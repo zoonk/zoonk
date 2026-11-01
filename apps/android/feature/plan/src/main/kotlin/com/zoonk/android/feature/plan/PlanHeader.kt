@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
@@ -36,6 +35,7 @@ import com.zoonk.android.feature.feedback.ReportProblemItem
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.GoalUpdateInput

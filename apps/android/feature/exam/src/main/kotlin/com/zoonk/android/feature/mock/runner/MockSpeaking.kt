@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +29,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.WritingWait
