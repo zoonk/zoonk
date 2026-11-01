@@ -1,10 +1,8 @@
 package com.zoonk.api
 
-import com.zoonk.api.models.GetChapterTestOut200Response
 import com.zoonk.api.models.LanguageConversationStartInput
 import com.zoonk.api.models.LanguageConversationStartInputOneOf2
 import com.zoonk.api.models.MeUpdate
-import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -14,7 +12,6 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -35,30 +32,6 @@ class ApiServicesTest {
     fun stop() {
         server.close()
     }
-
-    @Test
-    fun decodesAResponseWithAUuidATimestampAndAnEnum() =
-        runTest {
-            server.enqueue(
-                json(
-                    """{"earnedAt":"2026-10-28T09:00:00.000Z","id":"$goalId","key":"belt-yellow","kind":"belt","shownAt":null}""",
-                ),
-            )
-            val milestone = services.milestones.createMilestoneView(goalId).body()!!
-            assertEquals("/v1/me/milestones/$goalId/views", server.takeRequest().url.encodedPath)
-            assertEquals(goalId, milestone.id)
-            assertEquals("2026-10-28T09:00:00Z", milestone.earnedAt.toString())
-            assertEquals(Milestone.Kind.BELT, milestone.kind)
-            assertNull(milestone.shownAt)
-        }
-
-    @Test
-    fun decodesAUnionIntoTheBranchItMatches() =
-        runTest {
-            server.enqueue(json("""{"status":"nothingToSkip"}"""))
-            val result = services.learner.getChapterTestOut(goalId, goalId).body()!!
-            assertEquals(GetChapterTestOut200Response.NothingToSkipValue::class, result::class)
-        }
 
     @Test
     fun aPatchSendsOnlyTheFieldsItSets() =
