@@ -36,8 +36,7 @@ import androidx.compose.ui.unit.dp
  * own way, below its content or in a sheet, as main does under `lg`. With [panesTouch], the panes
  * meet without Material's room between them, for an aside that starts with its own hairline, so the
  * page's lists reach that hairline as they reach the window's edge. With [halfWidth], the supporting
- * pane takes half the room, for a long passage. With [atFoldOnly], the panes split only at an
- * unfolded book foldable's fold, for a spread that wider windows show as one column.
+ * pane takes half the room, for a long passage.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -46,13 +45,12 @@ fun PageWithSupportingPane(
     modifier: Modifier = Modifier,
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
-    atFoldOnly: Boolean = false,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(modifier.onPageSpan { span = it }) {
-        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth, atFoldOnly)
+        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth)
         val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = directive)
         val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
@@ -74,8 +72,7 @@ fun supportingPaneBeside(width: Dp): Boolean = pageDirective(width).maxHorizonta
  * here, the shell's list and detail): two where each keeps a phone's column, [MINIMUM_PANE] growing
  * with the text. That's where Material splits the window (expanded and wider), and on a page an
  * unfolded book foldable's fold crosses ([pageFold]), where the panes meet at the fold, flat or
- * folded, so each is a page of the book and folding moves nothing. [atFoldOnly] keeps one column
- * where there's no fold.
+ * folded, so each is a page of the book and folding moves nothing.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -84,7 +81,6 @@ fun pageDirective(
     span: PageSpan? = null,
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
-    atFoldOnly: Boolean = false,
 ): PaneScaffoldDirective {
     val info = currentWindowAdaptiveInfoV2()
     val fold = info.foldAcross(width, span)
@@ -109,9 +105,7 @@ fun pageDirective(
             }
         }
     val twoPanes =
-        window.maxHorizontalPartitions > 1 &&
-            (fold != null || !atFoldOnly) &&
-            narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
+        window.maxHorizontalPartitions > 1 && narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
 
     // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
     // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
