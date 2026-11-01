@@ -271,9 +271,7 @@ class LessonPlayerViewModel(
     private fun keepWork(state: LessonPlayerState) {
         // Until a run starts it holds none of the saved work, so what's saved waits for the run that restores it.
         if (state.run !is LessonRun.Started) return
-        // An answer sent to be checked may be on the server by the time the app comes back, so it's kept as checked.
-        val sent = state.currentStep?.id?.takeIf { state.phase == LessonPhase.Checking }
-        val checked = state.results.keys + listOfNotNull(sent)
+        val checked = state.results.keys
         saved[ROUNDS] = HashMap(state.rounds + checked.associateWith { state.round(it) + 1 })
         saved[REVEALED] = HashMap(state.revealed - checked)
         saved[ANSWERS] = HashMap((state.answers - checked).mapNotNull { (id, answer) -> answerJson(id, answer)?.let { id to it } }.toMap())
