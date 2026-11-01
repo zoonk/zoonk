@@ -22,9 +22,7 @@ struct AppDependencies {
   let tutorStore: TutorStore
   let voice: VoiceServices
 
-  static func live(
-    configuration: AppConfiguration = .current, mindMapsAPI: (any MindMapsAPIClient)? = nil
-  ) -> AppDependencies {
+  static func live(configuration: AppConfiguration = .current) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
     let sessionStore = SessionStore(
       api: AccountAPI(clients: clients),
@@ -35,8 +33,7 @@ struct AppDependencies {
       clients: clients,
       session: sessionStore,
       imageLoader: .live(configuration: configuration),
-      subscriptionStore: .live(),
-      mindMapsAPI: mindMapsAPI)
+      subscriptionStore: .live())
   }
 
   init(
@@ -45,19 +42,15 @@ struct AppDependencies {
     imageLoader: ImageLoader,
     subscriptionStore: AppStoreSubscriptionStore,
     buddyAPI: (any BuddyAPIClient)? = nil,
-    courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
-    mindMapsAPI: (any MindMapsAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
-    settingsAPI: (any SettingsAPIClient)? = nil,
-    studyAPI: (any StudyAPIClient)? = nil,
     tutorAPI: (any TutorAPIClient)? = nil
   ) {
     let cache = AppCache(session: session)
     self.cache = cache
     buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
     courseCatalogStore = CourseCatalogStore(
-      api: courseCatalogAPI ?? CourseCatalogAPI(clients: clients),
+      api: CourseCatalogAPI(clients: clients),
       language: currentCourseCatalogLanguage(),
       cache: cache)
     examStore = ExamStore(api: ExamAPI(clients: clients), cache: cache)
@@ -65,10 +58,9 @@ struct AppDependencies {
     learnerSummaryStore = LearnerSummaryStore(
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
       cache: cache)
-    let settingsStore = SettingsStore(
-      api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
+    let settingsStore = SettingsStore(api: SettingsAPI(clients: clients), cache: cache)
     self.settingsStore = settingsStore
-    let studyAPI = studyAPI ?? StudyAPI(clients: clients)
+    let studyAPI = StudyAPI(clients: clients)
     let todayStore = TodayStore(api: studyAPI, cache: cache)
     self.todayStore = todayStore
     let studySessionStore = StudySessionStore(api: studyAPI, cache: cache, today: todayStore)
@@ -79,8 +71,7 @@ struct AppDependencies {
       blockFinished: { studySessionStore.apply($1, sessionID: $0) })
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     self.imageLoader = imageLoader
-    mindMapsStore = MindMapsStore(
-      api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
+    mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
     onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)
     practiceStore = PracticeStore(api: PracticeAPI(clients: clients), cache: cache)

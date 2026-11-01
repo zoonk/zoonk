@@ -362,7 +362,9 @@ final class CourseCatalogStoreTests: XCTestCase {
 }
 
 private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
-  private var chapterDetailResults: [Result<CourseChapter, Error>]
+  private var chapterDetailResults: [Result<CourseChapter, Error>] = [
+    .success(.resourceTestFixture)
+  ]
   private var chapterResults: [Result<[CourseChapter], Error>]
   private var coursePageResults: [Result<CourseCatalogPage, Error>]
   private var courseResults: [Result<Course, Error>]
@@ -370,21 +372,16 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   private var searchResults: [Result<CatalogSearchResults, Error>]
   private(set) var courseQueries: [CourseCatalogQuery] = []
   private(set) var chapterKeys: [CatalogChapterKey] = []
-  private(set) var chapterListRequestCount = 0
-  private(set) var chapterRequestCount = 0
   private(set) var courseRequestCount = 0
-  private(set) var lessonListRequestCount = 0
   private(set) var searchQueries: [CatalogSearchQuery] = []
 
   init(
-    chapterDetailResults: [Result<CourseChapter, Error>] = [.success(.resourceTestFixture)],
     chapterResults: [Result<[CourseChapter], Error>] = [],
     coursePageResults: [Result<CourseCatalogPage, Error>] = [],
     courseResults: [Result<Course, Error>] = [],
     lessonResults: [Result<[CourseLesson], Error>] = [],
     searchResults: [Result<CatalogSearchResults, Error>] = []
   ) {
-    self.chapterDetailResults = chapterDetailResults
     self.chapterResults = chapterResults
     self.coursePageResults = coursePageResults
     self.courseResults = courseResults
@@ -407,14 +404,12 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   }
 
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
-    chapterRequestCount += 1
     chapterKeys.append(key)
     return try takeFirstResult(from: &chapterDetailResults).get()
   }
 
   func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    chapterListRequestCount += 1
-    return try takeFirstResult(from: &chapterResults).get()
+    try takeFirstResult(from: &chapterResults).get()
   }
 
   func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
@@ -424,7 +419,6 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
   func listChapterLessons(_ key: CatalogChapterKey) async throws
     -> [CourseLesson]
   {
-    lessonListRequestCount += 1
     chapterKeys.append(key)
     return try takeFirstResult(from: &lessonResults).get()
   }
@@ -473,11 +467,6 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
 
   func resolveCourseRequest(at index: Int, with page: CourseCatalogPage) {
     requests[index]?.continuation.resume(returning: page)
-    requests[index] = nil
-  }
-
-  func failCourseRequest(at index: Int, with error: any Error) {
-    requests[index]?.continuation.resume(throwing: error)
     requests[index] = nil
   }
 

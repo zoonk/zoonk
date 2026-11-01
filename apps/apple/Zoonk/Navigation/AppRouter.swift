@@ -14,7 +14,7 @@ enum AppSheet: Hashable, Identifiable {
 @MainActor
 @Observable
 final class AppRouter {
-  var selectedTab: AppTab
+  var selectedTab = AppTab.today
   var sheet: AppSheet?
   /// The speaking paper's open task in this window, as main's `/speaking?task=`.
   var speakingTask: String?
@@ -30,12 +30,7 @@ final class AppRouter {
 
   typealias BlockOpener = @MainActor (_ blockID: String, _ router: AppRouter) -> Void
 
-  init(
-    selectedTab: AppTab = .today, sheet: AppSheet? = nil,
-    openBlock: @escaping BlockOpener = { _, _ in }
-  ) {
-    self.selectedTab = selectedTab
-    self.sheet = sheet
+  init(openBlock: @escaping BlockOpener = { _, _ in }) {
     self.openBlock = openBlock
   }
 
