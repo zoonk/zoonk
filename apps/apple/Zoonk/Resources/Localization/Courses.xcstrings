@@ -6854,7 +6854,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld번째 레슨 · 전체 %2$lld개"
+            "value" : "%1$lld번째 레슨 (총 %2$lld개)"
           }
         },
         "pl" : {
