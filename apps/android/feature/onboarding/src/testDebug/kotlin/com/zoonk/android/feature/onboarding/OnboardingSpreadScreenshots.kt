@@ -207,15 +207,17 @@ class OnboardingSpreadScreenshots {
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val Z_FOLD = "w707dp-h823dp-xhdpi"
 
-        const val TIMELINE =
-            """{"kind":"timeline","title":"Court reforms","events":[{"date":"1990","label":"First reform"},{"date":"2004","label":"Second reform"}]}"""
+        const val VISUAL_QUESTION =
+            """{"context":null,"image":null,"itemId":"$ITEM_ID","skillId":"$ITEM_ID","format":"trueFalse","options":null,
+            "question":"A contract needs consideration to be binding.",
+            "visual":{"kind":"timeline","title":"Court reforms","events":[{"date":"1990","label":"First reform"},{"date":"2004","label":"Second reform"}]}}"""
 
         val SCREENS =
             listOf(
                 Screen("placement-intro") { placement(placementOf()) },
                 Screen("placement-choice", start = true) { placement(placementOf()) },
                 Screen("placement-typed", start = true) { placement(placementOf(next = typedQuestion())) },
-                Screen("placement-visual", start = true) { placement(placementOf(next = trueFalseQuestion(visual = TIMELINE))) },
+                Screen("placement-visual", start = true) { placement(placementOf(next = VISUAL_QUESTION)) },
                 Screen("level-test-reading") { levelTest(levelTestOf(answered = 3)) },
                 Screen("level-test-listening") { levelTest(levelTestOf(next = listeningQuestion(), answered = 6)) },
                 Screen("level-test-speaking") { levelTest(levelTestOf(next = SPEAKING_NEXT, answered = 11)) },
