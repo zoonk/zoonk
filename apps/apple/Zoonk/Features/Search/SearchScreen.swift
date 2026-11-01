@@ -43,8 +43,12 @@ struct SearchScreen: View {
           ForEach(results.chapters) { chapter in
             NavigationLink(value: CourseDestination.chapter(ChapterReference(chapter))) {
               Label {
-                Text(chapter.title)
-                Text(chapter.courseTitle)
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(chapter.title)
+                  Text(chapter.courseTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                }
               } icon: {
                 Image(systemName: "rectangle.stack")
               }
