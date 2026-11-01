@@ -3,10 +3,7 @@ package com.zoonk.android.feature.speaking
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.SpeakingPaper
 
-fun speakingPaper(
-    access: String = "open",
-    lastTry: String = "null",
-): SpeakingPaper =
+fun speakingPaper(access: String = "open"): SpeakingPaper =
     ApiJson.decodeFromString(
         """
         {"exam":"dele","language":"es","level":"B2","paper":"Prueba 4","source":"https://examenes.cervantes.es/dele-b2","title":"DELE B2",
@@ -14,7 +11,7 @@ fun speakingPaper(
         "tasks":[
           {"key":"1","minutes":{"min":6,"max":7},"mode":"monologueThenInteraction","name":"Valorar propuestas","options":2,"prepMinutes":10,
            "prepShared":{"minutes":20,"tasks":[1,2]},"role":"examiner","stimulus":"text",
-           "criteria":[{"key":"fluency","name":"Fluidez"},{"key":"range","name":"Alcance"}],"lastTry":$lastTry},
+           "criteria":[{"key":"fluency","name":"Fluidez"},{"key":"range","name":"Alcance"}],"lastTry":null},
           {"key":"2","minutes":{"min":5,"max":5},"mode":"monologue","name":"Describir una situación","options":1,"prepMinutes":0,
            "prepShared":null,"role":"partner","stimulus":"photos","criteria":[{"key":"accuracy","name":"Corrección"}],"lastTry":null}
         ]}

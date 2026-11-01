@@ -43,9 +43,8 @@ import java.io.File
 import java.util.UUID
 
 /** A conversation screen on fake API reads, a fake call client and fake peers, with the microphone allowed. */
-internal class ConversationHarness(
-    val id: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000c1"),
-) {
+internal class ConversationHarness {
+    val id: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000c1")
     val api = FakeConversationApi(conversation(id))
     val client = FakeCallClient()
     val transports = mutableListOf<FakeTransport>()
@@ -70,7 +69,7 @@ internal class ConversationHarness(
         }
     private val speech by lazy { silentSpeech(context, session, scope) }
     private val models = mutableMapOf<UUID, ConversationViewModel>()
-    val prep = MemoryPrepTimes()
+    private val prep = MemoryPrepTimes()
 
     init {
         shadowOf(context).grantPermissions(Manifest.permission.RECORD_AUDIO)
@@ -112,8 +111,7 @@ internal class ConversationHarness(
     fun Conversation(
         conversationId: UUID = id,
         startWith: Boolean? = null,
-        fromMock: Boolean = false,
-    ) = ConversationContent(model(conversationId), speech, exits, moments, startWith, fromMock = fromMock)
+    ) = ConversationContent(model(conversationId), speech, exits, moments, startWith)
 
     fun show(
         compose: ComposeContentTestRule,
@@ -130,7 +128,7 @@ internal class ConversationHarness(
     }
 }
 
-internal fun silentSpeech(
+private fun silentSpeech(
     context: Application,
     session: FakeSession,
     scope: CoroutineScope,
@@ -228,7 +226,7 @@ private fun conversationJson(
     "targetLanguage":"es","title":"Order at the café","unit":null}
     """.trimIndent()
 
-internal fun checkpointIntro(): LanguageCheckpointCall =
+private fun checkpointIntro(): LanguageCheckpointCall =
     ApiJson.decodeFromString(
         """
         {"status":"notStarted","dailyLimitReached":false,"intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
@@ -240,7 +238,7 @@ internal fun checkpointIntro(): LanguageCheckpointCall =
 
 internal fun checkpointStatus(json: String): LanguageCheckpointCall = ApiJson.decodeFromString(json)
 
-internal class MemoryPrepTimes : PrepTimes {
+private class MemoryPrepTimes : PrepTimes {
     private val starts = kotlinx.coroutines.flow.MutableStateFlow<Map<UUID, Long>>(emptyMap())
 
     override fun startedAt(card: UUID) = starts.map { it[card] }
@@ -253,7 +251,7 @@ internal class MemoryPrepTimes : PrepTimes {
     }
 }
 
-internal val EXAM_GOAL: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
+private val EXAM_GOAL: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
 
 /** An exam task's conversation, with [result] once graded. */
 internal fun examConversation(
