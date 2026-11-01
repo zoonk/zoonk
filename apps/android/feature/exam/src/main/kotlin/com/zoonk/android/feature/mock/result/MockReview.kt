@@ -125,8 +125,8 @@ internal class ReviewPlace(
                 // On the page, the learner reads the questions once their title has scrolled away.
                 inline.boundsInWindow().top > inline.positionInWindow().y -> true to top
 
-                // Shown whole, they're as open as they were.
-                else -> open to anchor
+                // With their title in view, they're as open as they were, at the question in view.
+                else -> open to top
             }
         return intArrayOf(if (reading) 1 else 0, at ?: -1)
     }

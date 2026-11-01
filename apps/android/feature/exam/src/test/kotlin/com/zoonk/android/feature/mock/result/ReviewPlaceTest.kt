@@ -94,6 +94,26 @@ class ReviewPlaceTest {
         rule.onNodeWithText(FIFTH).assertIsNotDisplayed()
     }
 
+    @Test
+    fun scrollingBackUpThePageMovesWhereTheSheetOpens() {
+        show()
+        rule.onNodeWithText("See the 12 questions").performClick()
+        rule.waitForIdle()
+        readFromTheTop(SIXTH)
+        recreate()
+        open()
+
+        rule
+            .onNode(
+                hasScrollAction() and hasAnyDescendant(hasText(SIXTH)),
+            ).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, -100_000f) }
+        rule.waitForIdle()
+        recreate()
+
+        rule.onNode(isDialog()).assertExists()
+        rule.onNodeWithText(FIRST).assertIsDisplayed()
+    }
+
     /** A short review shows whole on the page after the fold, so it was never closed: folding again opens the sheet. */
     @Test
     fun aShortReviewStaysOpenThroughAnOpenBook() {
@@ -171,6 +191,7 @@ class ReviewPlaceTest {
         "question":"Statement $number holds.","set":null}"""
 
     private companion object {
+        const val FIRST = "Question 1\u00A0· Mathematics"
         const val FIFTH = "Question 5\u00A0· Mathematics"
         const val SIXTH = "Question 6\u00A0· Mathematics"
     }
