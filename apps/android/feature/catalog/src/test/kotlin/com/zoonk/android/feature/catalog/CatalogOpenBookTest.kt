@@ -163,7 +163,7 @@ class CatalogOpenBookTest {
 
     @Test
     @Config(qualifiers = "w852dp-h883dp")
-    fun anOpenBookShowsTheChapterBeforeTheFoldAndItsLessonsAfterIt() {
+    fun anOpenBookShowsTheChapterAndItsLessonsBeforeTheFoldAndWhatItCoversAfterIt() {
         show(BOOK_PAGE) { app, navigator, store -> ChapterScreen(AppRoute.CatalogChapter(CHAPTER_TWO, COURSE), app, navigator, store) }
 
         unfold()
@@ -171,7 +171,7 @@ class CatalogOpenBookTest {
         assertBeforeFold("What Bonds covers.")
         assertBeforeFold("Does the electron circle the nucleus?")
         assertAfterFold("Where this chapter sits in the course")
-        assertAfterFold("Lessons")
+        assertBeforeFold("Lessons")
         assertAfterFold("What you'll learn")
         assertAfterFold("Your plan from this chapter")
     }

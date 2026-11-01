@@ -164,7 +164,8 @@ private fun chapterBlocks(
 
         if (hasLesson) {
             add(
-                CatalogBlock("lessons", trailing = true) {
+                // A chapter's way in is its lessons: on an open book they stay on the page before the fold.
+                CatalogBlock("lessons") {
                     val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
 
                     if (layout.beside && chapter.objectives.isNotEmpty()) {
