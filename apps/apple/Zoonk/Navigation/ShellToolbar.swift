@@ -74,7 +74,7 @@ struct ShellToolbar: ViewModifier {
   private var account: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
       AccountToolbarButton {
-        router.present(.account)
+        router.present(.account())
       }
     }
     .sharedBackgroundVisibility(.hidden)

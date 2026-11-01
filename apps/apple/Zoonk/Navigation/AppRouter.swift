@@ -2,9 +2,8 @@ import Observation
 import SwiftUI
 
 enum AppSheet: Hashable, Identifiable {
-  case account
+  case account(AccountPage? = nil)
   case feedback(screen: String)
-  case preferences
   case signIn
   case subscription
 
@@ -157,6 +156,9 @@ final class AppRouter {
       return true
     case .block(let blockID):
       open(blockID: blockID)
+      return true
+    case .sheet(let sheet):
+      present(sheet)
       return true
     case nil:
       return false

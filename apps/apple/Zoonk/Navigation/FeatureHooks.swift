@@ -45,7 +45,7 @@ extension TutorPlaces {
       case .account:
         router.present(.signIn)
       case .memory:
-        router.present(.account)
+        router.present(.account(.memory))
       case .subscription:
         router.present(.subscription)
       case .startGoal:

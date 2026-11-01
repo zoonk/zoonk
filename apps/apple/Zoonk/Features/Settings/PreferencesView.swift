@@ -168,42 +168,12 @@ struct PreferencesView: View {
   }
 }
 
-/// Preferences on their own, for a link from elsewhere such as Today's "Change limit". They're the
-/// learner's own, so the sheet closes once that session ends, as the account sheet leaves them.
-struct PreferencesSheet: View {
-  @Environment(\.dismiss) private var dismiss
-  @Environment(SessionStore.self) private var session
-
-  var body: some View {
-    NavigationStack {
-      PreferencesView()
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button(role: .close, action: dismiss.callAsFunction)
-          }
-        }
-    }
-    .onChange(of: session.state) { previous, state in
-      switch state {
-      case .signedOut, .unavailable:
-        dismiss()
-      case .signedIn(let account):
-        if let shown = previous.account, shown.user.id != account.user.id {
-          dismiss()
-        }
-      case .restoring:
-        break
-      }
-    }
-  }
-}
-
 struct ChangeLimitButton: View {
   @Environment(AppRouter.self) private var router
 
   var body: some View {
     Button {
-      router.present(.preferences)
+      router.present(.account(.preferences))
     } label: {
       Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
         .fontWeight(.semibold)

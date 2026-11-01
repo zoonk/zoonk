@@ -10,6 +10,22 @@ private enum AccountDestination: Hashable {
   case subscription(UUID)
 }
 
+enum AccountPage: Hashable {
+  case memory
+  case preferences
+  case profile
+}
+
+extension AccountDestination {
+  fileprivate init(_ page: AccountPage) {
+    switch page {
+    case .memory: self = .memory
+    case .preferences: self = .preferences
+    case .profile: self = .profile
+    }
+  }
+}
+
 private struct AccountDeletionDestination: Hashable {
   let email: String
   let hasAppleAccount: Bool
@@ -19,7 +35,7 @@ private struct AccountDeletionDestination: Hashable {
 struct AccountSheet: View {
   /// A guest gets sign-in instead of the hub. Any sign-in made in the sheet closes it once the
   /// profile is set up.
-  var signsIn = false
+  let signsIn: Bool
 
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
@@ -27,6 +43,13 @@ struct AccountSheet: View {
   @State private var isFeedbackPresented = false
   @State private var path = [AccountDestination]()
   @State private var isBeside = false
+  @State private var opensAt: AccountPage?
+
+  /// `page` opens over the hub as if picked there, so back leads to the hub.
+  init(signsIn: Bool = false, page: AccountPage? = nil) {
+    self.signsIn = signsIn
+    _opensAt = State(initialValue: page)
+  }
 
   var body: some View {
     PaneBeside(isAvailable: isShowingHub) {
@@ -57,6 +80,14 @@ struct AccountSheet: View {
       .onChange(of: isBeside, initial: true) {
         self.isBeside = isBeside
         openDefaultSectionBeside()
+      }
+    }
+    // Pushed once the hub is in place: a stack that starts at the page lays its list out without
+    // the sheet's trailing margin.
+    .onChange(of: isShowingHub, initial: true) {
+      if let opensAt, isShowingHub {
+        show(AccountDestination(opensAt))
+        self.opensAt = nil
       }
     }
     .onChange(of: session.state) { previous, state in
@@ -116,6 +147,8 @@ struct AccountSheet: View {
     let isSection = if case .deleteAccount = destination { false } else { true }
 
     return self.destination(destination)
+      // Inline like the hub: a page the sheet opens at can't take it from a hub shown before it.
+      .toolbarTitleDisplayMode(.inline)
       .navigationBarBackButtonHidden(isBeside && isSection)
       .toolbar {
         if isBeside, isSection {
@@ -141,7 +174,10 @@ struct AccountSheet: View {
     case .preferences:
       PreferencesView()
     case .profile:
-      if let account = session.account {
+      // A guest has no profile: creating the account gives them one.
+      if isGuest {
+        LoginView()
+      } else if let account = session.account {
         ProfileEditorView(account: account, isRequiredSetup: false) {
           path.append(.deleteAccount(makeDeletionDestination(account)))
         }
@@ -154,12 +190,13 @@ struct AccountSheet: View {
     }
   }
 
+  /// The saved sign-in being checked counts: only a sign-in made in the sheet closes it.
   private var isSignedInForGood: Bool {
-    guard case .signedIn(let account) = session.state else {
-      return false
+    switch session.state {
+    case .restoring: true
+    case .signedIn(let account): !isGuest && !account.needsProfileSetup
+    case .signedOut, .unavailable: false
     }
-
-    return !isGuest && !account.needsProfileSetup
   }
 
   private var closeButton: some View {
@@ -242,12 +279,13 @@ struct AccountSheet: View {
   }
 
   /// Leaves a local deletion result visible until the user dismisses it, and the open pages to
-  /// the same learner's updated account.
+  /// the same learner's updated or restored account.
   private func reconcileNavigation(
     from previous: AccountSessionState, to state: AccountSessionState
   ) {
     switch state {
-    case .signedIn(let account) where previous.account?.user.id == account.user.id:
+    case .signedIn(let account)
+    where previous == .restoring || previous.account?.user.id == account.user.id:
       break
     case .signedIn:
       path.removeAll()

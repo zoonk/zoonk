@@ -275,8 +275,10 @@ private func plan(_ syllabus: GoalSyllabus?) -> SearchGroup {
 }
 
 private func settingsGroup(isGuest: Bool) -> SearchGroup {
-  func setting(_ id: String, _ title: String, _ systemImage: String) -> SearchItem {
-    SearchItem(id: id, title: title, systemImage: systemImage, action: .present(.account))
+  func setting(
+    _ id: String, _ title: String, _ systemImage: String, page: AccountPage? = nil
+  ) -> SearchItem {
+    SearchItem(id: id, title: title, systemImage: systemImage, action: .present(.account(page)))
   }
 
   var items = [
@@ -287,11 +289,11 @@ private func settingsGroup(isGuest: Bool) -> SearchGroup {
     setting(
       "preferences",
       String(localized: "Preferences", table: "Search", comment: "Search row for Preferences"),
-      "slider.horizontal.3"),
+      "slider.horizontal.3", page: .preferences),
     setting(
       "memory",
       String(localized: "Memory", table: "Search", comment: "Search row for what Zoonk remembers"),
-      "brain"),
+      "brain", page: .memory),
     SearchItem(
       id: "subscription",
       title: String(
@@ -305,7 +307,7 @@ private func settingsGroup(isGuest: Bool) -> SearchGroup {
       setting(
         "profile",
         String(localized: "Profile", table: "Search", comment: "Search row for the profile"),
-        "person"),
+        "person", page: .profile),
       at: 1)
   }
 

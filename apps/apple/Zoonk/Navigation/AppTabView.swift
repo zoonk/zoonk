@@ -164,12 +164,10 @@ struct AppSheetView: View {
   var body: some View {
     Group {
       switch sheet {
-      case .account:
-        AccountSheet()
+      case .account(let page):
+        AccountSheet(page: page)
       case .feedback(let screen):
         FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
-      case .preferences:
-        PreferencesSheet()
       case .signIn:
         AccountSheet(signsIn: true)
       case .subscription:

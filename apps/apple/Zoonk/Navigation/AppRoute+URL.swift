@@ -4,6 +4,7 @@ enum AppLink: Equatable {
   case tab(AppTab)
   case route(AppRoute)
   case block(blockId: String)
+  case sheet(AppSheet)
 
   /// Mirrors `SUPPORTED_LOCALES` in `@zoonk/utils/locale`, which main prefixes its paths with.
   private static let localePrefixes: Set<String> = [
@@ -80,6 +81,12 @@ enum AppLink: Equatable {
     case (2, "start", let goalId, _): return .route(.goalSetup(goalId: goalId))
     case (2, "explain", let goalId, _): return .route(.explain(goalId: goalId))
     case (2, "plan-link", let planId, _): return .route(.planLink(planId: planId))
+    case (1, "settings", _, _): return .sheet(.account())
+    case (2, "settings", "memory", _): return .sheet(.account(.memory))
+    case (2, "settings", "appearance", _): return .sheet(.account(.preferences))
+    case (1, "profile", _, _): return .sheet(.account(.profile))
+    case (1, "subscription", _, _): return .sheet(.subscription)
+    case (1, "support", _, _): return .sheet(.feedback(screen: "support"))
     default: return nil
     }
   }

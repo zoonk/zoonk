@@ -39,6 +39,12 @@ final class AppNavigationTests: XCTestCase {
       ("https://www.zoonk.com/de/plan-link/p1", .route(.planLink(planId: "p1"))),
       ("https://www.zoonk.com/session", .route(.session)),
       ("https://www.zoonk.com/session?block=b1", .block(blockId: "b1")),
+      ("https://www.zoonk.com/settings", .sheet(.account())),
+      ("https://www.zoonk.com/pt/settings/memory", .sheet(.account(.memory))),
+      ("https://www.zoonk.com/settings/appearance", .sheet(.account(.preferences))),
+      ("https://www.zoonk.com/profile", .sheet(.account(.profile))),
+      ("https://www.zoonk.com/subscription", .sheet(.subscription)),
+      ("https://www.zoonk.com/support", .sheet(.feedback(screen: "support"))),
     ]
 
     for (url, expected) in links {
