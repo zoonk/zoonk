@@ -339,6 +339,29 @@ describe(checkLessonStep, () => {
     await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(3);
   });
 
+  it("replays the run's last recorded answer to a copy of it sent at once", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const answer = { kind: "check", optionId: "size" } as const;
+    const attemptId = randomUUID();
+
+    await check({ answer, attemptId: randomUUID(), runId: run.id, stepId });
+    await check({ answer, attemptId: randomUUID(), runId: run.id, stepId });
+
+    const outcomes = await whileLearnerLocked({
+      userId: user.id,
+      waiters: 2,
+      writes: () =>
+        Promise.all([
+          check({ answer, attemptId, runId: run.id, stepId }),
+          check({ answer, attemptId, runId: run.id, stepId }),
+        ]),
+    });
+
+    expect(outcomes[1]).toStrictEqual(outcomes[0]);
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(3);
+  });
+
   it("keeps two learners' answers apart when they send the same id", async () => {
     const [mine, theirs] = await Promise.all([setupRun(), setupRun()]);
     const attemptId = randomUUID();

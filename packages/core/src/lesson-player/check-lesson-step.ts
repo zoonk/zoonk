@@ -55,18 +55,28 @@ export type LessonStepCheckOutcome =
   | { status: "runEnded" }
   | { status: "unauthorized" };
 
+/** Leaves out `attemptId`, so a copy of an answer sent at once replays it instead of being refused. */
 async function countRunAnswers({
+  attemptId,
   client = prisma,
   startedAt,
   stepId,
   userId,
 }: {
+  attemptId?: string;
   client?: TransactionClient;
   startedAt: Date;
   stepId: string;
   userId: string;
 }): Promise<number> {
-  return client.attempt.count({ where: { answeredAt: { gte: startedAt }, stepId, userId } });
+  return client.attempt.count({
+    where: {
+      answeredAt: { gte: startedAt },
+      stepId,
+      userId,
+      ...(attemptId && { id: { not: attemptId } }),
+    },
+  });
 }
 
 /** The typed/listening fallback trains the modality actually used, not the original spoken screen. */
@@ -168,6 +178,7 @@ async function recordCheck({
       }
 
       const answers = await countRunAnswers({
+        attemptId,
         client: transaction,
         startedAt: run.startedAt,
         stepId: row.id,
