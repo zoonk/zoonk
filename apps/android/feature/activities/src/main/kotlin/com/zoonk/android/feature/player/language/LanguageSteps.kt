@@ -297,15 +297,17 @@ private fun VocabularyView(
 
     ReadScene {
         if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    word.word,
-                    modifier = Modifier.semantics { contentDescription = label },
-                    style = targetStyle(language, MaterialTheme.typography.displaySmall),
-                )
-                Romanization(word.romanization)
-                word.pronunciation?.let {
-                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        word.word,
+                        modifier = Modifier.semantics { contentDescription = label },
+                        style = targetStyle(language, MaterialTheme.typography.displaySmall),
+                    )
+                    Romanization(word.romanization)
+                    word.pronunciation?.let {
+                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
                 sound?.invoke()
             }
@@ -332,15 +334,25 @@ private fun AlphabetView(
     val label = stringResource(R.string.player_language_alphabet, content.symbol)
 
     ReadScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
-                content.symbol,
-                modifier = Modifier.semantics { contentDescription = label },
-                style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.SemiBold, textDirection = TextDirection.Content),
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(content.readingAid, style = MaterialTheme.typography.titleLarge)
-                Text(content.pronunciation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    content.symbol,
+                    modifier = Modifier.semantics { contentDescription = label },
+                    style =
+                        MaterialTheme.typography.displayLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            textDirection = TextDirection.Content,
+                        ),
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(content.readingAid, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        content.pronunciation,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
             sound?.invoke()
         }
