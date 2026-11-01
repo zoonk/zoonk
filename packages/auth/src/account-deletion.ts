@@ -22,8 +22,8 @@ const ENDED_STATUSES = ["canceled", "incomplete_expired"];
 const ANONYMIZE_TIMEOUT_MS = 60_000;
 
 /**
- * Better Auth ignores `beforeDelete`'s return value and core's Plus refunds can't live here, so
- * both travel through a request-local channel. Without it, website Plus is canceled unrefunded.
+ * Better Auth ignores `beforeDelete`'s return value. The request-local channel reports Apple's
+ * revocation result and lets core end website Plus before the account is deleted.
  */
 export async function captureAccountDeletionCleanup<Result>({
   endWebPlus,

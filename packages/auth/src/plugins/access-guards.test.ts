@@ -158,7 +158,7 @@ describe("access guards", () => {
     });
   });
 
-  it("lets only core's deletion, which refunds website Plus first, delete an account", async () => {
+  it("lets only core's deletion, which ends website Plus first, delete an account", async () => {
     const { headers } = await signInAsBrandOwner();
     const session = await organizationAuth.api.getSession({ headers });
     const endWebPlus = vi.fn();

@@ -33,6 +33,8 @@ export const accountPaths = {
   },
   "/me": {
     delete: {
+      description:
+        "Ends website Plus immediately before deleting the account. Store subscriptions must be canceled in their store.",
       operationId: "deleteCurrentUser",
       requestBody: {
         content: { "application/json": { schema: meDeletionSchema } },

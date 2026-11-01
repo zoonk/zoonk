@@ -4,7 +4,6 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 type StripeSubscriptionActionPath = "/api/auth/subscription/upgrade";
 
@@ -17,7 +16,7 @@ function getStripeSubscriptionFields() {
   };
 }
 
-async function createWebSubscriber() {
+async function createWebSubscriber(status: "active" | "past_due" = "active") {
   const user = await createE2EUser(getBaseURL());
 
   await prisma.subscription.create({
@@ -28,7 +27,7 @@ async function createWebSubscriber() {
       plan: "plus",
       provider: "stripe",
       referenceId: user.id,
-      status: "active",
+      status,
       ...getStripeSubscriptionFields(),
     },
   });
@@ -36,8 +35,8 @@ async function createWebSubscriber() {
   return user;
 }
 
-async function openWithSubscription(browser: Browser) {
-  const user = await createWebSubscriber();
+async function openWithSubscription(browser: Browser, status: "active" | "past_due" = "active") {
+  const user = await createWebSubscriber(status);
   const browserContext = await browser.newContext({ storageState: user.storageState });
   const page = await browserContext.newPage();
 
@@ -98,10 +97,16 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
-    await page.getByRole("link", { exact: true, name: "Cancel subscription" }).click();
-    await expect(page).toHaveURL(/\/subscription\/cancel$/u);
-    await page.getByRole("button", { exact: true, name: "Cancel now" }).click();
-    await expect(page.getByRole("status")).toContainText("You keep Plus until");
+    await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
+    const dialog = page.getByRole("alertdialog");
+
+    await expect(dialog).toContainText(
+      "You keep Plus until the end of the period you already paid for.",
+    );
+
+    await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
+    await expect(page.getByText("Subscription ending", { exact: true })).toBeVisible();
+    await expect(page.getByText(/^Your subscription will end on/u)).toBeVisible();
 
     await expect
       .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
@@ -110,9 +115,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     await page.goto("/subscription");
     await page.getByRole("button", { exact: true, name: "Keep Plus" }).click();
 
-    await expect(
-      page.getByRole("link", { exact: true, name: "Cancel subscription" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Cancel Plus" })).toBeVisible();
 
     await expect
       .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
@@ -122,70 +125,30 @@ test.describe("Subscription Page - With Plus Subscription", () => {
   });
 });
 
-/** Knowing an email isn't enough to end its Plus: support confirms with the owner first. */
-async function expectRequestForSupport(userId: string) {
-  await expect(prisma.feedback.findFirst({ where: { userId } })).resolves.toMatchObject({
-    context: { plusCancellation: { choice: "ordinary", userId } },
-  });
+test("an unpaid learner can cancel in Settings after reloading and stop charge retries", async ({
+  browser,
+}) => {
+  const { browserContext, page, user } = await openWithSubscription(browser, "past_due");
+  await page.goto("/subscription");
+  await page.reload();
+  await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
+  const dialog = page.getByRole("alertdialog");
+
+  await expect(dialog).toContainText(
+    "Plus ends right away, and we stop retrying your renewal payment.",
+  );
+
+  await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
 
   await expect(
-    prisma.subscription.findFirst({ where: { referenceId: userId } }),
-  ).resolves.toMatchObject({ cancelAtPeriodEnd: false, status: "active" });
-}
+    page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
+  ).toBeVisible();
 
-test.describe("Subscription Page - Cancel Without Logging In", () => {
-  test("passes a visitor's request to support without changing the subscription", async ({
-    browser,
-  }) => {
-    const user = await createWebSubscriber();
-    const visitor = await browser.newContext();
-    const page = await visitor.newPage();
+  await expect
+    .poll(() => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+    .toMatchObject({ status: "canceled" });
 
-    await page.goto("/subscription/cancel");
-
-    const cancel = page.getByRole("button", { exact: true, name: "Cancel now" });
-    await expectHydrated(cancel);
-
-    await page.getByLabel("Name").fill("Visitor Without A Login");
-    await page.getByLabel("Email", { exact: true }).fill(user.email);
-    await cancel.click();
-
-    await expect(page.getByRole("status")).toContainText("We received your cancellation request.");
-    await expectRequestForSupport(user.id);
-
-    await visitor.close();
-  });
-});
-
-test.describe("Subscription Page - Cancel From France", () => {
-  test("shows the request to check and change before it's sent", async ({ browser }) => {
-    const user = await createWebSubscriber();
-
-    const visitor = await browser.newContext({ extraHTTPHeaders: { "x-vercel-ip-country": "FR" } });
-
-    const page = await visitor.newPage();
-    await page.goto("/subscription/cancel");
-
-    const next = page.getByRole("button", { exact: true, name: "Continue" });
-    await expectHydrated(next);
-
-    await page.getByLabel("Name").fill("Camille Martin");
-    await page.getByLabel("Email", { exact: true }).fill(user.email);
-    await next.click();
-
-    const review = page.getByRole("region", { name: "Check your request" });
-    await expect(review).toContainText("Camille Martin");
-
-    await review.getByRole("button", { exact: true, name: "Edit" }).click();
-    await expect(page.getByLabel("Name")).toHaveValue("Camille Martin");
-    await next.click();
-
-    await review.getByRole("button", { exact: true, name: "Notify cancellation" }).click();
-    await expect(page.getByRole("status")).toContainText("We received your cancellation request.");
-    await expectRequestForSupport(user.id);
-
-    await visitor.close();
-  });
+  await browserContext.close();
 });
 
 const CONFIRMATION_CHECK_MS = 3000;

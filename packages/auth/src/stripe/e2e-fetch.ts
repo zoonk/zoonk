@@ -4,12 +4,30 @@ function seconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);
 }
 
+function isSupportedRequest({
+  method,
+  resumes,
+  stops,
+  url,
+}: {
+  method: string;
+  resumes: boolean;
+  stops: boolean;
+  url: URL;
+}): boolean {
+  if (!url.pathname.startsWith("/v1/subscriptions/sub_test_e2e_")) {
+    return false;
+  }
+
+  return ["GET", "DELETE"].includes(method) || (method === "POST" && (stops || resumes));
+}
+
 /** E2E uses fake Stripe keys and test-owned subscriptions; payment requests must stay local. */
 export async function stripeE2EFetch(
   input: Parameters<typeof fetch>[0],
   init?: RequestInit,
 ): Promise<Response> {
-  const url = new URL(typeof input === "string" || input instanceof URL ? input : input.url);
+  const url = new URL(input instanceof Request ? input.url : String(input));
   const id = url.pathname.split("/").at(-1);
   const method = init?.method ?? "GET";
   const body = new URLSearchParams(typeof init?.body === "string" ? init.body : "");
@@ -17,10 +35,7 @@ export async function stripeE2EFetch(
   const stops = body.get("cancel_at_period_end") === "true";
   const resumes = body.get("cancel_at") === "" || body.get("cancel_at_period_end") === "false";
 
-  if (
-    !url.pathname.startsWith("/v1/subscriptions/sub_test_e2e_") ||
-    (method !== "GET" && (method !== "POST" || !(stops || resumes)))
-  ) {
+  if (!isSupportedRequest({ method, resumes, stops, url })) {
     throw new Error(`Unsupported E2E Stripe request: ${method} ${url.pathname}`);
   }
 
@@ -33,15 +48,16 @@ export async function stripeE2EFetch(
   }
 
   const updated = method === "POST";
-  const stopped = updated ? stops : subscription.cancelAtPeriodEnd;
+  const ended = method === "DELETE";
+  const stopped = !ended && (updated ? stops : subscription.cancelAtPeriodEnd);
   const cancelAt = updated ? stops && subscription.periodEnd : subscription.cancelAt;
 
   return Response.json({
-    cancel_at: cancelAt ? seconds(cancelAt) : null,
+    cancel_at: !ended && cancelAt ? seconds(cancelAt) : null,
     cancel_at_period_end: stopped,
-    canceled_at: stops ? Math.floor(Date.now() / 1000) : null,
+    canceled_at: stops || ended ? Math.floor(Date.now() / 1000) : null,
     customer: `cus_${id}`,
-    ended_at: null,
+    ended_at: ended ? Math.floor(Date.now() / 1000) : null,
     id,
     items: {
       data: [
@@ -53,27 +69,6 @@ export async function stripeE2EFetch(
         },
       ],
     },
-    latest_invoice: {
-      amount_paid: 1000,
-      currency: "usd",
-      id: `in_${id}`,
-      lines: {
-        data: [
-          {
-            parent: {
-              subscription_item_details: { proration: false, subscription_item: `si_${id}` },
-            },
-            period: {
-              end: seconds(subscription.periodEnd),
-              start: seconds(subscription.periodStart),
-            },
-          },
-        ],
-      },
-      status: "paid",
-    },
-    metadata: {},
-    start_date: seconds(subscription.periodStart),
-    status: subscription.status,
+    status: ended ? "canceled" : subscription.status,
   });
 }

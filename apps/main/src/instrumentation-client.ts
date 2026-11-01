@@ -14,14 +14,7 @@ if (process.env.NODE_ENV === "production") {
   });
 
   // Guests, sign-in codes and social sign-in: `botCheckPlugin` checks the same requests on the server.
-  // The cancel page's form posts its Server Action to the page, with or without a locale prefix.
-  initBotId({
-    protect: [
-      { method: "POST", path: "/api/auth/*" },
-      { method: "POST", path: "/subscription/cancel" },
-      { method: "POST", path: "/*/subscription/cancel" },
-    ],
-  });
+  initBotId({ protect: [{ method: "POST", path: "/api/auth/*" }] });
 }
 
 /** PostHog starts from `AppAnalytics` once the visitor's choice and country allow it. */

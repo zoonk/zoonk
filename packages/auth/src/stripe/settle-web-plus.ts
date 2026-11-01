@@ -95,8 +95,6 @@ async function endWebPlus({
   }
 
   const stopped = await stopSubscription({
-    endsAt: new Date(),
-    endsNow: true,
     reason: `Plus through ${keptStore === "apple" ? "the App Store" : "Google Play"} too`,
     subscription,
   });

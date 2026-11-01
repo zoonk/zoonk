@@ -6,7 +6,6 @@ import {
   googlePlayNotificationSchema,
   googlePlaySubscriptionRequestSchema,
 } from "@zoonk/core/subscriptions/google-play-contract";
-import { webPlusCancellationRequestSchema } from "@zoonk/core/subscriptions/web-plus-cancellation-contract";
 import {
   badRequestResponse,
   conflictResponse,
@@ -107,7 +106,7 @@ export const subscriptionPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: stripeSubscriptionCancellationSchema } },
-          description: "What canceling, keeping Plus or deleting the account would do",
+          description: "What canceling or keeping Plus would do",
         },
         "401": unauthorizedResponse,
         "404": { ...notFoundResponse, description: "No web subscription left to cancel" },
@@ -119,22 +118,17 @@ export const subscriptionPaths = {
     },
     post: {
       description:
-        "Refunds through Stripe right away, and emails the receipt in the request's language.",
+        "Stops the renewal in Stripe. Plus stays until the end of the paid period. An unpaid or past-due renewal ends immediately to stop charge retries.",
       operationId: "cancelStripeSubscription",
-      requestBody: {
-        content: { "application/json": { schema: webPlusCancellationRequestSchema } },
-        required: true,
-      },
       responses: {
         "200": {
           content: { "application/json": { schema: stripeSubscriptionCancellationReceiptSchema } },
           description: "Canceled",
         },
-        "400": badRequestResponse,
         "401": unauthorizedResponse,
         "409": {
           ...conflictResponse,
-          description: "That choice isn't open anymore; read the preview again",
+          description: "No renewing web subscription to cancel; read the preview again",
         },
         "500": internalErrorResponse,
       },

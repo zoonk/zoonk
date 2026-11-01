@@ -82,44 +82,27 @@ async function voidOpenInvoice(subscription: Stripe.Subscription): Promise<void>
   }
 }
 
-/** An extraordinary cancellation's reason goes to Stripe, where support sees it beside the subscription. */
 export async function stopSubscription({
-  endsAt,
-  endsNow,
   reason,
   subscription,
 }: {
-  endsAt: Date;
-  endsNow: boolean;
   reason: string | null;
   subscription: Stripe.Subscription;
 }): Promise<Stripe.Subscription> {
-  const cancelNow = {
+  const canceled = await stripeClient.subscriptions.cancel(subscription.id, {
     ...(reason && { cancellation_details: { comment: reason } }),
     prorate: false,
-  };
+  });
 
   if (isUnpaid(subscription)) {
-    const canceled = await stripeClient.subscriptions.cancel(subscription.id, cancelNow);
     await voidOpenInvoice(subscription);
-    return canceled;
   }
 
-  if (endsNow) {
-    return stripeClient.subscriptions.cancel(subscription.id, cancelNow);
-  }
+  return canceled;
+}
 
-  const item = subscription.items.data[0];
-
-  // Ending before the period does would otherwise make Stripe credit the rest on its own.
-  if (item && endsAt.getTime() < toDate(item.current_period_end).getTime()) {
-    return stripeClient.subscriptions.update(subscription.id, {
-      cancel_at: Math.floor(endsAt.getTime() / 1000),
-      proration_behavior: "none",
-    });
-  }
-
-  return stripeClient.subscriptions.update(subscription.id, { cancel_at_period_end: true });
+export function endSubscription(subscription: Stripe.Subscription): Promise<Stripe.Subscription> {
+  return stopSubscription({ reason: null, subscription });
 }
 
 /** Turns a stopped renewal back on, clearing whichever field Stripe keeps the end in. */

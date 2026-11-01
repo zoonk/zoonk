@@ -1,171 +1,77 @@
 import { randomUUID } from "node:crypto";
-import { isHumanRequest } from "@zoonk/auth/human-check";
-import {
-  sendPlusCancellationEmail,
-  sendPlusCancellationRequestEmail,
-} from "@zoonk/auth/plus-emails";
 import { prisma } from "@zoonk/db";
-import { sendEmail } from "@zoonk/mailer";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
 import { endWebPlusForDeletedAccount } from "./web-plus-account-deletion";
-import {
-  cancelWebPlus,
-  getWebPlusCancellation,
-  keepWebPlus,
-  requestWebPlusCancellation,
-} from "./web-plus-cancellation";
+import { cancelWebPlus, getWebPlusCancellation, keepWebPlus } from "./web-plus-cancellation";
 import type Stripe from "stripe";
 
-const stripe = vi.hoisted(() => ({
-  cancel: vi.fn(),
-  paymentIntent: vi.fn(),
-  refund: vi.fn(),
-  retrieve: vi.fn(),
-  update: vi.fn(),
-  voidInvoice: vi.fn(),
-}));
+const stripe = vi.hoisted(() => ({ cancel: vi.fn(), retrieve: vi.fn(), update: vi.fn() }));
 
-// Stripe and the mailer are external services; the learner's subscription row is real.
+// Stripe is an external service; subscription persistence uses the real database.
 vi.mock("@zoonk/auth/stripe-client", () => ({
   stripeClient: {
-    invoices: { voidInvoice: stripe.voidInvoice },
-    paymentIntents: { retrieve: stripe.paymentIntent },
-    refunds: { create: stripe.refund },
     subscriptions: { cancel: stripe.cancel, retrieve: stripe.retrieve, update: stripe.update },
   },
 }));
 
-vi.mock("@zoonk/auth/plus-emails", () => ({
-  sendPlusCancellationEmail: vi.fn(),
-  sendPlusCancellationRequestEmail: vi.fn(),
-}));
-
-// BotID needs Vercel's request context.
-vi.mock("@zoonk/auth/human-check", () => ({ isHumanRequest: vi.fn() }));
-
-const DAY = 86_400;
-
-function stripeSubscription({
-  amountPaid,
-  cancelAtDaysFromNow,
-  cancelAtPeriodEnd = false,
-  interval,
-  periodStartDaysAgo,
-  status = "active",
-  subscribedDaysAgo,
-}: {
-  amountPaid: number;
-  cancelAtDaysFromNow?: number;
-  cancelAtPeriodEnd?: boolean;
-  interval: "month" | "year";
-  periodStartDaysAgo: number;
-  status?: Stripe.Subscription.Status;
-  subscribedDaysAgo: number;
-}) {
-  const now = Math.floor(Date.now() / 1000);
-  const periodStart = now - periodStartDaysAgo * DAY;
-  const periodEnd = periodStart + (interval === "year" ? 365 : 30) * DAY;
-  const cancelAt = cancelAtDaysFromNow === undefined ? null : now + cancelAtDaysFromNow * DAY;
+function stripeSubscription(interval: "month" | "year" = "month", cancelAtPeriodEnd = false) {
+  const start = Math.floor(Date.now() / 1000) - 86_400;
+  const end = start + (interval === "year" ? 365 : 30) * 86_400;
 
   return {
-    cancel_at: cancelAt,
+    cancel_at: cancelAtPeriodEnd ? end : null,
     cancel_at_period_end: cancelAtPeriodEnd,
-    customer: "cus_learner",
     id: `sub_${randomUUID()}`,
     items: {
       data: [
         {
-          // Stripe ends the current period at an earlier `cancel_at`.
-          current_period_end: cancelAt ?? periodEnd,
-          current_period_start: periodStart,
-          id: "si_plus",
+          current_period_end: end,
+          current_period_start: start,
           price: { recurring: { interval } },
         },
       ],
     },
-    latest_invoice: {
-      amount_paid: amountPaid,
-      currency: "eur",
-      id: `in_${randomUUID()}`,
-      lines: {
-        data: [
-          // An upgrade's proration comes first, over a shorter period.
-          {
-            parent: {
-              subscription_item_details: { proration: true, subscription_item: "si_plus" },
-            },
-            period: { end: periodStart + DAY, start: periodStart },
-          },
-          {
-            parent: {
-              subscription_item_details: { proration: false, subscription_item: "si_plus" },
-            },
-            period: { end: periodEnd, start: periodStart },
-          },
-        ],
-      },
-      payments: { data: [{ payment: { payment_intent: "pi_paid" }, status: "paid" }] },
-      status: status === "active" ? "paid" : "open",
-    },
-    metadata: { locale: "pt", timeZone: "America/Sao_Paulo" },
-    start_date: now - subscribedDaysAgo * DAY,
-    status,
+    status: "active",
   } as unknown as Stripe.Subscription;
 }
 
-async function subscribedLearner({
-  provider = "stripe",
-  refunded = 0,
-  subscription,
-}: {
-  provider?: "apple" | "stripe";
-  refunded?: number;
-  subscription?: Stripe.Subscription;
-}) {
+async function subscribedLearner(subscription: Stripe.Subscription) {
   const user = await userFixture();
   vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
   await prisma.subscription.create({
     data: {
-      periodEnd: new Date(Date.now() + DAY * 1000),
+      periodEnd: new Date(subscription.items.data[0]!.current_period_end * 1000),
       plan: "plus",
-      provider,
-      providerSubscriptionId: provider === "stripe" ? null : randomUUID(),
+      provider: "stripe",
       referenceId: user.id,
-      status: subscription?.status ?? "active",
-      stripeSubscriptionId: subscription?.id,
-      userId: provider === "stripe" ? null : user.id,
+      status: subscription.status,
+      stripeSubscriptionId: subscription.id,
     },
   });
 
-  if (subscription) {
-    stripe.retrieve.mockResolvedValue(subscription);
-  }
-
-  stripe.paymentIntent.mockResolvedValue({ latest_charge: { amount_refunded: refunded } });
+  stripe.retrieve.mockResolvedValue(subscription);
   stripe.cancel.mockResolvedValue({ ...subscription, status: "canceled" });
 
   stripe.update.mockImplementation(
-    async (_id: string, params: { cancel_at?: number | ""; cancel_at_period_end?: boolean }) => ({
+    async (_id: string, params: { cancel_at?: ""; cancel_at_period_end?: boolean }) => ({
       ...subscription,
-      cancel_at: params.cancel_at || null,
+      cancel_at: params.cancel_at_period_end
+        ? subscription.items.data[0]!.current_period_end
+        : null,
       cancel_at_period_end: params.cancel_at_period_end ?? false,
     }),
   );
 
-  stripe.refund.mockResolvedValue({ id: "re_test", status: "succeeded" });
-
   return user;
 }
 
-/** A purchase in the app that completed after the website's checkout: both bill the learner. */
-async function addNewerAppStorePlus(userId: string) {
+async function addNewerStorePlus(userId: string) {
   await prisma.subscription.create({
     data: {
-      periodEnd: new Date(Date.now() + 30 * DAY * 1000),
+      periodEnd: new Date(Date.now() + 86_400_000),
       plan: "plus",
       provider: "apple",
       providerSubscriptionId: randomUUID(),
@@ -176,621 +82,195 @@ async function addNewerAppStorePlus(userId: string) {
   });
 }
 
-describe("web Plus cancellation", () => {
+describe("website Plus cancellation", () => {
   beforeEach(() => {
     vi.mocked(getSession).mockResolvedValue(null);
-    vi.mocked(isHumanRequest).mockResolvedValue(true);
   });
 
-  it("refunds the whole payment and ends Plus now when the learner withdraws within 14 days", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 999,
-      interval: "month",
-      periodStartDaysAgo: 3,
-      subscribedDaysAgo: 3,
+  it.each(["month", "year"] as const)(
+    "keeps the paid %s until its end and persists the stopped renewal",
+    async (interval) => {
+      const subscription = stripeSubscription(interval);
+      const user = await subscribedLearner(subscription);
+      const endsAt = new Date(subscription.items.data[0]!.current_period_end * 1000);
+
+      await expect(getWebPlusCancellation()).resolves.toStrictEqual({
+        canResumeRenewal: false,
+        cancellation: { endsAt },
+        status: "ready",
+        unpaid: false,
+      });
+
+      await expect(cancelWebPlus()).resolves.toStrictEqual({
+        endsAt,
+        receivedAt: expect.any(Date),
+        status: "canceled",
+      });
+
+      expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
+        cancel_at_period_end: true,
+      });
+
+      expect(stripe.cancel).not.toHaveBeenCalled();
+
+      await expect(
+        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+      ).resolves.toMatchObject({ cancelAt: endsAt, cancelAtPeriodEnd: true, status: "active" });
+    },
+  );
+
+  it("stops the renewal of a website trial at the period end", async () => {
+    const subscription = { ...stripeSubscription(), status: "trialing" as const };
+    await subscribedLearner(subscription);
+    await expect(cancelWebPlus()).resolves.toMatchObject({ status: "canceled" });
+
+    expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
+      cancel_at_period_end: true,
     });
-
-    const user = await subscribedLearner({ subscription });
-    const outcome = await cancelWebPlus({ locale: "de", request: { choice: "withdrawal" } });
-
-    expect(outcome).toMatchObject({ refund: { amount: 999, currency: "eur" }, status: "canceled" });
-
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      { amount: 999, payment_intent: "pi_paid", reason: "requested_by_customer" },
-      { idempotencyKey: expect.stringMatching(/^plus-refund-in_.+-0$/u) },
-    );
-
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-
-    await expect(
-      prisma.subscription.findFirst({ where: { referenceId: user.id } }),
-    ).resolves.toMatchObject({ status: "canceled" });
-
-    expect(stripe.refund.mock.invocationCallOrder[0]).toBeLessThan(
-      stripe.cancel.mock.invocationCallOrder[0] ?? 0,
-    );
-
-    expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        choice: "withdrawal",
-        email: user.email,
-        locale: "de",
-        name: user.name,
-        refund: { amount: 999, currency: "eur" },
-      }),
-    );
   });
 
-  it("offers both choices within 14 days, and only stops the renewal after them", async () => {
-    await subscribedLearner({
-      subscription: stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 3,
-        subscribedDaysAgo: 3,
-      }),
-    });
+  it.each(["past_due", "unpaid"] as const)(
+    "ends a %s renewal immediately to stop charge retries",
+    async (status) => {
+      const subscription = { ...stripeSubscription("month", true), status };
+      const user = await subscribedLearner(subscription);
+      const before = new Date();
+      const outcome = await cancelWebPlus();
 
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      cancellation: { refundAmount: 0 },
-      status: "ready",
-      withdrawal: { refundAmount: 999 },
-    });
+      expect(outcome).toMatchObject({
+        endsAt: expect.any(Date),
+        receivedAt: expect.any(Date),
+        status: "canceled",
+      });
 
-    await subscribedLearner({
-      subscription: stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 20,
-      }),
-    });
+      if (outcome?.status !== "canceled") {
+        throw new Error("Expected cancellation");
+      }
 
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      status: "ready",
-      withdrawal: null,
-    });
+      expect(outcome.endsAt).toStrictEqual(outcome.receivedAt);
+      expect(outcome.endsAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
+      expect(stripe.update).not.toHaveBeenCalled();
 
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } }),
-    ).resolves.toStrictEqual({ status: "unavailable" });
+      await expect(
+        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+      ).resolves.toMatchObject({ status: "canceled" });
+    },
+  );
 
-    expect(stripe.refund).not.toHaveBeenCalled();
-  });
-
-  it("stops the renewal without a refund, keeping Plus until the period ends", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 999,
-      interval: "month",
-      periodStartDaysAgo: 20,
-      subscribedDaysAgo: 50,
-    });
-
-    const user = await subscribedLearner({ subscription });
-    const outcome = await cancelWebPlus({ locale: "en", request: { choice: "ordinary" } });
-
-    expect(outcome).toMatchObject({ refund: null, status: "canceled" });
-    expect(stripe.refund).not.toHaveBeenCalled();
+  it("finds website Plus even when a store purchase is newer", async () => {
+    const subscription = stripeSubscription();
+    const user = await subscribedLearner(subscription);
+    await addNewerStorePlus(user.id);
+    await expect(cancelWebPlus()).resolves.toMatchObject({ status: "canceled" });
 
     expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
       cancel_at_period_end: true,
     });
 
     await expect(
-      prisma.subscription.findFirst({ where: { referenceId: user.id } }),
-    ).resolves.toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+      prisma.subscription.findFirst({ where: { provider: "apple", userId: user.id } }),
+    ).resolves.toMatchObject({ cancelAtPeriodEnd: false, status: "active" });
   });
 
-  it("refunds a renewed year's months that haven't started and ends at the current month's end", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 12_000,
-      interval: "year",
-      periodStartDaysAgo: 40,
-      subscribedDaysAgo: 405,
+  it("keeps Plus by turning its renewal back on", async () => {
+    const subscription = stripeSubscription("month", true);
+    const user = await subscribedLearner(subscription);
+
+    await expect(getWebPlusCancellation()).resolves.toStrictEqual({
+      canResumeRenewal: true,
+      cancellation: null,
+      status: "ready",
+      unpaid: false,
     });
 
-    await subscribedLearner({ subscription });
-    const outcome = await cancelWebPlus({ locale: "en", request: { choice: "ordinary" } });
+    await expect(keepWebPlus()).resolves.toStrictEqual({ status: "kept" });
+    expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, { cancel_at: "" });
 
-    expect(outcome).toMatchObject({ refund: { amount: 10_000, currency: "eur" } });
+    await expect(
+      prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+    ).resolves.toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
+  });
 
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ amount: 10_000, payment_intent: "pi_paid" }),
-      expect.anything(),
-    );
+  it("resumes when Stripe keeps only the period-end flag", async () => {
+    const subscription = { ...stripeSubscription("month", true), cancel_at: null };
+    await subscribedLearner(subscription);
+    await expect(keepWebPlus()).resolves.toStrictEqual({ status: "kept" });
 
     expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
-      cancel_at: expect.any(Number),
-      proration_behavior: "none",
+      cancel_at_period_end: false,
     });
   });
 
-  it("refunds only what's still owed, and still cancels once nothing is", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 999,
-      interval: "month",
-      periodStartDaysAgo: 3,
-      subscribedDaysAgo: 3,
-    });
-
-    await subscribedLearner({ refunded: 400, subscription });
-    await cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } });
-
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ amount: 599 }),
-      { idempotencyKey: expect.stringMatching(/-400$/u) },
-    );
-
-    await subscribedLearner({ refunded: 999, subscription });
-    await cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } });
-
-    expect(stripe.refund).toHaveBeenCalledOnce();
-    expect(stripe.cancel).toHaveBeenCalledTimes(2);
+  it("does not cancel an already stopped renewal or resume one still renewing", async () => {
+    await subscribedLearner(stripeSubscription("month", true));
+    await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+    await subscribedLearner(stripeSubscription());
+    await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+    expect(stripe.update).not.toHaveBeenCalled();
   });
 
-  it("keeps Plus when Stripe refuses the refund", async () => {
-    await subscribedLearner({
-      subscription: stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 3,
-        subscribedDaysAgo: 3,
-      }),
-    });
-
-    stripe.refund.mockResolvedValue({ id: "re_failed", status: "failed" });
-
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } }),
-    ).rejects.toThrow("re_failed");
-
-    expect(stripe.cancel).not.toHaveBeenCalled();
-  });
-
-  it("ends an unpaid renewal now and stops Stripe from collecting it", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 0,
-      interval: "month",
-      periodStartDaysAgo: 3,
-      status: "past_due",
-      subscribedDaysAgo: 60,
-    });
-
-    await subscribedLearner({ subscription });
-
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      cancellation: { refundAmount: 0 },
-      status: "ready",
-      unpaid: true,
-      withdrawal: null,
-    });
-
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "ordinary" } }),
-    ).resolves.toMatchObject({ refund: null, status: "canceled" });
-
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-    expect(stripe.voidInvoice).toHaveBeenCalledOnce();
-    expect(stripe.refund).not.toHaveBeenCalled();
-  });
-
-  it("still confirms an unpaid renewal's cancel when voiding its invoice fails", async () => {
-    await subscribedLearner({
-      subscription: stripeSubscription({
-        amountPaid: 0,
-        interval: "month",
-        periodStartDaysAgo: 3,
-        status: "past_due",
-        subscribedDaysAgo: 60,
-      }),
-    });
-
-    stripe.voidInvoice.mockRejectedValue(new Error("Stripe is down"));
-
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "ordinary" } }),
-    ).resolves.toMatchObject({ status: "canceled" });
-
-    expect(sendPlusCancellationEmail).toHaveBeenCalledOnce();
-  });
-
-  it("leaves a store subscription to its store", async () => {
-    await subscribedLearner({ provider: "apple" });
+  it("leaves store subscriptions to their store", async () => {
+    const user = await userFixture();
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+    await addNewerStorePlus(user.id);
 
     await expect(getWebPlusCancellation()).resolves.toStrictEqual({
       provider: "apple",
       status: "store",
     });
 
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "ordinary" } }),
-    ).resolves.toStrictEqual({ status: "unavailable" });
+    await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
+    expect(stripe.update).not.toHaveBeenCalled();
+  });
 
+  it("requires a signed-in account", async () => {
+    await expect(cancelWebPlus()).resolves.toBeNull();
+    await expect(keepWebPlus()).resolves.toBeNull();
+    await expect(getWebPlusCancellation()).resolves.toBeNull();
+    const user = { ...(await userFixture()), isAnonymous: true };
+    vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
+    await expect(cancelWebPlus()).resolves.toBeNull();
     expect(stripe.retrieve).not.toHaveBeenCalled();
   });
 
-  it("cancels the website Plus while a newer store subscription also bills the learner", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 999,
-      interval: "month",
-      periodStartDaysAgo: 3,
-      subscribedDaysAgo: 3,
-    });
-
-    const user = await subscribedLearner({ subscription });
-    await addNewerAppStorePlus(user.id);
-
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      status: "ready",
-      withdrawal: { refundAmount: 999 },
-    });
+  it("propagates Stripe failures without changing the saved renewal", async () => {
+    const user = await subscribedLearner(stripeSubscription());
+    stripe.update.mockRejectedValue(new Error("Stripe unavailable"));
+    await expect(cancelWebPlus()).rejects.toThrow("Stripe unavailable");
 
     await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } }),
-    ).resolves.toMatchObject({ refund: { amount: 999, currency: "eur" }, status: "canceled" });
-
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
+      prisma.subscription.findFirst({ where: { referenceId: user.id } }),
+    ).resolves.toMatchObject({ cancelAtPeriodEnd: false });
   });
 
-  it("asks for an account first", async () => {
-    await expect(getWebPlusCancellation()).resolves.toBeNull();
+  describe("account deletion", () => {
+    it.each(["month", "year"] as const)(
+      "ends the website %s immediately, even alongside a newer store purchase",
+      async (interval) => {
+        const subscription = stripeSubscription(interval, true);
+        const user = await subscribedLearner(subscription);
+        await addNewerStorePlus(user.id);
+        await endWebPlusForDeletedAccount({ learner: user });
+        expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
+        expect(stripe.update).not.toHaveBeenCalled();
 
-    await expect(
-      cancelWebPlus({ locale: "en", request: { choice: "withdrawal" } }),
-    ).resolves.toBeNull();
-  });
+        await expect(
+          prisma.subscription.findFirst({ where: { stripeSubscriptionId: subscription.id } }),
+        ).resolves.toMatchObject({ status: "canceled" });
 
-  it("ends Plus now for an important reason and refunds the full days left", async () => {
-    const subscription = stripeSubscription({
-      amountPaid: 999,
-      interval: "month",
-      periodStartDaysAgo: 10,
-      subscribedDaysAgo: 50,
-    });
-
-    const user = await subscribedLearner({ subscription });
-
-    // 19 full days of 30 are left: the day it ends counts as used.
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      extraordinary: { refundAmount: 633 },
-      withdrawal: null,
-    });
-
-    const outcome = await cancelWebPlus({
-      locale: "en",
-      request: { choice: "extraordinary", reason: "I'm moving abroad" },
-    });
-
-    expect(outcome).toMatchObject({ refund: { amount: 633, currency: "eur" }, status: "canceled" });
-
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ amount: 633 }),
-      expect.anything(),
+        await expect(
+          prisma.subscription.findFirst({ where: { provider: "apple", userId: user.id } }),
+        ).resolves.toMatchObject({ status: "active" });
+      },
     );
 
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, {
-      cancellation_details: { comment: "I'm moving abroad" },
-      prorate: false,
-    });
+    it("stops deletion when Stripe cannot end the subscription", async () => {
+      const user = await subscribedLearner(stripeSubscription());
+      stripe.cancel.mockRejectedValue(new Error("Stripe unavailable"));
 
-    expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        choice: "extraordinary",
-        email: user.email,
-        reason: "I'm moving abroad",
-        refundableUntil: null,
-      }),
-    );
-  });
-
-  it("refunds only the days left after a renewed year's earlier cancel refunded its unstarted months", async () => {
-    // Renewed 40 days ago and canceled the usual way: 10 unstarted months came back, and Plus ends
-    // with the second month, 21 days from now.
-    const subscription = stripeSubscription({
-      amountPaid: 12_000,
-      cancelAtDaysFromNow: 21,
-      interval: "year",
-      periodStartDaysAgo: 40,
-      subscribedDaysAgo: 405,
-    });
-
-    await subscribedLearner({ refunded: 10_000, subscription });
-
-    await expect(getWebPlusCancellation()).resolves.toMatchObject({
-      extraordinary: { owed: 10_658, refundAmount: 658 },
-    });
-
-    await cancelWebPlus({
-      locale: "en",
-      request: { choice: "extraordinary", reason: "My school now pays for another tool" },
-    });
-
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ amount: 658 }),
-      expect.anything(),
-    );
-  });
-
-  describe("without logging in", () => {
-    beforeEach(() => {
-      vi.mocked(sendEmail).mockResolvedValue({ data: Response.json({ ok: true }), error: null });
-    });
-
-    it("passes the request to support and sends the account's own address a receipt, changing nothing", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 3,
-        subscribedDaysAgo: 3,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await goalFixture({ language: "pt", timezone: "America/Sao_Paulo", userId: user.id });
-      vi.mocked(getSession).mockResolvedValue(null);
-
-      const answer = await requestWebPlusCancellation({
-        email: ` ${user.email.toUpperCase()} `,
-        locale: "de",
-        name: "Erika Mustermann",
-        request: { choice: "extraordinary", reason: "Moving abroad" },
-      });
-
-      expect(answer).toStrictEqual({ receivedAt: expect.any(Date) });
-      const receivedAt = answer?.receivedAt.toISOString();
-
-      expect(stripe.retrieve).not.toHaveBeenCalled();
-      expect(stripe.cancel).not.toHaveBeenCalled();
-      expect(stripe.refund).not.toHaveBeenCalled();
-      expect(stripe.update).not.toHaveBeenCalled();
-
-      await expect(
-        prisma.feedback.findFirst({ where: { userId: user.id } }),
-      ).resolves.toMatchObject({
-        context: {
-          plusCancellation: {
-            choice: "extraordinary",
-            email: user.email.toUpperCase(),
-            name: "Erika Mustermann",
-            reason: "Moving abroad",
-            receivedAt,
-            userId: user.id,
-          },
-        },
-        message: expect.stringContaining(String(receivedAt)),
-        status: "new",
-      });
-
-      expect(sendEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          subject: expect.stringContaining("cancel"),
-          textBody: expect.stringContaining(String(receivedAt)),
-          to: "hello@zoonk.com",
-        }),
-      );
-
-      expect(sendPlusCancellationRequestEmail).toHaveBeenCalledExactlyOnceWith({
-        choice: "extraordinary",
-        email: user.email,
-        locale: "pt",
-        name: "Erika Mustermann",
-        reason: "Moving abroad",
-        receivedAt: answer?.receivedAt,
-        timeZone: "America/Sao_Paulo",
-      });
-
-      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
-    });
-
-    it("answers the same and only tells support about an email without an account", async () => {
-      const email = `nobody-${randomUUID()}@zoonk.test`;
-
-      const answer = await requestWebPlusCancellation({
-        email,
-        locale: "en",
-        name: "Nobody",
-        request: { choice: "withdrawal" },
-      });
-
-      expect(answer).toStrictEqual({ receivedAt: expect.any(Date) });
-
-      await expect(prisma.feedback.findFirst({ where: { email } })).resolves.toMatchObject({
-        context: { plusCancellation: { choice: "withdrawal", reason: null, userId: null } },
-        userId: null,
-      });
-
-      expect(sendEmail).toHaveBeenCalledOnce();
-      expect(sendPlusCancellationRequestEmail).not.toHaveBeenCalled();
-      expect(stripe.retrieve).not.toHaveBeenCalled();
-    });
-
-    it("takes nothing from a request that fails the human check", async () => {
-      vi.mocked(isHumanRequest).mockResolvedValue(false);
-      const email = `someone-${randomUUID()}@zoonk.test`;
-
-      await expect(
-        requestWebPlusCancellation({
-          email,
-          locale: "en",
-          name: "Someone",
-          request: { choice: "ordinary" },
-        }),
-      ).resolves.toBeNull();
-
-      await expect(prisma.feedback.findFirst({ where: { email } })).resolves.toBeNull();
-      expect(sendEmail).not.toHaveBeenCalled();
-      expect(sendPlusCancellationRequestEmail).not.toHaveBeenCalled();
-    });
-  });
-
-  describe(keepWebPlus, () => {
-    it("turns a stopped renewal back on, so Plus renews as before", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        cancelAtPeriodEnd: true,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 50,
-      });
-
-      const user = await subscribedLearner({ subscription });
-
-      await prisma.subscription.updateMany({
-        data: { cancelAtPeriodEnd: true },
-        where: { referenceId: user.id },
-      });
-
-      await expect(getWebPlusCancellation()).resolves.toMatchObject({ canResumeRenewal: true });
-      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "kept" });
-
-      expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
-        cancel_at_period_end: false,
-      });
-
-      await expect(
-        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
-      ).resolves.toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
-    });
-
-    it("can't keep Plus once it ends sooner than its period, after a refund", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 12_000,
-        cancelAtDaysFromNow: 10,
-        interval: "year",
-        periodStartDaysAgo: 100,
-        subscribedDaysAgo: 465,
-      });
-
-      await subscribedLearner({ subscription });
-
-      await expect(getWebPlusCancellation()).resolves.toMatchObject({ canResumeRenewal: false });
-      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
-      expect(stripe.update).not.toHaveBeenCalled();
-    });
-
-    it("has nothing to keep while Plus renews", async () => {
-      await subscribedLearner({
-        subscription: stripeSubscription({
-          amountPaid: 999,
-          interval: "month",
-          periodStartDaysAgo: 3,
-          subscribedDaysAgo: 3,
-        }),
-      });
-
-      await expect(keepWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
-    });
-  });
-
-  describe(endWebPlusForDeletedAccount, () => {
-    it("refunds everything within the 14 days and ends Plus with the account", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 5,
-        subscribedDaysAgo: 5,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user });
-
-      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ amount: 999 }),
-        expect.anything(),
-      );
-
-      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-
-      await expect(
-        prisma.subscription.findFirst({ where: { referenceId: user.id } }),
-      ).resolves.toMatchObject({ status: "canceled" });
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          canKeepPlus: false,
-          choice: "withdrawal",
-          email: user.email,
-          locale: "pt",
-          refund: { amount: 999, currency: "eur" },
-          source: "accountDeletion",
-        }),
-      );
-    });
-
-    it("refunds a renewed year's months that haven't started", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 12_000,
-        interval: "year",
-        periodStartDaysAgo: 100,
-        subscribedDaysAgo: 465,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user });
-
-      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ amount: 8000 }),
-        expect.anything(),
-      );
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ choice: "ordinary", refund: { amount: 8000, currency: "eur" } }),
-      );
-    });
-
-    it("refunds the website Plus while a newer store subscription also bills the learner", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 5,
-        subscribedDaysAgo: 5,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await addNewerAppStorePlus(user.id);
-      await endWebPlusForDeletedAccount({ learner: user });
-
-      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ amount: 999 }),
-        expect.anything(),
-      );
-
-      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-    });
-
-    it("ends a month after its 14 days without a refund", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 50,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user });
-
-      expect(stripe.refund).not.toHaveBeenCalled();
-      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ refund: null, source: "accountDeletion" }),
-      );
-    });
-
-    it("refunds a renewed year's unstarted months even after its renewal was stopped without a refund", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 12_000,
-        cancelAtPeriodEnd: true,
-        interval: "year",
-        periodStartDaysAgo: 100,
-        subscribedDaysAgo: 465,
-      });
-
-      const user = await subscribedLearner({ subscription });
-      await endWebPlusForDeletedAccount({ learner: user });
-
-      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ amount: 8000 }),
-        expect.anything(),
+      await expect(endWebPlusForDeletedAccount({ learner: user })).rejects.toThrow(
+        "Stripe unavailable",
       );
     });
   });

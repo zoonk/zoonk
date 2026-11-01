@@ -7,8 +7,7 @@ import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { z } from "zod";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
-import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
-import { endWebPlusBesideStorePlus, findStorePlus } from "./settle-web-plus";
+import { endWebPlusBesideStorePlus } from "./settle-web-plus";
 import { saveSubscription } from "./stop-web-plus";
 import { reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
@@ -125,24 +124,7 @@ export function stripePlugin() {
       // Canceling keeps Plus until the period ends, so the decision counts when it becomes
       // pending; a subscription ended right away (or by failed payments) was never pending.
       onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
-      // Stripe confirmed a checkout; the learner may never come back to the page it returns to.
-      // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook. A checkout
-      // opened while free can complete after a store purchase, whose Plus the learner keeps.
-      onSubscriptionComplete: async ({ stripeSubscription, subscription }) => {
-        const [, storePlus] = await Promise.all([
-          reportChange("started", subscription),
-          findStorePlus(subscription.referenceId),
-        ]);
-
-        if (storePlus || stripeSubscription.status !== "active") {
-          return;
-        }
-
-        await sendPlusPurchaseConfirmation({
-          referenceId: subscription.referenceId,
-          stripeSubscription,
-        });
-      },
+      onSubscriptionComplete: ({ subscription }) => reportChange("started", subscription),
       onSubscriptionDeleted: async ({ subscription }) => {
         if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {
           await reportChange("canceled", subscription);

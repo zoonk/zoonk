@@ -31,14 +31,6 @@ function renderFairUseLink(chunks: ReactNode) {
   );
 }
 
-function renderCancelLink(chunks: ReactNode) {
-  return (
-    <Link className={DISCLOSURE_LINK_CLASS} href="/subscription/cancel">
-      {chunks}
-    </Link>
-  );
-}
-
 function hasNoAccount(viewerState: PlusViewerState): boolean {
   return viewerState.status === "guest" || viewerState.status === "visitor";
 }
@@ -150,9 +142,9 @@ export async function PlusQuestions({
 
         <PublicDisclosure summary={t("Can I get a refund?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t.rich(
-              "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-              { link: renderCancelLink },
+            {t(
+              "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+              { email },
             )}
           </p>
         </PublicDisclosure>

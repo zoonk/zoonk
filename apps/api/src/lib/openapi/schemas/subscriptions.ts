@@ -41,74 +41,27 @@ export const freePlanResponseSchema = z
     id: "FreePlan",
   });
 
-const moneySchema = z
-  .object({
-    amount: z.number().meta({ description: "In the currency's major unit: 29.9 is R$ 29,90" }),
-    currency: z.string().meta({ description: "ISO 4217 code, such as BRL" }),
-  })
-  .meta({ id: "Money" });
-
 export const stripeSubscriptionCancellationSchema = z
   .object({
-    accountDeletion: z
-      .object({
-        refund: moneySchema
-          .nullable()
-          .meta({
-            description:
-              "Everything within the 14 days, or after a yearly renewal the months that haven't started",
-          }),
-      })
-      .meta({ description: "Deleting the account ends Plus right away and refunds this" }),
     canResumeRenewal: z
+      .boolean()
+      .meta({ description: "The renewal is stopped, so DELETE turns it back on (Keep Plus)" }),
+    cancellation: z
+      .object({ endsAt: z.iso.datetime() })
+      .nullable()
+      .meta({
+        description:
+          "Plus ends with its paid period, or immediately for an unpaid renewal. Null when the renewal is already stopped",
+      }),
+    unpaid: z
       .boolean()
       .meta({
         description:
-          "Only the renewal is stopped, at the end of the paid period, so DELETE turns it back on (Keep Plus)",
-      }),
-    cancellation: z
-      .object({
-        endsAt: z.iso.datetime(),
-        refund: moneySchema
-          .nullable()
-          .meta({ description: "After a yearly renewal, the months that haven't started" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
-      }),
-    extraordinary: z
-      .object({
-        refund: moneySchema
-          .nullable()
-          .meta({ description: "The full days left until Plus would end" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "Ending Plus now for an important reason, which the request names. Null for an unpaid renewal, whose cancellation already ends it now",
-      }),
-    withdrawal: z
-      .object({
-        refund: moneySchema,
-        until: z.iso.datetime().meta({ description: "The last day of the 14-day refund" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "Within 14 days of subscribing: Plus ends now and the whole payment is refunded",
+          "The renewal payment failed, so cancellation ends Plus immediately and stops charge retries",
       }),
   })
   .meta({ id: "StripeSubscriptionCancellation" });
 
 export const stripeSubscriptionCancellationReceiptSchema = z
-  .object({
-    endsAt: z.iso.datetime(),
-    receivedAt: z.iso.datetime(),
-    refund: moneySchema.nullable(),
-  })
-  .meta({
-    description: "The learner also gets this receipt by email",
-    id: "StripeSubscriptionCancellationReceipt",
-  });
+  .object({ endsAt: z.iso.datetime(), receivedAt: z.iso.datetime() })
+  .meta({ id: "StripeSubscriptionCancellationReceipt" });

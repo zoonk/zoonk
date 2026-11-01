@@ -214,7 +214,6 @@ msgstr "오늘"
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 #: src/components/learn/journey-page-bar.tsx
 msgctxt "fz0z4c"
 msgid "Plan"
@@ -389,6 +388,7 @@ msgstr "사용자 메뉴"
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 #: src/app/[lang]/(home)/_components/ready-section.tsx
 #: src/components/pricing/plus-plan.tsx
 #: src/components/pricing/pricing-covers.tsx
@@ -917,7 +917,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "계속하기"
@@ -1155,14 +1154,9 @@ msgid "Your goals, plans, progress, memory and uploads are deleted for good. Thi
 msgstr "목표, 계획, 진도, 메모리와 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요."
 
 #: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "UVa47p"
-msgid "Your Plus ends right away, and we refund {amount} to the payment method you used."
-msgstr "Plus 이용이 바로 종료되고, 결제에 사용한 수단으로 {amount} 환불해 드려요."
-
-#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "mvvPso"
-msgid "Your Plus ends right away, without a refund. You won't be charged again."
-msgstr "Plus 이용이 바로 종료되고 환불은 되지 않아요. 더 이상 요금이 청구되지 않아요."
+msgctxt "B62Z1j"
+msgid "Deleting your account ends Plus right away."
+msgstr "계정을 삭제하면 Plus 이용이 바로 종료돼요."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1219,8 +1213,6 @@ msgstr "Zoonk와 짝꿍이 부를 이름"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "이름"
@@ -1293,247 +1285,48 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "Jgc-3V"
-msgid "Choose how to cancel"
-msgstr "해지 방법 선택"
-
-#. Label for why the subscription ends now, in a legal cancellation form
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "AkCxS_"
-msgid "Reason"
-msgstr "사유"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "C_0PBN"
-msgid "Briefly, why you can't keep Plus until the end of the period."
-msgstr "기간이 끝날 때까지 Plus를 유지하기 어려운 이유를 간단히 적어 주세요."
-
-#. Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "JdkOCO"
-msgid "Confirm withdrawal"
-msgstr "청약 철회 확인"
-
-#. Confirms canceling the subscription, at the end of the period or now for an important reason. In German it must read exactly “Jetzt kündigen” (BGB § 312k).
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "AmzBg2"
-msgid "Cancel now"
-msgstr "지금 해지하기"
-
-#. Sends the cancellation from its summary page, as French law asks (Code de la consommation D215-3). In French it must read exactly “Notifier la résiliation”.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "Ta3yI5"
-msgid "Notify cancellation"
-msgstr "해지 통보하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "KEqLnF"
-msgid "We'll email you the confirmation."
-msgstr "확인 메일을 보내 드릴게요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "YKq7GK"
-msgid "Check your request"
-msgstr "요청 내용 확인"
-
-#. Goes back from the cancellation's summary to change it. In French it reads “Modifier”.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "wEQDC6"
-msgid "Edit"
-msgstr "수정하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "sy-pv5"
-msgid "Email"
-msgstr "이메일"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "p1P-hQ"
-msgid "Request"
-msgstr "요청"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-choices.tsx
-msgctxt "z_wUXE"
-msgid "Received"
-msgstr "접수됨"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "L3xzht"
-msgid "We've refunded the full {amount} to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr "결제에 사용한 수단으로 {amount} 전액을 환불했어요. 은행에서 환불 내역을 확인하기까지는 보통 영업일 기준 5~10일이 걸려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "4sPQbT"
-msgid "We've refunded {amount} for the days left to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr "결제에 사용한 수단으로 남은 일수에 해당하는 {amount} 환불했어요. 은행에서 환불 내역을 확인하기까지는 보통 영업일 기준 5~10일이 걸려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "RBJRQ0"
-msgid "We've refunded {amount} for the months that haven't started to the payment method you used. Your bank usually shows it within 5 to 10 business days."
-msgstr "결제에 사용한 수단으로 아직 시작되지 않은 달의 이용료 {amount} 환불했어요. 은행에서 환불 내역을 확인하기까지는 보통 영업일 기준 5~10일이 걸려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "zG9LME"
-msgid "Plus has ended."
-msgstr "Plus가 종료됐어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "-g6ZnF"
-msgid "You keep Plus until {date}, then it ends."
-msgstr "Plus는 {date}까지 이용할 수 있고, 이후 종료돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "a6637b"
-msgid "We've emailed the confirmation to {email}."
-msgstr "확인 메일을 {email}에 보냈어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "SBWnEw"
-msgid "We couldn't cancel your subscription. Try again or email hello@zoonk.com."
-msgstr "구독을 해지하지 못했어요. 다시 시도해 보거나 hello@zoonk.com에 이메일을 보내 주세요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-msgctxt "0sJrli"
-msgid "That option isn't available anymore. Check your choice above and try again."
-msgstr "해당 옵션은 더 이상 이용할 수 없어요. 위에서 선택한 내용을 확인하고 다시 시도해 보세요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-plus-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "<mono>{date}</mono>에 구독이 종료돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "c2I4F9"
-msgid "We couldn't send your request. Try again or email hello@zoonk.com."
-msgstr "요청을 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "JmEP0L"
-msgid "Check your name and email, then try again."
-msgstr "이름과 이메일 주소를 확인한 후 다시 시도해 보세요."
-
-#. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "vtYQXZ"
-msgid "We received your withdrawal request."
-msgstr "청약 철회 요청을 접수했어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "iyYNjY"
-msgid "We received your cancellation request."
-msgstr "해지 요청을 접수했어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "JjecyL"
-msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
-msgstr "Zoonk에 {email}로 가입한 계정이 있으면 몇 분 안에 해당 주소로 접수 확인 메일을 보내드리고, 변경 사항을 적용하기 전에 이메일로 확인을 요청드릴게요. 메일이 오지 않았나요? Zoonk에서 사용하는 이메일 주소가 맞는지 확인하거나 hello@zoonk.com으로 문의해 주세요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "RKaCAK"
-msgid "Subscribed in the App Store or Google Play? This doesn't cancel it. Cancel it there."
-msgstr "App Store나 Google Play에서 구독했나요? 여기서는 해당 구독이 해지되지 않아요. 구독한 스토어에서 해지해 주세요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "_kuMS2"
-msgid "You keep Plus until the period you paid for ends. After a yearly renewal, it ends with the current month, and we refund the rest."
-msgstr "결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요. 연간 구독이 갱신된 뒤에는 이번 달이 끝나면 종료되고, 나머지 금액은 환불해 드려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "aMFeUo"
-msgid "Cancel at the end of the period"
-msgstr "이용 기간이 끝날 때 해지하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "GUDLiS"
-msgid "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything."
-msgstr "구독 후 14일 이내에 신청할 수 있어요. 해지 의사를 확인하면 Plus 이용이 종료되고 전액 환불해 드려요."
-
-#. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "67jMfM"
-msgid "Full refund (withdrawal)"
-msgstr "전액 환불(청약 철회)"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "Sy5EMy"
-msgid "Plus ends once we confirm with you, and we refund the days left."
-msgstr "해지 의사를 확인하면 Plus 이용이 종료되고 남은 일수에 해당하는 요금을 환불해 드려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "5Avfh5"
-msgid "End now for an important reason"
-msgstr "부득이한 사유로 지금 해지하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "D8gqFG"
-msgid "The one you use for Zoonk"
-msgstr "Zoonk에서 사용하는 이메일 주소"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
 msgid "Cancel Plus"
 msgstr "Plus 해지"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "naLtG4"
-msgid "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes."
-msgstr "저희 웹사이트에서 구독한 Plus에 해당해요. 로그인은 필요 없어요. 변경 사항을 적용하기 전에 이메일로 해지 의사를 확인해요."
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "2LA7kt"
+msgid "Cancel Plus?"
+msgstr "Plus를 해지할까요?"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "ObvuQ4"
-msgid "Your last payment didn't go through. Canceling stops us from trying again."
-msgstr "지난 결제가 완료되지 않았어요. 해지하면 더 이상 결제를 시도하지 않아요."
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "OHwgQT"
+msgid "Plus ends right away, and we stop retrying your renewal payment."
+msgstr "Plus 이용이 바로 종료되고, 갱신 결제를 더 이상 재시도하지 않아요."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "tXpyKb"
-msgid "Stop the unpaid renewal"
-msgstr "미결제 갱신 중단하기"
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "ZwO-lB"
+msgid "You keep Plus until the end of the period you already paid for."
+msgstr "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "3h2o8M"
-msgid "You keep Plus until {date}. For the {count, plural, one {# month} other {# months}} that haven't started, we refund {amount}."
-msgstr "{date}까지 Plus를 이용할 수 있어요. 아직 시작되지 않은 {count, plural, other {#개월}}분에 대해 {amount} 환불해 드려요."
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "wBf7zr"
+msgid "We couldn't cancel Plus. Try again or email {email}."
+msgstr "Plus를 해지하지 못했어요. 다시 시도해 보거나 {email}로 이메일을 보내 주세요."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "lxAhrA"
-msgid "You keep Plus until {date}, and you won't be charged again."
-msgstr "{date}까지 Plus를 이용할 수 있고, 더 이상 요금이 청구되지 않아요."
+#. Zoonk's support address; your language may have its own.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "rM1iWC"
-msgid "Plus ends right away, and we refund {amount}. You can do this until {date}."
-msgstr "Plus가 바로 해지되고 {amount} 환불해 드려요. {date}까지 신청할 수 있어요."
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "orvpWh"
+msgid "Go back"
+msgstr "돌아가기"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "Je1aal"
-msgid "Plus ends right away, and we refund {amount} for the days left."
-msgstr "Plus가 바로 해지되고 남은 일수에 해당하는 {amount} 환불해 드려요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "8PqZ9h"
-msgid "Plus ends right away."
-msgstr "Plus가 바로 해지돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "t5tErU"
-msgid "There's no subscription to cancel on {email}."
-msgstr "{email}에는 해지할 구독이 없어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "ta4t1h"
-msgid "Plus, yearly"
-msgstr "Plus 연간 구독"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "7VS06t"
-msgid "Plus, monthly"
-msgstr "Plus 월간 구독"
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>에 구독이 종료돼요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
@@ -1544,11 +1337,6 @@ msgstr "<mono>{date}</mono>에 갱신돼요."
 msgctxt "xWINkR"
 msgid "Current billing period ends on <mono>{date}</mono>."
 msgstr "현재 결제 기간은 <mono>{date}</mono>에 끝나요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "UWVETE"
-msgid "Cancel subscription"
-msgstr "구독 해지"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1615,16 +1403,6 @@ msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "고객 지원에 문의하기"
 
-#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
-msgctxt "6vciLq"
-msgid "Until {date}, you can still end Plus now and get a full refund."
-msgstr "{date}까지는 Plus를 바로 해지하고 전액 환불받을 수 있어요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/refund-offer.tsx
-msgctxt "nXq8w6"
-msgid "Get a full refund"
-msgstr "전액 환불받기"
-
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "bF03Os"
 msgid "Confirming your subscription"
@@ -1654,6 +1432,11 @@ msgstr "Stripe에 확인하고 있어요…"
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "다시 확인하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "HkeWp4"
+msgid "Your last renewal payment failed."
+msgstr "최근 갱신 결제에 실패했어요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"
@@ -3472,13 +3255,6 @@ msgctxt "eOHX5x"
 msgid "Stuck? Ask Zu."
 msgstr "막혔나요? Zu에게 물어보세요."
 
-#. Zoonk's support address; your language may have its own.
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "ieflON"
-msgid "hello@zoonk.com"
-msgstr "hello@zoonk.com"
-
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "60PJVp"
 msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
@@ -4738,9 +4514,9 @@ msgid "Can I get a refund?"
 msgstr "환불받을 수 있나요?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "ilifrv"
-msgid "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr "저희 웹사이트에서 구독한 경우 14일 이내에 <link>해지</link>하면 전액 환불받을 수 있어요. 연간 구독 갱신 후 해지하면 아직 시작되지 않은 달의 요금이 환불돼요. App Store나 Google Play에서 구매한 경우에는 Apple 또는 Google의 환불 규정이 적용돼요."
+msgctxt "Ko-avu"
+msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "{email}로 문의해 주시면 확인해 볼게요. App Store나 Google Play에서 구매한 경우 Apple이나 Google의 환불 정책이 적용돼요."
 
 #: src/components/pricing/plus-questions.tsx
 #: src/components/public/public-footer.tsx

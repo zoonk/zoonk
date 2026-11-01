@@ -48,6 +48,7 @@
     },
     "/me": {
       "delete": {
+        "description": "Ends website Plus immediately before deleting the account. Store subscriptions must be canceled in their store.",
         "operationId": "deleteCurrentUser",
         "security": [
           {
@@ -12266,7 +12267,7 @@
         ],
         "responses": {
           "200": {
-            "description": "What canceling, keeping Plus or deleting the account would do",
+            "description": "What canceling or keeping Plus would do",
             "content": {
               "application/json": {
                 "schema": {
@@ -12308,7 +12309,7 @@
         }
       },
       "post": {
-        "description": "Refunds through Stripe right away, and emails the receipt in the request's language.",
+        "description": "Stops the renewal in Stripe. Plus stays until the end of the paid period. An unpaid or past-due renewal ends immediately to stop charge retries.",
         "operationId": "cancelStripeSubscription",
         "security": [
           {
@@ -12322,16 +12323,6 @@
         "tags": [
           "Subscriptions"
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StripeSubscriptionCancellationRequest"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Canceled",
@@ -12339,16 +12330,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StripeSubscriptionCancellationReceipt"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -12364,7 +12345,7 @@
             }
           },
           "409": {
-            "description": "That choice isn't open anymore; read the preview again",
+            "description": "No renewing web subscription to cancel; read the preview again",
             "content": {
               "application/json": {
                 "schema": {
@@ -25699,30 +25680,6 @@
         },
         "required": [
           "purchaseToken"
-        ],
-        "additionalProperties": false
-      },
-      "StripeSubscriptionCancellationRequest": {
-        "type": "object",
-        "properties": {
-          "choice": {
-            "type": "string",
-            "enum": [
-              "ordinary",
-              "withdrawal",
-              "extraordinary"
-            ],
-            "description": "ordinary stops the renewal; withdrawal ends Plus now with the 14-day full refund; extraordinary ends Plus now for an important reason and refunds the full days left"
-          },
-          "reason": {
-            "description": "Why, for an extraordinary cancellation, which needs one",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          }
-        },
-        "required": [
-          "choice"
         ],
         "additionalProperties": false
       },
@@ -73480,121 +73437,35 @@
       "StripeSubscriptionCancellation": {
         "type": "object",
         "properties": {
-          "accountDeletion": {
-            "type": "object",
-            "properties": {
-              "refund": {
-                "nullable": true,
-                "description": "Everything within the 14 days, or after a yearly renewal the months that haven't started",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Money"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "refund"
-            ],
-            "additionalProperties": false,
-            "description": "Deleting the account ends Plus right away and refunds this"
-          },
           "canResumeRenewal": {
             "type": "boolean",
-            "description": "Only the renewal is stopped, at the end of the paid period, so DELETE turns it back on (Keep Plus)"
+            "description": "The renewal is stopped, so DELETE turns it back on (Keep Plus)"
           },
           "cancellation": {
             "nullable": true,
-            "description": "Stopping the renewal, so Plus ends at endsAt. Null when the renewal is already stopped",
+            "description": "Plus ends with its paid period, or immediately for an unpaid renewal. Null when the renewal is already stopped",
             "type": "object",
             "properties": {
               "endsAt": {
                 "type": "string",
                 "format": "date-time",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-              },
-              "refund": {
-                "nullable": true,
-                "description": "After a yearly renewal, the months that haven't started",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Money"
-                  }
-                ]
               }
             },
             "required": [
-              "endsAt",
-              "refund"
+              "endsAt"
             ],
             "additionalProperties": false
           },
-          "extraordinary": {
-            "nullable": true,
-            "description": "Ending Plus now for an important reason, which the request names. Null for an unpaid renewal, whose cancellation already ends it now",
-            "type": "object",
-            "properties": {
-              "refund": {
-                "nullable": true,
-                "description": "The full days left until Plus would end",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Money"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "refund"
-            ],
-            "additionalProperties": false
-          },
-          "withdrawal": {
-            "nullable": true,
-            "description": "Within 14 days of subscribing: Plus ends now and the whole payment is refunded",
-            "type": "object",
-            "properties": {
-              "refund": {
-                "$ref": "#/components/schemas/Money"
-              },
-              "until": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "description": "The last day of the 14-day refund"
-              }
-            },
-            "required": [
-              "refund",
-              "until"
-            ],
-            "additionalProperties": false
+          "unpaid": {
+            "type": "boolean",
+            "description": "The renewal payment failed, so cancellation ends Plus immediately and stops charge retries"
           }
         },
         "required": [
-          "accountDeletion",
           "canResumeRenewal",
           "cancellation",
-          "extraordinary",
-          "withdrawal"
-        ],
-        "additionalProperties": false
-      },
-      "Money": {
-        "type": "object",
-        "properties": {
-          "amount": {
-            "type": "number",
-            "description": "In the currency's major unit: 29.9 is R$ 29,90"
-          },
-          "currency": {
-            "type": "string",
-            "description": "ISO 4217 code, such as BRL"
-          }
-        },
-        "required": [
-          "amount",
-          "currency"
+          "unpaid"
         ],
         "additionalProperties": false
       },
@@ -73610,23 +73481,13 @@
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "refund": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Money"
-              }
-            ]
           }
         },
         "required": [
           "endsAt",
-          "receivedAt",
-          "refund"
+          "receivedAt"
         ],
-        "additionalProperties": false,
-        "description": "The learner also gets this receipt by email"
+        "additionalProperties": false
       },
       "GoalPreparation": {
         "type": "object",

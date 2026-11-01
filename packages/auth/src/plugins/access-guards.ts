@@ -54,8 +54,8 @@ const guardBrandAddress = createAuthMiddleware(async (context) => {
 });
 
 /**
- * Better Auth's own deletion endpoint would skip the website Plus refunds the Terms give, which
- * core adds around it, so only core's deletion may reach it.
+ * Core's deletion captures the provider cleanup result, so only that path may reach Better Auth's
+ * deletion endpoint.
  */
 const guardAccountDeletion = createAuthMiddleware(async () => {
   if (!isAccountDeletionCleanupReady()) {

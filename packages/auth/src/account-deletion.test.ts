@@ -114,7 +114,7 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     ).resolves.toBeNull();
   });
 
-  it("lets core end website Plus with its refunds first, then cancels only what's still live", async () => {
+  it("lets core end website Plus first, then cancels only what's still live", async () => {
     const user = await createTestUser();
 
     const [live, ended] = await Promise.all(

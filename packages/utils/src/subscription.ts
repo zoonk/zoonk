@@ -1,6 +1,3 @@
-import { MS_PER_DAY } from "./date";
-import { getDateInTimeZone } from "./time-zone";
-
 const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
 
@@ -24,21 +21,4 @@ export function isWebManagedSubscriptionProvider(
   provider?: SubscriptionProvider | null,
 ): provider is "stripe" {
   return provider === "stripe";
-}
-
-const REFUND_DAYS = 14;
-
-/**
- * The day of purchase doesn't count toward the 14 refund days (EU Regulation 1182/71), so the
- * last one is the 14th day after it where the learner subscribed, as a UTC-midnight calendar date.
- */
-export function getRefundLastDay({
-  subscribedAt,
-  timeZone,
-}: {
-  subscribedAt: Date;
-  timeZone: string;
-}): Date {
-  const purchaseDay = getDateInTimeZone({ date: subscribedAt, timeZone });
-  return new Date(purchaseDay.getTime() + REFUND_DAYS * MS_PER_DAY);
 }

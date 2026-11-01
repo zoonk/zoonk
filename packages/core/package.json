@@ -572,7 +572,6 @@
     "./subscriptions/settle-store-plus": "./src/subscriptions/settle-store-plus.ts",
     "./subscriptions/web-plus-account-deletion": "./src/subscriptions/web-plus-account-deletion.ts",
     "./subscriptions/web-plus-cancellation": "./src/subscriptions/web-plus-cancellation.ts",
-    "./subscriptions/web-plus-cancellation-contract": "./src/subscriptions/web-plus-cancellation-contract.ts",
     "./users/current": "./src/users/current-user.ts",
     "./users/delete-current": "./src/users/delete-current-user.ts",
     "./users/export": "./src/users/export-current-user-data.ts",

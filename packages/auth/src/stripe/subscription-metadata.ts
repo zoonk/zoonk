@@ -11,17 +11,6 @@ function readTimeZone(timeZone: string | undefined): string | null {
   return timeZone && isValidTimeZone(timeZone) ? timeZone : null;
 }
 
-export function writeSubscriptionMetadata({
-  locale,
-  timeZone,
-}: {
-  locale: string;
-  timeZone?: string;
-}): Record<string, string> {
-  const zone = readTimeZone(timeZone);
-  return zone ? { locale, timeZone: zone } : { locale };
-}
-
 export function readSubscriptionMetadata(
   metadata: Record<string, string>,
   fallbackLocale: string = DEFAULT_LOCALE,

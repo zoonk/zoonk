@@ -4,9 +4,11 @@ import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plu
 import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
 import { getRequestBillingCurrency } from "@/data/subscriptions/get-request-billing-currency";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
+import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { getSession } from "@zoonk/core/users/session";
-import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
+import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
+import { CancelPlusButton } from "./cancel-plus-button";
 import { CurrentPlan } from "./current-plan";
 import { FreePlanUsage } from "./free-plan-usage";
 import { StripeCheckoutConfirming } from "./stripe-checkout-confirming";
@@ -52,6 +54,22 @@ export async function SubscriptionPlans({
   // Back from Stripe before its webhook saved the subscription: never the offer they just paid for.
   if (stripeCheckoutCompleted && hasAccount) {
     return <StripeCheckoutConfirming />;
+  }
+
+  const cancellation = hasAccount ? await getWebPlusCancellation() : null;
+
+  if (cancellation?.status === "ready" && cancellation.unpaid) {
+    return (
+      <Page className="max-w-form">
+        <PageHeader>
+          <PageHeaderContent>
+            <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
+            <PageSubtitle>{t("Your last renewal payment failed.")}</PageSubtitle>
+          </PageHeaderContent>
+        </PageHeader>
+        <CancelPlusButton endsNow />
+      </Page>
+    );
   }
 
   return (

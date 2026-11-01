@@ -1,5 +1,4 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
-import { Link } from "@/i18n/navigation";
 import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
@@ -11,21 +10,18 @@ import {
   PageSubtitle,
   PageTitle,
 } from "@zoonk/learn/page";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { Suspense } from "react";
+import { CancelPlusButton } from "./cancel-plus-button";
 import { KeepPlusButton } from "./keep-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
-import { RefundOffer } from "./refund-offer";
 
 function renderDate(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-/** The stores renew on their own terms, so for them it's only when the paid period ends. */
 async function getDateLine(subscription: Subscription): Promise<React.ReactNode> {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -33,9 +29,12 @@ async function getDateLine(subscription: Subscription): Promise<React.ReactNode>
   const toDate = (date: Date) =>
     format.dateTime(new Date(date), { day: "numeric", month: "short", year: "numeric" });
 
-  if (subscription.cancelAt) {
+  const endingAt =
+    subscription.cancelAt ?? (subscription.cancelAtPeriodEnd ? subscription.periodEnd : null);
+
+  if (endingAt) {
     return t.rich("Your subscription will end on <mono>{date}</mono>.", {
-      date: toDate(subscription.cancelAt),
+      date: toDate(endingAt),
       mono: renderDate,
     });
   }
@@ -55,49 +54,28 @@ async function getDateLine(subscription: Subscription): Promise<React.ReactNode>
       });
 }
 
-/** An ending Plus can be kept while only its renewal stopped, and refunded while the 14 days last. */
 async function EndingPlanActions() {
   const { data: cancellation } = await safeAsync(() => getWebPlusCancellation());
 
-  if (cancellation?.status !== "ready") {
-    return null;
-  }
-
-  const { canResumeRenewal, timeZone, withdrawal } = cancellation;
-
-  return (
-    <div className="flex flex-col gap-6 empty:hidden">
-      {canResumeRenewal && <KeepPlusButton />}
-      {withdrawal && <RefundOffer timeZone={timeZone} until={withdrawal.until} />}
-    </div>
-  );
+  return cancellation?.status === "ready" && cancellation.canResumeRenewal ? (
+    <KeepPlusButton />
+  ) : null;
 }
 
-async function WebPlanAction({ isEnding }: { isEnding: boolean }) {
-  const t = await getExtracted();
-
-  if (isEnding) {
-    return (
-      <Suspense>
-        <EndingPlanActions />
-      </Suspense>
-    );
-  }
-
-  return (
-    <Link
-      className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
-      href="/subscription/cancel"
-    >
-      {t("Cancel subscription")}
-    </Link>
+function WebPlanAction({ isEnding }: { isEnding: boolean }) {
+  return isEnding ? (
+    <Suspense>
+      <EndingPlanActions />
+    </Suspense>
+  ) : (
+    <CancelPlusButton />
   );
 }
 
 export async function CurrentPlan({ subscription }: { subscription: Subscription }) {
   const t = await getExtracted();
   const dateLine = await getDateLine(subscription);
-  const isEnding = Boolean(subscription.cancelAt);
+  const isEnding = Boolean(subscription.cancelAt || subscription.cancelAtPeriodEnd);
 
   return (
     <Page className="max-w-form">

@@ -81,7 +81,7 @@ describe(deleteCurrentUser, () => {
     expect(mocks.reauthorizeApple).not.toHaveBeenCalled();
   });
 
-  it("hands Better Auth's cleanup the ending of website Plus with its refunds", async () => {
+  it("hands Better Auth's cleanup the ending of website Plus", async () => {
     await deleteCurrentUser({});
 
     expect(mocks.captureDeletionCleanup).toHaveBeenCalledExactlyOnceWith({
