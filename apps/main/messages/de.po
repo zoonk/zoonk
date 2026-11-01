@@ -1449,9 +1449,9 @@ msgid "Cancel at the end of the period"
 msgstr "Zum Ende des Zeitraums kündigen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "eCYQKH"
-msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
-msgstr "Innerhalb von 14 Tagen nach Abschluss des Abos. Plus endet sofort und wir erstatten dir den gesamten Betrag."
+msgctxt "GUDLiS"
+msgid "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything."
+msgstr "Innerhalb von 14 Tagen nach Abschluss deines Abos. Plus endet nach Rücksprache mit dir und wir erstatten dir den vollen Betrag."
 
 #. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1461,9 +1461,9 @@ msgid "Full refund (withdrawal)"
 msgstr "Vollständige Erstattung (Widerruf)"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "M1J5Bi"
-msgid "Plus ends right away, and we refund the days left."
-msgstr "Plus endet sofort und wir erstatten dir den Betrag für die verbleibenden Tage."
+msgctxt "Sy5EMy"
+msgid "Plus ends once we confirm with you, and we refund the days left."
+msgstr "Plus endet nach Rücksprache mit dir und wir erstatten dir den Betrag für die verbleibenden Tage."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
@@ -1482,9 +1482,9 @@ msgid "Cancel Plus"
 msgstr "Plus kündigen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "qsB1Um"
-msgid "For Plus bought on our website. No login needed."
-msgstr "Für Plus-Abos von unserer Website. Keine Anmeldung nötig."
+msgctxt "naLtG4"
+msgid "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes."
+msgstr "Für Plus-Abos, die du auf unserer Website abgeschlossen hast. Keine Anmeldung nötig. Bevor sich etwas ändert, stimmen wir uns per E-Mail mit dir ab."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"

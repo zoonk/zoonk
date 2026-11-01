@@ -1449,9 +1449,9 @@ msgid "Cancel at the end of the period"
 msgstr "Disdire alla fine del periodo"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "eCYQKH"
-msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
-msgstr "Entro 14 giorni dall’attivazione dell’abbonamento. Plus termina subito e ti rimborsiamo tutto."
+msgctxt "GUDLiS"
+msgid "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything."
+msgstr "Entro 14 giorni dall’attivazione dell’abbonamento. Plus termina dopo la tua conferma e ti rimborsiamo l’intero importo."
 
 #. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1461,9 +1461,9 @@ msgid "Full refund (withdrawal)"
 msgstr "Rimborso completo (recesso)"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "M1J5Bi"
-msgid "Plus ends right away, and we refund the days left."
-msgstr "Plus termina subito e ti rimborsiamo i giorni rimanenti."
+msgctxt "Sy5EMy"
+msgid "Plus ends once we confirm with you, and we refund the days left."
+msgstr "Plus termina dopo la tua conferma e ti rimborsiamo i giorni rimanenti."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
@@ -1482,9 +1482,9 @@ msgid "Cancel Plus"
 msgstr "Disdici Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "qsB1Um"
-msgid "For Plus bought on our website. No login needed."
-msgstr "Per Plus acquistato sul nostro sito. Non serve accedere."
+msgctxt "naLtG4"
+msgid "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes."
+msgstr "Per Plus acquistato sul nostro sito. Non serve accedere. Ti chiederemo conferma via email prima di apportare qualsiasi modifica."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"

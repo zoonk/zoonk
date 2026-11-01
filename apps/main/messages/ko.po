@@ -1449,9 +1449,9 @@ msgid "Cancel at the end of the period"
 msgstr "이용 기간이 끝날 때 해지하기"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "eCYQKH"
-msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
-msgstr "구독 후 14일 이내에 신청할 수 있어요. Plus는 바로 종료되고, 전액 환불해 드려요."
+msgctxt "GUDLiS"
+msgid "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything."
+msgstr "구독 후 14일 이내에 신청할 수 있어요. 해지 의사를 확인하면 Plus 이용이 종료되고 전액 환불해 드려요."
 
 #. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1461,9 +1461,9 @@ msgid "Full refund (withdrawal)"
 msgstr "전액 환불(청약 철회)"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "M1J5Bi"
-msgid "Plus ends right away, and we refund the days left."
-msgstr "Plus가 바로 해지되고 남은 일수만큼 환불해 드려요."
+msgctxt "Sy5EMy"
+msgid "Plus ends once we confirm with you, and we refund the days left."
+msgstr "해지 의사를 확인하면 Plus 이용이 종료되고 남은 일수에 해당하는 요금을 환불해 드려요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
@@ -1482,9 +1482,9 @@ msgid "Cancel Plus"
 msgstr "Plus 해지"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "qsB1Um"
-msgid "For Plus bought on our website. No login needed."
-msgstr "Zoonk 웹사이트에서 구독한 Plus를 해지할 수 있어요. 로그인은 필요 없어요."
+msgctxt "naLtG4"
+msgid "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes."
+msgstr "저희 웹사이트에서 구독한 Plus에 해당해요. 로그인은 필요 없어요. 변경 사항을 적용하기 전에 이메일로 해지 의사를 확인해요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"

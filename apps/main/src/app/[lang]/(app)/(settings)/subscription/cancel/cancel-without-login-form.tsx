@@ -114,7 +114,7 @@ export function CancelWithoutLoginForm({ reviewFirst }: { reviewFirst: boolean }
     },
     {
       description: t(
-        "Within 14 days of subscribing. Plus ends right away, and we refund everything.",
+        "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything.",
       ),
       label: t({
         description:
@@ -124,7 +124,7 @@ export function CancelWithoutLoginForm({ reviewFirst }: { reviewFirst: boolean }
       value: "withdrawal",
     },
     {
-      description: t("Plus ends right away, and we refund the days left."),
+      description: t("Plus ends once we confirm with you, and we refund the days left."),
       label: t("End now for an important reason"),
       value: "extraordinary",
     },

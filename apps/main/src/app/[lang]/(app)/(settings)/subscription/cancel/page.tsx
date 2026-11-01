@@ -61,7 +61,11 @@ async function CancelWithoutLogin() {
       <CancelPlusHeader>
         <CancelPlusTitle />
         <PageSubtitle>
-          <span>{t("For Plus bought on our website. No login needed.")}</span>
+          <span>
+            {t(
+              "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes.",
+            )}
+          </span>
         </PageSubtitle>
       </CancelPlusHeader>
 

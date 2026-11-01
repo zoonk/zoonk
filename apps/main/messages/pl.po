@@ -1449,9 +1449,9 @@ msgid "Cancel at the end of the period"
 msgstr "Rezygnacja z końcem okresu"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "eCYQKH"
-msgid "Within 14 days of subscribing. Plus ends right away, and we refund everything."
-msgstr "W ciągu 14 dni od wykupienia subskrypcji. Pakiet Plus wygasa od razu i zwracamy całą kwotę."
+msgctxt "GUDLiS"
+msgid "Within 14 days of subscribing. Plus ends once we confirm with you, and we refund everything."
+msgstr "W ciągu 14 dni od rozpoczęcia subskrypcji. Po otrzymaniu twojego potwierdzenia wyłączymy Plus i zwrócimy całą kwotę."
 
 #. The 14-day withdrawal from the contract with its full refund. In brackets, the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
@@ -1461,9 +1461,9 @@ msgid "Full refund (withdrawal)"
 msgstr "Pełny zwrot (odstąpienie od umowy)"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "M1J5Bi"
-msgid "Plus ends right away, and we refund the days left."
-msgstr "Pakiet Plus wygasa od razu, a my zwracamy pieniądze za pozostałe dni."
+msgctxt "Sy5EMy"
+msgid "Plus ends once we confirm with you, and we refund the days left."
+msgstr "Po otrzymaniu twojego potwierdzenia wyłączymy Plus i zwrócimy pieniądze za pozostałe dni."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
@@ -1482,9 +1482,9 @@ msgid "Cancel Plus"
 msgstr "Rezygnacja z pakietu Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
-msgctxt "qsB1Um"
-msgid "For Plus bought on our website. No login needed."
-msgstr "Dla pakietu Plus kupionego na naszej stronie. Nie musisz się logować."
+msgctxt "naLtG4"
+msgid "For Plus bought on our website. No login needed. We'll confirm with you by email before anything changes."
+msgstr "Dla pakietu Plus kupionego na naszej stronie. Nie musisz się logować. Zanim cokolwiek się zmieni, uzyskamy twoje potwierdzenie e-mailem."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/page.tsx
 msgctxt "ObvuQ4"
