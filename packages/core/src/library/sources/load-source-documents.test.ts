@@ -55,6 +55,18 @@ describe(loadSourceDocuments, () => {
     expect(document?.images).toStrictEqual([{ data: expect.any(String), mediaType: "image/png" }]);
   });
 
+  it("lets a failed download of a shared slide deck fail, so the step tries again", async () => {
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("Busy", { status: 503 }));
+
+    const source = await sourceFixture({
+      kind: "upload",
+      mimeType: PPTX_CONTENT_TYPE,
+      url: `https://www.example.com/${randomUUID()}/slides.pptx`,
+    });
+
+    await expect(loadSourceDocuments([source.id])).rejects.toThrow(/status 503/u);
+  });
+
   it("loads sources in the order asked, skipping ones that no longer exist", async () => {
     const [first, second] = await Promise.all([webPdf("Edital"), webPdf("Retificação")]);
 

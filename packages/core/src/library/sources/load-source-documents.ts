@@ -1,7 +1,7 @@
 import "server-only";
 import { type Source, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { fetchDocument } from "./fetch-document";
+import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { type DocumentImage, isCutText, parseDocument } from "./parse-document";
 import {
   DOCX_CONTENT_TYPE,
@@ -36,7 +36,11 @@ async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8
     return null;
   }
 
-  const { data: fetched } = await safeAsync(() => fetchDocument(url));
+  const { data: fetched, error } = await safeAsync(() => fetchDocument(url));
+
+  if (error && !(error instanceof PermanentDocumentError)) {
+    throw error;
+  }
 
   return fetched?.contentType === mimeType ? fetched.bytes : null;
 }
