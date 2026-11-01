@@ -17,6 +17,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Local Development](#local-development)
+- [Reporting bugs](#reporting-bugs)
 - [Supporters](#supporters)
 
 ## Getting Started
@@ -56,6 +57,10 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 Codex, T3 Code, and Claude Code run `pnpm worktree:setup` when they create a worktree and wait for it before the agent starts: Codex through `.codex/environments/zoonk.toml`, T3 Code through the Setup action in `t3.json` (import it once from the project's Actions menu, under From t3.json), and Claude Code through the `WorktreeCreate` hook in `.claude/settings.json`, which creates its worktrees in `.claude/worktrees/` from the session's current commit. For other tools, run it once in the new worktree after `git worktree add`. It installs dependencies, generates Prisma, and prepares isolated development, test, and E2E databases when the primary checkout has a local `zoonk` database. Keep using `pnpm dev`, `pnpm test`, and `pnpm e2e` normally.
 
 See [worktree database setup](./packages/db/README.md#worktree-databases) for prerequisites, cleanup, and recovery.
+
+## Reporting bugs
+
+See [reporting bugs](./CONTRIBUTING.md#reporting-bugs). AI agents filing a report for someone: follow the [bug report guide](./.agents/skills/zoonk-bug-report/SKILL.md).
 
 ## Supporters
 

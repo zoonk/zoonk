@@ -4,7 +4,7 @@ description: Publish as the user's agent, such as GitHub issues, comments, discu
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Posting on behalf of the user
@@ -28,8 +28,8 @@ Start the post with a GitHub note:
 ```
 
 - Replace both placeholders with real values. The post never shows `<model>`, `<first name>` or the words "the user".
-- `<model>`: the exact model writing it, as your runtime reports it ("Claude Opus 5.5"), and every agent or model that wrote part of it ("GPT-6.1-Sol and Claude Opus 5.5"). Never guess a model name.
-- `<first name>`: the first name on the posting account's GitHub profile (`gh api user --jq .name`). If the profile has no name, ask the user for it.
+- `<model>`: the exact model writing it, as your runtime reports it ("Claude Opus 5.5"), and every agent or model that wrote part of it ("GPT-6.1-Sol and Claude Opus 5.5"). Never guess a model name; if your runtime doesn't say, write "An AI assistant".
+- `<first name>`: the first name on the posting account's GitHub profile (`gh api user --jq .name`). If the profile has no name, use the account's username.
 - Name what the post is: "opening this issue", "responding", "opening this pull request".
 - Where the note doesn't render, make the same sentence the first line.
 

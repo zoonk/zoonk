@@ -1,0 +1,69 @@
+name: Report a bug
+description: Something in Zoonk isn't working the way it should.
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for telling us. Plain words are fine, and so is "I don't know".
+
+        Please write in English. If that's hard, an AI assistant can write it with you in your language.
+
+        AI agents filing a report: follow [our bug report guide](https://github.com/zoonk/zoonk/blob/main/.agents/skills/zoonk-bug-report/SKILL.md).
+
+        Everything here is public, so leave out emails, passwords, payment details and anything else private. For a problem with your account or a payment, use [Help](https://www.zoonk.com/support) instead. For a security problem, [report it privately](https://github.com/zoonk/zoonk/security/advisories/new).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you were doing and what went wrong. Name the screen, and copy any message exactly as it appeared.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to make it happen again
+      description: What you tapped or clicked, in order. Say whether it happens every time or only sometimes.
+      placeholder: |
+        1. Open Today
+        2. Tap the first lesson
+        3. Answer the first question
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where were you using Zoonk?
+      multiple: true
+      options:
+        - Website on a computer
+        - Website on a phone or tablet
+        - App on iPhone or iPad
+        - App on Android
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      description: Device, browser or app version, if you know them. For example, "iPhone 16 with iOS 26" or "Chrome on Windows".
+  - type: input
+    id: language
+    attributes:
+      label: Zoonk's language
+      description: The language of Zoonk's buttons and menus, like English or Portuguese.
+  - type: input
+    id: when
+    attributes:
+      label: When did it happen?
+      description: The date and time with your time zone, so we can find it in our logs.
+      placeholder: March 3, around 3 pm, São Paulo time
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots or a screen recording
+      description: Hide names, emails and anything else private first.
+    validations:
+      accept: ".png,.jpg,.jpeg,.gif,.webp,.mp4,.mov,.webm"
