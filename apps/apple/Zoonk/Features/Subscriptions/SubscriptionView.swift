@@ -15,6 +15,7 @@ struct SubscriptionScreen: View {
           let appAccountToken = UUID(uuidString: account.user.id)
         {
           SubscriptionView(appAccountToken: appAccountToken)
+            .id(appAccountToken)
         } else {
           ScrollView {
             SubscriptionMarketingContent(
@@ -54,6 +55,11 @@ struct SubscriptionScreen: View {
         }
       }
     }
+    // Plus bought elsewhere since the account was read must show as the plan, not as an offer to
+    // pay twice.
+    .task {
+      await session.reconcileSynchronizedCredential()
+    }
   }
 
   private var isGuest: Bool {
@@ -65,10 +71,42 @@ struct SubscriptionView: View {
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
+  @State private var shownPlan: AccountSubscription?
+  @State private var boughtHere = false
 
   let appAccountToken: UUID
 
   var body: some View {
+    Group {
+      switch page {
+      case .offer:
+        offer
+      case .plan(let plan, let refusesPurchase):
+        PlusStatusView(subscription: plan, refusesPurchase: refusesPurchase)
+          .onAppear { shownPlan = plan }
+      }
+    }
+    .alert(isPresented: alertIsPresented) {
+      Alert(
+        title: alertTitle,
+        message: alertMessage,
+        dismissButton: .default(
+          Text(
+            "OK",
+            tableName: "Account",
+            comment: "Dismisses a subscription status message")
+        ) {
+          subscriptions.clearAlert()
+        })
+    }
+  }
+
+  private var page: SubscriptionPage {
+    SubscriptionPage(
+      current: session.account?.account.subscription, shownPlan: shownPlan, boughtHere: boughtHere)
+  }
+
+  private var offer: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
       SubscriptionMarketingContent(
         allowance: settings.allowance.value, freePlan: settings.freePlan,
@@ -85,10 +123,11 @@ struct SubscriptionView: View {
       [.appAccountToken(appAccountToken)]
     }
     .onInAppPurchaseStart { product in
+      boughtHere = true
       UsageAnalytics.track(.subscriptionCheckoutStarted(.init(productID: product.id)))
     }
     .onInAppPurchaseCompletion { _, result in
-      _ = await subscriptions.handlePurchase(
+      boughtHere = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),
         synchronizationScope: session.account?.user.id
       ) { signedTransaction, expectedAccountID in
@@ -104,19 +143,6 @@ struct SubscriptionView: View {
       ToolbarItem(placement: .bottomBar) {
         restorePurchasesButton
       }
-    }
-    .alert(isPresented: alertIsPresented) {
-      Alert(
-        title: alertTitle,
-        message: alertMessage,
-        dismissButton: .default(
-          Text(
-            "OK",
-            tableName: "Account",
-            comment: "Dismisses a subscription status message")
-        ) {
-          subscriptions.clearAlert()
-        })
     }
   }
 
@@ -274,6 +300,24 @@ struct SubscriptionView: View {
   }
 }
 
+/// A learner with Plus from any store or the web gets their plan instead of the App Store's offer,
+/// so nobody pays twice.
+enum SubscriptionPage: Equatable {
+  case offer
+  /// `refusesPurchase`: they came to buy Plus they already have.
+  case plan(AccountSubscription, refusesPurchase: Bool)
+
+  /// `shownPlan` keeps a plan whose Plus ends on screen, as a refund does, so its result shows.
+  /// Plus that a purchase started here brings is no second purchase to refuse.
+  init(current: AccountSubscription?, shownPlan: AccountSubscription?, boughtHere: Bool) {
+    if let plan = current ?? shownPlan {
+      self = .plan(plan, refusesPurchase: !boughtHere)
+    } else {
+      self = .offer
+    }
+  }
+}
+
 extension Text {
   fileprivate static var zoonkPlus: Text {
     Text(
@@ -384,8 +428,7 @@ struct PlusBenefits: View {
   }
 }
 
-/// Main's current plan for a subscription Zoonk manages: the stores' own are managed in the
-/// stores.
+/// Main's current plan, wherever Plus was bought.
 struct PlusStatusView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
@@ -395,12 +438,15 @@ struct PlusStatusView: View {
   @State private var cancellationFailed = false
   @State private var keepFailed = false
   @State private var working: Task<Void, Never>?
+  @State private var isAppStoreManagementPresented = false
 
   /// As it was when the screen opened, until the account says otherwise.
   let opened: AccountSubscription
+  let refusesPurchase: Bool
 
-  init(subscription: AccountSubscription) {
+  init(subscription: AccountSubscription, refusesPurchase: Bool = false) {
     opened = subscription
+    self.refusesPurchase = refusesPurchase
   }
 
   private var subscription: AccountSubscription {
@@ -425,6 +471,10 @@ struct PlusStatusView: View {
             .chip()
           }
 
+          if refusesPurchase {
+            alreadyHasPlus
+          }
+
           if let dateLine {
             dateLine
               .foregroundStyle(.secondary)
@@ -441,7 +491,8 @@ struct PlusStatusView: View {
           comment: "What Zoonk Plus includes, in one line")
       }
 
-      if subscription.provider == "stripe" {
+      switch subscription.provider {
+      case "stripe":
         if subscription.cancelAt == nil {
           Section {
             choicesButton(
@@ -532,18 +583,32 @@ struct PlusStatusView: View {
             EmptyView()
           }
         }
-      } else {
+      case "apple":
         Section {
-          Link(destination: AccountLinks.support) {
-            Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+          Button {
+            isAppStoreManagementPresented = true
+          } label: {
+            Text(
+              "Manage App Store subscription", tableName: "Account",
+              comment: "Opens Apple's subscription management")
           }
-        } footer: {
-          Text(
-            "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-            tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
         }
+      case "google":
+        supportSection(
+          footer: Text(
+            "Use Google Play on an Android device to change or cancel this subscription.",
+            tableName: "Account",
+            comment:
+              "Explains how to manage a Google-owned subscription without linking to external purchasing"
+          ))
+      default:
+        supportSection(
+          footer: Text(
+            "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+            tableName: "Account", comment: "Where a subscription Zoonk manages is changed"))
       }
     }
+    .manageSubscriptionsSheet(isPresented: $isAppStoreManagementPresented)
     .modifier(WebPlusLoading(choices: endingChoices))
     .onDisappear {
       working?.cancel()
@@ -583,6 +648,45 @@ struct PlusStatusView: View {
 
   private var endingChoices: Resource<WebPlusCancellation>? {
     settings.endingWebPlus(for: subscription)
+  }
+
+  /// Main and Android say the same.
+  private var alreadyHasPlus: Text {
+    switch subscription.provider {
+    case "apple":
+      Text(
+        "You already have Plus through the App Store.", tableName: "Account",
+        comment:
+          "Shown instead of buying Plus to someone who already bought it in the App Store, so they don't pay twice"
+      )
+    case "google":
+      Text(
+        "You already have Plus through Google Play.", tableName: "Account",
+        comment:
+          "Shown instead of buying Plus to someone who already bought it on Google Play, so they don't pay twice"
+      )
+    case "stripe":
+      Text(
+        "You already have Plus through the Zoonk website.", tableName: "Account",
+        comment:
+          "Shown instead of buying Plus to someone who already bought it on Zoonk's website, so they don't pay twice"
+      )
+    default:
+      Text(
+        "You already have Plus.", tableName: "Account",
+        comment:
+          "Shown instead of buying Plus to someone who already has it, so they don't pay twice")
+    }
+  }
+
+  private func supportSection(footer: Text) -> some View {
+    Section {
+      Link(destination: AccountLinks.support) {
+        Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+      }
+    } footer: {
+      footer
+    }
   }
 
   @ViewBuilder
