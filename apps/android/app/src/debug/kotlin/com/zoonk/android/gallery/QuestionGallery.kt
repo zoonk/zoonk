@@ -4,7 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.questions.Answer
@@ -101,10 +105,19 @@ private val drill =
 @Composable
 internal fun QuestionChoices() {
     Samples {
-        Sample(choice) { QuestionAnswer(choice, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
-        Sample(severalPicks) { QuestionAnswer(severalPicks, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(choice) { QuestionAnswer(choice, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
+        Sample(severalPicks) { QuestionAnswer(severalPicks, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
         Sample(choice.copy(itemId = "checked"), graded = true) {
-            QuestionAnswer(choice, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Choice(0), Answer.Choice(1), false), false, {}, {})
+            QuestionAnswer(
+                choice,
+                TrueFalseWords.TrueFalse,
+                false,
+                AnswerCheck(Answer.Choice(0), Answer.Choice(1), false),
+                null,
+                false,
+                {},
+                {},
+            )
         }
     }
 }
@@ -113,13 +126,15 @@ internal fun QuestionChoices() {
 internal fun QuestionStatements() {
     Samples {
         key("blank") {
+            var picked by remember { mutableStateOf<Answer?>(null) }
             QuestionAnswer(
                 statement,
                 TrueFalseWords.RightWrong,
                 allowBlank = true,
                 check = null,
+                draft = picked,
                 enabled = true,
-                onAnswer = {},
+                onAnswer = { picked = it },
                 onSubmit = {},
             )
         }
@@ -133,6 +148,7 @@ internal fun QuestionStatements() {
                     Answer.TrueFalse(true),
                     false,
                 ),
+                null,
                 false,
                 {
                 },
@@ -145,7 +161,7 @@ internal fun QuestionStatements() {
 @Composable
 internal fun QuestionOrderAndPairs() {
     Samples {
-        Sample(order) { QuestionAnswer(order, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(order) { QuestionAnswer(order, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
         Sample(order.copy(itemId = "order-checked"), graded = true) {
             QuestionAnswer(
                 order,
@@ -156,26 +172,36 @@ internal fun QuestionOrderAndPairs() {
                     Answer.Order(listOf(1, 0, 3, 2)),
                     false,
                 ),
+                null,
                 false,
                 {
                 },
                 {},
             )
         }
-        Sample(pairs) { QuestionAnswer(pairs, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(pairs) { QuestionAnswer(pairs, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
     }
 }
 
 @Composable
 internal fun QuestionFields() {
     Samples {
-        Sample(numeric) { QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(numeric) { QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
         Sample(numeric.copy(itemId = "numeric-checked"), graded = true) {
-            QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Numeric(68.0), null, true), false, {}, {})
+            QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Numeric(68.0), null, true), null, false, {}, {})
         }
-        Sample(typed) { QuestionAnswer(typed, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(typed) { QuestionAnswer(typed, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
         Sample(typed.copy(itemId = "typed-checked"), graded = true) {
-            QuestionAnswer(typed, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Text("So"), Answer.Text("Na"), false), false, {}, {})
+            QuestionAnswer(
+                typed,
+                TrueFalseWords.TrueFalse,
+                false,
+                AnswerCheck(Answer.Text("So"), Answer.Text("Na"), false),
+                null,
+                false,
+                {},
+                {},
+            )
         }
     }
 }
