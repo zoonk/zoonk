@@ -94,3 +94,40 @@ jobs:
 
       - name: Check String Catalogs
         run: make -C apps/apple strings-check
+
+  test:
+    needs: changes
+    if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
+    runs-on: xcode-27
+    timeout-minutes: 35
+    concurrency:
+      group: ${{ github.workflow }}-test-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Cache Swift packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/apple-source-packages
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+
+      - name: Run unit tests
+        env:
+          # Match the runtime installed on xcode-27; revisit alongside DEVELOPER_DIR.
+          TEST_DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=27.0
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
+        run: make -C apps/apple test
+
+      - name: Report unit test results
+        if: always()
+        shell: bash
+        run: |
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-unit-tests.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
