@@ -12,10 +12,16 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -30,6 +36,7 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -451,5 +458,60 @@ class LanguageStepsFlowTest {
 
         rule.waitForIdle()
         assertEquals(LessonAnswer.Reading(listOf("Yo", "veo", "un", "gato.")), current)
+    }
+
+    private fun tile(word: String) = rule.onNode(hasText(word) and hasAnyAncestor(hasContentDescription("Word bank")))
+
+    @OptIn(ExperimentalTestApi::class)
+    private fun SemanticsNodeInteraction.pressEnter() {
+        requestFocus()
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+    }
+
+    @Test
+    fun aKeyboardPlacingWordsMovesToTheNextTileThenToCheck() {
+        play(listOf(reading("read"), summaryStep("end")))
+
+        tile("Yo").pressEnter()
+        tile("gato.").assertIsFocused()
+        tile("gato.").pressEnter()
+        tile("veo").assertIsFocused()
+        tile("veo").pressEnter()
+        tile("un").assertIsFocused()
+        tile("un").pressEnter()
+
+        rule.onNodeWithText("Check").assertIsFocused()
+    }
+
+    @Test
+    fun aKeyboardTakingWordsOutMovesToTheNextWordThenToTheTileThatCameBack() {
+        play(listOf(reading("read"), summaryStep("end")))
+        listOf("Yo", "veo").forEach(::tap)
+
+        rule.onNodeWithContentDescription("Position 2: veo").pressEnter()
+        rule.onNodeWithContentDescription("Position 1: Yo").assertIsFocused()
+        rule.onNodeWithContentDescription("Position 1: Yo").pressEnter()
+
+        tile("Yo").assertIsFocused()
+    }
+
+    @Test
+    fun aKeyboardFillingTheLastBlankMovesToCheckAndClearingItToTheTileThatCameBack() {
+        play(listOf(fillBlank("blank"), summaryStep("end")))
+
+        tile("pay").pressEnter()
+        rule.onNodeWithText("Check").assertIsFocused()
+        rule.onNodeWithContentDescription("Blank 1: pay").pressEnter()
+
+        tile("pay").assertIsFocused()
+    }
+
+    @Test
+    fun aTapLeavesFocusWhereItWas() {
+        play(listOf(reading("read"), summaryStep("end")))
+
+        listOf("Yo", "veo", "un", "gato.").forEach { tile(it).performTouchInput { click() } }
+
+        rule.onNodeWithText("Check").assertIsNotFocused()
     }
 }

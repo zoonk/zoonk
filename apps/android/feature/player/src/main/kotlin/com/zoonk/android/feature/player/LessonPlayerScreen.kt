@@ -105,6 +105,7 @@ import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.FillsView
+import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
@@ -256,6 +257,7 @@ fun LessonPlayer(
             }
         }
     val focus = remember { FocusRequester() }
+    val primaryFocus = remember { FocusRequester() }
     var asking by rememberSaveable { mutableStateOf(false) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
@@ -333,7 +335,13 @@ fun LessonPlayer(
                 screen.primary != null -> {
                     {
                         TaskActionBar {
-                            ActionBar(screen, actions, language.prompt, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
+                            ActionBar(
+                                screen,
+                                actions,
+                                language.prompt,
+                                primaryFocus,
+                                onBack = { viewModel.dispatch(LessonAction.GoBack) },
+                            ) {
                                 // A screen that already offers help keeps the ask quiet.
                                 tutor?.askButton?.invoke(
                                     state.tutorScope(screen),
@@ -358,7 +366,9 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony, offer, touches)
+                CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
+                    Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony, offer, touches)
+                }
             }
         }
     }
@@ -673,6 +683,7 @@ private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
     prompt: PromptAudio?,
+    primaryFocus: FocusRequester,
     onBack: () -> Unit,
     ask: @Composable () -> Unit,
 ) {
@@ -693,7 +704,7 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width) {
+        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus)) {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }

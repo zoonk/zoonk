@@ -16,10 +16,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -33,6 +43,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.model.LessonAnswer
+import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import java.util.Locale
@@ -121,6 +133,7 @@ internal fun WordBank(
     used: List<Boolean>,
     enabled: Boolean,
     language: String,
+    focus: WordBankFocus,
     onPlace: (Int) -> Unit,
 ) {
     val label = stringResource(R.string.player_language_word_bank)
@@ -137,6 +150,7 @@ internal fun WordBank(
                     romanization = option.romanization,
                     language = language,
                     onClick = { onPlace(index) },
+                    modifier = with(focus) { Modifier.tile(index) },
                     enabled = enabled,
                     hidden = used.getOrElse(index) { false },
                 )
@@ -144,6 +158,71 @@ internal fun WordBank(
         }
     }
 }
+
+/**
+ * Main's word bank focus: a word placed or taken out with a keyboard would leave focus on the whole
+ * screen, so the next Tab starts over at the top. A placed tile hands focus to the next tile left, else
+ * the one before it, or to Check once the answer is complete; a word taken out hands it to the next
+ * word in the answer, else the one before it, else the tile it went back to. A word pressed without
+ * focus (a tap) leaves focus alone.
+ */
+@Stable
+internal class WordBankFocus(
+    private val primary: FocusRequester?,
+) {
+    private val tiles = mutableMapOf<Int, FocusRequester>()
+    private val words = mutableMapOf<Int, FocusRequester>()
+    private var focused: FocusRequester? = null
+    var target by mutableStateOf<FocusRequester?>(null)
+
+    fun Modifier.tile(index: Int) = follow(tiles.getOrPut(index, ::FocusRequester))
+
+    fun Modifier.word(index: Int) = follow(words.getOrPut(index, ::FocusRequester))
+
+    fun placed(
+        index: Int,
+        used: List<Boolean>,
+        complete: Boolean,
+    ) = moveTo(if (complete) primary else nearest(used.map { !it }, index)?.let { tiles[it] })
+
+    fun removed(
+        nextWord: Int?,
+        usedBefore: List<Boolean>,
+        usedAfter: List<Boolean>,
+    ) = moveTo(
+        nextWord?.let { words[it] } ?: usedBefore.indices.firstOrNull { usedBefore[it] && !usedAfter[it] }?.let { tiles[it] },
+    )
+
+    private fun Modifier.follow(requester: FocusRequester) =
+        focusRequester(requester).onFocusChanged {
+            if (it.isFocused) {
+                focused = requester
+            } else if (focused == requester) {
+                focused = null
+            }
+        }
+
+    private fun moveTo(requester: FocusRequester?) {
+        if (focused != null) target = requester
+    }
+}
+
+/** Check turns on only once the player has the answer, so a move to it waits for [answer]. */
+@Composable
+internal fun rememberWordBankFocus(answer: LessonAnswer?): WordBankFocus {
+    val primary = LocalPrimaryFocus.current
+    val focus = remember(primary) { WordBankFocus(primary) }
+
+    LaunchedEffect(focus.target, answer) {
+        if (focus.target?.requestFocus(FocusDirection.Enter) == true) focus.target = null
+    }
+    return focus
+}
+
+internal fun nearest(
+    available: List<Boolean>,
+    from: Int,
+): Int? = (from + 1..available.lastIndex).firstOrNull { available[it] } ?: (from - 1 downTo 0).firstOrNull { available[it] }
 
 /**
  * Which bank words are in use: a word placed from the bank marks its own tile; a word restored from

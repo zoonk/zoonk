@@ -2,6 +2,8 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.focus.FocusRequester
 import com.zoonk.android.data.Resource
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -21,6 +23,9 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
+
+/** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
+val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
 
 /** What a screen's view can ask the player to do. */
 @Stable

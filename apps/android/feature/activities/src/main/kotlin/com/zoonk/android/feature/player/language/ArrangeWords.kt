@@ -93,6 +93,7 @@ internal fun ArrangeWordsView(
     val sounds = speech?.let { rememberSpokenAudio(it, language) }
     val checked = result != null
     val editable = !checked && !locked
+    val focus = rememberWordBankFocus(answer)
 
     fun update(next: List<PlacedWord>) {
         placed = next
@@ -118,7 +119,12 @@ internal fun ArrangeWordsView(
                 correctWords = correctWords.takeIf { checked },
                 editable = editable,
                 language = language,
-                onRemove = { index -> update(placed.filterIndexed { i, _ -> i != index }) },
+                focus = focus,
+                onRemove = { index ->
+                    val next = placed.filterIndexed { i, _ -> i != index }
+                    focus.removed(index.coerceAtMost(next.lastIndex).takeIf { it >= 0 }, usedTiles(bank, placed), usedTiles(bank, next))
+                    update(next)
+                },
                 onMove = { from, to -> update(placed.toMutableList().apply { add(to, removeAt(from)) }) },
             )
         },
@@ -128,11 +134,14 @@ internal fun ArrangeWordsView(
                 used = usedTiles(bank, placed),
                 enabled = editable,
                 language = language,
+                focus = focus,
                 onPlace = { index ->
                     if (placed.size >= correctWords.size) return@WordBank
                     val option = bank[index]
                     option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
-                    update(placed + PlacedWord(option.word, option.romanization, index))
+                    val next = placed + PlacedWord(option.word, option.romanization, index)
+                    focus.placed(index, usedTiles(bank, next), complete = next.size == correctWords.size)
+                    update(next)
                 },
             )
         },
@@ -162,6 +171,7 @@ private fun AnswerArea(
     correctWords: List<String>?,
     editable: Boolean,
     language: String,
+    focus: WordBankFocus,
     onRemove: (Int) -> Unit,
     onMove: (Int, Int) -> Unit,
 ) {
@@ -227,7 +237,7 @@ private fun AnswerArea(
                         clickLabel = remove,
                         onClick = { onRemove(index) },
                         modifier =
-                            Modifier
+                            with(focus) { Modifier.word(index) }
                                 .onGloballyPositioned { bounds[index] = it.boundsInParent() }
                                 .zIndex(if (dragging == index) 1f else 0f)
                                 .graphicsLayer {

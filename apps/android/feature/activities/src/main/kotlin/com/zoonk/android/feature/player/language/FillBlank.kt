@@ -66,6 +66,7 @@ internal fun FillBlankView(
     val sounds = speech?.let { rememberSpokenAudio(it, language) }
     val checked = result != null
     val editable = !checked && !locked
+    val focus = rememberWordBankFocus(answer)
     val romanization =
         remember(content) {
             val first = content.answers.firstOrNull().orEmpty()
@@ -115,8 +116,15 @@ internal fun FillBlankView(
                                     },
                                 enabled = editable,
                                 style = style,
+                                modifier = with(focus) { Modifier.word(index) },
                                 onRemove = {
-                                    blanks = blanks.toMutableList().also { it[index] = null }
+                                    val next = blanks.toMutableList().also { it[index] = null }
+                                    focus.removed(
+                                        nearest(next.map { it != null }, index),
+                                        usedBlankTiles(options, blanks),
+                                        usedBlankTiles(options, next),
+                                    )
+                                    blanks = next
                                     if (answer != null) onAnswer(null)
                                 },
                             )
@@ -133,12 +141,14 @@ internal fun FillBlankView(
                 used = usedBlankTiles(options, blanks),
                 enabled = editable,
                 language = language,
+                focus = focus,
                 onPlace = { tile ->
                     val empty = blanks.indexOf(null)
                     if (empty == -1) return@WordBank
                     val option = options[tile]
                     option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
                     val next = blanks.toMutableList().also { it[empty] = option.word }
+                    focus.placed(tile, usedBlankTiles(options, next), complete = next.none { it == null })
                     blanks = next
                     if (next.none { it == null }) onAnswer(LessonAnswer.FillBlank(next.filterNotNull()))
                 },
@@ -165,6 +175,7 @@ private fun BlankSlot(
     enabled: Boolean,
     style: androidx.compose.ui.text.TextStyle,
     onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
     val line =
@@ -195,7 +206,7 @@ private fun BlankSlot(
         }
 
     Box(
-        Modifier
+        modifier
             .widthIn(min = 64.dp)
             .heightIn(min = 48.dp)
             .then(
