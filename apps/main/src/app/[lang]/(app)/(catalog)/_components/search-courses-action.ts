@@ -4,6 +4,7 @@ import { searchCatalog } from "@zoonk/core/catalog/search";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { normalizeString } from "@zoonk/utils/string";
+import { isUuid } from "@zoonk/utils/uuid";
 
 const MIN_DESCRIPTION_QUERY_LENGTH = 5;
 
@@ -32,8 +33,8 @@ function rankCatalogResults<Result extends { title: string }>({
 }
 
 /** A chapter whose lessons are still being written has no page yet. */
-async function loadPlanNames() {
-  const result = await getSyllabusView();
+async function loadPlanNames(goalId: string) {
+  const result = await getSyllabusView({ goalId });
 
   if (result.status !== "ready") {
     return { chapters: [], subjects: [] };
@@ -54,8 +55,8 @@ async function loadPlanNames() {
 }
 
 /** The client localizes mock names before matching; no English query is assumed here. */
-async function loadMocks() {
-  const result = await getExamView({});
+async function loadMocks(goalId: string) {
+  const result = await getExamView({ goalId });
 
   if (result.status !== "ready") {
     return [];
@@ -68,9 +69,13 @@ export type PalettePlan = Awaited<ReturnType<typeof loadPlanNames>> & {
   mocks: Awaited<ReturnType<typeof loadMocks>>;
 };
 
-/** Read once when the palette opens: the palette matches these names itself as the learner types. */
-export async function loadPalettePlanAction(): Promise<PalettePlan> {
-  const [plan, mocks] = await Promise.all([loadPlanNames(), loadMocks()]);
+/** Read once per goal when the palette opens: the palette matches these names itself as the learner types. */
+export async function loadPalettePlanAction(goalId: string): Promise<PalettePlan> {
+  if (!isUuid(goalId)) {
+    return { chapters: [], mocks: [], subjects: [] };
+  }
+
+  const [plan, mocks] = await Promise.all([loadPlanNames(goalId), loadMocks(goalId)]);
   return { ...plan, mocks };
 }
 

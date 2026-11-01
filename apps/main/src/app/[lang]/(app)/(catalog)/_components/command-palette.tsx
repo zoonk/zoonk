@@ -49,21 +49,22 @@ const EMPTY_SEARCH_RESULTS: PaletteSearchResults = {
 
 const NO_PLAN: PalettePlan = { chapters: [], mocks: [], subjects: [] };
 
-/** Once per palette, on its first opening; a failed read is asked again when it opens again. */
-function usePalettePlan({ enabled }: { enabled: boolean }): PalettePlan {
-  const [plan, setPlan] = useState<PalettePlan | null>(null);
+/** Once per goal, when the palette opens: a goal switched meanwhile reads its own names. */
+function usePalettePlan({ enabled, goalId }: { enabled: boolean; goalId: string | null }) {
+  const [loaded, setLoaded] = useState<{ goalId: string; plan: PalettePlan } | null>(null);
+  const loadedGoalId = loaded?.goalId ?? null;
 
   useEffect(() => {
-    if (!enabled || plan) {
+    if (!enabled || !goalId || loadedGoalId === goalId) {
       return;
     }
 
     const request = { current: true };
 
-    loadPalettePlanAction().then(
-      (loaded) => {
+    loadPalettePlanAction(goalId).then(
+      (plan) => {
         if (request.current) {
-          setPlan(loaded);
+          setLoaded({ goalId, plan });
         }
       },
       () => null,
@@ -72,9 +73,9 @@ function usePalettePlan({ enabled }: { enabled: boolean }): PalettePlan {
     return () => {
       request.current = false;
     };
-  }, [enabled, plan]);
+  }, [enabled, goalId, loadedGoalId]);
 
-  return plan ?? NO_PLAN;
+  return loaded && loaded.goalId === goalId ? loaded.plan : NO_PLAN;
 }
 
 /** The palette has closed by then, so a block that couldn't be opened says so in a toast. */
@@ -167,7 +168,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
       onSearch: handleSearch,
     });
 
-  const plan = usePalettePlan({ enabled: isOpen && learner !== undefined });
+  const plan = usePalettePlan({ enabled: isOpen, goalId: learner?.activeGoalId ?? null });
 
   const searched =
     query.trim().length < MIN_QUERY_LENGTH
