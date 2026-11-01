@@ -59,6 +59,7 @@ struct BrainPowerReward: View {
       .padding()
       .frame(idealWidth: 280)
       .presentationCompactAdaptation(.popover)
+      .accessibilitySizeStyles()
     }
   }
 }

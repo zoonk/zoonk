@@ -70,7 +70,9 @@ struct ChapterScreen: View {
       .sheet(isPresented: $isReporting) {
         FeedbackSheet(
           api: FeedbackAPI.live(),
-          context: FeedbackContext(contentID: chapterId, contentKind: .chapter), isReport: true)
+          context: FeedbackContext(contentID: chapterId, contentKind: .chapter), isReport: true
+        )
+        .accessibilitySizeStyles()
       }
       .loads(chapter)
     } else if learner.summary.value != nil {

@@ -116,9 +116,11 @@ private struct LessonPlayerContent: View {
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
+        .accessibilitySizeStyles()
     }
     .sheet(isPresented: $isShowingSummary) {
       LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
+        .accessibilitySizeStyles()
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
     .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {

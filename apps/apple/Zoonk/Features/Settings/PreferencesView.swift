@@ -132,6 +132,7 @@ struct PreferencesView: View {
             await settings.updatePreferences(.buddy(choice))
           }
         }
+        .accessibilitySizeStyles()
       }
     }
   }

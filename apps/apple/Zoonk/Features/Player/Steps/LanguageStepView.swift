@@ -667,6 +667,7 @@ private struct HintedWord: View {
         .padding(.horizontal)
         .padding(.vertical, 10)
         .presentationCompactAdaptation(.popover)
+        .accessibilitySizeStyles()
     }
   }
 }

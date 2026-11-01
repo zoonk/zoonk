@@ -28,7 +28,7 @@ struct TutorPanel: View {
             }
           }
       }
-      .roundedButtonsAtAccessibilitySizes()
+      .accessibilitySizeStyles()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
     }

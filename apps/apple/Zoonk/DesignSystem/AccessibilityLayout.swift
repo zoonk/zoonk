@@ -96,19 +96,18 @@ struct SectionHeaderRow<Trailing: View>: View {
 }
 
 extension View {
-  /// A wrapped capsule's round ends take the width its words need, so from the first accessibility
-  /// size buttons are rounded rectangles. A button's shape doesn't reach into a presentation:
-  /// apply it at the root of each presented screen too.
-  func roundedButtonsAtAccessibilitySizes() -> some View {
+  /// The button shape and label style for accessibility sizes. Neither reaches into a
+  /// presentation, so the app's root and the root of each presented screen apply them.
+  func accessibilitySizeStyles() -> some View {
     modifier(AccessibilityButtonShape())
+      .labelStyle(StackingLabelStyle())
   }
 }
 
 /// The system's label style until content stacks. Stacked, a list row would flow a label's icon
 /// into its title's first line, which pushes aside the first line of every text and control in a
 /// title of several. This one keeps the icon beside a title that fits its line and puts it above
-/// one that wraps, which then takes the row's width, as in a `MarkedRow`. Set at the app's root, it
-/// reaches presented screens too.
+/// one that wraps, which then takes the row's width, as in a `MarkedRow`.
 struct StackingLabelStyle: LabelStyle {
   func makeBody(configuration: Configuration) -> some View {
     StackingLabel(configuration: configuration)
@@ -136,6 +135,8 @@ private struct StackingLabel: View {
   }
 }
 
+/// A wrapped capsule's round ends take the width its words need, so from the first accessibility
+/// size buttons are rounded rectangles.
 private struct AccessibilityButtonShape: ViewModifier {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 

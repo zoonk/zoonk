@@ -47,6 +47,7 @@ struct MockResultView: View {
     }
     .sheet(item: $choices.speakingTask) { task in
       ConversationScreen(conversationId: task.conversationId)
+        .accessibilitySizeStyles()
     }
   }
 

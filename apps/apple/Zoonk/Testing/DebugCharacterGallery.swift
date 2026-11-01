@@ -9,13 +9,16 @@
     func body(content: Content) -> some View {
       if let mode {
         content.fullScreenCover(isPresented: .constant(true)) {
-          if mode == "ceremony" {
-            CeremonyPreview()
-          } else if mode == "moments" {
-            MomentsPreview()
-          } else {
-            Gallery()
+          Group {
+            if mode == "ceremony" {
+              CeremonyPreview()
+            } else if mode == "moments" {
+              MomentsPreview()
+            } else {
+              Gallery()
+            }
           }
+          .accessibilitySizeStyles()
         }
       } else {
         content

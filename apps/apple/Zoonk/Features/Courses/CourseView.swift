@@ -39,7 +39,9 @@ struct CourseView: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: course.id, contentKind: .course))
+        context: FeedbackContext(contentID: course.id, contentKind: .course)
+      )
+      .accessibilitySizeStyles()
     }
   }
 }

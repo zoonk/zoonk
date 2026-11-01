@@ -99,6 +99,7 @@ struct AccountSheet: View {
     }
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
+        .accessibilitySizeStyles()
     }
     .task {
       await session.reconcileSynchronizedCredential()

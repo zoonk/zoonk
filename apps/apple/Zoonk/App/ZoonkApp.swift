@@ -107,8 +107,7 @@ struct ZoonkApp: App {
         .environment(\.spokenAnswerRecording, .voice)
         .environment(\.activityRenderers, .app)
         .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
-        .roundedButtonsAtAccessibilitySizes()
-        .labelStyle(StackingLabelStyle())
+        .accessibilitySizeStyles()
     }
   }
 }

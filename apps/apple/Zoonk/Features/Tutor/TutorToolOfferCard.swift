@@ -108,6 +108,7 @@ struct TutorToolOfferCard: View {
         }
         .presentationDetents([.medium, .large])
         .onDisappear { callStart.cancel() }
+        .accessibilitySizeStyles()
       }
     }
   }

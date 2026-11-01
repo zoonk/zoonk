@@ -153,7 +153,9 @@ private struct BuddyContent: View {
         TutorPlaces { place in
           placeAfterDay = place
           isDayShown = false
-        })
+        }
+      )
+      .accessibilitySizeStyles()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -161,10 +163,13 @@ private struct BuddyContent: View {
         availableGlasses: status.glasses.filter(\.earned).compactMap {
           BuddyGlasses(rawValue: $0.glasses.rawValue)
         },
-        save: { choice in Task { await store.save(choice) } })
+        save: { choice in Task { await store.save(choice) } }
+      )
+      .accessibilitySizeStyles()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
+        .accessibilitySizeStyles()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in

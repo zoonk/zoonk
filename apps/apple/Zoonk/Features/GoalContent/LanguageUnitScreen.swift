@@ -180,7 +180,9 @@ struct LanguageUnitScreen: View {
         FeedbackSheet(
           api: FeedbackAPI.live(),
           context: FeedbackContext(contentID: chapterId, contentKind: .chapter, screen: "unit"),
-          isReport: true)
+          isReport: true
+        )
+        .accessibilitySizeStyles()
       }
       .loads(unit)
     }

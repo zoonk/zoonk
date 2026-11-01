@@ -68,7 +68,9 @@ private struct PlanSheets: ViewModifier {
           PlanSheetOpen { route in
             then = .open(route)
             self.sheet = nil
-          })
+          }
+        )
+        .accessibilitySizeStyles()
       }
   }
 
@@ -118,7 +120,9 @@ private struct PlanPathSheet: View {
             PlanSheetOpen { route in
               pendingRoute = route
               outline = nil
-            })
+            }
+          )
+          .accessibilitySizeStyles()
       }
     }
   }

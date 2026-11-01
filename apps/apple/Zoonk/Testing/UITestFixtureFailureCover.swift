@@ -15,6 +15,7 @@
               .padding()
               .accessibilityIdentifier("ui-test-fixture-failure")
           }
+          .accessibilitySizeStyles()
         }
       } else {
         content

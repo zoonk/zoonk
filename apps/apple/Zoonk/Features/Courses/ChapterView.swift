@@ -42,7 +42,9 @@ struct ChapterView: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter))
+        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter)
+      )
+      .accessibilitySizeStyles()
     }
   }
 }

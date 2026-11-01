@@ -68,6 +68,7 @@ struct TodayDayView: View {
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
+        .accessibilitySizeStyles()
     }
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {

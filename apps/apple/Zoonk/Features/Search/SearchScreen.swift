@@ -87,6 +87,7 @@ struct SearchScreen: View {
     .catalogDestinations()
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "command-palette"))
+        .accessibilitySizeStyles()
     }
   }
 

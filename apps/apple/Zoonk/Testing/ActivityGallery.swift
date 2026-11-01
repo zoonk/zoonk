@@ -33,7 +33,7 @@
             },
             isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
           )
-          .roundedButtonsAtAccessibilitySizes()
+          .accessibilitySizeStyles()
         }
       } else {
         content

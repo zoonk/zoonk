@@ -363,10 +363,12 @@ private struct PlanReveal: View {
     .planSheets($sheet, context: context, syllabus: syllabus.value)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
+        .accessibilitySizeStyles()
     }
     .sheet(isPresented: $showsTopics) {
       if let structure {
         SyllabusTopicsSheet(syllabus: structure)
+          .accessibilitySizeStyles()
       }
     }
   }

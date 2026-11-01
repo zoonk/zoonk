@@ -176,6 +176,6 @@ struct AppSheetView: View {
         SubscriptionScreen()
       }
     }
-    .roundedButtonsAtAccessibilitySizes()
+    .accessibilitySizeStyles()
   }
 }
