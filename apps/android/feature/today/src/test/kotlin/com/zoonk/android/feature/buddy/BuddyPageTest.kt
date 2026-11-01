@@ -17,8 +17,12 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.text.AnnotatedString
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
@@ -85,10 +89,16 @@ class BuddyPageTest {
         ZoonkTheme { BuddyPage(STATUS, GOAL, ask = ASK, app, navigator, access = TutorAccess.Ask) }
     }
 
-    private fun process() =
-        object : ViewModelStoreOwner {
+    /** A fresh view model store, as Android gives the screen after ending the app, with the saved state a navigation entry has. */
+    private fun process(): ViewModelStoreOwner {
+        val activity = compose.activity
+        return object : ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
             override val viewModelStore = ViewModelStore()
+            override val defaultViewModelProviderFactory = activity.defaultViewModelProviderFactory
+            override val defaultViewModelCreationExtras: CreationExtras
+                get() = MutableCreationExtras(activity.defaultViewModelCreationExtras).also { it[VIEW_MODEL_STORE_OWNER_KEY] = this }
         }
+    }
 
     private fun hasDraft(text: String) = SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(text))
 
