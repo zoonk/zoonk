@@ -12,7 +12,14 @@ import { OnboardingRailSection } from "./onboarding-rail";
 import { useOwnLevelLabels } from "./steps/level-choices";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
 
-type ReceiptFact = { count?: string; id: string; label: string; mono?: boolean; value: string };
+type ReceiptFact = {
+  count?: string;
+  id: string;
+  label: string;
+  mono?: boolean;
+  note?: string;
+  value: string;
+};
 
 function isAnswered({ goal, question }: { goal: GoalView; question: string }): boolean {
   const answered = goal.details.answered;
@@ -103,6 +110,9 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
               >
                 {fact.value}
               </span>
+              {fact.note && (
+                <span className="text-muted-foreground text-xs wrap-break-word">{fact.note}</span>
+              )}
               {fact.count && (
                 <span className="text-muted-foreground font-mono text-xs tabular-nums">
                   {fact.count}
