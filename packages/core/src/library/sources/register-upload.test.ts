@@ -45,6 +45,12 @@ function mockUploadedFile({
   return url;
 }
 
+function serveLinkedPage() {
+  vi.mocked(fetch).mockResolvedValue(
+    new PageResponse(`<p>${uniqueText()}</p>`, { headers: { "content-type": "text/html" } }),
+  );
+}
+
 function uniqueText() {
   return `${NOTICE_TEXT} ${randomUUID()}`;
 }
@@ -311,6 +317,32 @@ describe(registerSourceUpload, () => {
 
     expect(del).toHaveBeenCalledWith(url, PRIVATE_STORE);
     await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(0);
+  });
+
+  it("doesn't download a link once the learner has no uploads left", async () => {
+    const user = await userFixture();
+    await usageRecordsFixture({ count: 3, kind: "upload", userId: user.id });
+    mockSession(user.id);
+    serveLinkedPage();
+
+    await expect(
+      registerSourceUpload({ kind: "link", language: "pt", url: "https://www.example.com/edital" }),
+    ).resolves.toMatchObject({ limit: { resource: "upload" }, status: "limitReached" });
+
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("doesn't download a guest's link", async () => {
+    const guest = await userFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
+    mockGuestSession(guest.id);
+    serveLinkedPage();
+
+    await expect(
+      registerSourceUpload({ kind: "link", language: "pt", url: "https://www.example.com/edital" }),
+    ).resolves.toMatchObject({ status: "limitReached" });
+
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("counts a file once: signing its upload, registering it and pasting the same text", async () => {

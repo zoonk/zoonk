@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { findReachedUsageLimit } from "../../entitlements/_utils/reached-usage-limit";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -127,6 +129,23 @@ async function claimUpload(targetId: string): Promise<UsageRefusal | null> {
   return decision.status === "allowed" ? null : decision;
 }
 
+/** A file was claimed when its upload was signed, and pasted text costs nothing to read. */
+async function findLinkRefusal(): Promise<RefusedUsage | null> {
+  const viewer = await getEntitlementViewer();
+
+  if (!viewer) {
+    return null;
+  }
+
+  const limit = await findReachedUsageLimit({
+    kind: "upload",
+    tier: viewer.tier,
+    userId: viewer.userId,
+  });
+
+  return limit ? { limit, status: "limitReached" } : null;
+}
+
 async function removeUnusedBlob({
   content,
   storedBlobUrl,
@@ -187,6 +206,12 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
 
   if (input.kind === "file" && !isOwnUploadPathname({ pathname: input.pathname, userId })) {
     return { status: "invalidPathname" };
+  }
+
+  const refusal = input.kind === "link" ? await findLinkRefusal() : null;
+
+  if (refusal) {
+    return refusal;
   }
 
   const read = await readUpload(input);
