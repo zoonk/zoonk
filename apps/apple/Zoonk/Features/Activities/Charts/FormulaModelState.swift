@@ -57,6 +57,19 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
     )
   }
 
+  /// Where a model opens: at the check's inputs only once its screen is checked, so the expected
+  /// point sits on the curve. An answer alone says nothing: a model made again before Check (a fold,
+  /// a rotation) that opened there would read out the expected value.
+  func opening(check: ActivityCheck?, phase: ActivityPhase) -> (
+    sliders: [String: Double], events: [String: Double]
+  ) {
+    guard case .checked = phase, case .numeric(_, _, _, _, _, let inputs?, _) = check else {
+      return start(at: [])
+    }
+
+    return start(at: inputs)
+  }
+
   /// The slider the chart sweeps: the plot's x, or the first slider.
   var axis: Variable? {
     variables.first { $0.name == plot?.x } ?? variables.first

@@ -12,15 +12,7 @@ struct FormulaModelCanvas: View {
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
     self.fields = fields
-    let answeredInputs: [ActivityCheck.Input] =
-      if context.answer?.number != nil,
-        case .numeric(_, _, _, _, _, let inputs?, _) = context.check
-      {
-        inputs
-      } else {
-        []
-      }
-    let start = fields.start(at: answeredInputs)
+    let start = fields.opening(check: context.check, phase: context.phase)
     _sliders = State(initialValue: start.sliders)
     _events = State(initialValue: start.events)
   }

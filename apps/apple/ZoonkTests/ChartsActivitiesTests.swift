@@ -250,6 +250,30 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(fields.start(at: []).events, fields.eventsOff)
   }
 
+  /// A model made again before Check (a fold, a rotation) that opened at the check's inputs would
+  /// read out the expected answer.
+  func testAFormulaModelOpensAtTheCheckInputsOnlyOnceChecked() throws {
+    let fields: FormulaModelFields = try decode(
+      """
+      {"outputs":[{"formula":"100 * (1 + rate / 100) * (1 - rate / 100)","id":"price","label":"Final price","unit":"R$"}],
+       "variables":[{"initial":10,"label":"Up, then down","max":50,"min":0,"name":"rate","step":1,"unit":"%"}]}
+      """)
+    let check: ActivityCheck = try decode(
+      """
+      {"kind":"numeric","question":"A R$100 price goes up 20% and then down 20%. Where does it end?",
+       "answer":96,"tolerance":{"kind":"absolute","value":0.5},"unit":"R$","explanation":"",
+       "inputs":[{"name":"rate","value":20}],"output":"price"}
+      """)
+
+    let answering = fields.opening(check: check, phase: .answering)
+    XCTAssertEqual(answering.sliders, ["rate": 10])
+    XCTAssertEqual(
+      try XCTUnwrap(fields.value(output: "price", inputs: answering.sliders)), 99, accuracy: 1e-9)
+
+    let checked = fields.opening(check: check, phase: .checked(isCorrect: false))
+    XCTAssertEqual(checked.sliders, ["rate": 20], "The expected point sits on the curve")
+  }
+
   func testPatternTableEndingsAndGrading() throws {
     let fields: PatternTableFields = try decode(
       """
