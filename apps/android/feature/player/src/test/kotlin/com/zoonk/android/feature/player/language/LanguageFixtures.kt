@@ -112,8 +112,16 @@ internal fun matchColumns(id: String) =
         rightItems = """["cat","hello"]""",
     )
 
-internal fun vocabulary(id: String) =
-    step(id, StepKind.Vocabulary, "vocabulary", word = WORD, hints = """{"note":"You say it to a cat.","pronunciationTip":null}""")
+internal fun vocabulary(
+    id: String,
+    audioUrl: String? = null,
+) = step(
+    id,
+    StepKind.Vocabulary,
+    "vocabulary",
+    word = WORD.withAudio(audioUrl),
+    hints = """{"note":"You say it to a cat.","pronunciationTip":null}""",
+)
 
 internal fun translation(id: String) =
     step(
@@ -136,11 +144,16 @@ internal fun multipleChoice(id: String) =
                "question":"Where is the cat?"}""",
     )
 
-internal fun alphabet(id: String) =
-    step(
-        id,
-        StepKind.Alphabet,
-        "alphabet",
-        content = """{"audioText":"eñe","audioUrl":null,"forms":[{"label":"Capital","symbol":"Ñ"}],
-            "pronunciation":"like ny in canyon","readingAid":"enye","symbol":"ñ"}""",
-    )
+internal fun alphabet(
+    id: String,
+    audioUrl: String? = null,
+) = step(
+    id,
+    StepKind.Alphabet,
+    "alphabet",
+    content =
+        """{"audioText":"eñe","audioUrl":null,"forms":[{"label":"Capital","symbol":"Ñ"}],
+            "pronunciation":"like ny in canyon","readingAid":"enye","symbol":"ñ"}""".withAudio(audioUrl),
+)
+
+private fun String.withAudio(url: String?) = if (url == null) this else replaceFirst(""""audioUrl":null""", """"audioUrl":"$url"""")

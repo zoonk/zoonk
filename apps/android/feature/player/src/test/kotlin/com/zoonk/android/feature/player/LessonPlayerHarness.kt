@@ -24,6 +24,7 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
 import com.zoonk.android.feature.goalcontent.ChapterKey
@@ -83,6 +84,7 @@ internal class LessonPlayerHarness(
         pictures: PrivatePictures? = null,
         layoutDirection: LayoutDirection? = null,
         withTutor: Boolean = false,
+        withSpeech: Boolean = false,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -122,6 +124,7 @@ internal class LessonPlayerHarness(
                     LocalCodeSandbox provides sandbox,
                     LocalPrivatePictures provides pictures,
                     LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
+                    LocalLessonSpeech provides if (withSpeech) previewSpeech() else null,
                 ) {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()

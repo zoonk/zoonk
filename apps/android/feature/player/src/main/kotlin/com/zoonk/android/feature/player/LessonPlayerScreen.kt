@@ -366,6 +366,7 @@ fun LessonPlayer(
                                 actions,
                                 language.prompt,
                                 primaryFocus,
+                                spread,
                                 onBack = { viewModel.dispatch(LessonAction.GoBack) },
                             ) {
                                 // A screen that already offers help keeps the ask quiet.
@@ -791,12 +792,13 @@ private fun ActionBar(
     actions: StepActions,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
+    spread: Boolean,
     onBack: () -> Unit,
     ask: @Composable () -> Unit,
 ) {
     val primary = screen.primary ?: return
-    // A screen that's read (a word, a letter) has its recording here; listening plays it on the screen.
-    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let(::promptAudioUrl)
+    // A screen that's read (a word, a letter) has its recording here, or with its card on a spread; listening plays it on the screen.
+    val promptUrl = screen.step?.takeIf { it.isReadStep && !spread }?.let { promptAudioUrl(it) }
 
     val back: (@Composable () -> Unit)? =
         if (screen.canGoBack) {

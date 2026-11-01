@@ -71,8 +71,9 @@ fun rememberPromptAudio(
     return PromptAudio(audio, autoplay = { autoplay }, autoplayed = { autoplayed }, onAutoplayed = { autoplayed = it })
 }
 
-fun promptAudioUrl(step: LessonStep): String? {
-    val language = step.content as? StepContent.Language ?: return null
+fun promptAudioUrl(step: LessonStep): String? = (step.content as? StepContent.Language)?.let { promptAudioUrl(it) }
+
+fun promptAudioUrl(language: StepContent.Language): String? {
     val exercise = language.exercise.toExercise()
     return when (language.kind) {
         StepKind.Alphabet -> (exercise.content as? ExerciseContent.Alphabet)?.content?.audioUrl
@@ -102,7 +103,7 @@ fun PromptAudioEffect(
     }
 }
 
-/** The action bar's button for a screen that's read, such as a word or a letter. */
+/** The sound of a screen that's read, such as a word or a letter: in the action bar, or beside the card on a spread. */
 @Composable
 fun PromptAudioIconButton(
     url: String,

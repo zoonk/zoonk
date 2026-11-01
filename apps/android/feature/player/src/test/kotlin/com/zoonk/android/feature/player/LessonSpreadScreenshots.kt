@@ -18,6 +18,7 @@ import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.player.language.alphabet
 import com.zoonk.android.feature.player.language.reading
 import com.zoonk.android.feature.player.language.vocabulary
 import com.zoonk.android.feature.player.model.LessonStep
@@ -72,6 +73,7 @@ class LessonSpreadScreenshots {
             pictures = loadingPictures(),
             layoutDirection = layoutDirection,
             withTutor = withTutor,
+            withSpeech = true,
         )
         if (open) {
             rule.waitForIdle()
@@ -173,7 +175,15 @@ class LessonSpreadScreenshots {
 
     @Test
     @Config(qualifiers = BOOK)
-    fun bookVocabulary() = capture("book-vocabulary", vocabulary("word"))
+    fun bookVocabulary() = capture("book-vocabulary", vocabulary("word", SOUND))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookLetter() = capture("book-letter", alphabet("letter", SOUND))
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneVocabulary() = capture("phone-vocabulary", vocabulary("word", SOUND), open = false)
 
     @Test
     @Config(qualifiers = BOOK, fontScale = 1.75f)
@@ -250,6 +260,7 @@ class LessonSpreadScreenshots {
         explanationStep("idea").copy(image = StepImage("cloud", "https://blob.zoonk.test/cloud.png", "A cloud over a hill", 1024, 1280))
 
     private companion object {
+        const val SOUND = "https://cdn.zoonk.test/sound.mp3"
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val PHONE = "w411dp-h891dp-xxhdpi"
     }

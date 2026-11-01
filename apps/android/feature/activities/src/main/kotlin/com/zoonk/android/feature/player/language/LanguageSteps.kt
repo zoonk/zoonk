@@ -114,14 +114,23 @@ fun LanguageStepView(
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() }
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
+    // On a spread a word's or a letter's sound sits with it before the fold; in one column the action bar has it.
+    val sound: (@Composable () -> Unit)? =
+        if (part == StepPart.Screen &&
+            prompt != null
+        ) {
+            promptAudioUrl(content)?.let { url -> { PromptAudioIconButton(url, prompt) } }
+        } else {
+            null
+        }
 
     when (content.kind) {
         StepKind.Alphabet -> {
-            if (part.showsScreen) (exercise.content as? ExerciseContent.Alphabet)?.let { AlphabetView(it.content) }
+            if (part.showsScreen) (exercise.content as? ExerciseContent.Alphabet)?.let { AlphabetView(it.content, sound) }
         }
 
         StepKind.Vocabulary -> {
-            exercise.word?.let { VocabularyView(it, content.wordHints, languages.target, part) }
+            exercise.word?.let { VocabularyView(it, content.wordHints, languages.target, part, sound) }
         }
 
         StepKind.MultipleChoice -> {
@@ -282,6 +291,7 @@ private fun VocabularyView(
     hints: WordHints?,
     language: String,
     part: StepPart,
+    sound: (@Composable () -> Unit)?,
 ) {
     val label = stringResource(R.string.player_language_vocabulary, word.word)
 
@@ -297,6 +307,7 @@ private fun VocabularyView(
                 word.pronunciation?.let {
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
+                sound?.invoke()
             }
         }
         if (part.showsTurn) {
@@ -314,7 +325,10 @@ internal fun Romanization(text: String?) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AlphabetView(content: AlphabetContent) {
+private fun AlphabetView(
+    content: AlphabetContent,
+    sound: (@Composable () -> Unit)?,
+) {
     val label = stringResource(R.string.player_language_alphabet, content.symbol)
 
     ReadScene {
@@ -328,6 +342,7 @@ private fun AlphabetView(content: AlphabetContent) {
                 Text(content.readingAid, style = MaterialTheme.typography.titleLarge)
                 Text(content.pronunciation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
+            sound?.invoke()
         }
         if (content.forms.isNotEmpty()) {
             val formStyle = MaterialTheme.typography.headlineSmall.copy(textDirection = TextDirection.Content)
