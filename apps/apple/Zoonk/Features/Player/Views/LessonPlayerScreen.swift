@@ -77,7 +77,7 @@ private struct LessonPlayerContent: View {
     NavigationStack {
       VerticalToolbarReader { hasVerticalBar in
         content
-          .screenBar(edge: .top) {
+          .safeAreaBar(edge: .top) {
             // A vertical bar (iPhone Duo) has no room for the progress bar, so it tops the screen.
             if hasVerticalBar, let progress {
               progressBar(progress)

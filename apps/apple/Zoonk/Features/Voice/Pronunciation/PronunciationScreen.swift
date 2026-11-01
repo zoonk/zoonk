@@ -414,7 +414,7 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
-      .screenBar(edge: .bottom) { doneButton.keepsOffFold() }
+      .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
     } else {
       PaneSplit {
         List {
@@ -424,13 +424,13 @@ private struct PronunciationResultView: View {
         List {
           dayMoment
         }
-        .screenBar(edge: .bottom) { doneButton }
+        .safeAreaBar(edge: .bottom) { doneButton }
       } single: {
         List {
           summary
           dayMoment
         }
-        .screenBar(edge: .bottom) { doneButton.keepsOffFold() }
+        .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
       .milestoneCeremony(day?.ceremony)
     }

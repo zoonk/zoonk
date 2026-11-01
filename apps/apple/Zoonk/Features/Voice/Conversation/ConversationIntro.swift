@@ -113,7 +113,7 @@ struct ConversationIntro<Footer: View>: View {
         }
       }
     }
-    .screenBar(edge: .bottom) {
+    .safeAreaBar(edge: .bottom) {
       VStack(spacing: 12) {
         footer
       }

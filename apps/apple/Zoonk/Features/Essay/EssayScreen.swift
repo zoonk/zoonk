@@ -92,13 +92,13 @@ private struct EssayContent: View {
           Form {
             writeSections
           }
-          .screenBar(edge: .bottom) { actionBar }
+          .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
           Form {
             promptSections
             writeSections
           }
-          .screenBar(edge: .bottom) { actionBar }
+          .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
@@ -113,13 +113,13 @@ private struct EssayContent: View {
           // background.
           .scrollContentBackground(.hidden)
           .background(Color(.systemGroupedBackground))
-          .screenBar(edge: .bottom) { actionBar }
+          .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
           List {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
-          .screenBar(edge: .bottom) { actionBar }
+          .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else {
         List {
@@ -132,7 +132,7 @@ private struct EssayContent: View {
               comment: "An essay the learner skipped without sending a draft")
           }
         }
-        .screenBar(edge: .bottom) { actionBar }
+        .safeAreaBar(edge: .bottom) { actionBar }
       }
     }
     .toolbar {

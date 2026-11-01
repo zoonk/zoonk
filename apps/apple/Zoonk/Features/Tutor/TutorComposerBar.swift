@@ -46,7 +46,6 @@ struct TutorComposerBar: View {
           comment: "The buddy's composer for VoiceOver; the argument is the buddy's name")
       )
       .lineLimit(1...6)
-      .keepsFullTextSize()
       .focused($isFocused)
       .onKeyPress(.return, phases: .down) { press in
         guard TutorComposerKeys.returnSends(modifiers: press.modifiers) else {

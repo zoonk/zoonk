@@ -67,7 +67,7 @@ struct ConversationLiveView: View {
     .scrollDismissesKeyboard(.interactively)
     // The controls belong to the call's column, so they stay beside the aside rather than under
     // it, and one column moves them off iPhone Duo's fold.
-    .screenBar(edge: .bottom) {
+    .safeAreaBar(edge: .bottom) {
       VStack(spacing: 12) {
         typedReply
         controls
@@ -191,7 +191,6 @@ struct ConversationLiveView: View {
         text: $reply
       )
       .textFieldStyle(.roundedBorder)
-      .keepsFullTextSize()
       .focused($isTyping)
       .submitLabel(.send)
       .onSubmit(send)

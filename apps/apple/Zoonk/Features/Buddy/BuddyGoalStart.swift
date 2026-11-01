@@ -4,6 +4,7 @@ import SwiftUI
 struct BuddyGoalStart: View {
   @Environment(BuddyStore.self) private var store
   @Environment(\.tutorPlaces) private var places
+  @Environment(\.stacksContent) private var isStacked
 
   let name: String
   @Binding var goal: String
@@ -37,7 +38,7 @@ struct BuddyGoalStart: View {
     }
     .defaultScrollAnchor(.bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
-    .screenBar(edge: .bottom) {
+    .safeAreaBar(edge: .bottom) {
       VStack(alignment: .leading, spacing: 10) {
         ScrollView(.horizontal) {
           HStack(spacing: 8) {
@@ -54,7 +55,7 @@ struct BuddyGoalStart: View {
         .accessibilityLabel(
           Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
 
-        HStack(alignment: .bottom, spacing: 8) {
+        AccessibilityStack(alignment: .bottom, spacing: 8, stackedSpacing: 0) {
           MultilineTextField(
             text: $goal,
             prompt: Text(
@@ -63,15 +64,15 @@ struct BuddyGoalStart: View {
             label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
           )
           .lineLimit(1...4)
-          .keepsFullTextSize()
           .onSubmit(start)
-          .padding(.leading, 16)
+          .padding(isStacked ? .horizontal : .leading, 16)
           .padding(.vertical, 12)
 
           Button(action: start) {
             Text("Build my plan", tableName: "Buddy", comment: "Starts a goal with the words typed")
           }
           .buttonStyle(.mainAction)
+          .buttonSizing(isStacked ? .flexible : .automatic)
           .disabled(trimmedGoal.isEmpty)
           .padding(6)
         }

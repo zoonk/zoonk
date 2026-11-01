@@ -178,7 +178,6 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp()
-    app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     launch(app)
 
     let accountButton = app.navigationBars.buttons["Log in"].firstMatch
@@ -357,7 +356,6 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .googleSubscription)
-    app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     launch(app)
 
     let accountButton = app.buttons["Account"]
@@ -446,17 +444,20 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     launch(app)
 
+    // Today and Plan have no fixtures, so they show the system's `ContentUnavailableView` for being
+    // offline, whose title, message and button the audit finds don't follow Dynamic Type all the way.
+    let offline = ["Check your connection and try again.", "Try again"]
     for destination in [
-      (tabTitle: "Today", screenTitle: "Today"),
-      (tabTitle: "Plan", screenTitle: "Plan"),
-      (tabTitle: "Zu", screenTitle: "Zu"),
-      (tabTitle: "Search", screenTitle: "Search"),
+      (tabTitle: "Today", screenTitle: "Today", sizedBySystem: ["Today didn't load"] + offline),
+      (tabTitle: "Plan", screenTitle: "Plan", sizedBySystem: ["Couldn't load your plan"] + offline),
+      (tabTitle: "Zu", screenTitle: "Zu", sizedBySystem: []),
+      (tabTitle: "Search", screenTitle: "Search", sizedBySystem: []),
     ] {
       app.primaryNavigationItem(destination.tabTitle).tap()
       XCTAssertTrue(
         app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
         "Expected the \(destination.screenTitle) screen to render")
-      try performAccessibilityAudit(in: app)
+      try performAccessibilityAudit(in: app, sizedBySystem: destination.sizedBySystem)
     }
 
     app.primaryNavigationItem("Today").tap()
@@ -723,16 +724,20 @@ final class ZoonkUITests: XCTestCase {
   /// - Contrast: on the simulator it measures pixels under iOS 26's glass bars and scroll edge
   ///   effects and fails primary text on the system background.
   /// - Dynamic Type and clipping in system bars and the search field, which keep their size (a long
-  ///   press shows the Large Content Viewer) and truncate to their width.
+  ///   press shows the Large Content Viewer) and truncate to their width, and in the elements
+  ///   labeled `sizedBySystem`, which another system view sizes.
   /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
   private func performAccessibilityAudit(
-    in app: XCUIApplication, skipping skipped: XCUIAccessibilityAuditType = []
+    in app: XCUIApplication, skipping skipped: XCUIAccessibilityAuditType = [],
+    sizedBySystem labels: [String] = []
   ) throws {
+    let systemSized =
+      [app.navigationBars.firstMatch, app.tabBars.firstMatch, app.searchFields.firstMatch]
+      + labels.map { app.descendants(matching: .any)[$0].firstMatch }
     // Frames carry floating-point noise: Zu's bar starts at y 61.99999999999999 and its account
     // button at 61.99999999999997.
-    let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch, app.searchFields.firstMatch]
-      .filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
+    let frames = systemSized.filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
 
     try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
       guard let element = issue.element else {
@@ -741,7 +746,7 @@ final class ZoonkUITests: XCTestCase {
 
       switch issue.auditType {
       case .dynamicType, .textClipped:
-        return bars.contains { $0.contains(element.frame) }
+        return frames.contains { $0.contains(element.frame) }
       case .hitRegion:
         return [.other, .staticText, .image].contains(element.elementType)
       default:
@@ -765,6 +770,8 @@ final class ZoonkUITests: XCTestCase {
   private func makeApp(for scenario: UITestScenario = .signedOut) -> XCUIApplication {
     let app = XCUIApplication()
     app.launchArguments += scenario.launchArguments
+    // Reads without a fixture fail as offline, whatever runs on the machine.
+    app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launchEnvironment["ZOONK_UI_TEST_CATALOG"] = courseCatalogUITestSnapshotJSON
 
     if let accountJSON = scenario.accountJSON {
