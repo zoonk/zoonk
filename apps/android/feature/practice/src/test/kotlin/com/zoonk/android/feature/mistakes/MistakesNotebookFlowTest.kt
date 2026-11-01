@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -54,9 +55,9 @@ class MistakesNotebookFlowTest {
     private fun notebook(mistakes: List<Pair<String, String>>): MistakeList {
         val data =
             mistakes.mapIndexed { index, (skill, question) ->
-                """{"cause":"gap","createdAt":"2026-10-29T12:00:00Z","fixedAt":null,"id":"00000000-0000-4000-8000-00000000000$index",
+                """{"cause":"gap","createdAt":"2026-10-29T12:00:00Z","fixedAt":null,"id":"00000000-0000-4000-8000-${"%012x".format(index)}",
                 "itemId":null,"lesson":null,"practiceAvailable":true,"practiceAvailableTomorrow":false,
-                "skill":{"id":"00000000-0000-4000-8000-0000000000b$index","name":"$skill"},
+                "skill":{"id":"00000000-0000-4000-8000-${"%012x".format(0xb00 + index)}","name":"$skill"},
                 "snapshot":{"answer":"1","correctAnswer":"2","question":"$question"},"status":"open"}"""
             }
         return ApiJson.decodeFromString(
@@ -160,20 +161,23 @@ class MistakesNotebookFlowTest {
         assertTrue("on the page before the fold", bounds("Ratios").right <= 426.dp)
     }
 
-    /** What the Fixed tab showed is the list on the page after the fold, so what's open in it stays as the book opens. */
+    /**
+     * What the Fixed tab showed is the list on the page after the fold, so what's open in it, and where, stay as the book
+     * opens. A Galaxy Z Fold's window shows the phone's list without a fold, as the outer display does.
+     */
     @Test
-    @Config(qualifiers = "w852dp-h883dp")
+    @Config(qualifiers = "w707dp-h823dp")
     fun whatsOpenInTheFixedListStaysAsTheBookOpens() {
-        fixed = notebook(listOf("Fractions" to "What is a half of a half?", "Decimals" to "What is 0.5 + 0.25?"))
+        fixed = notebook((1..30).map { "Skill $it" to "Question $it?" } + ("Decimals" to "What is 0.5 + 0.25?"))
         fixedGate.complete(Unit)
         rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
         rule.onNodeWithText("Fixed").performClick()
         rule.onNodeWithText("Decimals").performScrollTo().performClick()
-        rule.onNodeWithText("What is 0.5 + 0.25?").assertExists()
+        rule.onNodeWithText("What is 0.5 + 0.25?").performScrollTo().assertIsDisplayed()
 
         unfold()
 
-        rule.onNodeWithText("What is 0.5 + 0.25?").assertExists()
-        assertTrue("what's fixed after the fold", bounds("Decimals").left >= 426.dp)
+        rule.onNodeWithText("What is 0.5 + 0.25?").assertIsDisplayed()
+        assertTrue("what's fixed after the fold", bounds("Decimals").left >= 353.dp)
     }
 }

@@ -451,7 +451,8 @@ private fun LazyListScope.notebookHead(
     actions: NotebookActions,
     lead: NotebookLead,
 ) {
-    if (lead.hero) item { NotebookHero(page, actions.onPractice) }
+    // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes.
+    item { if (lead.hero) NotebookHero(page, actions.onPractice) }
     item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
