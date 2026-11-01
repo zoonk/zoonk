@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
   pull_request:
-    branches: [main]
+    branches: [ci/android-test-base]
     paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -20,6 +20,10 @@ env:
 jobs:
   changes:
     uses: ./.github/workflows/native-changes.yml
+    # Finding the last passing run reads this workflow's runs.
+    permissions:
+      contents: read
+      actions: read
     with:
       app: android
 
@@ -75,7 +79,7 @@ jobs:
           path: apps/android/build/reports/profile/
 
   tests:
-    name: tests (${{ matrix.shard }}/${{ strategy.job-total }})
+    name: tests
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
