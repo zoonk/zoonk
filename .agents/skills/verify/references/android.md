@@ -93,7 +93,7 @@ adb shell settings put global animator_duration_scale 0          # remove animat
 adb shell cmd locale set-app-locales com.zoonk.debug --locales en-XA   # pseudolocale (API 33+); ar-XB for RTL
 ```
 
-TalkBack: boot the emulator with a window (without `-no-window`), turn TalkBack on in its Settings (Play images) and use the window for gestures; `adb input` can bypass it. Restore every setting you changed.
+TalkBack: boot the emulator with a window (without `-no-window`), turn TalkBack on in its Settings (Play images) and use the window for gestures. `adb shell input` bypasses TalkBack, but the emulator console's touches reach it: `adb -s <serial> emu event mouse <x> <y> 0 1`, then `... 0 0` half a second later, puts TalkBack's focus on what's under that point, and two quick touches double-tap the focused item. TalkBack's focus shows as a green box in `screencap`. Restore every setting you changed, TalkBack included.
 
 ## Report
 
