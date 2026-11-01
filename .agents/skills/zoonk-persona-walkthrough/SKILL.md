@@ -1,6 +1,6 @@
 ---
 name: zoonk-persona-walkthrough
-description: Use the running product as realistic learner personas, including their bad days, before calling a user-facing change done. Pick personas from the change's risks, put them in a realistic state cheaply, walk with fresh eyes, fix or push back, turn every reproducible problem into a regression test, and report the evidence.
+description: Use the running product as realistic learner personas, including their bad days, before calling a user-facing change done. Pick personas from the change's risks, put them in a realistic state cheaply, walk with fresh eyes, fix or push back, give a reproducible problem a regression test when zoonk-testing's bar calls for one, and report the evidence.
 license: MIT
 metadata:
   author: zoonk

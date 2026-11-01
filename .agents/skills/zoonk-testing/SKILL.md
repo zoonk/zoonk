@@ -37,18 +37,26 @@ Do not write React component unit tests or add tests for `admin`, `evals`, or `b
 
 ## The native bar
 
-A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that matters to a learner and that a check on a device can't see, or can't practically see: if it broke and no test caught it, would a learner be hurt, and would we notice? Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test.
+A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that would hurt a learner and that a check on a device can't see, or can't practically see. Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test. A test written to reproduce a bug ships only when it clears this bar.
 
 Worth a test:
 
 - **The shared data layer:** resources and keyed caches, mutations and queued saves, session identity (signing out on unauthorized, dropping a response whose session ended), generation streams and their resume, request counts, private image loading and API error mapping.
 - **State machines and races the app owns:** transitions driven by a write, a failure, a session change or responses out of order, such as a purchase, the lesson player's state, a live call or a mock run.
-- **Native-only logic:** layout math our code computes (pane splits, fold geometry), formatting it does itself (dates, numbers, durations, plurals across locales), parsing and transforms (rich text, sandbox output, chart and music data), and regexes on the device's engine.
+- **Native-only logic:** layout math our code computes (pane splits and fold geometry, checked on the values it returns, not on where a screen's parts land), formatting it does itself (dates, numbers, durations, plurals across locales), parsing and transforms (rich text, sandbox output, chart and music data), and regexes on the device's engine.
 - **What the learner made:** answers, drafts, progress or recordings kept across recreation, rotation, folding, process death or a failed save.
-- **A thin smoke layer:** a few Apple UI tests (launch to a finished lesson, recovery from auth loss, the accessibility audit) and Android device tests only for what the JVM can't run.
+- **A thin smoke layer:** a few Apple UI tests (launch to a finished lesson, recovery from sign-out or auth loss, the accessibility audit) and Android device tests only for what the JVM can't run.
 - **Checks fed by the source of truth:** tests that fail when fixtures exported from main or core drift, contract tests for hand-written wire models, and the Android lint-check detectors.
 
-Not worth one: screen tests of copy, labels, which notice shows, TalkBack or VoiceOver strings, icons, colors, sizes, pane or fold placement, scroll position, what's expanded or where a tap leads; a rule core or the API decides (day state, plan rules, scoring, limits, eligibility) when the app only shows the answer; hand-written JSON fed to the generated API client, which is the contract; framework behavior, static catalogs, config or analytics event names; and a second test of what another already guards (keep the cheaper). A wording, layout or styling fix is checked on the device and in on-demand renders, without a permanent test. Android's renders (`-Pzoonk.shots`) skip in the suite and are a review tool, never goldens.
+Not worth one:
+
+- Screen tests of copy, labels, which notice shows, TalkBack or VoiceOver strings, icons, colors, sizes, pane or fold placement, scroll position, what's expanded or where a tap leads.
+- A rule core or the API decides (day state, plan rules, scoring, limits, eligibility) when the app only shows the answer.
+- Hand-written JSON fed to the generated API client, which is the contract.
+- Framework behavior, static catalogs, config or analytics event names.
+- A second test of what another already guards; keep the cheaper.
+
+A wording, layout or styling fix is checked on the device and in on-demand renders, without a permanent test. Android's renders (`-Pzoonk.shots`) skip in the suite and are a review tool, never goldens.
 
 ## Data and external boundaries
 
