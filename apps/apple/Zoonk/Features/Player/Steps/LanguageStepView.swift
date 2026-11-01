@@ -318,12 +318,16 @@ private struct TranslationView: View {
       isLocked: context.isLocked
     ) { id in
       context.select(.translation(selectedOptionId: id))
+      audio.playWord(exercise.translationOptions.first { $0.id == id }?.audioUrl)
+    }
+  }
+}
 
-      if let url = exercise.translationOptions.first(where: { $0.id == id })?.audioUrl.flatMap(
-        URL.init(string:))
-      {
-        Task { await audio.play(url) }
-      }
+extension LessonAudio {
+  @MainActor
+  fileprivate func playWord(_ audioUrl: String?) {
+    if let url = audioUrl.flatMap(URL.init(string:)) {
+      Task { await play(url) }
     }
   }
 }
@@ -347,6 +351,8 @@ private struct LessonWordBank<Tiles: View>: View {
 
 /// A tile fills the first empty blank, and a filled blank empties on a tap.
 private struct FillBlankView: View {
+  @Environment(\.lessonAudio) private var audio
+
   let exercise: LanguageExercise
   let context: LessonStepContext
 
@@ -384,7 +390,7 @@ private struct FillBlankView: View {
             >= exercise.fillBlankOptions.filter { $0.word == option.word }.count
             || context.isLocked
         ) {
-          fill(option.word)
+          fill(option)
         }
       }
     }
@@ -435,19 +441,22 @@ private struct FillBlankView: View {
       }
   }
 
-  private func fill(_ word: String) {
+  private func fill(_ option: LanguageExercise.WordOption) {
     var answers = blanks
 
     guard let empty = answers.firstIndex(of: "") else {
       return
     }
 
-    answers[empty] = word
+    answers[empty] = option.word
     context.select(.fillBlank(userAnswers: answers))
+    audio.playWord(option.audioUrl)
   }
 }
 
 private struct ArrangeWordsView: View {
+  @Environment(\.lessonAudio) private var audio
+
   let exercise: LanguageExercise
   let context: LessonStepContext
   let part: LessonStepPart
@@ -543,12 +552,14 @@ private struct ArrangeWordsView: View {
 
     LessonWordBank {
       ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
+        let option = exercise.wordBankOptions[index]
+
         LessonWordTile(
-          word: exercise.wordBankOptions[index].word,
-          romanization: exercise.wordBankOptions[index].romanization,
+          word: option.word, romanization: option.romanization,
           isUsed: arranged.contains(index) || context.isLocked
         ) {
           set(arranged + [index])
+          audio.playWord(option.audioUrl)
         }
       }
     }
