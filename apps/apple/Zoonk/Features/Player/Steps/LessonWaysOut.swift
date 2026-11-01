@@ -82,6 +82,49 @@ struct LessonExampleLine: View {
   }
 }
 
+/// Help with a teaching screen on the learner's page of a spread, as main's aside offers it beside
+/// one on wide screens: two of the buddy's suggestions for the screen, or anything else.
+struct LessonScreenHelp: View {
+  @Environment(LearnerSummaryStore.self) private var learnerSummary
+
+  let store: LessonPlayerStore
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Label {
+        Text(
+          "Ask \(learnerSummary.buddyDisplayName) about this screen", tableName: "Player",
+          comment: "Above the buddy's suggestions beside a teaching screen")
+      } icon: {
+        Image(systemName: "bubble.left.and.text.bubble.right")
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+
+      FlowLayout {
+        ForEach((store.lesson?.tutorSuggestions ?? []).prefix(2), id: \.id) { suggestion in
+          Button {
+            store.ask(suggestionId: suggestion.id.rawValue)
+          } label: {
+            Text(suggestion.label)
+          }
+        }
+
+        Button {
+          store.ask()
+        } label: {
+          Text(
+            "Ask something else", tableName: "Player",
+            comment: "Opens the buddy to ask about the screen in the learner's own words")
+        }
+      }
+      .buttonStyle(.suggestionChip)
+      .font(.subheadline)
+    }
+    .accessibilityElement(children: .contain)
+  }
+}
+
 /// After two misses in a row on the same idea, or a long pause on an explanation.
 struct LessonAskBuddyOffer: View {
   enum Reason {

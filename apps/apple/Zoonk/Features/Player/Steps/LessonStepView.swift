@@ -88,11 +88,6 @@ private struct HookStepView: View {
   let context: LessonStepContext
   let part: LessonStepPart
 
-  /// A hook that asks for a guess first, with its question and options.
-  private var isGuess: Bool {
-    content.variant == .guess && content.question != nil && content.options != nil
-  }
-
   var body: some View {
     switch part {
     case .screen: screen
@@ -102,7 +97,7 @@ private struct HookStepView: View {
 
   @ViewBuilder
   private var screen: some View {
-    if isGuess, let question = content.question {
+    if content.asksGuess, let question = content.question {
       Text(
         "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
       )
@@ -123,7 +118,7 @@ private struct HookStepView: View {
 
   @ViewBuilder
   private var turn: some View {
-    if isGuess, let options = content.options {
+    if content.asksGuess, let options = content.options {
       LessonOptionList(
         options: options.map { LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect) },
         selectedId: context.answer.flatMap { if case .hookGuess(let id) = $0 { id } else { nil } },
@@ -524,6 +519,24 @@ private struct SummaryStepView: View {
             .foregroundStyle(.secondary)
         }
       }
+    }
+  }
+}
+
+extension HookContent {
+  /// A hook that asks for a guess first, with its question and options.
+  var asksGuess: Bool {
+    variant == .guess && question != nil && options != nil
+  }
+}
+
+extension LessonStep {
+  /// Text that teaches, which the buddy can explain another way, as main's aside offers beside it.
+  var teachesInText: Bool {
+    switch content {
+    case .explanation: true
+    case .hook(let hook): !hook.asksGuess
+    default: false
     }
   }
 }

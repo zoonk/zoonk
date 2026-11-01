@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonStageView: View {
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.lessonTutor) private var tutor
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -44,6 +45,9 @@ struct LessonStageView: View {
         // learner sees what they're asking about, and the buddy has the trailing page.
         let isAskingBeside = pages != nil && store.isAsking
         let spread = isAskingBeside ? nil : pages
+        // Help that's always beside a teaching screen leaves its pause nothing to offer.
+        let offersHelp =
+          spread != nil && step.teachesInText && tutor.panel != nil && !store.isGuest
 
         HStack(spacing: 0) {
           if let pages = spread {
@@ -72,6 +76,10 @@ struct LessonStageView: View {
                 // One container, so the id names the whole turn rather than each of its views.
                 VStack(alignment: .leading, spacing: 20) {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
+
+                  if offersHelp {
+                    LessonScreenHelp(store: store)
+                  }
                 }
                 .id(Self.turnId)
 
@@ -99,7 +107,7 @@ struct LessonStageView: View {
                 .id(Self.verdictId)
               }
 
-              if step.strugglePause != nil {
+              if step.strugglePause != nil, !offersHelp {
                 LessonPauseOffer(step: step, store: store)
               }
             }
