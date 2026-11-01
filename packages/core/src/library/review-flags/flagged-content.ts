@@ -1,5 +1,5 @@
 import "server-only";
-import { type ItemFormat, prisma } from "@zoonk/db";
+import { type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
 import {
   type StatuteArticleText,
   isStatuteSource,
@@ -20,6 +20,7 @@ export type FlaggedDrillGroup = {
   format: DrillFormat;
   itemIds: string[];
   language: string;
+  preparedAt: Date;
   law: { shortName: string; title: string; url: string | null };
   sourceId: string;
   style: (typeof STYLE_BY_FORMAT)[DrillFormat];
@@ -45,9 +46,11 @@ function readArticleReference(citation: string): string {
 
 function toDrillGroup({
   items,
+  preparedAt,
   texts,
 }: {
   items: readonly FlaggedItem[];
+  preparedAt: Date;
   texts: ReadonlyMap<string, string>;
 }): FlaggedDrillGroup | null {
   const [first] = items;
@@ -74,12 +77,19 @@ function toDrillGroup({
     itemIds: items.map((item) => item.id),
     language: first.language,
     law: { shortName: toStatuteShortName(source.title), title: source.title, url: source.url },
+    preparedAt,
     sourceId: source.id,
     style: STYLE_BY_FORMAT[first.format],
   };
 }
 
-async function toDrillGroups(items: readonly FlaggedItem[]): Promise<FlaggedDrillGroup[]> {
+async function toDrillGroups({
+  items,
+  preparedAt,
+}: {
+  items: readonly FlaggedItem[];
+  preparedAt: Date;
+}): Promise<FlaggedDrillGroup[]> {
   const drills = items.filter(
     (item) => item.source && isStatuteSource({ title: item.source.title, url: item.source.url }),
   );
@@ -96,43 +106,91 @@ async function toDrillGroups(items: readonly FlaggedItem[]): Promise<FlaggedDril
     (item) => `${item.source?.id}\u0000${item.sourceCitation}\u0000${item.format}`,
   );
 
-  return [...groups.values()].flatMap((group) => toDrillGroup({ items: group, texts }) ?? []);
+  return [...groups.values()].flatMap(
+    (group) => toDrillGroup({ items: group, preparedAt, texts }) ?? [],
+  );
 }
 
 /** Internal workflow bridge for the daily sweep and admin API. */
-export async function listFlaggedContent({
+export async function prepareFlaggedContent({
   flagIds,
 }: { flagIds?: readonly string[] } = {}): Promise<FlaggedContent> {
+  const preparedAt = new Date();
   const openFlags = { status: "open" as const, ...(flagIds ? { id: { in: [...flagIds] } } : {}) };
 
-  const [lessons, items] = await Promise.all([
+  const drillFlags = { ...openFlags, ...(!flagIds && { rewriteFailedAt: null }) };
+
+  const drillWhere = {
+    format: { in: ["multipleChoice", "trueFalse", "typed"] satisfies ItemFormat[] },
+    reviewFlags: { some: drillFlags },
+    sourceCitation: { not: null },
+  };
+
+  const [lessons, keys] = await Promise.all([
     prisma.lesson.findMany({
       orderBy: { updatedAt: "asc" },
       select: { id: true },
       take: MAX_FLAGGED_LESSONS,
       where: { contentStatus: "completed", reviewFlags: { some: openFlags } },
     }),
-    prisma.item.findMany({
-      orderBy: { id: "asc" },
-      select: {
-        format: true,
-        id: true,
-        language: true,
-        source: { select: { id: true, title: true, url: true } },
-        sourceCitation: true,
-      },
-      where: { reviewFlags: { some: openFlags } },
+    prisma.item.groupBy({
+      by: ["sourceId", "sourceCitation", "format"],
+      orderBy: [
+        { _min: { createdAt: "asc" } },
+        { sourceId: "asc" },
+        { sourceCitation: "asc" },
+        { format: "asc" },
+      ],
+      take: MAX_DRILL_GROUPS,
+      where: drillWhere,
     }),
   ]);
 
-  const drillGroups = await toDrillGroups(items);
+  const items = await prisma.item.findMany({
+    orderBy: { id: "asc" },
+    select: {
+      format: true,
+      id: true,
+      language: true,
+      source: { select: { id: true, title: true, url: true } },
+      sourceCitation: true,
+    },
+    where: {
+      ...drillWhere,
+      OR: keys.map(({ format, sourceCitation, sourceId }) => ({
+        format,
+        sourceCitation,
+        sourceId,
+      })),
+    },
+  });
 
-  return {
-    drillGroups: drillGroups.slice(0, MAX_DRILL_GROUPS),
-    lessonIds: lessons.map((lesson) => lesson.id),
-  };
+  const drillGroups = await toDrillGroups({ items, preparedAt });
+  const grouped = new Set(drillGroups.flatMap((group) => group.itemIds));
+
+  await recordFailedDrillRewrites({
+    itemIds: items.filter((item) => !grouped.has(item.id)).map((item) => item.id),
+    preparedAt,
+  });
+
+  return { drillGroups, lessonIds: lessons.map((lesson) => lesson.id) };
 }
 
 export function countOpenReviewFlags(): Promise<number> {
   return prisma.contentReviewFlag.count({ where: { status: "open" } });
+}
+
+export function recordFailedDrillRewrites({
+  itemIds,
+  preparedAt,
+  tx = prisma,
+}: {
+  itemIds: readonly string[];
+  preparedAt: Date;
+  tx?: Pick<TransactionClient, "contentReviewFlag">;
+}) {
+  return tx.contentReviewFlag.updateMany({
+    data: { rewriteFailedAt: new Date() },
+    where: { createdAt: { lte: preparedAt }, itemId: { in: [...itemIds] }, status: "open" },
+  });
 }

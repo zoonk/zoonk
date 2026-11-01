@@ -6,15 +6,16 @@ import { replaceFlaggedDrills } from "@zoonk/core/library/review-flags/drills";
 import {
   type FlaggedContent,
   type FlaggedDrillGroup,
-  listFlaggedContent,
+  prepareFlaggedContent,
+  recordFailedDrillRewrites,
 } from "@zoonk/core/library/review-flags/flagged";
 
-export async function listFlaggedContentStep(input: {
+export async function prepareFlaggedContentStep(input: {
   flagIds?: string[];
 }): Promise<FlaggedContent> {
   "use step";
 
-  return listFlaggedContent(input);
+  return prepareFlaggedContent(input);
 }
 
 export async function rewriteFlaggedDrillsStep({
@@ -42,4 +43,9 @@ export async function rewriteFlaggedDrillsStep({
     optionCount: STATUTE_DRILL_OPTION_COUNT,
     provenance,
   });
+}
+
+export async function recordFailedDrillRewriteStep(group: FlaggedDrillGroup): Promise<void> {
+  "use step";
+  await recordFailedDrillRewrites({ itemIds: group.itemIds, preparedAt: group.preparedAt });
 }

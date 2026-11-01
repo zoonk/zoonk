@@ -167,7 +167,7 @@ describe(flaggedContentWorkflow, () => {
 
     expect(rewrittenFlag.status).toBe("rewritten");
 
-    expect(failedFlag.status).toBe("open");
+    expect(failedFlag).toMatchObject({ rewriteFailedAt: expect.any(Date), status: "open" });
     expect(failedDrill.content).toStrictEqual(failed?.content);
     expect(start).not.toHaveBeenCalled();
   });

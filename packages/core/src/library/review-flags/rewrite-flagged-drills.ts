@@ -6,7 +6,7 @@ import { checkItem } from "../items/item-checks";
 import { toStoredItem } from "../items/item-content";
 import { repairItem } from "../items/item-repairs";
 import { resolveReviewFlags } from "../sources/content-review-flags";
-import { type FlaggedDrillGroup } from "./flagged-content";
+import { type FlaggedDrillGroup, recordFailedDrillRewrites } from "./flagged-content";
 
 /** Internal workflow bridge: the drills must come from the flagged group the sweep listed. */
 export async function replaceFlaggedDrills({
@@ -66,6 +66,12 @@ export async function replaceFlaggedDrills({
         }),
       ),
     );
+
+    await recordFailedDrillRewrites({
+      itemIds: group.itemIds.filter((id) => !pairs.some((pair) => pair.itemId === id)),
+      preparedAt: group.preparedAt,
+      tx,
+    });
 
     await Promise.all(
       pairs.map(({ itemId }) => resolveReviewFlags({ target: { itemId }, tx, writtenAt })),

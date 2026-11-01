@@ -249,17 +249,18 @@ enum ContentReviewStatus {
 
 /// Exactly one of `lessonId` and `itemId` is set.
 model ContentReviewFlag {
-  id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  noticeId   String              @map("notice_id") @db.Uuid
-  notice     SourceChangeNotice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
-  lessonId   String?             @map("lesson_id") @db.Uuid
-  lesson     Lesson?             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  itemId     String?             @map("item_id") @db.Uuid
-  item       Item?               @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  status     ContentReviewStatus @default(open)
-  resolvedAt DateTime?           @map("resolved_at")
-  createdAt  DateTime            @default(now()) @map("created_at")
-  updatedAt  DateTime            @default(now()) @updatedAt @map("updated_at")
+  id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  noticeId        String              @map("notice_id") @db.Uuid
+  notice          SourceChangeNotice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  lessonId        String?             @map("lesson_id") @db.Uuid
+  lesson          Lesson?             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  itemId          String?             @map("item_id") @db.Uuid
+  item            Item?               @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  status          ContentReviewStatus @default(open)
+  resolvedAt      DateTime?           @map("resolved_at")
+  rewriteFailedAt DateTime?           @map("rewrite_failed_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at")
 
   @@unique([noticeId, lessonId], name: "noticeLesson")
   @@unique([noticeId, itemId], name: "noticeItem")

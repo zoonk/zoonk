@@ -10,7 +10,7 @@ import { getSession } from "../../users/get-session";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
 import { createSourceChangeNotice } from "../sources/content-review-flags";
 import { recordSourceChangeNotice } from "../sources/source-change-notices";
-import { listFlaggedContent } from "./flagged-content";
+import { prepareFlaggedContent } from "./flagged-content";
 import { dismissReviewFlagForAdmin, getOpenReviewFlagForAdmin } from "./review-flags-admin";
 import { replaceFlaggedDrills } from "./rewrite-flagged-drills";
 
@@ -194,7 +194,7 @@ describe("the flag sweep", () => {
     const flags = await prisma.contentReviewFlag.findMany({ where: { noticeId: notice.id } });
     const flagIds = flags.map((flag) => flag.id);
 
-    const flagged = await listFlaggedContent({ flagIds });
+    const flagged = await prepareFlaggedContent({ flagIds });
 
     expect(flagged.lessonIds).toStrictEqual([citing.id]);
 
@@ -210,6 +210,7 @@ describe("the flag sweep", () => {
           title: "Lei nº 8.112, de 11 de dezembro de 1990",
           url: law.url,
         },
+        preparedAt: expect.any(Date),
         sourceId: law.id,
         style: "cebraspe",
       },
@@ -224,7 +225,7 @@ describe("the flag sweep", () => {
       where: { itemId: drill.id, noticeId: notice.id },
     });
 
-    const { drillGroups } = await listFlaggedContent({ flagIds: [flag.id] });
+    const { drillGroups } = await prepareFlaggedContent({ flagIds: [flag.id] });
     const [group] = drillGroups;
 
     if (!group) {
@@ -267,6 +268,68 @@ describe("the flag sweep", () => {
     expect(resolved.status).toBe("rewritten");
   });
 
+  it("keeps every drill in a selected group, even when the group has more than ten", async () => {
+    const { drill, law } = await lawWithDependents();
+
+    const others = await Promise.all(
+      Array.from({ length: 11 }, () =>
+        itemFixture({
+          format: "trueFalse",
+          generatedAt: daysAgo(3),
+          language: "pt",
+          skillId: drill.skillId,
+          sourceCitation: drill.sourceCitation,
+          sourceId: law.id,
+        }),
+      ),
+    );
+
+    const notice = await noticeFor(law.id);
+    const flags = await prisma.contentReviewFlag.findMany({ where: { noticeId: notice.id } });
+    const { drillGroups } = await prepareFlaggedContent({ flagIds: flags.map(({ id }) => id) });
+    expect(drillGroups).toHaveLength(1);
+
+    expect(drillGroups[0]?.itemIds.toSorted()).toStrictEqual(
+      [drill.id, ...others.map(({ id }) => id)].toSorted(),
+    );
+  });
+
+  it("keeps a failed rewrite open for admins and skips it on later daily sweeps", async () => {
+    const { drill, law } = await lawWithDependents();
+    const notice = await noticeFor(law.id);
+
+    const flag = await prisma.contentReviewFlag.findFirstOrThrow({
+      where: { itemId: drill.id, noticeId: notice.id },
+    });
+
+    const {
+      drillGroups: [group],
+    } = await prepareFlaggedContent({ flagIds: [flag.id] });
+
+    if (!group) {
+      throw new Error("No drill group");
+    }
+
+    await expect(
+      replaceFlaggedDrills({
+        drills: [],
+        group,
+        optionCount: 4,
+        provenance: { ...PROVENANCE, generatedAt: new Date().toISOString() },
+      }),
+    ).resolves.toBe(0);
+
+    const daily = await prepareFlaggedContent();
+    expect(daily.drillGroups.flatMap((candidate) => candidate.itemIds)).not.toContain(drill.id);
+
+    await expect(
+      prisma.contentReviewFlag.findUniqueOrThrow({ where: { id: flag.id } }),
+    ).resolves.toMatchObject({ rewriteFailedAt: expect.any(Date), status: "open" });
+
+    const manual = await prepareFlaggedContent({ flagIds: [flag.id] });
+    expect(manual.drillGroups.flatMap((candidate) => candidate.itemIds)).toContain(drill.id);
+  });
+
   it("leaves drills on an article the new text dropped for admins", async () => {
     const { drill, law } = await lawWithDependents();
 
@@ -281,9 +344,13 @@ describe("the flag sweep", () => {
       where: { itemId: drill.id, noticeId: notice.id },
     });
 
-    await expect(listFlaggedContent({ flagIds: [flag.id] })).resolves.toMatchObject({
+    await expect(prepareFlaggedContent({ flagIds: [flag.id] })).resolves.toMatchObject({
       drillGroups: [],
     });
+
+    await expect(
+      prisma.contentReviewFlag.findUniqueOrThrow({ where: { id: flag.id } }),
+    ).resolves.toMatchObject({ rewriteFailedAt: expect.any(Date), status: "open" });
   });
 });
 

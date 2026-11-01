@@ -1209,6 +1209,7 @@ async function drillsCase(): Promise<WriterCase> {
           itemIds: [drill.id],
           language: "pt",
           law: { shortName: "Lei nº 8.112", title: law.title, url: law.url },
+          preparedAt: new Date(),
           sourceId: law.id,
           style: "cebraspe",
         },
