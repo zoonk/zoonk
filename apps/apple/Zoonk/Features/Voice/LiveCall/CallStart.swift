@@ -23,8 +23,8 @@ final class CallStart {
     refusal = nil
 
     task = Task {
-      let result = await voice.startConversation(input) { [weak self] in
-        self?.isWriting = true
+      let result = await voice.startConversation(input) {
+        self.isWriting = true
       }
       isStarting = false
       isWriting = false

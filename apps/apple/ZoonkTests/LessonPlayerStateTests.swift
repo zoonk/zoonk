@@ -994,6 +994,7 @@ final class LessonMathTests: XCTestCase {
     XCTAssertEqual(String(LessonMath.attributed("e^{x+1}").characters), "ex+1")
   }
 
+  @MainActor
   func testRichTextKeepsPricesAndTypesetsFormulas() {
     XCTAssertEqual(
       String(LessonRichText.attributed("It costs $5 and $10.").characters), "It costs $5 and $10.")

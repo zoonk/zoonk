@@ -104,7 +104,8 @@ final class TodayDecodingTests: XCTestCase {
       let text = try decoder.singleValueContainer().decode(String.self)
       let style = Date.ISO8601FormatStyle(includingFractionalSeconds: true)
 
-      guard let date = try? style.parse(text) ?? Date.ISO8601FormatStyle().parse(text) else {
+      guard let date = (try? style.parse(text)) ?? (try? Date.ISO8601FormatStyle().parse(text))
+      else {
         throw DecodingError.dataCorrupted(
           .init(codingPath: decoder.codingPath, debugDescription: "Not an instant: \(text)"))
       }
