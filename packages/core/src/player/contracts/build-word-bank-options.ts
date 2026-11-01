@@ -31,11 +31,17 @@ type WordMetadata = Omit<WordBankOption, "word">;
 const WORD_BANK_DISTRACTOR_LIMIT = 4;
 
 /** Texts with the same key share one Word row and its audio. */
-export function normalizeWordKey(word: string): string {
-  return trimPunctuation(word).toLowerCase();
+export function normalizeWordKey({ language, word }: { language: string; word: string }): string {
+  return trimPunctuation(word).toLocaleLowerCase(language);
 }
 
-function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadata][] {
+function splitMultiWordEntries({
+  language,
+  lessonWord,
+}: {
+  language: string;
+  lessonWord: SerializedWord;
+}): [string, WordMetadata][] {
   const wordTokens = lessonWord.word.split(" ").filter(Boolean);
 
   if (wordTokens.length <= 1) {
@@ -46,7 +52,7 @@ function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadat
   const canSlice = romanizationTokens.length === wordTokens.length;
 
   return wordTokens.map((token, index) => [
-    normalizeWordKey(token),
+    normalizeWordKey({ language, word: token }),
     {
       audioUrl: null,
       romanization: canSlice ? (romanizationTokens[index] ?? null) : null,
@@ -79,15 +85,20 @@ function buildMergedWordMetadataLookup(
   );
 }
 
-function buildWordMetadataLookup(params: {
+type WordOptionSources = {
   distractorWords: DistractorWord[];
+  language: string;
   lessonWords: SerializedWord[];
   sentenceWordMap: Map<string, WordDataInput>;
-}): Map<string, WordMetadata> {
+};
+
+function buildWordMetadataLookup(params: WordOptionSources): Map<string, WordMetadata> {
+  const { language } = params;
+
   const lessonEntries = params.lessonWords.flatMap((lessonWord) => [
-    ...splitMultiWordEntries(lessonWord),
+    ...splitMultiWordEntries({ language, lessonWord }),
     [
-      normalizeWordKey(lessonWord.word),
+      normalizeWordKey({ language, word: lessonWord.word }),
       {
         audioUrl: lessonWord.audioUrl,
         romanization: lessonWord.romanization,
@@ -99,7 +110,7 @@ function buildWordMetadataLookup(params: {
   const distractorEntries = params.distractorWords.map(
     (word) =>
       [
-        normalizeWordKey(word.word),
+        normalizeWordKey({ language, word: word.word }),
         { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
       ] as const,
   );
@@ -107,7 +118,7 @@ function buildWordMetadataLookup(params: {
   const sentenceEntries = [...params.sentenceWordMap.values()].map(
     (word) =>
       [
-        normalizeWordKey(word.word),
+        normalizeWordKey({ language, word: word.word }),
         {
           audioUrl: word.audioUrl,
           romanization: word.romanization,
@@ -123,15 +134,11 @@ function buildWordMetadataLookup(params: {
   ]);
 }
 
-function createWordOptionBuilder(params: {
-  distractorWords: DistractorWord[];
-  lessonWords: SerializedWord[];
-  sentenceWordMap: Map<string, WordDataInput>;
-}): (word: string) => WordBankOption {
+function createWordOptionBuilder(params: WordOptionSources): (word: string) => WordBankOption {
   const metadataLookup = buildWordMetadataLookup(params);
 
   return (word) => {
-    const metadata = metadataLookup.get(normalizeWordKey(word));
+    const metadata = metadataLookup.get(normalizeWordKey({ language: params.language, word }));
 
     return {
       audioUrl: metadata?.audioUrl ?? null,
@@ -148,13 +155,11 @@ function emptyWordOption(word: string): WordBankOption {
 }
 
 /** Uses the same token metadata precedence as reading banks. */
-export function buildSentenceWordOptions(
-  sentence: string,
-  lessonWords: SerializedWord[],
-  distractorWords: DistractorWord[],
-  sentenceWordMap: Map<string, WordDataInput>,
-): WordBankOption[] {
-  const buildOption = createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap });
+export function buildSentenceWordOptions({
+  sentence,
+  ...sources
+}: WordOptionSources & { sentence: string }): WordBankOption[] {
+  const buildOption = createWordOptionBuilder(sources);
   return segmentWords(sentence).map((word) => buildOption(word));
 }
 
@@ -307,25 +312,28 @@ export function buildWordBankOptions(
   const words = shuffle([...config.correctWords, ...distractors]);
 
   const buildOption = config.usesTargetLanguageMetadata
-    ? createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap })
+    ? createWordOptionBuilder({
+        distractorWords,
+        language: languages.targetLanguage,
+        lessonWords,
+        sentenceWordMap,
+      })
     : emptyWordOption;
 
   return words.map((word) => buildOption(word));
 }
 
 /** Only a language lesson loads target words, so other lessons' tiles stay silent. */
-export function buildFillBlankOptions(
-  step: SerializedStep,
-  lessonWords: SerializedWord[],
-  distractorWords: DistractorWord[],
-  sentenceWordMap: Map<string, WordDataInput>,
-): WordBankOption[] {
+export function buildFillBlankOptions({
+  step,
+  ...sources
+}: WordOptionSources & { step: SerializedStep }): WordBankOption[] {
   if (step.kind !== "fillBlank") {
     return [];
   }
 
   const content = parseStepContent("fillBlank", step.content);
-  const buildOption = createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap });
+  const buildOption = createWordOptionBuilder(sources);
 
   return shuffle(getFillBlankWords(content)).map((word) => {
     const option = buildOption(word);

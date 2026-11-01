@@ -93,6 +93,33 @@ describe(schedulePronunciationReviews, () => {
 
     expect(reviews).toHaveLength(2);
   });
+
+  it("reviews the voiced word whose case differs by the target language's rules", async () => {
+    const [{ user }, organization] = await Promise.all([
+      languageGoalFixture(),
+      aiOrganizationFixture(),
+    ]);
+
+    const key = crypto.randomUUID();
+
+    const voiced = await wordFixture({
+      audioUrl: "https://audio.test/iyi.mp3",
+      organizationId: organization.id,
+      targetLanguage: "tr",
+      word: `İyi-${key}`,
+    });
+
+    const ids = await schedulePronunciationReviews({
+      targetLanguage: "tr",
+      timeZone: TIME_ZONE,
+      userId: user.id,
+      userLanguage: "pt",
+      words: [`iyi-${key}`],
+    });
+
+    const reviews = await prisma.pronunciationReview.findMany({ where: { id: { in: ids } } });
+    expect(reviews.map((review) => review.wordId)).toStrictEqual([voiced.id]);
+  });
 });
 
 describe("pronunciation review writes", () => {

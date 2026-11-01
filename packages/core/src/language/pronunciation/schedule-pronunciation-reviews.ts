@@ -6,6 +6,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { normalizeWordKey } from "../../player/contracts/build-word-bank-options";
 import { schedulePronunciationMiss } from "./pronunciation-rules";
 
 type ReviewWord = { audioUrl: string | null; id: string; word: string };
@@ -27,8 +28,17 @@ function findWords({
   });
 }
 
-function pickWord({ rows, text }: { rows: readonly ReviewWord[]; text: string }) {
-  const copies = rows.filter((row) => row.word.toLowerCase() === text.toLowerCase());
+function pickWord({
+  language,
+  rows,
+  text,
+}: {
+  language: string;
+  rows: readonly ReviewWord[];
+  text: string;
+}) {
+  const key = normalizeWordKey({ language, word: text });
+  const copies = rows.filter((row) => normalizeWordKey({ language, word: row.word }) === key);
   return copies.find((row) => row.audioUrl) ?? copies[0] ?? null;
 }
 
@@ -40,7 +50,11 @@ async function findOrCreateWords({
   texts: readonly string[];
 }): Promise<{ orgSlug: string | null; words: ReviewWord[] }> {
   const existing = await findWords({ targetLanguage, texts });
-  const missing = texts.filter((text) => !pickWord({ rows: existing, text }));
+
+  const missing = texts.filter(
+    (text) => !pickWord({ language: targetLanguage, rows: existing, text }),
+  );
+
   const organization = await prisma.organization.findUnique({ where: { slug: AI_ORG_SLUG } });
 
   if (missing.length > 0 && organization) {
@@ -51,7 +65,7 @@ async function findOrCreateWords({
   }
 
   const rows = missing.length > 0 ? await findWords({ targetLanguage, texts }) : existing;
-  const picked = texts.flatMap((text) => pickWord({ rows, text }) ?? []);
+  const picked = texts.flatMap((text) => pickWord({ language: targetLanguage, rows, text }) ?? []);
   const words = [...new Map(picked.map((word) => [word.id, word])).values()];
 
   return { orgSlug: organization?.slug ?? null, words };

@@ -37,18 +37,18 @@ function findBankWords({
 
 type WordRow = Awaited<ReturnType<typeof findBankWords>>[number];
 
-function uniqueByKey(texts: readonly string[]): string[] {
+function uniqueByKey({ language, texts }: { language: string; texts: readonly string[] }) {
   const byKey = texts.reduce((unique, text) => {
-    const key = normalizeWordKey(text);
+    const key = normalizeWordKey({ language, word: text });
     return unique.has(key) ? unique : unique.set(key, text);
   }, new Map<string, string>());
 
   return [...byKey.values()];
 }
 
-function pickRowByKey(rows: WordRow[]): Map<string, WordRow> {
+function pickRowByKey({ language, rows }: { language: string; rows: WordRow[] }) {
   return rows.reduce((picked, row) => {
-    const key = normalizeWordKey(row.word);
+    const key = normalizeWordKey({ language, word: row.word });
     const current = picked.get(key);
     return !current || (!current.audioUrl && row.audioUrl) ? picked.set(key, row) : picked;
   }, new Map<string, WordRow>());
@@ -65,21 +65,25 @@ export async function saveBankWords({
   targetLanguage,
   texts,
 }: BankWordsInput): Promise<Map<string, string>> {
+  const toKey = (word: string) => normalizeWordKey({ language: targetLanguage, word });
   const existing = await findBankWords({ organizationId, targetLanguage, texts });
-  const existingKeys = new Set(existing.map((row) => normalizeWordKey(row.word)));
+  const existingKeys = new Set(existing.map((row) => toKey(row.word)));
 
   await prisma.word.createMany({
-    data: uniqueByKey(texts)
-      .filter((word) => !existingKeys.has(normalizeWordKey(word)))
+    data: uniqueByKey({ language: targetLanguage, texts })
+      .filter((word) => !existingKeys.has(toKey(word)))
       .map((word) => ({ ...toProvenanceData(provenance), organizationId, targetLanguage, word })),
     skipDuplicates: true,
   });
 
-  const rows = pickRowByKey(await findBankWords({ organizationId, targetLanguage, texts }));
+  const rows = pickRowByKey({
+    language: targetLanguage,
+    rows: await findBankWords({ organizationId, targetLanguage, texts }),
+  });
 
   return new Map(
     texts.flatMap((text) => {
-      const row = rows.get(normalizeWordKey(text));
+      const row = rows.get(toKey(text));
       return row ? [[text, row.id]] : [];
     }),
   );

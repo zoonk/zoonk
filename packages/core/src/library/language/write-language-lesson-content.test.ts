@@ -87,12 +87,16 @@ function mockAudio() {
   });
 }
 
-async function claimLanguageLesson(attrs: { language: string; chapterId?: string }) {
+async function claimLanguageLesson(attrs: {
+  language: string;
+  chapterId?: string;
+  targetLanguage?: string;
+}) {
   const lesson = await libraryLessonFixture({
     canDo: "Ask how much the rent is",
     description: "Ask about the rent and the deposit",
     language: attrs.language,
-    targetLanguage: "en",
+    targetLanguage: attrs.targetLanguage ?? "en",
     title: "Asking about the rent",
     ...(attrs.chapterId ? { homeChapterId: attrs.chapterId } : {}),
   });
@@ -483,6 +487,51 @@ describe(writeLanguageLessonContent, () => {
     });
 
     expect(rows.map((row) => row.word).toSorted()).toStrictEqual([taught, voicedSie!.word]);
+  });
+
+  it("reuses a voiced word whose case differs by the target language's rules", async () => {
+    const organization = await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const tile = `iyi-${key}`;
+
+    const voiced = await wordFixture({
+      audioUrl: "https://blob.test/iyi.mp3",
+      organizationId: organization.id,
+      targetLanguage: "tr",
+      word: `İyi-${key}`,
+    });
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({
+      language: "pt",
+      targetLanguage: "tr",
+    });
+
+    const [firstSentence, ...otherSentences] = draft.sentences;
+
+    mockDraft({
+      ...draft,
+      sentences: [{ ...firstSentence!, sentence: `Bu ${tile} ${key}` }, ...otherSentences],
+    });
+
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    const voicedTexts = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
+    expect(voicedTexts).not.toContain(tile);
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+
+    const tiles = steps.flatMap((step) =>
+      "exercise" in step && step.kind === "reading"
+        ? step.exercise.wordBankOptions.filter((option) => option.word === tile)
+        : [],
+    );
+
+    expect(tiles.map((option) => option.audioUrl)).toStrictEqual([voiced.audioUrl]);
   });
 
   it("doesn't teach words the unit's earlier lessons taught", async () => {

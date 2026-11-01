@@ -128,9 +128,8 @@ export async function writeLanguageLessonContent({
     targetLanguage: inputs.targetLanguage,
   });
 
-  const lessonWordKeys = new Set(
-    [...shared.wordIdsByText.keys()].map((text) => normalizeWordKey(text)),
-  );
+  const toKey = (word: string) => normalizeWordKey({ language: inputs.targetLanguage, word });
+  const lessonWordKeys = new Set([...shared.wordIdsByText.keys()].map((text) => toKey(text)));
 
   const bankWordIds = await saveBankWords({
     organizationId: organization.id,
@@ -140,7 +139,7 @@ export async function writeLanguageLessonContent({
       sentences: stored.sentencesById,
       steps,
       targetLanguage: inputs.targetLanguage,
-    }).filter((word) => !lessonWordKeys.has(normalizeWordKey(word))),
+    }).filter((word) => !lessonWordKeys.has(toKey(word))),
   });
 
   await fillMissingAudio({

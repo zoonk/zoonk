@@ -210,6 +210,13 @@ export function serializeExerciseSteps({
     resources.sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
   );
 
+  const wordSources = {
+    distractorWords: serializedDistractorWords,
+    language: languages.targetLanguage,
+    lessonWords: serializedLessonWords,
+    sentenceWordMap,
+  };
+
   return steps.flatMap((raw) => {
     const step = serializeStep(raw);
 
@@ -220,20 +227,10 @@ export function serializeExerciseSteps({
     return [
       {
         ...step,
-        fillBlankOptions: buildFillBlankOptions(
-          step,
-          serializedLessonWords,
-          serializedDistractorWords,
-          sentenceWordMap,
-        ),
+        fillBlankOptions: buildFillBlankOptions({ ...wordSources, step }),
         matchColumnsRightItems: buildMatchColumnsRightItems(step),
         sentenceWordOptions: step.sentence
-          ? buildSentenceWordOptions(
-              step.sentence.sentence,
-              serializedLessonWords,
-              serializedDistractorWords,
-              sentenceWordMap,
-            )
+          ? buildSentenceWordOptions({ ...wordSources, sentence: step.sentence.sentence })
           : [],
         translationOptions: buildTranslationOptions({
           distractorLookup,

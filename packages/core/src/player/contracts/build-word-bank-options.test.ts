@@ -343,12 +343,15 @@ describe(buildSentenceWordOptions, () => {
   beforeEach(keepOrder);
 
   it("hydrates multi-word lesson entries token by token", () => {
-    const options = buildSentenceWordOptions(
-      "おはよう ございます",
-      [makeLessonWord({ romanization: "ohayou gozaimasu", word: "おはよう ございます" })],
-      [],
-      new Map(),
-    );
+    const options = buildSentenceWordOptions({
+      distractorWords: [],
+      language: "ja",
+      lessonWords: [
+        makeLessonWord({ romanization: "ohayou gozaimasu", word: "おはよう ございます" }),
+      ],
+      sentence: "おはよう ございます",
+      sentenceWordMap: new Map(),
+    });
 
     expect(options).toStrictEqual([
       { audioUrl: null, romanization: "ohayou", translation: null, word: "おはよう" },
@@ -357,18 +360,19 @@ describe(buildSentenceWordOptions, () => {
   });
 
   it("shows no romanization or respelling under a word already in Latin letters", () => {
-    const options = buildSentenceWordOptions(
-      "Guten Morgen",
-      [
+    const options = buildSentenceWordOptions({
+      distractorWords: [],
+      language: "de",
+      lessonWords: [
         makeLessonWord({
           pronunciation: "GOO-ten",
           romanization: "guten morgen",
           word: "Guten Morgen",
         }),
       ],
-      [],
-      new Map(),
-    );
+      sentence: "Guten Morgen",
+      sentenceWordMap: new Map(),
+    });
 
     expect(options).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "Guten" },
@@ -377,9 +381,10 @@ describe(buildSentenceWordOptions, () => {
   });
 
   it("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
-    const options = buildSentenceWordOptions(
-      "Привет",
-      [
+    const options = buildSentenceWordOptions({
+      distractorWords: [],
+      language: "ru",
+      lessonWords: [
         makeLessonWord({
           audioUrl: "/audio/privet.mp3",
           romanization: null,
@@ -387,8 +392,8 @@ describe(buildSentenceWordOptions, () => {
           word: "Привет",
         }),
       ],
-      [],
-      new Map([
+      sentence: "Привет",
+      sentenceWordMap: new Map([
         [
           "привет",
           {
@@ -399,7 +404,7 @@ describe(buildSentenceWordOptions, () => {
           },
         ],
       ]),
-    );
+    });
 
     expect(options).toStrictEqual([
       {
@@ -412,11 +417,12 @@ describe(buildSentenceWordOptions, () => {
   });
 
   it("uses sentence word translations when lesson words do not provide one", () => {
-    const options = buildSentenceWordOptions(
-      "Привет",
-      [],
-      [],
-      new Map([
+    const options = buildSentenceWordOptions({
+      distractorWords: [],
+      language: "ru",
+      lessonWords: [],
+      sentence: "Привет",
+      sentenceWordMap: new Map([
         [
           "привет",
           {
@@ -427,7 +433,7 @@ describe(buildSentenceWordOptions, () => {
           },
         ],
       ]),
-    );
+    });
 
     expect(options).toStrictEqual([
       {
@@ -531,10 +537,8 @@ describe(buildFillBlankOptions, () => {
       sentence: null,
     };
 
-    const options = buildFillBlankOptions(
-      step,
-      [],
-      [
+    const options = buildFillBlankOptions({
+      distractorWords: [
         makeDistractorWord({
           audioUrl: "/audio/taberu.mp3",
           romanization: "tabemasu",
@@ -547,8 +551,11 @@ describe(buildFillBlankOptions, () => {
           word: "飲みます",
         }),
       ],
-      new Map(),
-    );
+      language: "ja",
+      lessonWords: [],
+      sentenceWordMap: new Map(),
+      step,
+    });
 
     expect(options).toStrictEqual([
       {
