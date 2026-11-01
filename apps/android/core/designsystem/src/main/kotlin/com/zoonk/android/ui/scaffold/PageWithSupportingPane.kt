@@ -125,6 +125,17 @@ fun pageDirective(
             (fold != null || !atFoldOnly) &&
             narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
     val twoPanes = !alone && panesFit
+    val excluded =
+        when {
+            fold == null -> null
+
+            twoPanes -> fold.bounds
+
+            // Material lays a lone pane in the first room nothing excluded covers, counting from the left even right to left.
+            !panesFit && fold.start >= MINIMUM_PANE -> fold.bounds.throughWindowEnd()
+
+            else -> null
+        }
 
     // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
     // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
@@ -136,12 +147,23 @@ fun pageDirective(
         verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
         defaultPanePreferredWidth = window.defaultPanePreferredWidth,
         defaultPanePreferredHeight = window.defaultPanePreferredHeight,
-        // Material splits at an excluded fold, and lays a lone pane in the space before it: that's the page before the
-        // fold where two panes don't fit but the page holds a phone's column, and a squeeze beside the fold elsewhere.
-        excludedBounds = fold?.takeIf { twoPanes || (!panesFit && it.start >= MINIMUM_PANE) }?.let { listOf(it.bounds) }.orEmpty(),
+        excludedBounds = listOfNotNull(excluded),
         shouldAutoFocusCurrentDestination = false,
     )
 }
+
+/** The fold and the window after it, from the start edge as the layout reads. */
+@Composable
+private fun Rect.throughWindowEnd(): Rect =
+    if (LocalLayoutDirection.current == LayoutDirection.Ltr) {
+        copy(
+            right =
+                LocalWindowInfo.current.containerSize.width
+                    .toFloat(),
+        )
+    } else {
+        copy(left = 0f)
+    }
 
 /**
  * Where a page [width] wide spreads across an unfolded book's fold: the fold, where it crosses the

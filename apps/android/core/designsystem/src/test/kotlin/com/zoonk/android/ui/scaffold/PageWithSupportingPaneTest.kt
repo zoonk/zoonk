@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
@@ -26,6 +28,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.width
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -169,6 +172,30 @@ class PageWithSupportingPaneTest {
         rule.onNodeWithText("Aside beside").assertDoesNotExist()
         assertEquals(80f, bounds(PAGE).left.value, 0.5f)
         assertEquals(353.5f, bounds(PAGE).right.value, 0.5f)
+    }
+
+    /** Right to left, the page before the fold is the right one. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp", fontScale = 2f)
+    fun rightToLeftLargeTextKeepsOneColumnOnTheRightPage() {
+        rule.setContent {
+            ZoonkTheme {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    PageWithSupportingPane(
+                        supportingPane = { Box(Modifier.fillMaxSize().testTag(ASIDE)) { Text("Aside beside") } },
+                        modifier = Modifier.fillMaxSize(),
+                    ) { beside ->
+                        Box(Modifier.fillMaxSize().testTag(PAGE)) { Text(if (beside) "Page" else "Page with its aside below") }
+                    }
+                }
+            }
+        }
+
+        fold(FoldingFeature.State.FLAT)
+
+        rule.onNodeWithText("Page with its aside below").assertIsDisplayed()
+        assertEquals(426f, bounds(PAGE).left.value, 0.5f)
+        assertEquals(852f, bounds(PAGE).right.value, 0.5f)
     }
 
     /** A page a drawer leaves narrow has no room for a page on each side; folding it must not squeeze it beside the fold. */
