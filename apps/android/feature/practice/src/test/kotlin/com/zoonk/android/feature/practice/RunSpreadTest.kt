@@ -266,6 +266,20 @@ class RunSpreadTest {
         assertEquals("the passage starts the next question", top.value, text("Recife grew", substring = true).top.value, 0.5f)
     }
 
+    /** A Galaxy Z Fold's medium window spreads a question too. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp")
+    fun aNarrowerBookSpreadsAQuestionToo() {
+        show()
+        unfold()
+
+        assertTrue("the question ends before the fold", text("Which is a planet?").right <= 353.5.dp)
+        assertTrue(
+            "an option starts after the fold",
+            rule.onNodeWithText("Mars", substring = true).getUnclippedBoundsInRoot().left >= 353.dp,
+        )
+    }
+
     /** Text twice as large leaves a page too narrow for it, so the run keeps one column, on the page before the fold. */
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)

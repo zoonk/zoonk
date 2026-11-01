@@ -87,8 +87,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.GoalMistakePatternPattern
 import com.zoonk.api.models.Mistake
@@ -159,7 +158,7 @@ internal fun Notebook(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val fold = spreadFold(maxWidth, span)
         val wide = fold == null && maxWidth >= INBOX_WIDTH
         val first = if (fold == null && fixed) fixedOnes else toFix
         val heroAway by remember(first) { derivedStateOf { first.scroll.firstVisibleItemIndex > 0 } }

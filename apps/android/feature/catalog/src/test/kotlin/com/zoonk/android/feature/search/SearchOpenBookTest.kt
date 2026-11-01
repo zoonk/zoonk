@@ -134,6 +134,23 @@ class SearchOpenBookTest {
         assertBeforeFold("the bar", field())
     }
 
+    /** A Galaxy Z Fold's medium window spreads search's results too. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp")
+    fun aNarrowerBooksSearchSpreadsToo() {
+        lateinit var opened: AppSearch
+        show { app, navigator -> SearchHost(app, navigator, signedIn = true) { opened = checkNotNull(LocalAppSearch.current) } }
+
+        rule.runOnIdle { opened.open() }
+        unfold()
+        search("explore")
+
+        val match = rule.onNodeWithText("Explore courses").getUnclippedBoundsInRoot()
+        val ask = rule.onNodeWithText("“explore”", substring = true).getUnclippedBoundsInRoot()
+        assertTrue("the learner's match ends before the fold: $match", match.right <= 353.5.dp)
+        assertTrue("a way to ask starts after the fold: $ask", ask.left >= 353.dp)
+    }
+
     /** As on the open iPhone Duo: the learner's own matches face the ways to ask. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")

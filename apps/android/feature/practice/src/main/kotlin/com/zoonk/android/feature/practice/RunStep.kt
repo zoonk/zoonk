@@ -85,8 +85,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -160,7 +159,7 @@ internal fun RunFrame(
     }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val fold = spreadFold(maxWidth, span)
 
         LaunchedEffect(Unit) { focus.requestFocus() }
 

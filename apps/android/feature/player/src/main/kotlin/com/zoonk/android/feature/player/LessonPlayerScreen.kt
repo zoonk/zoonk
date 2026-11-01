@@ -129,8 +129,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlin.math.abs
 
@@ -563,9 +562,7 @@ private fun Content(
                             )
                         },
                 ) {
-                    // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
-                    val pagesFit = supportingPaneBeside(maxWidth)
-                    val fold = pageFold(maxWidth, span)?.takeIf { pagesFit }
+                    val fold = spreadFold(maxWidth, span)
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
 

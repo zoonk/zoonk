@@ -138,6 +138,20 @@ fun pageDirective(
 }
 
 /**
+ * Where a page [width] wide spreads across an unfolded book's fold: the fold, where it crosses the
+ * page and both pages have room for a phone's column, or null.
+ */
+@Composable
+fun spreadFold(
+    width: Dp,
+    span: PageSpan?,
+): PageFold? {
+    // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
+    val pagesFit = supportingPaneBeside(width)
+    return pageFold(width, span)?.takeIf { pagesFit }
+}
+
+/**
  * Where an unfolded book foldable's fold crosses a page [width] wide, flat or folded, or null where
  * none does. The page spans [span] of the window ([onPageSpan]), or the window's end before it's
  * placed, where the shell lays pages beside its navigation.

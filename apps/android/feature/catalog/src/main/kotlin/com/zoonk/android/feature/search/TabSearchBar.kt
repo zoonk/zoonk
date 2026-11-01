@@ -80,8 +80,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
@@ -267,7 +266,7 @@ private fun SearchSpread(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val fold = spreadFold(maxWidth, span)
         val (before, after) = spreadGroups(groups, searching)
 
         if (fold != null && before.isNotEmpty() && after.isNotEmpty()) {
