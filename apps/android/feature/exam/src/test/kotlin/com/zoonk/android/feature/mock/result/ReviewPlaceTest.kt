@@ -76,23 +76,44 @@ class ReviewPlaceTest {
         rule.onNodeWithText(FIFTH).assertIsNotDisplayed()
     }
 
+    /** Unfolding recreates the screen without its fold at first, so the sheet shows for a moment before the page does. */
     @Test
-    fun theSheetComesBackAtTheSameQuestion() {
+    fun theSheetsQuestionIsWhereThePageOpensAsTheBookUnfolds() {
         show()
         rule.onNodeWithText("See the 12 questions").performClick()
         rule.waitForIdle()
 
         readFromTheTop(SIXTH)
         recreate()
-
         rule.onNode(isDialog()).assertExists()
+        rule.onNodeWithText(SIXTH).assertIsDisplayed()
+        open()
+
+        rule.onNode(isDialog()).assertDoesNotExist()
         rule.onNodeWithText(SIXTH).assertIsDisplayed()
         rule.onNodeWithText(FIFTH).assertIsNotDisplayed()
     }
 
-    private fun show() {
+    /** A short review shows whole on the page after the fold, so it was never closed: folding again opens the sheet. */
+    @Test
+    fun aShortReviewStaysOpenThroughAnOpenBook() {
+        show(questions = 1)
+        rule.onNodeWithText("See the question").performClick()
+        rule.waitForIdle()
+
+        recreate()
+        open()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        recreate()
+
+        rule.onNode(isDialog()).assertExists()
+    }
+
+    private fun show(questions: Int = 12) {
         val api =
-            FakeMockRunApi(finishedMock(extra = """"purpose":"placement","review":[${(1..12).joinToString(",") { statement(it) }}]"""))
+            FakeMockRunApi(
+                finishedMock(extra = """"purpose":"placement","review":[${(1..questions).joinToString(",") { statement(it) }}]"""),
+            )
         restoration.setContent {
             val context = LocalContext.current
             val app = remember { AppContainer.preview(context) }

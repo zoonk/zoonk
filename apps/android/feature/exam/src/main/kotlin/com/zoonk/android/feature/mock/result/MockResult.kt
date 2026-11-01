@@ -221,7 +221,7 @@ internal fun MockResult(
                         MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
                     }
                     if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
-                        TextButton(onClick = { review.open = true }, modifier = Modifier.fillMaxWidth()) {
+                        TextButton(onClick = review::openSheet, modifier = Modifier.fillMaxWidth()) {
                             val questions = view.review.size
                             Text(
                                 if (questions == 1) {

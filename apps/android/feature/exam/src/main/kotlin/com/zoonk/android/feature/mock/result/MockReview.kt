@@ -74,52 +74,74 @@ import kotlinx.coroutines.launch
 
 /**
  * Where the learner is in the questions to review. A phone reads them in a sheet and an open book on
- * the page after the fold, and folding recreates the screen, so the place is saved as the question at
- * the top of what they read: the sheet opens there, or the page scrolls there.
+ * the page after the fold, and folding recreates the screen, so the screen saves whether the learner
+ * is in them and the question at the top of what they read. Each list that shows them brings that
+ * question back to its top once, since a recreated screen can lay out without its fold first.
  */
 @Stable
 internal class ReviewPlace(
-    restored: Int?,
+    open: Boolean,
+    private var anchor: Int?,
 ) {
     /** Whether a phone shows the sheet. */
-    var open by mutableStateOf(restored != null)
-    private var pending = restored
+    var open by mutableStateOf(open)
+        private set
     private var section: LayoutCoordinates? = null
     private val entries = HashMap<Int, LayoutCoordinates>()
+
+    fun openSheet() {
+        open = true
+        anchor = null
+    }
+
+    fun closeSheet() {
+        open = false
+        anchor = null
+    }
+
+    /** The question a list shown now brings to its top. */
+    fun restoring(): Int? = anchor
 
     fun sectionPlaced(coordinates: LayoutCoordinates) {
         section = coordinates
     }
 
-    /** Whether the question at [index] is the one to bring back to the top, once. */
     fun entryPlaced(
         index: Int,
         coordinates: LayoutCoordinates,
-    ): Boolean {
+    ) {
         entries[index] = coordinates
-        return (index == pending).also { if (it) pending = null }
     }
 
-    private fun reading(): Int? {
+    private fun saved(): IntArray {
         val top = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
         val inline = section?.takeIf { it.isAttached }
-        return when {
-            // On the page, the learner reads the questions once the section's title has scrolled away.
-            inline != null -> top.takeIf { inline.boundsInWindow().top > inline.positionInWindow().y }
+        val (reading, at) =
+            when {
+                inline == null -> open to (if (open) top ?: anchor ?: 0 else null)
 
-            open -> top ?: 0
+                top == null -> false to null
 
-            else -> null
-        }
+                // On the page, the learner reads the questions once their title has scrolled away.
+                inline.boundsInWindow().top > inline.positionInWindow().y -> true to top
+
+                // Shown whole, they're as open as they were.
+                else -> open to anchor
+            }
+        return intArrayOf(if (reading) 1 else 0, at ?: -1)
     }
 
     companion object {
-        val Saver = Saver<ReviewPlace, Int>(save = { it.reading() ?: -1 }, restore = { ReviewPlace(it.takeIf { at -> at >= 0 }) })
+        val Saver =
+            Saver<ReviewPlace, IntArray>(
+                save = { it.saved() },
+                restore = { ReviewPlace(open = it[0] == 1, anchor = it[1].takeIf { at -> at >= 0 }) },
+            )
     }
 }
 
 @Composable
-internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(null) }
+internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(open = false, anchor = null) }
 
 @Composable
 internal fun ReviewSection(
@@ -141,7 +163,7 @@ internal fun ReviewSheet(
     app: AppContainer,
     place: ReviewPlace,
 ) {
-    ModalBottomSheet(onDismissRequest = { place.open = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = place::closeSheet, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         // The title stays while a long review scrolls under it.
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.mock_result_review), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
@@ -159,6 +181,7 @@ private fun ReviewList(
     val words = view.trueFalseWords
     val scope = rememberCoroutineScope()
     val requesters = remember(view.review.size) { List(view.review.size) { BringIntoViewRequester() } }
+    val restore = remember { Restore(place.restoring()) }
 
     Column {
         view.review.forEachIndexed { index, entry ->
@@ -175,7 +198,9 @@ private fun ReviewList(
                 words,
                 app,
                 Modifier.bringIntoViewRequester(requesters[index]).onPlaced { coordinates ->
-                    if (place.entryPlaced(index, coordinates)) {
+                    place.entryPlaced(index, coordinates)
+                    if (restore.at == index && !restore.done) {
+                        restore.done = true
                         // Asked to show a rect as tall as the window, whatever scrolls the list brings the question's top to its own.
                         val window = coordinates.findRootCoordinates().size
                         scope.launch {
@@ -188,6 +213,12 @@ private fun ReviewList(
             )
         }
     }
+}
+
+private class Restore(
+    val at: Int?,
+) {
+    var done = false
 }
 
 @Composable
