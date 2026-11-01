@@ -122,9 +122,9 @@ class LessonSpreadTest {
     }
 
     private companion object {
-        /** A Pixel 10 Pro Fold's inner display, whose fold runs down its middle. */
-        const val BOOK = "w852dp-h883dp"
-        val FOLD: Dp = 426.dp
+        /** A Galaxy Z Fold's inner display, whose fold runs down its middle: without one it's one column, as a narrower book. */
+        const val BOOK = "w707dp-h823dp"
+        val FOLD: Dp = 353.5.dp
         const val PLACED = "Position 1: gato."
     }
 }

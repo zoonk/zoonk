@@ -235,6 +235,42 @@ class LessonSpreadScreenshots {
     fun wideWindowWithoutAFold() = capture("wide-check", checkStep("quiz"), open = false)
 
     @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi", fontScale = 2f)
+    fun wideWindowAtTwiceTheFontSize() = capture("wide-check-font200", checkStep("quiz"), open = false)
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletCheck() = capture("tablet-check", checkStep("quiz"), open = false)
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletChartActivity() = capture("tablet-formula", ActivityFixtures.step("formulaModel"), open = false)
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletVocabulary() = capture("tablet-vocabulary", vocabulary("word", SOUND), open = false)
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletTextOnlyWithTheBuddy() = capture("tablet-text-only-buddy", explanationStep("idea"), open = false, withTutor = true)
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletRightToLeft() = capture("tablet-check-rtl", checkStep("quiz"), open = false, layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = TABLET, fontScale = 2f)
+    fun tabletAtTwiceTheFontSize() = capture("tablet-check-font200", checkStep("quiz"), open = false)
+
+    @Test
+    @Config(qualifiers = TABLET_PORTRAIT)
+    fun tabletPortraitCheck() = capture("tablet-portrait-check", checkStep("quiz"), open = false)
+
+    @Test
+    @Config(qualifiers = DESKTOP)
+    fun desktopCheck() = capture("desktop-check", checkStep("quiz"), open = false)
+
+    @Test
     @Config(qualifiers = PHONE)
     fun phoneCheck() = capture("phone-check", checkStep("quiz"), open = false)
 
@@ -263,5 +299,12 @@ class LessonSpreadScreenshots {
         const val SOUND = "https://cdn.zoonk.test/sound.mp3"
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val PHONE = "w411dp-h891dp-xxhdpi"
+
+        /** A Pixel Tablet, which has no fold. */
+        const val TABLET = "w1280dp-h800dp-land-xhdpi"
+        const val TABLET_PORTRAIT = "w800dp-h1280dp-port-xhdpi"
+
+        /** A desktop window, wider than two of the lesson's columns. */
+        const val DESKTOP = "w1920dp-h1080dp-land-mdpi"
     }
 }

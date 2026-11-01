@@ -151,8 +151,8 @@ class RunSpreadTest {
         const val FIRST = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
         const val SECOND = "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
 
-        /** A Pixel 10 Pro Fold's inner display, whose fold runs down its middle. */
-        const val BOOK = "w852dp-h883dp"
-        val FOLD: Dp = 426.dp
+        /** A Galaxy Z Fold's inner display, whose fold runs down its middle: without one it's one column, as a narrower book. */
+        const val BOOK = "w707dp-h823dp"
+        val FOLD: Dp = 353.5.dp
     }
 }

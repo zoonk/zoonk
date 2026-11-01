@@ -39,7 +39,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -131,10 +130,12 @@ import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlin.math.abs
 
@@ -166,14 +167,16 @@ internal fun LessonColumn(
 /**
  * A [LessonColumn] as tall as the view at least: the part with the [FillsView] id stretches over
  * the height the other parts leave, never shorter than its own content. An empty part takes no gap,
- * so a page whose screen draws nothing on it starts level with the page beside it.
+ * so a page whose screen draws nothing on it starts level with the page beside it. A page of a
+ * spread [align]s its column toward the split, so on a very wide window the pages still meet there.
  */
 @Composable
 private fun StepColumn(
     modifier: Modifier,
+    align: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable () -> Unit,
 ) {
-    Layout(content, modifier.wrapContentWidth().lessonColumnWidth()) { measurables, constraints ->
+    Layout(content, modifier.wrapContentWidth(align).lessonColumnWidth()) { measurables, constraints ->
         val spacing = COLUMN_SPACING.roundToPx()
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val filling = measurables.indexOfFirst { it.layoutId == FillsView }
@@ -276,16 +279,15 @@ fun LessonPlayer(
     var asking by rememberSaveable { mutableStateOf(false) }
     // Ask opened beside the screen on an open book sits on the page after the fold, so it hides while the device is closed.
     var askedOnSpread by rememberSaveable { mutableStateOf(false) }
-    var spread by remember { mutableStateOf(false) }
     // A suggestion the help beside a teaching screen put in the buddy's composer, until the buddy takes it.
     var offerId by rememberSaveable { mutableStateOf<String?>(null) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val stepId = screen?.step?.id
     val closeOffer = { if (stepId != null) closedOffers = closedOffers + stepId }
-    val ask = {
+    val ask = { onSpread: Boolean ->
         asking = true
-        askedOnSpread = spread
+        askedOnSpread = onSpread
         closeOffer()
     }
     val touches = remember { mutableIntStateOf(0) }
@@ -294,15 +296,17 @@ fun LessonPlayer(
             null
         } else {
             { reason ->
-                AskBuddyOffer(reason, tutor.identity, onAsk = ask, onDismiss = closeOffer)
+                val spread = spreadShows()
+                AskBuddyOffer(reason, tutor.identity, onAsk = { ask(spread) }, onDismiss = closeOffer)
             }
         }
     val help: (@Composable () -> Unit)? =
         tutor?.takeIf { it.canAsk }?.let { buddy ->
             {
+                val spread = spreadShows()
                 ScreenHelp(buddy) { suggestion ->
                     offerId = suggestion?.id
-                    ask()
+                    ask(spread)
                 }
             }
         }
@@ -311,105 +315,108 @@ fun LessonPlayer(
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
 
-    TaskScaffold(
-        onClose = exits::close,
-        modifier =
-            Modifier
-                .focusRequester(focus)
-                .focusable()
-                .pointerInput(Unit) { countTouches(touches) }
-                .onPreviewKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown) touches.intValue++
-                    false
-                }.onKeyEvent { event ->
-                    event.type == KeyEventType.KeyDown && state != null && screen != null &&
-                        handleKey(event.key, state, screen, viewModel, actions, leave) {
-                            if (ownEnd == null) {
-                                completionMainAction(lesson, state, ending, viewModel, exits)
-                            } else {
-                                ownEnd.done.takeIf { state.completion?.status == CompletionStatus.Saved }
+    SpreadScreen {
+        TaskScaffold(
+            onClose = exits::close,
+            modifier =
+                Modifier
+                    .focusRequester(focus)
+                    .focusable()
+                    .pointerInput(Unit) { countTouches(touches) }
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown) touches.intValue++
+                        false
+                    }.onKeyEvent { event ->
+                        event.type == KeyEventType.KeyDown && state != null && screen != null &&
+                            handleKey(event.key, state, screen, viewModel, actions, leave) {
+                                if (ownEnd == null) {
+                                    completionMainAction(lesson, state, ending, viewModel, exits)
+                                } else {
+                                    ownEnd.done.takeIf { state.completion?.status == CompletionStatus.Saved }
+                                }
                             }
-                        }
-                },
-        title = { LessonTitle(lesson.title) },
-        actions = { ScreenMenu(lesson, state, screen, viewModel) },
-        exitConfirmation =
-            if (unsent) {
-                TaskExitConfirmation(
-                    title = stringResource(R.string.player_leave_title),
-                    description = stringResource(R.string.player_leave_description),
-                    confirm = stringResource(R.string.task_leave),
-                    cancel = stringResource(R.string.player_keep_writing),
-                )
-            } else {
-                null
-            },
-        bottomBar =
-            when {
-                state == null || screen == null -> {
+                    },
+            title = { LessonTitle(lesson.title) },
+            actions = { ScreenMenu(lesson, state, screen, viewModel) },
+            exitConfirmation =
+                if (unsent) {
+                    TaskExitConfirmation(
+                        title = stringResource(R.string.player_leave_title),
+                        description = stringResource(R.string.player_leave_description),
+                        confirm = stringResource(R.string.task_leave),
+                        cancel = stringResource(R.string.player_keep_writing),
+                    )
+                } else {
                     null
-                }
+                },
+            bottomBar =
+                when {
+                    state == null || screen == null -> {
+                        null
+                    }
 
-                state.phase == LessonPhase.Completed && ownEnd != null -> {
-                    { TaskActionBar { DoneAction(ownEnd, saving = state.completion?.status == CompletionStatus.Saving) } }
-                }
+                    state.phase == LessonPhase.Completed && ownEnd != null -> {
+                        { TaskActionBar { DoneAction(ownEnd, saving = state.completion?.status == CompletionStatus.Saving) } }
+                    }
 
-                state.phase == LessonPhase.Completed -> {
-                    { TaskActionBar { CompletionActions(lesson, state, ending, viewModel, exits) } }
-                }
+                    state.phase == LessonPhase.Completed -> {
+                        { TaskActionBar { CompletionActions(lesson, state, ending, viewModel, exits) } }
+                    }
 
-                screen.primary != null -> {
-                    {
-                        TaskActionBar {
-                            ActionBar(
-                                screen,
-                                actions,
-                                language.prompt,
-                                primaryFocus,
-                                spread,
-                                onBack = { viewModel.dispatch(LessonAction.GoBack) },
-                            ) {
-                                // A screen that already offers help keeps the ask quiet.
-                                tutor?.askButton?.invoke(
-                                    state.tutorScope(screen),
-                                    state.showsMiss(screen) && screen.struggleOffer == null,
-                                    asking && (spread || !askedOnSpread),
-                                    tutor.suggestions.firstOrNull { it.id == offerId },
-                                    { offerId = null },
-                                ) { open -> if (open) ask() else asking = false }
+                    screen.primary != null -> {
+                        {
+                            val spread = spreadShows()
+                            TaskActionBar {
+                                ActionBar(
+                                    screen,
+                                    actions,
+                                    language.prompt,
+                                    primaryFocus,
+                                    spread,
+                                    onBack = { viewModel.dispatch(LessonAction.GoBack) },
+                                ) {
+                                    // A screen that already offers help keeps the ask quiet.
+                                    tutor?.askButton?.invoke(
+                                        state.tutorScope(screen),
+                                        state.showsMiss(screen) && screen.struggleOffer == null,
+                                        asking && (spread || !askedOnSpread),
+                                        tutor.suggestions.firstOrNull { it.id == offerId },
+                                        { offerId = null },
+                                    ) { open -> if (open) ask(spread) else asking = false }
+                                }
                             }
                         }
                     }
-                }
 
-                else -> {
-                    null
-                }
-            },
-    ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            if (state == null || screen == null) {
-                Starting()
-            } else {
-                Segments(screen.segments, state)
-                CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
-                    Content(
-                        state,
-                        screen,
-                        ending,
-                        viewModel,
-                        actions,
-                        exits,
-                        navigator,
-                        ownEnd,
-                        language,
-                        buddy,
-                        ceremony,
-                        offer,
-                        help,
-                        touches,
-                        canvasWork,
-                    ) { spread = it }
+                    else -> {
+                        null
+                    }
+                },
+        ) { padding ->
+            Column(Modifier.fillMaxSize().padding(padding)) {
+                if (state == null || screen == null) {
+                    Starting()
+                } else {
+                    Segments(screen.segments, state)
+                    CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
+                        Content(
+                            state,
+                            screen,
+                            ending,
+                            viewModel,
+                            actions,
+                            exits,
+                            navigator,
+                            ownEnd,
+                            language,
+                            buddy,
+                            ceremony,
+                            offer,
+                            help,
+                            touches,
+                            canvasWork,
+                        )
+                    }
                 }
             }
         }
@@ -536,7 +543,6 @@ private fun Content(
     help: (@Composable () -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
-    onSpread: (Boolean) -> Unit,
 ) {
     val run = state.run
 
@@ -611,7 +617,6 @@ private fun Content(
                         },
                 ) {
                     val fold = spreadFold(maxWidth, span)
-                    SideEffect { onSpread(fold != null) }
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
 
@@ -622,6 +627,7 @@ private fun Content(
                             .onGloballyPositioned { reveal.viewport = it }
                             .verticalScroll(if (fold == null) scroll else turnScroll)
                             .padding(vertical = 16.dp),
+                        align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
                         Notice(state, screen, viewModel, part)
                         work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
@@ -645,6 +651,7 @@ private fun Content(
                                     .semantics { isTraversalGroup = true }
                                     .verticalScroll(scroll)
                                     .padding(vertical = 16.dp),
+                                align = Alignment.End,
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
                                 work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }

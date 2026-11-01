@@ -82,6 +82,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
@@ -158,55 +159,62 @@ internal fun RunFrame(
         }
     }
 
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = spreadFold(maxWidth, span)
+    SpreadScreen {
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
 
-        LaunchedEffect(Unit) { focus.requestFocus() }
+            LaunchedEffect(Unit) { focus.requestFocus() }
 
-        TaskScaffold(
-            onClose = onClose,
-            modifier =
-                Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
+            TaskScaffold(
+                onClose = onClose,
+                modifier =
+                    Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
+                        when {
+                            event.type != KeyEventType.KeyDown -> false
+                            event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
+                            event.key == Key.Escape -> true.also { onClose() }
+                            else -> false
+                        }
+                    },
+                title = { LessonTitle(title) },
+                actions = { report?.let { ReportProblemMenu(app, it) } },
+                closeLabel = closeLabel,
+                bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
+                // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
+                aside =
                     when {
-                        event.type != KeyEventType.KeyDown -> false
-                        event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
-                        event.key == Key.Escape -> true.also { onClose() }
-                        else -> false
-                    }
-                },
-            title = { LessonTitle(title) },
-            actions = { report?.let { ReportProblemMenu(app, it) } },
-            closeLabel = closeLabel,
-            bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
-            // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
-            aside =
-                when {
-                    fold != null -> null
-                    set != null -> TaskAside(half = isLongText(set.text)) { ItemSetText(set, inAside = true) }
-                    else -> aside?.let { TaskAside(title = asideTitle, content = it) }
-                },
-        ) { padding ->
-            val inlineSet = set == null || fold != null || !taskAsideBeside()
-            val shown = asideShown(hasAside, fold)
+                        fold != null -> null
+                        set != null -> TaskAside(half = isLongText(set.text)) { ItemSetText(set, inAside = true) }
+                        else -> aside?.let { TaskAside(title = asideTitle, content = it) }
+                    },
+            ) { padding ->
+                val inlineSet = set == null || fold != null || !taskAsideBeside()
+                val shown = asideShown(hasAside, fold)
 
-            Column(Modifier.padding(padding).fillMaxSize()) {
-                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
-                Box(Modifier.weight(1f).fillMaxWidth()) {
-                    // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
-                    ScrollingPage(
-                        Modifier
-                            .fillMaxSize()
-                            .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }),
-                        if (fold == null) scroll else turnScroll,
-                    ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                Column(Modifier.padding(padding).fillMaxSize()) {
+                    Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
+                    Box(Modifier.weight(1f).fillMaxWidth()) {
+                        // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
+                        val turnPage =
+                            if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
+                        ScrollingPage(
+                            Modifier.fillMaxSize().then(turnPage),
+                            if (fold == null) scroll else turnScroll,
+                            if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                        ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
 
-                    if (fold != null) {
-                        ScrollingPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, scroll) {
-                            content(StepPart.Screen, inlineSet, shown)
-                            if (shown) {
-                                HorizontalDivider()
-                                asideTitle?.let { SectionLabel(it) }
-                                aside?.invoke(this)
+                        if (fold != null) {
+                            ScrollingPage(
+                                Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
+                                scroll,
+                                Alignment.End,
+                            ) {
+                                content(StepPart.Screen, inlineSet, shown)
+                                if (shown) {
+                                    HorizontalDivider()
+                                    asideTitle?.let { SectionLabel(it) }
+                                    aside?.invoke(this)
+                                }
                             }
                         }
                     }
@@ -223,13 +231,15 @@ private fun asideShown(
     fold: PageFold?,
 ) = hasAside && (fold != null || taskAsideBeside())
 
+/** A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still meet there. */
 @Composable
 private fun ScrollingPage(
     modifier: Modifier,
     scroll: ScrollState,
+    align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = align) {
         Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
     }
 }
