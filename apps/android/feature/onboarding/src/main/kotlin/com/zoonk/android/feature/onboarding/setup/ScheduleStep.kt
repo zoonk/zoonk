@@ -328,7 +328,7 @@ private fun PlanFactChips(goal: Goal) {
     val facts = planFacts(goal).filter { it.chip }
     if (facts.isEmpty()) return
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        facts.forEach { LabelChip(text = it.count ?: it.value) }
+        facts.flatMap { listOfNotNull(it.count ?: it.value, it.note) }.forEach { LabelChip(text = it) }
     }
 }
 
