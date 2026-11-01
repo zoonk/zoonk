@@ -165,18 +165,19 @@ private struct MockChooser: View {
     PaneSplit {
       List {
         intro
+        choices(notesUnder: false)
         plusSection
-        lastMockSection
       }
     } secondary: {
       List {
-        choices
+        pickedSections
+        lastMockSection
       }
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       List {
         intro
-        choices
+        choices(notesUnder: true)
         plusSection
         lastMockSection
       }
@@ -215,25 +216,18 @@ private struct MockChooser: View {
         .foregroundStyle(.primary)
       }
     }
-
-    statusSection
   }
 
+  /// The picked mock's size note and what it leaves out go under the choices, unless the picked
+  /// mock shows them beside the choices.
   @ViewBuilder
-  private var choices: some View {
+  private func choices(notesUnder: Bool) -> some View {
     if placement, let lengths = view.placement {
       Section {
         ForEach(lengths.options) { option in
           choiceRow(
             id: option.length.rawValue, isPicked: option.length == pickedLength,
-            title: option.length == lengths.recommended
-              ? String(
-                localized:
-                  "About \(MockLabels.duration(minutes: option.estimatedMinutes)) (recommended)",
-                table: "Mock", comment: "The recommended placement length")
-              : String(
-                localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes))",
-                table: "Mock", comment: "A placement length"),
+            title: lengthName(option, recommended: lengths.recommended),
             detail: precision(option),
             trailing: String(
               localized: "\(option.questions) q", table: "Mock",
@@ -261,16 +255,8 @@ private struct MockChooser: View {
       } header: {
         Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
       } footer: {
-        if let pickedOption {
-          VStack(alignment: .leading, spacing: 4) {
-            MockSizeNote(
-              document: view.examDocument, minutes: pickedOption.minutes,
-              questions: pickedOption.questions, source: view.sizeSource)
-            ForEach(
-              pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
-              id: \.self
-            ) { Text($0) }
-          }
+        if notesUnder {
+          pickedNotes
         }
       }
 
@@ -312,22 +298,28 @@ private struct MockChooser: View {
     }
   }
 
+  /// What the last tap on Start led to sits right above it: at the top of the list, it was out of
+  /// view once the learner scrolled down to a subject.
   private var startBar: some View {
-    Group {
-      if isOpen {
-        Button {
-          Task { await start() }
-        } label: {
-          startLabel.frame(maxWidth: .infinity)
+    VStack(alignment: .leading, spacing: 10) {
+      startStatus
+
+      Group {
+        if isOpen {
+          Button {
+            Task { await start() }
+          } label: {
+            startLabel.frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.mainAction)
+          .disabled(busy || (!placement && pickedOption == nil))
+          .keyboardShortcut(.defaultAction)
+        } else {
+          SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
         }
-        .buttonStyle(.mainAction)
-        .disabled(busy || (!placement && pickedOption == nil))
-        .keyboardShortcut(.defaultAction)
-      } else {
-        SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
       }
+      .controlSize(.large)
     }
-    .controlSize(.large)
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
   }
@@ -363,67 +355,173 @@ private struct MockChooser: View {
   }
 
   @ViewBuilder
-  private var statusSection: some View {
+  private var startStatus: some View {
     switch status {
     case .choosing, .plusRequired:
       EmptyView()
     case .writing:
-      Section {
-        Label {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
-              .font(.headline)
-            Text(
-              "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-              tableName: "Mock", comment: "While a mock's questions are written"
-            )
-            .foregroundStyle(.secondary)
-          }
-        } icon: {
-          ProgressView()
-        }
-      }
-    case .short(_, let examQuestions, let limit, let minutes, let questions):
-      Section {
-        VStack(alignment: .leading, spacing: 4) {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
+            .font(.headline)
           Text(
-            "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-            tableName: "Mock", comment: "A mock that can ask only part of its questions")
-          switch limit {
-          case .day:
-            Text(
-              "More can be written for your mocks tomorrow.", tableName: "Mock",
-              comment: "Daily question limit")
-          case .month:
-            Text(
-              "More can be written for your mocks next month.", tableName: "Mock",
-              comment: "Monthly question limit")
-          case .total, nil:
-            Text(
-              "The question bank doesn't have more new ones for it yet.", tableName: "Mock",
-              comment: "No more questions")
-          }
+            "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
+            tableName: "Mock", comment: "While a mock's questions are written"
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
         }
-        .foregroundStyle(.secondary)
+      } icon: {
+        ProgressView()
       }
-    case .notEnoughQuestions:
-      Section {
+    // Only for the mock it was about: another pick starts another mock.
+    case .short(let optionId, let examQuestions, let limit, let minutes, let questions)
+    where optionId == pickedOption?.id:
+      VStack(alignment: .leading, spacing: 4) {
         Text(
-          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-          tableName: "Mock", comment: "Too few questions for a mock"
-        )
-        .foregroundStyle(.destructive)
+          "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
+          tableName: "Mock", comment: "A mock that can ask only part of its questions")
+        switch limit {
+        case .day:
+          Text(
+            "More can be written for your mocks tomorrow.", tableName: "Mock",
+            comment: "Daily question limit")
+        case .month:
+          Text(
+            "More can be written for your mocks next month.", tableName: "Mock",
+            comment: "Monthly question limit")
+        case .total, nil:
+          Text(
+            "The question bank doesn't have more new ones for it yet.", tableName: "Mock",
+            comment: "No more questions")
+        }
       }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    case .short:
+      EmptyView()
+    case .notEnoughQuestions:
+      Text(
+        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+        tableName: "Mock", comment: "Too few questions for a mock"
+      )
+      .font(.subheadline)
+      .foregroundStyle(.destructive)
     case .failed:
-      Section {
-        Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
-          .foregroundStyle(.destructive)
-      }
+      Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
     case .refused(let limit):
-      Section {
-        HelpLimitNotice(limit: limit)
+      HelpLimitNotice(limit: limit)
+    }
+  }
+
+  /// Main's picked mock: what Start starts.
+  @ViewBuilder
+  private var pickedSections: some View {
+    if placement, let lengths = view.placement,
+      let option = lengths.options.first(where: { $0.length == pickedLength })
+    {
+      pickedSize(
+        title: lengthName(option, recommended: lengths.recommended), questions: option.questions,
+        minutes: option.minutes, estimatedMinutes: option.estimatedMinutes)
+      pickedAsks(
+        option.areas,
+        title: Text("Subjects", tableName: "Mock", comment: "The subjects a picked mock asks"),
+        written: [])
+    } else if !placement, let option = pickedOption {
+      pickedSize(
+        title: MockLabels.optionName(option, severalDays: severalDays),
+        questions: option.questions, minutes: option.minutes,
+        estimatedMinutes: option.estimatedMinutes, notes: true)
+      pickedAsks(
+        option.covers ?? option.areas,
+        title: option.covers == nil
+          ? Text("Subjects", tableName: "Mock", comment: "The subjects a picked mock asks")
+          : Text("Parts", tableName: "Mock", comment: "The parts of the exam a picked mock asks"),
+        written: option.written)
+    }
+  }
+
+  private func pickedSize(
+    title: String, questions: Int, minutes: Int, estimatedMinutes: Int, notes: Bool = false
+  ) -> some View {
+    Section {
+      LabeledContent {
+        Text(questions, format: .number)
+      } label: {
+        Text("Questions", tableName: "Mock", comment: "How many questions a picked mock asks")
+      }
+
+      LabeledContent {
+        Text(MockLabels.duration(minutes: minutes))
+      } label: {
+        Text("Time limit", tableName: "Mock", comment: "The time a picked mock allows")
+      }
+
+      LabeledContent {
+        Text(
+          "About \(MockLabels.duration(minutes: estimatedMinutes))", tableName: "Mock",
+          comment: "How long a picked mock usually takes")
+      } label: {
+        Text("Usually takes", tableName: "Mock", comment: "How long a picked mock usually takes")
+      }
+    } header: {
+      Text(title)
+    } footer: {
+      if notes {
+        pickedNotes
       }
     }
+    .monospacedDigit()
+  }
+
+  @ViewBuilder
+  private func pickedAsks(_ names: [String], title: Text, written: [String]) -> some View {
+    if !names.isEmpty || !written.isEmpty {
+      Section {
+        ForEach(names, id: \.self) { Text($0) }
+
+        ForEach(written, id: \.self) { name in
+          VStack(alignment: .leading, spacing: 2) {
+            Text(name)
+            Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+        }
+      } header: {
+        title
+      }
+    }
+  }
+
+  /// The picked mock's size against the exam's, and what it leaves out.
+  @ViewBuilder
+  private var pickedNotes: some View {
+    if let pickedOption {
+      VStack(alignment: .leading, spacing: 4) {
+        MockSizeNote(
+          document: view.examDocument, minutes: pickedOption.minutes,
+          questions: pickedOption.questions, source: view.sizeSource)
+        ForEach(
+          pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
+          id: \.self
+        ) { Text($0) }
+      }
+    }
+  }
+
+  private func lengthName(
+    _ option: PlacementMockOption, recommended: PlacementMockOption.Length
+  ) -> String {
+    option.length == recommended
+      ? String(
+        localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes)) (recommended)",
+        table: "Mock", comment: "The recommended placement length")
+      : String(
+        localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes))",
+        table: "Mock", comment: "A placement length")
   }
 
   private func optionRow(_ option: MockOption) -> some View {
