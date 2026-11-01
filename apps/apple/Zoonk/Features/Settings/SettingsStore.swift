@@ -14,7 +14,9 @@ final class SettingsStore {
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
   let freePlan: Resource<FreePlan>
-  private let webPlusChoices: Resource<WebPlusCancellation>
+  /// Plus bought on the web that can still be canceled or kept, or `.notFound` without one. It asks
+  /// Stripe.
+  let webPlus: Resource<WebPlusCancellation>
 
   /// Kept with the learner it's about, so the next learner never sees it.
   private struct Notice {
@@ -71,21 +73,17 @@ final class SettingsStore {
     preferenceSaves = QueuedSaves(preferences, cache: cache)
     memorySaves = QueuedSaves(memory, cache: cache)
     freePlan = cache.resource(audience: .everyone) { _ in try await api.getFreePlan() }
-    webPlusChoices = signedIn([.userSubscription]) {
+    webPlus = signedIn([.userSubscription]) {
       try await api.getWebPlusCancellation(token: $0)
     }
   }
 
-  /// What canceling, keeping or deleting the account does to a Plus bought on the web. It asks
-  /// Stripe, so any other plan has none.
-  func webPlus(for subscription: AccountSubscription?) -> Resource<WebPlusCancellation>? {
-    subscription?.provider == "stripe" ? webPlusChoices : nil
-  }
-
-  /// What a Plus bought on the web whose renewal is stopped can still do: be kept, or the 14-day
-  /// refund.
-  func endingWebPlus(for subscription: AccountSubscription) -> Resource<WebPlusCancellation>? {
-    subscription.cancelAt == nil ? nil : webPlus(for: subscription)
+  /// Without Plus, a renewal the website couldn't charge can still be canceled. A guest has none,
+  /// and the API answers a guest as signed out.
+  func unpaidWebPlus(
+    for subscription: AccountSubscription?, hasAccount: Bool
+  ) -> Resource<WebPlusCancellation>? {
+    hasAccount && subscription == nil ? webPlus : nil
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {

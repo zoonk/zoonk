@@ -318,60 +318,32 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  /// Nothing left to cancel refreshes the account. A session that ended meanwhile fails; an
-  /// unauthorized answer signs that session out.
-  func webPlusCancellation() async -> WebPlusCancellationPreview {
+  /// False when it failed. Plus set to end, or nothing left to cancel anymore, refreshes the account
+  /// and what's left to cancel. A session that ended meanwhile fails; an unauthorized answer signs
+  /// that session out.
+  func cancelWebPlus() async -> Bool {
     guard let authenticatedSession else {
-      return .failed
+      return false
     }
 
     do {
-      let cancellation = try await api.webPlusCancellation(token: authenticatedSession.bearerToken)
-      return self.authenticatedSession == authenticatedSession ? .choices(cancellation) : .failed
-    } catch AccountAPIError.noWebSubscription {
-      guard self.authenticatedSession == authenticatedSession else {
-        return .failed
-      }
-
-      await reloadAccount(for: authenticatedSession)
-      return .nothingToCancel
+      try await api.cancelWebPlus(token: authenticatedSession.bearerToken)
+    } catch AccountAPIError.webPlusChanged {
+      // Already canceled elsewhere: reading the plan again shows that.
     } catch AccountAPIError.unauthorized {
       await expire(authenticatedSession)
-      return .failed
+      return false
     } catch {
-      return .failed
-    }
-  }
-
-  /// Refreshes the account once Plus is canceled or the choice closed. A session that ended
-  /// meanwhile fails; an unauthorized answer signs that session out.
-  func cancelWebPlus(withdraw: Bool) async -> WebPlusCancellationResult {
-    guard let authenticatedSession else {
-      return .failed
-    }
-
-    let result: WebPlusCancellationResult
-    do {
-      let refund = try await api.cancelWebPlus(
-        token: authenticatedSession.bearerToken, withdraw: withdraw)
-      result = .canceled(refund: refund)
-    } catch AccountAPIError.cancellationChoiceClosed {
-      result = .choiceClosed
-    } catch AccountAPIError.unauthorized {
-      await expire(authenticatedSession)
-      return .failed
-    } catch {
-      return .failed
+      return false
     }
 
     guard self.authenticatedSession == authenticatedSession else {
-      return .failed
+      return false
     }
 
-    // A closed choice can leave the account as it was while what's left to cancel changed.
     subscriptionChanged?()
     await reloadAccount(for: authenticatedSession)
-    return result
+    return true
   }
 
   /// False when it failed. Plus renewing again, or a renewal that can't be turned back on anymore,
@@ -388,7 +360,7 @@ final class SessionStore {
     do {
       try await api.keepWebPlus(token: authenticatedSession.bearerToken)
       renews = true
-    } catch AccountAPIError.cancellationChoiceClosed {
+    } catch AccountAPIError.webPlusChanged {
       renews = false
     } catch AccountAPIError.unauthorized {
       await expire(authenticatedSession)
@@ -402,7 +374,7 @@ final class SessionStore {
     }
 
     if renews, accountRefreshRevision == keepRevision, var account {
-      account.account.subscription?.cancelAt = nil
+      account.account.subscription?.endsAt = nil
       state = .signedIn(account)
     }
 
@@ -919,7 +891,7 @@ final class SessionStore {
       return .disposableEmail
     case .invalidCode:
       return .invalidCode
-    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
+    case .invalidAppStorePurchase, .webPlusChanged:
       return .signIn
     case .invalidEmail:
       return .invalidEmail
@@ -952,7 +924,7 @@ final class SessionStore {
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
-    case .cancellationChoiceClosed, .invalidAppStorePurchase, .noWebSubscription:
+    case .invalidAppStorePurchase, .webPlusChanged:
       return .accountDeletion
     case .invalidEmail:
       return .invalidEmail

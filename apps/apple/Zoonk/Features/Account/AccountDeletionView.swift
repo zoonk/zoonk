@@ -76,7 +76,7 @@ struct AccountDeletionView: View {
           .compactMap(\.self)
           .joined(separator: "\n\n"))
       }
-      .modifier(WebPlusLoading(choices: webPlus))
+      .loads(settings.webPlus, refreshable: false)
       .onAppear {
         session.clearFailure()
       }
@@ -362,32 +362,13 @@ struct AccountDeletionView: View {
     subscription.flatMap { StoreSubscriptionProvider(rawValue: $0.provider) }
   }
 
-  private var webPlus: Resource<WebPlusCancellation>? {
-    settings.webPlus(for: subscription)
-  }
-
   /// Main's `DeletionPlusNotice`. A read that failed says nothing and never stops the deletion.
   private var webPlusNotice: String? {
-    guard let choices = webPlus?.value else {
-      return nil
-    }
-
-    guard let refund = choices.accountDeletionRefund else {
-      return String(
-        localized: "Your Plus ends right away, without a refund. You won't be charged again.",
-        table: "Account",
-        comment:
-          "Before deleting the account, what happens to Plus bought on the web when nothing is refunded"
-      )
-    }
-
-    return String(
-      localized:
-        "Your Plus ends right away, and we refund \(refund.formatted) to the payment method you used.",
-      table: "Account",
-      comment:
-        "Before deleting the account, what happens to Plus bought on the web; the argument is the refunded amount"
-    )
+    settings.webPlus.value == nil
+      ? nil
+      : String(
+        localized: "Deleting your account ends Plus right away.", table: "Account",
+        comment: "Before deleting the account, what happens to Plus bought on the web")
   }
 
   private var normalizedCode: String {

@@ -254,59 +254,22 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(store.undoStatus, .idle)
   }
 
-  func testOnlyAWebPlusWhoseRenewalStoppedAsksStripeWhatsStillOpen() async {
+  func testOnlyAnAccountWithoutPlusAsksAboutAnUnpaidWebRenewal() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
-    let ends = Date(timeIntervalSince1970: 2_000_000_000)
 
+    XCTAssertNil(store.unpaidWebPlus(for: nil, hasAccount: false))
     XCTAssertNil(
-      store.endingWebPlus(
-        for: AccountSubscription(plan: "plus", provider: "stripe", status: "active")))
-    XCTAssertNil(
-      store.endingWebPlus(
-        for: AccountSubscription(plan: "plus", provider: "apple", status: "active", cancelAt: ends))
-    )
+      store.unpaidWebPlus(
+        for: AccountSubscription(plan: "plus", provider: "stripe", status: "active"),
+        hasAccount: true))
 
-    let choices = store.endingWebPlus(
-      for: AccountSubscription(plan: "plus", provider: "stripe", status: "active", cancelAt: ends))
-    await choices?.load()
+    let webPlus = store.unpaidWebPlus(for: nil, hasAccount: true)
+    await webPlus?.load()
 
-    XCTAssertEqual(choices?.value, .refundStillOpen)
+    XCTAssertEqual(webPlus?.value, WebPlusCancellation(unpaid: true))
     let tokens = await api.webPlusCancellationTokens
     XCTAssertEqual(tokens, ["preview-session"])
-  }
-
-  func testDeletingTheAccountAsksStripeOnlyAboutAWebPlus() async {
-    let api = SettingsAPIStub()
-    let store = makeStore(api: api)
-
-    XCTAssertNil(store.webPlus(for: nil))
-    XCTAssertNil(
-      store.webPlus(for: AccountSubscription(plan: "plus", provider: "apple", status: "active")))
-
-    let choices = store.webPlus(
-      for: AccountSubscription(plan: "plus", provider: "stripe", status: "active"))
-    await choices?.load()
-
-    XCTAssertEqual(choices?.value?.accountDeletionRefund, Money(amount: 29.9, currency: "BRL"))
-  }
-
-  func testAWebPlusRefundThatDidntLoadFailsUntilTriedAgain() async {
-    let api = SettingsAPIStub()
-    await api.failWebPlusCancellation(with: APIError.unavailable)
-    let store = makeStore(api: api)
-    let choices = store.endingWebPlus(
-      for: AccountSubscription(
-        plan: "plus", provider: "stripe", status: "active",
-        cancelAt: Date(timeIntervalSince1970: 2_000_000_000)))
-
-    await choices?.show()
-    XCTAssertEqual(choices?.state, .failed(.unavailable))
-
-    await api.failWebPlusCancellation(with: nil)
-    await choices?.refresh()
-
-    XCTAssertEqual(choices?.value, .refundStillOpen)
   }
 
   func testExportFailureDoesNotSayASettingDidNotSave() async {
@@ -343,7 +306,6 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var heldUpdateResponse: CheckedContinuation<Void, Error>?
   private var holdsEdits = false
   private var heldEdit: CheckedContinuation<Void, Error>?
-  private var webPlusCancellationError: Error?
 
   private let updateError: Error?
   private let deleteError: Error?
@@ -488,16 +450,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
 
   func getWebPlusCancellation(token: String) async throws -> WebPlusCancellation {
     webPlusCancellationTokens.append(token)
-
-    if let webPlusCancellationError {
-      throw webPlusCancellationError
-    }
-
-    return .refundStillOpen
-  }
-
-  func failWebPlusCancellation(with error: Error?) {
-    webPlusCancellationError = error
+    return WebPlusCancellation(unpaid: true)
   }
 
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }
@@ -519,15 +472,6 @@ extension LearningPreferences {
     dailyLimitMinutes: nil,
     dailyTimes: [15, 30, 45],
     soundsEnabled: true)
-}
-
-extension WebPlusCancellation {
-  fileprivate static let refundStillOpen = WebPlusCancellation(
-    withdrawal: .init(
-      refund: Money(amount: 29.9, currency: "BRL"), until: Date(timeIntervalSince1970: 1_000)),
-    periodEnd: nil,
-    canResumeRenewal: true,
-    accountDeletionRefund: Money(amount: 29.9, currency: "BRL"))
 }
 
 extension MemoryFact {

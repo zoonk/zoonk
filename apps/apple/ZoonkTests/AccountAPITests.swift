@@ -127,16 +127,24 @@ final class AccountAPITests: XCTestCase {
     XCTAssertEqual(synchronization.account.account.subscription?.provider, "apple")
   }
 
-  func testCancelingWebPlusSendsOnlyTheChoice() async throws {
-    let transport = WebPlusCancelTransport()
+  func testAWebPlusThatAlreadyChangedIsNotAFailure() async {
     let api = AccountAPI(
       clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: WebPlusConflictTransport()))
 
-    _ = try await api.cancelWebPlus(token: "test-session", withdraw: true)
-    _ = try await api.cancelWebPlus(token: "test-session", withdraw: false)
+    do {
+      try await api.cancelWebPlus(token: "test-session")
+      XCTFail("Expected the plan to have changed")
+    } catch {
+      XCTAssertEqual(error as? AccountAPIError, .webPlusChanged)
+    }
 
-    XCTAssertEqual(transport.sentBodies.value, [["choice": "withdrawal"], ["choice": "ordinary"]])
+    do {
+      try await api.keepWebPlus(token: "test-session")
+      XCTFail("Expected the plan to have changed")
+    } catch {
+      XCTAssertEqual(error as? AccountAPIError, .webPlusChanged)
+    }
   }
 
   func testInvalidAppleSubscriptionResponseRemainsDistinct() async {
@@ -241,38 +249,20 @@ private struct CurrentAccountTransport: ClientTransport {
   }
 }
 
-private struct WebPlusCancelTransport: ClientTransport {
-  let sentBodies = SentJSONBodies()
-
+private struct WebPlusConflictTransport: ClientTransport {
   func send(
     _ request: HTTPRequest,
     body: HTTPBody?,
     baseURL: URL,
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
-    XCTAssertEqual(operationID, "cancelStripeSubscription")
-    let data = try await Data(collecting: try XCTUnwrap(body), upTo: 1_024)
-    sentBodies.append(try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: String]))
+    XCTAssertTrue(["cancelStripeSubscription", "resumeStripeSubscription"].contains(operationID))
+    XCTAssertNil(body)
 
     return (
-      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-      HTTPBody(
-        #"{"endsAt":"2026-10-31T12:00:00.000Z","receivedAt":"2026-10-31T12:00:00.000Z","refund":null}"#
-      )
+      HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
+      HTTPBody(#"{"error":{"code":"CONFLICT","message":"Nothing renews"}}"#)
     )
-  }
-}
-
-private final class SentJSONBodies: @unchecked Sendable {
-  private let lock = NSLock()
-  private var bodies: [[String: String]] = []
-
-  var value: [[String: String]] {
-    lock.withLock { bodies }
-  }
-
-  func append(_ body: [String: String]) {
-    lock.withLock { bodies.append(body) }
   }
 }
 

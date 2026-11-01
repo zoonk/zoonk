@@ -1995,65 +1995,6 @@
         }
       }
     },
-    "Apple handles refunds for Plus bought in the App Store: ask for one in your Apple account. If you subscribed on our website, you can cancel within 14 days for a full refund. Just contact us." : {
-      "comment" : "Answers whether Plus can be refunded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wenn du Plus im App Store gekauft hast, ist Apple für die Rückerstattung zuständig: Beantrag sie in deinem Apple-Account. Wenn du dein Abo auf unserer Website abgeschlossen hast, kannst du es innerhalb von 14 Tagen kündigen und bekommst den vollen Betrag zurück. Meld dich einfach bei uns."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple tramita los reembolsos de las compras de Plus en el App Store: solicita uno desde tu cuenta de Apple. Si te suscribiste en nuestro sitio web, puedes cancelar en un plazo de 14 días para recibir un reembolso completo. Solo tienes que contactarnos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple gère le remboursement de Plus si tu l’as acheté dans l’App Store : fais ta demande depuis ton compte Apple. Si tu as souscrit ton abonnement sur notre site, tu peux l’annuler sous 14 jours pour obtenir un remboursement intégral. Il suffit de nous contacter."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple gestisce i rimborsi per Plus acquistato nell’App Store: richiedine uno dal tuo account Apple. Se hai sottoscritto l’abbonamento sul nostro sito, puoi disdirlo entro 14 giorni e ricevere un rimborso completo. Ti basta contattarci."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Storeで購入したPlusの返金はAppleが対応します。Appleアカウントから申請してください。Zoonkのウェブサイトで登録した場合は、14日以内に解約すれば全額返金を受けられます。お気軽にお問い合わせください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store에서 구독한 Plus의 환불은 Apple에서 처리해요. Apple 계정에서 환불을 요청해 주세요. Zoonk 웹사이트에서 구독했다면 14일 이내에 해지하고 전액 환불받을 수 있어요. 저희에게 문의해 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zwrotami za pakiet Plus kupiony w App Store zajmuje się Apple: poproś o zwrot na swoim koncie Apple. Jeśli masz subskrypcję wykupioną na naszej stronie, możesz ją anulować w ciągu 14 dni i otrzymać pełny zwrot pieniędzy. Wystarczy się z nami skontaktować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple cuida dos reembolsos de assinaturas do Plus feitas na App Store: peça o seu na sua conta Apple. Se você assinou pelo nosso site, pode cancelar em até 14 dias para receber o valor total de volta. É só falar com a gente."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store’dan alınan Plus için para iadesi işlemlerini Apple yürütür: Apple hesabından iade iste. Web sitemizden abone olduysan 14 gün içinde iptal ederek ödediğin tutarın tamamını geri alabilirsin. Bizimle iletişime geçmen yeterli."
-          }
-        }
-      }
-    },
     "By continuing, you agree to the Zoonk %@ and %@." : {
       "comment" : "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy",
       "localizations" : {
@@ -2237,61 +2178,61 @@
         }
       }
     },
-    "Cancel now" : {
-      "comment" : "Confirms canceling the subscription; Plus stays until the date in the dialog's message. In German it must read exactly “Jetzt kündigen” (BGB § 312k).",
+    "Cancel Plus" : {
+      "comment" : "Cancels Plus bought on the web: the button, and the confirmation in its dialog",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jetzt kündigen"
+            "value" : "Plus kündigen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancelar ahora"
+            "value" : "Cancelar Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Résilier maintenant"
+            "value" : "Résilier Plus"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disdici ora"
+            "value" : "Disdici Plus"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今すぐ解約する"
+            "value" : "Plusを解約する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지금 해지하기"
+            "value" : "Plus 해지하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anuluj teraz"
+            "value" : "Zrezygnuj z Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancelar agora"
+            "value" : "Cancelar o Plus"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Şimdi iptal et"
+            "value" : "Plus’ı iptal et"
           }
         }
       }
@@ -2351,65 +2292,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus iptal edilsin mi?"
-          }
-        }
-      }
-    },
-    "Cancel subscription" : {
-      "comment" : "Asks to cancel Plus bought on the web",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abo kündigen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar suscripción"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résilier l’abonnement"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disdici l’abbonamento"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サブスクリプションを解約する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "구독 해지하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anuluj subskrypcję"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar assinatura"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aboneliği iptal et"
           }
         }
       }
@@ -2957,65 +2839,6 @@
         }
       }
     },
-    "Confirm withdrawal" : {
-      "comment" : "Confirms withdrawing from the contract with a full refund. Use the official wording of the EU Consumer Rights Directive (art. 11a) in this language: in German exactly “Widerruf bestätigen”, in French “Confirmer la rétractation”, in Spanish “Confirmar desistimiento”, in Portuguese “Confirmar retratação”, in Italian “Conferma recesso”, in Polish “Potwierdź odstąpienie od umowy”.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widerruf bestätigen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirmar desistimiento"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirmer la rétractation"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conferma recesso"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "契約の撤回を確定する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "청약 철회 확인"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potwierdź odstąpienie od umowy"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirmar retratação"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cayma bildirimini onayla"
-          }
-        }
-      }
-    },
     "Contact support" : {
       "comment" : "Opens Zoonk's support",
       "localizations" : {
@@ -3140,65 +2963,6 @@
         }
       }
     },
-    "Continue with email" : {
-      "comment" : "Email sign-in button label",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit E-Mail fortfahren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar con correo electrónico"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer avec une adresse e-mail"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continua con email"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メールアドレスで続ける"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이메일로 계속하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontynuuj przez e-mail"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar com e-mail"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-posta ile devam et"
-          }
-        }
-      }
-    },
     "Continue with Google" : {
       "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
       "localizations" : {
@@ -3254,6 +3018,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Google ile devam et"
+          }
+        }
+      }
+    },
+    "Continue with email" : {
+      "comment" : "Email sign-in button label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit E-Mail fortfahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar con correo electrónico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer avec une adresse e-mail"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua con email"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスで続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일로 계속하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontynuuj przez e-mail"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar com e-mail"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta ile devam et"
           }
         }
       }
@@ -3909,6 +3732,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk hesabını silmen Google Play aboneliğini iptal etmez. Yenilenmesini istemiyorsan önce bir Android cihazda Google Play üzerinden aboneliğini iptal et."
+          }
+        }
+      }
+    },
+    "Deleting your account ends Plus right away." : {
+      "comment" : "Before deleting the account, what happens to Plus bought on the web",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dein Konto löschst, endet Plus sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si eliminas tu cuenta, Plus termina de inmediato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ton compte met immédiatement fin à Plus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se elimini il tuo account, Plus termina subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除すると、Plusはすぐに利用できなくなります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제하면 Plus 이용이 바로 종료돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięcie konta od razu kończy subskrypcję Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir sua conta encerra o Plus na hora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silersen Plus hemen sona erer."
           }
         }
       }
@@ -4670,61 +4552,61 @@
         }
       }
     },
-    "Get a full refund" : {
-      "comment" : "Opens the 14-day full refund of Plus bought on the web whose renewal is stopped",
+    "Go back" : {
+      "comment" : "Closes the dialog that cancels Plus without canceling it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vollen Betrag erstatten lassen"
+            "value" : "Zurück"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtener un reembolso completo"
+            "value" : "Volver"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtenir un remboursement intégral"
+            "value" : "Retour"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ottieni un rimborso completo"
+            "value" : "Torna indietro"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全額返金を申請する"
+            "value" : "戻る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전액 환불받기"
+            "value" : "돌아가기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uzyskaj pełny zwrot pieniędzy"
+            "value" : "Wróć"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Receber reembolso integral"
+            "value" : "Voltar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tam para iadesi al"
+            "value" : "Geri dön"
           }
         }
       }
@@ -4843,71 +4725,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Google Play"
-          }
-        }
-      }
-    },
-    "hello@zoonk.com" : {
-      "comment" : "An email address, not a phrase: keep it unless the style guide gives the language its own inbox",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "contacto@zoonk.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "contato@zoonk.com"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hello@zoonk.com"
           }
         }
       }
@@ -5155,7 +4972,7 @@
       }
     },
     "Keep Plus" : {
-      "comment" : "Closes the dialog that cancels Plus",
+      "comment" : "Turns the stopped renewal of Plus bought on the web back on, so it renews as before",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6222,61 +6039,61 @@
         }
       }
     },
-    "Plus is canceled" : {
-      "comment" : "After canceling Plus",
+    "Plus ends right away, and we stop retrying your renewal payment." : {
+      "comment" : "In the dialog that cancels Plus bought on the web whose renewal payment failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus ist gekündigt"
+            "value" : "Plus endet sofort und wir versuchen nicht mehr, die Zahlung für die Verlängerung einzuziehen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se canceló Plus"
+            "value" : "Plus termina de inmediato y dejamos de intentar cobrar tu renovación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus est résilié"
+            "value" : "Plus prend fin immédiatement et nous arrêtons les tentatives de paiement pour ton renouvellement."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai disdetto Plus"
+            "value" : "Plus termina subito e non proveremo più ad addebitarti il rinnovo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusを解約しました"
+            "value" : "Plusはすぐに利用できなくなり、更新料金の再請求も停止します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus 구독이 해지됐어요"
+            "value" : "Plus 이용이 바로 종료되고, 갱신 결제를 더 이상 시도하지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anulowano Plus"
+            "value" : "Subskrypcja Plus zakończy się od razu i przestaniemy ponawiać próby pobrania opłaty za odnowienie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus foi cancelado"
+            "value" : "O Plus acaba na hora e a gente para de tentar cobrar sua renovação."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus iptal edildi"
+            "value" : "Plus hemen sona erer ve yenileme ödemeni tekrar almaya çalışmayız."
           }
         }
       }
@@ -8348,65 +8165,6 @@
         }
       }
     },
-    "That option isn't available anymore." : {
-      "comment" : "The cancellation choice the learner picked closed, such as the 14-day refund",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Option ist nicht mehr verfügbar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esa opción ya no está disponible."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette option n’est plus disponible."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa opzione non è più disponibile."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "その選択肢は利用できなくなりました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 항목은 더 이상 선택할 수 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta opcja nie jest już dostępna."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essa opção não está mais disponível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu seçenek artık kullanılamıyor."
-          }
-        }
-      }
-    },
     "That username is already taken." : {
       "comment" : "Error shown when a chosen username is unavailable",
       "localizations" : {
@@ -8999,189 +8757,6 @@
         }
       }
     },
-    "Unable to manage your subscription. Contact us at hello@zoonk.com" : {
-      "comment" : "Canceling the web subscription failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Aboverwaltung lässt sich nicht öffnen. Schreib uns an hello@zoonk.com"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos administrar tu suscripción. Contáctanos en contacto@zoonk.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de gérer ton abonnement. Contacte-nous à hello@zoonk.com"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile gestire il tuo abbonamento. Scrivici a hello@zoonk.com"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サブスクリプションを管理できませんでした。hello@zoonk.comまでお問い合わせください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "구독을 관리할 수 없어요. hello@zoonk.com으로 문의하세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się anulować subskrypcji. Napisz do nas na hello@zoonk.com"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível gerenciar sua assinatura. Entre em contato pelo e-mail contato@zoonk.com"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aboneliğini yönetemedik. hello@zoonk.com adresinden bize ulaş"
-          }
-        }
-      }
-    },
-    "Until %@, you can get a full refund of %@. Plus ends right away." : {
-      "comment" : "In the dialog that cancels Plus: the 14-day full refund; the arguments are its last day and the amount",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis zum %1$@ kannst du dir %2$@ vollständig erstatten lassen. Plus endet sofort."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Until %1$@, you can get a full refund of %2$@. Plus ends right away."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hasta el %1$@, puedes recibir un reembolso completo de %2$@. Plus termina de inmediato."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jusqu’au %1$@, tu peux obtenir un remboursement intégral de %2$@. Plus prend fin immédiatement."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fino al %1$@ puoi ottenere un rimborso completo di %2$@. Plus termina subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@までは、%2$@の全額返金を受けられます。Plusは解約と同時に終了します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@까지 %2$@ 전액을 환불받을 수 있어요. Plus는 즉시 종료돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do %1$@ możesz otrzymać pełny zwrot w wysokości %2$@. Dostęp do Plus zakończy się od razu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Até %1$@, você pode receber o reembolso integral de %2$@. O Plus termina na hora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ tarihine kadar %2$@ tutarında tam para iadesi alabilirsin. Plus hemen sona erer."
-          }
-        }
-      }
-    },
-    "Until %@, you can still end Plus now and get a full refund." : {
-      "comment" : "Once the renewal of Plus bought on the web is stopped, under the button that still gives the 14-day full refund; the argument is its last day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis zum %@ kannst du Plus noch sofort beenden und bekommst den vollen Betrag zurück."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hasta el %@, aún puedes cancelar Plus de inmediato y recibir un reembolso completo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jusqu’au %@, tu peux encore résilier Plus dès maintenant et obtenir un remboursement intégral."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fino al %@ puoi ancora disdire Plus con effetto immediato e ottenere un rimborso completo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@までは、Plusを今すぐ解約して全額返金を受けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@까지는 Plus를 즉시 해지하고 전액 환불받을 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do %@ możesz jeszcze zrezygnować z pakietu Plus i otrzymać pełny zwrot. Dostęp zakończy się od razu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Até %@, você ainda pode encerrar o Plus agora e receber um reembolso integral."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tarihine kadar Plus’ı hemen sonlandırıp tam para iadesi alabilirsin."
-          }
-        }
-      }
-    },
     "Up to %lld lessons a day" : {
       "comment" : "Free plan: lessons a day",
       "localizations" : {
@@ -9343,6 +8918,65 @@
         }
       }
     },
+    "Use Google Play on an Android device to change or cancel this subscription." : {
+      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändere oder kündige dieses Abo über Google Play auf einem Android-Gerät."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilise Google Play sur un appareil Android pour modifier ou résilier cet abonnement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Google Play su un dispositivo Android per modificare o disdire questo abbonamento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このサブスクリプションを変更または解約するには、Android端末のGoogle Playを使ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Android 기기의 Google Play에서 이 구독을 변경하거나 해지하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby zmienić lub anulować tę subskrypcję, użyj Google Play na urządzeniu z systemem Android."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use o Google Play em um aparelho Android para alterar ou cancelar esta assinatura."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu aboneliği değiştirmek veya iptal etmek için bir Android cihazda Google Play’i kullan."
+          }
+        }
+      }
+    },
     "Use a different email" : {
       "comment" : "Button that returns to the email entry step",
       "localizations" : {
@@ -9461,65 +9095,6 @@
         }
       }
     },
-    "Use Google Play on an Android device to change or cancel this subscription." : {
-      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ändere oder kündige dieses Abo über Google Play auf einem Android-Gerät."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utilise Google Play sur un appareil Android pour modifier ou résilier cet abonnement."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa Google Play su un dispositivo Android per modificare o disdire questo abbonamento."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このサブスクリプションを変更または解約するには、Android端末のGoogle Playを使ってください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Android 기기의 Google Play에서 이 구독을 변경하거나 해지하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aby zmienić lub anulować tę subskrypcję, użyj Google Play na urządzeniu z systemem Android."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use o Google Play em um aparelho Android para alterar ou cancelar esta assinatura."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu aboneliği değiştirmek veya iptal etmek için bir Android cihazda Google Play’i kullan."
-          }
-        }
-      }
-    },
     "Username" : {
       "comment" : "Profile username field label",
       "localizations" : {
@@ -9575,65 +9150,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanıcı adı"
-          }
-        }
-      }
-    },
-    "username" : {
-      "comment" : "Placeholder for the username field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Benutzername"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nombre de usuario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nom d’utilisateur"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome utente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ユーザー名"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "사용자 이름"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nazwa użytkownika"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome de usuário"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "kullanıcı adı"
           }
         }
       }
@@ -9756,6 +9272,65 @@
         }
       }
     },
+    "We couldn't cancel Plus. Try again or email %@." : {
+      "comment" : "Canceling Plus bought on the web failed; the argument is the email address to write to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten Plus nicht kündigen. Versuch es noch einmal oder schreib eine E-Mail an %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos cancelar Plus. Vuelve a intentarlo o escríbenos a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de résilier Plus. Réessaie ou écris à %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a disdire Plus. Riprova o scrivici a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusを解約できませんでした。もう一度試すか、%@までメールでご連絡ください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus를 해지하지 못했어요. 다시 시도해 보거나 %@ 주소로 이메일을 보내 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się anulować subskrypcji Plus. Spróbuj ponownie lub napisz na adres %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu cancelar o Plus. Tente de novo ou mande um e-mail para %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus’ı iptal edemedik. Tekrar dene veya %@ adresine e-posta gönder."
+          }
+        }
+      }
+    },
     "We couldn't keep Plus. Try again or email hello@zoonk.com." : {
       "comment" : "Turning the stopped renewal of Plus bought on the web back on failed",
       "localizations" : {
@@ -9874,65 +9449,6 @@
         }
       }
     },
-    "We emailed you the confirmation." : {
-      "comment" : "After canceling Plus bought on the web without a refund",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir haben dir die Bestätigung per E-Mail geschickt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te enviamos la confirmación por correo electrónico."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous t’avons envoyé la confirmation par e-mail."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti abbiamo inviato la conferma via email."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "確認メールをお送りしました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인 이메일을 보냈어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wysłaliśmy ci potwierdzenie e-mailem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente te enviou a confirmação por e-mail."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Onay e-postasını gönderdik."
-          }
-        }
-      }
-    },
     "We sent a sign-in code to your email. It expires in 5 minutes." : {
       "comment" : "Explains where the email code was sent and when it expires",
       "localizations" : {
@@ -9988,124 +9504,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-posta adresine bir giriş kodu gönderdik. Kod 5 dakika geçerli."
-          }
-        }
-      }
-    },
-    "We'll email you the confirmation." : {
-      "comment" : "Ends the dialog that cancels Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir schicken dir die Bestätigung per E-Mail."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te enviaremos la confirmación por correo electrónico."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous t’enverrons la confirmation par e-mail."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti invieremo la conferma via email."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "確認メールをお送りします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인 이메일을 보내 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wyślemy ci potwierdzenie e-mailem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente vai te enviar a confirmação por e-mail."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Onay e-postasını göndereceğiz."
-          }
-        }
-      }
-    },
-    "We've refunded %@ to the payment method you used. We emailed you the confirmation." : {
-      "comment" : "After canceling Plus bought on the web; the argument is the refunded amount",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir haben dir %@ über die verwendete Zahlungsmethode zurückerstattet. Die Bestätigung haben wir dir per E-Mail geschickt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reembolsamos %@ al método de pago que usaste. Te enviamos la confirmación por correo electrónico."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous avons remboursé %@ sur le moyen de paiement que tu as utilisé. Nous t’avons envoyé la confirmation par e-mail."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abbiamo rimborsato %@ sul metodo di pagamento che hai usato. Ti abbiamo inviato la conferma via email."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "お支払い時と同じ方法で%@を返金しました。確認メールをお送りしました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "결제에 사용한 수단으로 %@ 환불해 드렸어요. 확인 이메일을 보냈어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zwróciliśmy %@ tą samą metodą płatności. Wysłaliśmy ci potwierdzenie e-mailem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente devolveu %@ pelo meio de pagamento que você usou e te enviou a confirmação por e-mail."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tutarını kullandığın ödeme yöntemine iade ettik. Onay e-postasını gönderdik."
           }
         }
       }
@@ -10348,6 +9746,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz paketle şunlardan yararlanabilirsin:"
+          }
+        }
+      }
+    },
+    "Write to us at %@ and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules." : {
+      "comment" : "Answers whether Plus can be refunded; the argument is the email address to write to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreib uns an %@ und wir prüfen das. Für Käufe im App Store oder bei Google Play gelten die Rückerstattungsregeln von Apple oder Google."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escríbenos a %@ y lo revisaremos. Las compras en el App Store o Google Play se rigen por las políticas de reembolso de Apple o Google."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris-nous à %@ et nous examinerons ta demande. Les achats sur l’App Store ou sur Google Play sont soumis aux règles de remboursement d’Apple ou de Google."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivici a %@ e valuteremo la richiesta. Gli acquisti su App Store o Google Play seguono le regole sui rimborsi di Apple o Google."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@までメールでご連絡いただければ、お調べします。App StoreやGoogle Playでの購入には、AppleやGoogleの返金規定が適用されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 주소로 이메일을 보내 주시면 확인해 볼게요. App Store나 Google Play에서 구매한 경우 Apple 또는 Google의 환불 규정이 적용돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz do nas na adres %@, a przyjrzymy się sprawie. W przypadku zakupów w App Store lub Google Play obowiązują zasady zwrotów ustalone przez Apple lub Google."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mande um e-mail para %@ e a gente analisa seu caso. Compras na App Store ou via Google Play seguem as regras de reembolso de cada loja."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ adresine yaz, durumu inceleyelim. App Store veya Google Play üzerinden yapılan satın alımlarda Apple’ın veya Google’ın iade kuralları geçerlidir."
           }
         }
       }
@@ -10653,126 +10110,61 @@
         }
       }
     },
-    "You keep Plus until %@, then it ends. You won't be charged again." : {
-      "comment" : "In the dialog that cancels Plus; the argument is Plus's last day",
+    "You keep Plus until the end of the period you already paid for." : {
+      "comment" : "In the dialog that cancels Plus bought on the web",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du behältst Plus bis zum %@, dann endet es. Dir wird nichts mehr berechnet."
+            "value" : "Du behältst Plus bis zum Ende des Zeitraums, für den du schon bezahlt hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservas Plus hasta el %@; después termina. No volveremos a cobrarte."
+            "value" : "Conservarás Plus hasta el final del periodo que ya pagaste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu gardes Plus jusqu’au %@, puis l’abonnement prend fin. Il n’y aura plus de prélèvement."
+            "value" : "Tu gardes Plus jusqu’à la fin de la période déjà payée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continui a usare Plus fino al %@, poi l’abbonamento termina. Non riceverai altri addebiti."
+            "value" : "Plus resta attivo fino alla fine del periodo che hai già pagato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusは%@まで利用でき、その後終了します。今後の請求はありません。"
+            "value" : "お支払い済みの期間が終わるまで、Plusを利用できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@까지 Plus를 이용할 수 있고, 그 후에는 구독이 종료돼요. 더 이상 요금이 청구되지 않아요."
+            "value" : "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pakiet Plus zachowasz do %@, potem wygaśnie. Nie pobierzemy kolejnych opłat."
+            "value" : "Zachowasz dostęp do Plus do końca opłaconego okresu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você continua com o Plus até %@. Depois disso, ele termina e você não recebe mais cobranças."
+            "value" : "Você continua com o Plus até o fim do período já pago."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus’ı %@ tarihine kadar kullanmaya devam edersin, ardından aboneliğin sona erer. Senden tekrar ücret alınmaz."
-          }
-        }
-      }
-    },
-    "You keep Plus until %@. We refund %@ for the months that haven't started." : {
-      "comment" : "In the dialog that cancels Plus after a yearly renewal; the arguments are Plus's last day and the refunded amount",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du behältst Plus bis zum %1$@. Für die noch nicht begonnenen Monate erstatten wir dir %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You keep Plus until %1$@. We refund %2$@ for the months that haven't started."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conservas Plus hasta el %1$@. Te reembolsamos %2$@ por los meses que aún no empiezan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu gardes Plus jusqu’au %1$@. Nous te remboursons %2$@ pour les mois qui n’ont pas encore commencé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continui a usare Plus fino al %1$@. Ti rimborsiamo %2$@ per i mesi non ancora iniziati."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusは%1$@まで利用できます。まだ始まっていない月の料金として%2$@を返金します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@까지 Plus를 이용할 수 있어요. 아직 시작되지 않은 달의 요금은 %2$@만큼 환불해 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pakiet Plus zachowasz do %1$@. Zwrócimy %2$@ za miesiące, które jeszcze się nie zaczęły."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você continua com o Plus até %1$@. A gente reembolsa %2$@ pelos meses que ainda não começaram."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus’ı %1$@ tarihine kadar kullanmaya devam edersin. Henüz başlamayan aylar için %2$@ iade ederiz."
+            "value" : "Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin."
           }
         }
       }
@@ -10836,65 +10228,6 @@
         }
       }
     },
-    "you@example.com" : {
-      "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "du@example.com"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@example.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "toi@example.com"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@example.com"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "taro@example.com"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이름@example.com"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ty@example.com"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "voce@example.com"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sen@example.com"
-          }
-        }
-      }
-    },
     "Your App Store purchases are now available on this Zoonk account." : {
       "comment" : "Confirms restored purchases were synchronized with Zoonk",
       "localizations" : {
@@ -10950,6 +10283,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store’dan satın aldıkların artık bu Zoonk hesabında kullanılabilir."
+          }
+        }
+      }
+    },
+    "Your Zoonk account and personalized data were permanently deleted." : {
+      "comment" : "Confirms that account data was permanently deleted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden endgültig gelöscht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron de forma permanente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compte Zoonk et tes données personnalisées ont été définitivement supprimés."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo account Zoonk e i tuoi dati personalizzati sono stati eliminati definitivamente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkアカウントと個人用データを完全に削除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk 계정과 개인 맞춤 데이터가 영구적으로 삭제됐어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje konto w Zoonku i spersonalizowane dane zostały trwale usunięte."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk hesabın ve sana özel verilerin kalıcı olarak silindi."
+          }
+        }
+      }
+    },
+    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
+      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se revocara la autorización de acceso. Elimina Zoonk de Iniciar sesión con Apple para terminar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation accordée à Zoonk. Retire Zoonk de « Se connecter avec Apple » pour terminer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi dati Zoonk sono stati eliminati, ma Apple non ha potuto confermare la revoca dell’autorizzazione. Rimuovi Zoonk da Sign in with Apple per completare l’operazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkのデータは削除されましたが、Apple側で連携の解除を確認できませんでした。「Appleでサインイン」からZoonkを削除して、手続きを完了してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk 데이터는 삭제됐지만, Apple에서 로그인 권한이 해제됐는지 확인하지 못했어요. 완료하려면 ‘Apple로 로그인’에서 Zoonk를 삭제해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje dane w Zoonku zostały usunięte, ale Apple nie potwierdziło cofnięcia uprawnień. Aby dokończyć, usuń Zoonk z funkcji Sign in with Apple."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk verilerin silindi, ancak Apple, Zoonk’a verdiğin iznin kaldırıldığını doğrulayamadı. İşlemi tamamlamak için Apple ile Giriş Yap bölümünden Zoonk’u kaldır."
           }
         }
       }
@@ -11072,6 +10523,65 @@
         }
       }
     },
+    "Your last renewal payment failed." : {
+      "comment" : "Plus bought on the web whose renewal payment couldn't be charged",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine letzte Zahlung für die Verlängerung ist fehlgeschlagen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cobrar tu último pago de renovación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le paiement de ton dernier renouvellement a échoué."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il pagamento del tuo ultimo rinnovo non è andato a buon fine."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前回の更新料金の決済ができませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 갱신 결제에 실패했어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się pobrać opłaty za ostatnie odnowienie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O pagamento da sua última renovação falhou."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son yenileme ödemen alınamadı."
+          }
+        }
+      }
+    },
     "Your name" : {
       "comment" : "Placeholder for the profile name field",
       "localizations" : {
@@ -11127,124 +10637,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adın"
-          }
-        }
-      }
-    },
-    "Your Plus ends right away, and we refund %@ to the payment method you used." : {
-      "comment" : "Before deleting the account, what happens to Plus bought on the web; the argument is the refunded amount",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plus endet sofort, und wir erstatten dir %@ auf das verwendete Zahlungsmittel."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suscripción a Plus termina de inmediato y te reembolsamos %@ al método de pago que usaste."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta formule Plus prend fin immédiatement et nous te remboursons %@ sur le moyen de paiement utilisé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo abbonamento Plus termina subito e ti rimborsiamo %@ sul metodo di pagamento che hai usato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusはすぐに終了し、お支払い時と同じ方法で%@を返金します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus가 바로 종료되고, 결제할 때 사용한 수단으로 %@ 환불돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój pakiet Plus zakończy się od razu, a my zwrócimy %@ tą samą metodą płatności."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O seu Plus acaba na hora, e a gente reembolsa %@ no mesmo meio de pagamento que você usou."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus aboneliğin hemen sona erer ve %@ tutarını kullandığın ödeme yöntemine iade ederiz."
-          }
-        }
-      }
-    },
-    "Your Plus ends right away, without a refund. You won't be charged again." : {
-      "comment" : "Before deleting the account, what happens to Plus bought on the web when nothing is refunded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plus endet sofort, ohne Rückerstattung. Dir wird nichts mehr berechnet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suscripción a Plus termina de inmediato, sin reembolso. No se te volverá a cobrar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta formule Plus prend fin immédiatement, sans remboursement. Nous ne te facturerons plus rien."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo abbonamento Plus termina subito, senza rimborso. Non riceverai altri addebiti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusはすぐに終了し、返金はありません。今後の請求はありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus가 환불 없이 바로 종료돼요. 앞으로 요금이 청구되지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój pakiet Plus zakończy się od razu, bez zwrotu pieniędzy. Nie pobierzemy już żadnych opłat."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O seu Plus acaba na hora, sem reembolso. Não haverá novas cobranças."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus aboneliğin hemen sona erer ve para iadesi yapılmaz. Senden tekrar ücret alınmaz."
           }
         }
       }
@@ -11556,120 +10948,61 @@
         }
       }
     },
-    "Your Zoonk account and personalized data were permanently deleted." : {
-      "comment" : "Confirms that account data was permanently deleted",
+    "Zoonk Plus" : {
+      "comment" : "Title of the native Zoonk Plus subscription screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden endgültig gelöscht."
+            "value" : "Zoonk Plus"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron de forma permanente."
+            "value" : "Zoonk Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compte Zoonk et tes données personnalisées ont été définitivement supprimés."
+            "value" : "Zoonk Plus"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo account Zoonk e i tuoi dati personalizzati sono stati eliminati definitivamente."
+            "value" : "Zoonk Plus"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkアカウントと個人用データを完全に削除しました。"
+            "value" : "Zoonk Plus"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk 계정과 개인 맞춤 데이터가 영구적으로 삭제됐어요."
+            "value" : "Zoonk Plus"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje konto w Zoonku i spersonalizowane dane zostały trwale usunięte."
+            "value" : "Zoonk Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
+            "value" : "Zoonk Plus"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hesabın ve sana özel verilerin kalıcı olarak silindi."
-          }
-        }
-      }
-    },
-    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
-      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se revocara la autorización de acceso. Elimina Zoonk de Iniciar sesión con Apple para terminar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation accordée à Zoonk. Retire Zoonk de « Se connecter avec Apple » pour terminer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I tuoi dati Zoonk sono stati eliminati, ma Apple non ha potuto confermare la revoca dell’autorizzazione. Rimuovi Zoonk da Sign in with Apple per completare l’operazione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkのデータは削除されましたが、Apple側で連携の解除を確認できませんでした。「Appleでサインイン」からZoonkを削除して、手続きを完了してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk 데이터는 삭제됐지만, Apple에서 로그인 권한이 해제됐는지 확인하지 못했어요. 완료하려면 ‘Apple로 로그인’에서 Zoonk를 삭제해 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje dane w Zoonku zostały usunięte, ale Apple nie potwierdziło cofnięcia uprawnień. Aby dokończyć, usuń Zoonk z funkcji Sign in with Apple."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk verilerin silindi, ancak Apple, Zoonk’a verdiğin iznin kaldırıldığını doğrulayamadı. İşlemi tamamlamak için Apple ile Giriş Yap bölümünden Zoonk’u kaldır."
+            "value" : "Zoonk Plus"
           }
         }
       }
@@ -12028,61 +11361,185 @@
         }
       }
     },
-    "Zoonk Plus" : {
-      "comment" : "Title of the native Zoonk Plus subscription screen",
+    "hello@zoonk.com" : {
+      "comment" : "An email address, not a phrase: keep it unless the style guide gives the language its own inbox",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "hello@zoonk.com"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "contacto@zoonk.com"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "contato@zoonk.com"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "hello@zoonk.com"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome utente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ユーザー名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자 이름"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nazwa użytkownika"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kullanıcı adı"
+          }
+        }
+      }
+    },
+    "you@example.com" : {
+      "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "du@example.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu@example.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "toi@example.com"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu@example.com"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "taro@example.com"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름@example.com"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ty@example.com"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voce@example.com"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sen@example.com"
           }
         }
       }

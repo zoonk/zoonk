@@ -44,38 +44,6 @@ final class SettingsAPITests: XCTestCase {
     XCTAssertEqual(preferences.dailyLimitChoices, [5, 360, 370, 390])
   }
 
-  func testAStoppedRenewalStillReadsItsRefund() async throws {
-    let api = SettingsAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!,
-        transport: WebPlusChoicesTransport(
-          status: .ok,
-          json: """
-            {
-              "accountDeletion": { "refund": { "amount": 29.9, "currency": "BRL" } },
-              "canResumeRenewal": true,
-              "cancellation": null,
-              "extraordinary": { "refund": { "amount": 19.5, "currency": "BRL" } },
-              "withdrawal": {
-                "refund": { "amount": 29.9, "currency": "BRL" },
-                "until": "2026-11-14T12:00:00.000Z"
-              }
-            }
-            """)))
-
-    let choices = try await api.getWebPlusCancellation(token: "token")
-
-    XCTAssertEqual(
-      choices,
-      WebPlusCancellation(
-        withdrawal: .init(
-          refund: Money(amount: 29.9, currency: "BRL"),
-          until: try Date("2026-11-14T12:00:00Z", strategy: .iso8601)),
-        periodEnd: nil,
-        canResumeRenewal: true,
-        accountDeletionRefund: Money(amount: 29.9, currency: "BRL")))
-  }
-
   func testNothingLeftToCancelIsNotFound() async {
     let api = SettingsAPI(
       clients: APIClientFactory(

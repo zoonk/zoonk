@@ -22,51 +22,16 @@ struct AccountSubscription: Decodable, Equatable, Hashable {
   let plan: String
   let provider: String
   let status: String?
-  var cancelAt: Date? = nil
+  /// When a subscription set to end ends: the date it was set to end, or the end of its paid period
+  /// once its renewal is stopped.
+  var endsAt: Date? = nil
   var periodEnd: Date? = nil
 }
 
-struct Money: Equatable {
-  /// In the currency's major unit: 29.9 is R$ 29,90.
-  let amount: Double
-  let currency: String
-
-  var formatted: String {
-    amount.formatted(.currency(code: currency))
-  }
-}
-
+/// Plus bought on the website that can still be canceled or kept.
 struct WebPlusCancellation: Equatable {
-  struct Withdrawal: Equatable {
-    let refund: Money
-    let until: Date
-  }
-
-  struct PeriodEnd: Equatable {
-    let endsAt: Date
-    let refund: Money?
-  }
-
-  /// Within 14 days of subscribing: Plus ends now and the whole payment is refunded.
-  let withdrawal: Withdrawal?
-  /// Stopping the renewal; after a yearly renewal it refunds the months that haven't started.
-  let periodEnd: PeriodEnd?
-  /// Only the renewal is stopped, so Plus can be kept and renew as before.
-  var canResumeRenewal = false
-  /// Deleting the account ends Plus right away and refunds this.
-  var accountDeletionRefund: Money? = nil
-}
-
-enum WebPlusCancellationPreview: Equatable {
-  case choices(WebPlusCancellation)
-  case nothingToCancel
-  case failed
-}
-
-enum WebPlusCancellationResult: Equatable {
-  case canceled(refund: Money?)
-  case choiceClosed
-  case failed
+  /// The renewal payment failed, so canceling ends Plus right away and stops the retries.
+  let unpaid: Bool
 }
 
 struct AppleSubscriptionSynchronization: Equatable {

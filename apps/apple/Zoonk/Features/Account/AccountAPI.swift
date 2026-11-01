@@ -6,19 +6,19 @@ enum AccountAPIError: Error, Equatable {
   case accountMismatch
   case appleCredentialMismatch
   case botDetected
-  case cancellationChoiceClosed
   case disposableEmail
   case invalidCode
   case invalidEmail
   case invalidAppStorePurchase
   case invalidResponse
   case network
-  case noWebSubscription
   case rateLimited
   case reauthenticationRequired
   case unauthorized
   case usernameTaken
   case validation
+  /// Nothing to cancel or keep anymore: the plan changed meanwhile.
+  case webPlusChanged
 }
 
 protocol AccountAPIClient {
@@ -45,14 +45,11 @@ protocol AccountAPIClient {
   func getUsernameSuggestion(token: String) async throws -> String?
   /// Advisory: saving the profile can still find it taken.
   func isUsernameAvailable(_ username: String) async throws -> Bool
-  /// What canceling Plus bought on the web would do. Throws `noWebSubscription` when nothing is
-  /// left to cancel.
-  func webPlusCancellation(token: String) async throws -> WebPlusCancellation
-  /// Ends Plus now with the 14-day refund, or stops the renewal, and returns what it refunded.
-  /// Throws `cancellationChoiceClosed` when that choice isn't open anymore.
-  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money?
-  /// Turns a stopped renewal back on. Throws `cancellationChoiceClosed` when Plus isn't set to end
-  /// with its paid period anymore.
+  /// Stops the renewal of Plus bought on the web, or ends an unpaid one right away. Throws
+  /// `webPlusChanged` when nothing renews anymore.
+  func cancelWebPlus(token: String) async throws
+  /// Turns a stopped renewal back on. Throws `webPlusChanged` when Plus isn't set to end with its
+  /// paid period anymore.
   func keepWebPlus(token: String) async throws
 }
 
@@ -285,37 +282,19 @@ struct AccountAPI {
     }
   }
 
-  func webPlusCancellation(token: String) async throws -> WebPlusCancellation {
+  func cancelWebPlus(token: String) async throws {
     let output = try await perform(token: token) { client in
-      try await client.getStripeSubscriptionCancellation()
+      try await client.cancelStripeSubscription()
     }
 
     switch output {
-    case .ok(let response):
-      return WebPlusCancellation(try response.body.json)
-    case .unauthorized:
-      throw AccountAPIError.unauthorized
-    case .notFound:
-      throw AccountAPIError.noWebSubscription
-    case .internalServerError, .undocumented:
-      throw AccountAPIError.invalidResponse
-    }
-  }
-
-  func cancelWebPlus(token: String, withdraw: Bool) async throws -> Money? {
-    let output = try await perform(token: token) { client in
-      try await client.cancelStripeSubscription(
-        .init(body: .json(.init(choice: withdraw ? .withdrawal : .ordinary))))
-    }
-
-    switch output {
-    case .ok(let response):
-      return try response.body.json.refund.map { Money($0.value1) }
+    case .ok:
+      return
     case .unauthorized:
       throw AccountAPIError.unauthorized
     case .conflict:
-      throw AccountAPIError.cancellationChoiceClosed
-    case .badRequest, .internalServerError, .undocumented:
+      throw AccountAPIError.webPlusChanged
+    case .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
   }
@@ -331,7 +310,7 @@ struct AccountAPI {
     case .unauthorized:
       throw AccountAPIError.unauthorized
     case .conflict:
-      throw AccountAPIError.cancellationChoiceClosed
+      throw AccountAPIError.webPlusChanged
     case .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
@@ -570,7 +549,7 @@ struct AccountAPI {
             plan: $0.plan,
             provider: $0.provider,
             status: $0.status,
-            cancelAt: $0.cancelAt,
+            endsAt: $0.cancelAt ?? ($0.cancelAtPeriodEnd == true ? $0.periodEnd : nil),
             periodEnd: $0.periodEnd)
         }),
       user: AccountUser(
@@ -584,23 +563,3 @@ struct AccountAPI {
 }
 
 extension AccountAPI: AccountAPIClient {}
-
-extension Money {
-  fileprivate init(_ money: Components.Schemas.Money) {
-    self.init(amount: money.amount, currency: money.currency)
-  }
-}
-
-extension WebPlusCancellation {
-  init(_ cancellation: Components.Schemas.StripeSubscriptionCancellation) {
-    self.init(
-      withdrawal: cancellation.withdrawal.map {
-        .init(refund: Money($0.refund), until: $0.until)
-      },
-      periodEnd: cancellation.cancellation.map {
-        .init(endsAt: $0.endsAt, refund: $0.refund.map { Money($0.value1) })
-      },
-      canResumeRenewal: cancellation.canResumeRenewal,
-      accountDeletionRefund: cancellation.accountDeletion.refund.map { Money($0.value1) })
-  }
-}

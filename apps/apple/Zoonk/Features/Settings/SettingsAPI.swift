@@ -152,7 +152,7 @@ struct SettingsAPI: SettingsAPIClient {
     try await clients.perform(token: token) { client in
       switch try await client.getStripeSubscriptionCancellation() {
       case .ok(let response):
-        return WebPlusCancellation(try response.body.json)
+        return WebPlusCancellation(unpaid: try response.body.json.unpaid)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
