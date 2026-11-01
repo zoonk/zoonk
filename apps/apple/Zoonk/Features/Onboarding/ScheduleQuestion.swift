@@ -13,6 +13,7 @@ struct ScheduleQuestion: View {
   @Environment(OnboardingStore.self) private var onboarding
   /// The plan so far is beside the question, so the question doesn't repeat it.
   @Environment(\.isPaneSplit) private var isBesidePlan
+  @Environment(\.onboardingAside) private var aside
   @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
   @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
@@ -132,11 +133,7 @@ struct ScheduleQuestion: View {
         title: Text(
           "How much time can you study each day?", tableName: "Onboarding",
           comment: "Onboarding question"),
-        description: isBesidePlan
-          ? nil
-          : Text(
-            PlanFact.chips(
-              of: view.goal, today: GoalDate.today(now: .now, timeZone: view.goal.timezone))))
+        description: isBesidePlan ? nil : aside?.planFacts.map { Text(PlanFact.chips($0)) })
 
       // The days decide the time, and what the time covers arrives last, so nothing above it moves.
       weekSection(shown)

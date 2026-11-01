@@ -4,7 +4,11 @@ import SwiftUI
 /// the plan so far once there is one.
 enum OnboardingAside {
   case howItWorks
-  case planSoFar(Components.Schemas.Goal)
+  case planSoFar([PlanFact])
+
+  var planFacts: [PlanFact]? {
+    if case .planSoFar(let facts) = self { facts } else { nil }
+  }
 }
 
 extension EnvironmentValues {
@@ -26,8 +30,8 @@ private struct OnboardingColumn: ViewModifier {
       switch aside {
       case .howItWorks?:
         HowItWorks()
-      case .planSoFar(let goal)?:
-        PlanSoFar(goal: goal)
+      case .planSoFar(let facts)?:
+        PlanSoFar(facts: facts)
       case nil:
         EmptyView()
       }

@@ -163,7 +163,12 @@ private struct GoalSteps: View {
       onAnswer: answer,
       onPlacementDone: finishPlacement
     )
-    .environment(\.onboardingAside, .planSoFar(view.goal))
+    // Decoded here, once per answer: the steps' own bodies run on every tap.
+    .environment(
+      \.onboardingAside,
+      .planSoFar(
+        PlanFact.all(of: view.goal, today: GoalDate.today(now: .now, timeZone: view.goal.timezone)))
+    )
     .id(step)
     .navigationBarBackButtonHidden()
     // The step counter takes the title's place; without it the bar shows no title.

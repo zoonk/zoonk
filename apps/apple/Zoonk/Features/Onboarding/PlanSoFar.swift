@@ -2,11 +2,9 @@ import SwiftUI
 
 /// Main's `PlanReceipt`: what the goal's answers have set so far, beside its setup steps.
 struct PlanSoFar: View {
-  let goal: Components.Schemas.Goal
+  let facts: [PlanFact]
 
   var body: some View {
-    let facts = PlanFact.all(of: goal, today: GoalDate.today(now: .now, timeZone: goal.timezone))
-
     List {
       Section {
         ForEach(facts) { fact in
@@ -68,16 +66,13 @@ struct PlanFact: Identifiable, Equatable {
 
   /// Main's chips: the short facts the daily time question shows when the plan so far isn't beside
   /// it, with the date as the days left.
-  static func chips(of goal: Components.Schemas.Goal, today: String) -> String {
+  static func chips(_ facts: [PlanFact]) -> String {
     let shown: Set = [
       "title", "date", "targetLanguage", "targetCourse", "institution", "targetPosition",
       "targetScore",
     ]
 
-    return all(of: goal, today: today)
-      .filter { shown.contains($0.id) }
-      .map { $0.count ?? $0.value }
-      .joinedFacts()
+    return facts.filter { shown.contains($0.id) }.map { $0.count ?? $0.value }.joinedFacts()
   }
 
   private struct Details: Decodable {
