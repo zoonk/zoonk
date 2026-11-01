@@ -15,19 +15,31 @@ const LATE_CHECK_MS = 180_000;
 /** The exchange before a check's new turns, so a short answer reads with its question. */
 const CONTEXT_TURNS = 2;
 
+/** About the exchanges a minute of talk holds; past them, the call's review still reads it all. */
+const CHECKS_PER_CALL_MINUTE = 4;
+
 /**
- * Claims the turns the call's checks haven't read before the model runs, so a transcript sent
- * again or at once asks no model, and a call's checks read its transcript about once.
+ * Claims the turns after the ones the call's checks have read, from exactly the count this
+ * request read, before the model runs: a transcript sent again or at once asks no model, and a
+ * call's checks read its transcript about once, a few times a minute at most.
  */
 async function checkNewTurns({
   row,
   ...check
 }: Parameters<typeof findNewlyMetObjectives>[0] & {
-  row: Pick<LanguageConversation, "checkedTurns" | "id">;
+  row: Pick<LanguageConversation, "checkedTurns" | "id" | "minutes">;
 }): Promise<string[]> {
+  if (check.turns.length <= row.checkedTurns) {
+    return [];
+  }
+
   const { count } = await prisma.languageConversation.updateMany({
-    data: { checkedTurns: check.turns.length },
-    where: { checkedTurns: { lt: check.turns.length }, id: row.id },
+    data: { checkedTurns: check.turns.length, objectiveChecks: { increment: 1 } },
+    where: {
+      checkedTurns: row.checkedTurns,
+      id: row.id,
+      objectiveChecks: { lt: row.minutes * CHECKS_PER_CALL_MINUTE },
+    },
   });
 
   if (count === 0) {

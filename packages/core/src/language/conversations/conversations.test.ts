@@ -103,6 +103,24 @@ async function connectPractice(chapterId: string) {
   return conversationId;
 }
 
+const CONVERSATION_UPDATE = /UPDATE "public"\."language_conversations"/u;
+
+/** Holds the call's row, so checks that read it wait at their claim in the order they were sent. */
+function holdConversationRow(conversationId: string) {
+  const held = Promise.withResolvers<number>();
+  const released = Promise.withResolvers<null>();
+
+  const done = prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM language_conversations WHERE id = ${conversationId}::uuid FOR UPDATE`;
+    const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+    held.resolve(backend?.pid ?? 0);
+    await released.promise;
+  });
+
+  done.catch((error: unknown) => held.reject(error));
+  return { done, pid: held.promise, release: () => released.resolve(null) };
+}
+
 describe("language conversations", () => {
   beforeEach(async () => {
     freezeClock();
@@ -475,6 +493,58 @@ describe("language conversations", () => {
     expect(vi.mocked(checkConversationObjectives).mock.calls[1]?.[0]).toMatchObject({
       turns: longer.slice(1),
     });
+  });
+
+  it("reads turns once when longer transcripts are sent at once", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    const row = holdConversationRow(conversationId);
+    const pid = await row.pid;
+    const turns = [...TURNS, { speaker: "learner" as const, text: "How much is the deposit?" }];
+
+    /** Each send waits at the claim before the next goes, so the longer ones claim last. */
+    const sent = await [2, 3, 4].reduce<Promise<Promise<unknown>[]>>(
+      async (previous, count, index) => {
+        const earlier = await previous;
+
+        const check = checkLanguageConversationObjectives({
+          conversationId,
+          input: { turns: turns.slice(0, count) },
+        });
+
+        await waitForBlockedStatement(pid, CONVERSATION_UPDATE, index + 1);
+        return [...earlier, check];
+      },
+      Promise.resolve([]),
+    );
+
+    row.release();
+    await row.done;
+    await Promise.all(sent);
+
+    expect(checkConversationObjectives).toHaveBeenCalledOnce();
+  });
+
+  it("checks a call's goals live about as often as its minutes hold exchanges", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+    const learnerTurn = { speaker: "learner" as const, text: "And the deposit?" };
+
+    await Array.from({ length: 12 }, (_, index) => index + 1).reduce(
+      (previous, extra) =>
+        previous.then(() =>
+          checkLanguageConversationObjectives({
+            conversationId,
+            input: { turns: [...TURNS, ...Array.from({ length: extra }, () => learnerTurn)] },
+          }),
+        ),
+      Promise.resolve<unknown>(null),
+    );
+
+    expect(checkConversationObjectives).toHaveBeenCalledTimes(8);
   });
 
   it("marks a goal two overlapping checks both found only once", async () => {
