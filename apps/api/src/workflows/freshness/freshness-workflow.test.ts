@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
@@ -23,6 +24,7 @@ import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtu
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { findAndStoreSources } from "../research/research-sources";
 import { freshnessWorkflow } from "./freshness-workflow";
 import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
 
@@ -232,6 +234,61 @@ describe(freshnessWorkflow, () => {
       usage: {} as never,
       userPrompt: "",
     }));
+  });
+
+  it("keeps deferred pricing when a missing notice needs a copy search", async () => {
+    const noticeText = await readFixture("tcdf-2026-notice.txt");
+    const failedUrl = `https://board.example.org/${randomUUID()}.txt`;
+    const mirrorUrl = `https://mirror.example.net/${randomUUID()}.txt`;
+
+    const document = {
+      documentType: "notice" as const,
+      kind: "official" as const,
+      publisher: null,
+      reason: "Notice",
+      title: `Notice ${randomUUID()}`,
+      url: failedUrl,
+    };
+
+    vi.mocked(findOfficialSources)
+      .mockResolvedValueOnce({
+        ...TASK,
+        data: { board: null, documents: [document], officialFound: true, searchCalls: 1 },
+      })
+      .mockResolvedValueOnce({
+        ...TASK,
+        data: {
+          board: null,
+          documents: [{ ...document, url: mirrorUrl }],
+          officialFound: true,
+          searchCalls: 1,
+        },
+      });
+
+    vi.mocked(fetch).mockImplementation(async (input) =>
+      input === failedUrl
+        ? new PageResponse("", { status: 404 })
+        : new PageResponse(noticeText, { headers: { "content-type": "text/plain" } }),
+    );
+
+    const serviceTier = chooseServiceTier({ wait: "later" });
+
+    const result = await findAndStoreSources({
+      analytics: { contentScope: "shared" },
+      plan: NEXT_NOTICE_PLAN,
+      requireOfficial: true,
+      serviceTier,
+      topic: "exam",
+    });
+
+    expect(result.sourceIds).toHaveLength(1);
+    expect(result.notDownloaded).toStrictEqual([]);
+
+    expect(
+      vi.mocked(findOfficialSources).mock.calls.map(([params]) => params.serviceTier),
+    ).toStrictEqual([serviceTier, serviceTier]);
+
+    expect(vi.mocked(findOfficialSources).mock.calls[1]?.[0].unreadable).toStrictEqual([failedUrl]);
   });
 
   it("updates only what a corrected notice changed and records the learner notice", async () => {
@@ -496,7 +553,14 @@ describe(freshnessWorkflow, () => {
       freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" }),
     ).resolves.toMatchObject({ status: "checked" });
 
-    expect(findOfficialSources).toHaveBeenCalledOnce();
+    expect(findOfficialSources).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceTier: chooseServiceTier({ wait: "later" }) }),
+    );
+
+    expect(generateExamResearchPlan).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceTier: chooseServiceTier({ wait: "later" }) }),
+    );
+
     expect(extractExamBlueprint).not.toHaveBeenCalled();
   });
 
@@ -598,6 +662,7 @@ describe(freshnessWorkflow, () => {
     expect(generateSourceChangeNotice).toHaveBeenCalledWith(
       expect.objectContaining({
         changes: "- Art. 1º A alíquota é de 15%.\n+ Art. 1º A alíquota é de 17%.",
+        serviceTier: chooseServiceTier({ wait: "later" }),
         source: "Lei nº 99.999/2026",
       }),
     );

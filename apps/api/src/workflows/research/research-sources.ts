@@ -1,3 +1,4 @@
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type FoundSourceDocument } from "@zoonk/ai/tasks/research/find-official-sources";
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type SourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
@@ -12,7 +13,7 @@ import { type ResearchGoal } from "./steps/load-research-goal-step";
 import {
   type StoredSource,
   keepReadableSourcesStep,
-  storeSourceStep,
+  storeSource,
 } from "./steps/store-sources-step";
 
 export type ResearchContext<TPlan extends ExamResearchPlan | SourceResearchPlan> = {
@@ -36,7 +37,7 @@ async function storeDocuments({
   topic: SourceTopic;
 }): Promise<{ stored: StoredSource[]; unreadable: FoundSourceDocument[] }> {
   const results = await Promise.allSettled(
-    documents.map((document) => storeSourceStep({ analytics, document, language, topic })),
+    documents.map((document) => storeSource({ analytics, document, language, topic })),
   );
 
   const stored = await keepReadableSourcesStep(
@@ -104,12 +105,14 @@ async function storeCopies({
   lost,
   plan,
   searchAnalytics,
+  serviceTier,
   topic,
 }: {
   analytics: ResearchAnalytics;
   lost: FoundSourceDocument[];
   plan: ExamResearchPlan | SourceResearchPlan;
   searchAnalytics: ResearchAnalytics;
+  serviceTier?: ServiceTier;
   topic: SourceTopic;
 }): Promise<StoredSource[]> {
   if (lost.length === 0) {
@@ -120,6 +123,7 @@ async function storeCopies({
     findSourcesStep({
       analytics: searchAnalytics,
       plan,
+      serviceTier,
       topic,
       unreadable: lost.map((document) => document.url),
     }),
@@ -148,16 +152,18 @@ export async function findAndStoreSources({
   personalPlan = false,
   plan,
   requireOfficial,
+  serviceTier,
   topic,
 }: {
   analytics: ResearchAnalytics;
   personalPlan?: boolean;
   plan: ExamResearchPlan | SourceResearchPlan;
   requireOfficial: boolean;
+  serviceTier?: ServiceTier;
   topic: SourceTopic;
 }): Promise<{ board: string | null; notDownloaded: string[]; sourceIds: string[] }> {
   const searchAnalytics = toPlanAnalytics({ analytics, personal: personalPlan });
-  const found = await findSourcesStep({ analytics: searchAnalytics, plan, topic });
+  const found = await findSourcesStep({ analytics: searchAnalytics, plan, serviceTier, topic });
 
   const { stored, unreadable } = await storeDocuments({
     analytics,
@@ -173,7 +179,7 @@ export async function findAndStoreSources({
   }
 
   const lost = listLostParts({ stored, topic, unreadable });
-  const copies = await storeCopies({ analytics, lost, plan, searchAnalytics, topic });
+  const copies = await storeCopies({ analytics, lost, plan, searchAnalytics, serviceTier, topic });
   const notDownloaded = listNotCopied({ copies, lost }).map((document) => document.url);
 
   // A notice's corrections and annexes read without it would stand in for the whole notice.

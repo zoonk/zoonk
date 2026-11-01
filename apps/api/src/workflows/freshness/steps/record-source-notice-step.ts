@@ -1,3 +1,4 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
 import { type SourceChange } from "@zoonk/core/library/exams/check-freshness";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
@@ -22,6 +23,7 @@ export async function recordSourceNoticeStep({
     analytics,
     changes,
     language: change.language,
+    serviceTier: chooseServiceTier({ wait: "later" }),
     source: change.title,
   });
 

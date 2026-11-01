@@ -4,7 +4,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { type ChangingFactsTopic } from "./changing-facts";
 import systemPrompt from "./research-plan.prompt.md";
 
@@ -44,6 +44,7 @@ export type ExamResearchPlanParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -90,10 +91,11 @@ export async function generateExamResearchPlan({
   goal,
   model = defaultModel,
   reasoning,
+  serviceTier,
   useFallback = true,
 }: ExamResearchPlanParams) {
   const userPrompt = formatResearchGoal({ details, goal });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

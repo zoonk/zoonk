@@ -3,7 +3,7 @@ import { Output, generateText, isStepCount } from "ai";
 import { type z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import {
   type ResearchSearchTool,
   buildResearchSearchTools,
@@ -23,6 +23,7 @@ export async function runSearchTask<T>({
   maxSteps,
   model,
   reasoning,
+  serviceTier,
   schema,
   searchTool,
   systemPrompt,
@@ -37,6 +38,7 @@ export async function runSearchTask<T>({
   maxSteps: number;
   model: string;
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   schema: z.ZodType<T>;
   searchTool: ResearchSearchTool;
   systemPrompt: string;
@@ -56,6 +58,7 @@ export async function runSearchTask<T>({
         providerOptions: buildProviderOptions({
           fallbackModels,
           model,
+          serviceTier,
           // A `native` search tool belongs to the requested model's provider alone.
           useFallback: useFallback && searchTool !== "native",
         }),

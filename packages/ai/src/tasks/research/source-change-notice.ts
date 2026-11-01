@@ -4,7 +4,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./source-change-notice.prompt.md";
 
@@ -23,6 +23,7 @@ export type SourceChangeNoticeParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -32,6 +33,7 @@ export async function generateSourceChangeNotice({
   language,
   model = defaultModel,
   reasoning,
+  serviceTier,
   source,
   useFallback = true,
 }: SourceChangeNoticeParams) {
@@ -39,7 +41,7 @@ export async function generateSourceChangeNotice({
 
 ${formatUntrustedInput({ CHANGES: changes, SOURCE: source })}`;
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

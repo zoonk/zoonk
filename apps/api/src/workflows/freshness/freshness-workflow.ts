@@ -1,3 +1,4 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import {
   type FreshnessCheck,
   type FreshnessStopReason,
@@ -38,6 +39,7 @@ async function searchNextNotice({
     analytics,
     plan,
     requireOfficial: true,
+    serviceTier: chooseServiceTier({ wait: "later" }),
     topic: "exam",
   });
 

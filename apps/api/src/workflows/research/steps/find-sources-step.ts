@@ -1,3 +1,4 @@
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type FoundSourceDocument,
   findOfficialSources,
@@ -51,17 +52,19 @@ function selectCopies({
 export async function findSourcesStep({
   analytics,
   plan,
+  serviceTier,
   topic,
   unreadable = [],
 }: {
   analytics: ResearchAnalytics;
   plan: ExamResearchPlan | SourceResearchPlan;
+  serviceTier?: ServiceTier;
   topic: ResearchTopic;
   unreadable?: string[];
 }): Promise<{ board: string | null; documents: FoundSourceDocument[]; officialFound: boolean }> {
   "use step";
 
-  const { data } = await findOfficialSources({ analytics, plan, topic, unreadable });
+  const { data } = await findOfficialSources({ analytics, plan, serviceTier, topic, unreadable });
 
   const documents =
     unreadable.length > 0

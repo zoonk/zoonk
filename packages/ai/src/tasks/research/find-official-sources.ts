@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { type Reasoning } from "../../provider-options";
+import { type Reasoning, type ServiceTier } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import promptTemplate from "./find-official-sources.prompt.md";
 import {
@@ -82,6 +82,7 @@ export type FindOfficialSourcesParams = {
   useFallback?: boolean;
   model?: string;
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -119,6 +120,7 @@ export async function findOfficialSources({
   model = defaultModel,
   plan,
   reasoning,
+  serviceTier,
   searchTool = defaultSearchTool,
   topic,
   unreadable = [],
@@ -139,6 +141,7 @@ export async function findOfficialSources({
     reasoning,
     schema,
     searchTool,
+    serviceTier,
     systemPrompt,
     task: "find-official-sources",
     useFallback,
