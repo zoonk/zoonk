@@ -7,6 +7,12 @@ const HANDLE_ALL_URLS = "delegate_permission/common.handle_all_urls";
  */
 export const APP_LINK_COMPONENTS = [{ "/": "/plan-link/*" }, { "/": "/*/plan-link/*" }];
 
+/**
+ * Apple sign-in's return on Android (the API's `/auth/apple/android` redirects there). The Auth Tab
+ * catches it itself; a browser without Auth Tab hands it to the app as an App Link.
+ */
+const ANDROID_APPLE_RETURN = { "/": "/auth/apple" };
+
 /** A comma-separated list of fingerprints, so another key (the upload key, a second machine) can join. */
 function readFingerprints(value: string | undefined): string[] {
   return (value ?? "")
@@ -19,7 +25,7 @@ function readFingerprints(value: string | undefined): string[] {
  * Android's Digital Asset Links: the release app and the Debug build, each verified by the SHA-256
  * fingerprints of the certificates that sign it (Play App Signing's key for release, the local
  * debug keystore for Debug). An app without fingerprints is left out. Android 15 and later open
- * only the paths in `APP_LINK_COMPONENTS`; earlier versions use the app's manifest.
+ * only these paths; earlier versions use the app's manifest.
  */
 export function getAndroidAssetLinks() {
   const apps = [
@@ -38,7 +44,9 @@ export function getAndroidAssetLinks() {
     .map((app) => ({
       relation: [HANDLE_ALL_URLS],
       relation_extensions: {
-        [HANDLE_ALL_URLS]: { dynamic_app_link_components: APP_LINK_COMPONENTS },
+        [HANDLE_ALL_URLS]: {
+          dynamic_app_link_components: [...APP_LINK_COMPONENTS, ANDROID_APPLE_RETURN],
+        },
       },
       target: {
         namespace: "android_app",
