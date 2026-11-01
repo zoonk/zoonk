@@ -102,6 +102,8 @@ private struct GoalSteps: View {
   /// "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal.
   let onGoalMoved: (String) -> Void
 
+  /// Read as the goal arrives, not in `body`, which runs on every save, failure and dialog.
+  private let planFacts: [PlanFact]
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @State private var history: [Components.Schemas.OnboardingStep]
@@ -124,6 +126,8 @@ private struct GoalSteps: View {
     self.onStartOver = onStartOver
     self.onGoalMoved = onGoalMoved
     _history = State(initialValue: Self.answeredSteps(view))
+    planFacts = PlanFact.all(
+      of: view.goal, today: GoalDate.today(now: .now, timeZone: view.goal.timezone))
   }
 
   private var step: Components.Schemas.OnboardingStep {
@@ -163,12 +167,7 @@ private struct GoalSteps: View {
       onAnswer: answer,
       onPlacementDone: finishPlacement
     )
-    // Decoded here, once per answer: the steps' own bodies run on every tap.
-    .environment(
-      \.onboardingAside,
-      .planSoFar(
-        PlanFact.all(of: view.goal, today: GoalDate.today(now: .now, timeZone: view.goal.timezone)))
-    )
+    .environment(\.onboardingAside, .planSoFar(planFacts))
     .id(step)
     .navigationBarBackButtonHidden()
     // The step counter takes the title's place; without it the bar shows no title.

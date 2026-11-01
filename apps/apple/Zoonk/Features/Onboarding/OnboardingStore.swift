@@ -366,6 +366,9 @@ final class OnboardingStore {
       [api] identity in
       try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)
     }
+
+    // The finish writes the tested level into the goal, which the plan so far shows beside the result.
+    onboarding(goalID: goalID).invalidate()
   }
 
   private func create(_ input: Components.Schemas.GoalCreateInput) async throws -> String {
