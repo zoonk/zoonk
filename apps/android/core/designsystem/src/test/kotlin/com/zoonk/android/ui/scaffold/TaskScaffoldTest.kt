@@ -3,10 +3,17 @@ package com.zoonk.android.ui.scaffold
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
@@ -122,5 +129,33 @@ class TaskScaffoldTest {
         val actions = rule.onNodeWithText("Hand in").getUnclippedBoundsInRoot()
         assertTrue("the title ends before the fold: $title", title.right <= 426.dp)
         assertTrue("the actions start after the fold: $actions", actions.left >= 426.dp)
+    }
+
+    /**
+     * A run drops its aside across an unfolded book's fold, where its passage leads the page before
+     * the fold, and takes it back on a phone, so folding swaps one for the other.
+     */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp")
+    fun keepsWhatTheTaskHoldsAsItsAsideComesAndGoes() {
+        val passage = TaskAside { Text("Passage") }
+        var aside by mutableStateOf<TaskAside?>(passage)
+        rule.setContent {
+            CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                TaskScaffold(onClose = {}, aside = aside) { padding ->
+                    var picks by rememberSaveable { mutableIntStateOf(0) }
+                    Button(onClick = { picks++ }, modifier = Modifier.padding(padding)) { Text("Picked $picks") }
+                }
+            }
+        }
+        rule.onNodeWithText("Picked 0").performClick()
+
+        aside = null
+        rule.waitForIdle()
+        rule.onNodeWithText("Picked 1").assertIsDisplayed()
+
+        aside = passage
+        rule.waitForIdle()
+        rule.onNodeWithText("Picked 1").assertIsDisplayed()
     }
 }

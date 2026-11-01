@@ -35,8 +35,7 @@ data class OrderCheck(
 
 /**
  * Steps tapped in order (main's `OrderQuestion`): each placed step shows its place, and tapping it
- * takes it out. The host gets the order once every step has a place, null before, and its [draft]
- * places them again.
+ * takes it out. The host gets the order once every step has a place, null before.
  */
 @Composable
 fun OrderQuestion(
@@ -45,9 +44,8 @@ fun OrderQuestion(
     enabled: Boolean,
     onAnswer: (Answer?) -> Unit,
     modifier: Modifier = Modifier,
-    draft: Answer? = null,
 ) {
-    var order by rememberSaveable { mutableStateOf((draft as? Answer.Order)?.order.orEmpty()) }
+    var order by rememberSaveable { mutableStateOf(emptyList<Int>()) }
     val locked = !enabled || check != null
     val placed = check?.order ?: order
 

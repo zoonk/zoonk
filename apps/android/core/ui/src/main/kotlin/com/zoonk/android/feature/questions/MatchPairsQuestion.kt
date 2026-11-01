@@ -38,7 +38,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 /**
  * Pairs matched by tapping an entry on the left, then its match on the right (main's
  * `MatchPairsQuestion`); tapping a matched entry undoes its pair. The host gets the pairs once
- * every entry on the left has one, null before, and its [draft] matches them again.
+ * every entry on the left has one, null before.
  */
 @Composable
 fun MatchPairsQuestion(
@@ -47,9 +47,8 @@ fun MatchPairsQuestion(
     enabled: Boolean,
     onAnswer: (Answer?) -> Unit,
     modifier: Modifier = Modifier,
-    draft: Answer? = null,
 ) {
-    var matches by rememberSaveable { mutableStateOf((draft as? Answer.Matches)?.matches ?: List(left.size) { UNMATCHED }) }
+    var matches by rememberSaveable { mutableStateOf(List(left.size) { UNMATCHED }) }
     var selected by rememberSaveable { mutableStateOf<Int?>(null) }
 
     fun update(next: List<Int>) {

@@ -118,14 +118,14 @@ fun TaskScaffold(
         )
     }
 
-    // The screen's modifier (focus, keys) stays on one node when an aside comes or goes.
+    // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
     Box(modifier) {
-        if (aside == null) {
-            frame()
-        } else {
-            PageWithSupportingPane(supportingPane = { TaskAsideRail(aside) }, panesTouch = true, halfWidth = aside.half) { beside ->
-                CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame() }
-            }
+        PageWithSupportingPane(
+            supportingPane = aside?.let { { TaskAsideRail(it) } },
+            panesTouch = true,
+            halfWidth = aside?.half == true,
+        ) { beside ->
+            CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame() }
         }
     }
 

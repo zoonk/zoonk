@@ -19,10 +19,10 @@ data class AnswerCheck(
 /**
  * The answer controls for any format (main's `QuestionView`). [onAnswer] gets the answer as it's
  * made, null until it's complete; [onSubmit] gets one Done sends from a typed or numeric box. Key it
- * by the question. [draft] is what [onAnswer] last got: a statement shows it, and every control
- * drawn again starts from it, so what shows is always what Check would send. A statement shows its
- * own words on its card, so its host leaves the title out. Across a spread ([part]) only a
- * statement's card draws on the screen's page; every control draws on the turn's.
+ * by the question. A statement shows its own words on its card, so its host leaves the title out.
+ * Across a spread ([part]) only a statement's card draws on the screen's page; every control draws
+ * on the turn's. A statement shows [draft], what [onAnswer] last got, so its card and its answers
+ * show the same pick on both pages.
  */
 @Composable
 fun QuestionAnswer(
@@ -38,12 +38,11 @@ fun QuestionAnswer(
     part: StepPart = StepPart.Whole,
 ) {
     if (!part.showsTurn && question.format != QuestionFormat.TrueFalse) return
-    val given = check?.answer ?: draft
 
     when (question.format) {
         QuestionFormat.Numeric -> {
             val sent =
-                (given as? Answer.Numeric)?.value?.let {
+                (check?.answer as? Answer.Numeric)?.value?.let {
                     formatNumber(
                         it,
                         currentLocale(),
@@ -70,7 +69,7 @@ fun QuestionAnswer(
                 onAnswer,
                 onSubmit,
                 modifier,
-                initialText = (given as? Answer.Text)?.text.orEmpty(),
+                initialText = (check?.answer as? Answer.Text)?.text.orEmpty(),
             )
         }
 
@@ -82,12 +81,11 @@ fun QuestionAnswer(
                 enabled = enabled,
                 onAnswer = onAnswer,
                 modifier = modifier,
-                draft = draft,
             )
         }
 
         QuestionFormat.MatchPairs -> {
-            MatchPairsQuestion(question.left.orEmpty(), question.right.orEmpty(), enabled && check == null, onAnswer, modifier, draft)
+            MatchPairsQuestion(question.left.orEmpty(), question.right.orEmpty(), enabled && check == null, onAnswer, modifier)
         }
 
         QuestionFormat.TrueFalse -> {
@@ -112,7 +110,6 @@ fun QuestionAnswer(
                 enabled = enabled,
                 onAnswer = onAnswer,
                 modifier = modifier,
-                draft = draft,
             )
         }
     }

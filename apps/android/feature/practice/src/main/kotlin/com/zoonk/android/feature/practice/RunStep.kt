@@ -143,7 +143,6 @@ internal fun RunFrame(
     val focus = remember { FocusRequester() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
-    // Above the task, whose frame starts over as its aside comes or goes, as it does across a fold.
     val scroll = rememberScrollState()
     val screenScroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
@@ -192,8 +191,7 @@ internal fun RunFrame(
             Column(Modifier.padding(padding).fillMaxSize()) {
                 Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
                 Box(Modifier.weight(1f).fillMaxWidth()) {
-                    // The turn's page is the one column's place, so its unsent work stays as the book opens or closes; where an
-                    // aside comes or goes the task's frame starts over, and the controls start from the screen's draft.
+                    // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
                     ScrollingPage(
                         Modifier
                             .fillMaxSize()

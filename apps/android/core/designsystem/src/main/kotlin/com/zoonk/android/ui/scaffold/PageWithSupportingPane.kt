@@ -38,12 +38,14 @@ import androidx.compose.ui.unit.dp
  * page's lists reach that hairline as they reach the window's edge, or for two pages that keep their
  * own margins on each side of a book's fold. With [halfWidth], the supporting
  * pane takes half the room, for a long passage. With [atFoldOnly], the panes split only at an
- * unfolded book foldable's fold, for a spread that wider windows show as one column.
+ * unfolded book foldable's fold, for a spread that wider windows show as one column. Without a
+ * [supportingPane] the page is one pane, in the same place as with one, so what [mainPane] holds
+ * keeps its state as a supporting pane comes or goes.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PageWithSupportingPane(
-    supportingPane: @Composable () -> Unit,
+    supportingPane: (@Composable () -> Unit)?,
     modifier: Modifier = Modifier,
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
@@ -53,7 +55,7 @@ fun PageWithSupportingPane(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(modifier.onPageSpan { span = it }) {
-        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth, atFoldOnly)
+        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth, atFoldOnly, alone = supportingPane == null)
         val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = directive)
         val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
@@ -61,7 +63,7 @@ fun PageWithSupportingPane(
             directive = navigator.scaffoldDirective,
             value = navigator.scaffoldValue,
             mainPane = { AnimatedPane { mainPane(supportingPaneBeside) } },
-            supportingPane = { AnimatedPane(if (halfWidth) Modifier.preferredWidth(HALF) else Modifier) { supportingPane() } },
+            supportingPane = { AnimatedPane(if (halfWidth) Modifier.preferredWidth(HALF) else Modifier) { supportingPane?.invoke() } },
         )
     }
 }
@@ -76,7 +78,7 @@ fun supportingPaneBeside(width: Dp): Boolean = pageDirective(width).maxHorizonta
  * with the text. That's where Material splits the window (expanded and wider), and on a page an
  * unfolded book foldable's fold crosses ([pageFold]), where the panes meet at the fold, flat or
  * folded, so each is a page of the book and folding moves nothing. [atFoldOnly] keeps one column
- * where there's no fold.
+ * where there's no fold, and [alone] everywhere.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -86,6 +88,7 @@ fun pageDirective(
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
     atFoldOnly: Boolean = false,
+    alone: Boolean = false,
 ): PaneScaffoldDirective {
     val info = currentWindowAdaptiveInfoV2()
     val fold = info.foldAcross(width, span)
@@ -110,7 +113,8 @@ fun pageDirective(
             }
         }
     val twoPanes =
-        window.maxHorizontalPartitions > 1 &&
+        !alone &&
+            window.maxHorizontalPartitions > 1 &&
             (fold != null || !atFoldOnly) &&
             narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
 

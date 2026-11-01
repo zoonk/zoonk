@@ -293,7 +293,7 @@ private fun PatternQuestion(
     ) { part, _, ruleShown ->
         key(index) {
             if (part.showsScreen) QuestionTitle(question.sentence, graded = checked != null)
-            if (part.showsTurn) PatternChoices(question, checked, drill.picked, viewModel)
+            if (part.showsTurn) PatternChoices(question, checked, viewModel)
         }
         if (ruleOpen && !ruleShown) RuleSheet(pattern) { ruleOpen = false }
     }
@@ -303,7 +303,6 @@ private fun PatternQuestion(
 private fun PatternChoices(
     question: MistakePatternDrillInner,
     checked: String?,
-    picked: Int?,
     viewModel: PatternViewModel,
 ) {
     ChoiceQuestion(
@@ -324,7 +323,6 @@ private fun PatternChoices(
             },
         enabled = checked == null,
         onAnswer = { viewModel.pick((it as? Answer.Choice)?.index) },
-        draft = picked?.let(Answer::Choice),
     )
     checked?.let { PatternFeedback(right = it.trim() == question.answer.trim(), explanation = question.feedback) }
 }
