@@ -32,6 +32,7 @@ struct ShellGate<Content: View>: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
+  @State private var goal = SentGoal(words: "")
 
   let requirement: AppRoute.Requirement
   let title: LocalizedStringResource
@@ -146,7 +147,7 @@ struct ShellGate<Content: View>: View {
       }
       .listRowBackground(Color.clear)
 
-      GoalStartEntry(isBoxOnly: true)
+      GoalStartEntry(part: .box, goal: $goal)
     }
   }
 }

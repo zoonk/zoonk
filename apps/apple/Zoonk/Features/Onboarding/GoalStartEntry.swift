@@ -3,33 +3,51 @@ import SwiftUI
 /// Sending opens the start flow, which reads the words right away: the tap is what starts it. A
 /// visitor becomes a guest when they send.
 struct GoalStartEntry: View {
-  /// The catalog's box: only the words and "Build my plan", since the courses below are its examples.
-  var isBoxOnly = false
+  enum Part {
+    /// The box, its material, "Build my plan" and the examples.
+    case whole
+    /// All but the examples, which face it on a spread.
+    case form
+    case examples
+    /// The catalog's box: only the words and "Build my plan", since the courses below are its
+    /// examples.
+    case box
+  }
+
+  var part = Part.whole
+  /// Kept by the screen, so folding or unfolding iPhone Duo keeps what the learner typed.
+  @Binding var goal: SentGoal
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var words = ""
-  @State private var material: [AttachedSource] = []
-  @State private var intent: MaterialIntent?
 
   var body: some View {
-    GoalEntrySections(
-      words: $words, isSection: !isBoxOnly, showsExamples: !isBoxOnly,
-      canSubmitEmpty: !material.isEmpty && intent != nil,
-      onSubmit: { goal in
-        onboarding.send(SentGoal(words: goal, material: material, intent: intent))
-        router.open(.startGoal())
-      },
-      attachment: {
-        if !isBoxOnly {
-          GoalMaterialSections(material: $material, intent: $intent)
-        }
-      })
+    if part == .examples {
+      GoalExamplesSection { words in
+        goal.words = words
+        send(words)
+      }
+    } else {
+      GoalEntrySections(
+        words: $goal.words, isSection: part != .box, showsExamples: part == .whole,
+        canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
+        onSubmit: send,
+        attachment: {
+          if part != .box {
+            GoalMaterialSections(material: $goal.material, intent: $goal.intent)
+          }
+        })
+    }
+  }
+
+  private func send(_ words: String) {
+    onboarding.send(SentGoal(words: words, material: goal.material, intent: goal.intent))
+    router.open(.startGoal())
   }
 }
 
 struct SentGoal {
-  let words: String
+  var words: String
   var material: [AttachedSource] = []
   var intent: MaterialIntent?
 
@@ -150,30 +168,10 @@ struct GoalEntrySections<Attachment: View>: View {
     }
 
     if showsExamples {
-      examplesSection
-    }
-  }
-
-  private var examplesSection: some View {
-    Section {
-      ForEach(examples, id: \.label.key) { example in
-        Button {
-          words = String(localized: example.label)
-          onSubmit(words)
-        } label: {
-          VStack(alignment: .leading) {
-            Text(example.label)
-              .foregroundStyle(.primary)
-            Text(example.kind)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-          }
-        }
+      GoalExamplesSection { example in
+        words = example
+        onSubmit(example)
       }
-    } header: {
-      Text(
-        "Examples", tableName: "Onboarding",
-        comment: "Title of example goals that start onboarding in one tap")
     }
   }
 
@@ -238,6 +236,33 @@ struct GoalEntrySections<Attachment: View>: View {
       LocalizedStringResource(
         "do well on the YKS, speak \(language)…", table: "Onboarding",
         comment: "Example goal in the empty goal box; the language is one the learner could speak")
+    }
+  }
+}
+
+/// Example goals that each start onboarding in one tap.
+struct GoalExamplesSection: View {
+  let onPick: (String) -> Void
+
+  var body: some View {
+    Section {
+      ForEach(examples, id: \.label.key) { example in
+        Button {
+          onPick(String(localized: example.label))
+        } label: {
+          VStack(alignment: .leading) {
+            Text(example.label)
+              .foregroundStyle(.primary)
+            Text(example.kind)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+    } header: {
+      Text(
+        "Examples", tableName: "Onboarding",
+        comment: "Title of example goals that start onboarding in one tap")
     }
   }
 

@@ -5,6 +5,7 @@ struct AllCoursesView: View {
   /// iPhone Duo keeps the box and the categories on the page before the hinge, flat or folded; nil
   /// elsewhere.
   @State private var leadingPageMargin: CGFloat?
+  @State private var goal = SentGoal(words: "")
 
   @Binding var category: CourseCategory?
 
@@ -22,7 +23,7 @@ struct AllCoursesView: View {
       .listSectionMargins(.trailing, leadingPageMargin)
       .listSectionSpacing(.compact)
 
-      GoalStartEntry(isBoxOnly: true)
+      GoalStartEntry(part: .box, goal: $goal)
         .listSectionMargins(.trailing, leadingPageMargin)
 
       if let counts = catalog.categoryCounts.value {

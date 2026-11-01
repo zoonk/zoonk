@@ -72,59 +72,71 @@ private struct TodayStartGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
+  @State private var goal = SentGoal(words: "")
 
   var body: some View {
-    List {
-      if let explanation = learner.summary.value?.openExplanations.last {
-        Section {
-          Label {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(explanation.title)
-              Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            }
-          } icon: {
-            Image(systemName: "play")
-              .foregroundStyle(.secondary)
-          }
-
-          Button {
-            router.open(.explain(goalId: explanation.id))
-          } label: {
-            Text(
-              "Continue explanation", tableName: "Today",
-              comment: "Opens the learner's unfinished quick explanation")
-          }
-        } header: {
-          Text(
-            "Your quick explanation", tableName: "Today",
-            comment: "The learner's unfinished quick explanation")
-        }
+    // The box keeps what's typed or pasted in it, and an open editor, as the examples come and go.
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
+      List {
+        GoalStartEntry(part: .examples, goal: $goal)
       }
-
-      if let draft = onboarding.resume.value?.draft {
-        Section {
-          Text(draft.prompt)
-
-          Button {
-            router.open(.startGoal(draftId: draft.draftId))
-          } label: {
-            Text(
-              "Continue", tableName: "Today",
-              comment: "Opens the goal the learner typed and hasn't confirmed yet")
-          }
-        } header: {
-          Text(
-            "What you wrote", tableName: "Onboarding",
-            comment: "Header over the learner's typed goal")
-        }
+    } content: { isBeside in
+      List {
+        resume
+        GoalStartEntry(part: isBeside ? .form : .whole, goal: $goal)
       }
-
-      GoalStartEntry()
     }
     .loads(onboarding.resume, refreshable: false)
     .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
+  }
+
+  @ViewBuilder
+  private var resume: some View {
+    if let explanation = learner.summary.value?.openExplanations.last {
+      Section {
+        Label {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(explanation.title)
+            Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
+              .font(.footnote)
+              .foregroundStyle(.secondary)
+          }
+        } icon: {
+          Image(systemName: "play")
+            .foregroundStyle(.secondary)
+        }
+
+        Button {
+          router.open(.explain(goalId: explanation.id))
+        } label: {
+          Text(
+            "Continue explanation", tableName: "Today",
+            comment: "Opens the learner's unfinished quick explanation")
+        }
+      } header: {
+        Text(
+          "Your quick explanation", tableName: "Today",
+          comment: "The learner's unfinished quick explanation")
+      }
+    }
+
+    if let draft = onboarding.resume.value?.draft {
+      Section {
+        Text(draft.prompt)
+
+        Button {
+          router.open(.startGoal(draftId: draft.draftId))
+        } label: {
+          Text(
+            "Continue", tableName: "Today",
+            comment: "Opens the goal the learner typed and hasn't confirmed yet")
+        }
+      } header: {
+        Text(
+          "What you wrote", tableName: "Onboarding",
+          comment: "Header over the learner's typed goal")
+      }
+    }
   }
 }
 
