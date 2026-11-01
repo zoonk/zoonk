@@ -107,7 +107,7 @@ internal fun MockResult(
         }
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
     MomentAfterCeremony(app, view.ceremony?.takeUnless { viewModel.openedFinished }) { buddy ->
-        var reviewOpen by rememberSaveable { mutableStateOf(false) }
+        val review = rememberReviewPlace()
         // Above both layouts, since an open book reads the areas on the page after the fold.
         var opened by rememberSaveable { mutableStateOf(emptyList<String>()) }
         val toggle = { key: String -> opened = if (key in opened) opened - key else opened + key }
@@ -116,21 +116,21 @@ internal fun MockResult(
         val keep = { offersViewModel.keep(offered) }
 
         BoxWithConstraints {
+            val fold = pageFold(maxWidth)
+            val asideFits = supportingPaneBeside(maxWidth, panesTouch = true)
             // An open book reads what happened before the fold, and what it means and what's next after it, with the way on.
-            val nextAfterFold =
-                MockResultPart.Score in has && pageFold(maxWidth) != null && supportingPaneBeside(maxWidth, panesTouch = true)
+            val nextAfterFold = MockResultPart.Score in has && fold != null && asideFits
             // With no questions to review, the areas and what the mock showed fill the page after the fold instead.
             val numbersAfterFold = nextAfterFold && view.review.isEmpty()
             val hasAside = resultAsideParts(has).isNotEmpty() || nextAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
-                    supportingPaneBeside(maxWidth, panesTouch = true)
+                    asideFits
                 } else {
                     maxWidth >=
                         WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
                 }
-            LaunchedEffect(wide) { if (wide) reviewOpen = false }
 
             val steps =
                 resultSteps(has).flatMap { part ->
@@ -142,7 +142,7 @@ internal fun MockResult(
                                         ScoreStep(view, it, dayMoment = { MockDayMoment(view, buddy) }) {
                                             if (!numbersAfterFold) ScoreNumbers(it, opened, toggle)
                                             if (!nextAfterFold) {
-                                                if (wide) ReviewSection(view, app)
+                                                if (wide) ReviewSection(view, app, review)
                                                 ResultNotes(view)
                                             }
                                         }
@@ -221,7 +221,7 @@ internal fun MockResult(
                         MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
                     }
                     if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
-                        TextButton(onClick = { reviewOpen = true }, modifier = Modifier.fillMaxWidth()) {
+                        TextButton(onClick = { review.open = true }, modifier = Modifier.fillMaxWidth()) {
                             val questions = view.review.size
                             Text(
                                 if (questions == 1) {
@@ -273,7 +273,7 @@ internal fun MockResult(
                                         AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
                                     }
                                     if (nextAfterFold) {
-                                        ReviewSection(view, app)
+                                        ReviewSection(view, app, review)
                                         ResultNotes(view)
                                     }
                                 }
@@ -283,9 +283,9 @@ internal fun MockResult(
                         },
                 ) { padding -> Box(Modifier.padding(padding)) { step() } }
             }
-        }
 
-        if (reviewOpen) ReviewSheet(view, app, onDismiss = { reviewOpen = false })
+            if (review.open && !wide) ReviewSheet(view, app, review)
+        }
     }
 }
 

@@ -3,12 +3,15 @@ package com.zoonk.android.feature.mock.result
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,9 +22,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.findRootCoordinates
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -53,14 +70,67 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
+import kotlinx.coroutines.launch
+
+/**
+ * Where the learner is in the questions to review. A phone reads them in a sheet and an open book on
+ * the page after the fold, and folding recreates the screen, so the place is saved as the question at
+ * the top of what they read: the sheet opens there, or the page scrolls there.
+ */
+@Stable
+internal class ReviewPlace(
+    restored: Int?,
+) {
+    /** Whether a phone shows the sheet. */
+    var open by mutableStateOf(restored != null)
+    private var pending = restored
+    private var section: LayoutCoordinates? = null
+    private val entries = HashMap<Int, LayoutCoordinates>()
+
+    fun sectionPlaced(coordinates: LayoutCoordinates) {
+        section = coordinates
+    }
+
+    /** Whether the question at [index] is the one to bring back to the top, once. */
+    fun entryPlaced(
+        index: Int,
+        coordinates: LayoutCoordinates,
+    ): Boolean {
+        entries[index] = coordinates
+        return (index == pending).also { if (it) pending = null }
+    }
+
+    private fun reading(): Int? {
+        val top = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
+        val inline = section?.takeIf { it.isAttached }
+        return when {
+            // On the page, the learner reads the questions once the section's title has scrolled away.
+            inline != null -> top.takeIf { inline.boundsInWindow().top > inline.positionInWindow().y }
+
+            open -> top ?: 0
+
+            else -> null
+        }
+    }
+
+    companion object {
+        val Saver = Saver<ReviewPlace, Int>(save = { it.reading() ?: -1 }, restore = { ReviewPlace(it.takeIf { at -> at >= 0 }) })
+    }
+}
+
+@Composable
+internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(null) }
 
 @Composable
 internal fun ReviewSection(
     view: MockExam,
     app: AppContainer,
+    place: ReviewPlace,
 ) {
     if (view.review.isEmpty()) return
-    ResultSection(stringResource(R.string.mock_result_review)) { ReviewList(view, app) }
+    Box(
+        Modifier.onPlaced(place::sectionPlaced),
+    ) { ResultSection(stringResource(R.string.mock_result_review)) { ReviewList(view, app, place) } }
 }
 
 /** Main's `MockReviewDrawer`: the same questions in a sheet, where the score step stays short on a phone. */
@@ -69,13 +139,13 @@ internal fun ReviewSection(
 internal fun ReviewSheet(
     view: MockExam,
     app: AppContainer,
-    onDismiss: () -> Unit,
+    place: ReviewPlace,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = { place.open = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         // The title stays while a long review scrolls under it.
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.mock_result_review), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) { ReviewList(view, app) }
+            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) { ReviewList(view, app, place) }
         }
     }
 }
@@ -84,8 +154,12 @@ internal fun ReviewSheet(
 private fun ReviewList(
     view: MockExam,
     app: AppContainer,
+    place: ReviewPlace,
 ) {
     val words = view.trueFalseWords
+    val scope = rememberCoroutineScope()
+    val requesters = remember(view.review.size) { List(view.review.size) { BringIntoViewRequester() } }
+
     Column {
         view.review.forEachIndexed { index, entry ->
             if (index > 0) HorizontalDivider()
@@ -94,7 +168,24 @@ private fun ReviewList(
                     .getOrNull(index - 1)
                     ?.set
                     ?.id == entry.set?.id
-            ReviewEntry(entry, continued, numbered = view.scoring != MockExam.Scoring.NET, words, app)
+            ReviewEntry(
+                entry,
+                continued,
+                numbered = view.scoring != MockExam.Scoring.NET,
+                words,
+                app,
+                Modifier.bringIntoViewRequester(requesters[index]).onPlaced { coordinates ->
+                    if (place.entryPlaced(index, coordinates)) {
+                        // Asked to show a rect as tall as the window, whatever scrolls the list brings the question's top to its own.
+                        val window = coordinates.findRootCoordinates().size
+                        scope.launch {
+                            requesters[index].bringIntoView(
+                                Rect(0f, 0f, coordinates.size.width.toFloat(), window.height.toFloat()),
+                            )
+                        }
+                    }
+                },
+            )
         }
     }
 }
@@ -106,11 +197,12 @@ private fun ReviewEntry(
     numbered: Boolean,
     words: TrueFalseWords,
     app: AppContainer,
+    modifier: Modifier,
 ) {
     val number = entry.number.toInt()
     val muted = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    Column(Modifier.padding(vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier.padding(vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 entry.area?.let { stringResource(R.string.mock_result_question_area, number, it) }
