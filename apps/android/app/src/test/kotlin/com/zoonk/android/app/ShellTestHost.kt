@@ -4,16 +4,12 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -29,10 +25,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.navigation.rememberAppNavigator
-import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
-import kotlinx.coroutines.launch
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 
@@ -88,7 +82,6 @@ private fun testEntries(navigator: AppNavigator): (NavKey) -> NavEntry<NavKey> =
         entry<AppRoute.Today> { CountedList("today") }
         entry<AppRoute.Plan> { CountedList("plan") }
         entry<AppRoute.Buddy> { CountedList("buddy") }
-        entry<AppRoute.Memory> { DockedActionPage() }
         entry<AppRoute.Chapter> { route ->
             viewModel { CountingViewModel("chapter:${route.chapterId}") }
             RoutePlaceholder(route, navigator)
@@ -118,19 +111,5 @@ private fun CountedList(name: String) {
                 .testTag("list:$name"),
     ) {
         items(100) { index -> Text("$name $index", Modifier.testTag("row:$name:$index").padding(16.dp)) }
-    }
-}
-
-/** A page with a docked action, like Today's Start on a phone, and a way to show a snackbar. */
-@Composable
-private fun DockedActionPage() {
-    val snackbars = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
-
-    Column(Modifier.fillMaxSize()) {
-        Box(Modifier.weight(1f))
-        DockedActionBar(Modifier.testTag("docked")) {
-            Button(onClick = { scope.launch { snackbars.showSnackbar("Saved") } }) { Text("Show") }
-        }
     }
 }

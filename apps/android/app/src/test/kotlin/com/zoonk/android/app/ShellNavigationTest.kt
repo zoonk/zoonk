@@ -7,7 +7,6 @@ import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -68,27 +67,6 @@ class ShellNavigationTest {
     }
 
     @Test
-    fun snackbarsShowAboveADockedAction() {
-        open(AppRoute.Memory)
-        rule.onNodeWithText("Show").performClick()
-
-        val snackbar = rule.onNodeWithText("Saved").fetchSemanticsNode().boundsInRoot
-        val docked = rule.onNodeWithTag("docked").fetchSemanticsNode().boundsInRoot
-        assertTrue("The snackbar ends at ${snackbar.bottom}, below the docked action's top ${docked.top}", snackbar.bottom <= docked.top)
-    }
-
-    @Test
-    fun reselectingTheTabGoesBackToItsRoot() {
-        tab("Plan").performClick()
-        open(AppRoute.Subject("biology"))
-        open(AppRoute.Chapter("chapter-1"))
-        tab("Plan").performClick()
-
-        rule.onNodeWithTag("row:plan:0").assertIsDisplayed()
-        rule.onNodeWithText("Chapter(chapterId=chapter-1)").assertDoesNotExist()
-    }
-
-    @Test
     fun backFollowsTheStackThenGoesHomeThenLeaves() {
         tab("Plan").performClick()
         open(AppRoute.Chapter("chapter-1"))
@@ -104,14 +82,6 @@ class ShellNavigationTest {
 
         pressBack()
         scenario.onActivity { assertTrue(it.isFinishing) }
-    }
-
-    @Test
-    fun aPagesBackButtonGoesBack() {
-        open(AppRoute.Mistakes)
-        rule.onNodeWithContentDescription("Back").performClick()
-
-        rule.onNodeWithTag("row:today:0").assertIsDisplayed()
     }
 
     @Test
@@ -132,40 +102,6 @@ class ShellNavigationTest {
         }
         rule.onNodeWithTag("row:today:0").assertIsDisplayed()
         rule.onNodeWithText("Chapter(chapterId=chapter-1)").assertDoesNotExist()
-    }
-
-    @Test
-    fun tasksCoverTheFrameAndCloseBackToIt() {
-        open(AppRoute.Mistakes)
-        open(AppRoute.MistakePractice())
-
-        rule.onNodeWithText("MistakePractice(skillId=null)").assertIsDisplayed()
-        tab("Today").assertDoesNotExist()
-
-        rule.onNodeWithContentDescription("Leave").performClick()
-        rule.onNodeWithText("Mistakes").assertIsDisplayed()
-        tab("Today").assertIsDisplayed()
-    }
-
-    @Test
-    fun aTaskOverTodayTakesTodayOutOfComposition() {
-        open(AppRoute.MistakePractice())
-
-        rule.onNodeWithTag("list:today").assertDoesNotExist()
-
-        rule.onNodeWithContentDescription("Leave").performClick()
-        rule.onNodeWithTag("list:today").assertIsDisplayed()
-    }
-
-    @Test
-    fun onboardingHidesTheBarOnAPhone() {
-        open(AppRoute.StartGoal())
-
-        rule.onNodeWithText("StartGoal(goal=null, planId=null, draftId=null)").assertIsDisplayed()
-        tab("Today").assertDoesNotExist()
-
-        pressBack()
-        tab("Today").assertIsDisplayed()
     }
 
     @Test

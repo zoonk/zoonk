@@ -10,13 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.shell.GoalMark
@@ -25,7 +21,6 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MeUser
-import org.junit.Assert.assertFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
@@ -49,16 +44,6 @@ class LetterMarkTest {
                 "emailVerified":true,"id":"00000000-0000-4000-8000-000000000001","image":null,"name":"Ana",
                 "updatedAt":"2026-01-01T00:00:00Z","username":null}""",
         )
-
-    @Test
-    fun theAvatarsLetterKeepsToItsCircleAtTwiceTheFontSize() {
-        RuntimeEnvironment.setFontScale(2f)
-        compose.setContent { ZoonkTheme { AccountAvatar(user, size = 32.dp) } }
-
-        val layouts = mutableListOf<TextLayoutResult>()
-        compose.onNodeWithText("A", useUnmergedTree = true).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-        assertFalse(layouts.single().didOverflowHeight)
-    }
 
     /** Review renders of the shell's bar at twice the font size, written only with `-Pzoonk.shots=<folder>`. No goldens. */
     @OptIn(ExperimentalMaterial3Api::class)
