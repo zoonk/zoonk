@@ -82,8 +82,12 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.GoalMistakePatternPattern
 import com.zoonk.api.models.Mistake
@@ -134,6 +138,11 @@ fun MistakesNotebookScreen(
     }
 }
 
+/**
+ * The notebook's two lists, what's to fix and what's fixed. Tabs switch between them; an unfolded
+ * book shows both, as the open iPhone Duo does: what's to fix under the notebook's hero on the page
+ * before the fold and what's fixed on the page after it, each under its own title.
+ */
 @Composable
 internal fun Notebook(
     goalId: UUID,
@@ -144,6 +153,62 @@ internal fun Notebook(
     nextChangeAt: Long? = null,
 ) {
     var fixed by rememberSaveable { mutableStateOf(false) }
+    val fixedListState = rememberLazyListState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val wide = fold == null && maxWidth >= INBOX_WIDTH
+
+        // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
+        Row(Modifier.fillMaxSize()) {
+            NotebookList(
+                goalId = goalId,
+                goalTitle = goalTitle,
+                fixed = fixed && fold == null,
+                store = store,
+                navigator = navigator,
+                listState = listState,
+                nextChangeAt = nextChangeAt,
+                hero = true,
+                onTab = if (fold == null) ({ fixed = it }) else null,
+                wide = wide,
+                modifier = if (fold == null) Modifier.weight(1f) else Modifier.width(fold.start),
+            )
+            if (fold != null) {
+                NotebookList(
+                    goalId = goalId,
+                    goalTitle = goalTitle,
+                    fixed = true,
+                    store = store,
+                    navigator = navigator,
+                    listState = fixedListState,
+                    nextChangeAt = nextChangeAt,
+                    hero = false,
+                    onTab = null,
+                    wide = false,
+                    modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
+                )
+            }
+        }
+    }
+}
+
+/** One of the notebook's lists: what's to fix or what's fixed, under the tabs that switch them or under its own title. */
+@Composable
+private fun NotebookList(
+    goalId: UUID,
+    goalTitle: String,
+    fixed: Boolean,
+    store: MistakesNotebookStore,
+    navigator: AppNavigator,
+    listState: LazyListState,
+    nextChangeAt: Long?,
+    hero: Boolean,
+    onTab: ((Boolean) -> Unit)?,
+    wide: Boolean,
+    modifier: Modifier,
+) {
     val key = NotebookKey(goalId, fixed)
     val loaded by store.notebooks[key].collectShown()
     val pattern by store.patterns[goalId].collectShown()
@@ -165,10 +230,12 @@ internal fun Notebook(
     SideEffect { if (list != null) lastLoaded = list }
     val head = list ?: lastLoaded
     if (head == null) {
-        if (loaded is LoadState.Failed) {
-            LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } })
-        } else {
-            PageLoading()
+        Box(modifier) {
+            if (loaded is LoadState.Failed) {
+                LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } })
+            } else {
+                PageLoading()
+            }
         }
         return
     }
@@ -188,7 +255,7 @@ internal fun Notebook(
     val selectedKey = picked?.takeIf { it in keys } ?: keys.firstOrNull()
     val actions =
         NotebookActions(
-            onTab = { fixed = it },
+            onTab = { onTab?.invoke(it) },
             onPick = { groupKey, open ->
                 if (open) picked = groupKey
                 collapsed = !open
@@ -207,11 +274,12 @@ internal fun Notebook(
             },
         )
 
-    BoxWithConstraints {
-        if (maxWidth >= INBOX_WIDTH && page.groups.isNotEmpty()) {
-            WideNotebook(page, actions, selectedKey, listState)
+    val lead = NotebookLead(hero, tabs = onTab != null)
+    Box(modifier) {
+        if (wide && page.groups.isNotEmpty()) {
+            WideNotebook(page, actions, lead, selectedKey, listState)
         } else {
-            NarrowNotebook(page, actions, selectedKey.takeUnless { collapsed }, listState)
+            NarrowNotebook(page, actions, lead, selectedKey.takeUnless { collapsed }, listState)
         }
     }
 }
@@ -237,6 +305,12 @@ private class NotebookPage(
     val words: TrueFalseWords = head.trueFalseLabels.recode()
 }
 
+/** What leads a list: the notebook's [hero], then the [tabs] or the list's own title. */
+private class NotebookLead(
+    val hero: Boolean,
+    val tabs: Boolean,
+)
+
 private class NotebookActions(
     val onTab: (Boolean) -> Unit,
     val onPick: (groupKey: String, open: Boolean) -> Unit,
@@ -252,11 +326,12 @@ private class NotebookActions(
 private fun NarrowNotebook(
     page: NotebookPage,
     actions: NotebookActions,
+    lead: NotebookLead,
     open: String?,
     listState: LazyListState,
 ) {
     LazyColumn(Modifier.fillMaxSize(), listState, detailPagePadding(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        notebookHead(page, actions)
+        notebookHead(page, actions, lead)
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 page.groups.forEachIndexed { index, group ->
@@ -280,6 +355,7 @@ private fun NarrowNotebook(
 private fun WideNotebook(
     page: NotebookPage,
     actions: NotebookActions,
+    lead: NotebookLead,
     selectedKey: String?,
     listState: LazyListState,
 ) {
@@ -292,7 +368,7 @@ private fun WideNotebook(
             contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            notebookHead(page, actions)
+            notebookHead(page, actions, lead)
             notebookBody(page, actions) {
                 Column(Modifier.bleed(LIST_ITEM_INSET)) {
                     page.groups.forEachIndexed { index, group ->
@@ -352,9 +428,10 @@ private fun LazyListScope.notebookBody(
 private fun LazyListScope.notebookHead(
     page: NotebookPage,
     actions: NotebookActions,
+    lead: NotebookLead,
 ) {
-    item { NotebookHero(page, actions.onPractice) }
-    item { NotebookTabs(page, actions.onTab) }
+    if (lead.hero) item { NotebookHero(page, actions.onPractice) }
+    item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
             PatternRow(
@@ -448,6 +525,27 @@ private fun NotebookTabs(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun NotebookListTitle(page: NotebookPage) {
+    val counts = page.head.counts
+
+    Row(
+        Modifier.semantics(mergeDescendants = true) { heading() },
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            stringResource(if (page.fixed) R.string.mistakes_tab_fixed else R.string.mistakes_tab_open),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            (if (page.fixed) counts.fixed else counts.open).toString(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        )
     }
 }
 

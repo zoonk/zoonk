@@ -1,11 +1,22 @@
 package com.zoonk.android.feature.mistakes
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -20,18 +31,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 class MistakesNotebookFlowTest {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val goalId = UUID.fromString("00000000-0000-4000-8000-0000000000a1")
     private var open: MistakeList = notebook(listOf("Percentages" to "What is half of 250?", "Ratios" to "If 3 cost 12, what do 5 cost?"))
+    private var fixed: MistakeList? = null
     private val fixedGate = CompletableDeferred<Unit>()
 
     private fun notebook(mistakes: List<Pair<String, String>>): MistakeList {
@@ -61,7 +78,7 @@ class MistakesNotebookFlowTest {
                     timeZone: String,
                 ): MistakeList {
                     if (key.fixed) fixedGate.await()
-                    return open
+                    return if (key.fixed) fixed ?: open else open
                 }
 
                 override suspend fun pattern(
@@ -98,5 +115,48 @@ class MistakesNotebookFlowTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("What is half of 250?").assertExists()
+    }
+
+    /** A Pixel Fold's inner display, its fold down the window's middle. */
+    private fun unfold() {
+        folds.overrideWindowLayoutInfo(
+            TestWindowLayoutInfo(
+                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
+            ),
+        )
+        rule.waitForIdle()
+    }
+
+    private fun bounds(text: String) = rule.onNodeWithText(text).getUnclippedBoundsInRoot()
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun anOpenBookShowsWhatsToFixBeforeTheFoldAndWhatsFixedAfterIt() {
+        fixed = notebook(listOf("Fractions" to "What is a half of a half?"))
+        fixedGate.complete(Unit)
+        rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
+        unfold()
+
+        rule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).assertCountEquals(0)
+        assertTrue("Practice mistakes before the fold", bounds("Practice mistakes").right <= 426.dp)
+        assertTrue("what's to fix before the fold", bounds("Percentages").right <= 426.dp)
+        assertTrue("what's fixed after the fold", bounds("Fractions").left >= 426.dp)
+        assertTrue("its title after the fold", bounds("Fixed").left >= 426.dp)
+    }
+
+    /** Opening the book recreates the screen, and the list to fix is the one the tabs showed. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun whatsOpenInTheListToFixStaysAsTheBookOpens() {
+        val restoration = StateRestorationTester(rule)
+        restoration.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
+        rule.onNodeWithText("Ratios").performScrollTo().performClick()
+        rule.onNodeWithText("If 3 cost 12, what do 5 cost?").assertExists()
+
+        unfold()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("If 3 cost 12, what do 5 cost?").assertExists()
+        assertTrue("on the page before the fold", bounds("Ratios").right <= 426.dp)
     }
 }
