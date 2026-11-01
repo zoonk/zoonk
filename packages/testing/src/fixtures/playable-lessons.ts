@@ -53,11 +53,13 @@ export async function playableLessonFixture({
 export async function languageLessonFixture({
   language = "pt",
   sentenceAudioUrl = null,
+  sentenceText = "How much is the rent?",
   sentenceTranslation = "Quanto é o aluguel?",
   wordTranslation = "aluguel",
 }: {
   language?: string;
   sentenceAudioUrl?: string | null;
+  sentenceText?: string;
   sentenceTranslation?: string;
   wordTranslation?: string;
 } = {}) {
@@ -83,7 +85,7 @@ export async function languageLessonFixture({
       data: {
         audioUrl: sentenceAudioUrl,
         organizationId: organization.id,
-        sentence: "How much is the rent?",
+        sentence: sentenceText,
         targetLanguage: "en",
       },
     }),
@@ -123,7 +125,7 @@ export async function languageLessonFixture({
           content: {
             language: "en",
             prompt: "Pergunte quanto é o aluguel.",
-            targetText: "How much is the rent?",
+            targetText: sentenceText,
             translation: sentenceTranslation,
           },
           kind: "spokenAnswer" as const,

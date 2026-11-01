@@ -371,7 +371,7 @@ describe(writeLanguageLessonContent, () => {
     const readingTiles = tilesOf("reading");
 
     expect(readingTiles.map((tile) => tile.word)).toStrictEqual(
-      expect.arrayContaining(["How", "much", key, "many", "there"]),
+      expect.arrayContaining(["How", "much", key, "many", "there", "the", "rent?"]),
     );
 
     expect(
@@ -385,6 +385,20 @@ describe(writeLanguageLessonContent, () => {
     ).toStrictEqual([]);
 
     expect(readingTiles.find((tile) => tile.word === key)?.audioUrl).toBe(sentenceWord.audioUrl);
+
+    const phraseWords = await prisma.word.findMany({
+      where: {
+        OR: ["the", "rent"].map((word) => ({ word: { equals: word, mode: "insensitive" } })),
+        audioUrl: { not: null },
+        organizationId: organization.id,
+        targetLanguage: "en",
+      },
+    });
+
+    expect(new Set(phraseWords.map((row) => row.word.toLowerCase()))).toStrictEqual(
+      new Set(["the", "rent"]),
+    );
+
     expect(tilesOf("listening").length).toBeGreaterThan(0);
     expect(tilesOf("listening").filter((tile) => tile.audioUrl)).toStrictEqual([]);
   });

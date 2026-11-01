@@ -119,6 +119,29 @@ describe(buildWordBankOptions, () => {
     });
   });
 
+  it("plays each word of a phrase the lesson teaches with its own audio, never the phrase's empty split", () => {
+    const options = buildWordBankOptions(
+      makeStep("reading", makeSentence({ sentence: "Das ist der rote Faden" })),
+      [
+        makeLessonWord({ audioUrl: "/audio/rote.mp3", id: "rote", word: "rote" }),
+        makeLessonWord({ audioUrl: "/audio/phrase.mp3", id: "phrase", word: "der rote Faden" }),
+      ],
+      ["Das", "ist", "der", "Faden"].map((word) =>
+        makeDistractorWord({ audioUrl: `/audio/${word}.mp3`, id: word, word }),
+      ),
+      new Map(),
+      LANGUAGES,
+    );
+
+    expect(options.map((option) => [option.word, option.audioUrl])).toStrictEqual([
+      ["Das", "/audio/Das.mp3"],
+      ["ist", "/audio/ist.mp3"],
+      ["der", "/audio/der.mp3"],
+      ["rote", "/audio/rote.mp3"],
+      ["Faden", "/audio/Faden.mp3"],
+    ]);
+  });
+
   it("listening uses translation distractors and keeps metadata empty", () => {
     const options = buildWordBankOptions(
       makeStep(

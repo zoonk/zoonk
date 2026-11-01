@@ -257,6 +257,29 @@ describe(getPlayableLibraryLesson, () => {
     });
   });
 
+  it("plays a sentence word that only another lesson saved and voiced", async () => {
+    const word = randomUUID();
+
+    const [{ lesson }, organization] = await Promise.all([
+      languageLessonFixture({ sentenceText: `How much is ${word}?` }),
+      organizationFixture(),
+    ]);
+
+    const voiced = await wordFixture({
+      audioUrl: `https://audio.zoonk.test/${word}.mp3`,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: word.toUpperCase(),
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+    const reading = steps.find((step) => step.kind === "reading");
+    const tiles = reading && "exercise" in reading ? reading.exercise.wordBankOptions : [];
+
+    expect(tiles.find((tile) => tile.word === `${word}?`)?.audioUrl).toBe(voiced.audioUrl);
+  });
+
   it("leaves out screens that show their own answer, such as an English word for English readers defined by itself", async () => {
     const [ownLanguage, silent] = await Promise.all([
       languageLessonFixture({
