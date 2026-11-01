@@ -1,0 +1,46 @@
+name: Blog
+
+# Vercel builds the blog only from here (`git.deploymentEnabled: false` in apps/blog/vercel.json),
+# so a push to main deploys it only when the push changes the blog.
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/blog/**
+      - "!apps/blog/**/*.test.ts"
+      - "!apps/blog/**/.eloqnt/**"
+      - pnpm-lock.yaml
+      - turbo.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    concurrency:
+      group: blog-production
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DEPLOY_REF: main
+      DEPLOY_SHA: ${{ github.sha }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID_BLOG: ${{ vars.VERCEL_PROJECT_ID_BLOG }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+      - uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          node-version-file: false
+          cache: true
+          save-cache: true
+      - name: Deploy the blog to production
+        run: pnpm deploy blog

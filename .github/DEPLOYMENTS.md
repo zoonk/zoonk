@@ -1,16 +1,17 @@
 # Deployments
 
-GitHub Actions owns deployments of `api`, `main`, and `admin`. Their Vercel projects keep the Git connection for fetching the exact commit, but `git.deploymentEnabled: false` prevents automatic deployments. The database-independent blog keeps its existing Vercel Git deployments.
+GitHub Actions owns every deployment. The Vercel projects keep the Git connection for fetching the exact commit, but `git.deploymentEnabled: false` prevents automatic deployments, so a push starts no Vercel build unless a workflow asks for one.
 
-| Event                           | Checks and deployment                                                                                                                      |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| PR opened, updated, or reopened | Code quality, Vitest (unit, database integration and player browser tests), and main/API E2E for PRs targeting `main`.                     |
-| Preview requested               | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
-| PR closed                       | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
-| Push to `main`                  | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
-| Push a `v*` tag                 | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
-| Publish a stable GitHub release | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines. |
-| Publish a prerelease            | No production deployment.                                                                                                                  |
+| Event                            | Checks and deployment                                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| PR opened, updated, or reopened  | Code quality, Vitest (unit, database integration and player browser tests), and main/API E2E for PRs targeting `main`.                     |
+| Preview requested                | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
+| PR closed                        | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
+| Push to `main`                   | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
+| Push to `main` touching the blog | Deploy the blog to production when the push changes `apps/blog`, the lockfile or `turbo.json`. "Run workflow" on Blog redeploys `main`.    |
+| Push a `v*` tag                  | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
+| Publish a stable GitHub release  | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines. |
+| Publish a prerelease             | No production deployment.                                                                                                                  |
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
 
@@ -18,17 +19,17 @@ Production domains move automatically when each deployment succeeds. Apps switch
 
 Provider tokens live in GitHub repository secrets. Non-secret resource identifiers and deployment selectors live in repository variables. The workflows read these values:
 
-| Setting                                                                      | Storage            | Purpose                                                           |
-| ---------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------- |
-| `VERCEL_TOKEN`                                                               | Secret             | Access to the three Vercel projects.                              |
-| `VERCEL_ORG_ID`                                                              | Variable           | Team owning those projects.                                       |
-| `VERCEL_PROJECT_ID_API`, `VERCEL_PROJECT_ID_MAIN`, `VERCEL_PROJECT_ID_ADMIN` | Variables          | App-to-project mapping.                                           |
-| `NEON_API_KEY`                                                               | Secret             | Neon branch management and connection strings.                    |
-| `NEON_PROJECT_ID`                                                            | Variable           | Neon project selected by the GitHub integration.                  |
-| `NEON_PRODUCTION_BRANCH`                                                     | Optional variable  | Production branch name or ID; defaults to `production`.           |
-| `NEON_STAGING_BRANCH`                                                        | Optional variable  | Staging branch name or ID; defaults to `staging`.                 |
-| `NEON_DATABASE`, `NEON_ROLE`                                                 | Optional variables | Explicit selection when a branch has multiple databases or roles. |
-| `TURBO_TOKEN`, `TURBO_TEAM`                                                  | Secret, variable   | Turborepo remote cache for CI.                                    |
+| Setting                                                                                                | Storage            | Purpose                                                           |
+| ------------------------------------------------------------------------------------------------------ | ------------------ | ----------------------------------------------------------------- |
+| `VERCEL_TOKEN`                                                                                         | Secret             | Access to the four Vercel projects.                               |
+| `VERCEL_ORG_ID`                                                                                        | Variable           | Team owning those projects.                                       |
+| `VERCEL_PROJECT_ID_API`, `VERCEL_PROJECT_ID_MAIN`, `VERCEL_PROJECT_ID_ADMIN`, `VERCEL_PROJECT_ID_BLOG` | Variables          | App-to-project mapping.                                           |
+| `NEON_API_KEY`                                                                                         | Secret             | Neon branch management and connection strings.                    |
+| `NEON_PROJECT_ID`                                                                                      | Variable           | Neon project selected by the GitHub integration.                  |
+| `NEON_PRODUCTION_BRANCH`                                                                               | Optional variable  | Production branch name or ID; defaults to `production`.           |
+| `NEON_STAGING_BRANCH`                                                                                  | Optional variable  | Staging branch name or ID; defaults to `staging`.                 |
+| `NEON_DATABASE`, `NEON_ROLE`                                                                           | Optional variables | Explicit selection when a branch has multiple databases or roles. |
+| `TURBO_TOKEN`, `TURBO_TEAM`                                                                            | Secret, variable   | Turborepo remote cache for CI.                                    |
 
 The workflow resolves the two existing Neon branches and refuses to proceed if either is missing or both resolve to the same branch. The pinned Neon CLI retrieves pooled and direct connection strings and automatically selects a database/role when the branch has only one of each. Ambiguous selection fails instead of choosing arbitrarily. Connection strings are masked and kept within the deployment job.
 

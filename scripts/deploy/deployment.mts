@@ -254,15 +254,24 @@ async function deployApp({
   });
 
   const deployment = z.object({ id: z.string() }).parse(response);
+  return waitForDeployment({ app: project.app, id: deployment.id, target });
+}
 
+export async function waitForDeployment({
+  app,
+  id,
+  target,
+}: {
+  app: string;
+  id: string;
+  target: Target;
+}): Promise<string> {
   async function checkDeployment(): Promise<string | undefined> {
     if (target === "preview") {
       await assertPullRequestOpen();
     }
 
-    const current = deploymentSchema.parse(
-      await vercel({ path: `/v13/deployments/${deployment.id}` }),
-    );
+    const current = deploymentSchema.parse(await vercel({ path: `/v13/deployments/${id}` }));
 
     if (
       current.readyState === "ERROR" ||
@@ -270,7 +279,7 @@ async function deployApp({
       current.readyState === "BLOCKED" ||
       current.aliasError
     ) {
-      throw new Error(`Vercel ${project.app} deployment failed: ${current.readyState}`);
+      throw new Error(`Vercel ${app} deployment failed: ${current.readyState}`);
     }
 
     if (current.readyState === "READY" && (target === "preview" || current.aliasAssigned)) {
@@ -280,11 +289,11 @@ async function deployApp({
     return undefined;
   }
 
-  const url = await waitFor({ check: checkDeployment, description: project.app });
-  process.stdout.write(`${project.app}: ${url}\n`);
+  const url = await waitFor({ check: checkDeployment, description: app });
+  process.stdout.write(`${app}: ${url}\n`);
 
   if (process.env.GITHUB_STEP_SUMMARY) {
-    await appendFile(process.env.GITHUB_STEP_SUMMARY, `- ${project.app}: ${url}\n`);
+    await appendFile(process.env.GITHUB_STEP_SUMMARY, `- ${app}: ${url}\n`);
   }
 
   return url;
