@@ -21,6 +21,7 @@ import com.zoonk.api.models.LessonStepCheckResultKeyPointsInner
 import com.zoonk.api.models.SpokenAnswerGrade
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
+import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
 typealias AnswerCorrection = LessonStepCheckResultCorrectionsInner
@@ -28,53 +29,66 @@ typealias AnswerKeyPoint = LessonStepCheckResultKeyPointsInner
 
 /** A learner's answer to one screen. A hook's guess is never sent: it isn't graded. */
 @Immutable
+@Serializable
 sealed interface LessonAnswer {
+    @Serializable
     data class Hook(
         val optionId: String,
     ) : LessonAnswer
 
+    @Serializable
     data class Check(
         val optionId: String,
     ) : LessonAnswer
 
+    @Serializable
     data class Typed(
         val text: String,
     ) : LessonAnswer
 
     /** A spoken screen's sentence typed instead of said. */
+    @Serializable
     data class Spoken(
         val text: String,
     ) : LessonAnswer
 
+    @Serializable
     data class Activity(
         val answer: ActivityAnswer,
     ) : LessonAnswer
 
     /** The choice picked at each decision, in order. */
+    @Serializable
     data class Challenge(
         val choiceIds: List<String>,
     ) : LessonAnswer
 
+    @Serializable
     data class MultipleChoice(
         val optionId: String,
     ) : LessonAnswer
 
+    @Serializable
     data class Translation(
         val optionId: String,
     ) : LessonAnswer
 
+    @Serializable
     data class FillBlank(
         val userAnswers: List<String>,
     ) : LessonAnswer
 
+    @Serializable
     data class Reading(
         val arrangedWords: List<String>,
     ) : LessonAnswer
 
+    @Serializable
     data class Listening(
         val arrangedWords: List<String>,
     ) : LessonAnswer
 
+    @Serializable
     data class MatchColumns(
         val pairs: List<Pair<String, String>>,
         val mistakes: Int,

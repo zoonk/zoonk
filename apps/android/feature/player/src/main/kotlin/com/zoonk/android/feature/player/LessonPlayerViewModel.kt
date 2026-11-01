@@ -18,6 +18,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.activities.savedJson
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
@@ -207,7 +208,7 @@ class LessonPlayerViewModel(
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
-    private var keptRounds: Map<String, Int>? = null
+    private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
     /**
      * Starts the lesson's run when it opens, as main does after its player mounts (never on a
@@ -259,17 +260,28 @@ class LessonPlayerViewModel(
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
         val after = mutableState.value ?: return
         if (after.completion?.status == CompletionStatus.Saving && before?.completion?.status != CompletionStatus.Saving) saveCompletion()
-        keepRounds(after)
+        keepWork(after)
     }
 
     /**
-     * Saves the round each screen's work belongs to, for when Android closes the app in the background. A checked screen
-     * is saved under its next round: the resumed run puts its retry straight on screen, and that retry starts over.
+     * Saves what the learner did and hasn't checked, for when Android closes the app in the background: each screen's
+     * answer and revealed steps, and the round its canvas work belongs to. A checked screen keeps neither and is saved
+     * under its next round: the resumed run puts its retry straight on screen, and that retry starts over.
      */
-    private fun keepRounds(state: LessonPlayerState) {
-        val rounds = state.rounds + state.results.keys.associateWith { state.round(it) + 1 }
-        if (rounds != keptRounds) saved[ROUNDS] = HashMap(rounds)
-        keptRounds = rounds
+    private fun keepWork(state: LessonPlayerState) {
+        val checked = state.results.keys
+        saved[ROUNDS] = HashMap(state.rounds + checked.associateWith { state.round(it) + 1 })
+        saved[REVEALED] = HashMap(state.revealed - checked)
+        saved[ANSWERS] = HashMap((state.answers - checked).mapNotNull { (id, answer) -> answerJson(id, answer)?.let { id to it } }.toMap())
+    }
+
+    /** An answer's saved JSON, encoded again only when the answer changes: a slider dispatches on every step it moves. */
+    private fun answerJson(
+        stepId: String,
+        answer: LessonAnswer,
+    ): String? {
+        encodedAnswers[stepId]?.takeIf { it.first === answer }?.let { return it.second }
+        return savedJson(ApiJson, LessonAnswer.serializer(), answer).also { encodedAnswers[stepId] = answer to it }
     }
 
     fun select(answer: LessonAnswer?) {
@@ -524,10 +536,16 @@ class LessonPlayerViewModel(
         talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
-        // After the server's answers rebuild the run, each screen's work comes back under the round it was saved in when
-        // Android closed the app in the background.
+        // After the server's answers rebuild the run, what the learner did and hadn't checked comes back, under the round
+        // it was saved in, when Android closed the app in the background.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
-        return state.withFirstAnswer(started).let { it.copy(rounds = it.rounds + rounds) }
+        val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
+        val answers =
+            saved.get<Map<String, String>>(ANSWERS).orEmpty().mapValues { (_, json) ->
+                ApiJson.decodeFromString(LessonAnswer.serializer(), json)
+            }
+        val resumed = state.withFirstAnswer(started)
+        return resumed.copy(answers = resumed.answers + answers, revealed = resumed.revealed + revealed, rounds = resumed.rounds + rounds)
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */
@@ -779,6 +797,8 @@ class LessonPlayerViewModel(
         const val UNPROCESSABLE = 422
         val REFUSED_CHECK_STATUSES = setOf(400, 404, 409, 422)
         const val ROUNDS = "rounds"
+        const val REVEALED = "revealed"
+        const val ANSWERS = "answers"
     }
 }
 

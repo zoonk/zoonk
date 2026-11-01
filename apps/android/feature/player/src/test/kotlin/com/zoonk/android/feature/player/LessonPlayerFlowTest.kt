@@ -2,9 +2,13 @@ package com.zoonk.android.feature.player
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -53,6 +57,46 @@ class LessonPlayerFlowTest {
     ) = harness.play(steps, configure = configure)
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
+
+    /** Android closing the app in the background keeps a typed answer the learner hasn't checked. */
+    @Test
+    fun aTypedAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(typedAnswerStep("write"), summaryStep("end")), restoration = restoration)
+        rule.onNode(hasSetTextAction()).performTextInput("Because the droplets are small")
+
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNode(hasSetTextAction()).assert(hasText("Because the droplets are small"))
+    }
+
+    /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
+    @Test
+    fun aPickComesBackAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(checkStep("quiz"), summaryStep("end")), restoration = restoration)
+        tap("Right")
+
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("Check").assertIsEnabled()
+    }
+
+    /** Android closing the app in the background keeps the steps of a worked example the learner has shown. */
+    @Test
+    fun aWorkedExamplesShownStepsComeBackAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(workedExampleStep("worked"), summaryStep("end")), restoration = restoration)
+        tap("Show the next step")
+        rule.onNodeWithText("Each part is 20", substring = true).assertExists()
+
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("Each part is 20", substring = true).assertExists()
+    }
 
     /** Going back to reread keeps the screen the learner left, so a sentence half built is still there when they return. */
     @Test
