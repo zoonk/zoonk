@@ -8,8 +8,8 @@ struct LanguageStepView: View {
 
   var body: some View {
     switch (exercise.kind, part) {
-    case (.vocabulary, .screen):
-      VocabularyView(exercise: exercise, wordHints: wordHints)
+    case (.vocabulary, _):
+      VocabularyView(exercise: exercise, wordHints: wordHints, part: part)
     case (.alphabet, .screen):
       AlphabetView(content: exercise.content)
     case (.multipleChoice, _):
@@ -150,36 +150,54 @@ final class LessonPromptAudio {
   }
 }
 
+/// On a spread, the word faces what it means, as in a bilingual reader.
 private struct VocabularyView: View {
+  @Environment(\.isPaneSplit) private var isPaneSplit
+
   let exercise: LanguageExercise
   let wordHints: WordHints?
+  let part: LessonStepPart
 
   var body: some View {
     if let word = exercise.word {
-      ScreenChip(
-        text: Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
+      switch part {
+      case .screen:
+        ScreenChip(
+          text: Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
 
-      HStack(alignment: .center, spacing: 16) {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(word.word)
-            .font(.largeTitle.weight(.semibold))
-          if let romanization = word.romanization {
-            Text(romanization).foregroundStyle(.secondary)
+        HStack(alignment: .center, spacing: 16) {
+          VStack(alignment: .leading, spacing: 4) {
+            Text(word.word)
+              .font(.largeTitle.weight(.semibold))
+            if let romanization = word.romanization {
+              Text(romanization).foregroundStyle(.secondary)
+            }
+            if let pronunciation = word.pronunciation {
+              Text(pronunciation).font(.callout).foregroundStyle(.secondary)
+            }
           }
-          if let pronunciation = word.pronunciation {
-            Text(pronunciation).font(.callout).foregroundStyle(.secondary)
-          }
+          Spacer(minLength: 0)
+          LessonAudioButton(url: word.audioUrl)
         }
-        Spacer(minLength: 0)
-        LessonAudioButton(url: word.audioUrl)
-      }
 
-      Text(word.translation)
-        .font(.title3)
-
-      if let wordHints {
-        LessonWordHints(hints: wordHints)
+        if !isPaneSplit {
+          meaning(word)
+        }
+      case .turn:
+        if isPaneSplit {
+          meaning(word)
+        }
       }
+    }
+  }
+
+  @ViewBuilder
+  private func meaning(_ word: LanguageExercise.Word) -> some View {
+    Text(word.translation)
+      .font(.title3)
+
+    if let wordHints {
+      LessonWordHints(hints: wordHints)
     }
   }
 }
