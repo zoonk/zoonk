@@ -2,7 +2,7 @@
 
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
+import { stripWrappingQuotes } from "@zoonk/utils/string";
 
 const MATH_DELIMITERS = [
   { close: String.raw`\\)`, kind: "math" as const, open: String.raw`\\(` },

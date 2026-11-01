@@ -48,8 +48,8 @@ class ApiJsonTest {
         val exercise =
             """
             {"content":{},"fillBlankOptions":[],"id":"7d3c1c1e-5b0a-4d43-9f55-0c9a3c1c2f10","kind":"listening",
-             "matchColumnsRightItems":[],"position":0,"sentence":null,"sentenceWordOptions":[],"translationOptions":[],
-             "vocabularyOptions":[],"word":null,"wordBankOptions":[]}
+             "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],"sentence":null,"sentenceWordOptions":[],
+             "translationOptions":[],"vocabularyOptions":[],"word":null,"wordBankOptions":[]}
             """.trimIndent()
 
         val decoded = ApiJson.decodeFromString<PlayableLibraryStepAnyOf9Exercise>(exercise)

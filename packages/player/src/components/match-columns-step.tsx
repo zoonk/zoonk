@@ -7,6 +7,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -28,7 +29,6 @@ import {
   getKeyboardItems,
   isItemMatched,
 } from "./_utils/match-columns";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 

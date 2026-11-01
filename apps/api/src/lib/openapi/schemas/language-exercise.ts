@@ -8,6 +8,8 @@ const wordBankOptionSchema = z.object({
   word: z.string(),
 });
 
+const readingPromptWordSchema = z.object({ translation: z.string().nullable(), word: z.string() });
+
 const serializedWordSchema = z.object({
   audioUrl: z.string().nullable(),
   distractors: z.array(z.string()),
@@ -41,6 +43,7 @@ const serializedStepResourceShape = {
   id: z.uuid(),
   matchColumnsRightItems: z.array(z.string()),
   position: z.number().int().min(0),
+  readingPromptWords: z.array(readingPromptWordSchema),
   sentence: serializedSentenceSchema.nullable(),
   sentenceWordOptions: z.array(wordBankOptionSchema),
   translationOptions: z.array(translationOptionSchema),

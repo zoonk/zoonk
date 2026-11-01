@@ -332,11 +332,10 @@ private const val NONE = "\u0000"
 @Composable
 internal fun ReadingPrompt(
     sentence: String,
-    sentenceWordOptions: List<WordBankOption>,
+    words: List<ReadingPromptWord>,
     answered: Boolean,
 ) {
     val prompt = remember(sentence) { stripWrappingQuotes(sentence) }
-    val hints = remember(prompt, sentenceWordOptions) { readingPromptHints(prompt, sentenceWordOptions) }
     val color = if (answered) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
     val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = color)
 
@@ -350,12 +349,12 @@ internal fun ReadingPrompt(
             },
             horizontalArrangement = Arrangement.spacedBy(if (' ' in prompt) 6.dp else 0.dp),
         ) {
-            hints.forEach { hint ->
-                val translation = hint.translation
+            words.forEach { promptWord ->
+                val translation = promptWord.translation
                 if (translation == null) {
-                    Text(hint.word, style = style, modifier = Modifier.clearAndSetSemantics {})
+                    Text(promptWord.word, style = style, modifier = Modifier.clearAndSetSemantics {})
                 } else {
-                    HintedWord(hint.word, translation, style)
+                    HintedWord(promptWord.word, translation, style)
                 }
             }
         }

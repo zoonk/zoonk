@@ -55,6 +55,7 @@ function makeStep(
     kind,
     matchColumnsRightItems: [],
     position: 0,
+    readingPromptWords: [],
     sentence,
     sentenceWordOptions: [],
     translationOptions: [],

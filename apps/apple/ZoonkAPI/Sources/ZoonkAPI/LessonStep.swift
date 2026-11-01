@@ -495,6 +495,11 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
     public let translation: String?
   }
 
+  public struct ReadingPromptWord: Codable, Hashable, Sendable {
+    public let word: String
+    public let translation: String?
+  }
+
   public struct TranslationOption: Codable, Hashable, Sendable, Identifiable {
     public let id: String
     public let word: String
@@ -530,14 +535,15 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
   public let word: Word?
   public let wordBankOptions: [WordOption]
   public let sentenceWordOptions: [WordOption]
+  public let readingPromptWords: [ReadingPromptWord]
   public let fillBlankOptions: [WordOption]
   public let translationOptions: [TranslationOption]
   public let vocabularyOptions: [Word]
   public let matchColumnsRightItems: [String]
 
   private enum CodingKeys: String, CodingKey {
-    case content, fillBlankOptions, id, kind, matchColumnsRightItems, sentence, sentenceWordOptions
-    case translationOptions, vocabularyOptions, word, wordBankOptions
+    case content, fillBlankOptions, id, kind, matchColumnsRightItems, readingPromptWords, sentence
+    case sentenceWordOptions, translationOptions, vocabularyOptions, word, wordBankOptions
   }
 
   public init(from decoder: any Decoder) throws {
@@ -556,6 +562,8 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
     word = try container.decodeIfPresent(Word.self, forKey: .word)
     wordBankOptions = try container.decode([WordOption].self, forKey: .wordBankOptions)
     sentenceWordOptions = try container.decode([WordOption].self, forKey: .sentenceWordOptions)
+    readingPromptWords = try container.decode(
+      [ReadingPromptWord].self, forKey: .readingPromptWords)
     fillBlankOptions = try container.decode([WordOption].self, forKey: .fillBlankOptions)
     translationOptions = try container.decode([TranslationOption].self, forKey: .translationOptions)
     vocabularyOptions = try container.decode([Word].self, forKey: .vocabularyOptions)
@@ -571,6 +579,7 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
     try container.encode(word, forKey: .word)
     try container.encode(wordBankOptions, forKey: .wordBankOptions)
     try container.encode(sentenceWordOptions, forKey: .sentenceWordOptions)
+    try container.encode(readingPromptWords, forKey: .readingPromptWords)
     try container.encode(fillBlankOptions, forKey: .fillBlankOptions)
     try container.encode(translationOptions, forKey: .translationOptions)
     try container.encode(vocabularyOptions, forKey: .vocabularyOptions)

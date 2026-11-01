@@ -7,11 +7,6 @@ import org.junit.Test
 
 /** The cases come from main's tests of the same rules, so both platforms read text alike. */
 class LanguageTextTest {
-    private fun option(
-        word: String,
-        translation: String?,
-    ) = WordBankOption(audioUrl = null, romanization = null, translation = translation, word = word)
-
     @Test
     fun aSentenceInQuotesLosesThemUnlessQuotesInsideWouldStandAlone() {
         assertEquals("hello there", stripWrappingQuotes("  \"hello there\"  "))
@@ -71,52 +66,5 @@ class LanguageTextTest {
         assertEquals("____ o shimasu", templateRomanization("o", "o o shimasu"))
         assertEquals("say hello ____ now", templateRomanization("(world)", "say hello (world) now"))
         assertEquals("say ____ smith now", templateRomanization("mr.", "say mr. smith now"))
-    }
-
-    @Test
-    fun readingHintsPairPromptWordsWithTheSentenceWordsTheyTranslate() {
-        assertEquals(
-            listOf(
-                PromptWordHint("Oi,", "Hi"),
-                PromptWordHint("como", "how"),
-                PromptWordHint("você", "you"),
-                PromptWordHint("está?", "are"),
-            ),
-            readingPromptHints(
-                "Oi, como você está?",
-                listOf(option("Hi,", "oi"), option("how", "como"), option("are", "são"), option("you?", "você")),
-            ),
-        )
-        assertEquals(listOf(PromptWordHint("Olá!", "Hello")), readingPromptHints("Olá!", listOf(option("Hello!", "ola"))))
-        assertEquals(
-            listOf(PromptWordHint("um", "a"), PromptWordHint("um", "one")),
-            readingPromptHints("um um", listOf(option("a", "um"), option("one", "um"))),
-        )
-        assertEquals(
-            listOf(
-                PromptWordHint("Tenha", "Have"),
-                PromptWordHint("um", "a"),
-                PromptWordHint("bom", "nice"),
-                PromptWordHint("dia!", "day"),
-            ),
-            readingPromptHints(
-                "Tenha um bom dia!",
-                listOf(option("Have", "ter"), option("a", "um"), option("nice", "legal"), option("day!", "dia")),
-            ),
-        )
-    }
-
-    @Test
-    fun vowelSignsStayOnTheWordsTheyTellApart() {
-        assertEquals("काम", stripPunctuation("काम।"))
-        assertEquals("สวัสดี", stripPunctuation("สวัสดี!"))
-        assertEquals(
-            listOf(PromptWordHint("काम", "work"), PromptWordHint("कम", "little")),
-            readingPromptHints("काम कम", listOf(option("little", "कम"), option("work", "काम"))),
-        )
-        assertEquals(
-            listOf(PromptWordHint("Hello,", "नमस्ते"), PromptWordHint("good!", "ดี")),
-            readingPromptHints("Hello, good!", listOf(option("नमस्ते,", "hello"), option("ดี!", "good"))),
-        )
     }
 }

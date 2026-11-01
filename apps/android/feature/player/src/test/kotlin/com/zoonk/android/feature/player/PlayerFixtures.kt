@@ -149,7 +149,7 @@ fun fillBlankStep(id: String) =
                 LanguageExercise.serializer(),
                 """
                 {"content":{"answers":["pay"],"distractors":["rent"],"feedback":"You pay rent.","question":"Fill in the blank","template":"I [BLANK] rent."},
-                 "fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"fillBlank","matchColumnsRightItems":[],"position":0,"sentence":null,
+                 "fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"fillBlank","matchColumnsRightItems":[],"position":0,"readingPromptWords":[],"sentence":null,
                  "sentenceWordOptions":[],"translationOptions":[],"vocabularyOptions":[],"word":null,"wordBankOptions":[]}
                 """.trimIndent(),
             ),

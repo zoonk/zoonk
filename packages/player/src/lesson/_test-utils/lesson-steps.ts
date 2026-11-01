@@ -96,6 +96,7 @@ export function fillBlankStep(id: string): PlayableLanguageStep {
       kind: "fillBlank",
       matchColumnsRightItems: [],
       position: 0,
+      readingPromptWords: [],
       sentence: null,
       sentenceWordOptions: [],
       translationOptions: [],

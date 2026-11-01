@@ -1,6 +1,6 @@
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
+import { stripWrappingQuotes } from "@zoonk/utils/string";
 
 export const QUESTION_TEXT_CLASS =
   "text-foreground in-data-[phase=feedback]:text-muted-foreground text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-balance md:text-[1.3125rem]";

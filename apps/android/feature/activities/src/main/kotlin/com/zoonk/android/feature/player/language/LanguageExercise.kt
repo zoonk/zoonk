@@ -7,6 +7,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOf3ContentPairs
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOf4Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfFillBlankOptionsInner
+import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfReadingPromptWordsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfSentence
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfTranslationOptionsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOfWord
@@ -17,6 +18,7 @@ typealias ExerciseWord = PlayableLibraryStepAnyOf5ListeningOneOfWord
 typealias ExerciseSentence = PlayableLibraryStepAnyOf5ListeningOneOfSentence
 typealias WordBankOption = PlayableLibraryStepAnyOf5ListeningOneOfFillBlankOptionsInner
 typealias TranslationOption = PlayableLibraryStepAnyOf5ListeningOneOfTranslationOptionsInner
+typealias ReadingPromptWord = PlayableLibraryStepAnyOf5ListeningOneOfReadingPromptWordsInner
 typealias AlphabetContent = PlayableLibraryStepAnyOf5ListeningOneOfContent
 typealias FillBlankContent = PlayableLibraryStepAnyOf5ListeningOneOf1Content
 typealias MatchPair = PlayableLibraryStepAnyOf5ListeningOneOf3ContentPairsInner
@@ -30,7 +32,7 @@ data class Exercise(
     val translationOptions: List<TranslationOption>,
     val fillBlankOptions: List<WordBankOption>,
     val wordBankOptions: List<WordBankOption>,
-    val sentenceWordOptions: List<WordBankOption>,
+    val readingPromptWords: List<ReadingPromptWord>,
     val matchColumnsRightItems: List<String>,
     val content: ExerciseContent,
 )
@@ -68,7 +70,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.Alphabet(content),
                 )
@@ -83,7 +85,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.FillBlank(content),
                 )
@@ -98,7 +100,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.Shared,
                 )
@@ -113,7 +115,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.MatchColumns(content.pairs, content.question),
                 )
@@ -128,7 +130,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.MultipleChoice(content),
                 )
@@ -143,7 +145,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.Shared,
                 )
@@ -158,7 +160,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.Shared,
                 )
@@ -173,7 +175,7 @@ fun LanguageExercise.toExercise(): Exercise =
                     translationOptions,
                     fillBlankOptions,
                     wordBankOptions,
-                    sentenceWordOptions,
+                    readingPromptWords,
                     matchColumnsRightItems,
                     ExerciseContent.Shared,
                 )

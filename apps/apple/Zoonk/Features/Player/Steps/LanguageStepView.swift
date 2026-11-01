@@ -520,7 +520,7 @@ private struct ArrangeWordsView: View {
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
       ReadingPromptText(
-        sentence: sentence.translation, sentenceWordOptions: exercise.sentenceWordOptions)
+        sentence: sentence.translation, words: exercise.readingPromptWords)
     }
   }
 
@@ -605,11 +605,10 @@ private struct ReadingPromptText: View {
   @State private var shownHint: Int?
 
   let sentence: String
-  let sentenceWordOptions: [LanguageExercise.WordOption]
+  let words: [LanguageExercise.ReadingPromptWord]
 
   var body: some View {
-    let prompt = ReadingPromptHints.stripWrappingQuotes(sentence)
-    let words = ReadingPromptHints.words(in: prompt, sentenceWordOptions: sentenceWordOptions)
+    let prompt = PromptText.stripWrappingQuotes(sentence)
     let hinted = words.indices.filter { words[$0].translation != nil }
 
     FlowLayout(spacing: prompt.contains(" ") ? wordSpacing : 0, alignment: .firstTextBaseline) {

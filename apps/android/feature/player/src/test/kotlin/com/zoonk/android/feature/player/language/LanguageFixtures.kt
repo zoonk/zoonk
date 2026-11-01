@@ -21,6 +21,11 @@ internal fun bank(vararg words: String) =
     "translation":null,"word":"$it"}"""
     }
 
+internal fun promptWords(vararg words: Pair<String, String?>) =
+    words.joinToString(",", "[", "]") { (word, translation) ->
+        """{"translation":${translation?.let { "\"$it\"" } ?: "null"},"word":"$word"}"""
+    }
+
 internal fun step(
     id: String,
     kind: StepKind,
@@ -33,7 +38,7 @@ internal fun step(
     translations: String = "[]",
     rightItems: String = "[]",
     hints: String? = null,
-    sentenceWords: String = "[]",
+    promptWords: String = "[]",
 ) = LessonStep(
     id,
     null,
@@ -43,8 +48,8 @@ internal fun step(
             LanguageExercise.serializer(),
             """
             {"content":$content,"fillBlankOptions":$fillBlank,"id":"00000000-0000-4000-8000-000000000001","kind":"$apiKind",
-             "matchColumnsRightItems":$rightItems,"position":0,"sentence":$sentence,"sentenceWordOptions":$sentenceWords,
-             "translationOptions":$translations,"vocabularyOptions":[],"word":$word,"wordBankOptions":$wordBank}
+             "matchColumnsRightItems":$rightItems,"position":0,"readingPromptWords":$promptWords,"sentence":$sentence,
+             "sentenceWordOptions":[],"translationOptions":$translations,"vocabularyOptions":[],"word":$word,"wordBankOptions":$wordBank}
             """.trimIndent(),
         ),
         hints?.let {
@@ -64,11 +69,7 @@ internal fun reading(id: String) =
         "reading",
         sentence = sentence(null),
         wordBank = bank("un", "Yo", "gato.", "veo"),
-        sentenceWords =
-            """[{"audioUrl":null,"romanization":null,"translation":"I","word":"Yo"},{"audioUrl":null,"romanization":null,
-                "translation":"see","word":"veo"},
-               {"audioUrl":null,"romanization":null,"translation":"a","word":"un"},{"audioUrl":null,"romanization":null,
-                   "translation":"cat","word":"gato."}]""",
+        promptWords = promptWords("I" to "Yo", "see" to "veo", "a" to "un", "cat." to "gato"),
     )
 
 /** A sentence long enough to wrap the answer onto more lines on a phone, in the order it's built. */
@@ -84,6 +85,7 @@ internal fun longReading(id: String) =
                "sentence":"${LONG_SENTENCE.joinToString(" ")}",
                "translation":"O fio condutor da minha experiência é melhorar processos","translationDistractors":[]}""",
         wordBank = bank("in", "common", "processes", "my", "improves", "am", "experience", "The", "those", "thread", "is", "improving"),
+        promptWords = promptWords(*"O fio condutor da minha experiência é melhorar processos".split(" ").map { it to null }.toTypedArray()),
     )
 
 internal fun listening(

@@ -62764,6 +62764,26 @@
                         "minimum": 0,
                         "maximum": 9007199254740991
                       },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
                       "sentence": {
                         "nullable": true,
                         "type": "object",
@@ -63052,6 +63072,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -63111,6 +63132,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -63392,6 +63433,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -63451,6 +63493,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -63696,6 +63758,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -63755,6 +63818,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -64027,6 +64110,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -64086,6 +64170,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -64384,6 +64488,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -64443,6 +64548,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -64688,6 +64813,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -64747,6 +64873,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -64992,6 +65138,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -65051,6 +65198,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -65296,6 +65463,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -66549,6 +66717,26 @@
                         "minimum": 0,
                         "maximum": 9007199254740991
                       },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
                       "sentence": {
                         "nullable": true,
                         "type": "object",
@@ -66837,6 +67025,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -66896,6 +67085,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -67177,6 +67386,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -67236,6 +67446,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -67481,6 +67711,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -67540,6 +67771,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -67812,6 +68063,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -67871,6 +68123,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -68169,6 +68441,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -68228,6 +68501,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -68473,6 +68766,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -68532,6 +68826,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -68777,6 +69091,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",
@@ -68836,6 +69151,26 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
+                      },
+                      "readingPromptWords": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "translation": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "word": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "translation",
+                            "word"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
                       "sentence": {
                         "nullable": true,
@@ -69081,6 +69416,7 @@
                       "id",
                       "matchColumnsRightItems",
                       "position",
+                      "readingPromptWords",
                       "sentence",
                       "sentenceWordOptions",
                       "translationOptions",

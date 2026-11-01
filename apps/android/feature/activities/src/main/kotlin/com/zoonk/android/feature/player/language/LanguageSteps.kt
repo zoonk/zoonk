@@ -152,7 +152,7 @@ fun LanguageStepView(
                     language = languages.target,
                     speech = speech,
                     onAnswer = select,
-                ) { ReadingPrompt(sentence.translation, exercise.sentenceWordOptions, answered = result != null) }
+                ) { ReadingPrompt(sentence.translation, exercise.readingPromptWords, answered = result != null) }
             }
         }
 

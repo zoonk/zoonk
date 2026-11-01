@@ -607,7 +607,7 @@ private func language(
     {"id": "\(id)", "position": 0, "skillId": null, "kind": "\(kind)", "wordHints": null,
      "exercise": {"id": "\(id)", "position": 0, "kind": "\(kind)", "content": \(content),
        "sentence": \(sentence), "word": null, "wordBankOptions": [],
-       "sentenceWordOptions": [\(options.joined(separator: ", "))],
+       "sentenceWordOptions": [\(options.joined(separator: ", "))], "readingPromptWords": [],
        "fillBlankOptions": [], "translationOptions": [], "vocabularyOptions": [],
        "matchColumnsRightItems": []}}
     """
@@ -1056,7 +1056,8 @@ final class LessonPlayerSavingTests: XCTestCase {
       {"id": "match", "position": 0, "skillId": null, "kind": "matchColumns", "wordHints": null,
        "exercise": {"id": "match", "position": 0, "kind": "matchColumns",
          "content": {"pairs": [{"left": "a", "right": "b"}]}, "sentence": null, "word": null,
-         "wordBankOptions": [], "sentenceWordOptions": [], "fillBlankOptions": [],
+         "wordBankOptions": [], "sentenceWordOptions": [], "readingPromptWords": [],
+         "fillBlankOptions": [],
          "translationOptions": [], "vocabularyOptions": [], "matchColumnsRightItems": ["b"]}}
       """#
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(match)])

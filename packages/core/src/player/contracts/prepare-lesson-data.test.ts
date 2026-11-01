@@ -361,12 +361,41 @@ describe(serializeExerciseSteps, () => {
     ]);
   });
 
+  it("gives a reading's prompt words the lesson words their translations name", () => {
+    const sentence = makeSentence({
+      sentence: "How much do I pay upfront?",
+      translation: "Quanto eu pago antecipadamente?",
+    });
+
+    const result = serialize({
+      lessonWords: [
+        makeWord({ id: "10", translation: "pagar", word: "pay" }),
+        makeWord({ id: "11", translation: "antecipadamente", word: "upfront" }),
+      ],
+      steps: [
+        makeStep({ content: {}, id: "40", kind: "reading", sentence }),
+        makeStep({ content: {}, id: "41", kind: "listening", sentence }),
+      ],
+    });
+
+    expect(result.map((step) => step.readingPromptWords)).toStrictEqual([
+      [
+        { translation: null, word: "Quanto" },
+        { translation: null, word: "eu" },
+        { translation: null, word: "pago" },
+        { translation: "upfront", word: "antecipadamente?" },
+      ],
+      [],
+    ]);
+  });
+
   it("keeps option helper arrays empty for unrelated step kinds", () => {
     const result = serialize({ steps: [makeStep()] });
 
     expect(result[0]).toMatchObject({
       fillBlankOptions: [],
       matchColumnsRightItems: [],
+      readingPromptWords: [],
       sentenceWordOptions: [],
       translationOptions: [],
       vocabularyOptions: [],

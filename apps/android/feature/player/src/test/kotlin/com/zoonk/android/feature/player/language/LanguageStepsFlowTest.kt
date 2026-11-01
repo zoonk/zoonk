@@ -288,8 +288,8 @@ class LanguageStepsFlowTest {
 
     @Test
     fun aReadingsSentenceIsReadOnceAsItsHeading() {
-        val catOnly = """[{"audioUrl":null,"romanization":null,"translation":"cat","word":"gato."}]"""
-        play(listOf(step("read", StepKind.Reading, "reading", sentence = sentence(null), sentenceWords = catOnly), summaryStep("end")))
+        val catOnly = promptWords("I" to null, "see" to null, "a" to null, "cat." to "gato")
+        play(listOf(step("read", StepKind.Reading, "reading", sentence = sentence(null), promptWords = catOnly), summaryStep("end")))
 
         val prompt = rule.onNode(isHeading() and hasContentDescription("I see a cat.")).fetchSemanticsNode()
         assertEquals(null, prompt.config.getOrNull(SemanticsProperties.Text))

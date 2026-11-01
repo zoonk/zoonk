@@ -870,6 +870,7 @@ describe("OpenAPI response schemas", () => {
       kind: "multipleChoice",
       matchColumnsRightItems: [],
       position: 0,
+      readingPromptWords: [],
       sentence: null,
       sentenceWordOptions: [],
       translationOptions: [],

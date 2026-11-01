@@ -1,10 +1,8 @@
 package com.zoonk.android.feature.player.language
 
 import java.text.BreakIterator
-import java.text.Normalizer
 
-// Ports of main's text rules for language screens (`@zoonk/utils/string`,
-// `packages/player/src/components/_utils`), so answers and hints read the same on both.
+// Ports of main's text rules for language screens (`@zoonk/utils/string`), so answers read the same on both.
 
 private val QUOTE_PAIRS = mapOf('"' to '"', '\'' to '\'', '‘' to '’', '“' to '”')
 private val NESTED_QUOTE = Regex("""(?<![\p{L}\p{N}])['"‘’“”]|['"‘’“”](?![\p{L}\p{N}])""")
@@ -19,21 +17,8 @@ fun stripWrappingQuotes(value: String): String {
 }
 
 private val SPACE_BEFORE_PUNCTUATION = Regex("""(?<!\s)\s+([!?.,;:。、！？؟])""")
-private val PUNCTUATION = Regex("""[^\p{L}\p{M}\p{N}\s]""")
-private val COMBINING_MARKS = Regex("[̀-ͯ]")
-private val SPACES = Regex("""\s+""")
 
 fun normalizePunctuation(text: String): String = text.replace(SPACE_BEFORE_PUNCTUATION, "$1")
-
-fun stripPunctuation(text: String): String = text.replace(PUNCTUATION, "")
-
-fun normalizeString(text: String): String =
-    Normalizer
-        .normalize(text, Normalizer.Form.NFD)
-        .replace(COMBINING_MARKS, "")
-        .lowercase()
-        .replace(SPACES, " ")
-        .trim()
 
 /**
  * A sentence's words, punctuation kept on the word it follows. Text without spaces (Japanese,
@@ -164,44 +149,3 @@ fun templateRomanization(
     val pattern = Regex("""(?<=\s|^|["'«「])$escaped(?=\s|[.,!?;:)"'»」]|$)""", RegexOption.IGNORE_CASE)
     return pattern.replaceFirst(sentence, "____")
 }
-
-/** A word of a reading prompt, with the target-language word it stands for when one is known. */
-data class PromptWordHint(
-    val word: String,
-    val translation: String?,
-)
-
-/**
- * Each prompt word is paired with the sentence word whose translation it is; the words left over
- * pair up in order, so every hinted word shows one translation.
- */
-fun readingPromptHints(
-    prompt: String,
-    sentenceWordOptions: List<WordBankOption>,
-): List<PromptWordHint> {
-    val words = segmentWords(prompt)
-    val targets =
-        sentenceWordOptions.mapNotNull { option ->
-            val key = promptKey(option.translation)
-            val translation = trimPunctuation(option.word)
-            if (key.isEmpty() || translation.isEmpty()) null else key to translation
-        }
-    val used = mutableSetOf<Int>()
-    val direct =
-        words.map { word ->
-            val key = promptKey(word)
-            targets.indices.firstOrNull { it !in used && targets[it].first == key }?.also(used::add)
-        }
-    val leftoverTargets = targets.indices.filter { it !in used }
-    val leftoverWords = direct.indices.filter { direct[it] == null }
-    val fallback = leftoverWords.zip(leftoverTargets).toMap()
-    return words.mapIndexed { index, word ->
-        PromptWordHint(word, (direct[index] ?: fallback[index])?.let { targets[it].second })
-    }
-}
-
-private val EDGE_PUNCTUATION = Regex("""^[^\p{L}\p{M}\p{N}]+|[^\p{L}\p{M}\p{N}]+$""")
-
-private fun trimPunctuation(word: String) = word.replace(EDGE_PUNCTUATION, "")
-
-private fun promptKey(word: String?) = normalizeString(stripPunctuation(word.orEmpty()))

@@ -1,8 +1,8 @@
 "use client";
 
 import {
+  type ReadingPromptWord,
   type SerializedStep,
-  type WordBankOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import {
   Popover,
@@ -12,27 +12,23 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
+import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
-import {
-  type ReadingPromptWordHint,
-  buildReadingPromptWordHints,
-} from "./_utils/reading-prompt-word-hints";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { QuestionText } from "./question-text";
 import { ScreenChip } from "./screen-chip";
 
-function ReadingPromptWord({
-  hint,
+function PromptWord({
+  promptWord,
   standalone,
 }: {
-  hint: ReadingPromptWordHint;
+  promptWord: ReadingPromptWord;
   standalone: boolean;
 }) {
-  if (!hint.translation) {
-    return <span>{hint.word}</span>;
+  if (!promptWord.translation) {
+    return <span>{promptWord.word}</span>;
   }
 
   return (
@@ -43,7 +39,7 @@ function ReadingPromptWord({
           standalone ? "inline-flex min-h-11 min-w-11 items-center" : "inline",
         )}
       >
-        {hint.word}
+        {promptWord.word}
       </PopoverTrigger>
 
       <PopoverContent
@@ -51,7 +47,7 @@ function ReadingPromptWord({
         sideOffset={8}
       >
         <PopoverHeader className="gap-0.5">
-          <PopoverTitle className="text-base">{hint.translation}</PopoverTitle>
+          <PopoverTitle className="text-base">{promptWord.translation}</PopoverTitle>
         </PopoverHeader>
       </PopoverContent>
     </Popover>
@@ -59,23 +55,21 @@ function ReadingPromptWord({
 }
 
 function ReadingPromptText({
+  promptWords,
   sentence,
-  sentenceWordOptions,
 }: {
+  promptWords: ReadingPromptWord[];
   sentence: string;
-  sentenceWordOptions: WordBankOption[];
 }) {
-  const prompt = stripWrappingQuotes(sentence);
-  const hints = buildReadingPromptWordHints({ prompt, sentenceWordOptions });
-  const hasWordSpaces = prompt.includes(" ");
+  const hasWordSpaces = stripWrappingQuotes(sentence).includes(" ");
 
   return (
     <span>
-      {hints.map((hint, index) => (
+      {promptWords.map((promptWord, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Prompt words can repeat in generated sentences, no unique ID.
-        <Fragment key={`${hint.word}-${hint.translation ?? "none"}-${index}`}>
+        <Fragment key={`${promptWord.word}-${promptWord.translation ?? "none"}-${index}`}>
           {index > 0 && hasWordSpaces ? " " : null}
-          <ReadingPromptWord hint={hint} standalone={hints.length === 1} />
+          <PromptWord promptWord={promptWord} standalone={promptWords.length === 1} />
         </Fragment>
       ))}
     </span>
@@ -112,8 +106,8 @@ export function ReadingStep({
         <ScreenChip>{t("Translate")}</ScreenChip>
         <QuestionText>
           <ReadingPromptText
+            promptWords={step.readingPromptWords}
             sentence={step.sentence.translation}
-            sentenceWordOptions={step.sentenceWordOptions}
           />
         </QuestionText>
       </div>

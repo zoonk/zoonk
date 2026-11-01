@@ -11,6 +11,7 @@ import {
   buildWordBankOptions,
 } from "./build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "./exercise-content";
+import { type ReadingPromptWord, buildReadingPromptWords } from "./reading-prompt-words";
 import {
   type TranslationOption,
   buildDistractorWordLookup,
@@ -18,6 +19,7 @@ import {
   serializeDistractorWord,
 } from "./translation-options";
 
+export type { ReadingPromptWord } from "./reading-prompt-words";
 export type { TranslationOption } from "./translation-options";
 
 type WordDataInput = {
@@ -97,6 +99,7 @@ export type SerializedStep<Kind extends ExerciseKind = ExerciseKind> = {
   vocabularyOptions: SerializedWord[];
   wordBankOptions: WordBankOption[];
   sentenceWordOptions: WordBankOption[];
+  readingPromptWords: ReadingPromptWord[];
   fillBlankOptions: WordBankOption[];
   matchColumnsRightItems: string[];
 };
@@ -154,6 +157,20 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
   return shuffle(content.pairs.map((pair) => pair.right));
 }
 
+function buildStepReadingPromptWords({
+  sentenceWordOptions,
+  step,
+}: {
+  sentenceWordOptions: WordBankOption[];
+  step: SerializedStep;
+}): ReadingPromptWord[] {
+  if (step.kind !== "reading" || !step.sentence) {
+    return [];
+  }
+
+  return buildReadingPromptWords({ prompt: step.sentence.translation, sentenceWordOptions });
+}
+
 function serializeStep(step: StepDataInput): SerializedStep | null {
   if (!isExerciseKind(step.kind)) {
     return null;
@@ -169,6 +186,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
       kind: step.kind,
       matchColumnsRightItems: [],
       position: step.position,
+      readingPromptWords: [],
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
       sentenceWordOptions: [],
       translationOptions: [],
@@ -224,14 +242,17 @@ export function serializeExerciseSteps({
       return [];
     }
 
+    const sentenceWordOptions = step.sentence
+      ? buildSentenceWordOptions({ ...wordSources, sentence: step.sentence.sentence })
+      : [];
+
     return [
       {
         ...step,
         fillBlankOptions: buildFillBlankOptions({ ...wordSources, step }),
         matchColumnsRightItems: buildMatchColumnsRightItems(step),
-        sentenceWordOptions: step.sentence
-          ? buildSentenceWordOptions({ ...wordSources, sentence: step.sentence.sentence })
-          : [],
+        readingPromptWords: buildStepReadingPromptWords({ sentenceWordOptions, step }),
+        sentenceWordOptions,
         translationOptions: buildTranslationOptions({
           distractorLookup,
           kind: step.kind,

@@ -11,6 +11,7 @@ import {
   segmentLearnerWords,
   segmentWords,
   stripPunctuation,
+  stripWrappingQuotes,
   toSlug,
   trimPunctuation,
 } from "./string";
@@ -419,6 +420,48 @@ describe(stripPunctuation, () => {
 
   it("handles empty string", () => {
     expect(stripPunctuation("")).toBe("");
+  });
+});
+
+describe(stripWrappingQuotes, () => {
+  it("removes one outer pair of matching quotes", () => {
+    expect(stripWrappingQuotes('  "hello there"  ')).toBe("hello there");
+    expect(stripWrappingQuotes("“hello there”")).toBe("hello there");
+    expect(stripWrappingQuotes("‘hello there’")).toBe("hello there");
+  });
+
+  it("leaves unmatched or inner quotes alone", () => {
+    expect(stripWrappingQuotes('"hello there')).toBe('"hello there');
+    expect(stripWrappingQuotes('He said "wait" and left.')).toBe('He said "wait" and left.');
+  });
+
+  it("leaves lone quote characters alone", () => {
+    expect(stripWrappingQuotes('"')).toBe('"');
+    expect(stripWrappingQuotes("'")).toBe("'");
+    expect(stripWrappingQuotes('  "  ')).toBe('  "  ');
+  });
+
+  it("strips outer single quotes when the inner text only has apostrophes", () => {
+    expect(stripWrappingQuotes("'It's ready'")).toBe("It's ready");
+    expect(stripWrappingQuotes("‘It’s ready’")).toBe("It’s ready");
+  });
+
+  it("preserves quotes around the first and last words", () => {
+    expect(stripWrappingQuotes('"this" should preserve quotes in the first and last "words"')).toBe(
+      '"this" should preserve quotes in the first and last "words"',
+    );
+
+    expect(stripWrappingQuotes("“this” should preserve quotes in the first and last “words”")).toBe(
+      "“this” should preserve quotes in the first and last “words”",
+    );
+
+    expect(stripWrappingQuotes("'this' should preserve quotes in the first and last 'words'")).toBe(
+      "'this' should preserve quotes in the first and last 'words'",
+    );
+
+    expect(stripWrappingQuotes("‘this’ should preserve quotes in the first and last ‘words’")).toBe(
+      "‘this’ should preserve quotes in the first and last ‘words’",
+    );
   });
 });
 
