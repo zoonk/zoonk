@@ -45,13 +45,13 @@ import com.zoonk.api.models.MockResult
 import com.zoonk.api.models.MockScoreNotes
 import kotlin.math.roundToInt
 
+/** What happened, then [details]: what it means and what's next, where they read under it. */
 @Composable
 internal fun ScoreStep(
     view: MockExam,
     result: MockResult,
     dayMoment: @Composable () -> Unit,
-    review: @Composable () -> Unit,
-    notes: Boolean,
+    details: @Composable () -> Unit,
 ) {
     ScoreHeader(view, result)
     AnswerTiles(result)
@@ -59,10 +59,18 @@ internal fun ScoreStep(
     PassMarks(view)
     NoteLines(scoreNoteLines(view.scoreNotes))
     dayMoment()
-    if (hasBreakdown(result)) Breakdown(result)
+    details()
+}
+
+/** What a score means: its areas and what the mock showed. */
+@Composable
+internal fun ScoreNumbers(
+    result: MockResult,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
+) {
+    if (hasBreakdown(result)) Breakdown(result, opened, onToggle)
     if (hasInsights(result)) Insights(result)
-    review()
-    if (notes) ResultNotes(view)
 }
 
 /** What the mock was: its document, size and what it left out. */

@@ -15,10 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -46,11 +42,20 @@ import kotlin.math.roundToInt
 
 internal fun hasBreakdown(result: MockResult): Boolean = result.areas.size > 1 || result.topics.size > 1
 
-/** Main's `MockResultBreakdown`: each area with its topics folded under it, or the topics of a one-area mock, worst first. */
+/**
+ * Main's `MockResultBreakdown`: each area with its topics folded under it, or the topics of a one-area
+ * mock, worst first. What's [opened] is kept above it, since an open book moves it to another page.
+ */
 @Composable
-internal fun Breakdown(result: MockResult) {
+internal fun Breakdown(
+    result: MockResult,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
+) {
     if (result.areas.size <= 1) {
-        ResultSection(stringResource(R.string.mock_result_by_topic)) { TopicRows(result.topics) }
+        ResultSection(stringResource(R.string.mock_result_by_topic)) {
+            TopicRows(result.topics, more = MORE_TOPICS in opened) { onToggle(MORE_TOPICS) }
+        }
         return
     }
 
@@ -58,7 +63,7 @@ internal fun Breakdown(result: MockResult) {
         Column {
             result.areas.forEachIndexed { index, area ->
                 if (index > 0) HorizontalDivider()
-                AreaRow(area, result.topics.filter { it.area == area.name })
+                AreaRow(area, result.topics.filter { it.area == area.name }, opened, onToggle)
             }
         }
     }
@@ -79,9 +84,12 @@ internal fun ResultSection(
 private fun AreaRow(
     area: MockResultAreasInner,
     topics: List<MockResultTopicsInner>,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
 ) {
     val score = area.score?.let { scoreRange(it.low, it.high) } ?: rightOf(area.correct, area.total)
-    var open by rememberSaveable(area.name) { mutableStateOf(false) }
+    val key = "$AREA${area.name}"
+    val open = key in opened
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
     val folds = topics.isNotEmpty()
 
@@ -91,7 +99,7 @@ private fun AreaRow(
                 .fillMaxWidth()
                 .then(
                     if (folds) {
-                        Modifier.clickable(role = Role.Button) { open = !open }.semantics { stateDescription = state }
+                        Modifier.clickable(role = Role.Button) { onToggle(key) }.semantics { stateDescription = state }
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },
@@ -111,7 +119,11 @@ private fun AreaRow(
                 )
             }
         }
-        if (open) Column(Modifier.padding(start = 16.dp, bottom = 8.dp)) { TopicRows(topics) }
+        if (open) {
+            Column(Modifier.padding(start = 16.dp, bottom = 8.dp)) {
+                TopicRows(topics, more = "$MORE_TOPICS${area.name}" in opened) { onToggle("$MORE_TOPICS${area.name}") }
+            }
+        }
     }
 }
 
@@ -119,15 +131,18 @@ private val worstFirst =
     compareBy<MockResultTopicsInner> { it.correct.toDouble() / it.total }.thenByDescending { it.total }
 
 @Composable
-private fun TopicRows(topics: List<MockResultTopicsInner>) {
+private fun TopicRows(
+    topics: List<MockResultTopicsInner>,
+    more: Boolean,
+    onMore: () -> Unit,
+) {
     val sorted = topics.sortedWith(worstFirst)
     val rest = sorted.drop(TOPICS_SHOWN)
-    var more by rememberSaveable { mutableStateOf(false) }
 
     TopicList(sorted.take(TOPICS_SHOWN))
     if (rest.isNotEmpty()) {
         val state = stringResource(if (more) R.string.disclosure_expanded else R.string.disclosure_collapsed)
-        TextButton(onClick = { more = !more }, modifier = Modifier.semantics { stateDescription = state }) {
+        TextButton(onClick = onMore, modifier = Modifier.semantics { stateDescription = state }) {
             Text(pluralStringResource(R.plurals.mock_result_more_topics, rest.size, rest.size))
             Icon(
                 painterResource(R.drawable.ic_expand_more),
@@ -306,3 +321,6 @@ private fun CalibrationInsight(result: MockResult) {
 
 private const val TOPICS_SHOWN = 5
 private const val HALF_TURN = 180f
+
+private const val AREA = "area:"
+private const val MORE_TOPICS = "more:"

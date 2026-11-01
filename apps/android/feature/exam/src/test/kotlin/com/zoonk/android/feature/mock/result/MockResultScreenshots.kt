@@ -163,6 +163,15 @@ class MockResultScreenshots {
         capture("result-open-book-without-aside")
     }
 
+    /** Nothing to review: the areas and what the mock showed take the page after the fold. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun openBookPerfect() {
+        show(finishedMock(result = result(extra = """"correct":3,"blank":0"""), extra = """"purpose":"placement","review":[]"""))
+        unfold()
+        capture("result-open-book-perfect")
+    }
+
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun openBookWithAside() {

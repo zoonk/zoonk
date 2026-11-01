@@ -108,15 +108,20 @@ internal fun MockResult(
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
     MomentAfterCeremony(app, view.ceremony?.takeUnless { viewModel.openedFinished }) { buddy ->
         var reviewOpen by rememberSaveable { mutableStateOf(false) }
+        // Above both layouts, since an open book reads the areas on the page after the fold.
+        var opened by rememberSaveable { mutableStateOf(emptyList<String>()) }
+        val toggle = { key: String -> opened = if (key in opened) opened - key else opened + key }
         val onContinue = { navigator.continueAfter(view, route) }
         val apply = { offersViewModel.apply(offered) }
         val keep = { offersViewModel.keep(offered) }
 
         BoxWithConstraints {
-            // An open book reads what was done before the fold and what's next after it, the questions to review included.
-            val reviewAfterFold =
+            // An open book reads what happened before the fold, and what it means and what's next after it, with the way on.
+            val nextAfterFold =
                 MockResultPart.Score in has && pageFold(maxWidth) != null && supportingPaneBeside(maxWidth, panesTouch = true)
-            val hasAside = resultAsideParts(has).isNotEmpty() || reviewAfterFold
+            // With no questions to review, the areas and what the mock showed fill the page after the fold instead.
+            val numbersAfterFold = nextAfterFold && view.review.isEmpty()
+            val hasAside = resultAsideParts(has).isNotEmpty() || nextAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -134,13 +139,13 @@ internal fun MockResult(
                             listOfNotNull(
                                 result?.let {
                                     ResultStep(SCORE, part.beside) {
-                                        ScoreStep(
-                                            view,
-                                            it,
-                                            dayMoment = { MockDayMoment(view, buddy) },
-                                            review = { if (wide && !reviewAfterFold) ReviewSection(view, app) },
-                                            notes = !reviewAfterFold,
-                                        )
+                                        ScoreStep(view, it, dayMoment = { MockDayMoment(view, buddy) }) {
+                                            if (!numbersAfterFold) ScoreNumbers(it, opened, toggle)
+                                            if (!nextAfterFold) {
+                                                if (wide) ReviewSection(view, app)
+                                                ResultNotes(view)
+                                            }
+                                        }
                                     }
                                 },
                             )
@@ -251,11 +256,12 @@ internal fun MockResult(
                     onClose = if (placement) onContinue else navigator::closeTask,
                     title = { StepDots(shown.size, position) },
                     actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
-                    bottomBar = actions,
+                    bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {
-                            TaskAside(title = stringResource(R.string.mock_result_after)) {
+                            TaskAside(title = stringResource(R.string.mock_result_after), footer = actions.takeIf { nextAfterFold }) {
                                 ResultAside(preparation) {
+                                    if (numbersAfterFold) result?.let { ScoreNumbers(it, opened, toggle) }
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
                                             AsideSection(
@@ -266,7 +272,7 @@ internal fun MockResult(
                                     if (MockResultPart.Next in has) {
                                         AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
                                     }
-                                    if (reviewAfterFold) {
+                                    if (nextAfterFold) {
                                         ReviewSection(view, app)
                                         ResultNotes(view)
                                     }
