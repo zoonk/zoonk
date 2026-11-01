@@ -1,4 +1,5 @@
 import "server-only";
+import { setTimeout as wait } from "node:timers/promises";
 import { type Goal, prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -28,9 +29,9 @@ import { type ChapterTestOutInput } from "./test-out-contract";
 import { scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
-/** Namespaces the per-test submit lock so it never collides with other advisory locks. */
-const SUBMIT_LOCK_NAMESPACE = 51_884;
-const SUBMIT_TIMEOUT_MS = 300_000;
+/** Longer than any submission takes: an older claim was left by a crash. */
+const CLAIM_TTL_MS = 300_000;
+const CLAIM_POLL_MS = 500;
 
 type ChapterTestOutOutcome = ProgressCelebration & {
   changeId: string | null;
@@ -279,6 +280,42 @@ async function submitOwnedTestOut({
   return toReadyResult({ celebration, said });
 }
 
+async function claimSubmission({ key, userId }: { key: string; userId: string }) {
+  const now = new Date();
+
+  await prisma.testOutClaim.deleteMany({
+    where: { createdAt: { lt: new Date(now.getTime() - CLAIM_TTL_MS) }, key },
+  });
+
+  const { count } = await prisma.testOutClaim.createMany({
+    data: [{ createdAt: now, key, userId }],
+    skipDuplicates: true,
+  });
+
+  return count > 0;
+}
+
+/**
+ * Domain writers commit their own transactions, so the claim is a row rather than a lock held open:
+ * a held transaction kept a connection idle while the work waited for others from the same pool.
+ */
+async function submitOnce(
+  submission: Parameters<typeof submitOwnedTestOut>[0] & { key: string },
+): Promise<SubmitChapterTestOutResult> {
+  const { key, ...owned } = submission;
+
+  if (!(await claimSubmission({ key, userId: owned.userId }))) {
+    await wait(CLAIM_POLL_MS);
+    return submitOnce(submission);
+  }
+
+  try {
+    return await submitOwnedTestOut(owned);
+  } finally {
+    await prisma.testOutClaim.deleteMany({ where: { key } });
+  }
+}
+
 /** Every question must belong to the chapter. Retrying a requestId returns its receipt without recording or celebrating again. */
 export async function submitChapterTestOut({
   chapterId,
@@ -295,17 +332,11 @@ export async function submitChapterTestOut({
     return owned;
   }
 
-  const key = `${owned.userId}:${goalId}:${chapterId}:${input.requestId}`;
-
-  // Domain writers commit their own transactions; this transaction holds only the per-test advisory lock.
-  return prisma.$transaction(
-    async (tx) => {
-      await tx.$queryRaw`
-        SELECT pg_advisory_xact_lock(${SUBMIT_LOCK_NAMESPACE}::int, hashtext(${key}))::text
-      `;
-
-      return submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId: owned.userId });
-    },
-    { timeout: SUBMIT_TIMEOUT_MS },
-  );
+  return submitOnce({
+    chapterId,
+    goal: owned.goal,
+    input,
+    key: `${owned.userId}:${goalId}:${chapterId}:${input.requestId}`,
+    userId: owned.userId,
+  });
 }

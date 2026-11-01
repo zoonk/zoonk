@@ -234,6 +234,17 @@ describe("a chapter test-out sent and read back", () => {
     });
   });
 
+  it("takes more submissions at once than the database pool has connections", async () => {
+    const { send } = await setup();
+    const moreThanThePool = 12;
+
+    const results = await Promise.allSettled(
+      Array.from({ length: moreThanThePool }, () => send({ requestId: randomUUID() })),
+    );
+
+    expect(results.filter((result) => result.status === "rejected")).toStrictEqual([]);
+  });
+
   it("reads a pass back as it was recorded, with its undo while the plan stands", async () => {
     const { chapterId, goal, send } = await setup();
     const requestId = randomUUID();
