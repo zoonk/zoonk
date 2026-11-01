@@ -1,6 +1,7 @@
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { essayGradeSchema, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
 import { essayViewResponseSchema } from "../schemas/essays";
@@ -65,7 +66,7 @@ export const examPaths = {
         ...commonErrors,
         "403": {
           ...forbiddenResponse,
-          description: `Today's time limit is reached. Error code: ${studySessionErrorCodes.dailyLimitReached}.`,
+          description: `Today's time limit is reached (${studySessionErrorCodes.dailyLimitReached}), or a guest must create an account because the AI budget all guests share today is spent (${LESSON_PLAYER_ERROR_CODES.signUpRequired}).`,
         },
         "409": {
           ...conflictResponse,

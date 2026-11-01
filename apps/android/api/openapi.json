@@ -3262,7 +3262,7 @@
             }
           },
           "403": {
-            "description": "Today's time limit is reached. Error code: DAILY_LIMIT_REACHED.",
+            "description": "Today's time limit is reached (DAILY_LIMIT_REACHED), or a guest must create an account because the AI budget all guests share today is spent (SIGN_UP_REQUIRED).",
             "content": {
               "application/json": {
                 "schema": {

@@ -1,6 +1,8 @@
 import "server-only";
 import { setTimeout as wait } from "node:timers/promises";
 import { type Attempt, type TransactionClient, prisma, sql } from "@zoonk/db";
+import { claimGuestShare } from "../../../entitlements/_utils/guest-spend-budget";
+import { ESSAY_GRADE_COST_MICROS } from "../../../entitlements/limits";
 
 const DAILY_ESSAY_GRADES = 6;
 
@@ -48,13 +50,43 @@ export async function countGradesLeft({
 }
 
 export type EssayGradeClaim =
-  | { attemptId: string; status: "claimed" | "limitReached" }
+  | { attemptId: string; status: "claimed" | "limitReached" | "signUpRequired" }
   | { attemptId: string; saved: Attempt; status: "saved" };
 
 type ClaimRound = EssayGradeClaim | { attemptId: string; status: "taken" };
 
 function isSettled(claim: ClaimRound): claim is EssayGradeClaim {
   return claim.status !== "taken";
+}
+
+/** Only once every round settles: a round with a taken draft is released and claimed again. */
+function admitGuestGrades({
+  rounds,
+  transaction,
+  userId,
+}: {
+  rounds: ClaimRound[];
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<ClaimRound[]> {
+  return rounds.reduce<Promise<ClaimRound[]>>(async (previous, round) => {
+    const admitted = await previous;
+
+    if (round.status !== "claimed") {
+      return [...admitted, round];
+    }
+
+    const allowed = await claimGuestShare({
+      costMicros: ESSAY_GRADE_COST_MICROS,
+      transaction,
+      userId,
+    });
+
+    return [
+      ...admitted,
+      allowed ? round : { attemptId: round.attemptId, status: "signUpRequired" },
+    ];
+  }, Promise.resolve([]));
 }
 
 function claimRound({
@@ -102,7 +134,11 @@ function claimRound({
       return { attemptId, status: "claimed" };
     });
 
-    const claimedIds = rounds.flatMap((round) =>
+    const admitted = rounds.some((round) => round.status === "taken")
+      ? rounds
+      : await admitGuestGrades({ rounds, transaction: tx, userId });
+
+    const claimedIds = admitted.flatMap((round) =>
       round.status === "claimed" ? [round.attemptId] : [],
     );
 
@@ -112,7 +148,7 @@ function claimRound({
       data: claimedIds.map((id) => ({ createdAt: now, id, localDate, userId })),
     });
 
-    return rounds;
+    return admitted;
   });
 }
 

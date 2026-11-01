@@ -14,7 +14,7 @@ export type EssayActions = {
     attemptId: string;
     durationMs: number;
     text: string;
-  }) => Promise<EssayDraft | "dailyLimitReached" | "limitReached" | null>;
+  }) => Promise<EssayDraft | "dailyLimitReached" | "limitReached" | "signUpRequired" | null>;
 };
 
 export type EssayHrefs = { dailyLimit: string; exit: string };

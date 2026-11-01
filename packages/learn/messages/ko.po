@@ -232,6 +232,7 @@ msgid "See Plus"
 msgstr "Plus 알아보기"
 
 #: src/_components/help-limit-notice.tsx
+#: src/essay/essay-status-line.tsx
 #: src/language/level-test/level-test-questions.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
@@ -2688,33 +2689,6 @@ msgid "See the grade"
 msgstr "점수 보기"
 
 #: src/essay/essay-screen.tsx
-msgctxt "8injUu"
-msgid "That didn't go through. Your text is still here. Try again in a moment."
-msgstr "처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-screen.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "하루 학습 시간 제한에 도달했어요. 작성한 글은 여기에 그대로 남아 있어요."
-
-#: src/essay/essay-screen.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "오늘 에세이 채점 횟수를 다 썼어요. 쓴 글은 그대로 남아 있으니 내일 보내세요."
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "mrTM3l"
-msgid "Still grading. This is taking longer than usual."
-msgstr "아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요."
-
-#: src/essay/essay-screen.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요."
-
-#: src/essay/essay-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "수정할 부분 다시 쓰기"
@@ -2756,6 +2730,33 @@ msgstr "작성한 글은 이 기기에 저장돼 돌아오면 이어서 쓸 수 
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "잠시 나갈까요?"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "8injUu"
+msgid "That didn't go through. Your text is still here. Try again in a moment."
+msgstr "처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요."
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-status-line.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "하루 학습 시간 제한에 도달했어요. 작성한 글은 여기에 그대로 남아 있어요."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "Vl53xq"
+msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
+msgstr "오늘 에세이 채점 횟수를 다 썼어요. 쓴 글은 그대로 남아 있으니 내일 보내세요."
+
+#: src/essay/essay-status-line.tsx
+#: src/mock/mock-result-essays.tsx
+msgctxt "mrTM3l"
+msgid "Still grading. This is taking longer than usual."
+msgstr "아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "UqDNfF"
+msgid "Reading your essay against each criterion. It can take up to 30 seconds."
+msgstr "평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요."
 
 #: src/essay/essay-word-count.tsx
 msgctxt "-8LNI4"

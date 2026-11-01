@@ -13,8 +13,10 @@ import {
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockSession } from "../_test-utils/mock-session";
-import { getUsageRule } from "../entitlements/limits";
+import { getUsagePeriodStarts } from "../entitlements/_utils/usage-periods";
+import { GUEST_DAILY_SPEND_BUDGET_MICROS, getUsageRule } from "../entitlements/limits";
 import { applyLevelEvidence } from "../language/levels/skill-level-rules";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
@@ -1146,6 +1148,39 @@ describe(checkLessonStep, () => {
 
     expect(outcomes.every((outcome) => outcome.status === "checked")).toBe(true);
     expect(gradeTypedAnswer).toHaveBeenCalledTimes(5);
+  });
+
+  it("grades a guest's written answer by code once the AI budget all guests share is spent", async () => {
+    const { run, steps, user } = await setupRun({ guest: true });
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    vi.mocked(gradeTypedAnswer).mockResolvedValueOnce(
+      typedGrade({ feedback: "Close.", isCorrect: false, score: 0.5 }),
+    );
+
+    try {
+      await useIsolatedBudgetDay();
+
+      await prisma.guestSpendDay.create({
+        data: {
+          day: getUsagePeriodStarts(new Date()).day,
+          spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS,
+        },
+      });
+
+      const outcome = await check({
+        answer: { kind: "typedAnswer", text: "Because it's probably around there" },
+        runId: run.id,
+        stepId: stepOfKind(steps, "typedAnswer").id,
+      });
+
+      expect(outcome).toMatchObject({ result: { checked: false }, status: "checked" });
+      expect(gradeTypedAnswer).not.toHaveBeenCalled();
+      await expect(prisma.modelGrade.count({ where: { userId: user.id } })).resolves.toBe(0);
+    } finally {
+      vi.useRealTimers();
+      vi.mocked(gradeTypedAnswer).mockReset();
+    }
   });
 
   it("needs a session and a real step", async () => {

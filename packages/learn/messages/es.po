@@ -232,6 +232,7 @@ msgid "See Plus"
 msgstr "Ver Plus"
 
 #: src/_components/help-limit-notice.tsx
+#: src/essay/essay-status-line.tsx
 #: src/language/level-test/level-test-questions.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
@@ -2688,33 +2689,6 @@ msgid "See the grade"
 msgstr "Ver la calificación"
 
 #: src/essay/essay-screen.tsx
-msgctxt "8injUu"
-msgid "That didn't go through. Your text is still here. Try again in a moment."
-msgstr "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-screen.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí."
-
-#: src/essay/essay-screen.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "Ya alcanzaste el límite de hoy para calificar redacciones. Tu texto se queda aquí; envíalo mañana."
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "mrTM3l"
-msgid "Still grading. This is taking longer than usual."
-msgstr "Aún estamos calificando. Está tardando más de lo habitual."
-
-#: src/essay/essay-screen.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
-
-#: src/essay/essay-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Reescribe lo que necesite ajustes"
@@ -2756,6 +2730,33 @@ msgstr "Tu texto se queda en este dispositivo y estará aquí cuando vuelvas."
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "¿Salir por ahora?"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "8injUu"
+msgid "That didn't go through. Your text is still here. Try again in a moment."
+msgstr "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento."
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-status-line.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "Vl53xq"
+msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
+msgstr "Ya alcanzaste el límite de hoy para calificar redacciones. Tu texto se queda aquí; envíalo mañana."
+
+#: src/essay/essay-status-line.tsx
+#: src/mock/mock-result-essays.tsx
+msgctxt "mrTM3l"
+msgid "Still grading. This is taking longer than usual."
+msgstr "Aún estamos calificando. Está tardando más de lo habitual."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "UqDNfF"
+msgid "Reading your essay against each criterion. It can take up to 30 seconds."
+msgstr "Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
 
 #: src/essay/essay-word-count.tsx
 msgctxt "-8LNI4"

@@ -54,3 +54,24 @@ export async function claimGuestSpend({
 
   return true;
 }
+
+/**
+ * For a call that a feature's own cap admits in the caller's transaction, such as a grade: a
+ * guest's also takes from the day all guests share. False means the guest must sign up.
+ */
+export async function claimGuestShare({
+  costMicros,
+  transaction,
+  userId,
+}: {
+  costMicros: number;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<boolean> {
+  const user = await transaction.user.findUnique({
+    select: { isAnonymous: true },
+    where: { id: userId },
+  });
+
+  return !user?.isAnonymous || claimGuestSpend({ costMicros, now: new Date(), transaction });
+}

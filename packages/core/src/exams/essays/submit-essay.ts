@@ -5,7 +5,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findSavedAttempt, getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { startStudyBlock } from "../../sessions/start-study-block";
-import { claimEssayGrades, releaseEssayGradeClaims } from "./_utils/essay-grade-claims";
+import {
+  type EssayGradeClaim,
+  claimEssayGrades,
+  releaseEssayGradeClaims,
+} from "./_utils/essay-grade-claims";
 import { gradeEssayText, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import {
@@ -17,12 +21,26 @@ import {
 export type SubmitEssayResult =
   | { grade: EssayGradeView; status: "graded" }
   | {
-      status: "blockNotActive" | "dailyLimitReached" | "limitReached" | "notFound" | "unauthorized";
+      status:
+        | "blockNotActive"
+        | "dailyLimitReached"
+        | "limitReached"
+        | "notFound"
+        | "signUpRequired"
+        | "unauthorized";
     };
 
 function replaySaved(saved: Pick<Attempt, "answer">): SubmitEssayResult {
   const grade = essayAnswerSchema.safeParse(saved.answer).data?.grade;
   return grade ? { grade, status: "graded" } : { status: "notFound" };
+}
+
+function settleUnclaimed(claim: EssayGradeClaim | undefined): SubmitEssayResult {
+  if (claim?.status === "saved") {
+    return replaySaved(claim.saved);
+  }
+
+  return { status: claim?.status === "signUpRequired" ? "signUpRequired" : "limitReached" };
 }
 
 /** Reusing an `attemptId` replays its saved grade, including concurrent submissions. */
@@ -70,12 +88,8 @@ export async function submitEssay({
 
   const [claim] = await claimEssayGrades({ attemptIds: [attemptId], localDate, userId });
 
-  if (claim?.status === "saved") {
-    return replaySaved(claim.saved);
-  }
-
   if (claim?.status !== "claimed") {
-    return { status: "limitReached" };
+    return settleUnclaimed(claim);
   }
 
   try {

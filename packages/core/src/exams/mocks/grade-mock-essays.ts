@@ -135,6 +135,10 @@ export async function gradeMockEssays({
   }
 
   return {
-    status: claims.some((claim) => claim.status === "limitReached") ? "limitReached" : "graded",
+    status: claims.some(
+      (claim) => claim.status === "limitReached" || claim.status === "signUpRequired",
+    )
+      ? "limitReached"
+      : "graded",
   };
 }

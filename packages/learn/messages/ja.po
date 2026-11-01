@@ -232,6 +232,7 @@ msgid "See Plus"
 msgstr "Plusの詳細を見る"
 
 #: src/_components/help-limit-notice.tsx
+#: src/essay/essay-status-line.tsx
 #: src/language/level-test/level-test-questions.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
@@ -2688,33 +2689,6 @@ msgid "See the grade"
 msgstr "採点結果を見る"
 
 #: src/essay/essay-screen.tsx
-msgctxt "8injUu"
-msgid "That didn't go through. Your text is still here. Try again in a moment."
-msgstr "うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-screen.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "1日の学習時間の上限に達しました。書いた内容はここに残ります。"
-
-#: src/essay/essay-screen.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。"
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "mrTM3l"
-msgid "Still grading. This is taking longer than usual."
-msgstr "引き続き採点しています。いつもより時間がかかっています。"
-
-#: src/essay/essay-screen.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "各評価基準に沿って小論文を読んでいます。最大30秒かかることがあります。"
-
-#: src/essay/essay-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "改善が必要な部分を書き直す"
@@ -2756,6 +2730,33 @@ msgstr "文章はこの端末に保存され、戻ってきたときに再開で
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "いったん中断しますか？"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "8injUu"
+msgid "That didn't go through. Your text is still here. Try again in a moment."
+msgstr "うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。"
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-status-line.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "1日の学習時間の上限に達しました。書いた内容はここに残ります。"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "Vl53xq"
+msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
+msgstr "今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。"
+
+#: src/essay/essay-status-line.tsx
+#: src/mock/mock-result-essays.tsx
+msgctxt "mrTM3l"
+msgid "Still grading. This is taking longer than usual."
+msgstr "引き続き採点しています。いつもより時間がかかっています。"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "UqDNfF"
+msgid "Reading your essay against each criterion. It can take up to 30 seconds."
+msgstr "各評価基準に沿って小論文を読んでいます。最大30秒かかることがあります。"
 
 #: src/essay/essay-word-count.tsx
 msgctxt "-8LNI4"

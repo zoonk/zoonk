@@ -232,6 +232,7 @@ msgid "See Plus"
 msgstr "Conhecer o Plus"
 
 #: src/_components/help-limit-notice.tsx
+#: src/essay/essay-status-line.tsx
 #: src/language/level-test/level-test-questions.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
@@ -2688,33 +2689,6 @@ msgid "See the grade"
 msgstr "Ver a nota"
 
 #: src/essay/essay-screen.tsx
-msgctxt "8injUu"
-msgid "That didn't go through. Your text is still here. Try again in a moment."
-msgstr "Não deu certo. Seu texto ainda está aqui. Tente de novo em instantes."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-screen.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "Você atingiu seu limite diário de tempo. Seu texto fica aqui."
-
-#: src/essay/essay-screen.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "Você usou todas as correções de redação de hoje. Seu texto continua aqui; envie amanhã."
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "mrTM3l"
-msgid "Still grading. This is taking longer than usual."
-msgstr "Ainda estamos corrigindo. Está demorando mais que o normal."
-
-#: src/essay/essay-screen.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "Estamos avaliando sua redação em cada critério. Pode levar até 30 segundos."
-
-#: src/essay/essay-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Reescreva o que precisa melhorar"
@@ -2756,6 +2730,33 @@ msgstr "Seu texto fica salvo neste dispositivo e estará aqui quando você volta
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "Sair por enquanto?"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "8injUu"
+msgid "That didn't go through. Your text is still here. Try again in a moment."
+msgstr "Não deu certo. Seu texto ainda está aqui. Tente de novo em instantes."
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-status-line.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "Você atingiu seu limite diário de tempo. Seu texto fica aqui."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "Vl53xq"
+msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
+msgstr "Você usou todas as correções de redação de hoje. Seu texto continua aqui; envie amanhã."
+
+#: src/essay/essay-status-line.tsx
+#: src/mock/mock-result-essays.tsx
+msgctxt "mrTM3l"
+msgid "Still grading. This is taking longer than usual."
+msgstr "Ainda estamos corrigindo. Está demorando mais que o normal."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "UqDNfF"
+msgid "Reading your essay against each criterion. It can take up to 30 seconds."
+msgstr "Estamos avaliando sua redação em cada critério. Pode levar até 30 segundos."
 
 #: src/essay/essay-word-count.tsx
 msgctxt "-8LNI4"

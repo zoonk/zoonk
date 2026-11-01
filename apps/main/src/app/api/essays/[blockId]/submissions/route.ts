@@ -8,7 +8,9 @@ export const POST = appPostRoute<{ blockId: string }>(
   async (
     request,
     { blockId },
-  ): Promise<EssayDraft | "blockNotActive" | "dailyLimitReached" | "limitReached" | null> => {
+  ): Promise<
+    EssayDraft | "blockNotActive" | "dailyLimitReached" | "limitReached" | "signUpRequired" | null
+  > => {
     const body = essaySubmissionInputSchema.safeParse(await readJsonBody(request));
 
     if (!body.success) {
@@ -20,7 +22,8 @@ export const POST = appPostRoute<{ blockId: string }>(
     if (
       result.status === "blockNotActive" ||
       result.status === "dailyLimitReached" ||
-      result.status === "limitReached"
+      result.status === "limitReached" ||
+      result.status === "signUpRequired"
     ) {
       return result.status;
     }

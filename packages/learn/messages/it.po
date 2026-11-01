@@ -232,6 +232,7 @@ msgid "See Plus"
 msgstr "Scopri Plus"
 
 #: src/_components/help-limit-notice.tsx
+#: src/essay/essay-status-line.tsx
 #: src/language/level-test/level-test-questions.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
@@ -2688,33 +2689,6 @@ msgid "See the grade"
 msgstr "Vedi il voto"
 
 #: src/essay/essay-screen.tsx
-msgctxt "8injUu"
-msgid "That didn't go through. Your text is still here. Try again in a moment."
-msgstr "L’invio non è riuscito. Il tuo testo è ancora qui. Riprova tra poco."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-screen.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "Hai raggiunto il limite di tempo giornaliero. Il tuo testo resta qui."
-
-#: src/essay/essay-screen.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "Hai esaurito le valutazioni dei temi per oggi. Il tuo testo resta qui; invialo domani."
-
-#: src/essay/essay-screen.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "mrTM3l"
-msgid "Still grading. This is taking longer than usual."
-msgstr "Stiamo ancora valutando il testo. Ci stiamo mettendo più del solito."
-
-#: src/essay/essay-screen.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "Stiamo esaminando il tuo tema in base a ciascun criterio. Possono volerci fino a 30 secondi."
-
-#: src/essay/essay-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Riscrivi le parti da migliorare"
@@ -2756,6 +2730,33 @@ msgstr "Il tuo testo resta su questo dispositivo e lo ritrovi qui quando torni."
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "Vuoi uscire per ora?"
+
+#: src/essay/essay-status-line.tsx
+msgctxt "8injUu"
+msgid "That didn't go through. Your text is still here. Try again in a moment."
+msgstr "L’invio non è riuscito. Il tuo testo è ancora qui. Riprova tra poco."
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/essay/essay-status-line.tsx
+msgctxt "yDPN7m"
+msgid "You've reached your daily time limit. Your text stays here."
+msgstr "Hai raggiunto il limite di tempo giornaliero. Il tuo testo resta qui."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "Vl53xq"
+msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
+msgstr "Hai esaurito le valutazioni dei temi per oggi. Il tuo testo resta qui; invialo domani."
+
+#: src/essay/essay-status-line.tsx
+#: src/mock/mock-result-essays.tsx
+msgctxt "mrTM3l"
+msgid "Still grading. This is taking longer than usual."
+msgstr "Stiamo ancora valutando il testo. Ci stiamo mettendo più del solito."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "UqDNfF"
+msgid "Reading your essay against each criterion. It can take up to 30 seconds."
+msgstr "Stiamo esaminando il tuo tema in base a ciascun criterio. Possono volerci fino a 30 secondi."
 
 #: src/essay/essay-word-count.tsx
 msgctxt "-8LNI4"

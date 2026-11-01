@@ -1,4 +1,5 @@
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
+import { signUpRequiredError } from "./lesson-player-errors";
 import { studySessionErrorCodes } from "./study-session-errors";
 
 const examErrorCodes = {
@@ -41,6 +42,7 @@ type ExamRefusal = {
     | "notRunning"
     | "notSpeaking"
     | "plusRequired"
+    | "signUpRequired"
     | "timeUp"
     | "tooEarly"
     | "unauthorized"
@@ -162,6 +164,10 @@ export function examError(result: ExamRefusal) {
 
   if (result.status === "notFound" || result.status === "noGoal") {
     return errors.notFound();
+  }
+
+  if (result.status === "signUpRequired") {
+    return signUpRequiredError();
   }
 
   return createErrorResponse(REFUSALS[result.status]);

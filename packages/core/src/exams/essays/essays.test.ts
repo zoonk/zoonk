@@ -7,7 +7,13 @@ import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../../_test-utils/mock-session";
+import { useIsolatedBudgetDay } from "../../_test-utils/isolated-budget-day";
+import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { getUsagePeriodStarts } from "../../entitlements/_utils/usage-periods";
+import {
+  ESSAY_GRADE_COST_MICROS,
+  GUEST_DAILY_SPEND_BUDGET_MICROS,
+} from "../../entitlements/limits";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import {
@@ -422,6 +428,36 @@ describe("essay drafts and access", () => {
     expect(gradeEssay).toHaveBeenCalledOnce();
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
     await expect(getEssay({ blockId })).resolves.toMatchObject({ essay: { gradesLeft: 5 } });
+  });
+
+  it("asks a guest to create an account once the AI budget all guests share is spent", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockGuestSession(user.id);
+    await useIsolatedBudgetDay();
+    const day = getUsagePeriodStarts(new Date()).day;
+
+    await prisma.guestSpendDay.create({
+      data: { day, spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS },
+    });
+
+    const draft = { attemptId: crypto.randomUUID(), durationMs: 1000, text: "My essay." };
+
+    await expect(submitEssay({ blockId, input: draft })).resolves.toStrictEqual({
+      status: "signUpRequired",
+    });
+
+    expect(gradeEssay).not.toHaveBeenCalled();
+
+    await prisma.guestSpendDay.update({ data: { spentMicros: 0 }, where: { day } });
+
+    await expect(submitEssay({ blockId, input: draft })).resolves.toMatchObject({
+      status: "graded",
+    });
+
+    await expect(prisma.guestSpendDay.findUniqueOrThrow({ where: { day } })).resolves.toMatchObject(
+      { spentMicros: ESSAY_GRADE_COST_MICROS },
+    );
   });
 
   it("grades drafts sent at once only up to the day's essay grades", async () => {
