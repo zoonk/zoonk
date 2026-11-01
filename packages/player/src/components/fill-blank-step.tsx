@@ -1,11 +1,15 @@
 "use client";
 
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import {
+  type SerializedStep,
+  type WordBankOption,
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
+import { useWordAudio } from "../use-word-audio";
 import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
@@ -163,16 +167,22 @@ export function FillBlankStep({
     return Array.from({ length: blankCount }, () => null);
   });
 
+  const { play } = useWordAudio({
+    preloadUrls: step.fillBlankOptions.map((option) => option.audioUrl),
+  });
+
   const handlePlaceWord = useCallback(
-    (word: string) => {
+    (option: WordBankOption) => {
       const firstEmptyIndex = blanks.indexOf(null);
 
       if (firstEmptyIndex === -1) {
         return;
       }
 
+      void play(option.audioUrl);
+
       const next = [...blanks];
-      next[firstEmptyIndex] = word;
+      next[firstEmptyIndex] = option.word;
       setBlanks(next);
 
       const userAnswers = getCompletedUserAnswers(next);
@@ -181,7 +191,7 @@ export function FillBlankStep({
         onSelectAnswer({ kind: "fillBlank", userAnswers });
       }
     },
-    [blanks, onSelectAnswer],
+    [blanks, onSelectAnswer, play],
   );
 
   const handleRemoveWord = useCallback(

@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectCount } from "../_test-utils/activity-player";
 import {
@@ -6,6 +7,7 @@ import {
   buildAdapters,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
+import { type PlayableLanguageStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, teachingStep } from "../preview/preview-steps";
 
@@ -35,6 +37,25 @@ async function checkRightAndContinue() {
   await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
+function wordAudioUrl(word: string): string {
+  return `https://audio.zoonk.test/${encodeURIComponent(word)}.mp3`;
+}
+
+function voiced(option: WordBankOption): WordBankOption {
+  return { ...option, audioUrl: wordAudioUrl(option.word) };
+}
+
+function withWordAudio(step: PlayableLanguageStep): PlayableLanguageStep {
+  return {
+    ...step,
+    exercise: {
+      ...step.exercise,
+      fillBlankOptions: step.exercise.fillBlankOptions.map(voiced),
+      wordBankOptions: step.exercise.wordBankOptions.map(voiced),
+    },
+  };
+}
+
 function letter({
   audioUrl,
   reading,
@@ -55,6 +76,10 @@ function letter({
 }
 
 describe("language lesson screens", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("builds sentences from the word bank, fixes a blank once and writes a sentence", async () => {
     const writing = teachingStep("typedAnswer");
 
@@ -122,6 +147,38 @@ describe("language lesson screens", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+  });
+
+  it("says each word in the bank as it goes into the answer", async () => {
+    const played: string[] = [];
+
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
+      this: HTMLMediaElement,
+    ) {
+      played.push(this.src);
+      return Promise.resolve();
+    });
+
+    renderLessonPlayer({
+      lesson: buildLesson(
+        [
+          withWordAudio(languageStep("reading")),
+          withWordAudio(languageStep("fillBlank")),
+          teachingStep("summary"),
+        ],
+        { language: "pt", targetLanguage: "en" },
+      ),
+    });
+
+    await pickWords(["How", "much"]);
+    expect(played).toStrictEqual([wordAudioUrl("How"), wordAudioUrl("much")]);
+
+    await pickWords(["is", "the", "rent?"]);
+    await checkRightAndContinue();
+
+    await expect.element(page.getByText("The electron is drawn as a")).toBeVisible();
+    await pickWords(["cloud"]);
+    expect(played.at(-1)).toBe(wordAudioUrl("cloud"));
   });
 
   it("shows the reading of a blank's sentence and of each word in the bank", async () => {
