@@ -275,6 +275,8 @@ internal fun WorkedExampleView(
         shown = revealed
     }
 
+    // On a spread, the problem with its picture or chart is the screen, and its steps unfold on the learner's page,
+    // above the button that shows the next one.
     ReadScene {
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -282,12 +284,10 @@ internal fun WorkedExampleView(
                 worked.title?.let { QuestionText(it) }
             }
             BodyText(worked.problem)
-        }
-        if (part.showsTurn) {
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
-        if (part.showsScreen) {
+        if (part.showsTurn) {
             val stepsLabel = stringResource(R.string.player_worked_example_steps)
             val words = rememberMathWords()
             val arrived = steps.lastOrNull()?.takeIf { revealed > 1 }
