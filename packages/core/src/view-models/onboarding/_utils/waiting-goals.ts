@@ -32,7 +32,7 @@ function findStartedCards(goals: readonly Goal[]): Map<string, StartedCard> {
 
     const card = cards.get(onboardingId) ?? { firstGoals: 0, live: false, places: new Set() };
     const place = readPlace(goal);
-    const moved = readDetail(goal.details, "movedFromGoalId") !== null;
+    const moved = goal.replacesGoalId !== null;
 
     return cards.set(onboardingId, {
       firstGoals: card.firstGoals + (place === null && !moved ? 1 : 0),

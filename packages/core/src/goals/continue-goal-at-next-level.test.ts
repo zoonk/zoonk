@@ -78,7 +78,6 @@ describe(continueGoalAtNextLevel, () => {
     });
 
     expect(next?.details).toStrictEqual({
-      continuesFromGoalId: goal.id,
       courseLevel: "beginner",
       level: "basic",
       purpose: "deep",
@@ -93,11 +92,49 @@ describe(continueGoalAtNextLevel, () => {
     expect(finished.status).toBe("completed");
     expect(profile.activeGoalId).toBe(next?.id);
 
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: next?.id } })).resolves.toMatchObject(
+      { replacesGoalId: goal.id },
+    );
+
     await expect(continueGoalAtNextLevel(goal.id)).resolves.toStrictEqual({
       status: "noNextLevel",
     });
 
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(2);
+  });
+
+  it("continues a goal once, whatever the learner later writes in the next goal's details", async () => {
+    const { goal, user } = await setup({ statuses: [...FINISHED] });
+    const first = await continueGoalAtNextLevel(goal.id);
+    const next = first.status === "created" ? first.goal : null;
+
+    await prisma.goal.update({ data: { details: {} }, where: { id: next?.id } });
+
+    await expect(continueGoalAtNextLevel(goal.id)).resolves.toStrictEqual({
+      status: "noNextLevel",
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(2);
+  });
+
+  it("creates one next goal when the same goal is continued twice at once", async () => {
+    const { goal, user } = await setup({ statuses: [...FINISHED] });
+
+    const results = await Promise.all([
+      continueGoalAtNextLevel(goal.id),
+      continueGoalAtNextLevel(goal.id),
+    ]);
+
+    expect(results.map((result) => result.status).toSorted()).toStrictEqual([
+      "created",
+      "noNextLevel",
+    ]);
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(2);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      status: "completed",
+    });
   });
 
   it("has no next level at the top of the course, nor for goals that aren't about learning", async () => {

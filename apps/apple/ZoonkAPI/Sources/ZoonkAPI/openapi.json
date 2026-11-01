@@ -3449,7 +3449,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The goal had already moved: its exam goal, with nothing started again",
+            "description": "The goal had already moved: its exam goal, even one the learner archived since, with nothing started again. A goal moves once",
             "content": {
               "application/json": {
                 "schema": {
@@ -14518,7 +14518,7 @@
             }
           },
           "409": {
-            "description": "The plan still has lessons to do, or the new goal couldn't be created",
+            "description": "The plan still has lessons to do",
             "content": {
               "application/json": {
                 "schema": {
@@ -14528,7 +14528,7 @@
             }
           },
           "422": {
-            "description": "Not a learn goal, or its course has no level after the plan's",
+            "description": "Not a learn goal, its course has no level after the plan's, or the goal was already continued",
             "content": {
               "application/json": {
                 "schema": {

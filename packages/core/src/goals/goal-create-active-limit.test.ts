@@ -9,7 +9,6 @@ import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { buildPlan } from "../plans/planner/build-plan";
 import { createOnboardingGoals } from "../view-models/onboarding/create-onboarding-goals";
 import { findActiveGoalLimit } from "./_utils/goal-status";
-import { createGoals } from "./create-goals";
 import { type GoalDraft } from "./goal-contract";
 
 vi.mock("../plans/planner/build-plan", { spy: true });
@@ -198,16 +197,5 @@ describe("onboarding recounts active goals under the creation lock", () => {
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
     ).resolves.toMatchObject({ activeGoalId: day.goal.id });
-  });
-
-  it("keeps an owned replacement outside the new-goal allowance", async () => {
-    const day = await setup();
-    await prisma.goal.update({ data: { status: "active" }, where: { id: day.goal.id } });
-
-    await expect(
-      createGoals({ dailyMinutes: 15, goals: [draft()] }, { replacesGoalId: day.goal.id }),
-    ).resolves.toMatchObject({ goals: [{ isActive: true }], status: "created" });
-
-    await expect(prisma.usageRecord.count({ where: { userId: day.user.id } })).resolves.toBe(0);
   });
 });

@@ -106,7 +106,8 @@ export const examPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: replacementGoalResponseSchema } },
-          description: "The goal had already moved: its exam goal, with nothing started again",
+          description:
+            "The goal had already moved: its exam goal, even one the learner archived since, with nothing started again. A goal moves once",
         },
         "201": {
           content: { "application/json": { schema: replacementGoalResponseSchema } },

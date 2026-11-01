@@ -19,10 +19,6 @@ function refuse({ status }: Refusal) {
     return errors.notFound();
   }
 
-  if (status === "refused") {
-    return errors.conflict("The next level's goal couldn't be created");
-  }
-
   return status === "notFinished"
     ? errors.conflict("Finish the plan's lessons first")
     : errors.unprocessableEntity("This goal has no next level to continue at");

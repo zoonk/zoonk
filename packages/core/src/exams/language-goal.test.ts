@@ -55,11 +55,7 @@ describe(moveLanguageGoalToExam, () => {
     const result = await moveLanguageGoalToExam(goal.id);
 
     expect(result).toMatchObject({
-      goal: {
-        details: { examName: "IELTS", movedFromGoalId: goal.id },
-        kind: "exam",
-        title: "IELTS",
-      },
+      goal: { details: { examName: "IELTS" }, kind: "exam", title: "IELTS" },
       status: "moved",
     });
 
@@ -71,7 +67,7 @@ describe(moveLanguageGoalToExam, () => {
     ]);
 
     expect(old.status).toBe("archived");
-    expect(created).toMatchObject({ kind: "exam", targetLanguage: "en" });
+    expect(created).toMatchObject({ kind: "exam", replacesGoalId: goal.id, targetLanguage: "en" });
   });
 
   it("leaves goals without an exam alone", async () => {
@@ -126,6 +122,31 @@ describe(moveLanguageGoalToExam, () => {
 
     await expect(prisma.goal.count({ where: { userId: guest.id } })).resolves.toBe(2);
   });
+
+  it("moves a language goal once, even after the learner archives its exam goal and resumes it", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { reason: "vou fazer o IELTS em março" },
+      kind: "language",
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const first = await moveLanguageGoalToExam(goal.id);
+    const examId = first.status === "moved" ? first.goal.id : "";
+
+    await prisma.goal.update({ data: { details: {}, status: "archived" }, where: { id: examId } });
+    await prisma.goal.update({ data: { status: "active" }, where: { id: goal.id } });
+
+    await expect(moveLanguageGoalToExam(goal.id)).resolves.toMatchObject({
+      goal: { id: examId },
+      status: "alreadyMoved",
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(2);
+  });
 });
 
 describe("onboarding's reason answer", () => {
@@ -147,10 +168,7 @@ describe("onboarding's reason answer", () => {
     });
 
     expect(result).toMatchObject({
-      movedTo: {
-        created: true,
-        goal: { details: { movedFromGoalId: goal.id }, kind: "exam", title: "IELTS" },
-      },
+      movedTo: { created: true, goal: { kind: "exam", title: "IELTS" } },
       status: "saved",
     });
 

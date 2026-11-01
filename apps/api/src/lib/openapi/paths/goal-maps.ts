@@ -70,13 +70,11 @@ export const goalMapPaths = {
           description: "The goal for the next level",
         },
         ...readErrors,
-        "409": {
-          ...conflictResponse,
-          description: "The plan still has lessons to do, or the new goal couldn't be created",
-        },
+        "409": { ...conflictResponse, description: "The plan still has lessons to do" },
         "422": {
           ...unprocessableEntityResponse,
-          description: "Not a learn goal, or its course has no level after the plan's",
+          description:
+            "Not a learn goal, its course has no level after the plan's, or the goal was already continued",
         },
       },
       security: AUTHENTICATED_SECURITY,

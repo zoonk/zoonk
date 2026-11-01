@@ -256,6 +256,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       details,
       hasUnpickedChoice: notice.hasUnpickedChoice,
       kind: goal.kind,
+      replacesGoalId: goal.replacesGoalId,
       targetDate: view.targetDate,
     },
     profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },

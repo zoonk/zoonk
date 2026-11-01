@@ -91,10 +91,6 @@ async function chooseActiveGoalId({
   return (await findActiveGoalId(userId)) ?? mainId;
 }
 
-async function isOwnGoal({ goalId, userId }: { goalId?: string; userId: string }) {
-  return goalId ? (await prisma.goal.count({ where: { id: goalId, userId } })) > 0 : false;
-}
-
 function assertNewGoalDates(input: GoalCreateInput): void {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
 
@@ -108,14 +104,7 @@ function assertNewGoalDates(input: GoalCreateInput): void {
   });
 }
 
-/**
- * A replacement (`replacesGoalId`) claims no slot, so callers must let a goal be replaced only
- * once.
- */
-export async function createGoals(
-  input: GoalCreateInput,
-  { replacesGoalId }: { replacesGoalId?: string } = {},
-): Promise<GoalCreateResult> {
+export async function createGoals(input: GoalCreateInput): Promise<GoalCreateResult> {
   const session = await getSession();
 
   if (!session) {
@@ -123,11 +112,8 @@ export async function createGoals(
   }
 
   const userId = session.user.id;
-  const replacing = await isOwnGoal({ goalId: replacesGoalId, userId });
 
-  if (!replacing) {
-    assertNewGoalDates(input);
-  }
+  assertNewGoalDates(input);
 
   if (!(await hasValidReferences({ goals: input.goals, userId }))) {
     return { status: "invalidReference" };
@@ -143,13 +129,11 @@ export async function createGoals(
       const state = await previous;
       const id = crypto.randomUUID();
 
-      const decision = replacing
-        ? ({ status: "allowed" } as const)
-        : await claimUsage({
-            generated: draft.kind === "explain",
-            kind: draft.kind === "explain" ? "explanation" : "goal",
-            targetId: id,
-          });
+      const decision = await claimUsage({
+        generated: draft.kind === "explain",
+        kind: draft.kind === "explain" ? "explanation" : "goal",
+        targetId: id,
+      });
 
       if (decision.status === "unauthorized") {
         return state;
@@ -164,7 +148,6 @@ export async function createGoals(
         draft,
         id,
         input,
-        replacing,
         testedLanguage:
           (draft.kind === "exam" && testedLanguages.get(draft.examBlueprintId ?? "")) || null,
         userId,

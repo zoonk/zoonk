@@ -23,14 +23,14 @@ export async function findOnboardingGoalIds(
 
   const goals = await prisma.goal.findMany({
     orderBy: { createdAt: "asc" },
-    select: { details: true, id: true, status: true },
+    select: { id: true, replacesGoalId: true, status: true },
     where: { details: { equals: onboardingId, path: ["onboardingId"] }, userId: goal.userId },
   });
 
   const places = new Map(goals.map((item, index) => [item.id, index]));
 
   const place = (item: (typeof goals)[number]) =>
-    places.get(readDetail(item.details, "movedFromGoalId") ?? "") ?? places.get(item.id) ?? 0;
+    places.get(item.replacesGoalId ?? "") ?? places.get(item.id) ?? 0;
 
   const live = goals
     .filter((item) => item.status !== "archived")

@@ -76,6 +76,11 @@ model Goal {
   examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
   primaryCourseId       String?                @map("primary_course_id") @db.Uuid
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  /// The goal this one took over, once: a finished learn goal continued at its course's next level,
+  /// or a language goal moved to its exam. Learners can't write it, unlike `details`.
+  replacesGoalId        String?                @unique @map("replaces_goal_id") @db.Uuid
+  replaces              Goal?                  @relation("GoalReplacement", fields: [replacesGoalId], references: [id], onDelete: SetNull)
+  replacedBy            Goal?                  @relation("GoalReplacement")
   generationRunId       String?                @map("generation_run_id")
   /// Asking for research again follows this run instead of paying again, unless it failed.
   researchRunId         String?                @map("research_run_id")

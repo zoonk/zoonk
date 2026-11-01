@@ -20,7 +20,15 @@ const RECENT_DRAFTS = 5;
 
 type ResumeGoal = Pick<
   Goal,
-  "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "status" | "targetDate" | "title"
+  | "createdAt"
+  | "details"
+  | "examBlueprintId"
+  | "id"
+  | "kind"
+  | "replacesGoalId"
+  | "status"
+  | "targetDate"
+  | "title"
 >;
 
 type ResumeDraft = {
@@ -71,6 +79,7 @@ async function isInOnboarding({
       details: readDetails(goal),
       hasUnpickedChoice: await hasUnpickedChoice(goal),
       kind: goal.kind,
+      replacesGoalId: goal.replacesGoalId,
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },
     profile: {
@@ -138,6 +147,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
         examBlueprintId: true,
         id: true,
         kind: true,
+        replacesGoalId: true,
         status: true,
         targetDate: true,
         title: true,

@@ -7,7 +7,7 @@ const SET_UP_PROFILE = { hasBuddy: false, hasEarlierGoals: true };
 
 function examSteps(details: Record<string, unknown>) {
   return getOnboardingSteps({
-    goal: { details, kind: "exam", targetDate: null },
+    goal: { details, kind: "exam", replacesGoalId: null, targetDate: null },
     profile: SET_UP_PROFILE,
   });
 }
@@ -15,7 +15,12 @@ function examSteps(details: Record<string, unknown>) {
 describe(getOnboardingSteps, () => {
   it("asks a learn goal what it's for, how much they know and their time", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { subject: "Quantum physics" }, kind: "learn", targetDate: null },
+      goal: {
+        details: { subject: "Quantum physics" },
+        kind: "learn",
+        replacesGoalId: null,
+        targetDate: null,
+      },
       profile: NEW_PROFILE,
     });
 
@@ -33,8 +38,9 @@ describe(getOnboardingSteps, () => {
   it("asks nothing of the next level of a finished plan: only its plan is ahead", () => {
     const steps = getOnboardingSteps({
       goal: {
-        details: { continuesFromGoalId: "goal-1", courseLevel: "beginner", level: "basic" },
+        details: { courseLevel: "beginner", level: "basic" },
         kind: "learn",
+        replacesGoalId: "goal-1",
         targetDate: null,
       },
       profile: NEW_PROFILE,
@@ -48,6 +54,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { level: "basic", purpose: "work", role: "Marketing analyst" },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: "2027-01-31",
       },
       profile: SET_UP_PROFILE,
@@ -58,7 +65,7 @@ describe(getOnboardingSteps, () => {
 
   it("asks for the role only when the goal is for work", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { purpose: "work" }, kind: "learn", targetDate: null },
+      goal: { details: { purpose: "work" }, kind: "learn", replacesGoalId: null, targetDate: null },
       profile: SET_UP_PROFILE,
     });
 
@@ -70,6 +77,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { purpose: "careerChange", role: "Teacher" },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -79,6 +87,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { purpose: "careerChange", targetPosition: "UX designer" },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -93,6 +102,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { examName: "ENEM", examTarget: "admission" },
         kind: "exam",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -102,6 +112,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { examName: "ENEM", examTarget: "admission", targetCourse: "Nursing" },
         kind: "exam",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -114,7 +125,12 @@ describe(getOnboardingSteps, () => {
   it("keeps a typed exam's populated notice date without asking for it", () => {
     expect(
       getOnboardingSteps({
-        goal: { details: { level: "none" }, kind: "exam", targetDate: "2027-01-31" },
+        goal: {
+          details: { level: "none" },
+          kind: "exam",
+          replacesGoalId: null,
+          targetDate: "2027-01-31",
+        },
         profile: SET_UP_PROFILE,
       }),
     ).toStrictEqual(["schedule", "plan"]);
@@ -129,6 +145,7 @@ describe(getOnboardingSteps, () => {
             dateProblem,
             details: { answered: ["purpose", "targetDate", "level", "schedule", "placement"] },
             kind: "learn",
+            replacesGoalId: null,
             targetDate: "2020-10-01",
           },
           profile: SET_UP_PROFILE,
@@ -142,6 +159,7 @@ describe(getOnboardingSteps, () => {
       dateProblem: "noSitting" as const,
       details: { level: "none" },
       kind: "exam" as const,
+      replacesGoalId: null,
       targetDate: "2027-02-15",
     };
 
@@ -170,6 +188,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { examName: "Biology test", materialIntent: "exam" },
         kind: "exam",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -180,7 +199,12 @@ describe(getOnboardingSteps, () => {
 
   it("asks a language goal why, unless it said so", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { level: "basic" }, kind: "language", targetDate: null },
+      goal: {
+        details: { level: "basic" },
+        kind: "language",
+        replacesGoalId: null,
+        targetDate: null,
+      },
       profile: SET_UP_PROFILE,
     });
 
@@ -192,6 +216,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { answered: ["purpose", "targetDate", "level", "schedule", "placement"] },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -207,6 +232,7 @@ describe(getOnboardingSteps, () => {
           followUps: [{ answer: null, question: "Which instrument does the band need?" }],
         },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -217,7 +243,12 @@ describe(getOnboardingSteps, () => {
 
   it("skips placement for someone starting from nothing", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { level: "none", purpose: "overview" }, kind: "learn", targetDate: null },
+      goal: {
+        details: { level: "none", purpose: "overview" },
+        kind: "learn",
+        replacesGoalId: null,
+        targetDate: null,
+      },
       profile: SET_UP_PROFILE,
     });
 
@@ -226,7 +257,14 @@ describe(getOnboardingSteps, () => {
 
   it("offers the buddy once, in the first onboarding, to learners without one", () => {
     const answered = { answered: ["purpose", "targetDate", "level", "schedule", "placement"] };
-    const goal = { details: answered, kind: "learn" as const, targetDate: null };
+
+    const goal = {
+      details: answered,
+      kind: "learn" as const,
+      replacesGoalId: null,
+      targetDate: null,
+    };
+
     const firstGoal = { ...SET_UP_PROFILE, hasEarlierGoals: false };
 
     expect(getOnboardingSteps({ goal, profile: firstGoal })).toStrictEqual(["buddy", "plan"]);
@@ -241,7 +279,12 @@ describe(getOnboardingSteps, () => {
   it("remembers a buddy answer, picked or skipped", () => {
     expect(
       getOnboardingSteps({
-        goal: { details: { answered: ["buddy"] }, kind: "learn", targetDate: null },
+        goal: {
+          details: { answered: ["buddy"] },
+          kind: "learn",
+          replacesGoalId: null,
+          targetDate: null,
+        },
         profile: NEW_PROFILE,
       }),
     ).not.toContain("buddy");
@@ -249,7 +292,12 @@ describe(getOnboardingSteps, () => {
 
   it("asks a course start for its optional date, level and time, then places the learner", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { courseStart: { chapterId: null } }, kind: "learn", targetDate: null },
+      goal: {
+        details: { courseStart: { chapterId: null } },
+        kind: "learn",
+        replacesGoalId: null,
+        targetDate: null,
+      },
       profile: NEW_PROFILE,
     });
 
@@ -258,7 +306,12 @@ describe(getOnboardingSteps, () => {
 
   it("gives a language course its level test, without asking why they learn it", () => {
     const steps = getOnboardingSteps({
-      goal: { details: { courseStart: { chapterId: null } }, kind: "language", targetDate: null },
+      goal: {
+        details: { courseStart: { chapterId: null } },
+        kind: "language",
+        replacesGoalId: null,
+        targetDate: null,
+      },
       profile: SET_UP_PROFILE,
     });
 
@@ -273,6 +326,7 @@ describe(getOnboardingSteps, () => {
           goal: {
             details: { answered: ["level"], courseStart: { chapterId: null }, level: "none" },
             kind,
+            replacesGoalId: null,
             targetDate: "2027-01-31",
           },
           profile: SET_UP_PROFILE,
@@ -293,6 +347,7 @@ describe(getOnboardingSteps, () => {
               level: "none",
             },
             kind: "exam",
+            replacesGoalId: null,
             targetDate,
           },
           profile: SET_UP_PROFILE,
@@ -306,6 +361,7 @@ describe(getOnboardingSteps, () => {
       goal: {
         details: { courseStart: { chapterId: "0190c9e2-8f1a-7000-8000-000000000001" } },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -323,6 +379,7 @@ describe(getOnboardingSteps, () => {
           level: "none",
         },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
@@ -338,6 +395,7 @@ describe(getOnboardingSteps, () => {
           details: { courseStart: { chapterId: null }, level: "none" },
           hasUnpickedChoice: true,
           kind: "exam",
+          replacesGoalId: null,
           targetDate: "2027-01-31",
         },
         profile: SET_UP_PROFILE,
@@ -348,7 +406,7 @@ describe(getOnboardingSteps, () => {
   it("has no screens for a quick explanation", () => {
     expect(
       getOnboardingSteps({
-        goal: { details: {}, kind: "explain", targetDate: null },
+        goal: { details: {}, kind: "explain", replacesGoalId: null, targetDate: null },
         profile: NEW_PROFILE,
       }),
     ).toStrictEqual([]);
@@ -367,6 +425,7 @@ describe(isGoalSetupLeft, () => {
           purpose: "overview",
         },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       }),
     ).toBe(true);
@@ -375,6 +434,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level"], courseStart, level: "basic" },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       }),
     ).toBe(true);
@@ -385,6 +445,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level", "targetDate", "placement", "schedule"], courseStart },
         kind: "learn",
+        replacesGoalId: null,
         targetDate: null,
       }),
     ).toBe(false);
@@ -393,8 +454,9 @@ describe(isGoalSetupLeft, () => {
   it("never holds back the next level of a finished course", () => {
     expect(
       isGoalSetupLeft({
-        details: { continuesFromGoalId: "finished-goal", courseStart },
+        details: { courseStart },
         kind: "learn",
+        replacesGoalId: "finished-goal",
         targetDate: null,
       }),
     ).toBe(false);

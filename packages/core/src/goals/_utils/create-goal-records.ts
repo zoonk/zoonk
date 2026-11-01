@@ -44,7 +44,15 @@ type GoalRecord = {
 /** Runs in the caller's learner write, so a goal can be created atomically with other writes. */
 export async function insertGoalWithPlan(
   tx: TransactionClient,
-  { dailyMinutes, draft, id, input, testedLanguage, userId }: GoalRecord,
+  {
+    dailyMinutes,
+    draft,
+    id,
+    input,
+    replacesGoalId,
+    testedLanguage,
+    userId,
+  }: GoalRecord & { replacesGoalId?: string },
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const { examSubjects, ...details } = draft.details ?? {};
@@ -59,6 +67,7 @@ export async function insertGoalWithPlan(
       language: draft.language,
       primaryCourseId: draft.primaryCourseId ?? null,
       prompt: draft.prompt,
+      replacesGoalId: replacesGoalId ?? null,
       studyTime: input.studyTime ?? null,
       targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
       targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
@@ -84,14 +93,13 @@ export async function insertGoalWithPlan(
  * Recounts active goals under the plan→user lock: a usage claim that passed earlier can't promise
  * the slot is still free.
  */
-export async function createGoal({
-  replacing = false,
-  ...record
-}: GoalRecord & { input: GoalCreateInput; replacing?: boolean }): Promise<AllowanceLimit | null> {
+export async function createGoal(
+  record: GoalRecord & { input: GoalCreateInput },
+): Promise<AllowanceLimit | null> {
   const { draft, id, userId } = record;
 
   return writeLearnerChange<null, AllowanceLimit>({ planInputs: true, userId }, async (tx) => {
-    if (!replacing && draft.kind !== "explain") {
+    if (draft.kind !== "explain") {
       const limit = await findActiveGoalLimit({ db: tx, goalId: id, userId });
 
       if (limit) {

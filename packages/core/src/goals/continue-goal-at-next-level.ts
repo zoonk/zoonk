@@ -1,20 +1,24 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { loadPlanCourse } from "../plans/_utils/plan-course";
 import { isPlanFinished } from "../plans/_utils/plan-end";
 import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
+import { insertGoalWithPlan, setActiveGoal } from "./_utils/create-goal-records";
+import { loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
-import { createGoals } from "./create-goals";
 import { type GoalView } from "./goal-contract";
 
 export type NextLevelResult =
   | { goal: GoalView; status: "created" }
-  | { status: "noNextLevel" | "notFinished" | "notFound" | "refused" | "unauthorized" };
+  | { status: "noNextLevel" | "notFinished" | "notFound" | "unauthorized" };
 
 const OWN_LEVEL_BEFORE: Record<CourseLevel, string> = {
   advanced: "advanced",
@@ -31,7 +35,6 @@ function buildNextDetails({ goal, level }: { goal: Goal; level: CourseLevel }) {
 
   return {
     ...Object.fromEntries(kept),
-    continuesFromGoalId: goal.id,
     courseLevel: level,
     level: OWN_LEVEL_BEFORE[level],
     purpose: details.purpose === "overview" ? "deep" : (details.purpose ?? "deep"),
@@ -52,7 +55,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     return owned;
   }
 
-  const { goal } = owned;
+  const { goal, userId } = owned;
 
   const plan = await prisma.plan.findUnique({
     select: {
@@ -68,10 +71,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
 
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
 
-  const phaseChallengesRequired = await arePhaseChallengesRequired({
-    goalKind: goal.kind,
-    userId: owned.userId,
-  });
+  const phaseChallengesRequired = await arePhaseChallengesRequired({ goalKind: goal.kind, userId });
 
   if (
     !isPlanFinished({
@@ -86,14 +86,6 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     return { status: "notFinished" };
   }
 
-  const continued = await prisma.goal.count({
-    where: { details: { equals: goal.id, path: ["continuesFromGoalId"] }, userId: owned.userId },
-  });
-
-  if (continued > 0) {
-    return { status: "noNextLevel" };
-  }
-
   const [course, studyDays] = await Promise.all([
     loadPlanCourse({ goal, items }),
     loadStudyDays(goalId),
@@ -103,56 +95,59 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     return { status: "noNextLevel" };
   }
 
-  await writeLearnerChange({ planInputs: true, userId: owned.userId }, async (tx) => {
-    const updated = await tx.goal.updateMany({
-      data: { status: "completed" },
-      where: { id: goal.id, status: { not: "completed" } },
-    });
+  const { nextLevel } = course;
+  const nextId = randomUUID();
 
-    if (updated.count === 0) {
-      return unchanged(null);
-    }
-  });
+  const completed = await writeLearnerChange<boolean, null>(
+    { planInputs: true, userId },
+    async (tx) => {
+      if (await tx.goal.findUnique({ select: { id: true }, where: { replacesGoalId: goal.id } })) {
+        return unchanged(null);
+      }
 
-  const created = await createGoals(
-    {
-      dailyMinutes: goal.dailyMinutes,
-      goals: [
-        {
-          details: buildNextDetails({ goal, level: course.nextLevel }),
+      const { count } = await tx.goal.updateMany({
+        data: { status: "completed" },
+        where: { id: goal.id, status: { not: "completed" } },
+      });
+
+      await insertGoalWithPlan(tx, {
+        dailyMinutes: goal.dailyMinutes,
+        draft: {
+          details: buildNextDetails({ goal, level: nextLevel }),
           kind: "learn",
           language: goal.language,
           primaryCourseId: course.courseId,
           prompt: goal.prompt,
           title: course.title,
         },
-      ],
-      studyDays,
-      studyTime: goal.studyTime ?? undefined,
-      timeZone: goal.timezone ?? undefined,
+        id: nextId,
+        input: {
+          studyDays,
+          studyTime: goal.studyTime ?? undefined,
+          timeZone: goal.timezone ?? undefined,
+        },
+        replacesGoalId: goal.id,
+        testedLanguage: null,
+        userId,
+      });
+
+      await setActiveGoal(tx, { activeGoalId: nextId, userId });
+      return count > 0;
     },
-    { replacesGoalId: goal.id },
   );
 
-  const [next] = created.status === "created" ? created.goals : [];
-
-  if (!next) {
-    await writeLearnerChange({ planInputs: true, userId: owned.userId }, async (tx) => {
-      const current = await tx.goal.findUnique({ where: { id: goal.id } });
-
-      if (!current || current.status === goal.status) {
-        return unchanged(null);
-      }
-
-      await tx.goal.update({ data: { status: goal.status }, where: { id: goal.id } });
-    });
-
-    return { status: "refused" };
+  if (completed === null) {
+    return { status: "noNextLevel" };
   }
 
-  if (goal.status !== "completed") {
+  if (completed) {
     trackGoalReached(goal);
   }
 
-  return { goal: next, status: "created" };
+  revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
+
+  const next = await prisma.goal.findUniqueOrThrow({ where: { id: nextId } });
+  const [view] = await loadGoalViews({ activeGoalId: nextId, goals: [next] });
+
+  return view ? { goal: view, status: "created" } : { status: "notFound" };
 }

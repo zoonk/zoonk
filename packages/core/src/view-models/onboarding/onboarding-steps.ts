@@ -185,7 +185,8 @@ export function getOnboardingSteps({
   goal,
   profile,
 }: {
-  goal: StepGoal;
+  /** A learn goal that replaced another continues that finished goal at its course's next level. */
+  goal: StepGoal & { replacesGoalId: string | null };
   profile: StepProfile;
 }): OnboardingStep[] {
   if (goal.kind === "explain") {
@@ -193,7 +194,7 @@ export function getOnboardingSteps({
   }
 
   // Continuing a completed plan retains its understood details and time without repeating onboarding.
-  if (typeof goal.details.continuesFromGoalId === "string") {
+  if (goal.kind === "learn" && goal.replacesGoalId !== null) {
     return ["plan"];
   }
 
@@ -213,12 +214,15 @@ export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolea
   return steps.some((step) => step !== "plan");
 }
 
-export function isGoalSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
+export function isGoalSetupLeft(
+  goal: Pick<Goal, "details" | "kind" | "replacesGoalId" | "targetDate">,
+): boolean {
   return hasOnboardingQuestions(
     getOnboardingSteps({
       goal: {
         details: isJsonObject(goal.details) ? goal.details : {},
         kind: goal.kind,
+        replacesGoalId: goal.replacesGoalId,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
       },
       profile: { hasBuddy: true, hasEarlierGoals: true },

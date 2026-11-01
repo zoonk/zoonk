@@ -21,17 +21,6 @@ type MoveOutcome =
   | { goalId: string; status: "alreadyMoved" | "moved" }
   | { status: "noExam" | "notFound" };
 
-function findReplacement(tx: TransactionClient, goal: Goal) {
-  return tx.goal.findFirst({
-    select: { id: true },
-    where: {
-      details: { equals: goal.id, path: ["movedFromGoalId"] },
-      status: { not: "archived" },
-      userId: goal.userId,
-    },
-  });
-}
-
 async function replaceWithExamGoal({
   examName,
   goal,
@@ -51,7 +40,7 @@ async function replaceWithExamGoal({
   await insertGoalWithPlan(tx, {
     dailyMinutes: goal.dailyMinutes,
     draft: {
-      details: { ...details, examName, examTarget: "score", movedFromGoalId: goal.id },
+      details: { ...details, examName, examTarget: "score" },
       kind: "exam",
       language: goal.language,
       prompt: goal.prompt,
@@ -61,6 +50,7 @@ async function replaceWithExamGoal({
     },
     id,
     input: { studyTime: goal.studyTime ?? undefined, timeZone: goal.timezone ?? undefined },
+    replacesGoalId: goal.id,
     testedLanguage: null,
     userId: goal.userId,
   });
@@ -71,7 +61,8 @@ async function replaceWithExamGoal({
 
 /**
  * One learner write, so a failure partway leaves the language goal active, and a request sent
- * again gets the exam goal the first one made (`alreadyMoved`).
+ * again gets the exam goal the first one made (`alreadyMoved`), even after the learner archived it
+ * and resumed the language goal.
  */
 export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLanguageGoalResult> {
   const session = await getSession();
@@ -91,12 +82,17 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
         return unchanged({ status: "notFound" });
       }
 
-      if (goal.status !== "active") {
-        const replacement = await findReplacement(tx, goal);
+      const replacement = await tx.goal.findUnique({
+        select: { id: true },
+        where: { kind: "exam", replacesGoalId: goal.id },
+      });
 
-        return unchanged(
-          replacement ? { goalId: replacement.id, status: "alreadyMoved" } : { status: "notFound" },
-        );
+      if (replacement) {
+        return unchanged({ goalId: replacement.id, status: "alreadyMoved" });
+      }
+
+      if (goal.status !== "active") {
+        return unchanged({ status: "notFound" });
       }
 
       const details = isJsonObject(goal.details) ? goal.details : {};
