@@ -114,28 +114,102 @@ struct StackingLabelStyle: LabelStyle {
   }
 }
 
+/// The system's label stays one view at every size, so its title grows with Dynamic Type instead of
+/// being replaced when content stacks: only the icon moves, out of the label to beside or above it.
 private struct StackingLabel: View {
   @Environment(\.stacksContent) private var isStacked
 
   let configuration: LabelStyleConfiguration
 
   var body: some View {
-    if isStacked {
-      ViewThatFits(in: .horizontal) {
-        // The system's gap beside a text title, which a `LabeledContent` title would close.
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-          configuration.icon
-          configuration.title
-        }
+    StackingLabelLayout {
+      if isStacked {
+        // The system's label leaves its icon out of VoiceOver.
+        configuration.icon
+          .accessibilityHidden(true)
+      }
 
-        VStack(alignment: .leading) {
+      Label {
+        configuration.title
+      } icon: {
+        if !isStacked {
           configuration.icon
-          configuration.title
         }
       }
-    } else {
-      Label(configuration)
+      // The system's style: this one would draw the label again.
+      .labelStyle(.automatic)
     }
+  }
+}
+
+/// A label alone, or after its icon: beside it when the label keeps its lines there, with the
+/// system's gap beside a text title (which a `LabeledContent` title would close), and above it
+/// otherwise, where the label takes the whole width.
+private struct StackingLabelLayout: Layout {
+  private static let besideSpacing: CGFloat = 8
+
+  /// Like a stack, it places each view with the proposal it measured it with: proposing a wrapped
+  /// text its own measured width can wrap it onto one more line than its height holds.
+  private struct Placement {
+    var origin: CGPoint
+    var size: CGSize
+    var proposal: ProposedViewSize
+  }
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    placements(for: proposal, subviews)
+      .reduce(CGRect.null) { $0.union(CGRect(origin: $1.origin, size: $1.size)) }
+      .size
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    for (subview, placement) in zip(subviews, placements(for: proposal, subviews)) {
+      subview.place(
+        at: CGPoint(x: bounds.minX + placement.origin.x, y: bounds.minY + placement.origin.y),
+        proposal: placement.proposal)
+    }
+  }
+
+  private func placements(for proposal: ProposedViewSize, _ subviews: Subviews) -> [Placement] {
+    guard let title = subviews.last else { return [] }
+
+    guard subviews.count == 2, let icon = subviews.first else {
+      return [Placement(origin: .zero, size: title.sizeThatFits(proposal), proposal: proposal)]
+    }
+
+    let iconSize = icon.sizeThatFits(.unspecified)
+    let besideWidth = iconSize.width + Self.besideSpacing
+    let besideProposal = ProposedViewSize(
+      width: proposal.width.map { max($0 - besideWidth, 0) }, height: nil)
+    let besideSize = title.sizeThatFits(besideProposal)
+    let unwrappedHeight = title.sizeThatFits(ProposedViewSize(width: .infinity, height: nil)).height
+
+    if besideSize.height <= unwrappedHeight {
+      let iconBaseline = icon.dimensions(in: .unspecified)[VerticalAlignment.firstTextBaseline]
+      let titleBaseline = title.dimensions(in: besideProposal)[VerticalAlignment.firstTextBaseline]
+      let baseline = max(iconBaseline, titleBaseline)
+
+      return [
+        Placement(
+          origin: CGPoint(x: 0, y: baseline - iconBaseline), size: iconSize,
+          proposal: .unspecified),
+        Placement(
+          origin: CGPoint(x: besideWidth, y: baseline - titleBaseline), size: besideSize,
+          proposal: besideProposal),
+      ]
+    }
+
+    let spacing = icon.spacing.distance(to: title.spacing, along: .vertical)
+    let belowProposal = ProposedViewSize(width: proposal.width, height: nil)
+
+    return [
+      Placement(origin: .zero, size: iconSize, proposal: .unspecified),
+      Placement(
+        origin: CGPoint(x: 0, y: iconSize.height + spacing),
+        size: title.sizeThatFits(belowProposal), proposal: belowProposal),
+    ]
   }
 }
 
