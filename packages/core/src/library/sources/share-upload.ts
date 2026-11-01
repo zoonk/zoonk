@@ -4,16 +4,19 @@ import { safeAsync } from "@zoonk/utils/error";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
 import { getKnownReusePolicy } from "./reuse-policy";
 import { deleteUploadedBlob } from "./upload-blob";
+import { fetchAndParse } from "./web-sources";
 
 export type ShareUploadInput = {
   sourceId: string;
   language: string;
   publisher: string | null;
   title: string;
-  url: string | null;
+  url: string;
 };
 
 export type SharedUpload = { merged: boolean; sourceId: string };
+
+type PublisherCopy = Awaited<ReturnType<typeof fetchAndParse>>;
 
 async function mergeIntoPublicSource({
   privateSourceId,
@@ -42,55 +45,81 @@ async function mergeIntoPublicSource({
   ]);
 }
 
-export async function shareSourceUpload(input: ShareUploadInput): Promise<SharedUpload | null> {
-  const source = await prisma.source.findUnique({
-    omit: { extractedText: true },
-    where: { id: input.sourceId },
-  });
-
-  if (source?.kind !== "upload" || source.visibility !== "private") {
-    return null;
-  }
-
+async function publishCopy({
+  copy,
+  input,
+}: {
+  copy: PublisherCopy;
+  input: ShareUploadInput;
+}): Promise<SharedUpload> {
   const publicCopy = await prisma.source.findFirst({
     select: { id: true },
-    where: { contentHash: source.contentHash, visibility: "public" },
+    where: { contentHash: copy.contentHash, visibility: "public" },
   });
 
   if (publicCopy) {
-    await mergeIntoPublicSource({ privateSourceId: source.id, publicSourceId: publicCopy.id });
-
-    if (source.blobUrl) {
-      await deleteUploadedBlob(source.blobUrl);
-    }
-
+    await mergeIntoPublicSource({ privateSourceId: input.sourceId, publicSourceId: publicCopy.id });
     return { merged: true, sourceId: publicCopy.id };
   }
 
   const shared = await safeAsync(() =>
     prisma.source.update({
       data: {
-        identityKey: buildSourceIdentityKey({ contentHash: source.contentHash, url: null }),
+        blobUrl: null,
+        extractedText: copy.parsed.text,
+        fetchedAt: new Date(),
+        identityKey: buildSourceIdentityKey({ contentHash: copy.contentHash, url: null }),
         language: input.language,
+        mimeType: copy.contentType,
         ownerId: null,
         publisher: input.publisher,
         reusePolicy:
-          getKnownReusePolicy({ publisher: input.publisher, url: input.url }) ?? undefined,
+          getKnownReusePolicy({ publisher: input.publisher, url: copy.url }) ?? undefined,
+        structure: { images: copy.parsed.images.length, pages: copy.parsed.pages, topic: null },
         title: input.title,
-        url: input.url,
+        url: copy.url,
         visibility: "public",
       },
-      where: { id: source.id },
+      where: { id: input.sourceId },
     }),
   );
 
   if (shared.error && isPrismaUniqueConstraintError(shared.error)) {
-    return shareSourceUpload(input);
+    return publishCopy({ copy, input });
   }
 
   if (shared.error) {
     throw shared.error;
   }
 
-  return { merged: false, sourceId: source.id };
+  return { merged: false, sourceId: input.sourceId };
+}
+
+/**
+ * Shares an upload only when the publisher's copy at `url` reads the same, and then holds only
+ * that copy: the learner's file may carry pages or notes the classifier never read.
+ */
+export async function shareSourceUpload(input: ShareUploadInput): Promise<SharedUpload | null> {
+  const upload = await prisma.source.findUnique({
+    select: { blobUrl: true, contentHash: true, kind: true, visibility: true },
+    where: { id: input.sourceId },
+  });
+
+  if (upload?.kind !== "upload" || upload.visibility !== "private") {
+    return null;
+  }
+
+  const copy = await fetchAndParse(input.url);
+
+  if (copy.contentHash !== upload.contentHash) {
+    return null;
+  }
+
+  const shared = await publishCopy({ copy, input });
+
+  if (upload.blobUrl) {
+    await deleteUploadedBlob(upload.blobUrl);
+  }
+
+  return shared;
 }

@@ -22,7 +22,7 @@ export type StoreWebSourceInput = {
   topic: SourceTopic;
 };
 
-async function fetchAndParse(url: string) {
+export async function fetchAndParse(url: string) {
   const document = await fetchDocument(url);
   const parsed = await parseDocument({ bytes: document.bytes, contentType: document.contentType });
 

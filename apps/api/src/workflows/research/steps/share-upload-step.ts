@@ -7,13 +7,13 @@ import { isSameDocumentTitle } from "../_utils/title-match";
 const ANY_COUNTRY = "ZZ";
 
 /** Only the title and publisher are searched, never the file's content. */
-export async function confirmPublicDocumentStep({
+export async function findPublisherCopiesStep({
   analytics,
   decision,
 }: {
   analytics: ResearchAnalytics;
   decision: UploadVisibility;
-}): Promise<{ url: string } | null> {
+}): Promise<string[]> {
   "use step";
 
   const { data } = await findOfficialSources({
@@ -29,13 +29,13 @@ export async function confirmPublicDocumentStep({
     },
   });
 
-  const match = data.documents.find(
-    (document) =>
-      document.kind === "official" &&
-      isSameDocumentTitle({ found: document.title, uploaded: decision.title }),
-  );
-
-  return match ? { url: match.url } : null;
+  return data.documents
+    .filter(
+      (document) =>
+        document.kind === "official" &&
+        isSameDocumentTitle({ found: document.title, uploaded: decision.title }),
+    )
+    .map((document) => document.url);
 }
 
 export async function shareUploadStep({

@@ -1,9 +1,13 @@
-import { randomUUID } from "node:crypto";
-import { findOfficialSources } from "@zoonk/ai/tasks/research/find-official-sources";
+import { createHash, randomUUID } from "node:crypto";
+import {
+  type FoundSourceDocument,
+  findOfficialSources,
+} from "@zoonk/ai/tasks/research/find-official-sources";
 import { classifyUploadVisibility } from "@zoonk/ai/tasks/research/upload-visibility";
 import { prisma } from "@zoonk/db";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sourceVisibilityWorkflow } from "./source-visibility-workflow";
 
@@ -26,14 +30,39 @@ const TASK_RESULT = {
 
 const NOTICE_TITLE = "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026";
 
-async function privateUpload() {
+const NOTICE_URL = "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/edital.pdf";
+
+function officialDocument(document: Partial<FoundSourceDocument>): FoundSourceDocument {
+  return {
+    documentType: "notice",
+    kind: "official",
+    publisher: "Cebraspe",
+    reason: "Opening notice",
+    title: "Edital nº 1 – Abertura – TCDF/ANACE 2026",
+    url: NOTICE_URL,
+    ...document,
+  };
+}
+
+function servePages(pages: Record<string, string>) {
+  vi.mocked(fetch).mockImplementation(async (url) => {
+    const page = typeof url === "string" ? pages[url] : undefined;
+
+    return page === undefined
+      ? new PageResponse("Not found", { status: 404 })
+      : new PageResponse(page, { headers: { "content-type": "text/plain" } });
+  });
+}
+
+async function privateUpload(
+  text = `EDITAL Nº 1 – TCDF/ANACE, DE 8 DE JULHO DE 2026. ${randomUUID()}`,
+) {
   const user = await userFixture();
-  const contentHash = `hash-${randomUUID()}`;
+  const contentHash = createHash("sha256").update(text).digest("hex");
 
   const source = await sourceFixture({
     contentHash,
-    extractedText:
-      "EDITAL Nº 1 – TCDF/ANACE, DE 8 DE JULHO DE 2026. O concurso será executado pelo Cebraspe.",
+    extractedText: text,
     identityKey: `private:${user.id}:upload:${contentHash}`,
     kind: "upload",
     language: "pt",
@@ -44,7 +73,7 @@ async function privateUpload() {
     visibility: "private",
   });
 
-  return { source, user };
+  return { source, text, user };
 }
 
 function classifyAs(visibility: "public" | "private") {
@@ -64,27 +93,14 @@ describe(sourceVisibilityWorkflow, () => {
   beforeEach(() => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
-      data: {
-        board: null,
-        documents: [
-          {
-            documentType: "notice",
-            kind: "official",
-            publisher: "Cebraspe",
-            reason: "Opening notice",
-            title: "Edital nº 1 – Abertura – TCDF/ANACE 2026",
-            url: "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/edital.pdf",
-          },
-        ],
-        officialFound: true,
-        searchCalls: 1,
-      },
+      data: { board: null, documents: [officialDocument({})], officialFound: true, searchCalls: 1 },
     });
   });
 
-  it("shares an upload the classifier and a search on the publisher's site agree is public", async () => {
-    const { source, user } = await privateUpload();
+  it("shares an upload the classifier calls public when the publisher's copy reads the same", async () => {
+    const { source, text, user } = await privateUpload();
     classifyAs("public");
+    servePages({ [NOTICE_URL]: text });
 
     await expect(
       sourceVisibilityWorkflow({ ownerId: user.id, sourceId: source.id }),
@@ -99,9 +115,61 @@ describe(sourceVisibilityWorkflow, () => {
     ).resolves.toMatchObject({
       ownerId: null,
       title: NOTICE_TITLE,
-      url: "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/edital.pdf",
+      url: NOTICE_URL,
       visibility: "public",
     });
+  });
+
+  it("keeps an edited notice private though the publisher's site has a document with its title", async () => {
+    const official = `EDITAL Nº 1 – TCDF/ANACE. As provas serão em 8 de julho. ${randomUUID()}`;
+    const { source, user } = await privateUpload(official.replace("8 de julho", "9 de agosto"));
+    classifyAs("public");
+    servePages({ [NOTICE_URL]: official });
+
+    await expect(
+      sourceVisibilityWorkflow({ ownerId: user.id, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "private" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ ownerId: user.id, visibility: "private" });
+  });
+
+  it("shares the publisher's document that reads the same when several carry the title", async () => {
+    const { source, text, user } = await privateUpload();
+    const correctionUrl = "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/retificacao.pdf";
+    const missingUrl = "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/removido.pdf";
+    classifyAs("public");
+
+    vi.mocked(findOfficialSources).mockResolvedValue({
+      ...TASK_RESULT,
+      data: {
+        board: null,
+        documents: [
+          officialDocument({
+            title: "Edital nº 2 – Retificação – TCDF/ANACE 2026",
+            url: correctionUrl,
+          }),
+          officialDocument({ url: missingUrl }),
+          officialDocument({}),
+        ],
+        officialFound: true,
+        searchCalls: 1,
+      },
+    });
+
+    servePages({
+      [correctionUrl]: `EDITAL Nº 2 – RETIFICAÇÃO. ${randomUUID()}`,
+      [NOTICE_URL]: text,
+    });
+
+    await expect(
+      sourceVisibilityWorkflow({ ownerId: user.id, sourceId: source.id }),
+    ).resolves.toStrictEqual({ merged: false, sourceId: source.id, status: "shared" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ url: NOTICE_URL, visibility: "public" });
   });
 
   it("keeps an upload private without searching when the classifier says so", async () => {
