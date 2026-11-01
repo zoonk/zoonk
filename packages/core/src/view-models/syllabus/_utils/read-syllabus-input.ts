@@ -1,6 +1,7 @@
 import "server-only";
 import { readOwnedGoal } from "../../../learner/facts/owned-goal";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
+import { readTaughtStandInSkills } from "../../../learner/facts/taught-stand-in-skills";
 import { readExamBlueprint } from "../../../library/exams/read-exam-blueprint";
 import { tagViewGoalReads } from "../../_utils/resolve-view-goal";
 import { loadSyllabusInput } from "./load-syllabus";
@@ -25,5 +26,6 @@ export async function readSyllabusInput(userId: string, goalId: string) {
     blueprint:
       goal.kind === "exam" && goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
     savedPlan,
+    taughtStandIns: readTaughtStandInSkills(userId, goalId),
   });
 }

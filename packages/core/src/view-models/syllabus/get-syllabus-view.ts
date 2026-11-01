@@ -6,11 +6,11 @@ import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { getOutlinedUntil } from "../../plans/_utils/stand-in-lessons";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
-import { loadTodayLearnBlocks } from "../_utils/today-lesson-order";
 import { buildSyllabus } from "./_utils/build-syllabus";
 import { readSyllabusInput } from "./_utils/read-syllabus-input";
 import { type SyllabusView } from "./syllabus-contract";
@@ -74,7 +74,7 @@ export async function getSyllabusView(
 
   const [syllabusInput, todayBlocks, sections] = await Promise.all([
     readSyllabusInput(goal.userId, goal.id),
-    loadTodayLearnBlocks(goal),
+    readTodayLearnBlocks(goal.userId, goal.id),
     loadSections(goal),
   ]);
 

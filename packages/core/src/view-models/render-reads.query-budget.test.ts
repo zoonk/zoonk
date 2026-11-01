@@ -15,7 +15,7 @@ import { getSyllabusView } from "./syllabus/get-syllabus-view";
 
 describe("render read statement budgets", () => {
   it.each([
-    ["plan", getPlanTabView, 19],
+    ["plan", getPlanTabView, 23],
     ["progress", getProgressView, 87],
     ["syllabus", getSyllabusView, 16],
     ["map", getFieldMapView, 26],

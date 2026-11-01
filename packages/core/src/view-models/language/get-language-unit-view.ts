@@ -9,12 +9,12 @@ import { findFreshMistakePattern } from "../../language/patterns/find-fresh-patt
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
-import { loadTodayLearnBlocks } from "../_utils/today-lesson-order";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
 import { type LanguageUnitView } from "./language-view-contract";
@@ -91,7 +91,7 @@ export async function getLanguageUnitView({
 
   const [todayBlocks, level, grammarTips, words, mistakes, pronunciation, blockedTestOutChapters] =
     await Promise.all([
-      goal ? loadTodayLearnBlocks(goal) : [],
+      goal ? readTodayLearnBlocks(userId, goal.id) : [],
       getSpeakingLevel({ goal, targetLanguage, userId }),
       loadGrammarTips(lessonIds),
       loadUnitWords(lessonIds),

@@ -110,10 +110,12 @@ export async function loadSyllabusInput(
     blueprint,
     savedPlan,
     selectedPlan,
+    taughtStandIns,
   }: {
     blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
     savedPlan?: SavedPlan | null;
     selectedPlan?: Pick<PlanReadContext, "items" | "state">;
+    taughtStandIns?: Promise<Set<string>>;
   } = {},
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
@@ -144,12 +146,13 @@ export async function loadSyllabusInput(
         userId: goal.userId,
       }),
       readSkillPrerequisiteMap([...graphSkillIds], from),
-      listTaughtStandInSkills({
-        blueprint: knownBlueprint,
-        goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
-        graph,
-        items: plan.items,
-      }),
+      taughtStandIns ??
+        listTaughtStandInSkills({
+          blueprint: knownBlueprint,
+          goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
+          graph,
+          items: plan.items,
+        }),
     ]);
 
   const settings = parsePlanSettings(plan.settings);

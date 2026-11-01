@@ -6,12 +6,12 @@ import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { loadNoticeDates } from "../../exams/_utils/notice-day";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
+import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
+import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
-import { listTaughtStandInSkills } from "../../lookahead/plan-outline-needs";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
-import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
@@ -197,9 +197,9 @@ export async function buildPlanView({
     }),
     Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
-    loadTodayLearnBlocks(goal),
+    readTodayLearnBlocks(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
-    listTaughtStandInSkills({ goal, graph: state.graph, items }),
+    readTaughtStandInSkills(goal.userId, goal.id),
   ]);
 
   const skillAreas = getSkillAreas({

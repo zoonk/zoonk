@@ -8,13 +8,13 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
 import { isPlanFinished } from "../../plans/_utils/plan-end";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase } from "../map/map-contract";
 import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
-import { loadTodayLearnBlocks } from "./today-lesson-order";
 
 export type GoalMap = {
   areas: MapArea[];
@@ -110,7 +110,7 @@ export async function loadGoalMap({
   const [graph, rows, todayBlocks] = await Promise.all([
     readGoalPlan(goal.id),
     loadPlanRows(goal.id),
-    loadTodayLearnBlocks(goal),
+    readTodayLearnBlocks(goal.userId, goal.id),
   ]);
 
   const skillIds = graph.skills.map((skill) => skill.id);
