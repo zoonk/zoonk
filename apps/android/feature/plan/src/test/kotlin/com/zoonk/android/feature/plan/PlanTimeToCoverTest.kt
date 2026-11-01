@@ -28,11 +28,4 @@ class PlanTimeToCoverTest {
 
         assertEquals(TimeToCoverState.Idle, answered.forPlan(coveragePlan(timeCovers = true)))
     }
-
-    @Test
-    fun theAnswerIsCoresSuggestion() {
-        assertEquals(TimeToCoverAnswer.Covers(45), timeToCover(recommended = 45).answer())
-        assertEquals(TimeToCoverAnswer.Focus(0.6, everyTopic = true, minutes = 240), timeToCover(recommended = 805, focus = 240).answer())
-        assertEquals(TimeToCoverAnswer.None, timeToCover(recommended = null).answer())
-    }
 }

@@ -39,7 +39,6 @@ class FakePlanApi : PlanApi {
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
     var shownPlan: Plan = plan()
     var shownSyllabus: Syllabus = syllabus()
-    var syllabi = 0
     var timeToCover: PlanTimeToCover = timeToCover()
     var timeToCoverGate: CompletableDeferred<Unit>? = null
     var timeToCoverFailure: ApiException? = null
@@ -91,10 +90,7 @@ class FakePlanApi : PlanApi {
     override suspend fun syllabus(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): Syllabus {
-        syllabi++
-        return shownSyllabus
-    }
+    ): Syllabus = shownSyllabus
 
     override suspend fun progress(
         session: AuthenticatedSession,

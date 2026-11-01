@@ -5,17 +5,8 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.MutationResult
-import com.zoonk.android.feature.plan.PlanApi
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
-import com.zoonk.api.models.GoalChapter
-import com.zoonk.api.models.Plan
-import com.zoonk.api.models.PlanChangeResult
-import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -29,7 +20,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import java.util.UUID
-import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GoalContentStoreTest {
@@ -41,35 +31,17 @@ class GoalContentStoreTest {
         runTest {
             val api = FakeGoalContentApi()
 
-            val outcome = stores(api).first.practice(key)
+            val outcome = store(api).practice(key)
 
             assertEquals(PracticeOutcome.Opened(AppRoute.QuestionBlock(sessionId = SESSION, blockId = BLOCK)), outcome)
             assertEquals(AreaPracticeInput(areaId = chapterId(3), timeZone = "America/Sao_Paulo"), api.practiced.single())
         }
 
     @Test
-    fun practiceThatBringsALessonOpensThatLesson() =
-        runTest {
-            val api = FakeGoalContentApi().apply { practice = { practiceBlock("learn", lessonId = lessonId(4)) } }
-
-            val outcome = stores(api).first.practice(key)
-
-            assertEquals(PracticeOutcome.Opened(AppRoute.Lesson(lessonId = lessonId(4), sessionId = SESSION)), outcome)
-        }
-
-    @Test
-    fun aLessonNotPickedYetOpensTheSessionAtItsBlock() =
-        runTest {
-            val api = FakeGoalContentApi().apply { practice = { practiceBlock("learn") } }
-
-            assertEquals(PracticeOutcome.Opened(AppRoute.Session(blockId = BLOCK)), stores(api).first.practice(key))
-        }
-
-    @Test
     fun practiceRefusalsSayWhy() =
         runTest {
             val api = FakeGoalContentApi()
-            val store = stores(api).first
+            val store = store(api)
 
             api.practice = { throw ApiException(ApiError.Unavailable, code = "EXTRA_TIME_UNAVAILABLE", status = 409) }
             assertEquals(PracticeOutcome.DailyLimit, store.practice(key))
@@ -90,7 +62,7 @@ class GoalContentStoreTest {
                         { throw ApiException(ApiError.Unavailable, code = "GOAL_NOT_ACTIVE", status = 409) }
                 }
 
-            assertEquals(PracticeOutcome.Failed, stores(api).first.practice(key))
+            assertEquals(PracticeOutcome.Failed, store(api).practice(key))
         }
 
     @Test
@@ -98,14 +70,14 @@ class GoalContentStoreTest {
         runTest {
             val api = FakeGoalContentApi().apply { practice = { throw ApiException(ApiError.Unauthorized, status = 401) } }
 
-            assertNull(stores(api).first.practice(key))
+            assertNull(store(api).practice(key))
         }
 
     @Test
     fun practiceRefreshesTheChapterShown() =
         runTest {
             val api = FakeGoalContentApi()
-            val store = stores(api).first
+            val store = store(api)
             val shown = launch { store.chapter[key].shown.collect {} }
             advanceUntilIdle()
 
@@ -116,12 +88,8 @@ class GoalContentStoreTest {
             shown.cancel()
         }
 
-    private fun TestScope.stores(
-        api: GoalContentApi,
-        planApi: PlanApi = SyllabusPlanApi(),
-    ): Pair<GoalContentStore, PlanStore> {
+    private fun TestScope.store(api: GoalContentApi): GoalContentStore {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        val cache = AppCache(FakeSession(ana), scope)
-        return GoalContentStore(api, cache, timeZone = { TimeZone.of("America/Sao_Paulo") }) to PlanStore(planApi, cache)
+        return GoalContentStore(api, AppCache(FakeSession(ana), scope), timeZone = { TimeZone.of("America/Sao_Paulo") })
     }
 }

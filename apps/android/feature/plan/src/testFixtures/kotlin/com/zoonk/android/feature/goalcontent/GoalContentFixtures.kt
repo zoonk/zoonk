@@ -1,8 +1,6 @@
 package com.zoonk.android.feature.goalcontent
 
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.feature.plan.FakePlanApi
-import com.zoonk.android.feature.plan.PlanApi
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
@@ -217,20 +215,5 @@ internal class FakeGoalContentApi : GoalContentApi {
     ): AreaPractice {
         practiced += input
         return practice()
-    }
-}
-
-/** The Plan's fake, reading the exam's syllabus and counting its reads. */
-internal class SyllabusPlanApi(
-    private val base: PlanApi = FakePlanApi(),
-) : PlanApi by base {
-    var syllabi = 0
-
-    override suspend fun syllabus(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): Syllabus {
-        syllabi++
-        return examSyllabus()
     }
 }

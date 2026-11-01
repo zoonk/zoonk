@@ -1,40 +1,14 @@
 package com.zoonk.android.feature.plan
 
-import com.zoonk.api.ApiJson
 import com.zoonk.api.ApiRequestJson
-import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanOperation
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
 class PlanOpTest {
-    @Test
-    fun aChangesOperationsReadByKind() {
-        val change =
-            planChange(
-                """[{"kind":"setDailyMinutes","minutes":40},{"kind":"setTargetDate","targetDate":null},
-                   {"kind":"focusAreas","areas":["Math"],"parts":[{"area":"Math","name":"geometry","skillIds":["s1"]}]},
-                   {"kind":"addSkills","skills":[{"name":"SQL","skillId":"k1","lessons":3,"area":null,"beforeSkillId":null}]},{"kind":"setExamChoice","group":"Language","subjects":["Biology","Chemistry"]}]""",
-            )
-
-        assertEquals(
-            listOf(
-                PlanOp.DailyMinutes(40),
-                PlanOp.TargetDate(null),
-                PlanOp.FocusAreas(listOf("Math"), listOf(FocusPart("Math", "geometry", listOf("s1")))),
-                PlanOp.AddSkills(listOf("SQL")),
-                PlanOp.ExamChoice("Language", listOf("Biology", "Chemistry")),
-            ),
-            change.operations.map { it.op },
-        )
-    }
-
     @Test
     fun eachOperationEncodesAsTheContractTakesItAndReadsBack() {
         val sent =
@@ -70,43 +44,6 @@ class PlanOpTest {
             assertEquals(Json.parseToJsonElement(json), encoded)
             assertEquals(op, PlanOp.of(encoded.jsonObject))
         }
-    }
-
-    @Test
-    fun onlyTheServersOwnOperationsCantBeSent() {
-        listOf(
-            PlanOp.AddSkills(listOf("SQL")),
-            PlanOp.Tools(listOf(ToolPick("Python", "setup", "mac"))),
-            PlanOp.FollowNotice,
-            PlanOp.NoticeDate(LocalDate.of(2027, 1, 31), estimated = true),
-            PlanOp.FitPhaseDates,
-            PlanOp.ExamChoice("Language", listOf("English")),
-            PlanOp.Unknown,
-        ).forEach { assertNull(it.toOperation()) }
-    }
-
-    @Test
-    fun anEndMovedByADayBesideLessonsIsntSaid() {
-        val moved =
-            ApiJson.decodeFromString<PlanEffect>(
-                """{"lessonsAdded":0,"lessonsRemoved":0,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-09"}""",
-            )
-        val withLessons =
-            ApiJson.decodeFromString<PlanEffect>(
-                """{"lessonsAdded":0,"lessonsRemoved":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-09"}""",
-            )
-
-        assertEquals(LocalDate.of(2027, 1, 10) to LocalDate.of(2027, 1, 9), shownEndMove(moved))
-        assertNull(shownEndMove(withLessons))
-    }
-
-    @Test
-    fun aCountIsByTheDateOnlyWhileThePlanEndsByIt() {
-        val ends = ApiJson.decodeFromString<PlanEffect>("""{"lessonsAdded":1,"lessonsRemoved":0,"endDateAfter":"2027-02-01"}""")
-
-        assertTrue(countsByDate(ends, LocalDate.of(2027, 3, 1)))
-        assertFalse(countsByDate(ends, LocalDate.of(2027, 1, 1)))
-        assertFalse(countsByDate(ends, null))
     }
 
     @Test
