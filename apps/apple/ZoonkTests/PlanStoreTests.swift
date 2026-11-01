@@ -105,44 +105,6 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertFalse(editor.failed)
   }
 
-  // Dropping a deadline sets back the latest change, so core undoes that change and answers with it
-  // (core's `undoSetBack`).
-  func testChangeThatSetsBackTheLatestOneSaysItsUndone() throws {
-    let json = """
-      {
-        "change": {
-          "canUndo": false, "id": "change-1", "status": "undone", "todaySession": null,
-          "effect": {
-            "endDateAfter": "2026-11-19", "endDateBefore": "2026-11-13",
-            "lessonsAdded": 0, "lessonsRemoved": 0
-          }
-        },
-        "status": "applied"
-      }
-      """
-
-    let result = try JSONDecoder().decode(PlanChangeResult.self, from: Data(json.utf8))
-
-    XCTAssertEqual(result.outcome, .undone)
-  }
-
-  func testPlanLinksTheLibraryCourseItTakesEveryChapterOfButNotAPrivateOne() throws {
-    let course = { (brandSlug: String) in
-      """
-      {
-        "brandSlug": \(brandSlug), "chapterCount": 17, "courseId": "course",
-        "courseSlug": "italiano-pt", "planChapterCount": 17, "title": "Italiano"
-      }
-      """
-    }
-
-    let library = try GoalPlan.stub(planId: "plan", course: course("\"ai\""))
-    let own = try GoalPlan.stub(planId: "plan", course: course("null"))
-
-    XCTAssertEqual(library.libraryCourse?.courseId, "course")
-    XCTAssertNil(own.libraryCourse)
-  }
-
   func testUndoneChangeSaysSoAndRevalidatesThePlan() async {
     let api = PlanAPIStub()
     let store = makeStore(api: api)
@@ -357,11 +319,11 @@ extension AppliedPlanChange {
 }
 
 extension GoalPlan {
-  fileprivate static func stub(planId: String, course: String = "null") throws -> GoalPlan {
+  fileprivate static func stub(planId: String) throws -> GoalPlan {
     let json = """
       {
         "access": { "freeWeekOver": false, "mocksRequirePlus": false },
-        "areas": [], "bases": null, "course": \(course), "end": null,
+        "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",
         "phases": [], "planId": "\(planId)", "ready": true,

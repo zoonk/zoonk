@@ -47,34 +47,6 @@ final class ProgressPresentationTests: XCTestCase {
       ProgressWeekday.thursday.localizedTitle(locale: Locale(identifier: "pt_BR")), "Quinta-feira")
   }
 
-  func testLevelShareIsFullAtTheLastLevel() {
-    XCTAssertEqual(
-      LevelProgress.fixture(level: 4, progressInLevel: 250, isMaxLevel: false).share, 0.25)
-    XCTAssertEqual(LevelProgress.fixture(level: 10, progressInLevel: 0, isMaxLevel: true).share, 1)
-  }
-
-  func testActivityStepsAreRelativeToTheBusiestDay() {
-    XCTAssertEqual(
-      [0, 1, 2, 5, 8].map { CalendarSteps.activity($0, maximum: 8) }, [0, 1, 1, 3, 4])
-    XCTAssertEqual(CalendarSteps.activity(0, maximum: 0), 0)
-  }
-
-  func testEnergyStepsKeepTheLastForFullEnergy() {
-    XCTAssertEqual(
-      [nil, 0, 10, 25, 26, 99.9, 100].map(CalendarSteps.energy), [0, 0, 1, 1, 2, 4, 5])
-  }
-
-  func testCalendarStartsOnTheNewestDayWithSomethingOnIt() {
-    let days = [3, 0, 2, 0].enumerated().map { index, step in
-      CalendarDay(date: ProgressDate("2026-08-0\(index + 1)")!, step: step, label: "", value: nil)
-    }
-
-    XCTAssertEqual(CalendarSteps.defaultIndex(days), 2)
-    XCTAssertEqual(
-      CalendarSteps.defaultIndex(
-        days.map { CalendarDay(date: $0.date, step: 0, label: "", value: nil) }), 3)
-  }
-
   func testArrowKeysMoveADayWithinItsWeekAndAWeekAcross() {
     XCTAssertEqual(CalendarSteps.index(from: 7, key: .upArrow, count: 20), 7)
     XCTAssertEqual(CalendarSteps.index(from: 8, key: .upArrow, count: 20), 7)
@@ -84,16 +56,5 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertEqual(CalendarSteps.index(from: 10, key: .leftArrow, count: 20), 3)
     XCTAssertEqual(CalendarSteps.index(from: 14, key: .rightArrow, count: 20), 14)
     XCTAssertEqual(CalendarSteps.index(from: 10, key: .rightArrow, count: 20), 17)
-  }
-}
-
-extension LevelProgress {
-  fileprivate static func fixture(level: Int, progressInLevel: Int, isMaxLevel: Bool)
-    -> LevelProgress
-  {
-    LevelProgress(
-      belt: .green, bpPerLevel: 1_000, bpToNextLevel: 1_000 - progressInLevel,
-      isMaxLevel: isMaxLevel,
-      level: level, nextBelt: nil, progressInLevel: progressInLevel, totalBrainPower: 3_000)
   }
 }

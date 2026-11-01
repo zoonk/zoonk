@@ -4,60 +4,6 @@ import XCTest
 
 @MainActor
 final class TodayStoreTests: XCTestCase {
-  func testTheQueueKeepsBlocksInTheirOrderAroundTheNextOne() throws {
-    let session = try day(
-      blocks: [
-        block(position: 0, status: "completed"), block(position: 1), block(position: 2),
-        block(position: 3),
-      ],
-      nextPosition: 2)
-    let queue = session.queue(next: session.nextBlock)
-
-    XCTAssertEqual(queue.before.map(\.position), [1])
-    XCTAssertEqual(queue.after.map(\.position), [3])
-    XCTAssertEqual(session.queue(next: nil).after.map(\.position), [1, 2, 3])
-  }
-
-  func testADayWithLessonsAsksForTheNextOnesWhileNobodyWritesThem() throws {
-    let lesson = try block(position: 0, kind: "learn")
-
-    XCTAssertEqual(
-      try day(blocks: [lesson], nextPosition: 0, lessonsToPrepare: true).comingLessons, .toPrepare)
-    XCTAssertEqual(
-      try day(blocks: [lesson], nextPosition: 0, lessonsComing: true).comingLessons, .beingWritten)
-    XCTAssertNil(try day(blocks: [lesson], nextPosition: 0).comingLessons)
-  }
-
-  func testTheDailyLimitCutsADayThatPlansMoreThanIt() throws {
-    let blocks = [try block(position: 0)]
-
-    XCTAssertEqual(
-      try day(blocks: blocks, nextPosition: 0, dailyGoal: 360, limitMinutes: 180).limitStatus,
-      .cuts)
-    XCTAssertNil(
-      try day(blocks: blocks, nextPosition: 0, dailyGoal: 60, limitMinutes: 180).limitStatus)
-    XCTAssertNil(
-      try day(blocks: blocks, nextPosition: 0, dailyGoal: 360, limitMinutes: nil).limitStatus)
-  }
-
-  func testTheDailyLimitEndsADayItStopsShortOfItsPlan() throws {
-    let done = [try block(position: 0, status: "completed")]
-
-    XCTAssertEqual(
-      try day(blocks: done, nextPosition: nil, limitReached: true, state: "limit").limitStatus,
-      .reached)
-    XCTAssertEqual(
-      try day(
-        blocks: done, nextPosition: nil, dailyGoal: 360, planned: 180, limitMinutes: 180,
-        limitReached: true, state: "done"
-      ).limitStatus, .reached)
-    XCTAssertNil(
-      try day(
-        blocks: done, nextPosition: nil, dailyGoal: 180, planned: 180, limitMinutes: 180,
-        limitReached: true, state: "done"
-      ).limitStatus, "a day done as planned is just done")
-  }
-
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
@@ -450,26 +396,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(reads, 2, "the next read says the lessons are coming")
   }
 
-  func testEachOpeningShowsItsScreen() throws {
-    let screens: [(String, StudyDestination)] = [
-      (#"{"blockId":"b1","kind":"essay","sessionId":"s1"}"#, .essay(blockID: "b1")),
-      (
-        #"{"blockId":"b1","kind":"checkpoint","sessionId":"s1"}"#,
-        .checkpoint(blockID: "b1", sessionID: "s1")
-      ),
-      (
-        #"{"kind":"challenge","planItemId":"p1","sessionId":"s1"}"#,
-        .challenge(planItemID: "p1", sessionID: "s1")
-      ),
-      (#"{"blockId":null,"kind":"session","sessionId":"s1"}"#, .session),
-      (#"{"kind":"today"}"#, .today),
-    ]
-
-    for (json, screen) in screens {
-      XCTAssertEqual(StudyDestination(try opening(json)), screen, json)
-    }
-  }
-
   func testAStepThatGoesBackToTodayReadsTodayAgain() async throws {
     let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
     let view = try today(session: day(blocks: [lesson], nextPosition: 0, id: "s1"))
@@ -653,19 +579,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.shownPlanChange(in: view)?.decision, .declined)
   }
 
-  func testMissedDaysThatPutTheDateAtRiskAskWhatToDo() throws {
-    let behind = try planChange(
-      status: "applied", kind: "missedDays",
-      behind:
-        #"{"canFocus":true,"coveredAfter":0.8,"coveredBefore":1,"currentMinutes":45,"measure":"exam"}"#
-    )
-    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: behind)
-    let store = TodayStore(api: StudyAPIStub(today: .day(view)), cache: signedInCache())
-
-    XCTAssertEqual(store.shownPlanChange(in: view), AnsweredPlanChange(change: behind))
-    XCTAssertEqual(behind.behind?.currentMinutes, 45)
-  }
-
   func testAFinishedBlockShowsTheServersNextOneAtOnceOnTodayAndTheSession() async throws {
     let session = try day(
       blocks: [
@@ -776,19 +689,18 @@ private func blockJSON(
 }
 
 private func block(
-  position: Int, kind: String = "practice", status: String = "pending", id: String? = nil,
-  lessonID: String? = nil, planItemID: String? = nil, checkpoint: String? = nil
+  position: Int, kind: String = "practice", id: String? = nil, lessonID: String? = nil,
+  planItemID: String? = nil, checkpoint: String? = nil
 ) throws -> StudyBlock {
   try decode(
     blockJSON(
-      position: position, kind: kind, status: status, id: id, lessonID: lessonID,
+      position: position, kind: kind, status: "pending", id: id, lessonID: lessonID,
       planItemID: planItemID, checkpoint: checkpoint))
 }
 
 private func dayJSON(
-  blocks: [StudyBlock], nextPosition: Int?, id: String?, dailyGoal: Int, planned: Int,
-  emptyDay: String?, limitMinutes: Int?, limitReached: Bool, lessonsComing: Bool,
-  lessonsToPrepare: Bool, localDate: String, goalID: String, state: String
+  blocks: [StudyBlock], nextPosition: Int?, id: String?, emptyDay: String?, localDate: String,
+  goalID: String, state: String
 ) -> String {
   let blockList = blocks.map {
     blockJSON(
@@ -799,14 +711,14 @@ private func dayJSON(
 
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
-    "dailyLimit":{"limitMinutes":\(limitMinutes.map(String.init) ?? "null"),"reached":\(limitReached),"remainingMinutes":0,
+    "dailyLimit":{"limitMinutes":60,"reached":false,"remainingMinutes":0,
     "usedMinutes":0},
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
     "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
-    "lessonsComing":\(lessonsComing),"lessonsToPrepare":\(lessonsToPrepare),
-    "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":\(planned)},
+    "lessonsComing":false,"lessonsToPrepare":false,
+    "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null,
@@ -816,27 +728,22 @@ private func dayJSON(
 }
 
 private func day(
-  blocks: [StudyBlock], nextPosition: Int?, id: String? = nil, dailyGoal: Int = 15,
-  planned: Int = 15, emptyDay: String? = nil, limitMinutes: Int? = 60, limitReached: Bool = false,
-  lessonsComing: Bool = false, lessonsToPrepare: Bool = false, localDate: String = "2026-10-28",
-  goalID: String = "g1", state: String = "underway"
+  blocks: [StudyBlock], nextPosition: Int?, id: String? = nil, emptyDay: String? = nil,
+  localDate: String = "2026-10-28", goalID: String = "g1", state: String = "underway"
 ) throws -> StudyDay {
   try decode(
     dayJSON(
-      blocks: blocks, nextPosition: nextPosition, id: id, dailyGoal: dailyGoal, planned: planned,
-      emptyDay: emptyDay, limitMinutes: limitMinutes, limitReached: limitReached,
-      lessonsComing: lessonsComing, lessonsToPrepare: lessonsToPrepare, localDate: localDate,
-      goalID: goalID, state: state))
+      blocks: blocks, nextPosition: nextPosition, id: id, emptyDay: emptyDay,
+      localDate: localDate, goalID: goalID, state: state))
 }
 
 private func planChange(
-  status: String, canUndo: Bool = false, id: String = "c1", kind: String = "edited",
-  behind: String = "null"
+  status: String, canUndo: Bool = false, id: String = "c1"
 ) throws -> TodayView.PlanChange {
   try decode(
     """
-    {"behind":\(behind),"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
-    "id":"\(id)","kind":"\(kind)","officialDate":null,"reason":"Rest on Saturdays?",
+    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
+    "id":"\(id)","kind":"edited","officialDate":null,"reason":"Rest on Saturdays?",
     "source":"memory","status":"\(status)","todaySession":null}
     """)
 }

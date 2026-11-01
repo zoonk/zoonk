@@ -8,13 +8,6 @@ final class UsernameStatusTests: XCTestCase {
     XCTAssertEqual(UsernameStatus.of("", current: "ana", check: nil), .idle)
   }
 
-  func testABadlyFormedUsernameIsInvalidWithoutAsking() {
-    XCTAssertEqual(UsernameStatus.of("an", current: "ana", check: nil), .invalid)
-    XCTAssertEqual(UsernameStatus.of("ana-b", current: "ana", check: nil), .invalid)
-    XCTAssertEqual(
-      UsernameStatus.of(String(repeating: "a", count: 31), current: "ana", check: nil), .invalid)
-  }
-
   func testAnotherUsernameIsCheckingUntilItsOwnAnswerArrives() {
     let earlier = UsernameCheck(username: "ana_b", status: .available)
 

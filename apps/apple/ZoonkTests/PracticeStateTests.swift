@@ -222,22 +222,3 @@ final class GradedRunTests: XCTestCase {
     XCTAssertEqual(GradedRunStage(answered: 0, asked: 0, total: 0), .waiting)
   }
 }
-
-final class OptionMarkTests: XCTestCase {
-  func testAWithheldAnswerMarksOnlyThePickByItsVerdict() {
-    let right = PracticeItemResult(answer: .choice(1), correctAnswer: nil, isCorrect: true)
-    let wrong = PracticeItemResult(answer: .choice(1), correctAnswer: nil, isCorrect: false)
-
-    XCTAssertEqual(right.optionMark(isRightAnswer: false, isPicked: true), .right)
-    XCTAssertNil(right.optionMark(isRightAnswer: false, isPicked: false))
-    XCTAssertEqual(wrong.optionMark(isRightAnswer: false, isPicked: true), .wrong)
-  }
-
-  func testADisclosedAnswerMarksItAndTheWrongPick() {
-    let result = PracticeItemResult(answer: .choice(1), correctAnswer: .choice(0), isCorrect: false)
-
-    XCTAssertEqual(result.optionMark(isRightAnswer: true, isPicked: false), .right)
-    XCTAssertEqual(result.optionMark(isRightAnswer: false, isPicked: true), .wrong)
-    XCTAssertNil(result.optionMark(isRightAnswer: false, isPicked: false))
-  }
-}

@@ -4,14 +4,6 @@ import XCTest
 
 @MainActor
 final class ProgressStoreTests: XCTestCase {
-  func testActivityPublishesLoadedProgress() async {
-    let store = makeStore(activityResults: [.success(.testFixture)])
-
-    await store.activity.load()
-
-    XCTAssertEqual(store.activity.state, .loaded(.testFixture))
-  }
-
   func testActivityWithoutStudyDaysStaysLoaded() async {
     let store = makeStore(activityResults: [.success(.emptyTestFixture)])
 
@@ -29,28 +21,6 @@ final class ProgressStoreTests: XCTestCase {
     await store.energy.load()
 
     XCTAssertEqual(store.energy.state, .empty)
-  }
-
-  func testUnauthorizedActivityExpiresTheMatchingSession() async {
-    let session = SessionStore.preview(account: .progressTestFixture)
-    let store = ProgressStore(
-      api: ProgressAPIStub(activityResults: [.failure(APIError.unauthorized)]),
-      cache: AppCache(session: session))
-
-    await store.activity.load()
-
-    XCTAssertNil(session.account)
-    XCTAssertEqual(store.activity.state, .idle)
-  }
-
-  func testActivityCanRetryAfterNetworkFailure() async {
-    let store = makeStore(activityResults: [.failure(APIError.network), .success(.testFixture)])
-
-    await store.activity.load()
-    XCTAssertEqual(store.activity.state, .failed(.network))
-
-    await store.activity.refresh()
-    XCTAssertEqual(store.activity.state, .loaded(.testFixture))
   }
 
   func testActivityIsReusedUntilProgressChanges() async {

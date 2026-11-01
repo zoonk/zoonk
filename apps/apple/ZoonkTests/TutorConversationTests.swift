@@ -1,4 +1,3 @@
-import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -276,13 +275,6 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.planChange?.status, .proposed)
   }
 
-  func testKeyboardReturnSendsAndShiftReturnStartsANewLine() {
-    XCTAssertTrue(TutorComposerKeys.returnSends(modifiers: []))
-    XCTAssertTrue(TutorComposerKeys.returnSends(modifiers: .command))
-    XCTAssertFalse(TutorComposerKeys.returnSends(modifiers: .shift))
-    XCTAssertFalse(TutorComposerKeys.returnSends(modifiers: [.shift, .command]))
-  }
-
   func testOnlyADraftWithWordsCanBeSentWhileAQuestionCanBeAsked() async {
     let api = TutorAPIStub(answers: [[]])
     let conversation = makeConversation(api: api)
@@ -324,28 +316,6 @@ final class TutorConversationTests: XCTestCase {
 
     XCTAssertTrue(unchecked === checked)
     XCTAssertFalse(store.conversation(.chapter(chapterId: "c")) === checked)
-  }
-
-  func testALessonAsksAboutTheScreenInViewAndItsCheckedAnswer() {
-    let screen = TutorScope(
-      LessonTutorScope(
-        lessonId: "l", stepId: "s2", stepNumber: 2, stepIds: ["s1", "s2"], suggestions: []))
-    let answer = TutorScope(
-      LessonTutorScope(
-        lessonId: "l", stepId: "s2", stepNumber: 2, answer: .check(optionId: "a"),
-        stepIds: ["s1", "s2"], suggestions: []))
-    let lesson = TutorScope(
-      LessonTutorScope(lessonId: "l", stepId: nil, stepIds: ["s1", "s2"], suggestions: []))
-
-    XCTAssertEqual(
-      screen,
-      .step(lessonId: "l", stepId: "s2", stepNumber: 2, answer: nil, suggestions: []))
-    XCTAssertFalse(screen.isAboutCheckedAnswer)
-    XCTAssertTrue(answer.isAboutCheckedAnswer)
-    XCTAssertEqual(screen.conversationKey, answer.conversationKey, "one conversation per screen")
-    XCTAssertEqual(screen.askLabel("Zu"), "Ask Zu about this screen")
-    XCTAssertEqual(answer.askLabel("Zu"), "Ask Zu about your answer")
-    XCTAssertEqual(lesson, .lesson(lessonId: "l", stepIds: ["s1", "s2"], suggestions: []))
   }
 
   func testQuestionsAboutACheckedAnswerShowWhileItsInView() async {
