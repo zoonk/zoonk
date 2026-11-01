@@ -3,10 +3,12 @@ package com.zoonk.buildlogic
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
@@ -78,8 +80,14 @@ internal fun Project.configureAndroid(android: CommonExtension) {
         stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("compose-stability.conf"))
     }
 
+    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
     dependencies {
         "lintChecks"(project(":lint-checks"))
+        constraints {
+            // Compose UI test still brings Espresso 3.5, whose input injection fails on API 37:
+            // https://github.com/android/android-test/issues/2507
+            "testImplementation"(libs.findLibrary("androidx-test-espresso-core").get())
+        }
     }
 }
 
