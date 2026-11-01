@@ -92,8 +92,14 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
 
 const UNFOLLOWED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
-function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: () => void }) {
-  useRefreshUntilShown({ refresh: onCheck, status: isReady ? "ready" : "waiting" });
+function RefreshUntilShown({
+  onCheck,
+  status,
+}: {
+  onCheck: () => void;
+  status: GenerationRun["status"];
+}) {
+  useRefreshUntilShown({ refresh: onCheck, status });
   return null;
 }
 
@@ -194,7 +200,9 @@ export function ExplainWaiting({
         </OnboardingHeading>
 
         {!ready && <GenerationWait kind="explanation" run={progress ?? UNFOLLOWED_RUN} />}
-        {!ready && <RefreshUntilShown isReady={progress?.status === "ready"} onCheck={onCheck} />}
+        {!ready && (
+          <RefreshUntilShown onCheck={onCheck} status={(progress ?? UNFOLLOWED_RUN).status} />
+        )}
 
         <Outline titles={explanation.outline} />
 
