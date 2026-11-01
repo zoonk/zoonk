@@ -15,28 +15,29 @@ describe(buildTranslationOptions, () => {
     vi.mocked(shuffle).mockImplementation((items) => [...items]);
   });
 
-  it("hydrates distractors with the same normalized key used during sanitation", () => {
+  it("shows each distractor as written, with its own word's audio", () => {
     const distractorLookup = buildDistractorWordLookup([
-      makeDistractorWord({ audioUrl: "/audio/cafe.mp3", romanization: "cafe", word: "café" }),
+      makeDistractorWord({ audioUrl: "/audio/esta-accent.mp3", id: "esta-accent", word: "está" }),
+      makeDistractorWord({ audioUrl: "/audio/esta.mp3", id: "esta", word: "esta" }),
     ]);
 
     const options = buildTranslationOptions({
       distractorLookup,
       kind: "translation",
-      language: "en",
+      language: "es",
       word: {
-        audioUrl: "/audio/tea.mp3",
-        distractors: ["cafe!"],
+        audioUrl: "/audio/es.mp3",
+        distractors: ["está"],
         id: "word-1",
         romanization: null,
-        translation: "tea",
-        word: "tea",
+        translation: "is",
+        word: "es",
       },
     });
 
     expect(options).toStrictEqual([
-      { audioUrl: "/audio/tea.mp3", id: "word-1", romanization: null, word: "Tea" },
-      { audioUrl: "/audio/cafe.mp3", id: "distractor-1", romanization: null, word: "Café" },
+      { audioUrl: "/audio/es.mp3", id: "word-1", romanization: null, word: "Es" },
+      { audioUrl: "/audio/esta-accent.mp3", id: "esta-accent", romanization: null, word: "Está" },
     ]);
   });
 

@@ -19,8 +19,8 @@ import { buildLanguageLessonSteps } from "./_utils/language-lesson-steps";
 import { saveLanguageLesson } from "./_utils/save-language-lesson";
 import {
   type SharedVocabulary,
+  saveBankWords,
   saveSharedVocabulary,
-  saveTargetWords,
 } from "./_utils/shared-vocabulary";
 
 type Analytics = Parameters<typeof generateLanguageLesson>[0]["analytics"];
@@ -132,7 +132,7 @@ export async function writeLanguageLessonContent({
     [...shared.wordIdsByText.keys()].map((text) => normalizeWordKey(text)),
   );
 
-  const bankWordIds = await saveTargetWords({
+  const bankWordIds = await saveBankWords({
     organizationId: organization.id,
     provenance: draft.provenance,
     targetLanguage: inputs.targetLanguage,

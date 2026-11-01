@@ -110,21 +110,23 @@ function buildDirectDistractorOption(params: {
   distractorLookup: Map<string, DistractorWord>;
   word: string;
 }): TranslationOption {
-  const distractorKey = normalizeDistractorKey(params.word);
-  const hydrated = params.distractorLookup.get(distractorKey);
+  const hydrated = params.distractorLookup.get(params.word);
 
   if (hydrated) {
     return toTranslationOption(hydrated);
   }
 
-  return buildFallbackDistractorOption({ key: distractorKey, word: params.word });
+  return buildFallbackDistractorOption({
+    key: normalizeDistractorKey(params.word),
+    word: params.word,
+  });
 }
 
-/** Missing enrichment still renders a plain distractor option. */
+/** Keyed by exact text: a row that differs in case, accent or punctuation is another word. */
 export function buildDistractorWordLookup(
   distractorWords: DistractorWord[],
 ): Map<string, DistractorWord> {
-  return new Map(distractorWords.map((word) => [normalizeDistractorKey(word.word), word] as const));
+  return new Map(distractorWords.map((word) => [word.word, word] as const));
 }
 
 /** Uses stored direct distractors and shows at most three after normalization. */

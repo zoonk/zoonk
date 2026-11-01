@@ -17,26 +17,25 @@ export type SharedVocabulary = {
   sentenceIdsByText: Map<string, string>;
 };
 
-type TargetWordsInput = {
+type BankWordsInput = {
   organizationId: string;
   provenance: LibraryProvenance;
-  romanizations?: ReadonlyMap<string, string | null>;
   targetLanguage: string;
   texts: readonly string[];
 };
 
-function findWords({
+function findBankWords({
   organizationId,
   targetLanguage,
   texts,
-}: Pick<TargetWordsInput, "organizationId" | "targetLanguage" | "texts">) {
+}: Omit<BankWordsInput, "provenance">) {
   return prisma.word.findMany({
     orderBy: { createdAt: "asc" },
     where: { organizationId, targetLanguage, word: { in: [...texts], mode: "insensitive" } },
   });
 }
 
-type WordRow = Awaited<ReturnType<typeof findWords>>[number];
+type WordRow = Awaited<ReturnType<typeof findBankWords>>[number];
 
 function uniqueByKey(texts: readonly string[]): string[] {
   const byKey = texts.reduce((unique, text) => {
@@ -56,43 +55,65 @@ function pickRowByKey(rows: WordRow[]): Map<string, WordRow> {
 }
 
 /**
- * Maps each text to its shared Word row, reusing one that differs only in case (a voiced one
- * first), so the same word is never stored or voiced twice.
+ * A tile shows its own text and only borrows its row's audio, so a bank word reuses a row that
+ * differs only in case (a voiced one first). Lesson words keep rows of their exact text instead:
+ * their screens show the row's text, and German "Sie" isn't "sie".
  */
-export async function saveTargetWords({
+export async function saveBankWords({
   organizationId,
   provenance,
-  romanizations = new Map(),
   targetLanguage,
   texts,
-}: TargetWordsInput): Promise<Map<string, string>> {
-  const written = toProvenanceData(provenance);
-
-  const romanizationByKey = new Map(
-    [...romanizations].map(([text, romanization]) => [normalizeWordKey(text), romanization]),
-  );
-
-  const existing = await findWords({ organizationId, targetLanguage, texts });
+}: BankWordsInput): Promise<Map<string, string>> {
+  const existing = await findBankWords({ organizationId, targetLanguage, texts });
   const existingKeys = new Set(existing.map((row) => normalizeWordKey(row.word)));
 
   await prisma.word.createMany({
     data: uniqueByKey(texts)
       .filter((word) => !existingKeys.has(normalizeWordKey(word)))
-      .map((word) => ({
-        ...written,
-        organizationId,
-        romanization: romanizationByKey.get(normalizeWordKey(word)) ?? null,
-        targetLanguage,
-        word,
-      })),
+      .map((word) => ({ ...toProvenanceData(provenance), organizationId, targetLanguage, word })),
     skipDuplicates: true,
   });
 
-  const rows = pickRowByKey(await findWords({ organizationId, targetLanguage, texts }));
+  const rows = pickRowByKey(await findBankWords({ organizationId, targetLanguage, texts }));
+
+  return new Map(
+    texts.flatMap((text) => {
+      const row = rows.get(normalizeWordKey(text));
+      return row ? [[text, row.id]] : [];
+    }),
+  );
+}
+
+async function saveWords({
+  content,
+  organizationId,
+  provenance,
+  targetLanguage,
+}: SharedVocabularyInput) {
+  const written = toProvenanceData(provenance);
+  const romanizations = new Map(content.words.map((word) => [word.word, word.romanization]));
+
+  const texts = [...new Set(content.words.flatMap((word) => [word.word, ...word.distractors]))];
+
+  await prisma.word.createMany({
+    data: texts.map((word) => ({
+      ...written,
+      organizationId,
+      romanization: romanizations.get(word) ?? null,
+      targetLanguage,
+      word,
+    })),
+    skipDuplicates: true,
+  });
+
+  const rows = await prisma.word.findMany({
+    where: { organizationId, targetLanguage, word: { in: texts } },
+  });
 
   await Promise.all(
-    [...rows].flatMap(([key, row]) => {
-      const romanization = romanizationByKey.get(key);
+    rows.flatMap((row) => {
+      const romanization = romanizations.get(row.word);
 
       return !row.romanization && romanization
         ? [
@@ -105,22 +126,7 @@ export async function saveTargetWords({
     }),
   );
 
-  return new Map(
-    texts.flatMap((text) => {
-      const row = rows.get(normalizeWordKey(text));
-      return row ? [[text, row.id]] : [];
-    }),
-  );
-}
-
-function saveWords({ content, organizationId, provenance, targetLanguage }: SharedVocabularyInput) {
-  return saveTargetWords({
-    organizationId,
-    provenance,
-    romanizations: new Map(content.words.map((word) => [word.word, word.romanization])),
-    targetLanguage,
-    texts: content.words.flatMap((word) => [word.word, ...word.distractors]),
-  });
+  return new Map(rows.map((row) => [row.word, row.id]));
 }
 
 async function savePronunciations({

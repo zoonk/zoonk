@@ -302,30 +302,21 @@ describe(writeLanguageLessonContent, () => {
 
   it("voices each word its word banks show once, so every target-language tile plays it", async () => {
     const organization = await aiOrganizationFixture();
-    const key = crypto.randomUUID();
+    const key = `ka${crypto.randomUUID()}`;
     const draft = uniqueDraft(key);
-    const depositText = draft.words[1]!.word;
 
     const unvoicedVariant = await wordFixture({
       organizationId: organization.id,
       targetLanguage: "en",
-      word: `T${depositText.slice(1)}`,
+      word: `K${key.slice(1)}`,
     });
 
-    const [sentenceWord, lessonWord] = await Promise.all([
-      wordFixture({
-        audioUrl: "https://blob.test/sentence-word.mp3",
-        organizationId: organization.id,
-        targetLanguage: "en",
-        word: key.toUpperCase(),
-      }),
-      wordFixture({
-        audioUrl: "https://blob.test/lesson-word.mp3",
-        organizationId: organization.id,
-        targetLanguage: "en",
-        word: depositText.toUpperCase(),
-      }),
-    ]);
+    const sentenceWord = await wordFixture({
+      audioUrl: "https://blob.test/sentence-word.mp3",
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: key.toUpperCase(),
+    });
 
     const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
     mockDraft(draft);
@@ -338,23 +329,15 @@ describe(writeLanguageLessonContent, () => {
       .mock.calls.map(([call]) => call.text.toLowerCase());
 
     expect(voiced).not.toContain(key);
-    expect(voiced).not.toContain(depositText.toLowerCase());
 
     const caseVariants = await prisma.word.findMany({
-      where: {
-        OR: [key, depositText].map((word) => ({ word: { equals: word, mode: "insensitive" } })),
-        targetLanguage: "en",
-      },
+      where: { targetLanguage: "en", word: { equals: key, mode: "insensitive" } },
     });
 
     expect(Object.fromEntries(caseVariants.map((row) => [row.id, row.audioUrl]))).toStrictEqual({
-      [lessonWord.id]: lessonWord.audioUrl,
       [sentenceWord.id]: sentenceWord.audioUrl,
       [unvoicedVariant.id]: null,
     });
-
-    const lessonWords = await linksOf(lesson.id);
-    expect(lessonWords[1]?.wordId).toBe(lessonWord.id);
 
     mockSession(crypto.randomUUID());
     const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
@@ -439,6 +422,67 @@ describe(writeLanguageLessonContent, () => {
 
     expect(keyTiles.length).toBeGreaterThan(0);
     expect(keyTiles.every((tile) => tile.audioUrl === row.audioUrl)).toBe(true);
+  });
+
+  it("teaches a word in its own case when a word bank voiced it in another", async () => {
+    const organization = await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const taught = `Sie-${key}`;
+    const bankTile = `Ich-${key}`;
+
+    const [voicedSie, voicedIch] = await Promise.all(
+      [taught, bankTile].map((word) =>
+        wordFixture({
+          audioUrl: `https://blob.test/${word.toLowerCase()}.mp3`,
+          organizationId: organization.id,
+          targetLanguage: "en",
+          word: word.toLowerCase(),
+        }),
+      ),
+    );
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    const [firstSentence, ...otherSentences] = draft.sentences;
+    const [firstWord, ...otherWords] = draft.words;
+
+    mockDraft({
+      ...draft,
+      sentences: [
+        { ...firstSentence!, sentence: `${bankTile} ${firstSentence!.sentence}` },
+        ...otherSentences,
+      ],
+      words: [{ ...firstWord!, word: taught }, ...otherWords],
+    });
+
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+    const exercises = steps.flatMap((step) => ("exercise" in step ? [step.exercise] : []));
+
+    expect(exercises.find((exercise) => exercise.kind === "vocabulary")?.word?.word).toBe(taught);
+
+    const voiced = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
+    expect(voiced).toContain(taught);
+    expect(voiced.map((text) => text.toLowerCase())).not.toContain(bankTile.toLowerCase());
+
+    const ichTiles = exercises.flatMap((exercise) =>
+      exercise.kind === "reading"
+        ? exercise.wordBankOptions.filter((tile) => tile.word === bankTile)
+        : [],
+    );
+
+    expect(ichTiles.map((tile) => tile.audioUrl)).toStrictEqual([voicedIch!.audioUrl]);
+
+    const rows = await prisma.word.findMany({
+      where: { targetLanguage: "en", word: { equals: taught, mode: "insensitive" } },
+    });
+
+    expect(rows.map((row) => row.word).toSorted()).toStrictEqual([taught, voicedSie!.word]);
   });
 
   it("doesn't teach words the unit's earlier lessons taught", async () => {
