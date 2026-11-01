@@ -9,36 +9,29 @@ struct LessonRecap: Equatable {
 }
 
 extension LessonPlayerState {
-  /// Main's `getLessonRecap`: the explanation, worked example or hook text the question in view
-  /// comes after. None where "Explain first" can bring the explanation instead.
+  /// None where "Explain first" can bring the explanation instead.
   var recap: LessonRecap? {
     guard let question = currentStep, !question.isRead,
       [.activity, .check, .hook, .typedAnswer].contains(question.kind),
-      explanationsAfterCurrent.isEmpty,
-      let id = queue[..<firstPlace(of: question)].last(where: { steps[$0]?.isRecapped == true }),
-      let step = steps[id]
+      explanationsAfterCurrent.isEmpty
     else {
       return nil
     }
 
-    let isMissed = phase == .feedback && currentResult?.isCorrect == false
-    return LessonRecap(step: step, mark: isMissed ? question.basisQuote(on: step) : nil)
-  }
+    let read = queue[..<position].compactMap { steps[$0] }.filter(\.isRecapped)
+      .sorted { $0.position < $1.position }
+    let isChecked = phase == .feedback && currentResult != nil
 
-  /// A missed question that gave up its place for the end (a missed quick check) recaps from where
-  /// it was written.
-  private func firstPlace(of step: LessonStep) -> Int {
-    guard let first = queue.firstIndex(of: step.id) else {
-      return 0
-    }
-
-    guard retried.contains(step.id), queue.lastIndex(of: step.id) == first,
-      let later = queue.firstIndex(where: { (steps[$0]?.position ?? 0) > step.position })
+    // A screen written after the question was written knowing it and may answer it.
+    guard
+      let step = read.last(where: { $0.position < question.position })
+        ?? (isChecked ? read.first { $0.position > question.position } : nil)
     else {
-      return first
+      return nil
     }
 
-    return min(first, later)
+    let isMissed = isChecked && currentResult?.isCorrect == false
+    return LessonRecap(step: step, mark: isMissed ? question.basisQuote(on: step) : nil)
   }
 }
 
@@ -46,7 +39,6 @@ extension LessonStep {
   fileprivate var isRecapped: Bool {
     switch content {
     case .explanation, .workedExample: true
-    case .hook(let hook): hook.variant == .text
     default: false
     }
   }

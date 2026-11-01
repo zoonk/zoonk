@@ -44,9 +44,6 @@ struct LessonRecapView: View {
     case .explanation(let explanation):
       LessonTextBlocks(explanation.text, mark: recap.mark)
       visual(explanation.visual)
-    case .hook(let hook):
-      LessonTextBlocks(hook.text ?? "", mark: recap.mark)
-      visual(hook.visual)
     case .workedExample(let example):
       workedExample(example)
     default:
