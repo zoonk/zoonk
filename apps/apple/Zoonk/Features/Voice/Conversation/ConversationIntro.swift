@@ -58,68 +58,89 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(
-            "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))\u{00A0}· Level \(intro.level)",
-            tableName: "Voice", comment: "A call's length and level, over its title"
-          )
-          .font(.caption.monospaced())
-          .foregroundStyle(.tertiary)
+    PaneSplit {
+      List {
+        situation
+      }
+    } secondary: {
+      List {
+        task
+      }
+      .safeAreaBar(edge: .bottom) { startBar }
+    } single: {
+      List {
+        situation
+        task
+      }
+      .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
+    }
+  }
 
-          Text(intro.speakingTask?.task.name ?? intro.title)
-            .font(.title2.weight(.semibold))
+  @ViewBuilder
+  private var situation: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))\u{00A0}· Level \(intro.level)",
+          tableName: "Voice", comment: "A call's length and level, over its title"
+        )
+        .font(.caption.monospaced())
+        .foregroundStyle(.tertiary)
 
-          Text(intro.speakingTask?.card.summary ?? intro.situation)
-            .foregroundStyle(.secondary)
-        }
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
+        Text(intro.speakingTask?.task.name ?? intro.title)
+          .font(.title2.weight(.semibold))
+
+        Text(intro.speakingTask?.card.summary ?? intro.situation)
+          .foregroundStyle(.secondary)
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+    }
+
+    Section {
+      CharacterRow(intro: intro, isTalking: false)
+    }
+  }
+
+  @ViewBuilder
+  private var task: some View {
+    if let examTask = intro.speakingTask {
+      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
+        ExamPrepTimer(cardId: conversationId, task: examTask.task)
       }
 
+      ExamTaskCard(task: examTask)
+    } else {
       Section {
-        CharacterRow(intro: intro, isTalking: false)
-      }
-
-      if let examTask = intro.speakingTask {
-        if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-          ExamPrepTimer(cardId: conversationId, task: examTask.task)
+        ForEach(intro.objectives, id: \.label) { objective in
+          VStack(alignment: .leading, spacing: 2) {
+            Text(objective.label)
+              .typesettingLanguage(.init(identifier: intro.targetLanguage))
+            Text(objective.description)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
         }
-
-        ExamTaskCard(task: examTask)
-      } else {
-        Section {
-          ForEach(intro.objectives, id: \.label) { objective in
-            VStack(alignment: .leading, spacing: 2) {
-              Text(objective.label)
-                .typesettingLanguage(.init(identifier: intro.targetLanguage))
-              Text(objective.description)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            }
-          }
-        } header: {
+      } header: {
+        Text(
+          "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
+      } footer: {
+        Label {
           Text(
-            "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
-        } footer: {
-          Label {
-            Text(
-              "Speak or type. The microphone is used only during the call.", tableName: "Voice",
-              comment: "How the call hears the learner")
-          } icon: {
-            Image(systemName: "mic")
-          }
+            "Speak or type. The microphone is used only during the call.", tableName: "Voice",
+            comment: "How the call hears the learner")
+        } icon: {
+          Image(systemName: "mic")
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 12) {
-        footer
-      }
-      .scenePadding()
-      .keepsOffFold()
+  }
+
+  private var startBar: some View {
+    VStack(spacing: 12) {
+      footer
     }
+    .scenePadding()
   }
 }
 
