@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -445,7 +445,7 @@ private fun Slot.applyPreview(
 /** Main's `OtherOptions` menu; each option closes it with [done] before acting. */
 @Composable
 private fun OtherOptions(options: @Composable (done: () -> Unit) -> Unit) {
-    var open by remember { mutableStateOf(false) }
+    var open by rememberSaveable { mutableStateOf(false) }
 
     Box {
         SuggestionAction(

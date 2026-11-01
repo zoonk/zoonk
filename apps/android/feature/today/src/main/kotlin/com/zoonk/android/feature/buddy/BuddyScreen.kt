@@ -317,7 +317,7 @@ private fun BuddyMenu(
     onGlasses: () -> Unit,
     navigator: AppNavigator,
 ) {
-    var open by remember { mutableStateOf(false) }
+    var open by rememberSaveable { mutableStateOf(false) }
     val more = stringResource(R.string.buddy_page_more, name)
 
     Box {
