@@ -71,7 +71,8 @@ struct SubscriptionView: View {
   var body: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
       SubscriptionMarketingContent(
-        allowance: settings.allowance.value, freePlan: settings.freePlan, viewer: .member)
+        allowance: settings.allowance.value, freePlan: settings.freePlan,
+        viewer: settings.allowance.value?.tier == .free ? .free : .subscribed)
     }
     .subscriptionStoreControlStyle(.prominentPicker)
     .subscriptionStoreButtonLabel(.multiline)
@@ -286,7 +287,8 @@ extension Text {
 private enum PlusViewer {
   case visitor
   case guest
-  case member
+  case free
+  case subscribed
 }
 
 private struct SubscriptionMarketingContent: View {
@@ -315,34 +317,10 @@ private struct SubscriptionMarketingContent: View {
 
       PlusBenefits()
 
-      if let allowance, allowance.tier == .free {
-        GroupBox {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("Free", tableName: "Account", comment: "The free plan's name")
-
-            if let limit = allowance.buddyMessagesDailyLimit {
-              Text(
-                "\(Text(allowance.buddyMessagesToday, format: .number).monospacedDigit())/\(Text(limit, format: .number).monospacedDigit()) buddy messages used today",
-                tableName: "Account",
-                comment:
-                  "A free plan's buddy messages used today, as in “3/5 buddy messages used today”"
-              )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-            }
-          }
-          .frame(maxWidth: .infinity, alignment: .leading)
-        } label: {
-          Text(
-            "Your plan", tableName: "Account",
-            comment: "Section with the learner's subscription plan, Free or Plus")
-        }
-      }
-
       switch freePlan.state {
       case .loaded(let limits):
-        if viewer == .visitor {
-          FreePlanIncludes(limits: limits)
+        if viewer != .subscribed {
+          FreePlanCard(limits: limits, viewer: viewer, allowance: allowance)
         }
 
         PlusQuestions(limits: limits, viewer: viewer)
@@ -830,12 +808,61 @@ struct WebPlusLoading: ViewModifier {
 }
 
 /// Main's Free card: what the free plan includes, against Plus above it.
-private struct FreePlanIncludes: View {
+private struct FreePlanCard: View {
+  @Environment(AppRouter.self) private var router
+
   let limits: FreePlan
+  let viewer: PlusViewer
+  let allowance: PlanAllowance?
 
   var body: some View {
     GroupBox {
       VStack(alignment: .leading, spacing: 12) {
+        switch viewer {
+        case .guest:
+          VStack(alignment: .leading, spacing: 8) {
+            Button {
+              router.present(.signIn)
+            } label: {
+              Text(
+                "Create a free account", tableName: "Account",
+                comment: "Opens sign-up from the free plan's card for a guest"
+              )
+              .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+
+            note(
+              Text(
+                "No card needed.", tableName: "Account",
+                comment: "Under the free plan's sign-up button; card means a payment card"
+              ))
+          }
+
+          Divider()
+        case .free:
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              "Your current plan", tableName: "Account",
+              comment: "On the free plan's card for a learner already on it")
+
+            if let allowance, let limit = allowance.buddyMessagesDailyLimit {
+              note(
+                Text(
+                  "\(Text(allowance.buddyMessagesToday, format: .number).monospacedDigit())/\(Text(limit, format: .number).monospacedDigit()) buddy messages used today",
+                  tableName: "Account",
+                  comment:
+                    "A free plan's buddy messages used today, as in “3/5 buddy messages used today”"
+                ))
+            }
+          }
+
+          Divider()
+        case .visitor, .subscribed:
+          EmptyView()
+        }
+
         if let goals = limits.activeGoals, let lessons = limits.lessonsPerMonth {
           Text(
             verbatim: [
@@ -885,6 +912,12 @@ private struct FreePlanIncludes: View {
     }
   }
 
+  private func note(_ text: Text) -> some View {
+    text
+      .font(.footnote)
+      .foregroundStyle(.secondary)
+  }
+
   private func item(_ title: Text) -> some View {
     Label {
       title
@@ -896,19 +929,10 @@ private struct FreePlanIncludes: View {
   }
 }
 
-/// Main's pricing questions. Only a visitor sees the Free card, so for anyone else the free plan's
-/// question starts open.
+/// Main's pricing questions.
 private struct PlusQuestions: View {
   let limits: FreePlan
   let viewer: PlusViewer
-
-  @State private var isFreePlanOpen: Bool
-
-  init(limits: FreePlan, viewer: PlusViewer) {
-    self.limits = limits
-    self.viewer = viewer
-    _isFreePlanOpen = State(initialValue: viewer != .visitor)
-  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -925,7 +949,7 @@ private struct PlusQuestions: View {
         .foregroundStyle(.secondary)
       }
 
-      DisclosureGroup(isExpanded: $isFreePlanOpen) {
+      DisclosureGroup {
         freePlanAnswer
       } label: {
         question(
@@ -974,7 +998,7 @@ private struct PlusQuestions: View {
 
   @ViewBuilder
   private var freePlanAnswer: some View {
-    if viewer != .member, let guestLessons = limits.guestLessons {
+    if viewer == .visitor || viewer == .guest, let guestLessons = limits.guestLessons {
       answer(
         Text(
           "Start free with \(guestLessons) lessons, no account needed. With a free account, you get:",
