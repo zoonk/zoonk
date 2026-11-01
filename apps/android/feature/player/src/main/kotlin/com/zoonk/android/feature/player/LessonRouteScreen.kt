@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -167,6 +168,7 @@ internal fun PlayingLesson(
                 lessonStarted = app.catalog.lessonStarted[route.lessonId],
                 chapters = app.goalContent,
                 analytics = app.analytics,
+                saved = createSavedStateHandle(),
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()

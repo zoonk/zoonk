@@ -569,10 +569,17 @@ private fun Content(
             // A new screen starts at its top; the same one recreated (the book folding, a rotation) stays where it was.
             var scrolledTo by rememberSaveable { mutableStateOf<String?>(null) }
             val screenKey = "${step.id}:${state.position}"
-            // "From the lesson" sits in the one column or on the page before the fold, so whether it's open is kept here.
-            var recapOpen by rememberSaveable(step.id, state.position) { mutableStateOf(false) }
-            val recap = @Composable { LessonRecap(state, screen, recapOpen) { recapOpen = it } }
-            val work = rememberScreenWork(canvasWork, step.id, state.position, state.round(step.id))
+            // "From the lesson" sits in the one column or on the page before the fold, so the screens it's open on are kept
+            // here, each for its round.
+            var openRecaps by rememberSaveable { mutableStateOf(emptyList<String>()) }
+            val round = "${step.id}:${state.round(step.id)}"
+            val recap = @Composable {
+                LessonRecap(state, screen, round in openRecaps) {
+                    openRecaps =
+                        if (it) openRecaps + round else openRecaps - round
+                }
+            }
+            val work = rememberScreenWork(canvasWork, step.id, state.round(step.id))
 
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {

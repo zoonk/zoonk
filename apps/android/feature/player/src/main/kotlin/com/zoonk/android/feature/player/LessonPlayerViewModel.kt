@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AnalyticsEvent
@@ -171,6 +172,7 @@ class LessonPlayerViewModel(
     private val lessonStarted: Resource<Boolean>? = null,
     private val chapters: GoalContentStore? = null,
     private val analytics: EventTracker = EventTracker {},
+    private val saved: SavedStateHandle = SavedStateHandle(),
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -251,9 +253,11 @@ class LessonPlayerViewModel(
 
     fun dispatch(action: LessonAction) {
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
-        val before = mutableState.value?.completion?.status
+        val before = mutableState.value
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
-        if (mutableState.value?.completion?.status == CompletionStatus.Saving && before != CompletionStatus.Saving) saveCompletion()
+        val after = mutableState.value ?: return
+        if (after.completion?.status == CompletionStatus.Saving && before?.completion?.status != CompletionStatus.Saving) saveCompletion()
+        if (after.rounds != before?.rounds) saved[ROUNDS] = HashMap(after.rounds)
     }
 
     fun select(answer: LessonAnswer?) {
@@ -490,7 +494,9 @@ class LessonPlayerViewModel(
         run: LibraryLessonRun,
     ): LessonPlayerState {
         val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started)
+        // A screen's canvas work comes back under its round after Android closes the app in the background.
+        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
+        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started).copy(rounds = rounds)
         state = reduce(state, run.toStartedAction(), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -759,6 +765,7 @@ class LessonPlayerViewModel(
         const val MAX_ANSWER_DURATION_MS = 3_600_000L
         const val UNPROCESSABLE = 422
         val REFUSED_CHECK_STATUSES = setOf(400, 404, 409, 422)
+        const val ROUNDS = "rounds"
     }
 }
 

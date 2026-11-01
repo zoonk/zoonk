@@ -14,6 +14,7 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -92,6 +93,8 @@ internal class LessonPlayerHarness(
         chapters = GoalContentStore(chapterApi, cache)
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
+        // What Android keeps for the screen when it closes the app in the background.
+        val saved = SavedStateHandle()
         val newViewModel = {
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
@@ -105,6 +108,7 @@ internal class LessonPlayerHarness(
                 activeGoalId = { GOAL_ID },
                 lessonStarted = catalog.lessonStarted[LESSON_ID],
                 chapters = chapters,
+                saved = saved,
             )
         }
         viewModel = newViewModel()

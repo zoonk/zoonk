@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -46,5 +47,26 @@ class ActivityKitFlowTest {
         rule.onNodeWithText("Check").assertIsEnabled()
         harness.tap("Check")
         shows("It leads to Pine.")
+    }
+
+    /** A missed check that comes back starts a new round, which Android keeps when it closes the app, so its path and answer come back together. */
+    @Test
+    fun aCanvasInALaterRoundComesBackWholeAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(ActivityFixtures.step("decisionTree")), restoration = restoration) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("decisionTree")) }
+        }
+        tap("Needles")
+        tap("In bundles")
+        harness.tap("Check")
+        harness.tap("Continue")
+        tap("Needles")
+        tap("In bundles")
+
+        harness.viewModel = harness.openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithContentDescription("Your answers").assertExists()
+        rule.onNodeWithText("Check").assertIsEnabled()
     }
 }

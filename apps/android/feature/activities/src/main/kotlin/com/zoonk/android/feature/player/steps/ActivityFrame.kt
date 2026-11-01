@@ -167,10 +167,10 @@ internal fun ActivityView(
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
-    val kept = LocalScreenWork.current?.keptAnswer
+    val work = LocalScreenWork.current
     val onAnswerChange = { next: ActivityAnswer? ->
         if (!locked) {
-            kept?.value = next
+            work?.keptAnswer = next
             actions.select(next?.let(LessonAnswer::Activity))
         }
     }
@@ -203,7 +203,7 @@ internal fun ActivityView(
     }
 
     // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
-    if (part.showsTurn) LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.value?.let(onAnswerChange) }
+    if (part.showsTurn) LaunchedEffect(step.id) { if (activityAnswer == null && result == null) work?.keptAnswer?.let(onAnswerChange) }
 
     QuestionScene {
         if (part.showsScreen) {

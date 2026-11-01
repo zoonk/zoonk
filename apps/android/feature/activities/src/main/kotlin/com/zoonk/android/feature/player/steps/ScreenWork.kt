@@ -8,13 +8,12 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.zoonk.android.feature.activities.jsonSaver
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.api.ApiJson
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.Serializable
 
 /**
  * What the learner did on a screen, which the lesson keeps for the screen's round (exactly as long as
@@ -24,9 +23,17 @@ import kotlinx.serialization.encodeToString
  */
 @Stable
 class ScreenWork internal constructor(
+    private val id: String,
     internal val canvas: @Composable (@Composable () -> Unit) -> Unit,
-    internal val keptAnswer: MutableState<ActivityAnswer?>,
-)
+    private val kept: MutableState<KeptAnswer?>,
+) {
+    /** Only this screen's: Android may bring back a copy saved on another screen when the lesson resumes elsewhere. */
+    internal var keptAnswer: ActivityAnswer?
+        get() = kept.value?.takeIf { it.screen == id }?.answer
+        set(answer) {
+            kept.value = answer?.let { KeptAnswer(id, it) }
+        }
+}
 
 val LocalScreenWork = staticCompositionLocalOf<ScreenWork?> { null }
 
@@ -34,11 +41,11 @@ val LocalScreenWork = staticCompositionLocalOf<ScreenWork?> { null }
 fun rememberScreenWork(
     holder: SaveableStateHolder,
     stepId: String,
-    position: Int,
     round: Int,
 ): ScreenWork {
+    val id = workKey(stepId, round)
     val part =
-        remember(stepId, position) {
+        remember(stepId) {
             movableContentOf {
                 key: String,
                 content: @Composable () -> Unit,
@@ -46,11 +53,11 @@ fun rememberScreenWork(
                 holder.SaveableStateProvider(key, content)
             }
         }
-    val keptAnswer = rememberSaveable(stepId, position, round, stateSaver = KeptAnswerSaver) { mutableStateOf<ActivityAnswer?>(null) }
+    val kept = rememberSaveable(id, stateSaver = KeptAnswerSaver) { mutableStateOf<KeptAnswer?>(null) }
 
     LaunchedEffect(stepId, round) { if (round > 0) holder.removeState(workKey(stepId, round - 1)) }
 
-    return remember(part, keptAnswer, stepId, round) { ScreenWork({ content -> part(workKey(stepId, round), content) }, keptAnswer) }
+    return remember(part, kept, id) { ScreenWork(id, { content -> part(id, content) }, kept) }
 }
 
 /** Outside a lesson a canvas keeps its work itself. */
@@ -60,10 +67,15 @@ internal fun ScreenCanvas(content: @Composable () -> Unit) {
     if (work == null) content() else work.canvas(content)
 }
 
+@Serializable
+internal data class KeptAnswer(
+    val screen: String,
+    val answer: ActivityAnswer,
+)
+
 private fun workKey(
     stepId: String,
     round: Int,
 ) = "$stepId:$round"
 
-private val KeptAnswerSaver: Saver<ActivityAnswer?, String> =
-    Saver(save = { answer -> answer?.let { ApiJson.encodeToString(it) } }, restore = { ApiJson.decodeFromString(it) })
+private val KeptAnswerSaver = jsonSaver(ApiJson, KeptAnswer.serializer())
