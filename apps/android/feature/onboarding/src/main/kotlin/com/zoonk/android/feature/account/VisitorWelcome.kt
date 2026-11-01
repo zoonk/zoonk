@@ -78,6 +78,7 @@ fun VisitorWelcome(
     var goal by rememberSaveable { mutableStateOf("") }
 
     PageWithSupportingPane(
+        atFoldOnly = true,
         supportingPane = {
             GoalExamples(
                 examples = rememberGoalExamples(),

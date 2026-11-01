@@ -6,6 +6,7 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
@@ -54,6 +55,19 @@ class VisitorWelcomeOpenBookTest {
         assertTrue("the examples start after the fold: $examples", examples.left.value >= FOLD)
         rule.onNodeWithText("pass the bar exam").assertExists()
         assertEquals(emptyList<String>(), sent)
+    }
+
+    /** Tablets keep main's one column: only a book's fold faces the box with its examples. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun aTabletKeepsTheExamplesUnderTheBox() {
+        rule.setContent {
+            ZoonkTheme { VisitorWelcome(rememberAppNavigator(), PaddingValues(), isSending = false, error = null, onSend = { sent += it }) }
+        }
+
+        val box = rule.onNode(hasSetTextAction()).getUnclippedBoundsInRoot()
+        val examples = rule.onNodeWithText("Examples").performScrollTo().getUnclippedBoundsInRoot()
+        assertTrue("the examples sit under the box: $examples, $box", examples.top >= box.bottom && examples.left < box.right)
     }
 
     private companion object {

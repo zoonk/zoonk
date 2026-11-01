@@ -271,6 +271,7 @@ private fun FirstGoal(
         }
 
     PageWithSupportingPane(
+        atFoldOnly = true,
         supportingPane = {
             GoalExamples(
                 examples = rememberGoalExamples(),
