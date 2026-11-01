@@ -1288,7 +1288,7 @@ msgstr "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życi
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
 msgid "Cancel Plus"
-msgstr "Rezygnacja z pakietu Plus"
+msgstr "Zrezygnuj z pakietu Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "2LA7kt"
