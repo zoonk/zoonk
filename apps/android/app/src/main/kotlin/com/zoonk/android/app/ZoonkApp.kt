@@ -42,6 +42,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
@@ -118,7 +122,9 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.LocalTabRootBar
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TabRootBar
+import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageDirective
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
@@ -239,7 +245,7 @@ fun AppShell(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val snackbarAnchors = remember { SnackbarAnchors() }
-    val entries = navigator.rememberEntries(remember(entryProvider) { { key: NavKey -> entryProvider(key).beforeFoldOnItsOwn(key) } })
+    val entries = navigator.rememberEntries(remember(entryProvider) { { key: NavKey -> entryProvider(key).onItsOwn(key, entryProvider) } })
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
     CompositionLocalProvider(
@@ -314,14 +320,54 @@ private fun <T : Any> listLed(listDetail: SceneStrategy<T>): SceneStrategy<T> =
     }
 
 /**
- * A list or its detail shown on its own keeps to the page before an unfolded book's fold, as other
- * one-column screens do: where only one pane fits, as with large text, or for a detail opened on its
- * own, Navigation 3 shows the entry across the window. Beside each other, the fold crosses neither.
+ * A list or its detail shown on its own, where only one pane fits (as with large text) or for a
+ * detail opened on its own (Help from the account menu), which Navigation 3 shows across the window.
+ * Across an unfolded book's fold a settings page faces the settings list, as main shows its settings
+ * tabs over every settings page, and anything else keeps to the page before the fold, as other
+ * one-column screens do. Beside each other, the fold crosses neither.
  */
-private fun NavEntry<NavKey>.beforeFoldOnItsOwn(key: NavKey): NavEntry<NavKey> {
+private fun NavEntry<NavKey>.onItsOwn(
+    key: NavKey,
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
+): NavEntry<NavKey> {
     if (PANE_ROLE !in metadata) return this
     val entry = this
-    return NavEntry(key, contentKey, metadata) { BeforeFold { beforeFold -> Box(beforeFold.fillMaxSize()) { entry.Content() } } }
+    val hub = AppRoute.Settings.takeIf { key != it && (key as? AppRoute)?.section == AppSection.Settings }
+
+    return NavEntry(key, contentKey, metadata) {
+        if (hub == null) {
+            BeforeFold { beforeFold -> Box(beforeFold.fillMaxSize()) { entry.Content() } }
+        } else {
+            val list = remember { entryProvider(hub) }
+            BesideItsListAtFold(list = { list.Content() }) { entry.Content() }
+        }
+    }
+}
+
+/** [detail] keeps one place whether or not [list] shows beside it, so what it holds stays as the book opens or closes. */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun BesideItsListAtFold(
+    list: @Composable () -> Unit,
+    detail: @Composable () -> Unit,
+) {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val directive = pageDirective(maxWidth, span, atFoldOnly = true)
+
+        ListDetailPaneScaffold(
+            directive = directive,
+            value =
+                ThreePaneScaffoldValue(
+                    primary = PaneAdaptedValue.Expanded,
+                    secondary = if (directive.maxHorizontalPartitions > 1) PaneAdaptedValue.Expanded else PaneAdaptedValue.Hidden,
+                    tertiary = PaneAdaptedValue.Hidden,
+                ),
+            listPane = { AnimatedPane { list() } },
+            detailPane = { AnimatedPane { detail() } },
+        )
+    }
 }
 
 // Material keeps its pane roles' metadata types to itself, so its list's are read off listPane().
