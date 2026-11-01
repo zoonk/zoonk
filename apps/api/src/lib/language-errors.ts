@@ -76,7 +76,7 @@ export function conversationRefusalError(
 export function invalidAudioError() {
   return createErrorResponse({
     code: "INVALID_AUDIO",
-    message: "Send a WebM, MP4, M4A, MP3 or WAV recording up to 2 MB",
+    message: "Send a WebM, MP4 or M4A recording up to 2 MB and a minute long",
     status: httpStatus.badRequest,
   });
 }

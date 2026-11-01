@@ -12,7 +12,7 @@ export const spokenAnswerRequestSchema = spokenAnswerFieldsSchema
       .file()
       .meta({
         description:
-          "The recording: WebM (Opus), MP4 or M4A (AAC), MP3 or WAV, up to 2 MB. Never kept.",
+          "The recording: WebM (Opus) or MP4 and M4A (AAC), up to 2 MB and a minute. Never kept.",
       }),
   })
   .meta({ id: "SpokenAnswerRequest" });
@@ -63,7 +63,7 @@ export const levelTestSpokenAnswerRequestSchema = z
       .file()
       .meta({
         description:
-          "The recording: WebM (Opus), MP4 or M4A (AAC), MP3 or WAV, up to 2 MB. Never kept.",
+          "The recording: WebM (Opus) or MP4 and M4A (AAC), up to 2 MB and a minute. Never kept.",
       }),
   })
   .meta({ id: "LanguageLevelTestSpokenAnswerRequest" });

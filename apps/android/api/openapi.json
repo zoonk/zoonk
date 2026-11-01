@@ -24118,7 +24118,7 @@
             "type": "string",
             "format": "binary",
             "contentEncoding": "binary",
-            "description": "The recording: WebM (Opus), MP4 or M4A (AAC), MP3 or WAV, up to 2 MB. Never kept."
+            "description": "The recording: WebM (Opus) or MP4 and M4A (AAC), up to 2 MB and a minute. Never kept."
           }
         },
         "required": [
@@ -24165,7 +24165,7 @@
             "type": "string",
             "format": "binary",
             "contentEncoding": "binary",
-            "description": "The recording: WebM (Opus), MP4 or M4A (AAC), MP3 or WAV, up to 2 MB. Never kept."
+            "description": "The recording: WebM (Opus) or MP4 and M4A (AAC), up to 2 MB and a minute. Never kept."
           }
         },
         "required": [
@@ -24471,7 +24471,7 @@
             "type": "string",
             "format": "binary",
             "contentEncoding": "binary",
-            "description": "The recording of the word: WebM (Opus), MP4 or M4A (AAC), MP3 or WAV, up to 2 MB. Never kept."
+            "description": "The recording of the word: WebM (Opus) or MP4 and M4A (AAC), up to 2 MB and a minute. Never kept."
           }
         },
         "required": [

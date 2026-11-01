@@ -25,16 +25,6 @@ describe(resolveAudioMediaType, () => {
     expect(resolveAudioMediaType({ bytes: bytes([26, 69, 223, 163]), declared: "" })).toBe(
       "audio/webm",
     );
-
-    expect(
-      resolveAudioMediaType({ bytes: bytes("RIFF", [0, 0, 0, 0], "WAVE"), declared: generic }),
-    ).toBe("audio/wav");
-
-    expect(resolveAudioMediaType({ bytes: bytes("ID3"), declared: generic })).toBe("audio/mpeg");
-
-    expect(resolveAudioMediaType({ bytes: bytes([255, 251]), declared: generic })).toBe(
-      "audio/mpeg",
-    );
   });
 
   it("leaves bytes it can't name with their declared type", () => {

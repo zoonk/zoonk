@@ -3,15 +3,8 @@ import { z } from "zod";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { answerTimeZoneSchema } from "../../learner/contract";
 
-const SPOKEN_AUDIO_MEDIA_TYPES = [
-  "audio/webm",
-  "audio/mp4",
-  "audio/m4a",
-  "audio/x-m4a",
-  "audio/mpeg",
-  "audio/wav",
-  "audio/x-wav",
-] as const;
+/** What every app records: Opus in WebM, or AAC in MP4. */
+const SPOKEN_AUDIO_MEDIA_TYPES = ["audio/webm", "audio/mp4", "audio/m4a", "audio/x-m4a"] as const;
 
 export const MAX_SPOKEN_AUDIO_BYTES = 2_000_000;
 

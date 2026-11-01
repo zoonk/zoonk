@@ -33,6 +33,15 @@ const OVER_A_MINUTE = new Uint8Array(
   readFileSync(new URL("_test-utils/over-a-minute.webm", import.meta.url)),
 );
 
+/** The same audio with its WebM `TimestampScale` cut 1,000-fold: its timestamps claim 61 ms. */
+function withShrunkTimestamps(recording: Uint8Array): Uint8Array {
+  const scale = Buffer.from("2ad7b1830f4240", "hex");
+  const at = Buffer.from(recording).indexOf(scale);
+  const forged = new Uint8Array(recording);
+  forged.set(Buffer.from("0003e8", "hex"), at + scale.length - 3);
+  return forged;
+}
+
 const FIELDS = { durationMs: 2400, timeZone: "America/Sao_Paulo" };
 
 function mockTranscript(text: string) {
@@ -116,6 +125,8 @@ describe(gradeSpokenAnswer, () => {
         { bytes: new Uint8Array(2_000_001), mediaType: "audio/webm" },
         { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
         { bytes: OVER_A_MINUTE, mediaType: "audio/webm" },
+        { bytes: withShrunkTimestamps(OVER_A_MINUTE), mediaType: "audio/webm" },
+        { bytes: AUDIO.bytes, mediaType: "audio/mpeg" },
       ].map((audio) => gradeSpokenAnswer({ audio, fields: FIELDS, stepId: step.id })),
     );
 
@@ -123,7 +134,7 @@ describe(gradeSpokenAnswer, () => {
     expect(assessPronunciation).not.toHaveBeenCalled();
 
     expect(results).toStrictEqual(
-      Array.from({ length: 5 }, () => ({ status: "fulfilled", value: { status: "invalidAudio" } })),
+      Array.from({ length: 7 }, () => ({ status: "fulfilled", value: { status: "invalidAudio" } })),
     );
   });
 
