@@ -39,6 +39,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -273,27 +274,27 @@ fun LessonPlayer(
     val primaryFocus = remember { FocusRequester() }
     val canvasWork = rememberSaveableStateHolder()
     var asking by rememberSaveable { mutableStateOf(false) }
+    // Ask opened beside the screen on an open book sits on the page after the fold, so it hides while the device is closed.
+    var askedOnSpread by rememberSaveable { mutableStateOf(false) }
+    var spread by remember { mutableStateOf(false) }
     // A suggestion the help beside a teaching screen put in the buddy's composer, until the buddy takes it.
     var offerId by rememberSaveable { mutableStateOf<String?>(null) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val stepId = screen?.step?.id
     val closeOffer = { if (stepId != null) closedOffers = closedOffers + stepId }
+    val ask = {
+        asking = true
+        askedOnSpread = spread
+        closeOffer()
+    }
     val touches = remember { mutableIntStateOf(0) }
     val offer: (@Composable (BuddyOfferReason) -> Unit)? =
         if (tutor == null || stepId in closedOffers) {
             null
         } else {
             { reason ->
-                AskBuddyOffer(
-                    reason,
-                    tutor.identity,
-                    onAsk = {
-                        asking = true
-                        closeOffer()
-                    },
-                    onDismiss = closeOffer,
-                )
+                AskBuddyOffer(reason, tutor.identity, onAsk = ask, onDismiss = closeOffer)
             }
         }
     val help: (@Composable () -> Unit)? =
@@ -301,8 +302,7 @@ fun LessonPlayer(
             {
                 ScreenHelp(buddy) { suggestion ->
                     offerId = suggestion?.id
-                    asking = true
-                    closeOffer()
+                    ask()
                 }
             }
         }
@@ -372,13 +372,10 @@ fun LessonPlayer(
                                 tutor?.askButton?.invoke(
                                     state.tutorScope(screen),
                                     state.showsMiss(screen) && screen.struggleOffer == null,
-                                    asking,
+                                    asking && (spread || !askedOnSpread),
                                     tutor.suggestions.firstOrNull { it.id == offerId },
                                     { offerId = null },
-                                ) { open ->
-                                    asking = open
-                                    if (open) closeOffer()
-                                }
+                                ) { open -> if (open) ask() else asking = false }
                             }
                         }
                     }
@@ -411,7 +408,7 @@ fun LessonPlayer(
                         help,
                         touches,
                         canvasWork,
-                    )
+                    ) { spread = it }
                 }
             }
         }
@@ -538,6 +535,7 @@ private fun Content(
     help: (@Composable () -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
+    onSpread: (Boolean) -> Unit,
 ) {
     val run = state.run
 
@@ -612,6 +610,7 @@ private fun Content(
                         },
                 ) {
                     val fold = spreadFold(maxWidth, span)
+                    SideEffect { onSpread(fold != null) }
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
 
