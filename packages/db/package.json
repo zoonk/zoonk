@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@types/pg": "8.23.1",
+    "@zoonk/ai": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "18.0.9",
     "prisma": "7.10.1",

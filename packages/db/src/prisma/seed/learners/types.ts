@@ -1,3 +1,4 @@
+import { type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import {
   type BuddyGlasses,
   type BuddyKind,
@@ -61,7 +62,7 @@ export type SeedGoal = {
   exam?: string;
   prompt: string;
   title: string;
-  details: Prisma.InputJsonObject;
+  details: Omit<UnderstoodGoal, "kind" | "subject" | "title"> & Prisma.InputJsonObject;
   targetDate?: Date;
   dailyMinutes: number;
   studyTime: string;

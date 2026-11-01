@@ -220,7 +220,7 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
       examYear: edition.year,
       level: "intermediate",
       studyDays: ["mon", "tue", "wed", "thu", "fri", "sat"],
-      targetScore: 720,
+      targetScore: "720",
       university: "UFMG",
     },
     exam: "enem",
