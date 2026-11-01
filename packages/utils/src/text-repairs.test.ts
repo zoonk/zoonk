@@ -63,6 +63,12 @@ describe(repairMarkdown, () => {
     expect(findUnrenderedMarkdown({ layout: "blocks", text: repaired })).toStrictEqual([]);
   });
 
+  it("turns links with a parenthesized or escaped title into plain words", () => {
+    const text = String.raw`[Ligue](tel:+5511999999999 (Central)) ou [veja](https://x.test "a \"b\"").`;
+
+    expect(repairMarkdown({ layout: "inline", text })).toBe("Ligue ou veja.");
+  });
+
   it("keeps a list's marks and a comparison that only looks like a quote", () => {
     const text = "- **um item\n> 5 anos: acima do limite";
     const repaired = repairMarkdown({ layout: "blocks", text });

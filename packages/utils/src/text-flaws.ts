@@ -19,7 +19,9 @@ const BLOCK_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: /^\s*```/u, problem: "a code fence" },
 ];
 
-export const MARKDOWN_LINK = /!?\[(?<text>[^\]\n]+)\]\([^)\s]+(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\)/u;
+/** CommonMark's `[text](url)`, with or without a title in quotes or parentheses. */
+export const MARKDOWN_LINK =
+  /!?\[(?<text>[^\]\n]+)\]\([^)\s]+(?:\s+(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|\([^()\n]*\)))?\)/u;
 
 /** CommonMark's `<scheme:address>` and `<name@example.com>`, which renderers turn into links. */
 export const AUTOLINK = /<(?<address>[a-z][a-z\d+.-]{1,31}:[^\s<>]*|[^\s<>@]+@[^\s<>@]+)>/iu;
