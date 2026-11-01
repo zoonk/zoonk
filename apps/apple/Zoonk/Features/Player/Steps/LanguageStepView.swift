@@ -656,7 +656,7 @@ private struct HintedWord: View {
       isShown = true
     } label: {
       Text(word)
-        .underline(pattern: .dot, color: .secondary)
+        .textRenderer(DottedUnderline(word: word))
         .contentShape(.rect.inset(by: -8))
     }
     .buttonStyle(.plain)
@@ -669,6 +669,64 @@ private struct HintedWord: View {
         .presentationCompactAdaptation(.popover)
         .accessibilitySizeStyles()
     }
+  }
+}
+
+/// Main's dotted underline, under the letters on every line. The system's dot pattern leaves gaps
+/// as wide as the space between two prompt words, so two hinted phrases side by side would read as
+/// one, and the punctuation around a phrase ("por mês?") isn't part of what it translates.
+private struct DottedUnderline: TextRenderer {
+  let word: String
+
+  func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+    let characters = Array(word.utf16)
+    let glyphsByLine = layout.map { line in line.flatMap { $0 } }
+    let start = glyphsByLine.joined().flatMap(\.characterIndices).min()
+
+    for (line, glyphs) in zip(layout, glyphsByLine) {
+      let letters = glyphs.filter { glyph in
+        glyph.characterIndices.contains { index in
+          start.map { Self.isLetter(characters, at: $0.distance(to: index)) } ?? false
+        }
+      }
+
+      if let minX = letters.map(\.typographicBounds.rect.minX).min(),
+        let maxX = letters.map(\.typographicBounds.rect.maxX).max()
+      {
+        context.fill(
+          Self.dots(from: minX, to: maxX, below: line.typographicBounds),
+          with: .style(.foreground.opacity(0.5)))
+      }
+
+      context.draw(line)
+    }
+  }
+
+  private static func isLetter(_ characters: [UInt16], at offset: Int) -> Bool {
+    guard characters.indices.contains(offset), let scalar = Unicode.Scalar(characters[offset])
+    else {
+      return true
+    }
+
+    return CharacterSet.alphanumerics.contains(scalar)
+  }
+
+  private static func dots(
+    from minX: CGFloat, to maxX: CGFloat, below line: Text.Layout.TypographicBounds
+  ) -> Path {
+    let size = line.descent * 0.35
+    let top = line.origin.y + line.descent
+    let width = maxX - minX
+    let count = max(Int((width + size) / (size * 2)), 1)
+    let step = count > 1 ? (width - size) / CGFloat(count - 1) : 0
+    var dots = Path()
+
+    for index in 0..<count {
+      dots.addEllipse(
+        in: CGRect(x: minX + CGFloat(index) * step, y: top, width: size, height: size))
+    }
+
+    return dots
   }
 }
 
