@@ -56,6 +56,15 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("reviewAlphabetLesson"),
   }),
   z.object({ input: z.object({ sourceId: z.uuid() }), kind: z.literal("checkUploadVisibility") }),
+  z.object({ input: z.object({}), kind: z.literal("endWebPlusBesideStore") }),
+  z.object({
+    input: z.object({
+      locale: z.string(),
+      store: z.enum(["apple", "google"]),
+      subscriptionId: z.uuid(),
+    }),
+    kind: z.literal("askToCancelSecondStorePlus"),
+  }),
 ]);
 
 export type FollowUp = z.infer<typeof followUpSchema>;

@@ -1,0 +1,358 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { sendEmail } from "@zoonk/mailer";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { guestAuth, signUp } from "../guests/_test-utils/guest-auth";
+import pt from "../translations/pt.json";
+import { endWebPlusBesideStorePlus } from "./settle-web-plus";
+import type Stripe from "stripe";
+
+vi.hoisted(() => {
+  process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
+});
+
+const DAY_MS = 86_400_000;
+const CUSTOMER = "cus_plus";
+
+const stripe = vi.hoisted(() => ({
+  cancel: vi.fn(),
+  checkout: vi.fn(),
+  constructEvent: vi.fn(),
+  createCustomer: vi.fn(),
+  createPreview: vi.fn(),
+  list: vi.fn(),
+  listPrices: vi.fn(),
+  paymentIntent: vi.fn(),
+  refund: vi.fn(),
+  retrieve: vi.fn(),
+  retrieveInvoice: vi.fn(),
+  searchCustomers: vi.fn(),
+  voidInvoice: vi.fn(),
+}));
+
+// Stripe and the mailer are external services; the learner's subscription rows are real.
+vi.mock("./client", () => ({
+  stripeClient: {
+    checkout: { sessions: { create: stripe.checkout } },
+    customers: { create: stripe.createCustomer, search: stripe.searchCustomers },
+    invoices: {
+      createPreview: stripe.createPreview,
+      retrieve: stripe.retrieveInvoice,
+      voidInvoice: stripe.voidInvoice,
+    },
+    paymentIntents: { retrieve: stripe.paymentIntent },
+    prices: { list: stripe.listPrices },
+    refunds: { create: stripe.refund },
+    subscriptions: { cancel: stripe.cancel, list: stripe.list, retrieve: stripe.retrieve },
+    webhooks: { constructEventAsync: stripe.constructEvent },
+  },
+}));
+
+vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn().mockResolvedValue({ error: null }) }));
+
+type Billed = { refunded: number; status: Stripe.Subscription.Status };
+
+/** Stripe's side of a learner's website subscriptions: refunds and cancels change what it reads next. */
+function fakeStripe() {
+  const subscriptions = new Map<string, Billed>();
+  const now = Math.floor(Date.now() / 1000);
+
+  const read = (id: string) => {
+    const { status } = subscriptions.get(id) ?? { status: "canceled" };
+
+    return {
+      cancel_at: null,
+      cancel_at_period_end: false,
+      canceled_at: status === "canceled" ? now : null,
+      customer: CUSTOMER,
+      ended_at: status === "canceled" ? now : null,
+      id,
+      items: {
+        data: [
+          {
+            current_period_end: now + 30 * 86_400,
+            current_period_start: now,
+            id: `si_${id}`,
+            price: {
+              id: "price_plus",
+              lookup_key: "plus_monthly",
+              recurring: { interval: "month" },
+            },
+          },
+        ],
+      },
+      latest_invoice: {
+        amount_paid: status === "past_due" ? 0 : 999,
+        currency: "eur",
+        id: `in_${id}`,
+        payments: { data: [{ payment: { payment_intent: `pi_${id}` }, status: "paid" }] },
+        status: status === "past_due" ? "open" : "paid",
+      },
+      metadata: { locale: "pt" },
+      start_date: now,
+      status,
+    } as unknown as Stripe.Subscription;
+  };
+
+  const byPaymentIntent = (paymentIntent: string) => {
+    const id = paymentIntent.replace(/^pi_/u, "");
+    return { id, state: subscriptions.get(id) };
+  };
+
+  stripe.list.mockImplementation(async () => ({
+    data: [...subscriptions.entries()]
+      .filter(([, { status }]) => status !== "canceled")
+      .map(([id]) => read(id)),
+  }));
+
+  stripe.retrieve.mockImplementation(async (id: string) => read(id));
+
+  stripe.paymentIntent.mockImplementation(async (paymentIntent: string) => ({
+    latest_charge: { amount_refunded: byPaymentIntent(paymentIntent).state?.refunded ?? 0 },
+  }));
+
+  stripe.refund.mockImplementation(
+    async ({ amount, payment_intent }: { amount: number; payment_intent: string }) => {
+      const { state } = byPaymentIntent(payment_intent);
+
+      if (state) {
+        state.refunded += amount;
+      }
+
+      return { id: `re_${payment_intent}`, status: "succeeded" };
+    },
+  );
+
+  stripe.cancel.mockImplementation(async (id: string) => {
+    const state = subscriptions.get(id);
+
+    if (state) {
+      state.status = "canceled";
+    }
+
+    return read(id);
+  });
+
+  return {
+    add(status: Stripe.Subscription.Status) {
+      const id = `sub_${randomUUID()}`;
+      subscriptions.set(id, { refunded: 0, status });
+      return id;
+    },
+  };
+}
+
+async function learner() {
+  const { headers, userId } = await signUp({ email: `plus-${randomUUID()}@example.test` });
+  await prisma.user.update({ data: { stripeCustomerId: CUSTOMER }, where: { id: userId } });
+  return { headers, userId };
+}
+
+function addStorePlus({
+  periodEnd = new Date(Date.now() + 30 * DAY_MS),
+  provider = "apple",
+  userId,
+}: {
+  periodEnd?: Date;
+  provider?: "apple" | "google";
+  userId: string;
+}) {
+  return prisma.subscription.create({
+    data: {
+      periodEnd,
+      plan: "plus",
+      provider,
+      providerSubscriptionId: randomUUID(),
+      referenceId: userId,
+      status: "active",
+      userId,
+    },
+  });
+}
+
+/** Better Auth saves this row when a checkout starts, while the learner is free. */
+function addCheckoutRow(userId: string) {
+  return prisma.subscription.create({
+    data: { plan: "plus", referenceId: userId, status: "incomplete", stripeCustomerId: CUSTOMER },
+  });
+}
+
+/** Stripe delivers the event that Checkout completed, as it may more than once. */
+function deliverCheckoutCompleted({
+  rowId,
+  subscriptionId,
+  userId,
+}: {
+  rowId: string;
+  subscriptionId: string;
+  userId: string;
+}) {
+  stripe.constructEvent.mockResolvedValue({
+    data: {
+      object: {
+        client_reference_id: userId,
+        metadata: { referenceId: userId, subscriptionId: rowId, userId },
+        mode: "subscription",
+        subscription: subscriptionId,
+      },
+    },
+    type: "checkout.session.completed",
+  });
+
+  return guestAuth.handler(
+    new Request("http://localhost:3000/api/auth/stripe/webhook", {
+      body: "{}",
+      headers: { "stripe-signature": "signed" },
+      method: "POST",
+    }),
+  );
+}
+
+function sentSubjects() {
+  return vi.mocked(sendEmail).mock.calls.map(([email]) => email.subject);
+}
+
+describe("one Plus per learner on the website", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("refunds and ends a checkout that completes after a store purchase, once across deliveries", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    await addStorePlus({ userId });
+    const subscriptionId = stripeFake.add("active");
+    const delivery = { rowId: row.id, subscriptionId, userId };
+
+    const first = await deliverCheckoutCompleted(delivery);
+    const again = await deliverCheckoutCompleted(delivery);
+
+    expect([first.status, again.status]).toStrictEqual([200, 200]);
+
+    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ amount: 999, payment_intent: `pi_${subscriptionId}` }),
+      expect.anything(),
+    );
+
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscriptionId, expect.anything());
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled" });
+
+    // The learner hears why, in the language they bought in, and never gets a purchase receipt.
+    expect(sentSubjects()).toStrictEqual([pt.plusAlreadyActiveSubject]);
+    expect(stripe.createPreview).not.toHaveBeenCalled();
+  });
+
+  it("fails the webhook while Stripe can't refund, so its next delivery finishes", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    await addStorePlus({ userId });
+    const subscriptionId = stripeFake.add("active");
+    const delivery = { rowId: row.id, subscriptionId, userId };
+
+    stripe.refund.mockRejectedValueOnce(new Error("Stripe is down"));
+
+    const failed = await deliverCheckoutCompleted(delivery);
+
+    expect(failed.status).toBe(400);
+    expect(stripe.cancel).not.toHaveBeenCalled();
+
+    const retried = await deliverCheckoutCompleted(delivery);
+
+    expect(retried.status).toBe(200);
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscriptionId, expect.anything());
+    expect(sentSubjects()).toStrictEqual([pt.plusAlreadyActiveSubject]);
+  });
+
+  it("keeps one of two website checkouts the learner paid, refunding the other", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    const earlier = stripeFake.add("active");
+    await deliverCheckoutCompleted({ rowId: row.id, subscriptionId: earlier, userId });
+
+    // The second checkout was already open, and writes the same row when it completes.
+    const later = stripeFake.add("active");
+    await deliverCheckoutCompleted({ rowId: row.id, subscriptionId: later, userId });
+
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(earlier, expect.anything());
+
+    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ amount: 999, payment_intent: `pi_${earlier}` }),
+      expect.anything(),
+    );
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "active", stripeSubscriptionId: later });
+
+    expect(vi.mocked(sendEmail)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        htmlBody: expect.stringContaining(pt.plusWebEndedTwice),
+        subject: pt.plusAlreadyActiveSubject,
+      }),
+    );
+  });
+
+  it("stops charging an unpaid website renewal once store Plus starts, with nothing to refund", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    await addStorePlus({ provider: "google", userId });
+    stripeFake.add("past_due");
+
+    await expect(endWebPlusBesideStorePlus(userId)).resolves.toMatchObject([
+      { keptStore: "google", refund: null },
+    ]);
+
+    expect(stripe.refund).not.toHaveBeenCalled();
+    expect(stripe.voidInvoice).toHaveBeenCalledOnce();
+    await expect(endWebPlusBesideStorePlus(userId)).resolves.toStrictEqual([]);
+  });
+
+  it("leaves website Plus alone while the learner has no store Plus", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    await addStorePlus({ periodEnd: new Date(Date.now() - DAY_MS), userId });
+    stripeFake.add("active");
+
+    await expect(endWebPlusBesideStorePlus(userId)).resolves.toStrictEqual([]);
+
+    expect(stripe.list).not.toHaveBeenCalled();
+    expect(stripe.cancel).not.toHaveBeenCalled();
+  });
+
+  it("starts a checkout in a row of its own, never a lapsed store subscription's", async () => {
+    fakeStripe();
+    const { headers, userId } = await learner();
+
+    // Apple's expiry hasn't reached us, so the row still says active after its period.
+    const lapsed = await addStorePlus({ periodEnd: new Date(Date.now() - DAY_MS), userId });
+
+    stripe.searchCustomers.mockResolvedValue({ data: [] });
+    stripe.createCustomer.mockResolvedValue({ id: CUSTOMER });
+    stripe.listPrices.mockResolvedValue({ data: [{ id: "price_plus", recurring: {} }] });
+    stripe.checkout.mockResolvedValue({ id: "cs_plus", url: "https://checkout.stripe.com/c/plus" });
+
+    await guestAuth.api.upgradeSubscription({
+      body: { cancelUrl: "/", locale: "en", plan: "plus", successUrl: "/" },
+      headers,
+    });
+
+    const [[checkout]] = stripe.checkout.mock.calls as [[Stripe.Checkout.SessionCreateParams]];
+    const rowId = String(checkout.subscription_data?.metadata?.subscriptionId);
+
+    expect(rowId).not.toBe(lapsed.id);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: lapsed.id } }),
+    ).resolves.toStrictEqual(lapsed);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: rowId } }),
+    ).resolves.toMatchObject({ provider: "stripe", status: "incomplete" });
+  });
+});

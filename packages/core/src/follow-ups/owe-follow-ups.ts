@@ -34,6 +34,10 @@ function getFollowUpKey(followUp: FollowUp): string {
       return `${followUp.input.lessonId}:${followUp.input.version}`;
     case "checkUploadVisibility":
       return followUp.input.sourceId;
+    case "endWebPlusBesideStore":
+      return "webPlus";
+    case "askToCancelSecondStorePlus":
+      return followUp.input.subscriptionId;
     default:
       return followUp satisfies never;
   }

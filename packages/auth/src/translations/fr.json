@@ -57,6 +57,7 @@
   "plusTwiceSubject": "Tu paies Zoonk Plus deux fois",
   "plusWebEndedBesideApple": "Tu as déjà Zoonk Plus via l’App Store, nous avons donc résilié le Plus que tu as acheté sur notre site.",
   "plusWebEndedBesideGoogle": "Tu as déjà Zoonk Plus via Google Play, nous avons donc résilié le Plus que tu as acheté sur notre site.",
+  "plusWebEndedTwice": "Tu t’es abonné deux fois à Zoonk Plus sur notre site, nous avons donc résilié l’abonnement en trop.",
   "plusWithdrawalReceived": "Nous avons reçu ta rétractation le {dateTime}.",
   "plusWithdrawalSubject": "Ton abonnement Zoonk Plus est résilié et remboursé",
   "withdrawalFormIntro": "À remplir et à nous envoyer uniquement si vous souhaitez vous rétracter du contrat.",

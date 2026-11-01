@@ -94,7 +94,7 @@ export function legalLinks(t: Translation): string {
   );
 }
 
-async function send({ body, subject, to }: { body: string; subject: string; to: string }) {
+export async function send({ body, subject, to }: { body: string; subject: string; to: string }) {
   const { error } = await sendEmail({ htmlBody: body, subject, to });
 
   if (error) {

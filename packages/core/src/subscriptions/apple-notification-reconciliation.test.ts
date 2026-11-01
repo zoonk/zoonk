@@ -1,16 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { AutoRenewStatus, NotificationTypeV2, Status, Type } from "@apple/app-store-server-library";
-import {
-  sendPlusTwiceEmail,
-  sendWebPlusEndedBesideStoreEmail,
-} from "@zoonk/auth/duplicate-plus-emails";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { processAppleSubscriptionNotification } from "./process-apple-subscription-notification";
+import { endWebPlusBesideStore } from "./settle-store-plus";
 
 const stripe = vi.hoisted(() => ({
   cancel: vi.fn(),
+  list: vi.fn(),
   paymentIntent: vi.fn(),
   refund: vi.fn(),
   retrieve: vi.fn(),
@@ -21,13 +19,8 @@ vi.mock("@zoonk/auth/stripe-client", () => ({
   stripeClient: {
     paymentIntents: { retrieve: stripe.paymentIntent },
     refunds: { create: stripe.refund },
-    subscriptions: { cancel: stripe.cancel, retrieve: stripe.retrieve },
+    subscriptions: { cancel: stripe.cancel, list: stripe.list, retrieve: stripe.retrieve },
   },
-}));
-
-vi.mock("@zoonk/auth/duplicate-plus-emails", () => ({
-  sendPlusTwiceEmail: vi.fn(),
-  sendWebPlusEndedBesideStoreEmail: vi.fn(),
 }));
 
 function encode(value: unknown) {
@@ -237,6 +230,10 @@ async function addWebPlus(userId: string) {
 
   stripe.retrieve.mockImplementation(async () => read());
 
+  stripe.list.mockImplementation(async () => ({
+    data: state.status === "canceled" ? [] : [read()],
+  }));
+
   stripe.paymentIntent.mockImplementation(async () => ({
     latest_charge: { amount_refunded: state.refunded },
   }));
@@ -251,8 +248,16 @@ async function addWebPlus(userId: string) {
     return read();
   });
 
+  await prisma.user.update({ data: { stripeCustomerId: "cus_plus" }, where: { id: userId } });
+
   return prisma.subscription.create({
     data: { plan: "plus", referenceId: userId, status: "active", stripeSubscriptionId: id },
+  });
+}
+
+function findOwedSettlements(userId: string) {
+  return prisma.followUp.findMany({
+    where: { kind: { in: ["endWebPlusBesideStore", "askToCancelSecondStorePlus"] }, userId },
   });
 }
 
@@ -299,7 +304,7 @@ describe("an App Store purchase beside other Plus", () => {
     vi.unstubAllEnvs();
   });
 
-  it("ends website Plus with a full refund, once across Apple's retries", async () => {
+  it("owes ending website Plus beside it, which ends it with a full refund once", async () => {
     const user = await userFixture();
     const webPlus = await addWebPlus(user.id);
 
@@ -312,6 +317,20 @@ describe("an App Store purchase beside other Plus", () => {
     await processAppleSubscriptionNotification({ signedPayload });
     await processAppleSubscriptionNotification({ signedPayload });
 
+    // Apple's purchase is saved without waiting on Stripe; the workflow settles it after.
+    expect(stripe.retrieve).not.toHaveBeenCalled();
+
+    await expect(findOwedSettlements(user.id)).resolves.toMatchObject([
+      { kind: "endWebPlusBesideStore" },
+    ]);
+
+    const ended = await endWebPlusBesideStore(user.id);
+    await expect(endWebPlusBesideStore(user.id)).resolves.toStrictEqual([]);
+
+    expect(ended).toMatchObject([
+      { email: user.email, keptStore: "apple", locale: "pt", refund: { amount: 999 } },
+    ]);
+
     expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ amount: 999, payment_intent: "pi_plus" }),
       expect.anything(),
@@ -322,21 +341,12 @@ describe("an App Store purchase beside other Plus", () => {
       prorate: false,
     });
 
-    expect(sendWebPlusEndedBesideStoreEmail).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        email: user.email,
-        locale: "pt",
-        refund: { amount: 999, currency: "eur" },
-        store: "apple",
-      }),
-    );
-
     await expect(
       prisma.subscription.findUniqueOrThrow({ where: { id: webPlus.id } }),
     ).resolves.toMatchObject({ status: "canceled" });
   });
 
-  it("asks the learner to cancel a second store's Plus, once", async () => {
+  it("owes asking the learner, once, to cancel a second store's Plus", async () => {
     const user = await userFixture();
     const originalTransactionId = randomUUID();
     const signedDate = new Date();
@@ -354,7 +364,7 @@ describe("an App Store purchase beside other Plus", () => {
     });
 
     const subscribed = appStoreSubscribed({ originalTransactionId, signedDate, userId: user.id });
-    await processAppleSubscriptionNotification({ signedPayload: subscribed });
+    const chain = await processAppleSubscriptionNotification({ signedPayload: subscribed });
     await processAppleSubscriptionNotification({ signedPayload: subscribed });
 
     // A later notification of the same chain while both still give Plus.
@@ -366,11 +376,12 @@ describe("an App Store purchase beside other Plus", () => {
       }),
     });
 
-    expect(sendPlusTwiceEmail).toHaveBeenCalledExactlyOnceWith({
-      email: user.email,
-      store: "apple",
-    });
-
-    expect(stripe.cancel).not.toHaveBeenCalled();
+    await expect(findOwedSettlements(user.id)).resolves.toMatchObject([
+      {
+        input: { locale: "en", store: "apple", subscriptionId: chain?.id },
+        kind: "askToCancelSecondStorePlus",
+        revision: 0,
+      },
+    ]);
   });
 });

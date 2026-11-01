@@ -57,6 +57,7 @@
   "plusTwiceSubject": "Zoonk Plus için iki kez ödüyorsun",
   "plusWebEndedBesideApple": "Zoonk Plus’ı zaten App Store üzerinden kullanıyorsun, bu yüzden web sitemizden aldığın Plus’ı iptal ettik.",
   "plusWebEndedBesideGoogle": "Zoonk Plus’ı zaten Google Play üzerinden kullanıyorsun, bu yüzden web sitemizden aldığın Plus’ı iptal ettik.",
+  "plusWebEndedTwice": "Web sitemizde Zoonk Plus’a iki kez abone oldun, bu yüzden fazla aboneliği iptal ettik.",
   "plusWithdrawalReceived": "Cayma bildirimini {dateTime} tarihinde aldık.",
   "plusWithdrawalSubject": "Zoonk Plus aboneliğin iptal edildi ve ücreti iade edildi",
   "withdrawalFormIntro": "Yalnızca sözleşmeden caymak istiyorsanız doldurup bize gönderin.",

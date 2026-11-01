@@ -1,11 +1,15 @@
 import { stripe } from "@better-auth/stripe";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
 import { z } from "zod";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
+import { sendWebPlusEndedEmail } from "./duplicate-plus-emails";
 import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
+import { findStorePlus, settleWebPlusCheckout } from "./settle-web-plus";
 import { reportSubscriptionChange } from "./subscription-events";
-import { endWebPlusBesideStorePlus } from "./web-plus-beside-store";
+import type Stripe from "stripe";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
@@ -25,9 +29,40 @@ function reportChange(change: "canceled" | "started", subscription: ReportedSubs
   });
 }
 
+/**
+ * Runs after Better Auth saved the checkout's subscription. Unlike its callbacks, a failure here
+ * fails the webhook, so Stripe delivers it again until the learner holds one Plus.
+ */
+async function settleCompletedCheckout(event: Stripe.Event) {
+  if (event.type !== "checkout.session.completed") {
+    return;
+  }
+
+  const checkout = event.data.object;
+  const userId = checkout.client_reference_id ?? checkout.metadata?.referenceId;
+  const subscriptionId = typeof checkout.subscription === "string" ? checkout.subscription : null;
+
+  if (checkout.mode !== "subscription" || !userId || !subscriptionId) {
+    return;
+  }
+
+  const ended = await settleWebPlusCheckout({ subscriptionId, userId });
+
+  await Promise.all(
+    ended.map(async (notice) => {
+      const { error } = await safeAsync(() => sendWebPlusEndedEmail(notice));
+
+      if (error) {
+        logError("Plus email failed", { error });
+      }
+    }),
+  );
+}
+
 export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: false,
+    onEvent: settleCompletedCheckout,
     organization: { enabled: true },
     stripeClient,
     stripeWebhookSecret: webhookSecret,
@@ -49,15 +84,14 @@ export function stripePlugin() {
       onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
       // Stripe confirmed a checkout; the learner may never come back to the page it returns to.
       // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook. A checkout
-      // opened while free can complete after a store purchase, which then keeps Plus, and a
-      // repeated delivery finds the subscription already ended.
+      // opened while free can complete after a store purchase, whose Plus the learner keeps.
       onSubscriptionComplete: async ({ stripeSubscription, subscription }) => {
-        const [, endedBesideStore] = await Promise.all([
+        const [, storePlus] = await Promise.all([
           reportChange("started", subscription),
-          endWebPlusBesideStorePlus(subscription.referenceId),
+          findStorePlus(subscription.referenceId),
         ]);
 
-        if (endedBesideStore || stripeSubscription.status !== "active") {
+        if (storePlus || stripeSubscription.status !== "active") {
           return;
         }
 

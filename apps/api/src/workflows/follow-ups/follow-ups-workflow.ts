@@ -41,9 +41,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
+    case "askToCancelSecondStorePlus":
     case "checkDailyInsight":
     case "checkFactSensitivity":
     case "classifyMistakeCause":
+    case "endWebPlusBesideStore":
     case "findMistakePattern":
     case "rememberOnboarding":
     case "rememberSession":

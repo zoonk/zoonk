@@ -16,6 +16,12 @@ import {
 } from "@zoonk/core/memory/insights/daily";
 import { type MemoryGate, gateMemoryCandidate } from "@zoonk/core/memory/remember-candidate";
 import { resolveMistakeCause } from "@zoonk/core/mistakes/resolve-cause";
+import {
+  type EndedWebPlus,
+  askToCancelSecondStorePlus,
+  endWebPlusBesideStore,
+  tellWebPlusEnded,
+} from "@zoonk/core/subscriptions/settle-store-plus";
 
 export type ProposedMemory = NonNullable<Awaited<ReturnType<typeof proposeSessionMemory>>>;
 
@@ -34,6 +40,23 @@ export async function checkMistakePatternStep(input: { language: string; userId:
 export async function checkFactSensitivityStep(input: { factId: string; statement: string }) {
   "use step";
   await checkFactSensitivity(input);
+}
+
+export async function endWebPlusBesideStoreStep(userId: string): Promise<EndedWebPlus[]> {
+  "use step";
+  return endWebPlusBesideStore(userId);
+}
+
+export async function tellWebPlusEndedStep(notice: EndedWebPlus) {
+  "use step";
+  await tellWebPlusEnded(notice);
+}
+
+export async function askToCancelSecondStorePlusStep(
+  input: Parameters<typeof askToCancelSecondStorePlus>[0],
+) {
+  "use step";
+  await askToCancelSecondStorePlus(input);
 }
 
 export async function voiceWordStep(input: Parameters<typeof voiceWord>[0]) {

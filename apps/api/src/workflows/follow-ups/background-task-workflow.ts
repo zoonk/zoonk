@@ -2,15 +2,18 @@ import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { claimRunToken } from "../_shared/run-token";
 import {
   type ProposedMemory,
+  askToCancelSecondStorePlusStep,
   checkFactSensitivityStep,
   checkMistakePatternStep,
   claimDailyInsightStep,
+  endWebPlusBesideStoreStep,
   gateMemoryCandidateStep,
   proposeOnboardingMemoryStep,
   proposeSessionMemoryStep,
   rememberMemoryCandidateStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
+  tellWebPlusEndedStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -73,6 +76,11 @@ async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> 
   await saveDailyInsightStep({ claim, userId, written });
 }
 
+async function endWebPlusBesideStore(userId: string): Promise<void> {
+  const ended = await endWebPlusBesideStoreStep(userId);
+  await Promise.all(ended.map((notice) => tellWebPlusEndedStep(notice)));
+}
+
 async function runTask(task: BackgroundTask): Promise<void> {
   const { userId } = task;
 
@@ -91,6 +99,10 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return checkFactSensitivityStep(task.input);
     case "voiceWord":
       return voiceWordStep(task.input);
+    case "endWebPlusBesideStore":
+      return endWebPlusBesideStore(userId);
+    case "askToCancelSecondStorePlus":
+      return askToCancelSecondStorePlusStep({ ...task.input, userId });
     default:
       return task satisfies never;
   }

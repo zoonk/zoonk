@@ -40,6 +40,7 @@ import { nameProviderAccount } from "./provider-username";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
+import { stripeRowsOnly } from "./stripe/stripe-rows-only";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
@@ -52,7 +53,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     fallback: getBaseUrl(),
     protocol: isLocalhostSupported() ? "http" : "https",
   },
-  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  database: prismaAdapter(stripeRowsOnly, { provider: "postgresql" }),
   databaseHooks: {
     session: {
       create: {

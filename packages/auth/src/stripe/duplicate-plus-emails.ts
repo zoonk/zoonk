@@ -13,27 +13,47 @@ import {
   paragraph,
   planName,
   renderEmail,
-  sendOnce,
+  send,
 } from "./plus-email-layout";
 
 type StoreProvider = "apple" | "google";
 
-/** Website Plus ended because the learner already pays for Plus through a store. */
-export async function sendWebPlusEndedBesideStoreEmail({
-  email,
-  interval,
-  locale,
-  refund,
-  store,
-  timeZone,
-}: {
+/** A website subscription ended because the learner already had Plus. */
+export type EndedWebPlus = {
   email: string;
   interval: BillingInterval;
+  /** The store whose Plus the learner keeps, or null when it was a second website subscription. */
+  keptStore: StoreProvider | null;
   locale: string;
   refund: Money | null;
-  store: StoreProvider;
   timeZone: string | null;
-}): Promise<void> {
+};
+
+/** Stores don't tell the learner's language: it's the app's request's, or English for a store's own notification. */
+export async function readStorePurchaseLocale(): Promise<string> {
+  const { data: locale } = await safeAsync(getRequestLocale);
+  return locale ?? DEFAULT_LOCALE;
+}
+
+function endedIntro(
+  t: Awaited<ReturnType<typeof getTranslation>>,
+  keptStore: StoreProvider | null,
+) {
+  if (keptStore === "apple") {
+    return t.plusWebEndedBesideApple;
+  }
+
+  return keptStore === "google" ? t.plusWebEndedBesideGoogle : t.plusWebEndedTwice;
+}
+
+export async function sendWebPlusEndedEmail({
+  email,
+  interval,
+  keptStore,
+  locale,
+  refund,
+  timeZone,
+}: EndedWebPlus): Promise<void> {
   const t = await getTranslation(locale);
   const format = formatters({ locale, timeZone });
 
@@ -42,7 +62,7 @@ export async function sendWebPlusEndedBesideStoreEmail({
     : html(t.plusNoMoreCharges);
 
   const body = renderEmail([
-    paragraph(html(store === "apple" ? t.plusWebEndedBesideApple : t.plusWebEndedBesideGoogle)),
+    paragraph(html(endedIntro(t, keptStore))),
     details([
       [t.plusAccountLabel, email],
       [t.plusPlanLabel, planName(t, interval)],
@@ -53,24 +73,21 @@ export async function sendWebPlusEndedBesideStoreEmail({
     legalLinks(t),
   ]);
 
-  await sendOnce({ body, subject: t.plusAlreadyActiveSubject, to: email });
+  await send({ body, subject: t.plusAlreadyActiveSubject, to: email });
 }
 
-/**
- * Stores charge before we hear of a purchase, so a second one can only be canceled by the learner.
- * Stores don't tell the learner's language: it's the app's request's, and English for a store's
- * own notification.
- */
+/** Stores charge before we hear of a purchase, so a second one can only be canceled by the learner. */
 export async function sendPlusTwiceEmail({
   email,
+  locale,
   store,
 }: {
   email: string;
+  locale: string;
   /** Where the newer subscription was bought, which the learner is asked to cancel. */
   store: StoreProvider;
 }): Promise<void> {
-  const { data: locale } = await safeAsync(getRequestLocale);
-  const t = await getTranslation(locale ?? DEFAULT_LOCALE);
+  const t = await getTranslation(locale);
 
   const cancelNewer =
     store === "apple"
@@ -84,5 +101,5 @@ export async function sendPlusTwiceEmail({
     legalLinks(t),
   ]);
 
-  await sendOnce({ body, subject: t.plusTwiceSubject, to: email });
+  await send({ body, subject: t.plusTwiceSubject, to: email });
 }

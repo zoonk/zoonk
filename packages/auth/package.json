@@ -34,7 +34,7 @@
     "./stripe-client": "./src/stripe/client.ts",
     "./stripe-subscription-metadata": "./src/stripe/subscription-metadata.ts",
     "./stop-web-plus": "./src/stripe/stop-web-plus.ts",
-    "./web-plus-beside-store": "./src/stripe/web-plus-beside-store.ts"
+    "./settle-web-plus": "./src/stripe/settle-web-plus.ts"
   },
   "scripts": {
     "test": "vitest run",
