@@ -13,11 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -30,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
@@ -55,7 +54,9 @@ private enum class Side(
 /**
  * A statement to judge (main's `TrueFalseQuestion`): a card swiped toward the end for true or the
  * start for false, and its options in the exam's words in reading order, false first. Where a
- * wrong answer cancels a right one, [allowBlank] adds "Leave blank", which is never red.
+ * wrong answer cancels a right one, [allowBlank] adds "Leave blank", which is never red. [picked]
+ * is the screen's answer before it's checked, so across a spread the card on the screen's page
+ * ([StepPart.Screen]) and the options on the turn's ([StepPart.Turn]) show the same pick.
  */
 @Composable
 fun TrueFalseQuestion(
@@ -63,47 +64,41 @@ fun TrueFalseQuestion(
     words: TrueFalseWords,
     allowBlank: Boolean,
     check: TrueFalseCheck?,
+    picked: Answer?,
     enabled: Boolean,
     onAnswer: (Answer?) -> Unit,
     modifier: Modifier = Modifier,
+    part: StepPart = StepPart.Whole,
 ) {
-    var picked by rememberSaveable { mutableStateOf<Side?>(null) }
     val locked = !enabled || check != null
     val hasTable = remember(statement) { parseRichBlocks(statement).any { it is RichBlock.Table } }
     val sides = if (allowBlank) Side.entries else listOf(Side.False, Side.True)
-    val shown = check?.answer?.let { answer -> Side.entries.first { it.answer == answer } } ?: picked
-
-    fun pick(side: Side) {
-        val next = if (picked == side) null else side
-        picked = next
-        onAnswer(next?.answer)
-    }
-
-    fun pickSide(side: Side) {
-        picked = side
-        onAnswer(side.answer)
-    }
+    val shown = (check?.answer ?: picked)?.let { answer -> Side.entries.firstOrNull { it.answer == answer } }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        StatementCard(
-            statement = statement,
-            graded = check != null,
-            canSwipe = !locked && !hasTable,
-            onSwipe = { isTrue -> pickSide(if (isTrue) Side.True else Side.False) },
-        )
+        if (part.showsScreen) {
+            StatementCard(
+                statement = statement,
+                graded = check != null,
+                canSwipe = !locked && !hasTable,
+                onSwipe = { isTrue -> onAnswer(if (isTrue) Side.True.answer else Side.False.answer) },
+            )
+        }
 
-        AnswerOptionGroup {
-            sides.forEachIndexed { index, side ->
-                val result = sideResult(side, check)
-                if (check != null && result == null && shown != side) return@forEachIndexed
+        if (part.showsTurn) {
+            AnswerOptionGroup {
+                sides.forEachIndexed { index, side ->
+                    val result = sideResult(side, check)
+                    if (check != null && result == null && shown != side) return@forEachIndexed
 
-                AnswerOption(
-                    marker = index + 1,
-                    picked = shown == side,
-                    result = result,
-                    onClick = { pick(side) },
-                    enabled = !locked,
-                ) { Text(text = sideLabel(side, words), style = MaterialTheme.typography.bodyLarge) }
+                    AnswerOption(
+                        marker = index + 1,
+                        picked = shown == side,
+                        result = result,
+                        onClick = { onAnswer(if (shown == side) null else side.answer) },
+                        enabled = !locked,
+                    ) { Text(text = sideLabel(side, words), style = MaterialTheme.typography.bodyLarge) }
+                }
             }
         }
     }

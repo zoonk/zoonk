@@ -68,22 +68,6 @@ interface StepActions {
 }
 
 /**
- * What of a screen a step view draws: all of it in one column, or one page of an unfolded book's
- * spread, the screen (its question or teaching) on the page before the fold and the learner's turn
- * (options, fields, canvases, a reading's picture) on the page after it. A view draws its turn at
- * the same place for [Whole] and [Turn], so work not yet sent stays when the book opens or closes.
- */
-enum class StepPart {
-    Whole,
-    Screen,
-    Turn,
-    ;
-
-    val showsScreen get() = this != Turn
-    val showsTurn get() = this != Screen
-}
-
-/**
  * The one place a screen kind gets its view. A kind without one here ([isPlayable]) is left out
  * when the lesson can do without it, and otherwise the lesson doesn't open: the server finishes a
  * run only once every screen it needs has an answer.

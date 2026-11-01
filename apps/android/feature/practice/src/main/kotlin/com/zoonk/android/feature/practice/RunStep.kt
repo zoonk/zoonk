@@ -1,14 +1,17 @@
 package com.zoonk.android.feature.practice
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -22,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,6 +38,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -44,6 +49,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
 import com.zoonk.android.feature.questions.DrillAnswerNotes
@@ -70,10 +76,16 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.scaffold.PageFold
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -107,50 +119,117 @@ interface RunControls {
 
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. On a wide window
- * a question's passage shows beside it, or else [aside].
+ * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
+ * spread: the passage or [aside] and the question ([StepPart.Screen]) on the page before the fold,
+ * the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
  */
 @Composable
 internal fun RunFrame(
     title: String,
     question: Question?,
+    place: Int,
     app: AppContainer,
     onClose: () -> Unit,
     mainAction: (() -> Unit)?,
     report: FeedbackTarget?,
     progress: @Composable () -> Unit,
-    actions: (@Composable () -> Unit)?,
+    actions: (@Composable (asideShown: Boolean) -> Unit)?,
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
-    content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
+    content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
     val set = question?.set?.takeIf { it.listening == null }
+    val hasAside = set == null && aside != null
+    // Above the task, whose frame starts over as its aside comes or goes, as it does across a fold.
+    val scroll = rememberScrollState()
+    val screenScroll = rememberScrollState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+    // A new question starts at its top; the same one recreated (the book folding, a rotation) stays where it was.
+    var scrolledTo by rememberSaveable { mutableStateOf<Int?>(null) }
 
-    LaunchedEffect(Unit) { focus.requestFocus() }
+    LaunchedEffect(place) {
+        if (scrolledTo != place) {
+            scroll.scrollTo(0)
+            screenScroll.scrollTo(0)
+            scrolledTo = place
+        }
+    }
 
-    TaskScaffold(
-        onClose = onClose,
-        modifier =
-            Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+
+        LaunchedEffect(Unit) { focus.requestFocus() }
+
+        TaskScaffold(
+            onClose = onClose,
+            modifier =
+                Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
+                    when {
+                        event.type != KeyEventType.KeyDown -> false
+                        event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
+                        event.key == Key.Escape -> true.also { onClose() }
+                        else -> false
+                    }
+                },
+            title = { LessonTitle(title) },
+            actions = { report?.let { ReportProblemMenu(app, it) } },
+            closeLabel = closeLabel,
+            bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
+            // A passage takes the rail over the run's own pane, as main's aside; across a fold both lead the page before it.
+            aside =
                 when {
-                    event.type != KeyEventType.KeyDown -> false
-                    event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
-                    event.key == Key.Escape -> true.also { onClose() }
-                    else -> false
+                    fold != null -> null
+                    set != null -> TaskAside(half = isLongText(set.text)) { ItemSetText(set, inAside = true) }
+                    else -> aside?.let { TaskAside(title = asideTitle, content = it) }
+                },
+        ) { padding ->
+            val inlineSet = set == null || fold != null || !taskAsideBeside()
+            val shown = asideShown(hasAside, fold)
+
+            Column(Modifier.padding(padding).fillMaxSize()) {
+                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress() }
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    // The turn's page is the one column's place, so its unsent work stays as the book opens or closes; where an
+                    // aside comes or goes the task's frame starts over, and the controls start from the screen's draft.
+                    ScrollingPage(
+                        Modifier
+                            .fillMaxSize()
+                            .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }),
+                        scroll,
+                    ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+
+                    if (fold != null) {
+                        ScrollingPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, screenScroll) {
+                            if (shown) {
+                                asideTitle?.let { SectionLabel(it) }
+                                aside?.invoke(this)
+                            }
+                            content(StepPart.Screen, inlineSet, shown)
+                        }
+                    }
                 }
-            },
-        title = { LessonTitle(title) },
-        actions = { report?.let { ReportProblemMenu(app, it) } },
-        closeLabel = closeLabel,
-        bottomBar = actions?.let { { TaskActionBar { it() } } },
-        // A passage takes the rail over the run's own pane, as main's aside.
-        aside =
-            set?.let { TaskAside(half = isLongText(it.text)) { ItemSetText(it, inAside = true) } }
-                ?: aside?.let { TaskAside(title = asideTitle, content = it) },
-    ) { padding ->
-        val beside = taskAsideBeside()
-        RunLayout(Modifier.padding(padding), header = progress) { content(set == null || !beside, set == null && aside != null && beside) }
+            }
+        }
+    }
+}
+
+/** Whether a run's own [hasAside] shows: beside the run, or across a fold on the page before it. */
+@Composable
+private fun asideShown(
+    hasAside: Boolean,
+    fold: PageFold?,
+) = hasAside && (fold != null || taskAsideBeside())
+
+@Composable
+private fun ScrollingPage(
+    modifier: Modifier,
+    scroll: ScrollState,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
     }
 }
 
@@ -197,28 +276,10 @@ internal fun RunMeter(
     }
 }
 
-@Composable
-private fun RunLayout(
-    modifier: Modifier,
-    header: @Composable () -> Unit,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(modifier.fillMaxSize()) {
-        header()
-        Column(
-            Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
-        }
-    }
-}
-
-/** A drill's line goes once answered; [lastAnswer] is the learner's earlier answer to the mistake's own question. */
+/**
+ * A drill's line goes once answered; [lastAnswer] is the learner's earlier answer to the mistake's own
+ * question. [part] says what of it this page draws: the question, or the learner's turn and feedback.
+ */
 @Composable
 internal fun RunQuestion(
     questions: List<Question>,
@@ -227,7 +288,9 @@ internal fun RunQuestion(
     controls: RunControls,
     words: TrueFalseWords,
     navigator: AppNavigator,
+    part: StepPart,
     inlineSet: Boolean,
+    draft: Answer?,
     onDraft: (Answer?) -> Unit,
     netScored: Boolean = false,
     examTomorrow: Boolean = false,
@@ -241,61 +304,68 @@ internal fun RunQuestion(
     val previous = questions.getOrNull(run.index - 1)
 
     if (drill != null && run.stage == DrillStage.Ideas) {
-        DrillIdeas(drill, openLesson)
+        if (part.showsScreen) DrillIdeas(drill, openLesson)
         return
     }
 
-    if (netScored) SwipeScore(netTally(questions, run))
-    if (checked == null) question.timeMachine?.let { TimeMachine(it, question.format, words) }
+    if (part.showsScreen) {
+        if (netScored) SwipeScore(netTally(questions, run))
+        if (checked == null) question.timeMachine?.let { TimeMachine(it, question.format, words) }
 
-    if (drill != null) {
-        val first = previous?.mistakeId != question.mistakeId
-        val shown = if (drill.isIdeaFirst) lastAnswer != null else first || drill.isReadFirst
-        if (shown) {
-            DrillNote(
-                drill,
-                openLesson,
-                answered = checked != null || drill.isIdeaFirst,
-                lastAnswer = lastAnswer?.takeIf { first || drill.isIdeaFirst },
-            )
+        if (drill != null) {
+            val first = previous?.mistakeId != question.mistakeId
+            val shown = if (drill.isIdeaFirst) lastAnswer != null else first || drill.isReadFirst
+            if (shown) {
+                DrillNote(
+                    drill,
+                    openLesson,
+                    answered = checked != null || drill.isIdeaFirst,
+                    lastAnswer = lastAnswer?.takeIf { first || drill.isIdeaFirst },
+                )
+            }
         }
     }
+    // The clock times the learner's answer, so it's part of their turn.
     val seconds = drill?.timeLimitSeconds
-    if (seconds != null && phase == RunPhase.Answering) {
+    if (part.showsTurn && seconds != null && phase == RunPhase.Answering) {
         DrillCountdown(seconds = seconds, onTimeUp = { controls.timeUp(question, seconds) })
     }
 
-    if (question.placement && run.stage != DrillStage.Reading) PlacementNote()
-    question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
+    if (part.showsScreen) {
+        if (question.placement && run.stage != DrillStage.Reading) PlacementNote()
+        question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
 
-    question.set?.let { set ->
-        if (set.listening != null) {
-            ListeningSet(set)
-        } else if (inlineSet) {
-            ItemSetText(set, continued = previous?.set?.id == set.id)
+        question.set?.let { set ->
+            if (set.listening != null) {
+                ListeningSet(set)
+            } else if (inlineSet) {
+                ItemSetText(set, continued = previous?.set?.id == set.id)
+            }
         }
+
+        ItemSupport(question)
     }
 
-    ItemSupport(question)
-
     if (run.stage == DrillStage.Reading) {
-        QuestionTitle(question.question)
+        if (part.showsScreen) QuestionTitle(question.question)
         return
     }
 
-    if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
+    if (part.showsScreen && question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
 
     QuestionAnswer(
         question = question,
         words = words,
         allowBlank = netScored,
         check = checked?.let { AnswerCheck(it.answer, it.feedback.correctAnswer, it.feedback.isCorrect) },
+        draft = draft,
         enabled = run.canAnswer,
         onAnswer = onDraft,
         onSubmit = { controls.submit(question, it) },
+        part = part,
     )
 
-    if (checked != null) {
+    if (checked != null && part.showsTurn) {
         QuestionFeedback(
             question = question,
             answer = checked.answer,

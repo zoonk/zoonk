@@ -38,6 +38,7 @@ class RunKitSlotsTest {
                 RunFrame(
                     title = "Ser and estar",
                     question = null,
+                    place = 0,
                     app = AppContainer.preview(rule.activity),
                     onClose = {},
                     mainAction = null,
@@ -46,7 +47,7 @@ class RunKitSlotsTest {
                     actions = null,
                     aside = { Text("Use ser for what something is.") },
                     asideTitle = "The rule",
-                ) { _, _ -> }
+                ) { _, _, _ -> }
             }
         }
 

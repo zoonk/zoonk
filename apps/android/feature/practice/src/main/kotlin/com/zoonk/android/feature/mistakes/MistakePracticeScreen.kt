@@ -135,6 +135,7 @@ internal fun PracticeRun(
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
         question = question,
+        place = run.index,
         app = app,
         onClose = viewModel::leave,
         mainAction = answerAction(questions, question, run, draft, viewModel),
@@ -154,7 +155,7 @@ internal fun PracticeRun(
             }
         },
         closeLabel = if (endsRun) stringResource(R.string.mistakes_practice_end) else null,
-    ) { inlineSet, _ ->
+    ) { part, inlineSet, _ ->
         question?.let {
             key(run.index) {
                 RunQuestion(
@@ -164,7 +165,9 @@ internal fun PracticeRun(
                     controls = viewModel,
                     words = state.read.words,
                     navigator = navigator,
+                    part = part,
                     inlineSet = inlineSet,
+                    draft = draft,
                     onDraft = { answer -> saved = Draft(run.index, it.itemId, answer) },
                     lastAnswer = state.read.lastAnswers[run.index]?.let { answer -> savedAnswerText(answer, state.read.words) },
                 )

@@ -86,9 +86,9 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternContrastInner
+import com.zoonk.api.models.MistakePatternDrillInner
 import com.zoonk.api.models.MistakePatternExamplesInner
 import com.zoonk.api.models.MistakePatternPracticeResult
 import kotlinx.coroutines.launch
@@ -247,6 +247,7 @@ private fun PatternQuestion(
     RunFrame(
         title = pattern.title,
         question = null,
+        place = index,
         app = app,
         onClose = onClose,
         mainAction =
@@ -258,10 +259,10 @@ private fun PatternQuestion(
         report = null,
         // Main's pattern drill counts a checked answer as done before Continue; a study block doesn't.
         progress = { RunMeter(index, pattern.drill.size, drill.segments, done = if (checked == null) index else index + 1) },
-        actions = {
+        actions = { ruleShown ->
             if (drill.failed && !drill.saving) SaveErrorText(viewModel::retry)
             TaskActions { width ->
-                if (!taskAsideBeside()) {
+                if (!ruleShown) {
                     OutlinedButton(onClick = { ruleOpen = true }) {
                         Icon(
                             painterResource(R.drawable.ic_menu_book),
@@ -289,32 +290,43 @@ private fun PatternQuestion(
         },
         aside = { RuleDetails(pattern) },
         asideTitle = stringResource(R.string.pattern_rule),
-    ) { _, asideShown ->
+    ) { part, _, ruleShown ->
         key(index) {
-            QuestionTitle(question.sentence, graded = checked != null)
-            ChoiceQuestion(
-                options = question.options,
-                select = null,
-                check =
-                    checked?.let {
-                        ChoiceCheck(
-                            correct =
-                                listOfNotNull(
-                                    question.options.indexOfFirst { option -> option.trim() == question.answer.trim() }.takeIf {
-                                        it >=
-                                            0
-                                    },
-                                ),
-                            picked = listOf(question.options.indexOf(it)),
-                        )
-                    },
-                enabled = checked == null,
-                onAnswer = { viewModel.pick((it as? Answer.Choice)?.index) },
-            )
-            checked?.let { PatternFeedback(right = it.trim() == question.answer.trim(), explanation = question.feedback) }
+            if (part.showsScreen) QuestionTitle(question.sentence, graded = checked != null)
+            if (part.showsTurn) PatternChoices(question, checked, drill.picked, viewModel)
         }
-        if (ruleOpen && !asideShown) RuleSheet(pattern) { ruleOpen = false }
+        if (ruleOpen && !ruleShown) RuleSheet(pattern) { ruleOpen = false }
     }
+}
+
+@Composable
+private fun PatternChoices(
+    question: MistakePatternDrillInner,
+    checked: String?,
+    picked: Int?,
+    viewModel: PatternViewModel,
+) {
+    ChoiceQuestion(
+        options = question.options,
+        select = null,
+        check =
+            checked?.let {
+                ChoiceCheck(
+                    correct =
+                        listOfNotNull(
+                            question.options.indexOfFirst { option -> option.trim() == question.answer.trim() }.takeIf {
+                                it >=
+                                    0
+                            },
+                        ),
+                    picked = listOf(question.options.indexOf(it)),
+                )
+            },
+        enabled = checked == null,
+        onAnswer = { viewModel.pick((it as? Answer.Choice)?.index) },
+        draft = picked?.let(Answer::Choice),
+    )
+    checked?.let { PatternFeedback(right = it.trim() == question.answer.trim(), explanation = question.feedback) }
 }
 
 @Composable

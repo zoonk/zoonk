@@ -3,6 +3,9 @@ package com.zoonk.android.feature.questions
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.TouchInjectionScope
@@ -35,7 +38,7 @@ class QuestionControlsTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private var answer: Answer? = null
+    private var answer by mutableStateOf<Answer?>(null)
     private var submitted: Answer? = null
 
     private fun show(
@@ -43,7 +46,9 @@ class QuestionControlsTest {
         allowBlank: Boolean = false,
         check: AnswerCheck? = null,
     ) = setContent {
-        QuestionAnswer(question, TrueFalseWords.TrueFalse, allowBlank, check, enabled = true, onAnswer = { answer = it }, onSubmit = {
+        QuestionAnswer(question, TrueFalseWords.TrueFalse, allowBlank, check, answer, enabled = true, onAnswer = {
+            answer = it
+        }, onSubmit = {
             submitted =
                 it
         })
@@ -133,6 +138,7 @@ class QuestionControlsTest {
                     TrueFalseWords.TrueFalse,
                     allowBlank = false,
                     check = null,
+                    draft = answer,
                     enabled = true,
                     onAnswer = { answer = it },
                     onSubmit = {},

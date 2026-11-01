@@ -11,6 +11,10 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -44,7 +48,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class QuestionBlockScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -74,6 +81,7 @@ class QuestionBlockScreenshots {
         name: String,
         dark: Boolean = false,
         check: Boolean = false,
+        open: Boolean = false,
         vararg questions: JsonObject,
     ) {
         val cache =
@@ -95,6 +103,25 @@ class QuestionBlockScreenshots {
             }
         }
 
+        if (open) {
+            // Android tells a listener that starts after the fold about it; window-testing doesn't, so a frame
+            // rebuilt as the fold drops the passage's aside hears it again.
+            repeat(2) {
+                rule.waitForIdle()
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                rule.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+            }
+            rule.waitForIdle()
+        }
         if (check) {
             rule.onNodeWithText("Moon", substring = true).performClick()
             rule.onNodeWithText("Check").performClick()
@@ -174,6 +201,38 @@ class QuestionBlockScreenshots {
         RuntimeEnvironment.setFontScale(2f)
         show("phone-font200-typed", questions = arrayOf(typed, next))
     }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xxhdpi")
+    fun bookSpread() {
+        show("book-passage", open = true, questions = arrayOf(planet("set" to PASSAGE), next))
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xxhdpi")
+    fun bookSpreadChecked() {
+        show("book-checked", check = true, open = true, questions = arrayOf(planet("timeMachine" to timeMachine), next))
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xxhdpi")
+    fun bookSpreadStatement() {
+        show("book-statement", open = true, questions = arrayOf(statement, next))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phonePassage() {
+        show("phone-passage", questions = arrayOf(planet("set" to PASSAGE), next))
+    }
+
+    private val statement =
+        blockQuestion(
+            "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+            "format" to "trueFalse",
+            "question" to "Mars is the fourth planet from the Sun.",
+            "options" to null,
+        )
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")

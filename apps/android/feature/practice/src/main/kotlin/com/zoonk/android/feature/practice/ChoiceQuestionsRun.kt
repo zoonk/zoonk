@@ -129,6 +129,7 @@ internal fun ChoiceQuestionsRun(
     RunFrame(
         title = title,
         question = question,
+        place = shown,
         app = app,
         onClose = onClose,
         mainAction = next,
@@ -160,37 +161,41 @@ internal fun ChoiceQuestionsRun(
                 }
             },
         aside = aside,
-    ) { inlineSet, asideShown ->
+    ) { part, inlineSet, asideShown ->
         if (question == null) {
-            if (waitingForMore) waiting()
+            if (waitingForMore && part.showsScreen) waiting()
             return@RunFrame
         }
         key(shown) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = hint(question)?.takeUnless { asideShown }.orEmpty(),
-                    modifier = Modifier.weight(1f).alignByBaseline(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Paragraph),
-                )
-                Text(
-                    text = stringResource(R.string.practice_count, shown + 1, total),
-                    modifier = Modifier.alignByBaseline(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
+            if (part.showsScreen) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = hint(question)?.takeUnless { asideShown }.orEmpty(),
+                        modifier = Modifier.weight(1f).alignByBaseline(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Paragraph),
+                    )
+                    Text(
+                        text = stringResource(R.string.practice_count, shown + 1, total),
+                        modifier = Modifier.alignByBaseline(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    )
+                }
+                question.set?.let { set -> if (inlineSet) ItemSetText(set) }
+                ItemSupport(question)
+                if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question)
             }
-            question.set?.let { set -> if (inlineSet) ItemSetText(set) }
-            ItemSupport(question)
-            if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question)
             QuestionAnswer(
                 question = question,
                 words = words,
                 allowBlank = false,
                 check = null,
+                draft = pick,
                 enabled = !locked,
                 onAnswer = { answer -> saved = Draft(shown, question.itemId, answer) },
                 onSubmit = { answer -> if (!locked) onAnswer(question, answer) },
+                part = part,
             )
         }
     }

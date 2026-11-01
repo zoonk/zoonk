@@ -241,15 +241,16 @@ internal fun Runner(
     RunFrame(
         title = blockTitle(detail.block.toDayStep()),
         question = question,
+        place = run.index,
         app = app,
         onClose = onClose,
         mainAction = mainAction,
         report = runReportTarget("question-block", question, run),
         progress = { RunSegments(questions, run) },
         actions = { BlockActions(read, run, question, draft, viewModel, app, navigator) },
-    ) { inlineSet, _ ->
+    ) { part, inlineSet, _ ->
         if (run.phase == RunPhase.FinishReady) {
-            FinishReady()
+            if (part.showsScreen) FinishReady()
         } else if (question != null) {
             key(run.index) {
                 RunQuestion(
@@ -259,7 +260,9 @@ internal fun Runner(
                     controls = viewModel,
                     words = detail.trueFalseWords,
                     navigator = navigator,
+                    part = part,
                     inlineSet = inlineSet,
+                    draft = draft,
                     onDraft = { answer -> saved = Draft(run.index, question.itemId, answer) },
                     netScored = isNetScored(question, detail),
                     examTomorrow = examTomorrow,

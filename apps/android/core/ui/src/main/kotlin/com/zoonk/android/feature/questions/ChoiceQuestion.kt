@@ -28,8 +28,8 @@ data class ChoiceCheck(
 
 /**
  * One pick or several (main's block `ChoiceQuestion`). The host gets the answer once it's
- * complete, null before; key it by the question so its picks start empty. Once checked, only the
- * right options and the learner's stay.
+ * complete, null before; key it by the question so its picks start from the host's [draft]. Once
+ * checked, only the right options and the learner's stay.
  */
 @Composable
 fun ChoiceQuestion(
@@ -39,8 +39,9 @@ fun ChoiceQuestion(
     enabled: Boolean,
     onAnswer: (Answer?) -> Unit,
     modifier: Modifier = Modifier,
+    draft: Answer? = null,
 ) {
-    var picks by rememberSaveable { mutableStateOf(emptyList<Int>()) }
+    var picks by rememberSaveable { mutableStateOf(draft.picks) }
     val multi = select.isMulti
     val locked = !enabled || check != null
     val shown = check?.picked ?: picks

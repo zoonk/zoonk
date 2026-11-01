@@ -14,4 +14,5 @@ dependencies {
     implementation(project(":feature:player"))
 
     testImplementation(testFixtures(project(":feature:plan")))
+    testImplementation(libs.androidx.window.testing)
 }
