@@ -1,14 +1,16 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type UsageKind } from "@zoonk/db";
+import { type TransactionClient, type UsageKind } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../cache/tags";
 import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
+import { claimUsageInTransaction } from "./_utils/claim-usage-in-transaction";
 import {
   type EntitlementViewer,
   getEntitlementViewer,
   getEntitlementViewerFor,
 } from "./_utils/entitlement-viewer";
+import { lockUsageForViewer } from "./_utils/usage-lock";
 import { type UsageDecision } from "./contract";
 
 type UsageClaim = { generated?: boolean; kind: UsageKind; seconds?: number; targetId: string };
@@ -56,4 +58,29 @@ export async function claimUsageFor({
 /** Claim immediately before starting a small AI call. */
 export function claimAssist(): Promise<UsageDecision> {
   return claimUsage({ kind: "assist", targetId: randomUUID() });
+}
+
+/**
+ * Claims a small AI call inside the caller's learner write, after the write's own checks, so it's
+ * charged only if that write commits. The caller expires the allowance tag once it commits.
+ */
+export async function claimAssistInWrite({
+  transaction,
+  viewer,
+}: {
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<boolean> {
+  await lockUsageForViewer({ transaction, userId: viewer.userId });
+
+  const { decision } = await claimUsageInTransaction({
+    generated: false,
+    kind: "assist",
+    now: new Date(),
+    targetId: randomUUID(),
+    transaction,
+    viewer,
+  });
+
+  return decision.status === "allowed";
 }
