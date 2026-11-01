@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.search
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,12 +33,14 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -70,6 +74,9 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
@@ -101,11 +108,13 @@ fun TabSearchBar(
     SearchPanel(app, navigator, state, docked) { inputField ->
         // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
         val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
-        SearchBar(
-            state = state,
-            inputField = inputField,
-            modifier = modifier.then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-        )
+        BeforeFold { beforeFold ->
+            SearchBar(
+                state = state,
+                inputField = inputField,
+                modifier = modifier.then(width).then(beforeFold).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+            )
+        }
     }
 }
 
@@ -228,12 +237,37 @@ internal fun SearchPanel(
 
     collapsed(inputField)
 
-    val results = @Composable { SearchResults(groups, highlighted = first, onOpen = { act(it.action) }) }
+    val results = @Composable { modifier: Modifier -> SearchResults(groups, highlighted = first, onOpen = { act(it.action) }, modifier) }
 
     if (docked) {
-        ExpandedDockedSearchBar(state = state, inputField = inputField) { results() }
+        ExpandedDockedSearchBar(state = state, inputField = inputField, modifier = Modifier.atBarWidth(state)) { results(Modifier) }
     } else {
-        ExpandedFullScreenSearchBar(state = state, inputField = inputField) { results() }
+        ExpandedFullScreenSearchBar(
+            state = state,
+            inputField = { BeforeFold { beforeFold -> Box(beforeFold.fillMaxWidth(), propagateMinConstraints = true) { inputField() } } },
+        ) { BeforeFold { beforeFold -> results(beforeFold) } }
+    }
+}
+
+/** Material opens the docked panel at least 360dp wide; it keeps to its bar, which ends at a book's fold. */
+@OptIn(ExperimentalMaterial3Api::class)
+private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
+    layout { measurable, constraints ->
+        val bar = state.collapsedCoords?.size?.width ?: constraints.maxWidth
+        val placeable = measurable.measure(constraints.copy(maxWidth = bar.coerceIn(constraints.minWidth, constraints.maxWidth)))
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
+
+/**
+ * Search reads with what's above it, so across an unfolded book foldable's fold it keeps to the page
+ * before it: [content] gets the width to keep to, which ends at the fold.
+ */
+@Composable
+private fun BeforeFold(content: @Composable (beforeFold: Modifier) -> Unit) {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
+        content(pageFold(maxWidth, span)?.let { Modifier.widthIn(max = it.start) } ?: Modifier)
     }
 }
 
@@ -349,12 +383,13 @@ private fun SearchResults(
     groups: List<SearchGroup>,
     highlighted: SearchItem?,
     onOpen: (SearchItem) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
     val container = SearchBarDefaults.colors().containerColor
     val tint = MaterialTheme.colorScheme.surfaceContainerHighest
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    LazyColumn(modifier.fillMaxSize()) {
         groups.forEach { group ->
             item(key = "group-${group.id}", contentType = "header") {
                 Text(
