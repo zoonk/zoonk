@@ -12,6 +12,7 @@ internal class FakeTutorApi : TutorApi {
         val question: String,
         val requestId: String,
         val scope: TutorScope,
+        val suggestion: String?,
     )
 
     var thread: TutorThread? = null
@@ -44,7 +45,7 @@ internal class FakeTutorApi : TutorApi {
         requestId: String,
         session: AuthenticatedSession,
     ): AskedQuestion {
-        asked += Ask(question, requestId, scope)
+        asked += Ask(question, requestId, scope, suggestion)
         refusal?.let { throw it }
         return AskedQuestion(turn("q${asked.size}", TutorTurn.Status.Pending, null, question, scope.about), null)
     }

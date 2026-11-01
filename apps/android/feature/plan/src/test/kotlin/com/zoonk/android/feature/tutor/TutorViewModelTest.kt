@@ -89,6 +89,28 @@ class TutorViewModelTest {
             assertTrue(vm.state.value.canAsk(vm.turns))
         }
 
+    /** A lesson's suggestion only fills the composer: nothing is asked until the learner sends it, by its id only while unchanged. */
+    @Test
+    fun anOfferedSuggestionWaitsForSendAndGoesByItsIdOnlyUnchanged() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val simpler = TutorSuggestion("Explain it more simply", "simpler")
+
+            vm.offer(simpler)
+            advanceUntilIdle()
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+            assertTrue(api.asked.isEmpty())
+
+            vm.send()
+            advanceUntilIdle()
+            vm.offer(simpler)
+            vm.draft.setTextAndPlaceCursorAtEnd("Explain it more simply, with a picture")
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler", null), api.asked.map { it.suggestion })
+        }
+
     @Test
     fun anAnswerMarksTheAllowanceItSpentStaleOnceItEnds() =
         runTest(dispatcher) {
