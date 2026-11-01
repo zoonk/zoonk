@@ -38,12 +38,15 @@ export function SidebarHeader({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-/** Its last child (the toggle) ends the row, and goes under the rest once collapsed. */
+/**
+ * Its last child (the toggle) ends the row. Collapsed, the toggle is all it shows, so the row keeps
+ * its height and nothing under it moves.
+ */
 export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "sidebar-collapsed:flex-col sidebar-collapsed:gap-2 flex min-w-0 items-center justify-between gap-1",
+        "sidebar-collapsed:*:not-last:hidden flex min-w-0 items-center justify-between gap-1",
         className,
       )}
       data-slot="sidebar-header-row"
@@ -60,7 +63,10 @@ export function SidebarSection({
 }: React.ComponentProps<"nav"> & { label?: string }) {
   return (
     <nav className={cn("flex flex-col gap-0.5", className)} data-slot="sidebar-section" {...props}>
-      {label && <span className="text-label sidebar-collapsed:hidden px-2 pb-1">{label}</span>}
+      {/* Collapsed, the label keeps its one line of room, so the icons under it stay put. */}
+      {label && (
+        <span className="text-label sidebar-collapsed:invisible truncate px-2 pb-1">{label}</span>
+      )}
       {children}
     </nav>
   );

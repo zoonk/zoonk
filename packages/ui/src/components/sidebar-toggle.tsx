@@ -40,7 +40,7 @@ function isCollapsed() {
 }
 
 /** True while the sidebar shows, collapsed to icons. */
-export function useSidebarCollapsed(): boolean {
+function useSidebarCollapsed(): boolean {
   return useSyncExternalStore(subscribe, isCollapsed, () => false);
 }
 
@@ -157,7 +157,7 @@ export function SidebarToggle({
 const SEARCH_CLASS = {
   bar: "h-10 rounded-[0.625rem] px-3 text-sm hover:bg-muted/60",
   sidebar: cn(
-    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 h-8 rounded-lg px-2.5 text-[0.8125rem]",
+    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 h-8 rounded-lg px-2 text-[0.8125rem]",
     SIDEBAR_ICON_ONLY_CLASS,
   ),
 } as const;

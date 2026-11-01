@@ -62,9 +62,7 @@ function AdminSidebarContent({
     <>
       <SidebarHeader className="gap-4">
         <SidebarHeaderRow>
-          <span className="sidebar-collapsed:hidden flex h-8 items-center px-2 text-sm font-semibold">
-            Zoonk Admin
-          </span>
+          <span className="flex h-8 items-center px-2 text-sm font-semibold">Zoonk Admin</span>
           {toggle}
         </SidebarHeaderRow>
         {search}
