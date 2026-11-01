@@ -41,7 +41,7 @@ export const ENGINEERING_RULES: Rule[] = [
     line: /\b(?:setInterval|setTimeout|addEventListener)\(|new (?:Resize|Intersection|Mutation)Observer\(/u,
     name: "Timer or listener",
     question:
-      "Is it removed when the component unmounts or the request ends? One left running leaks memory and keeps firing.",
+      "Is it removed when the component unmounts or the request ends? One left running leaks memory and keeps firing. Does a poll stop once what it waits for has failed or finished?",
     role: "engineering",
   },
   {
@@ -97,7 +97,15 @@ export const ENGINEERING_RULES: Rule[] = [
     line: /\.findMany\(/u,
     name: "List read",
     question:
-      "Is the result bounded (`take`, a page size) and read once per request, not once per item in a loop?",
+      "Is the result bounded (`take`, a page size), filtered and counted in SQL rather than in JavaScript afterward, and read once per request, not once per item in a loop?",
+    role: "engineering",
+  },
+  {
+    files: SERVER_SOURCE,
+    line: /\bdistinct:\s*[["']/u,
+    name: "In-memory distinct",
+    question:
+      "Prisma reads every matching row and keeps one per key in memory (its SQL has no DISTINCT or LIMIT). Can those rows grow with a learner's history or the catalog? Then group in SQL: `groupBy`, or `DISTINCT ON` in a `$queryRaw` template.",
     role: "engineering",
   },
   {
@@ -130,7 +138,15 @@ export const ENGINEERING_RULES: Rule[] = [
     line: new RegExp(String.raw`^(?!\s*${IMPORT_WITHOUT_MODEL_CALLS}).*["']@zoonk/ai/tasks/`, "u"),
     name: "Model task in reach of a request",
     question:
-      "Which request reaches this model call? Only an API workflow step or an interactive call may (root `AGENTS.md`); otherwise the request answers with a run to wait on, or the write owes a follow-up.",
+      "Which request reaches this model call, and which claim admits it before it runs, on every path to it (the learner's allowance, the guests' budget, a per-item cap)? Only an API workflow step or an interactive call may run it (root `AGENTS.md`); otherwise the request answers with a run to wait on, or the write owes a follow-up.",
+    role: "engineering",
+  },
+  {
+    files: /^apps\/api\/src\/workflows\/(?!.*\.test\.)(?!.*_test-utils)/u,
+    line: /^\s*["']use step["']/u,
+    name: "Workflow step",
+    question:
+      "How many model calls does it make, counting those inside the core function it runs? A retry repeats every call before the one that failed, so one paid call per step, and a failure no retry fixes is recorded instead of thrown (root `AGENTS.md`).",
     role: "engineering",
   },
   {

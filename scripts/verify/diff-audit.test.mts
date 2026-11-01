@@ -224,3 +224,30 @@ describe("questioning a diff", () => {
     ]);
   });
 });
+
+describe("questioning server cost", () => {
+  it("asks whether Prisma's distinct reads rows that grow with a learner's history", () => {
+    const read = file("packages/core/src/sessions/_utils/answers.ts", [
+      'distinct: ["itemId"],',
+      '    distinct: "skillId",',
+      "const distinct = new Set(options);",
+      "return distinct.size >= MIN_OPTIONS;",
+    ]);
+
+    assert.deepEqual(names([read]), ["In-memory distinct 1,2"]);
+    assert.deepEqual(names([file("apps/admin/src/x.ts", ['distinct: ["itemId"],'])]), []);
+  });
+
+  it("asks how many model calls a new workflow step repeats on a retry", () => {
+    const lines = ['  "use step";', "  'use step';", '  "use workflow";'];
+
+    assert.deepEqual(
+      names([
+        file("apps/api/src/workflows/lessons/steps/write-lesson-step.ts", lines),
+        file("apps/api/src/workflows/lessons/steps/write-lesson-step.test.ts", lines),
+        file("packages/core/src/library/lessons/write.ts", lines),
+      ]),
+      ["Workflow step 1,2"],
+    );
+  });
+});
