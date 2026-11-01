@@ -5,8 +5,9 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
-/** A screen's answer starts over, and with it what the learner did on its canvas. */
-private fun LessonPlayerState.startOver(id: String): Map<String, Int> = rounds + (id to round(id) + 1)
+/** A screen's answer starts over, and with it the steps it revealed and what the learner did on its canvas. */
+private fun LessonPlayerState.startOver(id: String): LessonPlayerState =
+    copy(answers = answers - id, revealed = revealed - id, rounds = rounds + (id to round(id) + 1))
 
 fun LessonPlayerState.round(stepId: String): Int = rounds[stepId] ?: 0
 
@@ -15,11 +16,10 @@ fun LessonPlayerState.enterPosition(
     now: Long,
 ): LessonPlayerState {
     val id = queue.getOrNull(position)
-    // A screen entered with no answer keeps its round, so a canvas Android restores after closing the app in the background
-    // finds its work.
-    return copy(
-        answers = answers - id.orEmpty(),
-        rounds = if (id != null && (id in answers || id in results)) startOver(id) else rounds,
+    // A screen entered with nothing to clear keeps its round, so a canvas Android restores after closing the app in the
+    // background finds its work.
+    val entered = if (id != null && (id in answers || id in results || id in revealed)) startOver(id) else this
+    return entered.copy(
         checkFailed = false,
         checkIssue = null,
         phase = LessonPhase.Playing,
@@ -135,9 +135,7 @@ fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     val reviewingPrevious = previousId in results
     val current = queue.getOrNull(position)
 
-    return copy(
-        answers = answers - current.orEmpty(),
-        rounds = current?.let(::startOver) ?: rounds,
+    return (current?.let(::startOver) ?: this).copy(
         checkFailed = false,
         checkIssue = null,
         notice = null,
@@ -214,9 +212,7 @@ fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
     val before = queue.take(position)
     val rest = queue.drop(position).filterNot(ids::contains)
 
-    return copy(
-        answers = answers - step.id,
-        rounds = startOver(step.id),
+    return startOver(step.id).copy(
         helped = helped + step.id,
         queue = before + ids + rest,
         stepStartedAt = now,

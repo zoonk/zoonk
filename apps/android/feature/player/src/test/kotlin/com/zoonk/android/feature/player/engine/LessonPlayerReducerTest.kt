@@ -118,6 +118,11 @@ class LessonPlayerReducerTest {
 
         val explained = play(listOf(checkStep("quiz"), explanationStep("e1")), LessonAction.ExplainFirst)
         assertEquals("Explain first", 1, explained.round("quiz"))
+
+        val revealing = play(listOf(explanationStep("intro"), workedExampleStep("worked")), LessonAction.Continue, LessonAction.Continue)
+        assertEquals(2, revealing.revealed["worked"])
+        val revisited = revealing.then(LessonAction.GoBack).then(LessonAction.Continue)
+        assertEquals("a worked example's steps start over with it", 1 to null, revisited.round("worked") to revisited.revealed["worked"])
     }
 
     @Test
