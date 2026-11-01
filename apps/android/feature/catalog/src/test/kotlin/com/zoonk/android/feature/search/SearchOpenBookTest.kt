@@ -124,6 +124,22 @@ class SearchOpenBookTest {
         assertBeforeFold("a result", rule.onNodeWithText("Explore courses").getUnclippedBoundsInRoot())
     }
 
+    /** As on the open iPhone Duo: the learner's own matches face the ways to ask. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun aQuerysMatchesFaceTheWaysToAskAcrossTheFold() {
+        lateinit var opened: AppSearch
+        show { app, navigator -> SearchHost(app, navigator, signedIn = true) { opened = checkNotNull(LocalAppSearch.current) } }
+
+        rule.runOnIdle { opened.open() }
+        unfold()
+        search("explore")
+
+        assertBeforeFold("the learner's match", rule.onNodeWithText("Explore courses").getUnclippedBoundsInRoot())
+        val ask = rule.onNodeWithText("“explore”", substring = true).getUnclippedBoundsInRoot()
+        assertTrue("a way to ask starts after the fold: $ask", ask.left >= FOLD)
+    }
+
     @Test
     @Config(qualifiers = "w411dp-h891dp")
     fun searchOverAPageFillsAPhone() {

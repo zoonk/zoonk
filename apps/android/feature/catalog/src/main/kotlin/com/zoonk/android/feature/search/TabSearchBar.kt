@@ -2,9 +2,12 @@ package com.zoonk.android.feature.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,6 +35,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,6 +46,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,6 +78,10 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
@@ -233,15 +242,42 @@ internal fun SearchPanel(
 
     collapsed(inputField)
 
-    val results = @Composable { modifier: Modifier -> SearchResults(groups, highlighted = first, onOpen = { act(it.action) }, modifier) }
+    val results =
+        @Composable { shown: List<SearchGroup>, modifier: Modifier ->
+            SearchResults(shown, highlighted = first, onOpen = { act(it.action) }, modifier)
+        }
 
     if (docked) {
-        ExpandedDockedSearchBar(state = state, inputField = inputField, modifier = Modifier.atBarWidth(state)) { results(Modifier) }
+        ExpandedDockedSearchBar(state = state, inputField = inputField, modifier = Modifier.atBarWidth(state)) { results(groups, Modifier) }
     } else {
         ExpandedFullScreenSearchBar(
             state = state,
             inputField = { BeforeFold { beforeFold -> Box(beforeFold.fillMaxWidth(), propagateMinConstraints = true) { inputField() } } },
-        ) { BeforeFold { beforeFold -> results(beforeFold) } }
+        ) { SearchSpread(groups, searching = text.text.isNotBlank(), results) }
+    }
+}
+
+/** Full-screen results keep to the page before a book's fold, or spread across both pages where each has room ([spreadGroups]). */
+@Composable
+private fun SearchSpread(
+    groups: List<SearchGroup>,
+    searching: Boolean,
+    results: @Composable (List<SearchGroup>, Modifier) -> Unit,
+) {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
+        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
+        val (before, after) = spreadGroups(groups, searching)
+
+        if (fold != null && before.isNotEmpty() && after.isNotEmpty()) {
+            Row {
+                results(before, Modifier.width(fold.start).semantics { isTraversalGroup = true })
+                results(after, Modifier.weight(1f).padding(start = fold.end - fold.start).semantics { isTraversalGroup = true })
+            }
+        } else {
+            BeforeFold { beforeFold -> results(groups, beforeFold) }
+        }
     }
 }
 

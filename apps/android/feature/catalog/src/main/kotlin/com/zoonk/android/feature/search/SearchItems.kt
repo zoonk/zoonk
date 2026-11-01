@@ -164,6 +164,20 @@ internal fun searchGroups(
     return (filtered(general, query) + searched + filtered(help, query) + listOfNotNull(fallback)).filter { it.items.isNotEmpty() }
 }
 
+/**
+ * Across an unfolded book's fold, as on the open iPhone Duo: what the learner can do on the page
+ * before it and the places to go on the page after it; with a query, the learner's own matches
+ * before it and the catalog and the ways to ask after it, the ways to ask leading when nothing of
+ * the learner's matches.
+ */
+internal fun spreadGroups(
+    groups: List<SearchGroup>,
+    searching: Boolean,
+): Pair<List<SearchGroup>, List<SearchGroup>> {
+    val (after, before) = groups.partition { it.id in if (searching) ASKED_GROUPS else PLACE_GROUPS }
+    return if (searching && before.isEmpty()) after.partition { it.id == FALLBACK_GROUP } else before to after
+}
+
 private fun filtered(
     groups: List<SearchGroup>,
     query: String,
@@ -502,12 +516,15 @@ private fun fallbackGroup(
         )
 
     return SearchGroup(
-        "fallback",
+        FALLBACK_GROUP,
         stringResource(if (ask != null) R.string.search_group_ask else R.string.search_group_new_goal),
         listOfNotNull(ask, start),
     )
 }
 
+private const val FALLBACK_GROUP = "fallback"
+private val PLACE_GROUPS = setOf("pages", "goals", "explanations")
+private val ASKED_GROUPS = setOf("catalog", FALLBACK_GROUP)
 private val COMBINING_ACCENTS = Regex("[\\u0300-\\u036f]")
 private val SPACES = Regex("\\s+")
 private const val SECONDS_PER_MINUTE = 60
