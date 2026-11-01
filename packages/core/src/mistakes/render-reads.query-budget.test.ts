@@ -1,6 +1,10 @@
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import {
+  assertReadBudget,
+  countDatabaseRows,
+  countDatabaseStatements,
+} from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
@@ -35,5 +39,37 @@ describe("mistake read budgets", () => {
 
     assertReadBudget(counts, name === "practice" ? 24 : 32);
     expect(counts.result.status).toBe("ready");
+  });
+
+  it("finds practice-ready mistakes without reading every question of their skills", async () => {
+    const user = await userFixture();
+    const itemsPerSkill = 12;
+
+    const { goal, items, skills } = await learnerGoalFixture({
+      itemsPerSkill,
+      phases: [3],
+      userId: user.id,
+    });
+
+    await Promise.all(
+      skills.map((skill, index) =>
+        mistakeFixture({
+          createdAt: new Date(Date.now() - 86_400_000),
+          itemId: items[index * itemsPerSkill]!.id,
+          skillId: skill.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    mockSession(user.id);
+
+    const reads = await countDatabaseRows(
+      () => listCurrentUserMistakes({ goalId: goal.id, limit: 50, offset: 0, status: "open" }),
+      '"items"',
+    );
+
+    expect(reads.result).toMatchObject({ availability: { ready: 3, tomorrow: 0 } });
+    expect(reads.rows).toBeLessThanOrEqual(skills.length);
   });
 });

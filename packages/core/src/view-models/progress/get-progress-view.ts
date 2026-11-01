@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { listCurrentUserSkills } from "../../learner/list-current-user-skills";
-import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
+import { countOpenGoalMistakes } from "../../mistakes/count-goal-mistakes";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { loadStillNeededWork } from "../../preparation/_utils/load-still-needed-work";
 import {
@@ -45,7 +45,7 @@ export async function getProgressView(
   const [preparation, skills, mistakes, work] = await Promise.all([
     isExplanation ? null : getGoalPreparation(goal.id),
     listCurrentUserSkills({ goalId: goal.id }),
-    listCurrentUserMistakes({ goalId: goal.id, limit: 1, offset: 0 }),
+    countOpenGoalMistakes({ goalId: goal.id }),
     loadStillNeededWork({ goalId: goal.id, now: new Date() }),
   ]);
 
@@ -61,7 +61,7 @@ export async function getProgressView(
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         title: goal.title,
       },
-      mistakes: { open: mistakes.status === "ready" ? mistakes.counts.open : 0 },
+      mistakes: { open: mistakes.status === "ready" ? mistakes.open : 0 },
       preparation: preparation?.status === "ready" ? preparation.preparation : null,
       stillNeeded: buildStillNeeded({
         goalKind: goal.kind,
