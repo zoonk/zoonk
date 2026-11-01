@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -19,14 +20,14 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 
 /**
  * Material's dropdown menu, anchored like Material's to the layout it sits in (a `Box` around the
- * button that opens it). Material opens it from the anchor's start, or from its end where the start
- * would leave the window. Beside an unfolded book foldable's fold, it also opens from the anchor's
- * end where opening from its start could reach the fold, so it stays on the anchor's page.
+ * button that opens it). Beside an unfolded book foldable's fold it stays on its button's page: it
+ * opens toward the side of the page with more room and is no wider than that room, so Material's
+ * own placement, from the button's start or its end, never reaches the fold.
  */
 @Composable
 fun DropdownMenu(
@@ -38,40 +39,53 @@ fun DropdownMenu(
 ) {
     val direction = LocalLayoutDirection.current
     val folds = currentWindowAdaptiveInfoV2().windowPosture.allVerticalHingeBounds
-    val reach = with(LocalDensity.current) { WIDEST_MENU.toPx() }
+    val window =
+        LocalWindowInfo.current.containerSize.width
+            .toFloat()
     var anchor by remember { mutableStateOf<Rect?>(null) }
-    val fromEnd by remember(folds, reach, direction) {
-        derivedStateOf { anchor?.let { at -> folds.any { it.reachedFromStart(at, reach, direction) } } == true }
+    val room by remember(folds, window, direction) {
+        derivedStateOf { anchor?.let { at -> folds.firstNotNullOfOrNull { it.roomBeside(at, window, direction) } } }
     }
 
     if (folds.isNotEmpty()) Spacer(Modifier.onGloballyPositioned { anchor = it.parentLayoutCoordinates?.boundsInWindow() })
 
-    // Material picks its placement by the layout direction it's given, so the menu is placed as the
-    // other direction would place it, and its items keep the page's direction.
-    val placedAs =
-        when {
-            !fromEnd -> direction
-            direction == LayoutDirection.Ltr -> LayoutDirection.Rtl
-            else -> LayoutDirection.Ltr
-        }
+    // Material opens a menu from its button's start in the layout direction it's given, so the menu is
+    // placed in the direction it opens toward, and its items keep the page's direction.
+    val placedAs = room?.let { if (it.rightward) LayoutDirection.Ltr else LayoutDirection.Rtl } ?: direction
+    val width = room?.let { Modifier.widthIn(max = with(LocalDensity.current) { it.width.toDp() }) } ?: Modifier
     CompositionLocalProvider(LocalLayoutDirection provides placedAs) {
-        androidx.compose.material3.DropdownMenu(expanded, onDismissRequest, modifier, scrollState = scrollState) {
+        androidx.compose.material3.DropdownMenu(expanded, onDismissRequest, width.then(modifier), scrollState = scrollState) {
             CompositionLocalProvider(LocalLayoutDirection provides direction) { content() }
         }
     }
 }
 
-/** Whether a menu [reach] wide, opened from the start of an [anchor] on one side of this fold, would reach it. */
-private fun Rect.reachedFromStart(
-    anchor: Rect,
-    reach: Float,
-    direction: LayoutDirection,
-): Boolean =
-    if (direction == LayoutDirection.Ltr) {
-        anchor.right <= left && anchor.left + reach > left
-    } else {
-        anchor.left >= right && anchor.right - reach < right
-    }
+/** Which way a menu opens from its button, toward the window's right or left, and how wide it can be there. */
+private data class MenuRoom(
+    val rightward: Boolean,
+    val width: Float,
+)
 
-/** Material caps a menu item's width at 280dp. */
-private val WIDEST_MENU = 280.dp
+/**
+ * The room on the page an [anchor] sits on beside this fold, in a [window] that wide, or null where
+ * the anchor crosses it. With as much room either way, the menu opens from the button's start, as
+ * Material's does.
+ */
+private fun Rect.roomBeside(
+    anchor: Rect,
+    window: Float,
+    direction: LayoutDirection,
+): MenuRoom? {
+    val (pageLeft, pageRight) =
+        when {
+            anchor.right <= left -> 0f to left
+            anchor.left >= right -> right to window
+            else -> return null
+        }
+    val toRight = pageRight - anchor.left
+    val toLeft = anchor.right - pageLeft
+
+    val rightward = if (direction == LayoutDirection.Ltr) toRight >= toLeft else toRight > toLeft
+
+    return if (rightward) MenuRoom(rightward = true, toRight) else MenuRoom(rightward = false, toLeft)
+}
