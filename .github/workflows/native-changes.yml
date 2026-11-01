@@ -37,18 +37,19 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           ACTION: ${{ github.event.action }}
           APP: ${{ inputs.app }}
-          WORKFLOW: ${{ github.workflow }}
+          REPO: ${{ github.repository }}
           BRANCH: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
         run: |
           if [[ "$EVENT_NAME" != pull_request || "$ACTION" != synchronize ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          passed=$(gh run list --workflow "$WORKFLOW" --branch "$BRANCH" --status success --limit 1 \
-            --json headSha --jq '.[0].headSha // ""') || passed=""
+          # A fork's PR can share this branch name, so keep only runs of this PR's own repository.
+          passed=$(gh api "repos/$REPO/actions/workflows/$APP.yml/runs?branch=$BRANCH&status=success&per_page=20" \
+            --jq "[.workflow_runs[] | select(.head_repository.full_name == \"$HEAD_REPO\")][0].head_sha // \"\"") || passed=""
           if [[ -z "$passed" ]] || ! git fetch --no-tags --filter=blob:none --depth=1 origin "$passed"; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             exit 0
