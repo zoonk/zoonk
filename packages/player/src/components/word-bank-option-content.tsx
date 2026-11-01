@@ -1,7 +1,7 @@
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ReactNode, useId } from "react";
+import { type MouseEventHandler, type ReactNode, useId } from "react";
 import { RomanizationText } from "./romanization-text";
 
 function WordBankOptionContent({
@@ -66,7 +66,7 @@ export function WordBankOptionButton({
 }: {
   disabled: boolean;
   isSelected?: boolean;
-  onToggle: () => void;
+  onToggle: MouseEventHandler<HTMLButtonElement>;
   option: WordBankOption;
 }) {
   const descriptionId = useId();

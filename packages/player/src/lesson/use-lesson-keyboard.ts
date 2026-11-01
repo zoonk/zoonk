@@ -35,6 +35,13 @@ export function useLessonKeyboard() {
     actions.continue();
   });
 
+  // A held Enter presses a focused button once, as it acts once on the screen.
+  useKeyboardCallback("Enter", (event) => {
+    if (!event.repeat || !(event.target instanceof HTMLButtonElement)) {
+      return false;
+    }
+  });
+
   useKeyboardCallback(
     "ArrowRight",
     () => {

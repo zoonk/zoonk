@@ -12,6 +12,7 @@ import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
+import { removeKeepingFocus } from "./_utils/word-bank-focus";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
 import { QUESTION_TEXT_CLASS, QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
@@ -75,7 +76,7 @@ function BlankSlot({
           resultState === "incorrect" && "border-destructive",
         )}
         disabled={hasResult}
-        onClick={onRemove}
+        onClick={(event) => removeKeepingFocus(event, onRemove)}
         type="button"
       >
         {word}
@@ -112,7 +113,7 @@ function TemplateText({
   const segments = template.split("[BLANK]");
 
   return (
-    <p className={cn(QUESTION_TEXT_CLASS, "leading-10")}>
+    <p className={cn(QUESTION_TEXT_CLASS, "leading-10")} data-slot="word-answer">
       {segments.map((segment, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
         <span key={`seg-${segment}-${index}`}>

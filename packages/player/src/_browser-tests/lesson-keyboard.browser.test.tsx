@@ -1,8 +1,14 @@
 import { act } from "@testing-library/react";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it, vi } from "vitest";
-import { page, userEvent } from "vitest/browser";
-import { expectVerdict, focusOn, press, pressOnPage } from "../_test-utils/activity-player";
+import { type Locator, page, userEvent } from "vitest/browser";
+import {
+  expectCount,
+  expectVerdict,
+  focusOn,
+  press,
+  pressOnPage,
+} from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
 import {
@@ -12,7 +18,7 @@ import {
 } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { activityStep, teachingStep } from "../preview/preview-steps";
+import { activityStep, languageStep, teachingStep } from "../preview/preview-steps";
 
 const DESKTOP = { height: 900, width: 1280 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -24,6 +30,46 @@ function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
 
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
+}
+
+function bankTile(word: string) {
+  return page
+    .getByRole("group", { name: "Word bank" })
+    .getByRole("button", { exact: true, name: word });
+}
+
+function bankWord(index: number) {
+  const word = page
+    .getByRole("group", { name: "Word bank" })
+    .getByRole("button")
+    .elements()
+    .at(index)
+    ?.getAttribute("aria-label");
+
+  if (!word) {
+    throw new Error(`The word bank has no word at ${index}`);
+  }
+
+  return word;
+}
+
+function placedWord(position: number, word: string) {
+  return page
+    .getByRole("group", { name: "Your answer" })
+    .getByRole("button", { exact: true, name: `Position ${position}: ${word}. Tap to remove.` });
+}
+
+function pressWithScreenReader(target: Locator) {
+  target
+    .element()
+    .dispatchEvent(
+      new PointerEvent("click", { bubbles: true, buttons: 1, detail: 1, pointerType: "mouse" }),
+    );
+}
+
+async function pressEnterOn(target: Locator) {
+  await focusOn(target);
+  await press("Enter");
 }
 
 describe("lesson by keyboard", () => {
@@ -197,6 +243,90 @@ describe("lesson by keyboard", () => {
     await pressOnPage("Escape");
     expect(onExit).toHaveBeenCalledOnce();
     await expect.element(leave).not.toBeInTheDocument();
+  });
+
+  it("a word bank keeps keyboard focus on the words as they go in and come out, and leaves a pointer's focus alone", async () => {
+    await atViewport(DESKTOP, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson(
+          [languageStep("reading"), languageStep("fillBlank"), teachingStep("summary")],
+          { language: "pt", targetLanguage: "en" },
+        ),
+      });
+
+      const check = page.getByRole("button", { name: /^Check/u });
+
+      await expect.element(bankTile("rent?")).toBeVisible();
+
+      await bankTile(bankWord(0)).click();
+      await expect.element(bankTile(bankWord(1))).not.toHaveFocus();
+      await placedWord(1, bankWord(0)).click();
+      await expect.element(bankTile(bankWord(0))).not.toHaveFocus();
+
+      pressWithScreenReader(bankTile(bankWord(0)));
+      await expect.element(bankTile(bankWord(1))).toHaveFocus();
+      pressWithScreenReader(placedWord(1, bankWord(0)));
+      await expect.element(bankTile(bankWord(0))).toHaveFocus();
+
+      await tabTo(bankTile(bankWord(0)));
+      await press("Enter");
+      await expect.element(bankTile(bankWord(1))).toHaveFocus();
+
+      await pressEnterOn(bankTile(bankWord(-1)));
+      await expect.element(bankTile(bankWord(-2))).toHaveFocus();
+      await press("Enter");
+      await expect.element(bankTile(bankWord(-3))).toHaveFocus();
+
+      await pressEnterOn(placedWord(3, bankWord(-2)));
+      await expect.element(placedWord(2, bankWord(-1))).toHaveFocus();
+
+      await pressEnterOn(placedWord(1, bankWord(0)));
+      await expect.element(placedWord(1, bankWord(-1))).toHaveFocus();
+      await press("Enter");
+      await expect.element(bankTile(bankWord(-1))).toHaveFocus();
+
+      for (const word of ["How", "much", "is", "the", "rent?"]) {
+        // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+        await pressEnterOn(bankTile(word));
+      }
+
+      await expect.element(check).toHaveFocus();
+      await press("Enter");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await press("Enter");
+
+      await expect.element(page.getByText("The electron is drawn as a")).toBeVisible();
+      await pressEnterOn(bankTile("orbit"));
+      await expect.element(check).toHaveFocus();
+
+      await pressEnterOn(page.getByRole("button", { name: "Blank 1: orbit. Tap to remove." }));
+      await expect.element(bankTile("orbit")).toHaveFocus();
+    });
+  });
+
+  it("a held Enter presses a focused button once, so it neither empties the word bank nor skips the feedback", async () => {
+    await atViewport(DESKTOP, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([languageStep("reading"), teachingStep("summary")], {
+          language: "pt",
+          targetLanguage: "en",
+        }),
+      });
+
+      await focusOn(bankTile("How"));
+      await userEvent.keyboard("{Shift>}{Enter>8}{/Enter}{/Shift}");
+      await expectCount(page.getByRole("group", { name: "Your answer" }).getByRole("button"), 1);
+
+      for (const word of ["much", "is", "the", "rent?"]) {
+        // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+        await pressEnterOn(bankTile(word));
+      }
+
+      await expect.element(page.getByRole("button", { name: /^Check/u })).toHaveFocus();
+      await userEvent.keyboard("{Enter>8}{/Enter}");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await expect.element(page.getByRole("heading", { name: "Summary" })).not.toBeInTheDocument();
+    });
   });
 
   it("the close button names Escape as its key", async () => {

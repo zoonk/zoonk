@@ -19,6 +19,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { type StepResult } from "../step-answer";
+import { removeKeepingFocus } from "./_utils/word-bank-focus";
 import { RomanizationText } from "./romanization-text";
 import { WORD_CHIP_CLASS } from "./word-bank-option-content";
 
@@ -78,7 +79,7 @@ function PlacedWordTile({
         resultState === "incorrect" && ANSWER_TONE.wrong,
       )}
       disabled={hasResult}
-      onClick={onClick}
+      onClick={(event) => removeKeepingFocus(event, onClick)}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       type="button"
@@ -160,6 +161,7 @@ export function ArrangeWordsAnswerArea({
         <div
           aria-label={t("Your answer")}
           className="border-border flex min-h-16 flex-wrap gap-2 border-b pb-3"
+          data-slot="word-answer"
           role="group"
         >
           {placedWords.length === 0 ? (
