@@ -12,9 +12,22 @@ private struct MockResultChoices {
   var reviewPlace: String?
 }
 
+/// The questions to review, and the header over them, on one list's screen.
+@Observable
+private final class ReviewRows {
+  var shown: Set<String> = []
+
+  func update(_ id: String, isShown: Bool) {
+    if isShown {
+      shown.insert(id)
+    } else {
+      shown.remove(id)
+    }
+  }
+}
+
 extension EnvironmentValues {
-  /// Called as a question to review, or the header over them, comes on or leaves its list's screen.
-  @Entry fileprivate var reviewRowShown: ((_ id: String, _ isShown: Bool) -> Void)?
+  @Entry fileprivate var reviewRows: ReviewRows?
 }
 
 private let reviewHeader = "questions-to-review"
@@ -27,22 +40,17 @@ private struct ReviewList<Content: View>: View {
   @Binding var place: String?
   @ViewBuilder let content: Content
 
-  @State private var shown: Set<String> = []
+  @State private var rows = ReviewRows()
 
   var body: some View {
+    let shown = rows.shown
     let top = shown.contains(reviewHeader) ? nil : review.first { shown.contains($0.id) }?.id
 
     ScrollViewReader { proxy in
       List {
         content
       }
-      .environment(\.reviewRowShown) { id, isShown in
-        if isShown {
-          shown.insert(id)
-        } else {
-          shown.remove(id)
-        }
-      }
+      .environment(\.reviewRows, rows)
       // At its first size, and again as unfolding resizes it, which scrolls it away.
       .onGeometryChange(for: CGSize.self) {
         $0.size
@@ -1096,7 +1104,7 @@ private struct MockPlanSection: View {
 }
 
 private struct MockReviewSection: View {
-  @Environment(\.reviewRowShown) private var rowShown
+  @Environment(\.reviewRows) private var rows
 
   let items: [MockReviewItem]
   @Binding var opened: Set<String>
@@ -1158,11 +1166,11 @@ private struct MockReviewSection: View {
           }
         }
         .id(item.id)
-        .onScrollVisibilityChange(threshold: 0.5) { rowShown?(item.id, $0) }
+        .onScrollVisibilityChange(threshold: 0.5) { rows?.update(item.id, isShown: $0) }
       }
     } header: {
       Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
-        .onScrollVisibilityChange(threshold: 0.5) { rowShown?(reviewHeader, $0) }
+        .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
     }
   }
 }
