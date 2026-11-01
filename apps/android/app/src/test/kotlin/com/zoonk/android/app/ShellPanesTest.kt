@@ -65,6 +65,14 @@ class ShellPanesTest {
         }
     }
 
+    /** A Pixel Fold's inner display opens flat, its fold down the window's middle, once what's open has settled. */
+    private fun unfold() {
+        rule.waitForIdle()
+        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.waitForIdle()
+    }
+
     @Test
     fun aListAndItsDetailShareTheWindow() {
         rule.runOnIdle { navigator.open(AppRoute.Settings) }
@@ -101,16 +109,29 @@ class ShellPanesTest {
         assertTrue("the detail starts at the fold: $detail", detail.left >= 426.dp)
     }
 
-    /** A detail opened on its own, as Subscription from the account menu, is a page of its own beside the rail. */
+    /** A detail opened on its own, as Subscription from the account menu, is a page of its own: on an open book, the page before the fold. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")
-    fun aDetailOpenedOnItsOwnFillsThePage() {
-        rule.waitForIdle()
-        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+    fun aDetailOpenedOnItsOwnKeepsToThePageBeforeTheFold() {
         rule.runOnIdle { navigator.open(AppRoute.Preferences) }
+        unfold()
 
         val detail = rule.onNodeWithTag("detail").assertIsDisplayed().getUnclippedBoundsInRoot()
-        assertEquals(772f, detail.width.value, 0.5f)
+        assertEquals(80f, detail.left.value, 0.5f)
+        assertEquals(426f, detail.right.value, 0.5f)
+    }
+
+    /** Text this large leaves room for one pane: the detail shows on its own, on the page before the fold. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp", fontScale = 2f)
+    fun largeTextShowsADetailOnThePageBeforeTheFold() {
+        rule.runOnIdle { navigator.open(AppRoute.Settings) }
+        rule.runOnIdle { navigator.open(AppRoute.Preferences) }
+        unfold()
+
+        val detail = rule.onNodeWithTag("detail").assertIsDisplayed().getUnclippedBoundsInRoot()
+        rule.onNodeWithText("Settings list").assertDoesNotExist()
+        assertEquals(80f, detail.left.value, 0.5f)
+        assertEquals(426f, detail.right.value, 0.5f)
     }
 }

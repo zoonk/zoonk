@@ -5,12 +5,14 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
@@ -114,6 +116,7 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.LocalTabRootBar
 import com.zoonk.android.ui.scaffold.TabRootBar
 import com.zoonk.android.ui.scaffold.pageDirective
@@ -236,7 +239,7 @@ fun AppShell(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val snackbarAnchors = remember { SnackbarAnchors() }
-    val entries = navigator.rememberEntries(entryProvider)
+    val entries = navigator.rememberEntries(remember(entryProvider) { { key: NavKey -> entryProvider(key).beforeFoldOnItsOwn(key) } })
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
     CompositionLocalProvider(
@@ -302,14 +305,24 @@ private fun ShellSnackbarHost(
 
 /**
  * Material's list-detail scene where a list leads it. A detail opened on its own (Subscription from
- * the account menu) is a page of its own: Material would lay it beside an empty list, or in the page
- * before an unfolded book's fold with the page after it empty.
+ * the account menu) is a page of its own: Material would lay it beside an empty list.
  */
 private fun <T : Any> listLed(listDetail: SceneStrategy<T>): SceneStrategy<T> =
     SceneStrategy { entries ->
         val panes = entries.takeLastWhile { PANE_ROLE in it.metadata }
         if (panes.any { it.metadata[PANE_ROLE]?.javaClass == LIST_ROLE }) with(listDetail) { calculateScene(entries) } else null
     }
+
+/**
+ * A list or its detail shown on its own keeps to the page before an unfolded book's fold, as other
+ * one-column screens do: where only one pane fits, as with large text, or for a detail opened on its
+ * own, Navigation 3 shows the entry across the window. Beside each other, the fold crosses neither.
+ */
+private fun NavEntry<NavKey>.beforeFoldOnItsOwn(key: NavKey): NavEntry<NavKey> {
+    if (PANE_ROLE !in metadata) return this
+    val entry = this
+    return NavEntry(key, contentKey, metadata) { BeforeFold { beforeFold -> Box(beforeFold.fillMaxSize()) { entry.Content() } } }
+}
 
 // Material keeps its pane roles' metadata types to itself, so its list's are read off listPane().
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
