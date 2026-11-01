@@ -10,6 +10,7 @@ final class EssayWriter {
     case failed
     case limitReached
     case dailyLimitReached
+    case signUpRequired
   }
 
   private static let slowAfter = Duration.seconds(20)
@@ -118,6 +119,8 @@ final class EssayWriter {
       status = .limitReached
     case .done(.dailyLimitReached):
       status = .dailyLimitReached
+    case .done(.signUpRequired):
+      status = .signUpRequired
     case .done(.blockNotActive):
       status = .failed
       // The block was finished or skipped elsewhere; a fresh read, not one already on its way,

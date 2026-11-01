@@ -14,7 +14,8 @@ final class EssayWriterTests: XCTestCase {
   }
 
   func testTheDailyTimeLimitStopsASendAndKeepsTheText() async {
-    let writer = makeWriter(DailyLimitTransport())
+    let transport = ForbiddenTransport(code: "DAILY_LIMIT_REACHED")
+    let writer = makeWriter(transport)
     writer.text = "My essay about it."
 
     await writer.send()
@@ -22,8 +23,17 @@ final class EssayWriterTests: XCTestCase {
     XCTAssertEqual(writer.status, .dailyLimitReached)
     XCTAssertEqual(writer.text, "My essay about it.")
     XCTAssertEqual(
-      makeWriter(DailyLimitTransport()).text, "My essay about it.", "Opened again, it's still there"
-    )
+      makeWriter(transport).text, "My essay about it.", "Opened again, it's still there")
+  }
+
+  func testAGuestPastTheSharedAIBudgetIsAskedToSignUpAndKeepsTheText() async {
+    let writer = makeWriter(ForbiddenTransport(code: "SIGN_UP_REQUIRED"))
+    writer.text = "My essay about it."
+
+    await writer.send()
+
+    XCTAssertEqual(writer.status, .signUpRequired)
+    XCTAssertEqual(writer.text, "My essay about it.")
   }
 
   func testAFinishedEssayShowsItsLastGradeAndTakesNoRewrite() async {
@@ -120,7 +130,9 @@ final class EssayWriterTests: XCTestCase {
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 }
 
-private struct DailyLimitTransport: ClientTransport {
+private struct ForbiddenTransport: ClientTransport {
+  let code: String
+
   func send(
     _ request: HTTPRequest,
     body: HTTPBody?,
@@ -129,7 +141,7 @@ private struct DailyLimitTransport: ClientTransport {
   ) async throws -> (HTTPResponse, HTTPBody?) {
     (
       HTTPResponse(status: .forbidden, headerFields: [.contentType: "application/json"]),
-      HTTPBody(#"{"error":{"code":"DAILY_LIMIT_REACHED","message":"Daily time limit reached"}}"#)
+      HTTPBody(#"{"error":{"code":"\#(code)","message":"Refused"}}"#)
     )
   }
 }

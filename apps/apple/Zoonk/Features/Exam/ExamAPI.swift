@@ -47,6 +47,7 @@ enum EssaySubmission: Equatable, Sendable {
   case graded(EssayGrade)
   case limitReached
   case dailyLimitReached
+  case signUpRequired
   case blockNotActive
 }
 
@@ -367,7 +368,9 @@ struct ExamAPI {
       switch try await client.submitEssay(path: .init(blockId: blockId), body: .json(body)) {
       case .ok(let response): return .graded(try PracticeJSON.recode(try response.body.json))
       case .tooManyRequests: return .limitReached
-      case .forbidden: return .dailyLimitReached
+      case .forbidden(let response):
+        return (try? response.body.json)?.error.code == "SIGN_UP_REQUIRED"
+          ? .signUpRequired : .dailyLimitReached
       case .conflict: return .blockNotActive
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound

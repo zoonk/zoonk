@@ -321,6 +321,8 @@ private struct EssayContent: View {
           .foregroundStyle(.secondary)
           ChangeLimitButton()
         }
+      } else if writer.isWriting, writer.status == .signUpRequired {
+        HelpLimitNotice(limit: .signUpRequired)
       } else if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {
         Text(
           "You've used today's essay grades. Your text stays here; send it tomorrow.",
