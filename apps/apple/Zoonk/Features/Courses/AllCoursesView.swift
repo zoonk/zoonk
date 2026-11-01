@@ -2,8 +2,8 @@ import SwiftUI
 
 struct AllCoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  /// Partially folded, iPhone Duo keeps the box and the categories on the page before the fold;
-  /// nil elsewhere.
+  /// iPhone Duo keeps the box and the categories on the page before the hinge, flat or folded; nil
+  /// elsewhere.
   @State private var leadingPageMargin: CGFloat?
 
   @Binding var category: CourseCategory?
@@ -40,7 +40,7 @@ struct AllCoursesView: View {
     }
     // Section margins count from the list's whole bounds, which run under the vertical bar.
     .onGeometryChange(for: CGFloat?.self) { proxy in
-      PaneSpace(proxy).fold.map {
+      PaneSpace(proxy).hinge.map {
         proxy.size.width - $0.lowerBound + proxy.safeAreaInsets.trailing
       }
     } action: {

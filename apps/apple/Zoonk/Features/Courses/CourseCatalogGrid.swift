@@ -49,14 +49,14 @@ struct CourseCatalogGrid: View {
   }
 
   private var columns: [GridItem] {
-    guard let fold = space.columnsAroundFold(minimum: Self.minimumColumn, spacing: Self.spacing)
+    guard let hinge = space.columnsAroundHinge(minimum: Self.minimumColumn, spacing: Self.spacing)
     else {
       return [
         GridItem(.adaptive(minimum: Self.minimumColumn), spacing: Self.spacing, alignment: .top)
       ]
     }
 
-    return fold.map { GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top) }
+    return hinge.map { GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top) }
   }
 
   @ViewBuilder

@@ -139,7 +139,7 @@ struct ScheduleQuestion: View {
           timeMenu(shown)
           timeAnswer(shown)
         }
-        .keepsBeforeFold()
+        .keepsBeforeHinge()
         .listRowBackground(Color.clear)
       } header: {
         // The picker carries the name for VoiceOver; this is its visible title.

@@ -156,15 +156,15 @@ extension PaneSpace {
     var spacing: CGFloat
   }
 
-  /// The same number of columns on each side, so the grid stays even, with the fold as the gap
-  /// between the halves.
-  func columnsAroundFold(minimum: CGFloat, spacing: CGFloat) -> [Column]? {
-    guard let fold else {
+  /// The same number of columns on each side, so the grid stays even, with the hinge as the gap
+  /// between the halves, flat or folded.
+  func columnsAroundHinge(minimum: CGFloat, spacing: CGFloat) -> [Column]? {
+    guard let hinge else {
       return nil
     }
 
-    let leading = fold.lowerBound
-    let trailing = width - fold.upperBound
+    let leading = hinge.lowerBound
+    let trailing = width - hinge.upperBound
     let perSide = max(
       Int(((min(leading, trailing) + spacing) / (minimum + spacing)).rounded(.down)), 1)
 
@@ -175,7 +175,7 @@ extension PaneSpace {
       }
     }
 
-    return side(leading, spacingAfter: fold.upperBound - fold.lowerBound)
+    return side(leading, spacingAfter: hinge.upperBound - hinge.lowerBound)
       + side(trailing, spacingAfter: 0)
   }
 }

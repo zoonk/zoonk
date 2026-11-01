@@ -24,11 +24,11 @@ struct MindMapsScreen: View {
       return [GridItem(.flexible())]
     }
 
-    guard let fold = gridSpace.columnsAroundFold(minimum: tileWidth, spacing: 16) else {
+    guard let hinge = gridSpace.columnsAroundHinge(minimum: tileWidth, spacing: 16) else {
       return [GridItem(.adaptive(minimum: tileWidth), spacing: 16)]
     }
 
-    return fold.map { GridItem(.fixed($0.width), spacing: $0.spacing) }
+    return hinge.map { GridItem(.fixed($0.width), spacing: $0.spacing) }
   }
 
   @ViewBuilder

@@ -15,11 +15,13 @@ final class PaneSpaceTests: XCTestCase {
     XCTAssertEqual(panes, PaneSpace.Panes(primary: 455, gap: 40))
   }
 
-  func testFlatOnTheDuoThePanesStillMeetAtTheHinge() {
+  func testFlatOnTheDuoThePanesAndAGridStillMeetAtTheHinge() {
     let space = PaneSpace(width: 867, hinge: 455.5...495.5)
 
     XCTAssertEqual(space.panes(primaryShare: 0.55), PaneSpace.Panes(primary: 455.5, gap: 40))
-    XCTAssertNil(space.columnsAroundFold(minimum: 240, spacing: 24))
+    XCTAssertEqual(
+      space.columnsAroundHinge(minimum: 240, spacing: 24),
+      [PaneSpace.Column(width: 455.5, spacing: 40), PaneSpace.Column(width: 371.5, spacing: 0)])
   }
 
   func testAnEvenSplitNeedsAPhoneWidthForEachPane() {
@@ -48,12 +50,12 @@ final class PaneSpaceTests: XCTestCase {
     XCTAssertEqual(panes, PaneSpace.Panes(primary: 390, gap: 40))
   }
 
-  func testAGridHasNoFoldColumnsWithoutAFold() {
-    XCTAssertNil(PaneSpace(width: 828).columnsAroundFold(minimum: 240, spacing: 24))
+  func testAGridHasNoHingeColumnsWithoutAHinge() {
+    XCTAssertNil(PaneSpace(width: 828).columnsAroundHinge(minimum: 240, spacing: 24))
   }
 
   func testAGridAcrossTheFoldGetsOneColumnOnEachSideWithTheFoldBetween() {
-    let columns = PaneSpace(width: 828, fold: 435...475).columnsAroundFold(
+    let columns = PaneSpace(width: 828, fold: 435...475).columnsAroundHinge(
       minimum: 240, spacing: 24)
 
     XCTAssertEqual(
@@ -63,7 +65,7 @@ final class PaneSpaceTests: XCTestCase {
 
   func testAWideGridAcrossTheFoldGetsTheSameNumberOfColumnsOnEachSide() {
     // The narrower side fits two columns, so the wider one gets two as well.
-    let columns = PaneSpace(width: 1100, fold: 560...600).columnsAroundFold(
+    let columns = PaneSpace(width: 1100, fold: 560...600).columnsAroundHinge(
       minimum: 200, spacing: 20)
 
     XCTAssertEqual(
