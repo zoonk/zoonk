@@ -41,7 +41,7 @@ export async function loadStripeWebSubscription(
   const subscription = await stripeClient.subscriptions.retrieve(saved.stripeSubscriptionId);
 
   if (hasBillingStateChanged({ live: subscription, saved })) {
-    await saveSubscription({ subscription, userId });
+    await saveSubscription(subscription);
     revalidateCacheTags([getUserSubscriptionCacheTag(userId)]);
     return null;
   }
