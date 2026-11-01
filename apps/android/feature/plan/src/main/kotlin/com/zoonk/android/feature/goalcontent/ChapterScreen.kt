@@ -33,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -80,6 +79,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.ChapterMindMap
@@ -330,9 +330,7 @@ private fun ChapterHero(
         Text(
             text = chapter.chapter.title,
             modifier =
-                Modifier.onGloballyPositioned(onTitlePlaced).semantics {
-                    heading()
-                },
+                Modifier.onGloballyPositioned(onTitlePlaced).pageTitle(),
             style = MaterialTheme.typography.titleLarge,
         )
         if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())

@@ -12,8 +12,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +46,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
@@ -273,9 +272,7 @@ private fun SubjectHero(
         Text(
             text = subject.name,
             modifier =
-                Modifier.onGloballyPositioned(onTitlePlaced).semantics {
-                    heading()
-                },
+                Modifier.onGloballyPositioned(onTitlePlaced).pageTitle(),
             style = MaterialTheme.typography.titleLarge,
         )
 

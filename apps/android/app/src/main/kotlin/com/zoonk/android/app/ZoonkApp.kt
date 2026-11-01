@@ -121,6 +121,7 @@ import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.LocalShownOnTop
 import com.zoonk.android.ui.scaffold.LocalTabRootBar
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TabRootBar
@@ -245,7 +246,10 @@ fun AppShell(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val snackbarAnchors = remember { SnackbarAnchors() }
-    val entries = navigator.rememberEntries(remember(entryProvider) { { key: NavKey -> entryProvider(key).onItsOwn(key, entryProvider) } })
+    val entries =
+        navigator.rememberEntries(
+            remember(entryProvider, navigator) { { key: NavKey -> entryProvider(key).onItsOwn(key, entryProvider).onTop(key, navigator) } },
+        )
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
     CompositionLocalProvider(
@@ -339,8 +343,19 @@ private fun NavEntry<NavKey>.onItsOwn(
             BeforeFold { beforeFold -> Box(beforeFold.fillMaxSize()) { entry.Content() } }
         } else {
             val list = remember { entryProvider(hub) }
-            BesideItsListAtFold(list = { list.Content() }) { entry.Content() }
+            BesideItsListAtFold(list = { CompositionLocalProvider(LocalShownOnTop provides false) { list.Content() } }) { entry.Content() }
         }
+    }
+}
+
+/** The screen the learner went to last, whose title takes their focus; switching tabs leaves it on the tab. */
+private fun NavEntry<NavKey>.onTop(
+    key: NavKey,
+    navigator: AppNavigator,
+): NavEntry<NavKey> {
+    val entry = this
+    return NavEntry(key, contentKey, metadata) {
+        CompositionLocalProvider(LocalShownOnTop provides (navigator.currentRoute == key && !navigator.isSwitchingTabs)) { entry.Content() }
     }
 }
 

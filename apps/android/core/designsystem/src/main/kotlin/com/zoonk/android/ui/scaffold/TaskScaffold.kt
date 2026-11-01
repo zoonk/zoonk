@@ -84,6 +84,7 @@ private fun TaskTopBar(
     actions: @Composable RowScope.() -> Unit,
     onClose: () -> Unit,
     closeLabel: String?,
+    focus: TitleTarget,
 ) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
@@ -91,7 +92,7 @@ private fun TaskTopBar(
         val fold = pageFold(maxWidth, span)
 
         CenterAlignedTopAppBar(
-            title = { if (fold == null) title() },
+            title = { if (fold == null) Box(Modifier.titleTarget(focus)) { title() } },
             navigationIcon = {
                 if (fold == null) {
                     CloseButton(onClick = onClose, label = closeLabel)
@@ -99,7 +100,7 @@ private fun TaskTopBar(
                     Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
                         CloseButton(onClick = onClose, label = closeLabel)
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() }
+                            Box(Modifier.titleTarget(focus)) { ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() } }
                         }
                         Spacer(Modifier.width(CLOSE_WIDTH))
                     }
@@ -141,20 +142,21 @@ fun TaskScaffold(
 ) {
     var isConfirmingExit by rememberSaveable { mutableStateOf(false) }
     val leave = { if (exitConfirmation == null) onClose() else isConfirmingExit = true }
+    val focus = rememberTitleFocus()
 
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable (snackbars: Boolean) -> Unit = { snackbars ->
         Scaffold(
-            topBar = { TaskTopBar(title, actions, onClose = leave, closeLabel) },
+            topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
             bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
             snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
-            content = content,
+            content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
         )
     }
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
-    Box(modifier) {
+    Box(Modifier.pageFocus(focus).then(modifier)) {
         PageWithSupportingPane(
             supportingPane = aside?.let { { TaskAsideRail(it) } },
             panesTouch = true,

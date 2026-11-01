@@ -59,6 +59,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkOutline
@@ -162,7 +163,7 @@ private fun Heading(link: PlanLink) {
         Eyebrow(stringResource(R.string.planlink_eyebrow))
         Text(
             link.outline.subject?.title ?: stringResource(R.string.planlink_study_plan),
-            modifier = Modifier.semantics { heading() },
+            modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineSmall,
         )
         link.outline.subject?.description?.let {

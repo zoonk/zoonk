@@ -72,6 +72,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.Explanation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -257,7 +258,7 @@ private fun ExplainHeading(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         eyebrow()
-        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
         subtitle?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }

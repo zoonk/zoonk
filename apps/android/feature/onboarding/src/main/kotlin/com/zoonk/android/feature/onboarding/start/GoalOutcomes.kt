@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -41,6 +40,7 @@ import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.pageTitle
 
 @Composable
 internal fun OnboardingHeading(
@@ -51,11 +51,7 @@ internal fun OnboardingHeading(
         // Each step swaps the whole screen: naming it as a pane makes TalkBack say which one arrived.
         Text(
             text = title,
-            modifier =
-                Modifier.semantics {
-                    heading()
-                    paneTitle = title
-                },
+            modifier = Modifier.pageTitle().semantics { paneTitle = title },
             style = MaterialTheme.typography.headlineSmall,
         )
         if (description != null) {
