@@ -169,9 +169,16 @@ data class PageSpan(
     }
 }
 
-/** Reports where this layout sits across its window, for [pageFold] and [pageDirective]. */
+/**
+ * Reports where this layout sits across its window, for [pageFold] and [pageDirective]. A placement
+ * that's scaled or partly off the window (a page shrinking under predictive back) isn't reported, so
+ * the page keeps the panes it had.
+ */
 fun Modifier.onPageSpan(onSpan: (PageSpan) -> Unit): Modifier =
-    onPlaced { onSpan(it.boundsInWindow().let { bounds -> PageSpan(bounds.left, bounds.right) }) }
+    onPlaced { coordinates ->
+        val bounds = coordinates.boundsInWindow()
+        if (bounds.width == coordinates.size.width.toFloat()) onSpan(PageSpan(bounds.left, bounds.right))
+    }
 
 /** The narrowest page a book foldable leaves beside the navigation rail: a 673dp Galaxy Z Fold's 256dp, with room to spare. */
 private val MINIMUM_PANE = 240.dp

@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
@@ -174,6 +176,36 @@ class PageWithSupportingPaneTest {
         show()
 
         fold(FoldingFeature.State.HALF_OPENED, FoldingFeature.Orientation.HORIZONTAL)
+
+        rule.onNodeWithText("Page").assertIsDisplayed()
+        rule.onNodeWithText("Aside beside").assertIsDisplayed()
+    }
+
+    /** Predictive back shrinks the page it leaves to 70%: that page keeps its panes while it shrinks. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp")
+    fun aShrinkingPageKeepsItsPanes() {
+        var scale by mutableFloatStateOf(1f)
+        rule.setContent {
+            ZoonkTheme {
+                Box(
+                    Modifier.fillMaxSize().graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    },
+                    contentAlignment = Alignment.TopEnd,
+                ) {
+                    PageWithSupportingPane(supportingPane = { Text("Aside beside") }, modifier = Modifier.width(627.dp)) { beside ->
+                        Text(if (beside) "Page" else "Page with its aside below")
+                    }
+                }
+            }
+        }
+        fold(FoldingFeature.State.FLAT)
+        rule.onNodeWithText("Aside beside").assertIsDisplayed()
+
+        scale = 0.7f
+        rule.waitForIdle()
 
         rule.onNodeWithText("Page").assertIsDisplayed()
         rule.onNodeWithText("Aside beside").assertIsDisplayed()
