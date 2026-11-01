@@ -315,6 +315,30 @@ describe(checkLessonStep, () => {
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
+  it("records no more than a run's answers to a screen when they're sent at once", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const answer = { kind: "check", optionId: "path" } as const;
+    vi.useFakeTimers({ now: new Date(), toFake: ["Date"] });
+
+    try {
+      await whileLearnerLocked({
+        userId: user.id,
+        waiters: 5,
+        writes: () =>
+          Promise.all(
+            Array.from({ length: 5 }, () =>
+              check({ answer, attemptId: randomUUID(), runId: run.id, stepId }),
+            ),
+          ),
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(3);
+  });
+
   it("keeps two learners' answers apart when they send the same id", async () => {
     const [mine, theirs] = await Promise.all([setupRun(), setupRun()]);
     const attemptId = randomUUID();

@@ -56,15 +56,17 @@ export type LessonStepCheckOutcome =
   | { status: "unauthorized" };
 
 async function countRunAnswers({
+  client = prisma,
   startedAt,
   stepId,
   userId,
 }: {
+  client?: TransactionClient;
   startedAt: Date;
   stepId: string;
   userId: string;
 }): Promise<number> {
-  return prisma.attempt.count({ where: { answeredAt: { gte: startedAt }, stepId, userId } });
+  return client.attempt.count({ where: { answeredAt: { gte: startedAt }, stepId, userId } });
 }
 
 /** The typed/listening fallback trains the modality actually used, not the original spoken screen. */
@@ -163,6 +165,17 @@ async function recordCheck({
     refuse: async (transaction: TransactionClient) => {
       if (!(await lockOpenRun(transaction, run.id))) {
         return "runEnded";
+      }
+
+      const answers = await countRunAnswers({
+        client: transaction,
+        startedAt: run.startedAt,
+        stepId: row.id,
+        userId: comesBack.userId,
+      });
+
+      if (answers >= MAX_ANSWERS_PER_STEP_IN_RUN) {
+        return "runFull";
       }
 
       const overtaken = await hasAnswerSince(transaction, {
