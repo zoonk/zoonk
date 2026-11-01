@@ -3,6 +3,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
+import { getLocalDateInstants } from "../../../learner/_utils/local-time";
 import { readMistakeSnapshot } from "../../../mistakes/mistake-snapshot";
 import { type RecentActivity } from "./activity-signals";
 
@@ -50,7 +51,11 @@ export async function loadRecentActivity({
         skillId: true,
         studySessionId: true,
       },
-      where: { answeredAt: { lte: now }, localDate: { gte: since }, userId },
+      where: {
+        answeredAt: { ...getLocalDateInstants({ from: since }), lte: now },
+        localDate: { gte: since },
+        userId,
+      },
     }),
     prisma.mistake.findMany({
       orderBy: { createdAt: "desc" },

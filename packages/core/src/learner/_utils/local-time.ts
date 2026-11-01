@@ -80,3 +80,14 @@ export function getLocalDaysBetween({
 
   return Math.round((toDay - fromDay) / MS_PER_DAY);
 }
+
+/**
+ * Every zone's local date falls within a day of the same UTC date, so these `answeredAt` bounds hold
+ * every answer on local dates from `from` until before `until`, and let the query use that index.
+ */
+export function getLocalDateInstants({ from, until }: { from: Date; until?: Date }) {
+  return {
+    gte: new Date(from.getTime() - MS_PER_DAY),
+    ...(until && { lt: new Date(until.getTime() + MS_PER_DAY) }),
+  };
+}

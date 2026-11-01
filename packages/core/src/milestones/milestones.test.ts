@@ -223,6 +223,40 @@ describe(getWeeklyRecap, () => {
     expect(result.recap.badges.map((badge) => badge.key)).toStrictEqual(["trapHunter:boss"]);
   });
 
+  it("counts the week's answers from a zone far ahead of UTC", async () => {
+    const user = await userFixture();
+    const skill = await skillFixture({ name: "Proportions" });
+    const mondayMorningAhead = new Date("2026-09-27T10:30:00Z");
+
+    await Promise.all([
+      dailyProgressFixtureMany([
+        { correctAnswers: 2, date: weekDay(0, 0), timeSpentSeconds: 600, userId: user.id },
+      ]),
+      attemptFixture({
+        answeredAt: mondayMorningAhead,
+        isCorrect: false,
+        localDate: MONDAY,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: weekDay(3),
+        isCorrect: true,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+    const result = await getWeeklyRecap({ timeZone: "UTC" });
+
+    expect(result.status === "ready" && result.recap.turnaround).toMatchObject({
+      from: 0,
+      name: "Proportions",
+      to: 1,
+    });
+  });
+
   it("keeps showing the last finished week until the current one ends", async () => {
     const user = await userFixture();
 

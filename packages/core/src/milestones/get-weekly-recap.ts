@@ -2,7 +2,7 @@ import "server-only";
 import { type MasteryState, type Milestone, prisma } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getStartOfLocalDay } from "../learner/_utils/local-time";
+import { getLocalDateInstants, getStartOfLocalDay } from "../learner/_utils/local-time";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
 import { loadTomorrow } from "../sessions/_utils/load-summary-parts";
@@ -52,10 +52,16 @@ function getReason(state: MasteryState): TurnaroundReason {
 }
 
 async function loadTurnaround({ userId, weekStart }: { userId: string; weekStart: Date }) {
+  const weekDates = {
+    gte: weekStart,
+    lt: new Date(weekStart.getTime() + DAYS_PER_WEEK * MS_PER_DAY),
+  };
+
   const answers = await prisma.attempt.findMany({
     select: { answeredAt: true, isCorrect: true, localDate: true, skillId: true },
     where: {
-      localDate: { gte: weekStart, lt: new Date(weekStart.getTime() + DAYS_PER_WEEK * MS_PER_DAY) },
+      answeredAt: getLocalDateInstants({ from: weekDates.gte, until: weekDates.lt }),
+      localDate: weekDates,
       skillId: { not: null },
       userId,
     },
