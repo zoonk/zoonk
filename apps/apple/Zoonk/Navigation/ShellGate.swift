@@ -137,19 +137,27 @@ struct ShellGate<Content: View>: View {
     }
   }
 
+  /// An open book faces the box with the goal's examples, as Today's first goal does; the box keeps
+  /// what's typed in it as they come and go.
   private var goalBox: some View {
-    List {
-      Section {
-        Text(
-          "Tell us what you want to learn, and we'll plan every day until you get there.",
-          tableName: "Navigation",
-          comment: "Explains what starting a goal does, on a page that needs one"
-        )
-        .foregroundStyle(.secondary)
+    PaneBeside(atHingeOnly: true, paneEdge: .trailing, primaryShare: 0.55) {
+      List {
+        GoalStartEntry(part: .examples, goal: $goal)
       }
-      .listRowBackground(Color.clear)
+    } content: { _ in
+      List {
+        Section {
+          Text(
+            "Tell us what you want to learn, and we'll plan every day until you get there.",
+            tableName: "Navigation",
+            comment: "Explains what starting a goal does, on a page that needs one"
+          )
+          .foregroundStyle(.secondary)
+        }
+        .listRowBackground(Color.clear)
 
-      GoalStartEntry(part: .box, goal: $goal)
+        GoalStartEntry(part: .box, goal: $goal)
+      }
     }
   }
 }
