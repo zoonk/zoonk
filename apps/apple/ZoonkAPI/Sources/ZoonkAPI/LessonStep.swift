@@ -496,6 +496,7 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
   }
 
   public struct ReadingPromptWord: Codable, Hashable, Sendable {
+    /// A word of the prompt, or a phrase the lesson translates as a unit.
     public let word: String
     public let translation: String?
   }

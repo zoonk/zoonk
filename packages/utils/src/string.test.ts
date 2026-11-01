@@ -10,10 +10,12 @@ import {
   replaceEmDashes,
   segmentLearnerWords,
   segmentWords,
+  splitEdgePunctuation,
   stripPunctuation,
   stripWrappingQuotes,
   toSlug,
   trimPunctuation,
+  wordSeparator,
 } from "./string";
 
 describe(removeAccents, () => {
@@ -296,6 +298,14 @@ describe(segmentWords, () => {
   });
 });
 
+describe(wordSeparator, () => {
+  it("is a space where segmentWords splits at spaces and nothing where it finds words", () => {
+    expect(wordSeparator("o portão")).toBe(" ");
+    expect(wordSeparator("新幹線に乗ります。")).toBe("");
+    expect(wordSeparator("Bonjour !")).toBe("");
+  });
+});
+
 describe(segmentLearnerWords, () => {
   it.each([
     ["私は学生です。", ["私は", "学生です。"]],
@@ -393,6 +403,18 @@ describe(trimPunctuation, () => {
     expect(trimPunctuation(" «l'eau» ")).toBe("l'eau");
     expect(trimPunctuation("「駅」")).toBe("駅");
     expect(trimPunctuation("नमस्ते।")).toBe("नमस्ते");
+  });
+});
+
+describe(splitEdgePunctuation, () => {
+  it.each([
+    ["¿Hola?", { after: "?", before: "¿", word: "Hola" }],
+    ["por mês?", { after: "?", before: "", word: "por mês" }],
+    ["l'heure,", { after: ",", before: "", word: "l'heure" }],
+    ["乗ります。", { after: "。", before: "", word: "乗ります" }],
+    ["काम", { after: "", before: "", word: "काम" }],
+  ])("sets the punctuation around %s apart and keeps what's inside", (text, expected) => {
+    expect(splitEdgePunctuation(text)).toStrictEqual(expected);
   });
 });
 

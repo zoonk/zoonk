@@ -96,6 +96,16 @@ export function trimPunctuation(text: string): string {
   return text.replaceAll(/^[^\p{L}\p{M}\p{N}]+|[^\p{L}\p{M}\p{N}]+$/gu, "");
 }
 
+export function splitEdgePunctuation(text: string): {
+  after: string;
+  before: string;
+  word: string;
+} {
+  const word = trimPunctuation(text);
+  const start = word ? text.indexOf(word) : text.length;
+  return { after: text.slice(start + word.length), before: text.slice(0, start), word };
+}
+
 /** Keeps combining marks: Devanagari and Thai vowel signs tell words apart ("कम", "काम"). */
 export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{M}\p{N}\s]/gu, "");
@@ -131,10 +141,15 @@ function segmentNonSpaceText(text: string): string[] {
   return tokens;
 }
 
+/** What `segmentWords` split the text's words at: a space, or nothing in a script without them. */
+export function wordSeparator(text: string): string {
+  return normalizePunctuation(text).includes(" ") ? " " : "";
+}
+
 export function segmentWords(text: string): string[] {
   const normalizedText = normalizePunctuation(text);
 
-  if (normalizedText.includes(" ")) {
+  if (wordSeparator(normalizedText)) {
     return normalizedText.split(" ").filter(Boolean);
   }
 

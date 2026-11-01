@@ -62771,10 +62771,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -63140,10 +63142,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -63501,10 +63505,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -63826,10 +63832,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -64178,10 +64186,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -64556,10 +64566,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -64881,10 +64893,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -65206,10 +65220,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -66724,10 +66740,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -67093,10 +67111,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -67454,10 +67474,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -67779,10 +67801,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -68131,10 +68155,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -68509,10 +68535,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -68834,10 +68862,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [
@@ -69159,10 +69189,12 @@
                           "properties": {
                             "translation": {
                               "nullable": true,
+                              "description": "The sentence's words it translates, or null when no sure match exists",
                               "type": "string"
                             },
                             "word": {
-                              "type": "string"
+                              "type": "string",
+                              "description": "A word of the prompt, or a phrase the lesson translates as a unit"
                             }
                           },
                           "required": [

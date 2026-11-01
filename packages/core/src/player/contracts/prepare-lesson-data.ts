@@ -158,17 +158,24 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
 }
 
 function buildStepReadingPromptWords({
-  sentenceWordOptions,
+  languages,
   step,
+  vocabulary,
 }: {
-  sentenceWordOptions: WordBankOption[];
+  languages: LessonLanguages;
   step: SerializedStep;
+  vocabulary: SerializedWord[];
 }): ReadingPromptWord[] {
   if (step.kind !== "reading" || !step.sentence) {
     return [];
   }
 
-  return buildReadingPromptWords({ prompt: step.sentence.translation, sentenceWordOptions });
+  return buildReadingPromptWords({
+    languages,
+    prompt: step.sentence.translation,
+    sentence: step.sentence.sentence,
+    vocabulary,
+  });
 }
 
 function serializeStep(step: StepDataInput): SerializedStep | null {
@@ -242,17 +249,19 @@ export function serializeExerciseSteps({
       return [];
     }
 
-    const sentenceWordOptions = step.sentence
-      ? buildSentenceWordOptions({ ...wordSources, sentence: step.sentence.sentence })
-      : [];
-
     return [
       {
         ...step,
         fillBlankOptions: buildFillBlankOptions({ ...wordSources, step }),
         matchColumnsRightItems: buildMatchColumnsRightItems(step),
-        readingPromptWords: buildStepReadingPromptWords({ sentenceWordOptions, step }),
-        sentenceWordOptions,
+        readingPromptWords: buildStepReadingPromptWords({
+          languages,
+          step,
+          vocabulary: serializedLessonWords,
+        }),
+        sentenceWordOptions: step.sentence
+          ? buildSentenceWordOptions({ ...wordSources, sentence: step.sentence.sentence })
+          : [],
         translationOptions: buildTranslationOptions({
           distractorLookup,
           kind: step.kind,

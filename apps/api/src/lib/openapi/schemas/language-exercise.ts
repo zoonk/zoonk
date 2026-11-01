@@ -8,7 +8,15 @@ const wordBankOptionSchema = z.object({
   word: z.string(),
 });
 
-const readingPromptWordSchema = z.object({ translation: z.string().nullable(), word: z.string() });
+const readingPromptWordSchema = z.object({
+  translation: z
+    .string()
+    .nullable()
+    .meta({ description: "The sentence's words it translates, or null when no sure match exists" }),
+  word: z
+    .string()
+    .meta({ description: "A word of the prompt, or a phrase the lesson translates as a unit" }),
+});
 
 const serializedWordSchema = z.object({
   audioUrl: z.string().nullable(),
