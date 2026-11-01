@@ -19,8 +19,8 @@ import {
   matchesPaletteSearch,
 } from "./command-palette-items";
 import { type LearnerPalette, useLearnerPaletteGroups } from "./command-palette-learner-groups";
+import { type PaletteSearchResults } from "./command-palette-plan";
 import { useSettingsPaletteItems } from "./command-palette-settings";
-import { type PaletteSearchResults } from "./search-courses-action";
 
 const MAX_MOCK_RESULTS = 6;
 
@@ -121,7 +121,6 @@ export function usePaletteGroups({
     query,
   });
 
-  // The server already matched these against the query, on more than their visible titles.
   const mocks = getVisiblePaletteGroups({
     groups: [
       {

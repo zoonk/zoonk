@@ -30,13 +30,52 @@ import { keepsRowsThrough } from "./command-palette-highlight";
 import { type PaletteItem, getPaletteItemSearchValue } from "./command-palette-items";
 import { type LearnerPalette, UNREAD_LEARNER_PALETTE } from "./command-palette-learner-groups";
 import { PaletteResultGroup } from "./command-palette-options";
-import { type PaletteSearchResults, searchPaletteAction } from "./search-courses-action";
+import { type PaletteSearchResults, toPaletteSearchResults } from "./command-palette-plan";
+import {
+  type CatalogSearchResults,
+  type PalettePlan,
+  loadPalettePlanAction,
+  searchCatalogAction,
+} from "./search-courses-action";
+
+const MIN_QUERY_LENGTH = 2;
+const NO_CATALOG_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 
 const EMPTY_SEARCH_RESULTS: PaletteSearchResults = {
-  catalog: { chapters: [], courses: [] },
+  catalog: NO_CATALOG_RESULTS,
   mocks: [],
   plan: { chapters: [], subjects: [] },
 };
+
+const NO_PLAN: PalettePlan = { chapters: [], mocks: [], subjects: [] };
+
+/** Once per palette, on its first opening; a failed read is asked again when it opens again. */
+function usePalettePlan({ enabled }: { enabled: boolean }): PalettePlan {
+  const [plan, setPlan] = useState<PalettePlan | null>(null);
+
+  useEffect(() => {
+    if (!enabled || plan) {
+      return;
+    }
+
+    const request = { current: true };
+
+    loadPalettePlanAction().then(
+      (loaded) => {
+        if (request.current) {
+          setPlan(loaded);
+        }
+      },
+      () => null,
+    );
+
+    return () => {
+      request.current = false;
+    };
+  }, [enabled, plan]);
+
+  return plan ?? NO_PLAN;
+}
 
 /** The palette has closed by then, so a block that couldn't be opened says so in a toast. */
 function useContinueFromPalette() {
@@ -117,21 +156,36 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const continueSession = useContinueFromPalette();
 
   const handleSearch = useCallback(
-    (searchQuery: string) => searchPaletteAction({ language: locale, query: searchQuery }),
+    (searchQuery: string) => searchCatalogAction({ language: locale, query: searchQuery }),
     [locale],
   );
 
   const { closePalette, isOpen, onSelectItem, open, query, results, returnFocusRef, setQuery } =
-    useCommandPaletteSearch<PaletteSearchResults>({
-      emptyResults: EMPTY_SEARCH_RESULTS,
+    useCommandPaletteSearch<CatalogSearchResults>({
+      emptyResults: NO_CATALOG_RESULTS,
+      minQueryLength: MIN_QUERY_LENGTH,
       onSearch: handleSearch,
     });
+
+  const plan = usePalettePlan({ enabled: isOpen && learner !== undefined });
+
+  const searched =
+    query.trim().length < MIN_QUERY_LENGTH
+      ? EMPTY_SEARCH_RESULTS
+      : toPaletteSearchResults({ catalog: results, plan, query });
 
   useEffect(() => listenForCommandPaletteOpen(open), [open]);
 
   const [highlighted, setHighlighted] = useState(-1);
 
-  const shown = useShownPalette({ highlighted, isLoggedIn, isOpen, learner, query, results });
+  const shown = useShownPalette({
+    highlighted,
+    isLoggedIn,
+    isOpen,
+    learner,
+    query,
+    results: searched,
+  });
 
   function runPaletteItem(item: PaletteItem) {
     if (item.kind === "logout") {

@@ -4,10 +4,6 @@ import { searchCatalog } from "@zoonk/core/catalog/search";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { normalizeString } from "@zoonk/utils/string";
-import { matchesPaletteSearch } from "./command-palette-items";
-
-const MAX_PLAN_SUBJECTS = 4;
-const MAX_PLAN_CHAPTERS = 6;
 
 const MIN_DESCRIPTION_QUERY_LENGTH = 5;
 
@@ -36,7 +32,7 @@ function rankCatalogResults<Result extends { title: string }>({
 }
 
 /** A chapter whose lessons are still being written has no page yet. */
-async function searchPlan(query: string) {
+async function loadPlanNames() {
   const result = await getSyllabusView();
 
   if (result.status !== "ready") {
@@ -45,32 +41,20 @@ async function searchPlan(query: string) {
 
   const { goal, subjects } = result.syllabus;
 
-  const matchingSubjects = subjects
-    .filter((subject) =>
-      matchesPaletteSearch({ query, value: `${subject.name} ${subject.shortName}` }),
-    )
-    .slice(0, MAX_PLAN_SUBJECTS)
-    .map(({ key, name, shortName }) => ({ key, name, shortName }));
-
-  const matchingChapters = subjects
-    .flatMap((subject) =>
+  return {
+    chapters: subjects.flatMap((subject) =>
       subject.chapters.flatMap(({ chapterId, title }) =>
-        chapterId && matchesPaletteSearch({ query, value: title })
+        chapterId
           ? [{ chapterId, subject: subject.shortName, title, unit: goal.kind === "language" }]
           : [],
       ),
-    )
-    .slice(0, MAX_PLAN_CHAPTERS);
-
-  return { chapters: matchingChapters, subjects: matchingSubjects };
+    ),
+    subjects: subjects.map(({ key, name, shortName }) => ({ key, name, shortName })),
+  };
 }
 
 /** The client localizes mock names before matching; no English query is assumed here. */
-async function searchMocks(query: string) {
-  if (!query.trim()) {
-    return [];
-  }
-
+async function loadMocks() {
   const result = await getExamView({});
 
   if (result.status !== "ready") {
@@ -80,33 +64,23 @@ async function searchMocks(query: string) {
   return result.exam.mocks.flatMap(({ blockId, number }) => (blockId ? [{ blockId, number }] : []));
 }
 
-export type PaletteSearchResults = {
-  catalog: Awaited<ReturnType<typeof searchCatalog>>;
-  mocks: Awaited<ReturnType<typeof searchMocks>>;
-  plan: Awaited<ReturnType<typeof searchPlan>>;
+export type PalettePlan = Awaited<ReturnType<typeof loadPlanNames>> & {
+  mocks: Awaited<ReturnType<typeof loadMocks>>;
 };
 
-export async function searchPaletteAction(params: {
-  language: string;
-  query: string;
-}): Promise<PaletteSearchResults> {
-  const [catalog, plan, mocks] = await Promise.all([
-    searchCatalog(params),
-    searchPlan(params.query),
-    searchMocks(params.query),
-  ]);
+/** Read once when the palette opens: the palette matches these names itself as the learner types. */
+export async function loadPalettePlanAction(): Promise<PalettePlan> {
+  const [plan, mocks] = await Promise.all([loadPlanNames(), loadMocks()]);
+  return { ...plan, mocks };
+}
 
-  const planChapterIds = new Set(plan.chapters.map((chapter) => chapter.chapterId));
+export async function searchCatalogAction(params: { language: string; query: string }) {
+  const catalog = await searchCatalog(params);
 
   return {
-    catalog: {
-      chapters: rankCatalogResults({
-        query: params.query,
-        results: catalog.chapters.filter((chapter) => !planChapterIds.has(chapter.id)),
-      }),
-      courses: rankCatalogResults({ query: params.query, results: catalog.courses }),
-    },
-    mocks,
-    plan,
+    chapters: rankCatalogResults({ query: params.query, results: catalog.chapters }),
+    courses: rankCatalogResults({ query: params.query, results: catalog.courses }),
   };
 }
+
+export type CatalogSearchResults = Awaited<ReturnType<typeof searchCatalogAction>>;

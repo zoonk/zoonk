@@ -317,7 +317,7 @@ export function getPaletteItemSearchValue(item: PaletteItem) {
   return [item.searchValue, "meta" in item ? item.meta : undefined].filter(Boolean).join(" ");
 }
 
-/** Accent-insensitive, as the server searches the learner's own plan. */
+/** Accent-insensitive, as the catalog search is. */
 export function matchesPaletteSearch({ query, value }: { query: string; value: string }) {
   const normalizedQuery = normalizePaletteSearchText(query.trim());
 
