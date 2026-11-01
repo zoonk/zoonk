@@ -68,6 +68,7 @@ struct LessonQuestionText: View {
   var body: some View {
     LessonRichText(text)
       .font(.title2.weight(.semibold))
+      .dimsOnceChecked()
       .fixedSize(horizontal: false, vertical: true)
       .accessibilityAddTraits(.isHeader)
   }
@@ -75,6 +76,22 @@ struct LessonQuestionText: View {
 
 extension EnvironmentValues {
   @Entry var lessonScreenHeight: CGFloat = .infinity
+  @Entry var isLessonStepChecked = false
+}
+
+extension View {
+  /// Main's question text: once checked, it steps back so the learner's eyes go to the verdict.
+  func dimsOnceChecked() -> some View {
+    modifier(DimsOnceChecked())
+  }
+}
+
+private struct DimsOnceChecked: ViewModifier {
+  @Environment(\.isLessonStepChecked) private var isChecked
+
+  func body(content: Content) -> some View {
+    content.foregroundStyle(isChecked ? HierarchicalShapeStyle.secondary : .primary)
+  }
 }
 
 /// Main's caps on a lesson picture's height, as shares of the screen's: a read screen's lead

@@ -151,6 +151,7 @@ struct LessonStageView: View {
           }
         }
         .environment(\.isPaneSplit, spread != nil)
+        .environment(\.isLessonStepChecked, state.phase == .feedback)
         .environment(
           \.lessonScreenHeight,
           proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom

@@ -374,6 +374,7 @@ private struct FillBlankView: View {
         if !segment.isEmpty {
           Text(segment.trimmingCharacters(in: .whitespaces))
             .font(.title3)
+            .dimsOnceChecked()
         }
 
         if index < blanks.count {
@@ -519,8 +520,7 @@ private struct ArrangeWordsView: View {
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
       ReadingPromptText(
-        sentence: sentence.translation, sentenceWordOptions: exercise.sentenceWordOptions,
-        isAnswered: context.result != nil)
+        sentence: sentence.translation, sentenceWordOptions: exercise.sentenceWordOptions)
     }
   }
 
@@ -606,7 +606,6 @@ private struct ReadingPromptText: View {
 
   let sentence: String
   let sentenceWordOptions: [LanguageExercise.WordOption]
-  let isAnswered: Bool
 
   var body: some View {
     let prompt = ReadingPromptHints.stripWrappingQuotes(sentence)
@@ -623,7 +622,7 @@ private struct ReadingPromptText: View {
       }
     }
     .font(.title2.weight(.semibold))
-    .foregroundStyle(isAnswered ? .secondary : .primary)
+    .dimsOnceChecked()
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(prompt)
     .accessibilityAddTraits(.isHeader)
