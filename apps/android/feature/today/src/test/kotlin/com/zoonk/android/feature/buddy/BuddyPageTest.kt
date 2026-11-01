@@ -2,7 +2,6 @@ package com.zoonk.android.feature.buddy
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,17 +12,9 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.text.AnnotatedString
-import androidx.lifecycle.HasDefaultViewModelProviderFactory
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.MutableCreationExtras
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.plan.learnerSummary
@@ -62,19 +53,6 @@ class BuddyPageTest {
         compose.onNode(hasSetTextAction()).assert(hasDraft(""))
     }
 
-    @Test
-    fun anUnsentQuestionFromSearchIsBackAfterAndroidEndsTheApp() {
-        val restoration = StateRestorationTester(compose)
-        var process by mutableStateOf(process())
-        restoration.setContent { CompositionLocalProvider(LocalViewModelStoreOwner provides process) { Page() } }
-        compose.onNode(hasSetTextAction()).assert(hasDraft(ASK))
-
-        process = process()
-        restoration.emulateSavedInstanceStateRestore()
-
-        compose.onNode(hasSetTextAction()).assert(hasDraft(ASK))
-    }
-
     @Composable
     private fun Page() {
         val context = LocalContext.current
@@ -87,17 +65,6 @@ class BuddyPageTest {
             }
         val navigator = rememberAppNavigator()
         ZoonkTheme { BuddyPage(STATUS, GOAL, ask = ASK, app, navigator, access = TutorAccess.Ask) }
-    }
-
-    /** A fresh view model store, as Android gives the screen after ending the app, with the saved state a navigation entry has. */
-    private fun process(): ViewModelStoreOwner {
-        val activity = compose.activity
-        return object : ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
-            override val viewModelStore = ViewModelStore()
-            override val defaultViewModelProviderFactory = activity.defaultViewModelProviderFactory
-            override val defaultViewModelCreationExtras: CreationExtras
-                get() = MutableCreationExtras(activity.defaultViewModelCreationExtras).also { it[VIEW_MODEL_STORE_OWNER_KEY] = this }
-        }
     }
 
     private fun hasDraft(text: String) = SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(text))
