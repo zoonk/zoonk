@@ -19,10 +19,10 @@ type SitemapChapter = {
 async function listSitemapLibraryChapterPage(page: number): Promise<SitemapChapter[]> {
   "use cache";
 
-  const where = await getSitemapLibraryChapterWhere();
-  const listed = await prisma.chapter.findMany({ select: { id: true }, where });
-  const ids = getSitemapPageRowIds({ listed, page, resource: "library-chapters" });
-  warnIfSitemapPageIsFull({ page, resource: "library-chapters", rows: ids.length });
+  const [where, ids] = await Promise.all([
+    getSitemapLibraryChapterWhere(),
+    getSitemapPageRowIds({ page, resource: "library-chapters" }),
+  ]);
 
   const chapters = await prisma.chapter.findMany({
     orderBy: { id: "asc" },
@@ -35,6 +35,8 @@ async function listSitemapLibraryChapterPage(page: number): Promise<SitemapChapt
     },
     where: { ...where, id: { in: ids } },
   });
+
+  warnIfSitemapPageIsFull({ page, resource: "library-chapters", rows: chapters.length });
 
   return chapters.flatMap(({ homeCourse, slug, updatedAt }) =>
     homeCourse

@@ -1,20 +1,8 @@
-import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { describe, expect, it } from "vitest";
 import { getSitemapPageIds, getSitemapPageRowIds, isSitemapPage } from "./sitemap-pages";
-
-function listedRows(count: number): { id: string }[] {
-  return Array.from({ length: count }, () => ({ id: randomUUID() }));
-}
-
-function getPageOfRows(listed: { id: string }[]): Map<string, number> {
-  return new Map(
-    getSitemapPageIds("library-lessons").flatMap((page) =>
-      getSitemapPageRowIds({ listed, page, resource: "library-lessons" }).map(
-        (id) => [id, page] as const,
-      ),
-    ),
-  );
-}
 
 describe(getSitemapPageIds, () => {
   it("lists each sitemap's fixed pages", () => {
@@ -34,23 +22,44 @@ describe(isSitemapPage, () => {
 });
 
 describe(getSitemapPageRowIds, () => {
-  it("lists each row on exactly one page, spread evenly", () => {
-    const listed = listedRows(32_000);
-    const pages = getPageOfRows(listed);
-    const groups = Map.groupBy(pages.values(), (page) => page);
-    const sizes = [...groups.values()].map((rows) => rows.length);
+  it.each(["library-lessons", "library-chapters"] as const)(
+    "queries only the stable UUID slice for %s, including unsigned suffixes",
+    async (resource) => {
+      const create = resource === "library-lessons" ? libraryLessonFixture : libraryChapterFixture;
 
-    expect(pages.size).toBe(listed.length);
-    expect(Math.max(...sizes)).toBeLessThan(1200);
-  });
+      const rows = await Promise.all(
+        ["00000000", "7fffffff", "80000000", "ffffffff"].map((suffix) =>
+          create({ id: `${crypto.randomUUID().slice(0, -8)}${suffix}` }),
+        ),
+      );
 
-  it("keeps every row's page however many other rows join or leave the listing", () => {
-    const listed = listedRows(20_000);
-    const kept = listed.slice(15_000);
+      const count = getSitemapPageIds(resource).length;
 
-    const before = getPageOfRows(listed);
-    const after = getPageOfRows([...kept, ...listedRows(60_000)]);
+      const pages = await Promise.all(
+        getSitemapPageIds(resource).map((page) => getSitemapPageRowIds({ page, resource })),
+      );
 
-    expect(kept.filter(({ id }) => before.get(id) !== after.get(id))).toStrictEqual([]);
-  });
+      for (const row of rows) {
+        const page = Number.parseInt(row.id.slice(-8), 16) % count;
+        expect(pages.flat().filter((id) => id === row.id)).toStrictEqual([row.id]);
+        expect(pages[page]).toContain(row.id);
+      }
+
+      await create();
+      const removed = rows[0]!;
+
+      if (resource === "library-lessons") {
+        await prisma.lesson.delete({ where: { id: removed.id } });
+      } else {
+        await prisma.chapter.delete({ where: { id: removed.id } });
+      }
+
+      await Promise.all(
+        rows.slice(1).map(async (row) => {
+          const page = Number.parseInt(row.id.slice(-8), 16) % count;
+          await expect(getSitemapPageRowIds({ page, resource })).resolves.toContain(row.id);
+        }),
+      );
+    },
+  );
 });

@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
-import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
+import { isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 type SitemapCourse = { brandSlug: string; courseSlug: string; language: string; updatedAt: Date };
 
@@ -9,9 +9,6 @@ async function listSitemapCoursePage(page: number): Promise<SitemapCourse[]> {
   "use cache";
 
   const where = await getSitemapCourseWhere();
-  const listed = await prisma.course.findMany({ select: { id: true }, where });
-  const ids = getSitemapPageRowIds({ listed, page, resource: "courses" });
-  warnIfSitemapPageIsFull({ page, resource: "courses", rows: ids.length });
 
   const courses = await prisma.course.findMany({
     orderBy: { id: "asc" },
@@ -21,8 +18,10 @@ async function listSitemapCoursePage(page: number): Promise<SitemapCourse[]> {
       slug: true,
       updatedAt: true,
     },
-    where: { ...where, id: { in: ids } },
+    where,
   });
+
+  warnIfSitemapPageIsFull({ page, resource: "courses", rows: courses.length });
 
   return courses.map((course) => ({
     brandSlug: course.organization?.slug ?? "",

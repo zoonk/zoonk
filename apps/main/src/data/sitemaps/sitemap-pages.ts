@@ -1,3 +1,4 @@
+import { prisma, sql } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 
 /** Search engines read at most this many URLs from one sitemap. */
@@ -30,25 +31,23 @@ export function isSitemapPage({ page, resource }: { page: number; resource: Site
   return Number.isInteger(page) && page >= 0 && page < SITEMAP_PAGES[resource];
 }
 
-/** The id's last 8 hex digits (32 bits), random in every id version the tables hold (v4, v7, v8). */
-const ID_RANDOM_HEX_DIGITS = 8;
+const SITEMAP_TABLES = {
+  "library-chapters": sql`library_chapters`,
+  "library-lessons": sql`library_lessons`,
+};
 
-/**
- * From the id alone: search engines read each page at a different time and every page is cached on
- * its own, so a row joining or leaving must not move others between pages.
- */
-function getSitemapPage({ id, resource }: { id: string; resource: SitemapResource }) {
-  return Number.parseInt(id.slice(-ID_RANDOM_HEX_DIGITS), 16) % SITEMAP_PAGES[resource];
-}
-
-export function getSitemapPageRowIds({
-  listed,
+/** UUID suffixes keep membership stable while other rows join or leave independently cached pages. */
+export async function getSitemapPageRowIds({
   page,
   resource,
 }: {
-  listed: readonly { id: string }[];
   page: number;
-  resource: SitemapResource;
-}): string[] {
-  return listed.flatMap(({ id }) => (getSitemapPage({ id, resource }) === page ? [id] : []));
+  resource: keyof typeof SITEMAP_TABLES;
+}): Promise<string[]> {
+  const rows = await prisma.$queryRaw<{ id: string }[]>(sql`
+    SELECT id FROM ${SITEMAP_TABLES[resource]}
+    WHERE visibility = 'public' AND ('x' || right(id::text, 8))::bit(32)::bigint % ${SITEMAP_PAGES[resource]} = ${page}
+  `);
+
+  return rows.map(({ id }) => id);
 }
