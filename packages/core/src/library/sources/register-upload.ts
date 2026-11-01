@@ -1,10 +1,9 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { findReachedUsageLimit } from "../../entitlements/_utils/reached-usage-limit";
+import { previewUsageClaim } from "../../entitlements/_utils/reached-usage-limit";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
@@ -46,7 +45,16 @@ async function linkLearnerSource({
       skipDuplicates: true,
     });
 
-    return count === 0 ? unchanged(null) : null;
+    if (count > 0) {
+      return null;
+    }
+
+    const uploaded = await tx.learnerSource.updateMany({
+      data: { origin: "upload" },
+      where: { origin: { not: "upload" }, sourceId, userId },
+    });
+
+    return uploaded.count === 0 ? unchanged(null) : null;
   });
 }
 
@@ -139,20 +147,20 @@ async function claimUpload(targetId: string): Promise<UsageRefusal | null> {
 }
 
 /** A file was claimed when its upload was signed, and pasted text costs nothing to read. */
-async function findLinkRefusal(): Promise<RefusedUsage | null> {
+async function findLinkRefusal(): Promise<UsageRefusal | null> {
   const viewer = await getEntitlementViewer();
 
   if (!viewer) {
-    return null;
+    return { status: "unauthorized" };
   }
 
-  const limit = await findReachedUsageLimit({
+  const decision = await previewUsageClaim({
     kind: "upload",
     tier: viewer.tier,
     userId: viewer.userId,
   });
 
-  return limit ? { limit, status: "limitReached" } : null;
+  return decision.status === "allowed" ? null : decision;
 }
 
 async function removeUnusedBlob({
@@ -181,7 +189,8 @@ async function storeUpload({
     findStoredCopy({ hash: content.hash, userId }),
   ]);
 
-  const uploadId = input.kind === "file" ? getUploadClaimId(input.pathname) : randomUUID();
+  const uploadKey = input.kind === "file" ? input.pathname : `${userId}:${content.hash}`;
+  const uploadId = getUploadClaimId(uploadKey);
   const sourceId = storedCopy?.id ?? uploadId;
   const refusal = await claimUpload(input.kind === "file" ? uploadId : sourceId);
 
@@ -204,6 +213,32 @@ async function storeUpload({
   return { checkVisibility: created, source, status: "ready" };
 }
 
+/** Sharing a file may remove it, so a retried registration answers from the source it made. */
+async function replayRegisteredFile({
+  input,
+  userId,
+}: {
+  input: SourceUploadInput;
+  userId: string;
+}): Promise<SourceUploadResult | null> {
+  const source =
+    input.kind === "file"
+      ? await prisma.source.findFirst({
+          omit: { extractedText: true },
+          where: { ...libraryRowsVisibleTo(userId), id: getUploadClaimId(input.pathname) },
+        })
+      : null;
+
+  if (!source) {
+    return null;
+  }
+
+  const goalId = await getOwnGoalId({ goalId: input.goalId, userId });
+  await linkLearnerSource({ goalId, sourceId: source.id, userId });
+
+  return { checkVisibility: false, source, status: "ready" };
+}
+
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {
   const session = await getSession();
 
@@ -215,6 +250,12 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
 
   if (input.kind === "file" && !isOwnUploadPathname({ pathname: input.pathname, userId })) {
     return { status: "invalidPathname" };
+  }
+
+  const replayed = await replayRegisteredFile({ input, userId });
+
+  if (replayed) {
+    return replayed;
   }
 
   const refusal = input.kind === "link" ? await findLinkRefusal() : null;

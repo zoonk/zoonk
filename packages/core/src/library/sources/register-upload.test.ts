@@ -2,12 +2,14 @@ import { randomUUID } from "node:crypto";
 import { del, get, issueSignedToken } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken } from "./create-upload-token";
+import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
 
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
@@ -301,6 +303,78 @@ describe(registerSourceUpload, () => {
     expect(del).not.toHaveBeenCalled();
   });
 
+  it("answers a retried file registration after sharing removed its file", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const { pathname } = uploadNotice({ text: uniqueText(), userId: user.id });
+
+    const first = await registerSourceUpload({ kind: "file", language: "pt", pathname });
+
+    if (first.status !== "ready") {
+      throw new Error("The first registration should succeed.");
+    }
+
+    await prisma.source.update({
+      data: { blobUrl: null, ownerId: null, visibility: "public" },
+      where: { id: first.source.id },
+    });
+
+    vi.mocked(get).mockResolvedValue(null);
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: false,
+      source: { id: first.source.id },
+      status: "ready",
+    });
+  });
+
+  it("records an upload of a document research had already linked as the learner's own", async () => {
+    const user = await userFixture();
+    const text = uniqueText();
+
+    const shared = await sourceFixture({
+      contentHash: hashDocument({ bytes: new TextEncoder().encode(text), text }),
+    });
+
+    await learnerSourceFixture({ origin: "research", sourceId: shared.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      registerSourceUpload({ kind: "text", language: "pt", text }),
+    ).resolves.toMatchObject({ source: { id: shared.id }, status: "ready" });
+
+    await expect(
+      prisma.learnerSource.findMany({ select: { origin: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ origin: "upload" }]);
+  });
+
+  it("charges one upload when the same link is registered twice at once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const page = `<p>${uniqueText()}</p>`;
+    const bothFetching = Promise.withResolvers<null>();
+
+    vi.mocked(fetch).mockImplementation(async () => {
+      if (vi.mocked(fetch).mock.calls.length === 2) {
+        bothFetching.resolve(null);
+      }
+
+      await bothFetching.promise;
+      return new PageResponse(page, { headers: { "content-type": "text/html" } });
+    });
+
+    const link = { kind: "link", language: "pt", url: "https://www.example.com/edital" } as const;
+    await Promise.all([registerSourceUpload(link), registerSourceUpload(link)]);
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
+    ).resolves.toBe(1);
+
+    await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(1);
+  });
+
   it("links the upload to the learner's goal but not to someone else's", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
 
@@ -373,6 +447,26 @@ describe(registerSourceUpload, () => {
     await expect(
       registerSourceUpload({ kind: "link", language: "pt", url: "https://www.example.com/edital" }),
     ).resolves.toMatchObject({ status: "limitReached" });
+
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("doesn't download a link while a Plus learner's uploads are spaced out", async () => {
+    const user = await userFixture();
+
+    await Promise.all([
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      usageRecordsFixture({ count: 30, kind: "upload", userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+    serveLinkedPage();
+
+    await expect(
+      registerSourceUpload({ kind: "link", language: "pt", url: "https://www.example.com/edital" }),
+    ).resolves.toMatchObject({ status: "slowDown" });
 
     expect(fetch).not.toHaveBeenCalled();
   });

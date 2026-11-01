@@ -31,9 +31,9 @@ export function isOwnUploadPathname({
   return isFileInFolder({ folder: getSourceUploadFolder(userId), pathname });
 }
 
-export function getUploadClaimId(pathname: string): string {
+export function getUploadClaimId(key: string): string {
   return createHash("sha256")
-    .update(pathname)
+    .update(key)
     .digest("hex")
     .replace(HASH_AS_UUID, "$<p1>-$<p2>-8$<p3>-8$<p4>-$<p5>");
 }
