@@ -55,11 +55,6 @@ struct SubscriptionScreen: View {
         }
       }
     }
-    // Plus bought elsewhere since the account was read must show as the plan, not as an offer to
-    // pay twice.
-    .task {
-      await session.reconcileSynchronizedCredential()
-    }
   }
 
   private var isGuest: Bool {
@@ -71,7 +66,7 @@ struct SubscriptionView: View {
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @State private var shownPlan: AccountSubscription?
+  @State private var openedPlan: AccountSubscription?
   @State private var boughtHere = false
 
   let appAccountToken: UUID
@@ -83,8 +78,13 @@ struct SubscriptionView: View {
         offer
       case .plan(let plan, let refusesPurchase):
         PlusStatusView(subscription: plan, refusesPurchase: refusesPurchase)
-          .onAppear { shownPlan = plan }
       }
+    }
+    // Plus bought elsewhere since the account was read must show as the plan, not as an offer to
+    // pay twice.
+    .task {
+      await session.reconcileSynchronizedCredential()
+      openedPlan = session.account?.account.subscription
     }
     .alert(isPresented: alertIsPresented) {
       Alert(
@@ -103,7 +103,8 @@ struct SubscriptionView: View {
 
   private var page: SubscriptionPage {
     SubscriptionPage(
-      current: session.account?.account.subscription, shownPlan: shownPlan, boughtHere: boughtHere)
+      current: session.account?.account.subscription, openedPlan: openedPlan,
+      boughtHere: boughtHere)
   }
 
   private var offer: some View {
@@ -307,10 +308,11 @@ enum SubscriptionPage: Equatable {
   /// `refusesPurchase`: they came to buy Plus they already have.
   case plan(AccountSubscription, refusesPurchase: Bool)
 
-  /// `shownPlan` keeps a plan whose Plus ends on screen, as a refund does, so its result shows.
-  /// Plus that a purchase started here brings is no second purchase to refuse.
-  init(current: AccountSubscription?, shownPlan: AccountSubscription?, boughtHere: Bool) {
-    if let plan = current ?? shownPlan {
+  /// `openedPlan`, Plus as the account read when the screen opened, keeps its plan on screen when
+  /// that Plus ends there, as a refund does, so the result shows. Plus that a purchase started here
+  /// brings is no second purchase to refuse.
+  init(current: AccountSubscription?, openedPlan: AccountSubscription?, boughtHere: Bool) {
+    if let plan = current ?? openedPlan {
       self = .plan(plan, refusesPurchase: !boughtHere)
     } else {
       self = .offer

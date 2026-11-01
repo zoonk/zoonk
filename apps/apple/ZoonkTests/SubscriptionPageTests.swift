@@ -4,7 +4,7 @@ import XCTest
 
 final class SubscriptionPageTests: XCTestCase {
   func testLearnerWithoutPlusGetsTheOffer() {
-    XCTAssertEqual(SubscriptionPage(current: nil, shownPlan: nil, boughtHere: false), .offer)
+    XCTAssertEqual(SubscriptionPage(current: nil, openedPlan: nil, boughtHere: false), .offer)
   }
 
   func testPlusFromAnyProviderRefusesAnotherPurchase() {
@@ -12,7 +12,7 @@ final class SubscriptionPageTests: XCTestCase {
       let plus = makeSubscription(provider: provider)
 
       XCTAssertEqual(
-        SubscriptionPage(current: plus, shownPlan: nil, boughtHere: false),
+        SubscriptionPage(current: plus, openedPlan: nil, boughtHere: false),
         .plan(plus, refusesPurchase: true),
         provider)
     }
@@ -22,7 +22,7 @@ final class SubscriptionPageTests: XCTestCase {
     let plus = makeSubscription(provider: "apple")
 
     XCTAssertEqual(
-      SubscriptionPage(current: plus, shownPlan: nil, boughtHere: true),
+      SubscriptionPage(current: plus, openedPlan: nil, boughtHere: true),
       .plan(plus, refusesPurchase: false))
   }
 
@@ -30,7 +30,7 @@ final class SubscriptionPageTests: XCTestCase {
     let plus = makeSubscription(provider: "stripe")
 
     XCTAssertEqual(
-      SubscriptionPage(current: nil, shownPlan: plus, boughtHere: false),
+      SubscriptionPage(current: nil, openedPlan: plus, boughtHere: false),
       .plan(plus, refusesPurchase: true))
   }
 
