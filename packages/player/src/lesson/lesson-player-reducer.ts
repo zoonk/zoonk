@@ -142,6 +142,9 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
 
   const resumed = {
     ...resumeLesson(available, answers),
+    rounds: Object.fromEntries(
+      Object.keys(state.steps).map((id) => [id, (state.rounds[id] ?? 0) + 1]),
+    ),
     run: state.run,
     skippedWritingStepIds,
     unavailableStepIds: state.unavailableStepIds,

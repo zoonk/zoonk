@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  challengeStep,
   checkStep,
   explanationStep,
   fillBlankStep,
@@ -18,7 +19,7 @@ import {
   createInitialState,
   getCurrentStep,
 } from "./lesson-player-state";
-import { type PlayableLibraryStep } from "./lesson-player-types";
+import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-player-types";
 
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
@@ -28,6 +29,10 @@ function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]): Less
     (state, action) => lessonPlayerReducer(state, action),
     createInitialState({ id: "lesson", steps }),
   );
+}
+
+function pickChallenge(choiceIds: string[]): LessonPlayerAction {
+  return { answer: { choiceIds, kind: "challenge" }, stepId: "case", type: "selectAnswer" };
 }
 
 function answerCheck(
@@ -96,6 +101,113 @@ describe(lessonPlayerReducer, () => {
     const forward = lessonPlayerReducer(stillQuiz, { type: "continue" });
     expect([getCurrentStep(forward)?.id, forward.reviewing]).toStrictEqual(["a", false]);
     expect(forward.firstVerdicts).toStrictEqual({ quiz: true });
+  });
+
+  it("keeps an unchecked answer when the learner goes back, and shows it again on Next", () => {
+    const picked = { kind: "check", optionId: "right" } as const;
+
+    const answered = play(
+      [explanationStep("tip"), checkStep("quiz")],
+      [{ type: "continue" }, { answer: picked, stepId: "quiz", type: "selectAnswer" }],
+    );
+
+    const back = lessonPlayerReducer(answered, { direction: "prev", type: "navigate" });
+    expect([getCurrentStep(back)?.id, back.answers.quiz]).toStrictEqual(["tip", picked]);
+
+    const again = lessonPlayerReducer(back, { type: "continue" });
+
+    expect([getCurrentStep(again)?.id, again.answers.quiz]).toStrictEqual(["quiz", picked]);
+    expect(again.rounds).toStrictEqual(answered.rounds);
+    expect(getLessonScreen(again).primary).toMatchObject({ disabled: false, label: "check" });
+  });
+
+  it("starts a question over only when a checked attempt of it comes back", () => {
+    const missed = play(
+      [checkStep("quiz"), explanationStep("tip")],
+      [...answerCheck("quiz", false), { type: "continue" }],
+    );
+
+    const retry = lessonPlayerReducer(missed, { type: "continue" });
+
+    expect(getCurrentStep(retry)?.id).toBe("quiz");
+    expect([retry.answers.quiz, retry.results.quiz]).toStrictEqual([undefined, undefined]);
+    expect(retry.rounds.quiz).toBe((missed.rounds.quiz ?? 0) + 1);
+  });
+
+  it("stops Previous before the earlier copy of a question that came back", () => {
+    const steps = [checkStep("quiz"), explanationStep("tip"), summaryStep("end")];
+
+    const retry = play(steps, [
+      ...answerCheck("quiz", false),
+      { type: "continue" },
+      { type: "continue" },
+      { type: "continue" },
+    ]);
+
+    expect([getCurrentStep(retry)?.id, retry.position]).toStrictEqual(["quiz", 3]);
+
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+    const atTip = lessonPlayerReducer(lessonPlayerReducer(retry, back), back);
+
+    expect([getCurrentStep(atTip)?.id, getLessonScreen(atTip).canGoBack]).toStrictEqual([
+      "tip",
+      false,
+    ]);
+
+    expect(lessonPlayerReducer(atTip, back).position).toBe(1);
+
+    const missedLast = play(
+      [explanationStep("tip"), checkStep("quiz")],
+      [{ type: "continue" }, ...answerCheck("quiz", false), { type: "continue" }],
+    );
+
+    expect([getCurrentStep(missedLast)?.id, getLessonScreen(missedLast).canGoBack]).toStrictEqual([
+      "quiz",
+      false,
+    ]);
+  });
+
+  it("brings a pending self-correction back with its notice after the learner goes back", () => {
+    const wrong: LessonPlayerAction = {
+      counts: true,
+      result: stepResult(false),
+      stepId: "order",
+      type: "checkResolved",
+    };
+
+    const built: LessonPlayerAnswer = { kind: "fillBlank", userAnswers: ["Wrong"] };
+
+    const firstTry = play(
+      [explanationStep("tip"), fillBlankStep("order")],
+      [{ type: "continue" }, { answer: built, stepId: "order", type: "selectAnswer" }, wrong],
+    );
+
+    expect(firstTry.notice).toBe("selfCorrect");
+
+    const back = lessonPlayerReducer(firstTry, { direction: "prev", type: "navigate" });
+    expect(back.notice).toBeNull();
+
+    const again = lessonPlayerReducer(back, { type: "continue" });
+
+    expect([again.notice, again.answers.order]).toStrictEqual(["selfCorrect", built]);
+  });
+
+  it("goes on with a challenge left halfway when the learner comes back to it", () => {
+    const halfway = play(
+      [explanationStep("tip"), challengeStep("case")],
+      [
+        { type: "continue" },
+        { type: "continue" },
+        pickChallenge(["ask"]),
+        { type: "continue" },
+        pickChallenge(["ask", "ship"]),
+        { direction: "prev", type: "navigate" },
+        { type: "continue" },
+      ],
+    );
+
+    expect(getCurrentStep(halfway)?.id).toBe("case");
+    expect(getLessonScreen(halfway).primary).toMatchObject({ disabled: false, label: "confirm" });
   });
 
   it("skips the rest of a skipped activity's screens and goes on from where the learner is", () => {

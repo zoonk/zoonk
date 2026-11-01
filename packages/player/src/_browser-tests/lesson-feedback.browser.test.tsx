@@ -203,7 +203,7 @@ describe("lesson feedback", () => {
     renderLessonPlayer({ lesson });
 
     await page.getByRole("button", { name: "Explain first" }).click();
-    await expect.element(page.getByText(QUESTION)).not.toBeInTheDocument();
+    await expect.element(page.getByText(QUESTION)).not.toBeVisible();
 
     await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
     await press("Enter");

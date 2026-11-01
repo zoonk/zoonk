@@ -5,7 +5,7 @@ import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { Activity, useRef, useState } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { getPlayerStepAudioUrl } from "../player-step";
 import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
@@ -23,13 +23,14 @@ import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonScreenMenu } from "./lesson-screen-menu";
 import { LessonSounds } from "./lesson-sounds";
 import { LessonStage } from "./lesson-stage";
+import { getScreenRef, useKeptScreens } from "./use-kept-screens";
 import { useLessonKeyboard } from "./use-lesson-keyboard";
 import { useRevealFeedback } from "./use-reveal-feedback";
 import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
 import { useSwipeNavigation } from "./use-swipe-navigation";
 
-function getPromptAudioUrl(step: PlayableLibraryStep | null): string | null {
-  return step && isLanguageStep(step) ? getPlayerStepAudioUrl(step.exercise) : null;
+function getPromptAudioUrl(step: PlayableLibraryStep): string | null {
+  return isLanguageStep(step) ? getPlayerStepAudioUrl(step.exercise) : null;
 }
 
 function LessonCompletion() {
@@ -72,7 +73,8 @@ function LessonContent() {
   const { screen, state } = useLessonPlayer();
   const [autoPlayAudio, setAutoPlayAudio] = useState(false);
   const turn = useScreenTurn(state);
-  const audioUrl = getPromptAudioUrl(screen.step);
+  const shown = screen.step && getScreenRef(state, screen.step.id);
+  const kept = useKeptScreens(state, shown);
 
   if (state.run.status === "refused") {
     return <LessonAccessScreen refusal={state.run.refusal} />;
@@ -82,19 +84,31 @@ function LessonContent() {
     return <LessonCompletion />;
   }
 
-  return (
-    <PlayerAudioProvider
-      audioUrl={audioUrl}
-      autoPlayAudio={autoPlayAudio}
-      key={`${screen.step?.id}:${audioUrl ?? "no-audio"}`}
-      onAutoPlayAudioEnabled={() => setAutoPlayAudio(true)}
-    >
-      <div className="flex flex-1 flex-col">
-        <LessonStage turn={turn} />
-      </div>
-      <LessonActionBar />
-    </PlayerAudioProvider>
-  );
+  if (!shown) {
+    return null;
+  }
+
+  return [shown, ...kept].map(({ key, stepId }) => {
+    const step = state.steps[stepId];
+    const isShown = key === shown.key;
+
+    return (
+      step && (
+        <Activity key={key} mode={isShown ? "visible" : "hidden"}>
+          <PlayerAudioProvider
+            audioUrl={getPromptAudioUrl(step)}
+            autoPlayAudio={autoPlayAudio}
+            onAutoPlayAudioEnabled={() => setAutoPlayAudio(true)}
+          >
+            <div className="flex flex-1 flex-col">
+              <LessonStage isShown={isShown} step={step} turn={turn} />
+            </div>
+            {isShown && <LessonActionBar />}
+          </PlayerAudioProvider>
+        </Activity>
+      )
+    );
+  });
 }
 
 export function LessonPlayerShell() {

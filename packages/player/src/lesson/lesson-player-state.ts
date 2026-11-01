@@ -45,6 +45,11 @@ export type LessonPlayerState = {
   results: Record<string, LessonStepResult>;
   retried: string[];
   revealed: Record<string, number>;
+  /**
+   * Moves on wherever a screen starts over (its answer cleared), so the stage makes it anew; until
+   * then the screen keeps what the learner did on it, even while another screen shows.
+   */
+  rounds: Record<string, number>;
   run: LessonPlayerRun;
   reviewing: boolean;
   selfCorrected: string[];
@@ -117,6 +122,7 @@ export function createInitialState(
     retried: [],
     revealed: {},
     reviewing: false,
+    rounds: {},
     run: { status: "idle" },
     selfCorrected: [],
     skippedWritingStepIds: [],

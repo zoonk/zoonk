@@ -13,17 +13,33 @@ function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<st
   return Object.fromEntries(Object.entries(record).filter(([entry]) => entry !== key));
 }
 
-export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
-  const id = state.queue[position] ?? "";
+function startOverIfChecked(state: LessonPlayerState, id: string): LessonPlayerState {
+  if (!(id in state.results)) {
+    return state;
+  }
 
   return {
     ...state,
     answers: omitKey(state.answers, id),
+    results: omitKey(state.results, id),
+    rounds: { ...state.rounds, [id]: (state.rounds[id] ?? 0) + 1 },
+  };
+}
+
+function awaitsSelfCorrection(state: LessonPlayerState, id: string): boolean {
+  return state.selfCorrected.includes(id) && !(id in state.results);
+}
+
+export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
+  const id = state.queue[position] ?? "";
+
+  return {
+    ...startOverIfChecked(state, id),
     checkFailed: false,
     checkIssue: null,
+    notice: awaitsSelfCorrection(state, id) ? "selfCorrect" : state.notice,
     phase: "playing",
     position,
-    results: omitKey(state.results, id),
     reviewing: false,
     stepStartedAt: Date.now(),
   };
@@ -173,12 +189,10 @@ export function goBack(state: LessonPlayerState): LessonPlayerState {
     return state;
   }
 
-  const current = state.queue[state.position] ?? "";
   const reviewing = previousId in state.results;
 
   return {
     ...state,
-    answers: omitKey(state.answers, current),
     checkFailed: false,
     checkIssue: null,
     notice: null,
@@ -189,12 +203,22 @@ export function goBack(state: LessonPlayerState): LessonPlayerState {
   };
 }
 
+/**
+ * A missed question that came back holds its attempt in the later copy, so the earlier one, its
+ * result cleared, would show it unanswered and let the learner answer it twice.
+ */
+function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
+  const id = state.queue[position] ?? "";
+  return !(id in state.results) && state.queue.includes(id, position + 1);
+}
+
 export function canGoBack(state: LessonPlayerState): boolean {
   return (
     state.phase === "playing" &&
     state.position > 0 &&
     !state.quickCheck &&
-    state.run.status !== "refused"
+    state.run.status !== "refused" &&
+    !isEarlierCopy(state, state.position - 1)
   );
 }
 
@@ -297,7 +321,6 @@ export function explainFirst(state: LessonPlayerState): LessonPlayerState {
 
   return {
     ...state,
-    answers: omitKey(state.answers, step.id),
     helped: [...state.helped, step.id],
     queue: [...before, ...ids, ...rest],
     stepStartedAt: Date.now(),

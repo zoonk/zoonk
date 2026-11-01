@@ -18,6 +18,7 @@ import { LessonStepResultView } from "./feedback/lesson-step-result";
 import { LessonRecapRow } from "./lesson-aside";
 import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPlayerState } from "./lesson-player-state";
+import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { type ScreenTurn } from "./use-screen-turns";
 
@@ -152,14 +153,16 @@ function getUpcomingSteps(state: LessonPlayerState) {
     .flatMap((id) => state.steps[id] ?? []);
 }
 
-export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
+export function LessonStage({
+  isShown,
+  step,
+  turn,
+}: {
+  isShown: boolean;
+  step: PlayableLibraryStep;
+  turn: ScreenTurn | null;
+}) {
   const { actions, screen, state } = useLessonPlayer();
-  const { step } = screen;
-
-  if (!step) {
-    return null;
-  }
-
   const result = state.results[step.id];
 
   const next = result && {
@@ -170,21 +173,21 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
 
   return (
     <div className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS)} data-slot="lesson-stage">
-      <LessonNotice />
+      {isShown && <LessonNotice />}
 
-      <LessonScreenFrame key={`${step.id}-${state.position}`} turn={turn}>
+      <LessonScreenFrame turn={turn}>
         <LessonStepView
           answer={state.answers[step.id]}
-          isLocked={state.phase !== "playing"}
+          isLocked={isShown && state.phase !== "playing"}
           onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
           result={result}
           step={step}
         />
       </LessonScreenFrame>
 
-      {!isLanguageStep(step) && <LessonCitation citation={step.citation} />}
+      {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
-      {state.phase === "feedback" && result && next && (
+      {isShown && state.phase === "feedback" && result && next && (
         <PlayerContentFrame className="flex flex-col gap-3 pb-6">
           {showsOwnResult(step) ? (
             <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
@@ -201,8 +204,8 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
         </PlayerContentFrame>
       )}
 
-      <LessonRecapRow />
-      <UpcomingPictures steps={getUpcomingSteps(state)} />
+      {isShown && <LessonRecapRow />}
+      {isShown && <UpcomingPictures steps={getUpcomingSteps(state)} />}
     </div>
   );
 }
