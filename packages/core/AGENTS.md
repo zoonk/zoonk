@@ -24,7 +24,7 @@
 
 ## Admission
 
-- Work that costs (a model call, a download or parse, paid research) is admitted by a claim before it starts, inside the capability that does the work, so a new caller (another route, a correction, a guest, a background check) can't reach the work without it. A claim is a row under a unique key, or a count and an insert under the learner's lock in one short write ([`claimUsage`](src/entitlements/claim-usage.ts) and its siblings), never a transaction held open across the work. A cap counts its claims, not what the work saves afterward, and a claim keyed by the request lets a retry replay for free.
+- Work that costs (a model call, a download or parse, paid research) is admitted by a claim before it starts, inside the capability that does the work, so a new caller (another route, a correction, a guest, a background check) can't reach the work without it. A claim is a row under a unique key, or a count and an insert under the learner's lock in one short write ([`claimUsage`](src/entitlements/claim-usage.ts) and its siblings), never a transaction held open across the work. A cap counts its claims, not what the work saves afterward. A claim keyed by the request charges a retry once, but `claimUsage` still answers it as allowed: to run the work once, only the request whose insert won does it, and the others replay its saved result or follow its run.
 - What decides a charge, a share, a replacement or "already done" lives in a column only core writes. A field clients send or edit (`details`, a reported length or count) can describe the learner, never stand in for that fact.
 
 ## Follow-ups and generation
