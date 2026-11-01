@@ -114,6 +114,15 @@ class PageWithSupportingPaneTest {
         rule.onNodeWithText("Aside beside").assertIsDisplayed()
     }
 
+    /** At twice the text, Material's 360dp aside is too narrow for it. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land", fontScale = 2f)
+    fun aWideWindowAtTwiceTheTextKeepsOneColumn() {
+        show()
+
+        assertOnePage(1280.dp)
+    }
+
     @Test
     @Config(qualifiers = "w800dp-h1280dp")
     fun aTabletInPortraitKeepsOneColumn() {

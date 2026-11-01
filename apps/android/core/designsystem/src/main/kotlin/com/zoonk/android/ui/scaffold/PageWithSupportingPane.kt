@@ -90,11 +90,23 @@ fun pageDirective(
     val fold = info.foldAcross(width, span)
     val window =
         if (fold == null) calculatePaneScaffoldDirective(info) else calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(info)
+    val spacer = if (panesTouch) 0.dp else window.horizontalPartitionSpacerSize
     val narrowestPane =
-        when {
-            fold != null -> minOf(fold.start, width - fold.end)
-            halfWidth -> width / 2
-            else -> width - window.defaultPanePreferredWidth
+        if (fold != null) {
+            minOf(fold.start, width - maxOf(fold.end, fold.start + spacer))
+        } else {
+            // Material gives the main pane what the supporting pane leaves, or shrinks both alike when they don't fit.
+            val supporting = if (halfWidth) width / 2 else window.defaultPanePreferredWidth
+            val room = width - spacer
+            val preferred = window.defaultPanePreferredWidth + supporting
+            if (room >=
+                preferred
+            ) {
+                minOf(supporting, room - supporting)
+            } else {
+                minOf(window.defaultPanePreferredWidth, supporting) *
+                    (room / preferred)
+            }
         }
     val twoPanes =
         window.maxHorizontalPartitions > 1 &&
@@ -106,7 +118,7 @@ fun pageDirective(
     // under the page on tall windows.
     return PaneScaffoldDirective(
         maxHorizontalPartitions = if (twoPanes) window.maxHorizontalPartitions else 1,
-        horizontalPartitionSpacerSize = if (panesTouch) 0.dp else window.horizontalPartitionSpacerSize,
+        horizontalPartitionSpacerSize = spacer,
         maxVerticalPartitions = 1,
         verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
         defaultPanePreferredWidth = window.defaultPanePreferredWidth,
