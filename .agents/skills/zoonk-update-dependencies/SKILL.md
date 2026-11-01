@@ -14,7 +14,7 @@ metadata:
 3. Update pnpm to the latest stable version in `package.json` and any explicit CI pins. Use that version locally; CI that reads `packageManager` needs no duplicate pin.
 4. Run `pnpm -r up --latest`. Ensure the root package and shared catalogs are updated too.
 5. Manually bump existing prerelease dependencies: move one whose line has shipped a stable release to that release, and bump the rest to the latest release on their current channel. Determine these from the current manifests; `--latest` does not advance all prereleases.
-6. Keep `@types/node` aligned with the project's current Node.js major, as declared in `package.json` and CI. For example, retain `^24` while the project uses Node.js 24.
+6. Keep `@types/node` aligned with the project's current Node.js major, as declared in `package.json` and CI. For example, retain `^26` while the project uses Node.js 26.
 7. Run `pnpm outdated --include-github-actions` and update outdated GitHub Actions.
 8. Read release notes and/or changelogs for all updated dependencies across the versions being upgraded. Implement required code and configuration changes. Also identify useful new features for this project; list them with their benefits at the end of the task without implementing them. If an i18n upgrade changes message keys, migrate them while preserving existing translations rather than retranslating unchanged text.
 9. Delete all existing `node_modules` directories within the active checkout and the root `pnpm-lock.yaml`, then run `pnpm install` from scratch.

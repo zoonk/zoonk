@@ -38,7 +38,7 @@ catalog:
   "@tailwindcss/postcss": 4.3.3
   "@testing-library/react": 16.3.3
   "@types/mdx": 2.0.14
-  "@types/node": ^24
+  "@types/node": ^26
   "@types/react-dom": ^19.3.0
   "@types/react": ^19.3.0
   "@vercel/analytics": 2.0.1

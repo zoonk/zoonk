@@ -61,7 +61,7 @@ export function makeDeviceKey() {
   return {
     keyId: sha256(point).toString("base64"),
     privateKey,
-    publicKey: publicKey.export({ format: "pem", type: "spki" }).toString(),
+    publicKey: publicKey.export({ format: "pem", type: "spki" }),
   };
 }
 
