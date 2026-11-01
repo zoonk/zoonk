@@ -209,13 +209,24 @@ internal fun AccountPlans(
         return
     }
     when (website) {
-        is LoadState.Loaded -> PageColumn {
-            if (alreadyPlus) AlreadyPlusMessage(STRIPE)
-            WebPlusPlan(website.value, cancellation)
+        is LoadState.Loaded -> {
+            PageColumn {
+                if (alreadyPlus) AlreadyPlusMessage(STRIPE)
+                WebPlusPlan(website.value, cancellation)
+            }
         }
-        is LoadState.Failed -> PageColumn { LoadFailedMessage(onRetry = onRetryWebsite) }
-        LoadState.Idle, LoadState.Loading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
-        LoadState.Empty -> offer()
+
+        is LoadState.Failed -> {
+            PageColumn { LoadFailedMessage(onRetry = onRetryWebsite) }
+        }
+
+        LoadState.Idle, LoadState.Loading -> {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+        }
+
+        LoadState.Empty -> {
+            offer()
+        }
     }
 }
 

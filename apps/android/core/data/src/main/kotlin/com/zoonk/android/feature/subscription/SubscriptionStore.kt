@@ -222,7 +222,10 @@ class SubscriptionStore(
                 mutablePurchase.value = PurchaseState.PlanCheckFailed
                 return
             }
-            if (account.state.value.value?.account?.subscription != null) {
+            if (account.state.value.value
+                    ?.account
+                    ?.subscription != null
+            ) {
                 mutablePurchase.value = PurchaseState.AlreadyPlus
                 return
             }
