@@ -18,6 +18,7 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -26,6 +27,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToKey
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.CourseResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,7 +63,15 @@ class CatalogOpenBookTest {
     @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val api = FakeCatalogApi()
+    private var api = FakeCatalogApi()
+
+    /** Outside the composition, as the app's container keeps it while the window is recreated. */
+    private val store by lazy {
+        CatalogStore(
+            api,
+            AppCache(FakeSession(null), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+        )
+    }
 
     /** A page [width] wide at the window's end, where the shell lays it beside an unfolded book's navigation rail. */
     @Composable
@@ -70,10 +82,6 @@ class CatalogOpenBookTest {
         ZoonkTheme {
             val context = LocalContext.current
             val app = remember { AppContainer.preview(context) }
-            val store =
-                remember {
-                    CatalogStore(api, AppCache(FakeSession(null), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
-                }
             val navigator = rememberAppNavigator()
 
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
@@ -86,6 +94,9 @@ class CatalogOpenBookTest {
         width: Dp = Dp.Unspecified,
         content: @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit,
     ) = rule.setContent { Page(width, content) }
+
+    private fun catalog(): @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit =
+        { app, navigator, store -> CatalogScreen(AppRoute.Catalog(), app, navigator, store) }
 
     private fun course(): @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit =
         { app, navigator, store -> CourseScreen(AppRoute.CatalogCourse(COURSE), app, navigator, store) }
@@ -112,14 +123,20 @@ class CatalogOpenBookTest {
         return rule.onNodeWithText(text).getUnclippedBoundsInRoot()
     }
 
-    private fun assertBeforeFold(text: String) {
+    private fun assertBeforeFold(
+        text: String,
+        fold: Dp = FOLD,
+    ) {
         val bounds = boundsOf(text)
-        assertTrue("“$text” ends before the fold: $bounds", bounds.right <= FOLD)
+        assertTrue("“$text” ends before the fold: $bounds", bounds.right <= fold)
     }
 
-    private fun assertAfterFold(text: String) {
+    private fun assertAfterFold(
+        text: String,
+        fold: Dp = FOLD,
+    ) {
         val bounds = boundsOf(text)
-        assertTrue("“$text” starts after the fold: $bounds", bounds.left >= FOLD)
+        assertTrue("“$text” starts after the fold: $bounds", bounds.left >= fold)
     }
 
     private fun assertOneList() = rule.onAllNodes(hasScrollAction()).assertCountEquals(1)
@@ -206,6 +223,48 @@ class CatalogOpenBookTest {
         boundsOf("Start today, at your level")
     }
 
+    /** The categories are the page before the fold and the courses the page after it, as the tablet keeps them beside the grid. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun anOpenBookShowsTheCategoriesBeforeTheFoldAndTheCoursesAfterIt() {
+        show(BOOK_PAGE, catalog())
+
+        unfold()
+
+        assertBeforeFold("Math")
+        assertAfterFold("Start from a course, or tell Zoonk what you're getting ready for.")
+        assertAfterFold("Course 1")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun aTabletKeepsTheCategoriesBesideTheCourses() {
+        show(content = catalog())
+
+        assertTrue("the categories keep their column", boundsOf("Math").right <= 240.dp)
+        assertTrue("the courses start after it", boundsOf("Course 1").left >= 240.dp)
+    }
+
+    /** Without its fold, a Galaxy Z Fold's 707dp window shows the chips over the courses; across the fold, the categories leave them for a page of their own. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp")
+    fun unfoldingKeepsTheCourseTheLearnerWasAtAndTheGoalTheyTyped() {
+        api = FakeCatalogApi(all = (1..20).map { courseResult(it) }, pageSize = 20)
+        val restoration = StateRestorationTester(rule)
+        restoration.setContent { Page(Z_FOLD_PAGE, catalog()) }
+        rule.onNode(hasSetTextAction()).performTextInput("pass the bar exam")
+        rule.onNode(hasScrollAction() and hasAnyDescendant(hasText("Course 1"))).performScrollToKey(courseId(12))
+
+        restoration.emulateSavedInstanceStateRestore()
+        unfold()
+
+        assertAtTop("Course 12")
+        assertAfterFold("Course 12", fold = Z_FOLD)
+        assertBeforeFold("Math", fold = Z_FOLD)
+        boundsOf("Start from a course, or tell Zoonk what you're getting ready for.")
+        rule.onNode(hasSetTextAction()).assert(hasText("pass the bar exam"))
+    }
+
     /** Folding and unfolding recreate the window: the learner's place and the levels they opened come back on the page that holds them. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")
@@ -248,5 +307,18 @@ class CatalogOpenBookTest {
         /** A Pixel Fold's 852dp window less the 80dp rail. */
         val BOOK_PAGE = 772.dp
         val FOLD = 426.dp
+
+        /** A Galaxy Z Fold's 707dp window less the rail, and its fold at the window's middle pixel. */
+        val Z_FOLD_PAGE = 627.dp
+        val Z_FOLD = 353.dp
+
+        fun courseId(number: Int) = "55555555-5555-4555-8555-%012d".format(number)
+
+        fun courseResult(number: Int): CourseResult =
+            ApiJson.decodeFromString(
+                """{"description":"A first sentence.","estimatedMinutes":90,"id":"${courseId(number)}","language":"en","lessonCount":6,
+                    "organization":{"id":"44444444-4444-4444-8444-444444444444","name":"Zoonk","slug":"zoonk"},"slug":"s",
+                    "subject":"science","title":"Course $number"}""",
+            )
     }
 }

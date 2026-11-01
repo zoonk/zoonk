@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":feature:today"))
 
     implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.coil.compose)
 
     testImplementation(testFixtures(project(":feature:account")))

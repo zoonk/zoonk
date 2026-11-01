@@ -3,6 +3,7 @@ package com.zoonk.android.feature.catalog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,12 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +81,9 @@ import com.zoonk.android.ui.components.SubjectLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageDirective
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CourseCategoryCounts
 import com.zoonk.api.models.CourseResult
@@ -109,6 +118,7 @@ fun CatalogScreen(
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val categories = categoryLinks(countsState.value, category, locale)
     val gridState = rememberSaveable(category, saver = LazyGridState.Saver) { LazyGridState() }
+    var goal by rememberSaveable { mutableStateOf("") }
     val title = category?.let { stringResource(R.string.catalog_category_title, stringResource(Subject.of(it).label!!)) }
 
     PageScaffold(
@@ -124,11 +134,7 @@ fun CatalogScreen(
             },
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
-            Row(Modifier.fillMaxSize()) {
-                if (wide) {
-                    CategoryList(categories, onSelect = { category = it }, Modifier.width(240.dp).verticalScroll(rememberScrollState()))
-                }
-
+            val grid = @Composable { withChips: Boolean, modifier: Modifier ->
                 CourseGrid(
                     app = app,
                     catalog = catalog,
@@ -136,12 +142,65 @@ fun CatalogScreen(
                     list = list,
                     state = state,
                     gridState = gridState,
-                    header = { CatalogHeader(onGoal = { goal -> navigator.open(AppRoute.StartGoal(goal = goal)) }) },
-                    chips = if (wide) null else ({ CategoryChips(categories, onSelect = { category = it }) }),
+                    header = { CatalogHeader(goal, { goal = it }, onGoal = { navigator.open(AppRoute.StartGoal(goal = it)) }) },
+                    chips = if (withChips) ({ CategoryChips(categories, onSelect = { category = it }) }) else null,
                     onRetry = { scope.launch { courses.refresh() } },
-                    modifier = Modifier.weight(1f),
+                    modifier = modifier,
                 )
             }
+
+            ListBeforeFold(
+                list = {
+                    CategoryList(
+                        categories,
+                        onSelect = { category = it },
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    )
+                },
+                detail = { grid(false, Modifier) },
+            ) {
+                Row(Modifier.fillMaxSize()) {
+                    if (wide) {
+                        CategoryList(categories, onSelect = { category = it }, Modifier.width(240.dp).verticalScroll(rememberScrollState()))
+                    }
+
+                    grid(!wide, Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Across an unfolded book foldable's fold, [list] is the page before it and [detail] the page after
+ * it, as Material's list and detail; [elsewhere] lays out every other window.
+ */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun ListBeforeFold(
+    list: @Composable () -> Unit,
+    detail: @Composable () -> Unit,
+    elsewhere: @Composable () -> Unit,
+) {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val directive = pageDirective(maxWidth, span, panesTouch = true, atFoldOnly = true)
+
+        if (directive.maxHorizontalPartitions > 1) {
+            ListDetailPaneScaffold(
+                directive = directive,
+                value =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary = PaneAdaptedValue.Expanded,
+                        tertiary = PaneAdaptedValue.Hidden,
+                    ),
+                listPane = { AnimatedPane { list() } },
+                detailPane = { AnimatedPane { detail() } },
+            )
+        } else {
+            elsewhere()
         }
     }
 }
@@ -198,10 +257,13 @@ private fun CategoryList(
     }
 }
 
+/** The goal is the screen's, so what the learner typed stays when a fold moves the courses to their own page. */
 @Composable
-private fun CatalogHeader(onGoal: (String) -> Unit) {
-    var goal by rememberSaveable { mutableStateOf("") }
-
+private fun CatalogHeader(
+    goal: String,
+    onGoalChange: (String) -> Unit,
+    onGoal: (String) -> Unit,
+) {
     Column(Modifier.padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             stringResource(R.string.catalog_subtitle),
@@ -212,7 +274,7 @@ private fun CatalogHeader(onGoal: (String) -> Unit) {
 
         GoalBox(
             value = goal,
-            onValueChange = { goal = it },
+            onValueChange = onGoalChange,
             onSubmit = onGoal,
             modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH),
             placeholder = stringResource(R.string.catalog_goal_example),
@@ -314,7 +376,9 @@ private fun CourseGrid(
         contentPadding = PaddingValues(bottom = 24.dp),
     ) {
         item(key = "header", span = { GridItemSpan(maxLineSpan) }, contentType = "header") { header() }
-        if (chips != null) stickyHeader(key = "chips", contentType = "chips") { chips() }
+        // Empty where the categories show apart: the grid's saved place is an index, and a Pixel Fold unfolding
+        // recreates its window from chips over the courses to the categories beside them.
+        stickyHeader(key = "chips", contentType = "chips") { chips?.invoke() }
 
         when (state) {
             LoadState.Idle, LoadState.Loading -> {
