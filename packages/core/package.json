@@ -575,7 +575,6 @@
     "./users/delete-current": "./src/users/delete-current-user.ts",
     "./users/export": "./src/users/export-current-user-data.ts",
     "./users/has-apple-account": "./src/users/get-current-user-has-apple-account.ts",
-    "./users/otp/send": "./src/users/send-otp.ts",
     "./users/session": "./src/users/get-session.ts",
     "./view-models/chapter/contract": "./src/view-models/chapter/chapter-contract.ts",
     "./view-models/chapter/get": "./src/view-models/chapter/get-chapter-view.ts",
