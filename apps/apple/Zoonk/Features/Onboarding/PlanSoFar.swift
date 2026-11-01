@@ -16,6 +16,12 @@ struct PlanSoFar: View {
             Text(fact.value)
               .monospacedDigit()
 
+            if let note = fact.note {
+              Text(note)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
             if let daysLeft = fact.daysLeft {
               Text(daysLeft)
                 .font(.caption)
@@ -39,6 +45,7 @@ struct PlanFact: Identifiable, Equatable {
   let label: LocalizedStringResource
   let value: String
   var daysLeft: String?
+  var note: String?
 
   /// `today` is the goal's today, `YYYY-MM-DD`.
   static func all(
@@ -58,7 +65,9 @@ struct PlanFact: Identifiable, Equatable {
         value: goal.title),
       date(of: goal, answered: details?.answered ?? [], today: today),
     ].compactMap { $0 }
-      + (understood ?? []).map { PlanFact(id: $0.id, label: $0.label, value: $0.value) }
+      + (understood ?? []).map {
+        PlanFact(id: $0.id, label: $0.label, value: $0.value, note: $0.note)
+      }
       + [level(details), time(of: goal, answered: details?.answered ?? [])].compactMap { $0 }
   }
 
