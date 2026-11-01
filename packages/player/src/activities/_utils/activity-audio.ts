@@ -28,7 +28,7 @@ export function scheduleClick({
   context: AudioContext;
   kind: "accent" | "beat" | "hit";
   time: number;
-}): void {
+}): OscillatorNode {
   const frequency = { accent: 1760, beat: 1320, hit: 2400 }[kind];
   const peak = { accent: 0.5, beat: 0.3, hit: 0.6 }[kind];
   const oscillator = context.createOscillator();
@@ -42,4 +42,10 @@ export function scheduleClick({
   oscillator.connect(gain).connect(context.destination);
   oscillator.start(time);
   oscillator.stop(time + CLICK_SECONDS);
+  return oscillator;
+}
+
+/** Clicks a run scheduled ahead keep sounding on the shared clock until they're stopped. */
+export function silenceClicks(clicks: readonly OscillatorNode[]): void {
+  clicks.forEach((click) => click.stop());
 }

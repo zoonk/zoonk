@@ -2,7 +2,7 @@
 
 import { rhythmHitSteps, rhythmStepMs } from "@zoonk/core/library/activities/music";
 import { useEffect, useRef, useState } from "react";
-import { scheduleClick, startActivityAudio } from "../_utils/activity-audio";
+import { scheduleClick, silenceClicks, startActivityAudio } from "../_utils/activity-audio";
 import { heardAtMs } from "./rhythm-clock";
 
 type RhythmFields = { pattern: string; rounds: number; stepsPerBeat: number; tempo: number };
@@ -18,6 +18,7 @@ const TAIL_SECONDS = 0.5;
 const MS = 1000;
 
 type Session = {
+  clicks: OscillatorNode[];
   context: AudioContext;
   end: number;
   frame: number;
@@ -57,21 +58,39 @@ function scheduleRun({
   const rounds = kind === "tap" ? fields.rounds : 1;
   const roundsStart = start + countInBeats * beatSeconds;
 
-  Array.from({ length: countInBeats + rounds * beats }, (_, beat) => beat).forEach((beat) => {
+  const beatClicks = Array.from({ length: countInBeats + rounds * beats }, (_, beat) =>
     scheduleClick({
       context,
       kind: beat % beats === 0 ? "accent" : "beat",
       time: start + beat * beatSeconds,
-    });
-  });
+    }),
+  );
 
-  if (kind === "listen") {
-    rhythmHitSteps(fields.pattern).forEach((step) => {
-      scheduleClick({ context, kind: "hit", time: roundsStart + step * stepSeconds });
-    });
+  const hitClicks =
+    kind === "listen"
+      ? rhythmHitSteps(fields.pattern).map((step) =>
+          scheduleClick({ context, kind: "hit", time: roundsStart + step * stepSeconds }),
+        )
+      : [];
+
+  return {
+    clicks: [...beatClicks, ...hitClicks],
+    end: roundsStart + rounds * beats * beatSeconds,
+    roundsStart,
+    stepSeconds,
+  };
+}
+
+function stopSession(session: { current: Session | null }): Session | null {
+  const current = session.current;
+  session.current = null;
+
+  if (current) {
+    cancelAnimationFrame(current.frame);
+    silenceClicks(current.clicks);
   }
 
-  return { end: roundsStart + rounds * beats * beatSeconds, roundsStart, stepSeconds };
+  return current;
 }
 
 export function useRhythmRun({
@@ -85,6 +104,7 @@ export function useRhythmRun({
   const [position, setPosition] = useState<RunPosition | null>(null);
   const [taps, setTaps] = useState<number[]>([]);
   const session = useRef<Session | null>(null);
+  const starts = useRef(0);
   const tapsRef = useRef<number[]>([]);
   const finishRef = useRef(onFinish);
 
@@ -96,11 +116,9 @@ export function useRhythmRun({
   // can't finish, so it starts over, and a finished one stays.
   useEffect(
     () => () => {
-      const left = session.current;
-      cancelAnimationFrame(left?.frame ?? 0);
-      session.current = null;
+      starts.current += 1;
 
-      if (left) {
+      if (stopSession(session)) {
         tapsRef.current = [];
         setTaps([]);
         setPosition(null);
@@ -149,9 +167,15 @@ export function useRhythmRun({
   }
 
   async function start(kind: RunKind) {
-    cancelAnimationFrame(session.current?.frame ?? 0);
-
+    stopSession(session);
+    starts.current += 1;
+    const started = starts.current;
     const context = await startActivityAudio();
+
+    if (started !== starts.current) {
+      return;
+    }
+
     const startTime = context.currentTime + LEAD_IN_SECONDS;
     const run = scheduleRun({ context, fields, kind, start: startTime });
 
@@ -188,8 +212,8 @@ export function useRhythmRun({
   }
 
   function reset() {
-    cancelAnimationFrame(session.current?.frame ?? 0);
-    session.current = null;
+    starts.current += 1;
+    stopSession(session);
     tapsRef.current = [];
     setTaps([]);
     setPosition(null);

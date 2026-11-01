@@ -18,9 +18,41 @@ import {
   explanationStep,
   languageStep,
 } from "../preview/preview-steps";
+import type * as ActivityAudio from "../activities/_utils/activity-audio";
+
+const piano = vi.hoisted(() => {
+  const stop = vi.fn();
+  return { stop, voice: () => ({ ready: Promise.resolve(), start: vi.fn(), stop }) };
+});
+
+vi.mock("smplr", () => ({ Soundfont: piano.voice, SplendidGrandPiano: piano.voice }));
+
+const audioStart = vi.hoisted((): { hold: Promise<unknown>; started: number } => ({
+  hold: Promise.resolve(),
+  started: 0,
+}));
+
+// A device can take a while to start its sound, and the learner can leave meanwhile.
+vi.mock("../activities/_utils/activity-audio", async (importOriginal) => {
+  const audio = await importOriginal<typeof ActivityAudio>();
+
+  return {
+    ...audio,
+    startActivityAudio: async () => {
+      await audioStart.hold;
+      const context = await audio.startActivityAudio();
+      audioStart.started += 1;
+      return context;
+    },
+  };
+});
 
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 const LETTER_SOUND = "https://audio.zoonk.test/ja-a.mp3";
+
+function immediateStops(stop: { mock: { calls: unknown[][] } }): number {
+  return stop.mock.calls.filter((args) => args.length === 0).length;
+}
 
 const reading = explanationStep({
   text: "A chemical change makes a new substance.",
@@ -60,6 +92,8 @@ async function goBackAndReturn() {
 describe("going back to reread", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    audioStart.hold = Promise.resolve();
+    audioStart.started = 0;
     localStorage.removeItem(DEVICE_DELAY_KEY);
   });
 
@@ -118,6 +152,7 @@ describe("going back to reread", () => {
 
   it("starts a rhythm run or a sound check over when the learner leaves it halfway", async () => {
     localStorage.removeItem(DEVICE_DELAY_KEY);
+    const stop = vi.spyOn(AudioScheduledSourceNode.prototype, "stop");
     playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
     await page.getByRole("button", { name: /^Next/u }).click();
     await page.getByRole("button", { name: "Start the sound check" }).click();
@@ -127,6 +162,8 @@ describe("going back to reread", () => {
       .not.toBeInTheDocument();
 
     await goBackAndReturn();
+
+    expect(immediateStops(stop)).toBeGreaterThan(0);
 
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
     await page.getByRole("button", { name: "Skip for now" }).click();
@@ -171,5 +208,37 @@ describe("going back to reread", () => {
 
     await expect.poll(() => played.length).toBeGreaterThan(playedBefore);
     expect(new Set(played)).toStrictEqual(new Set([LETTER_SOUND]));
+  });
+
+  it("never starts a sound check its screen was left before its sound came on", async () => {
+    localStorage.removeItem(DEVICE_DELAY_KEY);
+    const sound = Promise.withResolvers<null>();
+    audioStart.hold = sound.promise;
+    playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: "Start the sound check" }).click();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
+    const createOscillator = vi.spyOn(AudioContext.prototype, "createOscillator");
+    sound.resolve(null);
+    await expect.poll(() => audioStart.started).toBe(1);
+    expect(createOscillator).not.toHaveBeenCalled();
+    await page.getByRole("button", { name: /^Next/u }).click();
+
+    await expect.element(page.getByRole("button", { name: "Start the sound check" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
+  });
+
+  it("stops a melody when the learner leaves it", async () => {
+    playLesson([reading, activity(activityContentFixtures.notationPlayer)]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: "Play the melody" }).click();
+    await expect.element(page.getByText(/^Bar \d of 4$/u)).toBeVisible();
+    const stopsBefore = piano.stop.mock.calls.length;
+
+    await goBackAndReturn();
+
+    expect(piano.stop.mock.calls.length).toBeGreaterThan(stopsBefore);
+    await expect.element(page.getByRole("button", { name: "Play the melody" })).toBeVisible();
   });
 });

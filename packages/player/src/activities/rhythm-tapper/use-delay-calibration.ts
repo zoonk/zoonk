@@ -2,7 +2,7 @@
 
 import { estimateDeviceDelay } from "@zoonk/core/library/activities/music";
 import { useEffect, useRef, useState } from "react";
-import { scheduleClick, startActivityAudio } from "../_utils/activity-audio";
+import { scheduleClick, silenceClicks, startActivityAudio } from "../_utils/activity-audio";
 import {
   CALIBRATION_CLICKS,
   CALIBRATION_COUNT_IN,
@@ -19,24 +19,31 @@ export type CalibrationPhase =
   | { kind: "countIn" }
   | { kind: "idle" };
 
-type Run = { clicksMs: number[]; context: AudioContext; end: number; frame: number };
+type Run = {
+  clicks: OscillatorNode[];
+  clicksMs: number[];
+  context: AudioContext;
+  end: number;
+  frame: number;
+};
 
 function scheduleClicks(context: AudioContext) {
   const start = context.currentTime + LEAD_IN_SECONDS;
   const interval = CALIBRATION_INTERVAL_MS / MS;
   const total = CALIBRATION_COUNT_IN + CALIBRATION_CLICKS;
 
-  Array.from({ length: total }, (_, index) => index).forEach((index) => {
+  const clicks = Array.from({ length: total }, (_, index) =>
     scheduleClick({
       context,
       kind: index === CALIBRATION_COUNT_IN ? "accent" : "beat",
       time: start + index * interval,
-    });
-  });
+    }),
+  );
 
   const measuredStart = start + CALIBRATION_COUNT_IN * interval;
 
   return {
+    clicks,
     clicksMs: Array.from({ length: CALIBRATION_CLICKS }, (_, index) =>
       heardAtMs(context, measuredStart + index * interval),
     ),
@@ -45,20 +52,31 @@ function scheduleClicks(context: AudioContext) {
   };
 }
 
+function stopRun(run: { current: Run | null }): Run | null {
+  const current = run.current;
+  run.current = null;
+
+  if (current) {
+    cancelAnimationFrame(current.frame);
+    silenceClicks(current.clicks);
+  }
+
+  return current;
+}
+
 export function useDelayCalibration() {
   const [phase, setPhase] = useState<CalibrationPhase>({ kind: "idle" });
   const run = useRef<Run | null>(null);
+  const starts = useRef(0);
   const taps = useRef<number[]>([]);
 
   // A sound check its screen leaves (hidden while the learner reads another) can't finish, so it
   // starts over.
   useEffect(
     () => () => {
-      const left = run.current;
-      cancelAnimationFrame(left?.frame ?? 0);
-      run.current = null;
+      starts.current += 1;
 
-      if (left) {
+      if (stopRun(run)) {
         taps.current = [];
         setPhase({ kind: "idle" });
       }
@@ -96,14 +114,22 @@ export function useDelayCalibration() {
   }
 
   async function start() {
-    cancelAnimationFrame(run.current?.frame ?? 0);
+    stopRun(run);
+    starts.current += 1;
+    const started = starts.current;
     const context = await startActivityAudio();
-    const { clicksMs, end, measuredStart } = scheduleClicks(context);
+
+    if (started !== starts.current) {
+      return;
+    }
+
+    const { clicks, clicksMs, end, measuredStart } = scheduleClicks(context);
 
     taps.current = [];
     setPhase({ kind: "countIn" });
 
     run.current = {
+      clicks,
       clicksMs,
       context,
       end,
