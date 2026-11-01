@@ -13,6 +13,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -48,7 +52,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MockResultScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     @get:Rule
@@ -145,6 +152,23 @@ class MockResultScreenshots {
     fun expanded() {
         show(enem())
         capture("result-expanded")
+    }
+
+    /** A placement mock that moved nothing in the plan has no aside of its own: the questions to review take the page after the fold. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun openBookWithoutAside() {
+        show(finishedMock(extra = """"purpose":"placement","review":[$MISSED,$STATEMENT]"""))
+        unfold()
+        capture("result-open-book-without-aside")
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun openBookWithAside() {
+        show(enem())
+        unfold()
+        capture("result-open-book-with-aside")
     }
 
     @Test
@@ -251,6 +275,12 @@ class MockResultScreenshots {
         }
         compose.waitForIdle()
         return api
+    }
+
+    private fun unfold() {
+        val fold = FoldingFeature(compose.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        compose.waitForIdle()
     }
 
     private fun capture(

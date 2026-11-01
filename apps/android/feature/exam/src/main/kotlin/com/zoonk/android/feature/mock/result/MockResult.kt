@@ -61,6 +61,7 @@ import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
@@ -110,9 +111,11 @@ internal fun MockResult(
         val onContinue = { navigator.continueAfter(view, route) }
         val apply = { offersViewModel.apply(offered) }
         val keep = { offersViewModel.keep(offered) }
-        val hasAside = resultAsideParts(has).isNotEmpty()
 
         BoxWithConstraints {
+            // An open book reads what was done before the fold and what's next after it, the questions to review included.
+            val reviewAfterFold = MockResultPart.Score in has && spreadFold(maxWidth, span = null) != null
+            val hasAside = resultAsideParts(has).isNotEmpty() || reviewAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -134,7 +137,8 @@ internal fun MockResult(
                                             view,
                                             it,
                                             dayMoment = { MockDayMoment(view, buddy) },
-                                            review = { if (wide) ReviewSection(view, app) },
+                                            review = { if (wide && !reviewAfterFold) ReviewSection(view, app) },
+                                            notes = !reviewAfterFold,
                                         )
                                     }
                                 },
@@ -260,6 +264,10 @@ internal fun MockResult(
                                     }
                                     if (MockResultPart.Next in has) {
                                         AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
+                                    }
+                                    if (reviewAfterFold) {
+                                        ReviewSection(view, app)
+                                        ResultNotes(view)
                                     }
                                 }
                             }

@@ -51,6 +51,7 @@ internal fun ScoreStep(
     result: MockResult,
     dayMoment: @Composable () -> Unit,
     review: @Composable () -> Unit,
+    notes: Boolean,
 ) {
     ScoreHeader(view, result)
     AnswerTiles(result)
@@ -61,6 +62,12 @@ internal fun ScoreStep(
     if (hasBreakdown(result)) Breakdown(result)
     if (hasInsights(result)) Insights(result)
     review()
+    if (notes) ResultNotes(view)
+}
+
+/** What the mock was: its document, size and what it left out. */
+@Composable
+internal fun ResultNotes(view: MockExam) {
     MockNotes(
         document = view.examDocument,
         source = view.sizeSource,

@@ -15,6 +15,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material3.adaptive)
 
+    testImplementation(libs.androidx.window.testing)
     testImplementation(testFixtures(project(":feature:conversation")))
     testImplementation(testFixtures(project(":feature:plan")))
 }
