@@ -121,7 +121,6 @@ struct MistakesScreen: View {
   }
 }
 
-/// One of the notebook's lists, by skill, with its next page.
 private struct MistakeListSections: View {
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice

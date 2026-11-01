@@ -240,7 +240,6 @@ struct GoalEntrySections<Attachment: View>: View {
   }
 }
 
-/// Example goals that each start onboarding in one tap.
 struct GoalExamplesSection: View {
   let onPick: (String) -> Void
 
