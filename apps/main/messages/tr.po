@@ -4809,6 +4809,26 @@ msgid "For an exam, the diagnostic, your plan and its first week are free. Plus 
 msgstr "Sınava hazırlıkta seviye belirleme testi, planın ve ilk haftası ücretsiz. Plus ile sınav gününe kadar çalışmaya devam eder, bu süreçte deneme sınavları da çözersin."
 
 #: src/components/pricing/subscribe-button.tsx
+msgctxt "iB3ixY"
+msgid "You already have Plus through the App Store."
+msgstr "App Store üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "Fwt_t3"
+msgid "You already have Plus through Google Play."
+msgstr "Google Play üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "okYAd9"
+msgid "You already have Plus through the Zoonk website."
+msgstr "Zoonk web sitesi üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "mtWXkr"
+msgid "You already have Plus."
+msgstr "Zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abone ol"

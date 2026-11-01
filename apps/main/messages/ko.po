@@ -4809,6 +4809,26 @@ msgid "For an exam, the diagnostic, your plan and its first week are free. Plus 
 msgstr "시험 준비를 위한 진단과 계획, 첫 주 학습은 무료예요. Plus로는 모의고사도 풀면서 시험 당일까지 계속 준비할 수 있어요."
 
 #: src/components/pricing/subscribe-button.tsx
+msgctxt "iB3ixY"
+msgid "You already have Plus through the App Store."
+msgstr "이미 App Store에서 Plus를 구독하고 있어요."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "Fwt_t3"
+msgid "You already have Plus through Google Play."
+msgstr "이미 Google Play에서 Plus를 구독하고 있어요."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "okYAd9"
+msgid "You already have Plus through the Zoonk website."
+msgstr "이미 Zoonk 웹사이트에서 Plus를 구독하고 있어요."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "mtWXkr"
+msgid "You already have Plus."
+msgstr "이미 Plus를 구독하고 있어요."
+
+#: src/components/pricing/subscribe-button.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "구독하기"

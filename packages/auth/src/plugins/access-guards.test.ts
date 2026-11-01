@@ -3,7 +3,12 @@ import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it, vi } from "vitest";
 import { captureAccountDeletionCleanup } from "../account-deletion";
-import { guestAuth, signInAsGuest } from "../guests/_test-utils/guest-auth";
+import {
+  createTestEmail,
+  guestAuth,
+  signInAsGuest,
+  signUp as signUpLearner,
+} from "../guests/_test-utils/guest-auth";
 import { baseAuthConfig, baseAuthPlugins } from "../server";
 import { accessGuardsPlugin } from "./access-guards";
 
@@ -75,6 +80,32 @@ describe("access guards", () => {
     await expect(
       guestAuth.api.upgradeSubscription({ body: UPGRADE_BODY, headers }),
     ).rejects.toMatchObject({ body: { code: "GUEST_PURCHASE_NOT_ALLOWED" }, statusCode: 403 });
+
+    expect(stripeMocks.create).not.toHaveBeenCalled();
+  });
+
+  it("refuses a checkout while the learner has Plus, naming where it's managed", async () => {
+    const { headers, userId } = await signUpLearner({ email: createTestEmail() });
+    const dayFromNow = new Date(Date.now() + 86_400_000);
+
+    await prisma.subscription.create({
+      data: {
+        periodEnd: dayFromNow,
+        plan: "plus",
+        provider: "apple",
+        providerSubscriptionId: randomUUID(),
+        referenceId: userId,
+        status: "active",
+        userId,
+      },
+    });
+
+    await expect(
+      guestAuth.api.upgradeSubscription({ body: UPGRADE_BODY, headers }),
+    ).rejects.toMatchObject({
+      body: { code: "PLUS_ALREADY_ACTIVE", provider: "apple" },
+      statusCode: 409,
+    });
 
     expect(stripeMocks.create).not.toHaveBeenCalled();
   });

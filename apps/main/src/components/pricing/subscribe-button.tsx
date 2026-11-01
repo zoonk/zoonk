@@ -1,5 +1,6 @@
 "use client";
 
+import { ACCESS_ERROR_CODES } from "@zoonk/auth/access-contract";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
@@ -11,7 +12,9 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PLUS_CTA_CLASS } from "./plus-cta";
 
-type RequestState = "error" | "idle" | "loading";
+/** Plus bought elsewhere while this page was open: the answer says where it's managed. */
+type AlreadyPlus = { provider: unknown };
+type RequestState = AlreadyPlus | "error" | "idle" | "loading";
 type StripeLocaleOverride = "de" | "es-419" | "fr" | "it" | "ja" | "ko" | "pl" | "pt-BR" | "tr";
 
 /**
@@ -37,6 +40,24 @@ function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {
   );
 
   return checked?.value === "yearly" ? "yearly" : "monthly";
+}
+
+function AlreadyPlusMessage({ provider }: AlreadyPlus) {
+  const t = useExtracted();
+
+  if (provider === "apple") {
+    return t("You already have Plus through the App Store.");
+  }
+
+  if (provider === "google") {
+    return t("You already have Plus through Google Play.");
+  }
+
+  if (provider === "stripe") {
+    return t("You already have Plus through the Zoonk website.");
+  }
+
+  return t("You already have Plus.");
 }
 
 /** The auth client loads on the tap, so the pricing page doesn't ship it up front. */
@@ -70,6 +91,11 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
       return upgradeError;
     });
 
+    if (refusal?.code === ACCESS_ERROR_CODES.plusAlreadyActive) {
+      setRequestState({ provider: "provider" in refusal ? refusal.provider : null });
+      return;
+    }
+
     const failure = error ?? refusal;
 
     if (failure) {
@@ -95,6 +121,12 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
       {requestState === "error" && (
         <p className="text-destructive-text text-sm" role="alert">
           {t("Unable to start checkout. Contact us at hello@zoonk.com")}
+        </p>
+      )}
+
+      {typeof requestState === "object" && (
+        <p className="text-muted-foreground text-sm" role="status">
+          <AlreadyPlusMessage provider={requestState.provider} />
         </p>
       )}
     </>

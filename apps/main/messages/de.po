@@ -4809,6 +4809,26 @@ msgid "For an exam, the diagnostic, your plan and its first week are free. Plus 
 msgstr "Für eine Prüfung sind die Einstufung, dein Plan und die erste Woche kostenlos. Mit Plus lernst du bis zum Prüfungstag weiter und machst unterwegs Probeprüfungen."
 
 #: src/components/pricing/subscribe-button.tsx
+msgctxt "iB3ixY"
+msgid "You already have Plus through the App Store."
+msgstr "Du hast Plus bereits über den App Store abonniert."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "Fwt_t3"
+msgid "You already have Plus through Google Play."
+msgstr "Du hast Plus bereits über Google Play abonniert."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "okYAd9"
+msgid "You already have Plus through the Zoonk website."
+msgstr "Du hast Plus bereits über die Zoonk-Website abonniert."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "mtWXkr"
+msgid "You already have Plus."
+msgstr "Du hast bereits Plus."
+
+#: src/components/pricing/subscribe-button.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abonnieren"

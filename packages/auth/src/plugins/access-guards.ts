@@ -1,18 +1,37 @@
+import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { ACCESS_ERROR_CODES } from "../access-contract";
 import { isAccountDeletionCleanupReady } from "../account-deletion";
+import { getActiveSubscriptionQuery } from "../active-subscription";
 import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 
+/** One Plus per learner: the answer names where the learner's Plus is managed. */
 const guardPlusPurchase = createAuthMiddleware(async (context) => {
   const session = await getSessionFromCtx(context);
 
-  if (session?.user.isAnonymous) {
+  if (!session) {
+    return;
+  }
+
+  if (session.user.isAnonymous) {
     throw new APIError("FORBIDDEN", {
       code: ACCESS_ERROR_CODES.guestPurchaseNotAllowed,
       message: "Create an account before subscribing.",
+    });
+  }
+
+  const plus = await prisma.subscription.findFirst(
+    getActiveSubscriptionQuery({ now: new Date(), userId: session.user.id }),
+  );
+
+  if (plus) {
+    throw new APIError("CONFLICT", {
+      code: ACCESS_ERROR_CODES.plusAlreadyActive,
+      message: "You already have Plus.",
+      provider: plus.provider,
     });
   }
 });
