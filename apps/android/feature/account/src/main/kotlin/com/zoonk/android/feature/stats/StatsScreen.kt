@@ -51,7 +51,6 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageDirective
-import com.zoonk.android.ui.scaffold.pageFold
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -68,7 +67,7 @@ enum class StatsPage(
     Patterns(AppRoute.StatsPatterns, R.string.stats_patterns),
 }
 
-/** What a stats page needs from the frame: the window's room (medium and up, expanded and up) and a way to its sibling pages. */
+/** What a stats page needs from the frame: its own pane's room (medium and up, and that with the list beside it) and a way to its sibling pages. */
 internal class StatsContext(
     val app: AppContainer,
     val navigator: AppNavigator,
@@ -97,21 +96,6 @@ fun StatsScreen(
         BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
             val directive = pageDirective(maxWidth, panesTouch = true)
             val listBeside = directive.maxHorizontalPartitions > 1
-            val fold = pageFold(maxWidth)
-            val pageWidth =
-                when {
-                    !listBeside -> maxWidth
-                    fold != null -> maxWidth - fold.end
-                    else -> maxWidth - NAV_WIDTH
-                }
-            val context =
-                StatsContext(
-                    app,
-                    navigator,
-                    stats,
-                    wide = pageWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp,
-                    expanded = listBeside && pageWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp,
-                )
 
             ListDetailPaneScaffold(
                 directive = directive,
@@ -122,7 +106,14 @@ fun StatsScreen(
                         tertiary = PaneAdaptedValue.Hidden,
                     ),
                 listPane = { AnimatedPane(Modifier.preferredWidth(NAV_WIDTH)) { StatsNavList(page, navigator) } },
-                detailPane = { AnimatedPane { StatsPageArea(page, context) } },
+                detailPane = {
+                    AnimatedPane {
+                        BoxWithConstraints {
+                            val wide = maxWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
+                            StatsPageArea(page, StatsContext(app, navigator, stats, wide, expanded = listBeside && wide))
+                        }
+                    }
+                },
             )
         }
     }

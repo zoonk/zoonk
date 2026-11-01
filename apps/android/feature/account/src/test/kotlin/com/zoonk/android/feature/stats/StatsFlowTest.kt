@@ -1,18 +1,24 @@
 package com.zoonk.android.feature.stats
 
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -25,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,8 +40,11 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class StatsFlowTest {
-    @get:Rule
-    val rule: ComposeContentTestRule = createComposeRule()
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
+    val rule = createAndroidComposeRule<ComponentActivity>()
 
     private lateinit var navigator: AppNavigator
 
@@ -137,6 +147,23 @@ class StatsFlowTest {
         show(StatsPage.Overview, api = api)
 
         rule.onNodeWithText("40%–95%").assertExists()
+    }
+
+    /** On an unfolded Galaxy Z Fold, text this large leaves no room for the list: the page keeps to the side before the fold, laid out as a phone's. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp", fontScale = 1.5f)
+    fun largeTextOnAnOpenBookLaysTheOverviewOutAsAPhones() {
+        show(StatsPage.Overview)
+        folds.overrideWindowLayoutInfo(
+            TestWindowLayoutInfo(
+                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
+            ),
+        )
+        rule.waitForIdle()
+
+        val belt = rule.onNodeWithText("Yellow belt").assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertTrue("the overview keeps before the fold: $belt", belt.right <= 353.5.dp)
+        rule.onNodeWithText("60%–90%").assertDoesNotExist()
     }
 
     @Test

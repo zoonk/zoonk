@@ -18,6 +18,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.googleid)
 
+    testImplementation(libs.androidx.window.testing)
+
     testFixturesImplementation(project(":core:data"))
     testFixturesImplementation(testFixtures(project(":core:data")))
     testFixturesImplementation(platform(libs.androidx.compose.bom))
