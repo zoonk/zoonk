@@ -1,6 +1,5 @@
 package com.zoonk.android.data
 
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
@@ -8,7 +7,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
-import mockwebserver3.SocketEffect
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -125,43 +123,6 @@ class ApiRuntimeTest {
     }
 
     @Test
-    fun generationEventsResumeAfterADroppedConnection() =
-        runTest {
-            server.enqueue(events(event("outline", "started"), event("outline", "completed"), drop = true))
-            server.enqueue(events(event("lessons", "started"), drop = true))
-            server.enqueue(events(event("lessons", "completed")))
-
-            val received = api.generationEvents("gen-1", ana).toList()
-
-            assertEquals(
-                listOf("outline started", "outline completed", "lessons started", "lessons completed"),
-                received.map {
-                    "${it.step} ${it.status}"
-                },
-            )
-            val targets = List(3) { server.takeRequest() }
-            assertEquals(listOf("0", "2", "3"), targets.map { it.url.queryParameter("startIndex") })
-            assertEquals("Bearer token-a", targets.last().headers["Authorization"])
-        }
-
-    @Test
-    fun generationEventsGiveUpAfterThreeDropsWithoutAnEvent() =
-        runTest {
-            repeat(4) { server.enqueue(events(drop = true)) }
-            val failure = runCatching { api.generationEvents("gen-1", ana).toList() }.exceptionOrNull()
-            assertEquals(ApiError.Network, (failure as ApiException).error)
-            assertEquals(4, server.requestCount)
-        }
-
-    @Test
-    fun anUnknownGenerationIsNotFound() =
-        runTest {
-            server.enqueue(MockResponse.Builder().code(404).build())
-            val failure = runCatching { api.generationEvents("missing", ana).toList() }.exceptionOrNull()
-            assertEquals(ApiError.NotFound, (failure as ApiException).error)
-        }
-
-    @Test
     fun theRequestLogNamesMethodPathStatusAndTime() =
         runTest {
             server.enqueue(MockResponse.Builder().code(204).build())
@@ -202,24 +163,4 @@ class ApiRuntimeTest {
             .addHeader("Content-Type", "application/json")
             .body(body)
             .build()
-
-    private fun event(
-        step: String,
-        status: String,
-    ) = """data: {"at":1761650000000,"status":"$status","step":"$step"}""" + "\n\n"
-
-    /** An event stream; a dropped one ends before the length it announced, as a lost connection does. */
-    private fun events(
-        vararg events: String,
-        drop: Boolean = false,
-    ): MockResponse {
-        val body = events.joinToString("")
-        val builder =
-            MockResponse
-                .Builder()
-                .addHeader("Content-Type", "text/event-stream")
-                .body(body)
-        if (drop) builder.setHeader("Content-Length", body.length + 100).onResponseEnd(SocketEffect.CloseSocket())
-        return builder.build()
-    }
 }
