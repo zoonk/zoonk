@@ -51,7 +51,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -76,6 +78,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
@@ -282,7 +285,8 @@ internal fun ColumnScope.PlanEditorBody(
 
 /**
  * Material's modal side sheet, which Compose doesn't offer: on the window's end edge, with main's
- * light dim so the page stays readable behind it.
+ * light dim so the page stays readable behind it. On an unfolded book it keeps to the page after the
+ * fold, as sheets and dialogs do.
  */
 @Composable
 private fun SidePanel(
@@ -290,6 +294,12 @@ private fun SidePanel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val title = stringResource(R.string.plan_editor_title)
+    val window =
+        with(LocalDensity.current) {
+            LocalWindowInfo.current.containerSize.width
+                .toDp()
+        }
+    val width = pageFold(window)?.let { minOf(PANEL_WIDTH, window - it.end) } ?: PANEL_WIDTH
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         (LocalView.current.parent as? DialogWindowProvider)?.window?.setDimAmount(PANEL_DIM)
@@ -305,7 +315,7 @@ private fun SidePanel(
                 modifier =
                     Modifier
                         .fillMaxHeight()
-                        .widthIn(max = PANEL_WIDTH)
+                        .widthIn(max = width)
                         .fillMaxWidth()
                         .semantics { paneTitle = title },
                 shape = RoundedCornerShape(topStart = PANEL_CORNER, bottomStart = PANEL_CORNER),
