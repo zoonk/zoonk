@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/auth.ts",
     "./access-contract": "./src/access-contract.ts",
+    "./active-subscription": "./src/active-subscription.ts",
     "./account-deletion": "./src/account-deletion.ts",
     "./app-attest": "./src/app-attest/native-app-attest.ts",
     "./app-attest-contract": "./src/app-attest/app-attest-contract.ts",
@@ -30,7 +31,8 @@
     "./subscription-events": "./src/stripe/subscription-events.ts",
     "./plus-emails": "./src/stripe/plus-emails.ts",
     "./stripe-client": "./src/stripe/client.ts",
-    "./stripe-subscription-metadata": "./src/stripe/subscription-metadata.ts"
+    "./stripe-subscription-metadata": "./src/stripe/subscription-metadata.ts",
+    "./stop-web-plus": "./src/stripe/stop-web-plus.ts"
   },
   "scripts": {
     "test": "vitest run",

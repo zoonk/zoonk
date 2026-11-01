@@ -1,7 +1,8 @@
+import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { cacheTag, io } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
-import { getActiveSubscriptionQuery, readActiveSubscription } from "../learner/facts/subscription";
+import { readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 
 /** Workflow bridges pass the goal owner, never a caller-selected identity. */

@@ -1,5 +1,6 @@
 import "server-only";
 import { sendPlusCancellationEmail } from "@zoonk/auth/plus-emails";
+import { refundLatestPayment, saveSubscription, stopSubscription } from "@zoonk/auth/stop-web-plus";
 import { readSubscriptionMetadata } from "@zoonk/auth/stripe-subscription-metadata";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import {
@@ -7,7 +8,6 @@ import {
   type WebPlusCancellation,
   loadCancellation,
 } from "./_utils/load-web-plus-cancellation";
-import { refundLatestPayment, saveSubscription, stopSubscription } from "./_utils/stop-web-plus";
 
 type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
 

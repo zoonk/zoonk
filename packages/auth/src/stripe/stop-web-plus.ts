@@ -1,10 +1,9 @@
-import "server-only";
-import { stripeClient } from "@zoonk/auth/stripe-client";
-import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { PLUS_PLAN } from "@zoonk/utils/subscription";
+import { stripeClient } from "./client";
+import { reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
 
 /** A renewal Stripe couldn't charge has no Plus left, but Stripe keeps trying to collect it. */
