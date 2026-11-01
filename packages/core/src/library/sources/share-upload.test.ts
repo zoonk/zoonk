@@ -200,6 +200,25 @@ describe(shareSourceUpload, () => {
     );
   });
 
+  it("merges into the copy first shared with the same text after the publisher updated it", async () => {
+    const [first, second] = await Promise.all([userFixture(), userFixture()]);
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+    servePublisherCopy(noticeText());
+    await expect(refreshWebSource(shared.id)).resolves.toMatchObject({ status: "changed" });
+
+    servePublisherCopy(text);
+    const late = await privateUploadFixture({ text, userId: second.id });
+
+    await expect(shareNotice(late.id)).resolves.toStrictEqual({
+      merged: true,
+      sourceId: shared.id,
+    });
+  });
+
   it("ignores sources that aren't private uploads", async () => {
     const source = await sourceFixture();
 

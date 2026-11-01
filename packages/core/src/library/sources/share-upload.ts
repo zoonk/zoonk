@@ -56,9 +56,17 @@ async function publishCopy({
   copy: PublisherCopy;
   input: ShareUploadInput;
 }): Promise<SharedUpload> {
+  const identityKey = buildSourceIdentityKey({ contentHash: copy.contentHash, url: null });
+
+  // A freshness check may since have updated the copy first shared with this text.
   const publicCopy = await prisma.source.findFirst({
     select: { id: true },
-    where: { contentHash: copy.contentHash, visibility: "public" },
+    where: {
+      OR: [
+        { contentHash: copy.contentHash, visibility: "public" },
+        { identityKey, language: input.language },
+      ],
+    },
   });
 
   if (publicCopy) {
@@ -72,7 +80,7 @@ async function publishCopy({
         blobUrl: null,
         extractedText: copy.parsed.text,
         fetchedAt: new Date(),
-        identityKey: buildSourceIdentityKey({ contentHash: copy.contentHash, url: null }),
+        identityKey,
         language: input.language,
         mimeType: copy.contentType,
         ownerId: null,
