@@ -260,14 +260,13 @@ describe(getPlayableLibraryLesson, () => {
   it("plays a sentence word that only another lesson saved and voiced", async () => {
     const word = randomUUID();
 
-    const [{ lesson }, organization] = await Promise.all([
-      languageLessonFixture({ sentenceText: `How much is ${word}?` }),
-      organizationFixture(),
-    ]);
+    const { lesson, sentence } = await languageLessonFixture({
+      sentenceText: `How much is ${word}?`,
+    });
 
     const voiced = await wordFixture({
       audioUrl: `https://audio.zoonk.test/${word}.mp3`,
-      organizationId: organization.id,
+      organizationId: sentence.organizationId,
       targetLanguage: "en",
       word: word.toUpperCase(),
     });
