@@ -55,6 +55,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({ lessonId: z.uuid(), version: z.number().int() }),
     kind: z.literal("reviewAlphabetLesson"),
   }),
+  z.object({ input: z.object({ sourceId: z.uuid() }), kind: z.literal("checkUploadVisibility") }),
 ]);
 
 export type FollowUp = z.infer<typeof followUpSchema>;

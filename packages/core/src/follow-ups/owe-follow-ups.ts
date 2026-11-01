@@ -32,6 +32,8 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.mockId;
     case "reviewAlphabetLesson":
       return `${followUp.input.lessonId}:${followUp.input.version}`;
+    case "checkUploadVisibility":
+      return followUp.input.sourceId;
     default:
       return followUp satisfies never;
   }

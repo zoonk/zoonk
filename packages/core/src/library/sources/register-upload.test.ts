@@ -251,6 +251,38 @@ describe(registerSourceUpload, () => {
     await expect(prisma.learnerSource.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
+  it("asks for one visibility check when the same file is registered twice at once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const { pathname } = uploadNotice({ text: uniqueText(), userId: user.id });
+    const bothReading = Promise.withResolvers<null>();
+    const readBlob = vi.mocked(get).getMockImplementation();
+
+    vi.mocked(get).mockImplementation(async (...args) => {
+      if (vi.mocked(get).mock.calls.length === 2) {
+        bothReading.resolve(null);
+      }
+
+      await bothReading.promise;
+      return readBlob?.(...args) ?? null;
+    });
+
+    const results = await Promise.all([
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ]);
+
+    expect(
+      results.filter((result) => result.status === "ready" && result.checkVisibility),
+    ).toHaveLength(1);
+
+    const source = await prisma.source.findFirstOrThrow({ where: { ownerId: user.id } });
+
+    await expect(
+      prisma.followUp.findMany({ select: { input: true, kind: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ input: { sourceId: source.id }, kind: "checkUploadVisibility" }]);
+  });
+
   it("keeps the file when the same registration is retried", async () => {
     const user = await userFixture();
     mockSession(user.id);

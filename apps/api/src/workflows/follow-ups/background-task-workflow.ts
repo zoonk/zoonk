@@ -19,6 +19,7 @@ export type BackgroundTask = Exclude<
   OwedFollowUp,
   {
     kind:
+      | "checkUploadVisibility"
       | "prepareGoalLessons"
       | "prepareSession"
       | "reviewAlphabetLesson"

@@ -7,6 +7,7 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { findReachedUsageLimit } from "../../entitlements/_utils/reached-usage-limit";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
@@ -92,10 +93,10 @@ function createPrivateSource({
     });
 
     if (stored) {
-      return unchanged(stored);
+      return unchanged({ created: false, source: stored });
     }
 
-    return tx.source.create({
+    const source = await tx.source.create({
       data: {
         blobUrl: content.blobUrl,
         contentHash: content.hash,
@@ -118,6 +119,14 @@ function createPrivateSource({
       },
       omit: { extractedText: true },
     });
+
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { sourceId: id }, kind: "checkUploadVisibility" }],
+      userId,
+    });
+
+    return { created: true, source };
   });
 }
 
@@ -189,10 +198,10 @@ async function storeUpload({
     return { checkVisibility: false, source: storedCopy, status: "ready" };
   }
 
-  const source = await createPrivateSource({ content, id: sourceId, input, userId });
+  const { created, source } = await createPrivateSource({ content, id: sourceId, input, userId });
   await linkLearnerSource({ goalId, sourceId: source.id, userId });
 
-  return { checkVisibility: true, source, status: "ready" };
+  return { checkVisibility: created, source, status: "ready" };
 }
 
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {

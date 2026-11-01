@@ -5,6 +5,7 @@ import { claimRunToken } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
+import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow } from "./background-task-workflow";
 import {
@@ -57,6 +58,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "reviewAlphabetLesson": {
       const analytics = { distinctId: userId };
       await start(alphabetReviewWorkflow, [{ ...followUp.input, analytics }]);
+      return;
+    }
+    case "checkUploadVisibility": {
+      const { sourceId } = followUp.input;
+      await start(sourceVisibilityWorkflow, [{ ownerId: userId, sourceId }]);
       return;
     }
     default:
