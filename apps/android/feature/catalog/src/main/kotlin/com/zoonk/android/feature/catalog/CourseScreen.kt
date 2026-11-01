@@ -93,6 +93,7 @@ private fun courseBlocks(
         add(
             CatalogBlock("hero") {
                 val scope = rememberCoroutineScope()
+                val showBlock = LocalShowBlock.current
                 val hero = @Composable { modifier: Modifier ->
                     CourseHero(
                         app = app,
@@ -100,16 +101,7 @@ private fun courseBlocks(
                         course = course,
                         promise = promise,
                         pace = pace,
-                        onTryLesson =
-                            tryLesson?.takeUnless { beside }?.let {
-                                {
-                                    scope.launch {
-                                        layout.listState.animateScrollToItem(
-                                            1,
-                                        )
-                                    }
-                                }
-                            },
+                        onTryLesson = tryLesson?.takeUnless { beside }?.let { { scope.launch { showBlock("try") } } },
                         headlineModifier = layout.headline,
                         modifier = modifier,
                     )

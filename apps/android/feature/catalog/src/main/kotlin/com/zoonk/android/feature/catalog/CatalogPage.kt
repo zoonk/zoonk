@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
@@ -30,6 +31,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInWindow
@@ -105,15 +107,10 @@ internal fun <T : Any> CatalogPage(
                 panesTouch = true,
                 supportingPane = {
                     if (state is LoadState.Loaded) {
-                        val listState = remember { LazyListState() }
-                        val layout = CatalogPageLayout(listState, beside = false, headline = Modifier, disclosures, twoPages = true)
-                        BlockList(
-                            blocks(state.value, layout).filter { it.trailing },
-                            listState,
-                            reading,
-                            PANE_MARGIN,
-                            Modifier.fillMaxSize(),
-                        )
+                        val layout = CatalogPageLayout(beside = false, headline = Modifier, disclosures, twoPages = true)
+                        val shown = blocks(state.value, layout).filter { it.trailing }
+                        val listState = remember { reading.listState(shown) }
+                        BlockList(shown, listState, reading, PANE_MARGIN, Modifier.fillMaxSize())
                     }
                 },
             ) { twoPages ->
@@ -135,15 +132,16 @@ internal fun <T : Any> CatalogPage(
                     }
 
                     is LoadState.Loaded -> {
-                        val listState = remember(twoPages) { LazyListState() }
-                        SideEffect { headlineList = listState }
                         val beside = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
                         val wide = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-                        val shown = blocks(state.value, CatalogPageLayout(listState, beside, headline, disclosures, twoPages))
+                        val all = blocks(state.value, CatalogPageLayout(beside, headline, disclosures, twoPages))
+                        val shown = if (twoPages) all.filterNot { it.trailing } else all
+                        val listState = remember(twoPages) { reading.listState(shown) }
+                        SideEffect { headlineList = listState }
 
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                             BlockList(
-                                blocks = if (twoPages) shown.filterNot { it.trailing } else shown,
+                                blocks = shown,
                                 state = listState,
                                 reading = reading,
                                 margin = if (wide) 24.dp else PANE_MARGIN,
@@ -166,7 +164,6 @@ internal fun <T : Any> CatalogPage(
  * as an open book's two pages, its trailing blocks after the fold.
  */
 internal data class CatalogPageLayout(
-    val listState: LazyListState,
     val beside: Boolean,
     /** Goes on the page's headline, so the top app bar takes the title once the headline scrolls under it. */
     val headline: Modifier,
@@ -181,7 +178,10 @@ internal class CatalogBlock(
     val content: @Composable () -> Unit,
 )
 
-/** Opens at the block [reading] last saw in this list, and tells it where the learner reads. */
+/** Brings a block of the list that shows this one into view, by key, as the course's “Try a lesson” brings the lesson to try. */
+internal val LocalShowBlock = staticCompositionLocalOf<suspend (key: String) -> Unit> { {} }
+
+/** Tells [reading] where the learner reads. */
 @Composable
 private fun BlockList(
     blocks: List<CatalogBlock>,
@@ -191,8 +191,11 @@ private fun BlockList(
     modifier: Modifier = Modifier,
 ) {
     val current by rememberUpdatedState(blocks)
+    val show: suspend (String) -> Unit = { key ->
+        val index = current.indexOfFirst { it.key == key }
+        if (index >= 0) state.animateScrollToItem(index)
+    }
 
-    remember(state) { reading.opening(blocks)?.let { (index, offset) -> state.requestScrollToItem(index, offset) } }
     LaunchedEffect(state, reading) {
         snapshotFlow {
             state.layoutInfo.visibleItemsInfo
@@ -205,13 +208,15 @@ private fun BlockList(
             .collect { (key, offset) -> current.firstOrNull { it.key == key }?.let { reading.read(it, offset, current) } }
     }
 
-    LazyColumn(
-        state = state,
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = margin, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(56.dp),
-    ) {
-        items(blocks, key = { it.key }, contentType = { it.key }) { it.content() }
+    CompositionLocalProvider(LocalShowBlock provides show) {
+        LazyColumn(
+            state = state,
+            modifier = modifier,
+            contentPadding = PaddingValues(horizontal = margin, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(56.dp),
+        ) {
+            items(blocks, key = { it.key }, contentType = { it.key }) { it.content() }
+        }
     }
 }
 
@@ -226,13 +231,19 @@ internal class CatalogReading(
     private var trailing: BlockPlace? = null,
     private var trailingLast: Boolean = false,
 ) {
-    /** The index and offset a list of [blocks] opens at, or null for its top. */
-    fun opening(blocks: List<CatalogBlock>): Pair<Int, Int>? {
+    /** A list of [blocks], opened where it was read: a page of the book at its own place, one column at the page read last. */
+    fun listState(blocks: List<CatalogBlock>): LazyListState {
         val places = if (trailingLast) listOf(trailing, leading) else listOf(leading, trailing)
+        val opening =
+            places.firstNotNullOfOrNull { place ->
+                place?.let {
+                    blocks.indexOfFirst { it.key == place.key }.takeIf { it >= 0 }?.let { index ->
+                        LazyListState(index, place.offset)
+                    }
+                }
+            }
 
-        return places.firstNotNullOfOrNull { place ->
-            place?.let { blocks.indexOfFirst { it.key == place.key }.takeIf { it >= 0 }?.let { index -> index to place.offset } }
-        }
+        return opening ?: LazyListState()
     }
 
     /** [block] is at the top of a list of [blocks], [offset] into it. Read in one column, the other page opens at its top. */

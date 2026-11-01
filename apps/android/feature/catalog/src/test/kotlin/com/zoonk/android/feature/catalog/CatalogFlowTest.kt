@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
@@ -81,6 +82,17 @@ class CatalogFlowTest {
         rule.onNodeWithText("No, it's more like a cloud").performClick()
 
         assertEquals(AppRoute.Lesson(LESSON_TWO, firstAnswer = "cloud"), navigator.currentRoute)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h600dp")
+    fun tryALessonBringsTheLessonToTryIntoView() {
+        show { app, navigator, store -> CourseScreen(AppRoute.CatalogCourse(COURSE), app, navigator, store) }
+        rule.onNodeWithText("Does the electron circle the nucleus?").assertIsNotDisplayed()
+
+        rule.onNodeWithText("Try a lesson").performClick()
+
+        rule.onNodeWithText("Does the electron circle the nucleus?").assertIsDisplayed()
     }
 
     @Test
