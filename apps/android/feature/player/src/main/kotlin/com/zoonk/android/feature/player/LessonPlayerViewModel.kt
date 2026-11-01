@@ -494,9 +494,7 @@ class LessonPlayerViewModel(
         run: LibraryLessonRun,
     ): LessonPlayerState {
         val started = now()
-        // A screen's canvas work comes back under its round after Android closes the app in the background.
-        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
-        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started).copy(rounds = rounds)
+        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started)
         state = reduce(state, run.toStartedAction(), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -514,7 +512,10 @@ class LessonPlayerViewModel(
         talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
-        return state.withFirstAnswer(started)
+        // After the server's answers rebuild the run, each screen's work comes back under the round it was saved in when
+        // Android closed the app in the background.
+        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
+        return state.withFirstAnswer(started).let { it.copy(rounds = it.rounds + rounds) }
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */

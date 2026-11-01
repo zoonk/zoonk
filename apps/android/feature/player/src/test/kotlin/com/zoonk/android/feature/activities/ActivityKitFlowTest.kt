@@ -53,7 +53,7 @@ class ActivityKitFlowTest {
     @Test
     fun aCanvasInALaterRoundComesBackWholeAfterAndroidClosesTheAppInTheBackground() {
         val restoration = StateRestorationTester(rule)
-        harness.play(listOf(ActivityFixtures.step("decisionTree")), restoration = restoration) {
+        harness.play(listOf(ActivityFixtures.step("decisionTree", id = TREE)), restoration = restoration) {
             grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected("decisionTree")) }
         }
         tap("Needles")
@@ -63,10 +63,16 @@ class ActivityKitFlowTest {
         tap("Needles")
         tap("In bundles")
 
+        // The server has the missed check, so the run it resumes is rebuilt from it.
+        harness.api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$TREE"}]"""
         harness.viewModel = harness.openAgain()
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithContentDescription("Your answers").assertExists()
         rule.onNodeWithText("Check").assertIsEnabled()
+    }
+
+    private companion object {
+        const val TREE = "00000000-0000-4000-8000-000000000201"
     }
 }
