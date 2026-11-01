@@ -175,7 +175,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "4.0.91",
+    "@ai-sdk/openai": "4.0.106",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

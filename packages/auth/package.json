@@ -38,18 +38,18 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.7.7",
-    "@better-auth/stripe": "1.7.7",
-    "@vercel/blob": "2.8.1",
+    "@better-auth/prisma-adapter": "1.7.14",
+    "@better-auth/stripe": "1.7.14",
+    "@vercel/blob": "2.8.2",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.7.7",
+    "better-auth": "1.7.14",
     "botid": "catalog:",
     "jose": "catalog:",
     "mailchecker": "6.0.21",
     "node-app-attest": "1.0.1",
-    "stripe": "22.6.2",
+    "stripe": "23.1.0",
     "zod": "catalog:"
   },
   "devDependencies": {

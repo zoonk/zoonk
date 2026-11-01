@@ -33,17 +33,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.10.0",
-    "@prisma/client": "7.10.0",
-    "@vercel/functions": "3.9.11",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "@vercel/functions": "3.10.5",
     "@zoonk/utils": "workspace:*",
     "pg": "8.23.1"
   },
   "devDependencies": {
     "@types/pg": "8.23.1",
     "@zoonk/tsconfig": "workspace:*",
-    "dotenv": "18.0.6",
-    "prisma": "7.10.0",
+    "dotenv": "18.0.9",
+    "prisma": "7.10.1",
     "tsx": "catalog:",
     "typescript": "catalog:"
   },

@@ -32,7 +32,7 @@ async function connectionUri(pooled: boolean): Promise<string> {
   requiredEnv("NEON_API_KEY");
 
   const args = [
-    fileURLToPath(import.meta.resolve("neonctl/cli.js")),
+    fileURLToPath(import.meta.resolve("neon/cli")),
     "connection-string",
     branchId,
     "--project-id",

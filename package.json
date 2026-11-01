@@ -62,14 +62,14 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "knip": "6.40.0",
-    "neonctl": "2.27.0",
+    "knip": "6.44.1",
+    "neon": "8.16.0",
     "oxc-parser": "0.156.0",
-    "oxfmt": "0.72.0",
-    "oxlint": "1.87.0",
-    "oxlint-tsgolint": "7.0.2003",
+    "oxfmt": "0.75.0",
+    "oxlint": "1.90.0",
+    "oxlint-tsgolint": "7.0.2005",
     "portless": "0.15.12",
-    "turbo": "2.11.7",
+    "turbo": "2.11.10",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"
@@ -77,5 +77,5 @@
   "engines": {
     "node": "^26"
   },
-  "packageManager": "pnpm@12.10.1"
+  "packageManager": "pnpm@12.16.1"
 }
