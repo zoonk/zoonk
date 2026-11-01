@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
@@ -160,7 +161,25 @@ class LessonSpreadTest {
         assertAfterFold("the placed word", described(PLACED))
     }
 
+    /** Folding or unfolding recreates the screen: a learner who scrolled down to the options stays there. */
+    @Test
+    @Config(qualifiers = SHORT_PHONE)
+    fun theScrollStaysWhereTheLearnerLeftItWhenTheScreenIsRecreated() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(checkStep("quiz"), summaryStep("end")), restoration = restoration)
+        rule.onNodeWithText("Wrong").performScrollTo()
+        val scrolled = text("Question quiz?").top
+
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+
+        assertEquals("the question stays scrolled", scrolled.value, text("Question quiz?").top.value, 0.5f)
+    }
+
     private companion object {
+        /** A phone so short the question and its options scroll. */
+        const val SHORT_PHONE = "w411dp-h300dp"
+
         /** A Pixel 10 Pro Fold's inner display, whose fold runs down its middle. */
         const val BOOK = "w852dp-h883dp"
         const val PHONE = "w411dp-h891dp"

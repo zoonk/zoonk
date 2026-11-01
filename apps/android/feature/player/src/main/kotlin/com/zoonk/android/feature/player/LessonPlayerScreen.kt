@@ -526,9 +526,16 @@ private fun Content(
             val reveal = remember(step.id, state.position) { FeedbackReveal() }
             var span by remember { mutableStateOf<PageSpan?>(null) }
 
-            LaunchedEffect(step.id, state.position) {
-                scroll.scrollTo(0)
-                screenScroll.scrollTo(0)
+            // A new screen starts at its top; the same one recreated (the book folding, a rotation) stays where it was.
+            var scrolledTo by rememberSaveable { mutableStateOf<String?>(null) }
+            val screenKey = "${step.id}:${state.position}"
+
+            LaunchedEffect(screenKey) {
+                if (scrolledTo != screenKey) {
+                    scroll.scrollTo(0)
+                    screenScroll.scrollTo(0)
+                    scrolledTo = screenKey
+                }
             }
             PrefetchPictures(state)
 
