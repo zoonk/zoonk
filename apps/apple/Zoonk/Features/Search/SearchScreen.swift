@@ -47,10 +47,8 @@ struct SearchScreen: View {
       await searchCatalog()
     }
     .catalogDestinations()
-    .sheet(isPresented: $isFeedbackPresented) {
-      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "command-palette"))
-        .accessibilitySizeStyles()
-    }
+    .feedbackSheet(
+      isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "command-palette"))
   }
 
   /// Before a query, the places to go face what the learner can do. A query's own matches face the

@@ -80,12 +80,9 @@ struct SubjectScreen: View {
           }
         }
       }
-      .sheet(isPresented: $isReporting) {
-        FeedbackSheet(
-          api: FeedbackAPI.live(), context: FeedbackContext(screen: "subject"), isReport: true
-        )
-        .accessibilitySizeStyles()
-      }
+      .feedbackSheet(
+        isPresented: $isReporting, context: FeedbackContext(screen: "subject"), isReport: true
+      )
       .loads(syllabus)
     }
   }

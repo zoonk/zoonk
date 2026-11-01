@@ -1,6 +1,46 @@
 import SwiftUI
 
-/// Only a visitor or a guest, whose account has no real email, types an email to be answered at.
+extension View {
+  /// The feedback form, its store kept with the screen that opens it: unfolding iPhone Duo makes
+  /// the sheet's content again, which would lose a half-written message or a send in flight.
+  func feedbackSheet(
+    isPresented: Binding<Bool>, context: FeedbackContext, isReport: Bool = false
+  ) -> some View {
+    modifier(FeedbackSheetPresenter(isPresented: isPresented, context: context, isReport: isReport))
+  }
+}
+
+private struct FeedbackSheetPresenter: ViewModifier {
+  @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Binding var isPresented: Bool
+  let context: FeedbackContext
+  let isReport: Bool
+
+  @State private var store: FeedbackFormStore?
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: isPresented, initial: true) { _, isShown in
+        store =
+          isShown
+          ? FeedbackFormStore(
+            api: FeedbackAPI.live(), context: context, session: session, learner: learner)
+          : nil
+      }
+      .sheet(item: $store, onDismiss: dismissed, content: form)
+  }
+
+  private func dismissed() {
+    isPresented = false
+  }
+
+  private func form(_ store: FeedbackFormStore) -> some View {
+    FeedbackForm(store: store, isReport: isReport)
+      .accessibilitySizeStyles()
+  }
+}
+
 struct FeedbackSheet: View {
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learner
@@ -10,39 +50,44 @@ struct FeedbackSheet: View {
   var isReport = false
 
   var body: some View {
-    FeedbackForm(
-      api: api, context: context, isReport: isReport,
-      accountEmail: learner.summary.value?.identity.isAnonymous == true
+    OwnedFeedbackForm(
+      store: FeedbackFormStore(api: api, context: context, session: session, learner: learner),
+      isReport: isReport)
+  }
+}
+
+private struct OwnedFeedbackForm: View {
+  @State var store: FeedbackFormStore
+  let isReport: Bool
+
+  var body: some View {
+    FeedbackForm(store: store, isReport: isReport)
+  }
+}
+
+extension FeedbackFormStore: Identifiable {
+  /// Only a visitor or a guest, whose account has no real email, types an email to be answered at.
+  convenience init(
+    api: any FeedbackAPIClient, context: FeedbackContext?, session: SessionStore,
+    learner: LearnerSummaryStore
+  ) {
+    self.init(
+      api: api, context: context,
+      defaultEmail: learner.summary.value?.identity.isAnonymous == true
         ? nil : session.account?.user.email,
       token: session.authenticatedSession?.bearerToken)
+  }
+
+  var asksForEmail: Bool {
+    defaultEmail.isEmpty
   }
 }
 
 private struct FeedbackForm: View {
   @Environment(\.dismiss) private var dismiss
   @FocusState private var focusedField: FeedbackField?
-  @State private var store: FeedbackFormStore
-  private let asksForEmail: Bool
-  private let attachesScreen: Bool
-  private let isReport: Bool
-
-  init(
-    api: any FeedbackAPIClient,
-    context: FeedbackContext?,
-    isReport: Bool,
-    accountEmail: String?,
-    token: String?
-  ) {
-    asksForEmail = accountEmail?.isEmpty ?? true
-    attachesScreen = context?.contentID != nil
-    self.isReport = isReport
-    _store = State(
-      initialValue: FeedbackFormStore(
-        api: api,
-        context: context,
-        defaultEmail: accountEmail,
-        token: token))
-  }
+  @Bindable var store: FeedbackFormStore
+  let isReport: Bool
 
   var body: some View {
     NavigationStack {
@@ -126,7 +171,7 @@ private struct FeedbackForm: View {
         }
       }
 
-      if asksForEmail {
+      if store.asksForEmail {
         Section {
           TextField(
             text: $store.email,
@@ -177,7 +222,7 @@ private struct FeedbackForm: View {
         .focused($focusedField, equals: .message)
         .lineLimit(5...10)
       } footer: {
-        if attachesScreen {
+        if store.attachesScreen {
           Label {
             Text(
               "This screen is attached",

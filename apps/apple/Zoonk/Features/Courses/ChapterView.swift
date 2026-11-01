@@ -39,13 +39,9 @@ struct ChapterView: View {
           "Chapter options", table: "Courses", comment: "The chapter page's menu of options"),
         showFeedback: { isFeedbackPresented = true })
     }
-    .sheet(isPresented: $isFeedbackPresented) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter)
-      )
-      .accessibilitySizeStyles()
-    }
+    .feedbackSheet(
+      isPresented: $isFeedbackPresented,
+      context: FeedbackContext(contentID: chapter.id, contentKind: .chapter))
   }
 }
 

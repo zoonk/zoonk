@@ -182,14 +182,9 @@ private struct PlanContent: View {
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
         .accessibilitySizeStyles()
     }
-    .sheet(isPresented: $isReporting) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: plan.planId, contentKind: .plan),
-        isReport: true
-      )
-      .accessibilitySizeStyles()
-    }
+    .feedbackSheet(
+      isPresented: $isReporting,
+      context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
   }
 
   @ViewBuilder

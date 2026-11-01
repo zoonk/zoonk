@@ -121,12 +121,8 @@ private struct ExamList: View {
         }
       }
     }
-    .sheet(isPresented: $isReporting) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(), context: FeedbackContext(screen: "exam"), isReport: true
-      )
-      .accessibilitySizeStyles()
-    }
+    .feedbackSheet(
+      isPresented: $isReporting, context: FeedbackContext(screen: "exam"), isReport: true)
   }
 
   @ViewBuilder

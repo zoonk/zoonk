@@ -36,13 +36,9 @@ struct CourseView: View {
           "Course options", table: "Courses", comment: "The course page's menu of options"),
         showFeedback: { isFeedbackPresented = true })
     }
-    .sheet(isPresented: $isFeedbackPresented) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: course.id, contentKind: .course)
-      )
-      .accessibilitySizeStyles()
-    }
+    .feedbackSheet(
+      isPresented: $isFeedbackPresented,
+      context: FeedbackContext(contentID: course.id, contentKind: .course))
   }
 }
 

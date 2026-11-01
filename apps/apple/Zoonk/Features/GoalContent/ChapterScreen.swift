@@ -68,13 +68,10 @@ struct ChapterScreen: View {
           }
         }
       }
-      .sheet(isPresented: $isReporting) {
-        FeedbackSheet(
-          api: FeedbackAPI.live(),
-          context: FeedbackContext(contentID: chapterId, contentKind: .chapter), isReport: true
-        )
-        .accessibilitySizeStyles()
-      }
+      .feedbackSheet(
+        isPresented: $isReporting,
+        context: FeedbackContext(contentID: chapterId, contentKind: .chapter), isReport: true
+      )
       .loads(chapter)
     } else if learner.summary.value != nil {
       notInPlan

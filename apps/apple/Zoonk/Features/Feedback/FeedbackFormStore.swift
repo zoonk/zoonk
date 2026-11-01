@@ -15,6 +15,8 @@ final class FeedbackFormStore {
   var message = ""
   private(set) var state = FeedbackFormState.idle
 
+  /// The account's email, empty for a visitor or a guest, who types one to be answered at.
+  let defaultEmail: String
   private let api: any FeedbackAPIClient
   private let context: FeedbackContext?
   private let token: String?
@@ -28,7 +30,12 @@ final class FeedbackFormStore {
     self.api = api
     self.context = context
     self.token = token
-    email = defaultEmail?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    self.defaultEmail = defaultEmail?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    email = self.defaultEmail
+  }
+
+  var attachesScreen: Bool {
+    context?.contentID != nil
   }
 
   var canSubmit: Bool {
