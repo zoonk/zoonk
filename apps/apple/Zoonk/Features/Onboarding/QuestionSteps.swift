@@ -930,7 +930,7 @@ private struct LevelQuestion: View {
   }
 }
 
-/// The levels a learner can say they have, as the level question and the plan so far name them.
+/// Main's `OnboardingOwnLevel`: the level a learner says they have.
 enum OwnLevel: String {
   case none, basic, intermediate, advanced
 

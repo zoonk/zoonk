@@ -218,8 +218,6 @@ private struct MockChooser: View {
     }
   }
 
-  /// The picked mock's size note and what it leaves out go under the choices, unless the picked
-  /// mock shows them beside the choices.
   @ViewBuilder
   private func choices(notesUnder: Bool) -> some View {
     if placement, let lengths = view.placement {
@@ -298,8 +296,8 @@ private struct MockChooser: View {
     }
   }
 
-  /// What the last tap on Start led to sits right above it: at the top of the list, it was out of
-  /// view once the learner scrolled down to a subject.
+  /// What the last Start led to sits right above it, not at the top of a list the learner may
+  /// have scrolled away from.
   private var startBar: some View {
     VStack(alignment: .leading, spacing: 10) {
       startStatus
@@ -416,7 +414,7 @@ private struct MockChooser: View {
     }
   }
 
-  /// Main's picked mock: what Start starts.
+  /// Main's `PickedMock`: what Start starts.
   @ViewBuilder
   private var pickedSections: some View {
     if placement, let lengths = view.placement,
@@ -496,7 +494,6 @@ private struct MockChooser: View {
     }
   }
 
-  /// The picked mock's size against the exam's, and what it leaves out.
   @ViewBuilder
   private var pickedNotes: some View {
     if let pickedOption {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Main's `PlanReceipt`: what the goal's answers have set so far, beside its setup steps.
+/// Main's `PlanReceipt`.
 struct PlanSoFar: View {
   let facts: [PlanFact]
 
@@ -16,8 +16,8 @@ struct PlanSoFar: View {
             Text(fact.value)
               .monospacedDigit()
 
-            if let count = fact.count {
-              Text(count)
+            if let daysLeft = fact.daysLeft {
+              Text(daysLeft)
                 .font(.caption)
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
@@ -38,10 +38,8 @@ struct PlanFact: Identifiable, Equatable {
   let id: String
   let label: LocalizedStringResource
   let value: String
-  /// The days left until the goal's date.
-  var count: String?
+  var daysLeft: String?
 
-  /// Main's order: the goal, its date, what onboarding understood, the level, then the time a day.
   /// `today` is the goal's today, `YYYY-MM-DD`.
   static func all(
     of goal: Components.Schemas.Goal, today: String, locale: Locale = .current
@@ -64,15 +62,14 @@ struct PlanFact: Identifiable, Equatable {
       + [level(details), time(of: goal, answered: details?.answered ?? [])].compactMap { $0 }
   }
 
-  /// Main's chips: the short facts the daily time question shows when the plan so far isn't beside
-  /// it, with the date as the days left.
+  /// Main's `PlanReceiptChips`: the short facts, the date as its days left.
   static func chips(_ facts: [PlanFact]) -> String {
     let shown: Set = [
       "title", "date", "targetLanguage", "targetCourse", "institution", "targetPosition",
       "targetScore",
     ]
 
-    return facts.filter { shown.contains($0.id) }.map { $0.count ?? $0.value }.joinedFacts()
+    return facts.filter { shown.contains($0.id) }.map { $0.daysLeft ?? $0.value }.joinedFacts()
   }
 
   private struct Details: Decodable {
@@ -117,7 +114,7 @@ struct PlanFact: Identifiable, Equatable {
     return PlanFact(
       id: "date", label: label, value: PlanDate.longText(targetDate),
       // Never "0 days": Portuguese's singular covers 0, and a date that's today gets asked again.
-      count: days > 0
+      daysLeft: days > 0
         ? String(
           localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
         : nil)

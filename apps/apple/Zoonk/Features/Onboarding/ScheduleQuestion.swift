@@ -11,7 +11,6 @@ struct ScheduleQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  /// The plan so far is beside the question, so the question doesn't repeat it.
   @Environment(\.isPaneSplit) private var isBesidePlan
   @Environment(\.onboardingAside) private var aside
   @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
