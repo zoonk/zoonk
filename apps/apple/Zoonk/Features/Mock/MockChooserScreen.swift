@@ -39,6 +39,7 @@ private struct MockChooserContent: View {
       } description: {
         Text("Mock exam, timed like the real one", tableName: "Mock", comment: "What mocks are")
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -54,6 +55,7 @@ private struct MockChooserContent: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .loaded(let view):
       MockChooser(goalId: goalId, view: view, placement: false) { id in
         router.open(.mock(blockId: id))

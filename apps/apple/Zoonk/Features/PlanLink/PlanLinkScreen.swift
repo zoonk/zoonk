@@ -39,6 +39,7 @@ struct PlanLinkScreen: View {
                 Image(systemName: "link")
               }
             }
+            .lonePage()
           case .failed:
             ContentUnavailableView {
               Text(
@@ -51,6 +52,7 @@ struct PlanLinkScreen: View {
                 Text("Try again", tableName: "PlanLink", comment: "Loads the shared plan again")
               }
             }
+            .lonePage()
           case .idle, .loading, .empty:
             ProgressView()
           }

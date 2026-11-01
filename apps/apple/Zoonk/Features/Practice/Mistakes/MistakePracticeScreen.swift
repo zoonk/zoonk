@@ -258,6 +258,7 @@ struct MistakePracticeScreen: View {
       }
       .buttonStyle(.bordered)
     }
+    .lonePage()
   }
 
   private func read() async {

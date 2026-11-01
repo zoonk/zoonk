@@ -70,6 +70,7 @@ struct TestOutScreen: View {
                 "Your plan already skips this chapter.", tableName: "Practice",
                 comment: "Why a test-out has nothing to skip.")
             }
+            .lonePage()
           case .loaded(.plusRequired):
             preparing(failure: PracticeAPIError.plusRequired)
           case .loaded(.test(let test)) where test.questions.isEmpty:

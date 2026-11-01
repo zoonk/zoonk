@@ -360,5 +360,6 @@ private struct CourseDetailEmptyView: View {
         tableName: "Courses",
         comment: "Guidance when a course request returns no content.")
     }
+    .lonePage()
   }
 }

@@ -48,6 +48,7 @@ struct CatalogFailureRecoveryView: View {
       }
     }
     .frame(maxWidth: .infinity, minHeight: 360)
+    .lonePage()
   }
 
   @ViewBuilder

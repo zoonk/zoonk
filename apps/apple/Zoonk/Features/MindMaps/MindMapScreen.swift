@@ -64,6 +64,7 @@ struct MindMapScreen: View {
               KindMark(kind: .mindMap)
             }
           }
+          .lonePage()
         }
       }
       .toolbar {
@@ -98,6 +99,7 @@ struct MindMapScreen: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .idle, .loading:
       ProgressView()
     }
@@ -186,6 +188,7 @@ private struct ZoomableRemoteImage: View {
             Image(systemName: "wifi.exclamationmark")
           }
         }
+        .lonePage()
       } else {
         ProgressView()
       }

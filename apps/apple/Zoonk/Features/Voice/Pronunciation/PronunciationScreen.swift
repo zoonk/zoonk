@@ -58,6 +58,7 @@ struct PronunciationScreen: View {
           Image(systemName: "waveform")
         }
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -75,6 +76,7 @@ struct PronunciationScreen: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .loaded(let value):
       PronunciationRoundView(reviews: value)
         .id(value.goalId)
@@ -415,6 +417,7 @@ private struct PronunciationResultView: View {
         }
       }
       .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
+      .lonePage()
     } else {
       PaneSplit {
         List {

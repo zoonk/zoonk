@@ -61,6 +61,7 @@ struct StatsEmpty: View {
       }
       .buttonStyle(.mainAction)
     }
+    .lonePage()
     .background(Color(.systemGroupedBackground))
   }
 }
@@ -111,6 +112,7 @@ struct StatsFailure: View {
       }
       .buttonStyle(.mainAction)
     }
+    .lonePage()
     .background(Color(.systemGroupedBackground))
   }
 }

@@ -76,6 +76,7 @@ private struct MockStage: View {
           Image(systemName: "timer")
         }
       }
+      .lonePage()
       .navigationTitle(untitledMock)
     case .failed:
       ContentUnavailableView {
@@ -92,6 +93,7 @@ private struct MockStage: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
       .navigationTitle(untitledMock)
     case .loaded(let view):
       stage(view)
@@ -273,6 +275,7 @@ private struct MockTimeUpView: View {
       }
       .keepsOffFold()
     }
+    .lonePage()
   }
 }
 
@@ -302,6 +305,7 @@ private struct MockGradingView: View {
       }
       .keepsOffFold()
     }
+    .lonePage()
   }
 }
 
@@ -336,6 +340,7 @@ private struct MockExpiredView: View {
       .padding(.vertical, 10)
       .keepsOffFold()
     }
+    .lonePage()
   }
 }
 

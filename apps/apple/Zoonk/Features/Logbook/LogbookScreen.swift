@@ -117,6 +117,7 @@ struct LogbookScreen: View {
             }
             .buttonStyle(.bordered)
           }
+          .lonePage()
         default:
           ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -43,6 +43,7 @@ struct GoalSetupContent: View {
             Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
           }
         }
+        .lonePage()
         .closesTask()
       case .idle, .loading, .empty:
         StepLoading()

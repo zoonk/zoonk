@@ -123,6 +123,7 @@ struct LanguageUnitScreen: View {
               Image(systemName: "character.book.closed")
             }
           }
+          .lonePage()
         case .failed:
           ContentUnavailableView {
             Label {
@@ -140,6 +141,7 @@ struct LanguageUnitScreen: View {
             }
             .buttonStyle(.bordered)
           }
+          .lonePage()
         case .idle, .loading:
           ProgressView()
         }

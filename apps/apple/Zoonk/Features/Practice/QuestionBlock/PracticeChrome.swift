@@ -423,5 +423,6 @@ struct PracticeLoadFailureView: View {
       }
       .buttonStyle(.bordered)
     }
+    .lonePage()
   }
 }

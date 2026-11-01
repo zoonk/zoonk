@@ -27,6 +27,7 @@ struct ExplainScreen: View {
               Text("Try again", tableName: "Explain", comment: "Loads the explanation again")
             }
           }
+          .lonePage()
         case .idle, .loading, .empty:
           ProgressView()
         }

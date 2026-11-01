@@ -69,6 +69,7 @@ private struct GuestGoalGate: View {
         Text("Back to Today", tableName: "Onboarding", comment: "Leaves the start flow for Today")
       }
     }
+    .lonePage()
   }
 }
 

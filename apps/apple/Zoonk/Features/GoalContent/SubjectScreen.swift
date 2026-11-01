@@ -36,6 +36,7 @@ struct SubjectScreen: View {
               }
               .buttonStyle(.bordered)
             }
+            .lonePage()
           default:
             ContentUnavailableView {
               Label {
@@ -46,6 +47,7 @@ struct SubjectScreen: View {
                 Image(systemName: "books.vertical")
               }
             }
+            .lonePage()
           }
         }
       }

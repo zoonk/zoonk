@@ -96,6 +96,7 @@ struct CheckpointScreen: View {
         "This challenge isn't ready yet.", tableName: "Practice",
         comment: "A challenge that can't start on this device yet.")
     }
+    .lonePage()
   }
 
   private func notStarted(planItemId: String) -> some View {
@@ -116,6 +117,7 @@ struct CheckpointScreen: View {
       }
       .buttonStyle(.mainAction)
     }
+    .lonePage()
   }
 
   private func duel(_ loaded: CheckpointLoad, state: CheckpointDuelState) -> some View {

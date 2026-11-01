@@ -83,6 +83,7 @@ struct GradedAtEndRun: View {
               comment: "A test waits for the questions still being written.")
           }
         }
+        .lonePage()
       }
     } response: {
       if let question {

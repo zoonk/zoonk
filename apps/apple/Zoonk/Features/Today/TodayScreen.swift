@@ -34,13 +34,16 @@ struct TodayScreen: View {
     case .loaded(.noGoal(let suggestion)):
       if let suggestion {
         TodaySuggestedGoal(suggestion: suggestion)
+          .lonePage()
       } else {
         TodayStartGoal()
       }
     case .loaded(.preparing(let goalID, let title)):
       TodayPreparing(goalID: goalID, title: title)
+        .lonePage()
     case .loaded(.goalNotActive):
       TodayGoalPaused()
+        .lonePage()
     case .failed(let error) where error != .unauthorized:
       ContentUnavailableView {
         Label {
@@ -60,9 +63,11 @@ struct TodayScreen: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     default:
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .lonePage()
     }
   }
 }

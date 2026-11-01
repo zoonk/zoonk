@@ -35,6 +35,7 @@ struct SessionSummaryView: View {
           }
           .buttonStyle(.bordered)
         }
+        .lonePage()
       } else {
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)

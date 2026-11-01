@@ -49,6 +49,7 @@ struct SessionScreen: View {
                   "Start today's session from Today.", tableName: "Session",
                   comment: "The session screen with no day opened")
               }
+              .lonePage()
             }
           }
           .navigationTitle(
@@ -105,6 +106,7 @@ private struct SessionContent: View {
           }
           .buttonStyle(.bordered)
         }
+        .lonePage()
       default:
         if let moment = playback.moment {
           List {

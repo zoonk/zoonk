@@ -33,6 +33,7 @@ struct BuddyScreen: View {
   private var loading: some View {
     ProgressView()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .lonePage()
       .navigationTitle(Text(summary.buddyDisplayName))
   }
 
@@ -55,6 +56,7 @@ struct BuddyScreen: View {
       }
       .buttonStyle(.bordered)
     }
+    .lonePage()
     .navigationTitle(Text(summary.buddyDisplayName))
   }
 

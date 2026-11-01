@@ -34,6 +34,7 @@ struct ChapterScreen: View {
             }
             .buttonStyle(.bordered)
           }
+          .lonePage()
         case .idle, .loading:
           ProgressView()
         }
@@ -98,6 +99,7 @@ struct ChapterScreen: View {
         Image(systemName: "book")
       }
     }
+    .lonePage()
   }
 }
 

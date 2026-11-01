@@ -20,6 +20,7 @@ struct SpeakingScreen: View {
             "Calls in the language you're learning, at your level.", tableName: "Voice",
             comment: "What speaking practice is, without a goal")
         }
+        .lonePage()
       }
     }
     .navigationTitle(
@@ -64,6 +65,7 @@ private struct SpeakingPaperView: View {
           Image(systemName: "mic.slash")
         }
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -79,6 +81,7 @@ private struct SpeakingPaperView: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .loaded(let value):
       list(value)
     }

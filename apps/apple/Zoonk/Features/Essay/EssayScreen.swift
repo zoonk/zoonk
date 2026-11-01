@@ -22,6 +22,7 @@ struct EssayScreen: View {
               Image(systemName: "text.document")
             }
           }
+          .lonePage()
         case .failed:
           ContentUnavailableView {
             Label {
@@ -37,6 +38,7 @@ struct EssayScreen: View {
             }
             .buttonStyle(.bordered)
           }
+          .lonePage()
         case .loaded(let view):
           EssayContent(store: store, essay: view)
         }

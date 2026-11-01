@@ -49,12 +49,14 @@ struct ShellGate<Content: View>: View {
         .navigationTitle(Text(title))
     case (_, .visitor):
       described(signInGate)
+        .lonePage()
         .navigationTitle(Text(title))
     case (.goal, .noGoal) where startsGoalHere:
       goalBox
         .navigationTitle(Text(title))
     case (.goal, .noGoal):
       described(startGoalGate)
+        .lonePage()
         .navigationTitle(Text(title))
     }
   }

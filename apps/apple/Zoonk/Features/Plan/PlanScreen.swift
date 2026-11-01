@@ -51,6 +51,7 @@ private struct GoalPlanView: View {
       PlanBuildingView(goal: goal) {
         await plan.refresh()
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -72,8 +73,10 @@ private struct GoalPlanView: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .idle, .loading:
       ProgressView()
+        .lonePage()
     }
   }
 
@@ -129,6 +132,7 @@ private struct PlanSetupLeft: View {
       .buttonStyle(.mainAction)
       .controlSize(.large)
     }
+    .lonePage()
   }
 }
 

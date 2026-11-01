@@ -42,6 +42,7 @@ private struct ExamContent: View {
           "Your exam's areas, how ready you are for each, and its mock exams.", tableName: "Exam",
           comment: "What the exam page shows, for a goal that isn't an exam")
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -57,6 +58,7 @@ private struct ExamContent: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .loaded(let view):
       ExamList(exam: view, options: options.value)
     }
