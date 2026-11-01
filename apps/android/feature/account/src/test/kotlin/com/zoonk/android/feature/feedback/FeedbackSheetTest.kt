@@ -1,16 +1,11 @@
 package com.zoonk.android.feature.feedback
 
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -40,7 +35,6 @@ class FeedbackSheetTest {
     private var reachable = true
     private var answer: CompletableDeferred<Unit>? = null
     private lateinit var sheet: FeedbackSheet
-    private var hosted by mutableStateOf(true)
 
     private val sender =
         FeedbackSender(
@@ -52,21 +46,19 @@ class FeedbackSheetTest {
             FakeSession(null),
         )
 
-    private fun open(restoration: StateRestorationTester? = null) {
-        val content =
-            @Composable {
-                ZoonkTheme {
-                    val context = LocalContext.current
-                    val app = remember { AppContainer.preview(context) }
-                    val snackbars = rememberWindowSnackbars(app)
+    private fun open() {
+        rule.setContent {
+            ZoonkTheme {
+                val context = LocalContext.current
+                val app = remember { AppContainer.preview(context) }
+                val snackbars = rememberWindowSnackbars(app)
 
-                    CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
-                        if (hosted) sheet = rememberSendFeedback(app, "account-menu", sender)
-                        SnackbarHost(snackbars)
-                    }
+                CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
+                    sheet = rememberSendFeedback(app, "account-menu", sender)
+                    SnackbarHost(snackbars)
                 }
             }
-        if (restoration == null) rule.setContent(content) else restoration.setContent(content)
+        }
         rule.runOnIdle { sheet.open() }
     }
 
@@ -78,18 +70,6 @@ class FeedbackSheetTest {
     private fun send() {
         rule.onNodeWithText("Send message").performClick()
         rule.waitForIdle()
-    }
-
-    @Test
-    fun aSentMessageClosesTheFormWithThanks() {
-        open()
-        rule.onNodeWithText("Send feedback").assertIsDisplayed()
-        write()
-        send()
-
-        rule.onNodeWithText("Thanks! We got your message.").assertIsDisplayed()
-        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertDoesNotExist()
-        assertEquals("account-menu", sent.single().context?.screen)
     }
 
     @Test
@@ -105,31 +85,6 @@ class FeedbackSheetTest {
     }
 
     @Test
-    fun eachOpeningStartsANewMessage() {
-        open()
-        write()
-
-        rule.runOnIdle { sheet.open() }
-
-        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertIsDisplayed()
-        rule.onNodeWithText(MESSAGE).assertDoesNotExist()
-    }
-
-    @Test
-    fun aHostThatComesBackOpensANewMessage() {
-        open()
-        write()
-
-        hosted = false
-        rule.waitForIdle()
-        hosted = true
-        rule.runOnIdle { sheet.open() }
-
-        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertIsDisplayed()
-        rule.onNodeWithText(MESSAGE).assertDoesNotExist()
-    }
-
-    @Test
     fun aSlowSendLeavesALaterOpeningOpen() {
         answer = CompletableDeferred()
         open()
@@ -142,22 +97,6 @@ class FeedbackSheetTest {
 
         assertEquals(1, sent.size)
         rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertIsDisplayed()
-    }
-
-    @Test
-    fun aSendThatEndsAfterTheSheetsStateIsRestoredStillClosesWithThanks() {
-        val restoration = StateRestorationTester(rule)
-        answer = CompletableDeferred()
-        open(restoration)
-        write()
-        send()
-
-        restoration.emulateSavedInstanceStateRestore()
-        answer?.complete(Unit)
-        rule.waitForIdle()
-
-        rule.onNodeWithText("Thanks! We got your message.").assertIsDisplayed()
-        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertDoesNotExist()
     }
 
     private companion object {

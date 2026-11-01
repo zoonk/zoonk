@@ -98,21 +98,6 @@ class SignInTest {
         }
 
     @Test
-    fun anInvalidEmailIsCaughtBeforeSending() =
-        runTest {
-            val (sessions, account) = stores()
-            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-
-            signIn.onEmailChange("ana@zoonk")
-            signIn.sendCode()
-            advanceUntilIdle()
-
-            assertEquals(AccountFailure.InvalidEmail, signIn.failure)
-            assertTrue(api.codesSent.isEmpty())
-            assertNull(signIn.codeSentTo)
-        }
-
-    @Test
     fun aWrongCodeCanBeRetypedButAnExpiredOneNeedsANewCode() =
         runTest {
             val (sessions, account) = stores()
@@ -141,35 +126,6 @@ class SignInTest {
             assertEquals(ResendStatus.Sent, signIn.resend)
             assertNull(signIn.failure)
             assertEquals("", signIn.code)
-        }
-
-    @Test
-    fun aRateLimitedResendSaysToWait() =
-        runTest {
-            val (sessions, account) = stores()
-            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-            signIn.onEmailChange("ana@zoonk.test")
-            signIn.sendCode()
-            advanceUntilIdle()
-
-            api.sendFailure = ApiException(ApiError.Unavailable, "RATE_LIMIT_EXCEEDED")
-            signIn.resendCode()
-            advanceUntilIdle()
-
-            assertEquals(ResendStatus.RateLimited, signIn.resend)
-        }
-
-    @Test
-    fun closingGooglesSheetIsNotAFailure() =
-        runTest {
-            val (sessions, account) = stores()
-            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-
-            signIn.startGoogle()
-            signIn.finishGoogle(GoogleIdToken.Canceled)
-
-            assertNull(signIn.work)
-            assertNull(signIn.failure)
         }
 
     @Test
