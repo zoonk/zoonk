@@ -12,28 +12,6 @@ struct CurrentAccount: Decodable, Equatable {
 struct AccountAccess: Decodable, Equatable {
   let deletion: AccountDeletionRequirements
   var subscription: AccountSubscription?
-
-  var subscriptionAction: AccountSubscriptionAction {
-    guard let subscription else {
-      return .subscribe
-    }
-
-    switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-    case .apple:
-      return .manageAppStore
-    case .google:
-      return .explainGooglePlayManagement
-    case nil:
-      return .contactSupport
-    }
-  }
-}
-
-enum AccountSubscriptionAction: Equatable {
-  case contactSupport
-  case explainGooglePlayManagement
-  case manageAppStore
-  case subscribe
 }
 
 struct AccountDeletionRequirements: Decodable, Equatable {

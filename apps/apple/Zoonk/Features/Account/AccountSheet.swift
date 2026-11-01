@@ -1,4 +1,3 @@
-import StoreKit
 import SwiftUI
 
 private enum AccountDestination: Hashable {
@@ -25,8 +24,6 @@ struct AccountSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
-  @State private var isAppStoreSubscriptionManagementPresented = false
-  @State private var isGooglePlayManagementPresented = false
   @State private var isFeedbackPresented = false
   @State private var path = [AccountDestination]()
   @State private var isBeside = false
@@ -77,26 +74,6 @@ struct AccountSheet: View {
     .presentationDetents([.large])
     .presentationDragIndicator(requiresProfileSetup ? .hidden : .visible)
     .presentationSizing(.page)
-    .manageSubscriptionsSheet(isPresented: $isAppStoreSubscriptionManagementPresented)
-    .alert(
-      Text(
-        "Managed on Google Play",
-        tableName: "Account",
-        comment: "Title explaining where a Google-owned subscription is managed"),
-      isPresented: $isGooglePlayManagementPresented
-    ) {
-      Button(role: .cancel) {
-      } label: {
-        Text("OK", tableName: "Account", comment: "Dismisses subscription management guidance")
-      }
-    } message: {
-      Text(
-        "Use Google Play on an Android device to change or cancel this subscription.",
-        tableName: "Account",
-        comment:
-          "Explains how to manage a Google-owned subscription without linking to external purchasing"
-      )
-    }
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
         .accessibilitySizeStyles()
@@ -223,9 +200,7 @@ struct AccountSheet: View {
         SettingsHubView(
           account: account,
           sectionOpen: sectionOpen,
-          sendFeedback: { isFeedbackPresented = true },
-          manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
-          showGooglePlayManagement: { isGooglePlayManagementPresented = true }
+          sendFeedback: { isFeedbackPresented = true }
         )
         .navigationTitle(
           Text("Settings", tableName: "Account", comment: "Title of the settings hub")
@@ -301,8 +276,6 @@ private struct SettingsHubView: View {
   let account: CurrentAccount
   let sectionOpen: AccountSectionOpen?
   let sendFeedback: () -> Void
-  let manageAppStoreSubscription: () -> Void
-  let showGooglePlayManagement: () -> Void
 
   var body: some View {
     List {
@@ -358,9 +331,7 @@ private struct SettingsHubView: View {
         AccountSubscriptionRow(
           access: account.account,
           appAccountToken: UUID(uuidString: account.user.id),
-          sectionOpen: sectionOpen,
-          manageAppStoreSubscription: manageAppStoreSubscription,
-          showGooglePlayManagement: showGooglePlayManagement)
+          sectionOpen: sectionOpen)
 
         Link(destination: AccountLinks.support) {
           Text("Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages")
@@ -451,40 +422,41 @@ private struct AccountSubscriptionRow: View {
   let access: AccountAccess
   let appAccountToken: UUID?
   let sectionOpen: AccountSectionOpen?
-  let manageAppStoreSubscription: () -> Void
-  let showGooglePlayManagement: () -> Void
 
-  @ViewBuilder
   var body: some View {
-    switch access.subscriptionAction {
-    case .subscribe:
-      AccountSectionLink(
-        destination: appAccountToken.map(AccountDestination.subscription), sectionOpen: sectionOpen
-      ) {
-        rowLabel(status: freeStatus)
+    AccountSectionLink(destination: destination, sectionOpen: sectionOpen) {
+      LabeledContent {
+        if access.subscription != nil {
+          PlusMark(
+            accessibilityLabel: Text(
+              "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
+        }
+      } label: {
+        subscriptionLabel
       }
-      .accessibilityLabel(subscriptionLabel)
-      .accessibilityValue(freeStatus)
-    case .manageAppStore:
-      Button(action: manageAppStoreSubscription) {
-        rowLabel(status: appStoreStatus)
-      }
-      .accessibilityLabel(subscriptionLabel)
-      .accessibilityValue(appStoreStatus)
-    case .explainGooglePlayManagement:
-      Button(action: showGooglePlayManagement) {
-        rowLabel(status: googlePlayStatus)
-      }
-      .accessibilityLabel(subscriptionLabel)
-      .accessibilityValue(googlePlayStatus)
-    case .contactSupport:
-      AccountSectionLink(
-        destination: access.subscription.map(AccountDestination.plus), sectionOpen: sectionOpen
-      ) {
-        rowLabel(status: activeStatus)
-      }
-      .accessibilityLabel(subscriptionLabel)
-      .accessibilityValue(activeStatus)
+      .foregroundStyle(.primary)
+    }
+    .accessibilityLabel(subscriptionLabel)
+    .accessibilityValue(status)
+  }
+
+  private var destination: AccountDestination? {
+    if let subscription = access.subscription {
+      .plus(subscription)
+    } else {
+      appAccountToken.map(AccountDestination.subscription)
+    }
+  }
+
+  private var status: Text {
+    guard let subscription = access.subscription else {
+      return freeStatus
+    }
+
+    return switch StoreSubscriptionProvider(rawValue: subscription.provider) {
+    case .apple: appStoreStatus
+    case .google: googlePlayStatus
+    case nil: activeStatus
     }
   }
 
@@ -521,19 +493,6 @@ private struct AccountSubscriptionRow: View {
       "Active",
       tableName: "Account",
       comment: "Status for an active subscription")
-  }
-
-  private func rowLabel(status: Text) -> some View {
-    LabeledContent {
-      if access.subscriptionAction != .subscribe {
-        PlusMark(
-          accessibilityLabel: Text(
-            "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
-      }
-    } label: {
-      subscriptionLabel
-    }
-    .foregroundStyle(.primary)
   }
 }
 
