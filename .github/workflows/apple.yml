@@ -18,6 +18,10 @@ env:
 jobs:
   changes:
     uses: ./.github/workflows/native-changes.yml
+    # Finding the last passing run reads this workflow's runs.
+    permissions:
+      contents: read
+      actions: read
     with:
       app: apple
 
