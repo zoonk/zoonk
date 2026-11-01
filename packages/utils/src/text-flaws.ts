@@ -19,10 +19,14 @@ const BLOCK_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: /^\s*```/u, problem: "a code fence" },
 ];
 
-export const MARKDOWN_LINK = /!?\[(?<text>[^\]\n]+)\]\([^)\s]+\)/u;
+export const MARKDOWN_LINK = /!?\[(?<text>[^\]\n]+)\]\([^)\s]+(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\)/u;
+
+/** CommonMark's `<scheme:address>` and `<name@example.com>`, which renderers turn into links. */
+export const AUTOLINK = /<(?<address>[a-z][a-z\d+.-]{1,31}:[^\s<>]*|[^\s<>@]+@[^\s<>@]+)>/iu;
 
 const INLINE_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: MARKDOWN_LINK, problem: "a link's brackets and URL" },
+  { pattern: AUTOLINK, problem: "a link's angle brackets" },
   {
     pattern:
       /<\/?(?:a|b|br|code|div|em|h[1-6]|hr|i|img|li|ol|p|pre|small|span|strong|sub|sup|table|td|th|tr|u|ul)\b[^>]*>/iu,

@@ -55,6 +55,14 @@ describe(repairMarkdown, () => {
     expect(findUnrenderedMarkdown({ layout: "blocks", text: repaired })).toStrictEqual([]);
   });
 
+  it("turns a link with a title and an angle-bracket link into plain words", () => {
+    const text = 'Ligue [para nós](tel:+5511999999999 "Central") ou abra <sms:+5511999999999>.';
+    const repaired = repairMarkdown({ layout: "blocks", text });
+
+    expect(repaired).toBe("Ligue para nós ou abra sms:+5511999999999.");
+    expect(findUnrenderedMarkdown({ layout: "blocks", text: repaired })).toStrictEqual([]);
+  });
+
   it("keeps a list's marks and a comparison that only looks like a quote", () => {
     const text = "- **um item\n> 5 anos: acima do limite";
     const repaired = repairMarkdown({ layout: "blocks", text });

@@ -2,6 +2,7 @@ import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup
 import { findMarkdownTableLines } from "./markdown-table";
 import { replaceEmDashes } from "./string";
 import {
+  AUTOLINK,
   MARKDOWN_LINK,
   type TextLayout,
   findStrayEmphasis,
@@ -14,6 +15,7 @@ const HEADING_MARK = /^(?<indent>\s{0,3})#{1,6}\s+(?=\S)/u;
 const QUOTE_MARK = /^(?<indent>\s*)>\s+(?=[^\d\s])/u;
 
 const LINK = new RegExp(MARKDOWN_LINK.source, "gu");
+const ANGLE_LINK = new RegExp(AUTOLINK.source, "giu");
 const LINE_BREAK_TAG = /<br\s*\/?>/giu;
 
 const STYLE_TAG = /<\/?(?:a|b|div|em|i|p|small|span|strong|u)\b[^>]*>/giu;
@@ -38,6 +40,7 @@ function removeLineMarks(line: string): string {
 function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {
   return line
     .replaceAll(LINK, "$<text>")
+    .replaceAll(ANGLE_LINK, "$<address>")
     .replaceAll(LINE_BREAK_TAG, breakAs)
     .replaceAll(STYLE_TAG, "")
     .split("\n")
