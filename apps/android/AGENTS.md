@@ -93,7 +93,6 @@ Follow the root completion and verification policy. The [README command referenc
 Several agents may run emulators and builds on one machine. When it's overloaded, the emulator's hang detector kills the emulator, and on macOS one with a window then opens a "quit unexpectedly" alert on screen.
 
 - Use the AVDs that exist (`emulator -list-avds`); don't create AVDs per task. Run `pnpm dev:queue` before booting one, so the boot waits while every slot is busy, then boot it headless with `-no-window -no-snapshot-save`, keep it running while you work, and shut it down when your task ends. A headless emulator opens no window, and its crash opens no alert. Look at it with `adb -s <serial> exec-out screencap -p > screen.png`.
-- Boot with `-read-only` too, so another agent can boot the same AVD: the emulator refuses a second instance of an AVD unless every instance is read-only. A read-only instance drops what you installed or changed when it shuts down, so install your build again after each boot.
 - Boot with a window only for TalkBack checks, which need its gestures; on macOS, run `pnpm dev:close-device-crash-alerts` before ending that task.
 - When your emulator exits on its own, the machine was overloaded: run `pnpm dev:queue` before booting it again, so it waits for heavy jobs to make room.
 - Run at most two emulators and two Gradle builds at once. Never run `./gradlew --stop`: it stops every Gradle daemon of that version on the machine, including other agents' builds. Idle daemons exit on their own.
