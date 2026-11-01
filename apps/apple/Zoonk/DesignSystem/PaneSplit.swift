@@ -54,11 +54,14 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   }
 }
 
-/// A leading pane beside `content` wherever `PaneSplit` would split. Unlike `PaneSplit`'s
-/// builders, `content` keeps its identity as the pane comes and goes, so a navigation stack in it
-/// keeps its pages, and what the learner typed or opened on them, through a fold or a resize.
+/// A pane beside `content` wherever `PaneSplit` would split. Unlike `PaneSplit`'s builders,
+/// `content` keeps its identity as the pane comes and goes, so a navigation stack in it keeps its
+/// pages, and what the learner typed or opened on them, through a fold or a resize.
 struct PaneBeside<Pane: View, Content: View>: View {
   var isAvailable = true
+  var paneEdge = HorizontalEdge.leading
+  /// The leading side's share of the width where there's no hinge, as in `PaneSplit`.
+  var primaryShare: CGFloat = 0.5
   @ViewBuilder let pane: () -> Pane
   @ViewBuilder let content: (_ isBeside: Bool) -> Content
 
@@ -66,10 +69,13 @@ struct PaneBeside<Pane: View, Content: View>: View {
 
   var body: some View {
     GeometryReader { proxy in
-      let panes = isAvailable ? PaneSpace(proxy).panes(primaryShare: 0.5, stacked: isStacked) : nil
+      let panes =
+        isAvailable
+        ? PaneSpace(proxy).panes(primaryShare: primaryShare, stacked: isStacked) : nil
+      let isTrailingPane = panes != nil && paneEdge == .trailing
 
       HStack(spacing: 0) {
-        if let panes {
+        if let panes, paneEdge == .leading {
           pane()
             .frame(width: panes.primary)
             .frame(maxHeight: .infinity, alignment: .top)
@@ -78,8 +84,18 @@ struct PaneBeside<Pane: View, Content: View>: View {
         }
 
         content(panes != nil)
-          .safeAreaPadding(.leading, panes?.gap ?? 0)
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+          .safeAreaPadding(.leading, paneEdge == .leading ? panes?.gap ?? 0 : 0)
+          .frame(width: isTrailingPane ? panes?.primary : nil)
+          .frame(maxWidth: isTrailingPane ? nil : .infinity, maxHeight: .infinity, alignment: .top)
+          // Level with the pane, as both of `PaneSplit`'s are.
+          .contentMargins(.top, panes == nil ? nil : 0, for: .scrollContent)
+
+        if let panes, paneEdge == .trailing {
+          pane()
+            .safeAreaPadding(.leading, panes.gap)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .contentMargins(.top, 0, for: .scrollContent)
+        }
       }
       .environment(\.isPaneSplit, panes != nil)
     }
