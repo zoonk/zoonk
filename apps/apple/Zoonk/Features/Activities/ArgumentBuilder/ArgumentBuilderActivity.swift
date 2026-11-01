@@ -44,8 +44,8 @@ private struct ArgumentBuilderCanvas: View {
   let fields: ArgumentFields
   let context: ActivityCanvasContext
 
-  @State private var evidenceId: String?
-  @State private var reasoningId: String?
+  @ActivityState private var evidenceId: String?
+  @ActivityState private var reasoningId: String?
   @State private var targetedPart: Part?
 
   init(fields: ArgumentFields, context: ActivityCanvasContext) {
@@ -53,8 +53,10 @@ private struct ArgumentBuilderCanvas: View {
     self.context = context
 
     let ids = context.answer?.ids ?? []
-    _evidenceId = State(initialValue: fields.evidence.first { ids.contains($0.id) }?.id)
-    _reasoningId = State(initialValue: fields.reasoning.first { ids.contains($0.id) }?.id)
+    _evidenceId = ActivityState(
+      wrappedValue: fields.evidence.first { ids.contains($0.id) }?.id, "evidenceId")
+    _reasoningId = ActivityState(
+      wrappedValue: fields.reasoning.first { ids.contains($0.id) }?.id, "reasoningId")
   }
 
   private var isChecked: Bool {

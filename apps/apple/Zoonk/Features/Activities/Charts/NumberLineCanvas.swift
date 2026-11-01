@@ -38,7 +38,7 @@ struct NumberLineCanvas: View {
   let context: ActivityCanvasContext
   let fields: NumberLineFields
 
-  @State private var explored: Double?
+  @ActivityState("explored") private var explored: Double? = nil
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }

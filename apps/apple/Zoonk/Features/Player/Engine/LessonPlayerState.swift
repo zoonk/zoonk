@@ -78,6 +78,9 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var phase: Phase
   private(set) var run = Run.idle
   private(set) var answers: [String: LessonAnswer] = [:]
+  /// Moves on wherever a screen's answer is cleared, so what the learner did on its canvas
+  /// (`ActivityWork`) lasts exactly as long as the answer.
+  private(set) var rounds: [String: Int] = [:]
   private(set) var results: [String: LessonStepResult] = [:]
   /// The first verdict on each answerable screen, which is what the lesson counts.
   private(set) var firstVerdicts: [String: Bool] = [:]
@@ -295,7 +298,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     let previousId = queue[position - 1]
-    answers[queue[position]] = nil
+    clearAnswer(queue[position])
     checkFailed = false
     notice = nil
     reviewing = results[previousId] != nil
@@ -314,7 +317,7 @@ struct LessonPlayerState: Equatable, Sendable {
     let ids = explanationsAfterCurrent
     let rest = queue[position...].filter { !ids.contains($0) }
     queue = Array(queue[..<position]) + ids + rest
-    answers[step.id] = nil
+    clearAnswer(step.id)
     helped.insert(step.id)
     stepStartedAt = now
   }
@@ -646,13 +649,18 @@ struct LessonPlayerState: Equatable, Sendable {
 
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
-    answers[id] = nil
+    clearAnswer(id)
     results[id] = nil
     checkFailed = false
     phase = .playing
     position = newPosition
     reviewing = false
     stepStartedAt = now
+  }
+
+  private mutating func clearAnswer(_ stepId: String) {
+    answers[stepId] = nil
+    rounds[stepId, default: 0] += 1
   }
 
   private mutating func complete(status: Completion.Status) {
@@ -834,7 +842,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
-    answers = [:]
+    lessonOrder.forEach { clearAnswer($0) }
     results = [:]
     firstVerdicts = [:]
     firstVerdictAttemptIds = [:]

@@ -12,6 +12,12 @@ struct LessonStepView: View {
   let part: LessonStepPart
 
   var body: some View {
+    content
+      .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
+  }
+
+  @ViewBuilder
+  private var content: some View {
     switch step.content {
     case .hook(let content):
       HookStepView(step: step, content: content, context: context, part: part)

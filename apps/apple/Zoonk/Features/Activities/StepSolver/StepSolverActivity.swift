@@ -80,7 +80,7 @@ private struct StepSolverCanvas: View {
   let fields: StepSolverFields
   let context: ActivityCanvasContext
 
-  @State private var picks: StepSolver.Picks = [:]
+  @ActivityState("picks") private var picks: StepSolver.Picks = [:]
 
   private var isChecked: Bool {
     if case .checked = context.phase { true } else { false }

@@ -78,7 +78,7 @@ struct UnitCircleCanvas: View {
   let context: ActivityCanvasContext
   let fields: UnitCircleFields
 
-  @State private var degrees: Double
+  @ActivityState private var degrees: Double
 
   init(context: ActivityCanvasContext, fields: UnitCircleFields) {
     self.context = context
@@ -86,7 +86,7 @@ struct UnitCircleCanvas: View {
     let target = Self.target(context.check, fields: fields)
     let start = fields.degrees(fields.startAngle)
     let step = UnitCircleAngle.step(target.map { [start, $0.degrees] } ?? [start])
-    _degrees = State(initialValue: UnitCircleAngle.snap(start, step: step))
+    _degrees = ActivityState(wrappedValue: UnitCircleAngle.snap(start, step: step), "degrees")
   }
 
   private static func target(_ check: ActivityCheck?, fields: UnitCircleFields)

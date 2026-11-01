@@ -153,12 +153,12 @@ struct DistributionExplorerCanvas: View {
   let context: ActivityCanvasContext
   let fields: DistributionExplorerFields
 
-  @State private var handles: DistributionExplorerFields.Interval
+  @ActivityState private var handles: DistributionExplorerFields.Interval
 
   init(context: ActivityCanvasContext, fields: DistributionExplorerFields) {
     self.context = context
     self.fields = fields
-    _handles = State(initialValue: fields.handles)
+    _handles = ActivityState(wrappedValue: fields.handles, "handles")
   }
 
   private var isChecked: Bool {

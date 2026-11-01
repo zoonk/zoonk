@@ -15,8 +15,8 @@ private struct TimelineCanvas: View {
   let fields: TimelineFields
   let context: ActivityCanvasContext
 
-  @State private var placements: [TimelineScale.Placement] = []
-  @State private var isRevealed = false
+  @ActivityState("placements") private var placements: [TimelineScale.Placement] = []
+  @ActivityState("isRevealed") private var isRevealed = false
 
   private var isChecked: Bool {
     if case .checked = context.phase { true } else { false }

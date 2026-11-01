@@ -6,13 +6,13 @@ struct GeometryBoardCanvas: View {
   let context: ActivityCanvasContext
   let fields: GeometryBoardFields
 
-  @State private var points: [GeometryBoardFields.Point]
+  @ActivityState private var points: [GeometryBoardFields.Point]
   @FocusState private var focusedCorner: Int?
 
   init(context: ActivityCanvasContext, fields: GeometryBoardFields) {
     self.context = context
     self.fields = fields
-    _points = State(initialValue: fields.points)
+    _points = ActivityState(wrappedValue: fields.points, "points")
   }
 
   private var isChecked: Bool {

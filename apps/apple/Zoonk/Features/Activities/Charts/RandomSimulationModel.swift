@@ -257,7 +257,7 @@ enum SamplingModel {
     return (middle - reach)...(middle + reach)
   }
 
-  struct Bin: Hashable {
+  struct Bin: Hashable, Sendable {
     let from: Double
     let to: Double
     let count: Int

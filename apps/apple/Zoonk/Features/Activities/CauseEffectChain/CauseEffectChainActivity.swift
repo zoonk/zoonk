@@ -86,16 +86,17 @@ private struct CauseEffectCanvas: View {
   let fields: CauseEffectFields
   let context: ActivityCanvasContext
 
-  @State private var learnerLinks: [Link]?
-  @State private var causeId: String?
-  @State private var notice: String?
+  @ActivityState private var learnerLinks: [Link]?
+  @ActivityState("causeId") private var causeId: String? = nil
+  @ActivityState("notice") private var notice: String? = nil
   @State private var targetedId: String?
 
   init(fields: CauseEffectFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-    _learnerLinks = State(
-      initialValue: CauseEffectFields.learnerLinks(answer: context.answer, phase: context.phase))
+    _learnerLinks = ActivityState(
+      wrappedValue: CauseEffectFields.learnerLinks(answer: context.answer, phase: context.phase),
+      "learnerLinks")
   }
 
   private var links: [Link] { learnerLinks ?? [] }

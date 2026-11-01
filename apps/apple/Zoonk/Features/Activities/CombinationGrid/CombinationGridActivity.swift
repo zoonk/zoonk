@@ -21,8 +21,8 @@ private struct CombinationGridCanvas: View {
   let fields: CombinationGridFields
   let context: ActivityCanvasContext
 
-  @State private var fill: [String?]
-  @State private var activeCell: Int?
+  @ActivityState private var fill: [String?]
+  @ActivityState private var activeCell: Int?
   @ScaledMetric(relativeTo: .body) private var cellSize = 56.0
   @ScaledMetric(relativeTo: .body) private var optionWidth = 72.0
 
@@ -34,8 +34,9 @@ private struct CombinationGridCanvas: View {
     let isReadOnly = context.phase == .explore || !CombinationGrid.isFillable(fields)
     let answered = context.answer?.cells.flatMap { $0.count == right.count ? $0 : nil }
     let fill: [String?] = isReadOnly ? right : answered ?? Array(repeating: nil, count: right.count)
-    _fill = State(initialValue: fill)
-    _activeCell = State(initialValue: CombinationGrid.nextEmpty(fill, after: nil))
+    _fill = ActivityState(wrappedValue: fill, "fill")
+    _activeCell = ActivityState(
+      wrappedValue: CombinationGrid.nextEmpty(fill, after: nil), "activeCell")
   }
 
   private var right: [String] { CombinationGrid.cells(fields) }

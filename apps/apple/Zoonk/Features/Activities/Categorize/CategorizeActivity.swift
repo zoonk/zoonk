@@ -15,8 +15,8 @@ private struct CategorizeCanvas: View {
   let fields: CategorizeFields
   let context: ActivityCanvasContext
 
-  @State private var placements: [String: String]
-  @State private var selectedId: String?
+  @ActivityState private var placements: [String: String]
+  @ActivityState("selectedId") private var selectedId: String? = nil
   @State private var targetedGroupId: String?
   @FocusState private var focusedItemId: String?
   @AccessibilityFocusState private var voiceOverItemId: String?
@@ -26,7 +26,7 @@ private struct CategorizeCanvas: View {
   init(fields: CategorizeFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-    _placements = State(initialValue: context.answer?.pairs ?? [:])
+    _placements = ActivityState(wrappedValue: context.answer?.pairs ?? [:], "placements")
   }
 
   private var items: [CategorizeFields.Item] { fields.shuffledItems }

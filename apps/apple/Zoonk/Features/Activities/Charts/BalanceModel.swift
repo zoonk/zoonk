@@ -39,12 +39,12 @@ struct BalanceFields: Decodable, Hashable, Sendable {
 
 /// Mirrors main's `balance-model.ts`.
 enum BalanceModel {
-  struct Pan: Hashable {
+  struct Pan: Hashable, Sendable {
     var units: Double
     var x: Double
   }
 
-  struct State: Hashable {
+  struct State: Hashable, Sendable {
     var left: Pan
     var right: Pan
   }

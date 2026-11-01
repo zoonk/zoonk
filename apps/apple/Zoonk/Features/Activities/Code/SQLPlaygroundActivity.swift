@@ -99,20 +99,20 @@ private struct SQLPlaygroundCanvas: View {
   let context: ActivityCanvasContext
   let fields: SQLPlaygroundFields
 
-  @State private var query: String
+  @ActivityState private var query: String
   @State private var selection: TextSelection?
-  @State private var queryRun: SQLRun?
+  @ActivityState private var queryRun: SQLRun?
   @State private var activeRun: UUID?
   @State private var revision = 0
-  @State private var isStale = false
+  @ActivityState("isStale") private var isStale = false
   @State private var verifiedSolution: String?
 
   init(context: ActivityCanvasContext, fields: SQLPlaygroundFields) {
     self.context = context
     self.fields = fields
-    _query = State(initialValue: context.phase == .explore ? fields.solution : "")
-    _queryRun = State(
-      initialValue: (try? context.answer?.decode(as: SQLResult.self)).map(SQLRun.done))
+    _query = ActivityState(wrappedValue: context.phase == .explore ? fields.solution : "", "query")
+    _queryRun = ActivityState(
+      wrappedValue: (try? context.answer?.decode(as: SQLResult.self)).map(SQLRun.done), "queryRun")
   }
 
   private var isChecked: Bool {
@@ -403,11 +403,11 @@ private struct SQLPlaygroundCanvas: View {
 private struct SQLTableViewer: View {
   let table: SQLPlaygroundFields.Table
 
-  @State private var isExpanded: Bool
+  @ActivityState private var isExpanded: Bool
 
   init(table: SQLPlaygroundFields.Table) {
     self.table = table
-    _isExpanded = State(initialValue: table.rows.count <= 6)
+    _isExpanded = ActivityState(wrappedValue: table.rows.count <= 6, "isExpanded-\(table.name)")
   }
 
   var body: some View {

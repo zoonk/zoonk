@@ -12,7 +12,7 @@ extension ActivityRenderer {
 }
 
 private struct MatchPairsCanvas: View {
-  private struct Miss: Equatable {
+  private struct Miss: Equatable, Sendable {
     let left: String
     let right: String
     let explanation: String?
@@ -21,14 +21,14 @@ private struct MatchPairsCanvas: View {
   let fields: MatchPairsFields
   let context: ActivityCanvasContext
 
-  @State private var progress: MatchPairs.Progress
-  @State private var selection: [MatchPairs.Side: String] = [:]
-  @State private var miss: Miss?
+  @ActivityState private var progress: MatchPairs.Progress
+  @ActivityState("selection") private var selection: [MatchPairs.Side: String] = [:]
+  @ActivityState("miss") private var miss: Miss? = nil
 
   init(fields: MatchPairsFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-    _progress = State(initialValue: MatchPairs.progress(from: context.answer))
+    _progress = ActivityState(wrappedValue: MatchPairs.progress(from: context.answer), "progress")
   }
 
   private var isChecked: Bool {

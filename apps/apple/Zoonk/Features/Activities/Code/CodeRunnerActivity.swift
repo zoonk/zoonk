@@ -65,12 +65,12 @@ private struct CodeRunnerCanvas: View {
   let fields: CodeRunnerFields
 
   @State private var runner: CodeProgramRunner
-  @State private var edits: [Int: String] = [:]
-  @State private var run: CodeProgramRun?
+  @ActivityState("edits") private var edits: [Int: String] = [:]
+  @ActivityState private var run: CodeProgramRun?
   /// The run in progress; a result for any other run is dropped.
   @State private var activeRun: UUID?
   @State private var revision = 0
-  @State private var isStale = false
+  @ActivityState("isStale") private var isStale = false
   @State private var runtime: CodeRuntimeStatus
   @State private var runtimeAttempt = 0
 
@@ -78,8 +78,8 @@ private struct CodeRunnerCanvas: View {
     self.context = context
     self.fields = fields
     _runner = State(initialValue: CodeProgramRunner(language: fields.language))
-    _run = State(
-      initialValue: context.answer?.output.map { CodeProgramRun(stop: .done, output: $0) })
+    _run = ActivityState(
+      wrappedValue: context.answer?.output.map { CodeProgramRun(stop: .done, output: $0) }, "run")
     // JavaScript needs no download, so there's nothing to wait for.
     _runtime = State(initialValue: fields.language == .python ? .loading : .ready)
   }

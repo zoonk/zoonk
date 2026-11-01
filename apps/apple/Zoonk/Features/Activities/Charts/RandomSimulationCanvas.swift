@@ -25,18 +25,24 @@ private struct RevealCount: ViewModifier {
   let total: Int
   var isInstant = false
   @Binding var revealed: Int
+  /// A canvas made again (a fold, a resized window) continues the kept count; a later key is a new
+  /// run, which starts over.
+  @State private var continuesKept = true
 
   func body(content: Content) -> some View {
     content.task(id: key) {
+      let start = continuesKept ? revealed : 0
+      continuesKept = false
+
       guard !reduceMotion, !isInstant else {
         revealed = total
         return
       }
 
-      revealed = 0
+      revealed = start
       let frames = 30
 
-      for frame in 1...frames {
+      for frame in 1...frames where total * frame / frames >= start {
         try? await Task.sleep(for: .milliseconds(33))
         guard !Task.isCancelled else { return }
         revealed = total * frame / frames
@@ -49,14 +55,19 @@ private func percentText(_ share: Double) -> String {
   ActivityNumberFormat.format(share * 100, unit: "%", digits: share * 100 < 10 ? 1 : 0)
 }
 
+private struct ChanceRun: Equatable, Sendable {
+  let seed: Int
+  let outcomes: [Int]
+}
+
 private struct ChanceSimulationView: View {
   let context: ActivityCanvasContext
   let fields: RandomSimulationFields.Chance
   let fieldsJSON: String
 
-  @State private var runIndex = 0
-  @State private var revealed = 0
-  @State private var simulated: (seed: Int, outcomes: [Int])?
+  @ActivityState("runIndex") private var runIndex = 0
+  @ActivityState("revealed") private var revealed = 0
+  @ActivityState("simulated") private var simulated: ChanceRun? = nil
 
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
@@ -144,7 +155,7 @@ private struct ChanceSimulationView: View {
       }
     }
     .task(id: isRunning ? seed : nil) {
-      guard isRunning else {
+      guard isRunning, simulated?.seed != self.seed else {
         return
       }
 
@@ -154,7 +165,7 @@ private struct ChanceSimulationView: View {
       }.value
 
       if !Task.isCancelled {
-        simulated = (seed, outcomes)
+        simulated = ChanceRun(seed: seed, outcomes: outcomes)
       }
     }
     .modifier(
@@ -283,7 +294,7 @@ private struct ChanceSimulationView: View {
 
 /// A size's results with what the reveal doesn't change: the middle range, the smallest size's
 /// results to compare with, and the tallest bar either reaches.
-private struct SamplingRun {
+private struct SamplingRun: Equatable, Sendable {
   let key: [Int]
   let selected: [Double]
   let range: ClosedRange<Double>
@@ -306,17 +317,17 @@ private struct SamplingSimulationView: View {
   let fields: RandomSimulationFields.Sampling
   let fieldsJSON: String
 
-  @State private var sizeIndex: Int
-  @State private var runIndex = 0
-  @State private var revealed = 0
-  @State private var simulated: SamplingRun?
+  @ActivityState private var sizeIndex: Int
+  @ActivityState("runIndex") private var runIndex = 0
+  @ActivityState("revealed") private var revealed = 0
+  @ActivityState("simulated") private var simulated: SamplingRun? = nil
 
   init(context: ActivityCanvasContext, fields: RandomSimulationFields.Sampling, fieldsJSON: String)
   {
     self.context = context
     self.fields = fields
     self.fieldsJSON = fieldsJSON
-    _sizeIndex = State(initialValue: max(fields.sampleSizes.count - 1, 0))
+    _sizeIndex = ActivityState(wrappedValue: max(fields.sampleSizes.count - 1, 0), "sizeIndex")
   }
 
   private var isChecked: Bool {
@@ -518,6 +529,10 @@ private struct SamplingSimulationView: View {
       }
     }
     .task(id: simulationKey) {
+      guard simulated?.key != simulationKey else {
+        return
+      }
+
       let key = simulationKey
       let (population, runs, size, smallest) = (fields.population, fields.runs, size, smallest)
       let (seed, smallestSeed) = (seed(size), seed(smallest))

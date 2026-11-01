@@ -77,9 +77,11 @@
 
     @State private var result: LessonStepResult?
     @State private var run = 0
+    @State private var work = ActivityWork()
 
     var body: some View {
-      // The player's spread on wide screens, so a canvas shows at the trailing page's width.
+      // The player's spread on wide screens, so a canvas shows on the page and at the width the
+      // player gives it.
       PaneSplit {
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
@@ -87,6 +89,7 @@
             part(.screen)
           }
           .padding()
+          .id(run)
         }
       } secondary: {
         ScrollView {
@@ -109,6 +112,7 @@
           .id(run)
         }
       }
+      .environment(work)
       .navigationTitle(Text(verbatim: content.template))
       .onAppear {
         if answer != nil, result == nil {
@@ -121,6 +125,7 @@
             answer = nil
             result = nil
             run += 1
+            work = ActivityWork()
           } label: {
             Label {
               Text(verbatim: "Start over")

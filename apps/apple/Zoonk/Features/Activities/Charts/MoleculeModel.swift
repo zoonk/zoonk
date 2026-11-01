@@ -267,7 +267,7 @@ enum MoleculeModel {
       })
   }
 
-  struct Point: Hashable {
+  struct Point: Hashable, Sendable {
     var x: Double
     var y: Double
   }

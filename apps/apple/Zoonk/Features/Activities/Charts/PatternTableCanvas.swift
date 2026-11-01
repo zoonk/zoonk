@@ -78,8 +78,8 @@ struct PatternTableCanvas: View {
   let context: ActivityCanvasContext
   let fields: PatternTableFields
 
-  @State private var filled: [String: String]
-  @State private var active: Int?
+  @ActivityState private var filled: [String: String]
+  @ActivityState private var active: Int?
 
   init(context: ActivityCanvasContext, fields: PatternTableFields) {
     self.context = context
@@ -87,8 +87,9 @@ struct PatternTableCanvas: View {
 
     let filled =
       (context.answer.flatMap { try? $0.decode(as: PatternTableAnswer.self) })?.pairs ?? [:]
-    _filled = State(initialValue: filled)
-    _active = State(initialValue: fields.nextOpenBlank(after: nil, filled: filled))
+    _filled = ActivityState(wrappedValue: filled, "filled")
+    _active = ActivityState(
+      wrappedValue: fields.nextOpenBlank(after: nil, filled: filled), "active")
   }
 
   private var isChecked: Bool {

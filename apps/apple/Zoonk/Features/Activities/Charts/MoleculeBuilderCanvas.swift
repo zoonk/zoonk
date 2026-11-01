@@ -7,14 +7,14 @@ struct MoleculeBuilderCanvas: View {
   let context: ActivityCanvasContext
   let fields: MoleculeBuilderFields
 
-  private struct Snapshot: Hashable {
+  private struct Snapshot: Hashable, Sendable {
     var build: MoleculeBuild
     var layout: [String: MoleculeModel.Point]
     var selectedId: String?
   }
 
-  @State private var state: Snapshot
-  @State private var history: [Snapshot] = []
+  @ActivityState private var state: Snapshot
+  @ActivityState("history") private var history: [Snapshot] = []
 
   init(context: ActivityCanvasContext, fields: MoleculeBuilderFields) {
     self.context = context
@@ -22,8 +22,9 @@ struct MoleculeBuilderCanvas: View {
 
     let answered = context.answer.flatMap { try? $0.decode(as: MoleculeBuild.self) }
     let build = answered.flatMap { $0.kind == "molecule" ? $0 : nil } ?? .empty
-    _state = State(
-      initialValue: Snapshot(build: build, layout: MoleculeModel.layout(build), selectedId: nil))
+    _state = ActivityState(
+      wrappedValue: Snapshot(build: build, layout: MoleculeModel.layout(build), selectedId: nil),
+      "state")
   }
 
   private var target: [(element: String, count: Int)] { MoleculeModel.parse(fields.formula) ?? [] }

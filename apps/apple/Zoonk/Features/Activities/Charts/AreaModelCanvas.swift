@@ -21,7 +21,7 @@ struct AreaModelFields: Decodable, Hashable, Sendable {
 }
 
 /// Mirrors main's `area-model-cuts.ts`.
-struct AreaModelSide: Hashable {
+struct AreaModelSide: Hashable, Sendable {
   var cuts: [Double]
   let step: Double
   let total: Double
@@ -63,13 +63,13 @@ struct AreaModelCanvas: View {
   let context: ActivityCanvasContext
   let fields: AreaModelFields
 
-  @State private var sides: [AreaModelSide]
+  @ActivityState private var sides: [AreaModelSide]
   @State private var width: CGFloat = 320
 
   init(context: ActivityCanvasContext, fields: AreaModelFields) {
     self.context = context
     self.fields = fields
-    _sides = State(initialValue: fields.sides.map(AreaModelSide.init))
+    _sides = ActivityState(wrappedValue: fields.sides.map(AreaModelSide.init), "sides")
   }
 
   private var isChecked: Bool {

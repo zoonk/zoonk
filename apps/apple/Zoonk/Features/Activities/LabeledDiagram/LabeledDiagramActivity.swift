@@ -51,8 +51,8 @@ private struct LabeledDiagramCanvas: View {
   let fields: LabeledDiagramFields
   let context: ActivityCanvasContext
 
-  @State private var placements: [String: String]
-  @State private var activeKey: String?
+  @ActivityState private var placements: [String: String]
+  @ActivityState private var activeKey: String?
   @State private var targetedKey: String?
   @ScaledMetric(relativeTo: .subheadline) private var nameWidth = 110.0
 
@@ -61,9 +61,9 @@ private struct LabeledDiagramCanvas: View {
     self.context = context
 
     let placements = context.answer?.pairs ?? [:]
-    _placements = State(initialValue: placements)
-    _activeKey = State(
-      initialValue: Self.nextEmpty(after: nil, placements: placements, fields: fields))
+    _placements = ActivityState(wrappedValue: placements, "placements")
+    _activeKey = ActivityState(
+      wrappedValue: Self.nextEmpty(after: nil, placements: placements, fields: fields), "activeKey")
   }
 
   private var isChecked: Bool {

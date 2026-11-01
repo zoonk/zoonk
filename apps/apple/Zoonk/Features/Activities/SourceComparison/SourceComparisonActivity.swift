@@ -129,14 +129,14 @@ private struct SourceComparisonCanvas: View {
   let fields: SourceComparisonFields
   let context: ActivityCanvasContext
 
-  @State private var learnerMarks: [String]?
+  @ActivityState private var learnerMarks: [String]?
 
   init(fields: SourceComparisonFields, context: ActivityCanvasContext) {
     self.fields = fields
     self.context = context
-    _learnerMarks = State(
-      initialValue: SourceComparisonFields.learnerMarks(
-        answer: context.answer, phase: context.phase))
+    _learnerMarks = ActivityState(
+      wrappedValue: SourceComparisonFields.learnerMarks(
+        answer: context.answer, phase: context.phase), "learnerMarks")
   }
 
   private var marked: [String] {

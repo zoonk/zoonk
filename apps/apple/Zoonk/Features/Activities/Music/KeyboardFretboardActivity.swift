@@ -71,7 +71,7 @@ private struct KeyboardFretboardState {
 }
 
 private struct PianoBoard: View {
-  @State private var pressed: [Int]
+  @ActivityState private var pressed: [Int]
   @Binding var cantListen: Bool
 
   let fields: KeyboardFretboardFields
@@ -86,8 +86,9 @@ private struct PianoBoard: View {
     self.context = context
     self.audio = audio
     _cantListen = cantListen
-    _pressed = State(
-      initialValue: KeyboardFretboardState(fields: fields, context: context).initialPitches)
+    _pressed = ActivityState(
+      wrappedValue: KeyboardFretboardState(fields: fields, context: context).initialPitches,
+      "pressed")
   }
 
   var body: some View {
@@ -150,8 +151,8 @@ private struct PianoBoard: View {
 }
 
 private struct GuitarOnlyBoard: View {
-  @State private var voicing: GuitarVoicing
-  @State private var firstFret: Int
+  @ActivityState private var voicing: GuitarVoicing
+  @ActivityState private var firstFret: Int
   @Binding var cantListen: Bool
 
   let fields: KeyboardFretboardFields
@@ -169,8 +170,9 @@ private struct GuitarOnlyBoard: View {
 
     let initial = KeyboardFretboardState(fields: fields, context: context).initialPitches
     let voicing = KeyboardFretboard.voicing(for: initial) ?? Guitar.unplayed
-    _voicing = State(initialValue: voicing)
-    _firstFret = State(initialValue: KeyboardFretboard.fretWindowStart(voicing))
+    _voicing = ActivityState(wrappedValue: voicing, "voicing")
+    _firstFret = ActivityState(
+      wrappedValue: KeyboardFretboard.fretWindowStart(voicing), "firstFret")
   }
 
   var body: some View {

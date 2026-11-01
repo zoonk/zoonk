@@ -37,9 +37,9 @@ private struct BlockBalance: View {
   let start: BalanceModel.State
   let solution: Double
 
-  @State private var current: BalanceModel.State
-  @State private var history: [BalanceModel.State] = []
-  @State private var wrongMoves = 0
+  @ActivityState private var current: BalanceModel.State
+  @ActivityState("history") private var history: [BalanceModel.State] = []
+  @ActivityState("wrongMoves") private var wrongMoves = 0
 
   init(
     context: ActivityCanvasContext, fields: BalanceFields, start: BalanceModel.State,
@@ -49,7 +49,7 @@ private struct BlockBalance: View {
     self.fields = fields
     self.start = start
     self.solution = solution
-    _current = State(initialValue: start)
+    _current = ActivityState(wrappedValue: start, "current")
   }
 
   private var isChecked: Bool {
@@ -325,8 +325,8 @@ private struct SymbolicBalance: View {
   let fields: BalanceFields
   let start: BalanceModel.State?
 
-  @State private var reached = 0
-  @State private var hint: String?
+  @ActivityState("reached") private var reached = 0
+  @ActivityState("hint") private var hint: String? = nil
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }

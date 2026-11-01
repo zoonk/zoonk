@@ -117,6 +117,41 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentStep?.id, "summary")
   }
 
+  /// What the learner did on a canvas lasts exactly as long as the screen's answer (its round).
+  func testAScreensRoundLastsAsLongAsItsAnswer() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    let round = state.rounds["check"]
+
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "second")
+    let second = state.rounds["second"]
+
+    state.goBack()
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.rounds["check"], round, "Previous shows the answer with what was done")
+    XCTAssertNotEqual(state.rounds["second"], second, "the screen left unanswered starts over")
+  }
+
+  func testAQuestionMissedOnTheLastScreenComesBackForANewRound() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(explanation), try step(check(id: "check"))])
+    state.continueLesson()
+    let round = state.rounds["check"]
+
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertEqual(state.rounds["check"], round, "a verdict keeps the round")
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertNotEqual(state.rounds["check"], round)
+    XCTAssertNil(state.currentAnswer)
+  }
+
   func testResumedRunOpensAfterTheReadingBeforeTheFirstOpenScreen() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
 

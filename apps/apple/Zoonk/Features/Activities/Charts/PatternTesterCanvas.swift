@@ -5,9 +5,10 @@ struct PatternTesterCanvas: View {
   let context: ActivityCanvasContext
   let fields: PatternTesterFields
 
-  @State private var pattern: String
+  @ActivityState private var pattern: String
   @State private var selection: TextSelection?
-  @State private var hintsShown = 0
+  @ActivityState("hintsShown") private var hintsShown = 0
+  /// The `.task` below tests the kept pattern again whenever the canvas appears.
   @State private var regexTest: (pattern: String, results: PatternRegex.Results?)?
 
   init(context: ActivityCanvasContext, fields: PatternTesterFields) {
@@ -15,7 +16,8 @@ struct PatternTesterCanvas: View {
     self.fields = fields
 
     let answered = context.answer.flatMap { try? $0.decode(as: PatternTesterAnswer.self) }?.pattern
-    _pattern = State(initialValue: context.phase == .explore ? fields.solution : answered ?? "")
+    _pattern = ActivityState(
+      wrappedValue: context.phase == .explore ? fields.solution : answered ?? "", "pattern")
   }
 
   private var isChecked: Bool {

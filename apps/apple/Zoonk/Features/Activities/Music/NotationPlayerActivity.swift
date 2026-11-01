@@ -128,8 +128,8 @@ final class NotationPlayback {
 }
 
 private struct NotationPlayerCanvas: View {
-  @State private var view: NotationPlayerFields.View
-  @State private var tempo: Int
+  @ActivityState private var view: NotationPlayerFields.View
+  @ActivityState private var tempo: Int
   @State private var audio = MusicAudio()
   @State private var playback = NotationPlayback()
 
@@ -139,8 +139,8 @@ private struct NotationPlayerCanvas: View {
   init(fields: NotationPlayerFields) {
     self.fields = fields
     tune = ABCTune(notation: fields.notation)
-    _view = State(initialValue: fields.view)
-    _tempo = State(initialValue: fields.tempo)
+    _view = ActivityState(wrappedValue: fields.view, "view")
+    _tempo = ActivityState(wrappedValue: fields.tempo, "tempo")
   }
 
   var body: some View {

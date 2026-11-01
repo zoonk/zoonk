@@ -33,8 +33,8 @@ private struct MapExplorerCanvas: View {
   let fields: MapExplorerFields
   let map: ActivityBaseMap
 
-  @State private var selectedId: String?
-  @State private var visited: [String] = []
+  @ActivityState("selectedId") private var selectedId: String? = nil
+  @ActivityState("visited") private var visited: [String] = []
   /// Main's `FALLBACK_WIDTH` until the column is measured.
   @State private var width = 318.0
 

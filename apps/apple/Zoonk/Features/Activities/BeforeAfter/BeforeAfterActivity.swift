@@ -68,8 +68,8 @@ private struct BeforeAfterCanvas: View {
   let fields: BeforeAfterFields
   let context: ActivityCanvasContext
 
-  @State private var isRevealed = false
-  @State private var isSettled = false
+  @ActivityState("isRevealed") private var isRevealed = false
+  @ActivityState("isSettled") private var isSettled = false
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @AccessibilityFocusState private var isAfterFocused: Bool
 

@@ -86,6 +86,7 @@ final class LessonPlayerStore {
   private var saving: [String: Task<Void, Never>] = [:]
   private var reportedAbandonment = false
   @ObservationIgnored let promptAudio = LessonPromptAudio()
+  @ObservationIgnored private var works: [String: (round: Int, work: ActivityWork)] = [:]
 
   init(
     lessonId: String, studySessionId: String?, fromCatalog: Bool = false, api: LessonPlayerAPI,
@@ -121,6 +122,16 @@ final class LessonPlayerStore {
 
       return try await operation(identity.bearerToken)
     }
+  }
+
+  func work(for stepId: String, round: Int) -> ActivityWork {
+    if let kept = works[stepId], kept.round == round {
+      return kept.work
+    }
+
+    let work = ActivityWork()
+    works[stepId] = (round, work)
+    return work
   }
 
   func ask(suggestionId: String? = nil) {

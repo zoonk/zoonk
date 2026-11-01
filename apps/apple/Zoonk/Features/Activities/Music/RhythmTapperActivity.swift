@@ -22,7 +22,7 @@ private enum RhythmDeviceDelay {
 private struct RhythmTapperCanvas: View {
   @AppStorage(RhythmDeviceDelay.key) private var storedDelay: String?
   @State private var audio = MusicAudio()
-  @State private var isCalibrating = false
+  @ActivityState("isCalibrating") private var isCalibrating = false
 
   let fields: RhythmTapperFields
   let context: ActivityCanvasContext

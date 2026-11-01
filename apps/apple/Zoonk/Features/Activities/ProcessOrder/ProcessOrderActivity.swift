@@ -27,8 +27,8 @@ private struct ProcessOrderCanvas: View {
   let fields: ProcessOrderFields
   let context: ActivityCanvasContext
 
-  @State private var order: [String]
-  @State private var selectedId: String?
+  @ActivityState private var order: [String]
+  @ActivityState("selectedId") private var selectedId: String? = nil
   @State private var targetedId: String?
 
   init(fields: ProcessOrderFields, context: ActivityCanvasContext) {
@@ -38,12 +38,12 @@ private struct ProcessOrderCanvas: View {
     let prompt =
       context.payload["prompt"].flatMap { if case .string(let text) = $0 { text } else { nil } }
       ?? ""
-    _order = State(
-      initialValue: context.answer?.ids
+    _order = ActivityState(
+      wrappedValue: context.answer?.ids
         ?? ProcessOrder.shuffled(
           fields.steps, seed: "\(prompt):\(fields.steps.map(\.id).joined(separator: ","))"
         )
-        .map(\.id))
+        .map(\.id), "order")
   }
 
   var body: some View {

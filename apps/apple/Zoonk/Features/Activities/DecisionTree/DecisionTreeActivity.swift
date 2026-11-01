@@ -17,7 +17,7 @@ private struct DecisionTreeCanvas: View {
   let fields: DecisionTreeFields
   let context: ActivityCanvasContext
 
-  @State private var path: [String]
+  @ActivityState private var path: [String]
   @ScaledMetric(relativeTo: .body) private var branchWidth = 140.0
 
   init(fields: DecisionTreeFields, context: ActivityCanvasContext) {
@@ -25,7 +25,7 @@ private struct DecisionTreeCanvas: View {
     self.context = context
 
     let ids = context.answer?.ids ?? []
-    _path = State(initialValue: ids.first == fields.rootId ? ids : [fields.rootId])
+    _path = ActivityState(wrappedValue: ids.first == fields.rootId ? ids : [fields.rootId], "path")
   }
 
   private var isChecked: Bool {

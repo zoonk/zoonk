@@ -7,7 +7,7 @@ struct LineCrossingCanvas: View {
   let fields: LineCrossingFields
 
   /// How far the one moved line is, by its id; right or up is positive.
-  @State private var offsets: [String: Double] = [:]
+  @ActivityState("offsets") private var offsets: [String: Double] = [:]
   @State private var dragOrigin: Double?
 
   private var axis: LineCrossingModel.Axis { LineCrossingModel.axis(of: fields.shift.direction) }

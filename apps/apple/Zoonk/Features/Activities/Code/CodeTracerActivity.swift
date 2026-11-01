@@ -97,18 +97,18 @@ private struct CodeTracerCanvas: View {
   let context: ActivityCanvasContext
   let fields: CodeTracerFields
 
-  @State private var step: Int
-  @State private var furthest: Int
-  @State private var predictions: [String: String]
+  @ActivityState private var step: Int
+  @ActivityState private var furthest: Int
+  @ActivityState private var predictions: [String: String]
 
   init(context: ActivityCanvasContext, fields: CodeTracerFields) {
     self.context = context
     self.fields = fields
     // Before the first line when the learner must predict it.
     let start = fields.pauses.contains { $0.step == 0 } ? -1 : 0
-    _step = State(initialValue: start)
-    _furthest = State(initialValue: start)
-    _predictions = State(initialValue: context.answer?.pairs ?? [:])
+    _step = ActivityState(wrappedValue: start, "step")
+    _furthest = ActivityState(wrappedValue: start, "furthest")
+    _predictions = ActivityState(wrappedValue: context.answer?.pairs ?? [:], "predictions")
   }
 
   private var start: Int {

@@ -6,15 +6,15 @@ struct FormulaModelCanvas: View {
   let context: ActivityCanvasContext
   let fields: FormulaModelFields
 
-  @State private var sliders: [String: Double]
-  @State private var events: [String: Double]
+  @ActivityState private var sliders: [String: Double]
+  @ActivityState private var events: [String: Double]
 
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
     self.fields = fields
     let start = fields.opening(check: context.check, phase: context.phase)
-    _sliders = State(initialValue: start.sliders)
-    _events = State(initialValue: start.events)
+    _sliders = ActivityState(wrappedValue: start.sliders, "sliders")
+    _events = ActivityState(wrappedValue: start.events, "events")
   }
 
   private var isChecked: Bool {

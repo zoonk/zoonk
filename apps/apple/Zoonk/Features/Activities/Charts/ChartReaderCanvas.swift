@@ -58,7 +58,7 @@ struct ChartReaderCanvas: View {
   let fields: ChartReaderFields
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @State private var selected: [String] = []
+  @ActivityState("selected") private var selected: [String] = []
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
