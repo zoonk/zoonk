@@ -23,7 +23,7 @@ function toExamScope(blueprint: ExamBlueprint): CurriculumScope {
 
   return {
     exams,
-    generalGoal: toExamIdentity({ details: {}, exams, title: blueprint.name }),
+    generalGoal: toExamIdentity({ details: {}, exams }) ?? blueprint.name,
     language: blueprint.language,
     ownerId: null,
     targetLanguage: null,

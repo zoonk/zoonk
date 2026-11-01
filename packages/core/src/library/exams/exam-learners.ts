@@ -1,6 +1,6 @@
 import "server-only";
 import { type Goal, type GoalKind, type Plan, type TransactionClient, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getPlanState } from "../../plans/_utils/plan-context";
@@ -196,6 +196,14 @@ export async function getResearchGoal(goalId: string) {
   };
 }
 
+/** The position decides which notice research reads; the plan's own call keeps it from providers that train. */
+function toResearchedExam({ details, title }: { details: unknown; title: string }): string {
+  const name = toExamIdentity({ details, exams: [] });
+  const position = getString(details, "targetPosition")?.trim();
+
+  return name && position ? `${name}, ${position}` : (name ?? title);
+}
+
 export function toResearchPlanInput(goal: {
   details: unknown;
   kind: GoalKind;
@@ -214,8 +222,9 @@ export function toResearchPlanInput(goal: {
     };
   }
 
-  const named =
-    goal.kind === "exam" ? toExamIdentity({ details, exams: [], title: goal.title }) : goal.title;
-
-  return { details: toSharedContext(details) ?? "none", goal: named, personal: false };
+  return {
+    details: toSharedContext(details) ?? "none",
+    goal: goal.kind === "exam" ? toResearchedExam({ details, title: goal.title }) : goal.title,
+    personal: false,
+  };
 }

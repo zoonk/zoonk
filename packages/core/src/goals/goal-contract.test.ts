@@ -1,6 +1,6 @@
 import { getLanguageName } from "@zoonk/utils/languages";
 import { describe, expect, it } from "vitest";
-import { goalDraftSchema } from "./goal-contract";
+import { goalDraftSchema, goalUpdateInputSchema } from "./goal-contract";
 
 function acceptsLanguage(language: string): boolean {
   return goalDraftSchema.safeParse({
@@ -41,5 +41,34 @@ describe("a goal draft's languages", () => {
     });
 
     expect(draft).toMatchObject({ language: "pt", targetLanguage: "zh-TW" });
+  });
+});
+
+describe("a goal's details", () => {
+  const draft = { kind: "learn", language: "en", prompt: "Learn biology", title: "Biology" };
+
+  const understood = {
+    answered: ["purpose", "role"],
+    examSubjects: Array.from({ length: 12 }, (_, index) => `Subject number ${index + 1}`),
+    followUps: [
+      { answer: "a".repeat(200), question: "q".repeat(200) },
+      { answer: "b".repeat(200), question: "r".repeat(200) },
+    ],
+    onboardingId: "0196f1a2-0000-7000-8000-000000000000",
+    purpose: "deep",
+    reason: "c".repeat(200),
+    role: "d".repeat(200),
+  };
+
+  it("accepts what onboarding understood and every answer it asks for", () => {
+    expect(goalDraftSchema.safeParse({ ...draft, details: understood }).success).toBe(true);
+    expect(goalUpdateInputSchema.safeParse({ details: understood }).success).toBe(true);
+  });
+
+  it("refuses details far larger than onboarding writes, so they can't inflate the goal's AI calls", () => {
+    const oversized = { ...understood, notes: "x".repeat(10_000) };
+
+    expect(goalDraftSchema.safeParse({ ...draft, details: oversized }).success).toBe(false);
+    expect(goalUpdateInputSchema.safeParse({ details: oversized }).success).toBe(false);
   });
 });

@@ -231,7 +231,7 @@ describe("skill extensions", () => {
         courseId: course.id,
         scope: {
           exams: [],
-          generalGoal: goal.title,
+          generalGoal: "Inglês",
           language: "pt",
           ownerId: null,
           targetLanguage: "en",

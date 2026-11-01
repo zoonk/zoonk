@@ -204,6 +204,7 @@ describe(loadGoalCurriculumInputs, () => {
 
     const goal = await goalFixture({
       details: {
+        field: "design",
         followUps: [{ answer: "Na escola Santa Rita, em Pelotas", question: "Onde?" }],
         level: "none",
         purpose: "careerChange",
@@ -222,9 +223,7 @@ describe(loadGoalCurriculumInputs, () => {
       throw new Error("Expected the goal's inputs");
     }
 
-    const shared = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: null } });
-
-    const general = toScopedGraphPrompt({
+    const shared = toScopedGraphPrompt({
       inputs,
       scope: { generalGoal: "Trabalhar como UX designer", ownerId: null },
     });
@@ -232,13 +231,14 @@ describe(loadGoalCurriculumInputs, () => {
     const owned = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: user.id } });
 
     expect(shared).toMatchObject({
-      context: '{"targetPosition":"UX designer"}',
-      goal: "Tornar-se UX designer",
+      context: '{"field":"design"}',
+      goal: "Trabalhar como UX designer",
       purpose: "careerChange",
     });
 
-    expect(general.goal).toBe("Trabalhar como UX designer");
-    expect(JSON.stringify(shared)).not.toMatch(/Joana|Pelotas|Professora|Maria|Santa Rita/u);
+    expect(JSON.stringify(shared)).not.toMatch(
+      /Joana|Pelotas|Professora|Maria|Santa Rita|Tornar-se/u,
+    );
 
     expect(owned.goal).toBe(goal.prompt);
     expect(owned.context).toMatch(/Professora/u);

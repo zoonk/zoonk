@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { type MockQuickChoice } from "../exams/mocks/mock-format-mix";
+import { toExamIdentity } from "../library/curriculum/shared-graph-prompt";
 import {
   getExamChoiceFormat,
   getExamChoiceFormats,
@@ -14,7 +15,8 @@ import { readGoalExamFormats } from "../library/exams/short-answers";
 export type PlacementItemExam = {
   /** Null until the exam blueprint is linked. */
   blueprintId: string | null;
-  name: string;
+  /** Null for a notice read before its exam was named: only what onboarding understood names it. */
+  name: string | null;
   /** Null when the notice does not specify an option count. */
   optionCount: number | null;
   /** Quoted past-paper examples; omitted when the picker does not load them. */
@@ -40,7 +42,7 @@ function toOptionCount(formats: NoticeFormats): number | null {
   return choice?.kind === "multipleChoice" ? choice.options : null;
 }
 
-export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
+export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam & { name: string } {
   const { structure } = readBlueprintContent(blueprint);
 
   return {
@@ -54,7 +56,7 @@ export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
   };
 }
 
-function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: string }) {
+function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: string | null }) {
   return {
     blueprintId: null,
     name,
@@ -64,7 +66,7 @@ function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: str
 }
 
 export function getGoalItemExam(
-  goal: Pick<Goal, "details" | "kind" | "title"> & { examBlueprint: ExamBlueprint | null },
+  goal: Pick<Goal, "details" | "kind"> & { examBlueprint: ExamBlueprint | null },
 ): { exam: PlacementItemExam | null; formats: NoticeFormats | null } {
   const blueprint = goal.examBlueprint;
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
@@ -74,7 +76,9 @@ export function getGoalItemExam(
     return { exam: goal.kind === "exam" ? toItemExam(blueprint) : null, formats };
   }
 
-  return { exam: formats ? toNoticeItemExam({ formats, name: goal.title }) : null, formats };
+  const name = toExamIdentity({ details: goal.details, exams: [] });
+
+  return { exam: formats ? toNoticeItemExam({ formats, name }) : null, formats };
 }
 
 /** With a `choice`, the questions take that format's shape, and only questions in it count. */

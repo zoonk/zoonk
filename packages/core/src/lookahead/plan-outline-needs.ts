@@ -1,10 +1,9 @@
 import "server-only";
 import { type Course, type ExamBlueprint, type Goal, type Skill, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { findUntaughtSkills } from "../library/curriculum/course-outline-state";
 import { type CourseBandNeed, type CurriculumScope } from "../library/curriculum/curriculum-scope";
-import { toExamIdentity } from "../library/curriculum/shared-graph-prompt";
-import { type CandidateExam, toGoalCandidateExams } from "../library/exams/candidate-exams";
+import { toSharedGoalName } from "../library/curriculum/shared-graph-prompt";
+import { toGoalCandidateExams } from "../library/exams/candidate-exams";
 import { goalUsesTools } from "../plans/_utils/plan-tools";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
@@ -19,7 +18,7 @@ type NeedCourse = Pick<Course, "id" | "language" | "targetLanguage" | "userId" |
 
 type PlanGoal = Pick<
   Goal,
-  "details" | "examBlueprintId" | "kind" | "primaryCourseId" | "targetLanguage" | "title"
+  "details" | "examBlueprintId" | "kind" | "primaryCourseId" | "targetLanguage"
 > & { examBlueprint: ExamBlueprint | null };
 
 const DEFAULT_LEVEL: CourseBandNeed["level"] = "beginner";
@@ -41,7 +40,6 @@ async function loadStandIns({
           kind: true,
           primaryCourseId: true,
           targetLanguage: true,
-          title: true,
         },
       },
       graph: true,
@@ -105,16 +103,7 @@ function toBands({
   }));
 }
 
-type ScopeGoal = Pick<PlanGoal, "details" | "examBlueprint" | "kind" | "targetLanguage" | "title">;
-
-function toGeneralGoal({ exams, goal }: { exams: CandidateExam[]; goal: ScopeGoal }): string {
-  if (goal.kind !== "exam") {
-    return goal.title;
-  }
-
-  const details = isJsonObject(goal.details) ? goal.details : {};
-  return toExamIdentity({ details, exams, title: goal.title });
-}
+type ScopeGoal = Pick<PlanGoal, "details" | "examBlueprint" | "kind" | "targetLanguage">;
 
 /** Private courses preserve their owner; shared exam outlines use exam identity rather than learner wording. */
 export function toPlanCourseScope({
@@ -132,7 +121,7 @@ export function toPlanCourseScope({
 
   return {
     exams,
-    generalGoal: ownerId ? null : toGeneralGoal({ exams, goal }),
+    generalGoal: ownerId ? null : toSharedGoalName({ exams, goal, language: course.language }),
     language: course.language,
     ownerId,
     targetLanguage: course.targetLanguage ?? goal.targetLanguage,

@@ -31,7 +31,7 @@ const MAX_COUNT = 10;
 const DEFAULT_OPTION_COUNT = 4;
 
 export type ItemExamFormat = {
-  name: string;
+  name: string | null;
   style: string;
   optionCount?: number | null;
   select?: OptionSelect | null;

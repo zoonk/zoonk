@@ -22,7 +22,10 @@ import {
   getScopeModel,
   getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
-import { toScopedGraphPrompt } from "@zoonk/core/library/curriculum/shared-graph-prompt";
+import {
+  toLanguageGoal,
+  toScopedGraphPrompt,
+} from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { safeAsync } from "@zoonk/utils/error";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type GoalStreamStep } from "./goal-progress-step";
@@ -71,8 +74,11 @@ export async function decideGoalScopeStep({
     return inputs.exams.length > 0 ? { ...scope, exams: inputs.exams } : scope;
   }
 
-  if (goal.kind === "language") {
-    return { ...shared, generalGoal: goal.title };
+  if (goal.kind === "language" && goal.targetLanguage) {
+    return {
+      ...shared,
+      generalGoal: toLanguageGoal({ language: goal.language, targetLanguage: goal.targetLanguage }),
+    };
   }
 
   // Lessons from the learner's own material cite it, so they're never shared.
@@ -86,13 +92,13 @@ export async function decideGoalScopeStep({
     language: goal.language,
   });
 
-  if (data.privateCourse) {
-    return toPrivateScope(goal);
-  }
-
   // A model's general form of the learner's words can still carry their target ("750 points for
   // medicine"), so an exam's shared content is written for the exam.
-  const generalGoal = inputs.examIdentity ?? data.generalGoal ?? goal.title;
+  const generalGoal = inputs.examIdentity ?? data.generalGoal;
+
+  if (data.privateCourse || !generalGoal) {
+    return toPrivateScope(goal);
+  }
 
   return { ...shared, exams: inputs.exams, generalGoal };
 }

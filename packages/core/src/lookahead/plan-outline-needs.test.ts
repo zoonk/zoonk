@@ -21,6 +21,7 @@ import {
   listPlanSkillIdsWithin,
   listSoonStandInCourseIds,
   listTaughtStandInSkills,
+  toPlanCourseScope,
 } from "./plan-outline-needs";
 
 function standInDays({ days, skillId }: { days: Date[]; skillId: string }) {
@@ -179,7 +180,7 @@ describe(listPlanOutlineNeeds, () => {
         courseId: shared.id,
         scope: {
           exams: [],
-          generalGoal: "Learn statistics",
+          generalGoal: null,
           language: "pt",
           ownerId: null,
           targetLanguage: null,
@@ -508,5 +509,47 @@ describe(listTaughtStandInSkills, () => {
     });
 
     expect([...taught].toSorted()).toStrictEqual([partly.id, alongside.id].toSorted());
+  });
+});
+
+describe(toPlanCourseScope, () => {
+  const course = {
+    id: "course",
+    language: "en",
+    targetLanguage: null,
+    userId: null,
+    visibility: "public" as const,
+  };
+
+  const goal = {
+    details: { targetPosition: "Nurse at Maria's clinic" },
+    examBlueprint: null,
+    kind: "learn" as const,
+    targetLanguage: null,
+    title: "Biology for Maria's clinic",
+  };
+
+  it("outlines a shared course from normalized goal facts, never the title the learner gave the goal", () => {
+    const learn = toPlanCourseScope({ course, goal });
+
+    const language = toPlanCourseScope({
+      course: { ...course, targetLanguage: "es" },
+      goal: { ...goal, kind: "language", targetLanguage: "es" },
+    });
+
+    const exam = toPlanCourseScope({
+      course,
+      goal: {
+        ...goal,
+        details: { examName: "TRT-4", targetPosition: "Analyst like Maria" },
+        kind: "exam",
+      },
+    });
+
+    expect([learn.generalGoal, language.generalGoal, exam.generalGoal]).toStrictEqual([
+      null,
+      "Spanish",
+      "TRT-4",
+    ]);
   });
 });

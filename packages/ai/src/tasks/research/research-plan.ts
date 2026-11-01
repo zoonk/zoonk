@@ -84,7 +84,7 @@ export function formatResearchGoal({
 ${formatUntrustedInput({ DETAILS: details ?? "none", GOAL: goal })}`;
 }
 
-/** It never states facts about the exam itself. */
+/** It never states facts about the exam itself. Its goal is the learner's, so it isn't `libraryInput`. */
 export async function generateExamResearchPlan({
   analytics,
   details,
@@ -108,7 +108,6 @@ export async function generateExamResearchPlan({
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
     systemPrompt,
     task: "research-plan",
   });

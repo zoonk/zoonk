@@ -58,7 +58,6 @@ export async function generateSourceResearchPlan({
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
     systemPrompt,
     task: "source-research-plan",
   });

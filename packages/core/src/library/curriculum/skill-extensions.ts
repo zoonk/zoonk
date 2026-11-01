@@ -274,7 +274,6 @@ export async function listSkillExtensions({
       primaryCourseId: true,
       status: true,
       targetLanguage: true,
-      title: true,
       userId: true,
     },
     where: { id: goalId },

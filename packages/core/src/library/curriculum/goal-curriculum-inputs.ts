@@ -294,8 +294,7 @@ export async function loadGoalCurriculumInputs(
   return {
     awaitingAnswers: isAwaitingAnswers(goal, details),
     blueprintReference: blueprint,
-    examIdentity:
-      goal.kind === "exam" ? toExamIdentity({ details, exams, title: goal.title }) : null,
+    examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,
     goal: {
       examBlueprintId: goal.examBlueprintId,

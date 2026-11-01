@@ -4,7 +4,7 @@ import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
-import { MAX_GOAL_PROMPT_LENGTH } from "./goal-input-limits";
+import { MAX_GOAL_DETAILS_LENGTH, MAX_GOAL_PROMPT_LENGTH } from "./goal-input-limits";
 
 const MAX_TITLE_LENGTH = 120;
 const MAX_GOALS_AT_ONCE = 3;
@@ -50,9 +50,11 @@ const timeZoneSchema = z
 
 const detailsSchema = z
   .record(z.string(), z.json())
+  .refine((details) => JSON.stringify(details).length <= MAX_GOAL_DETAILS_LENGTH, {
+    message: `Details are at most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
+  })
   .meta({
-    description:
-      "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role",
+    description: `What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
   });
 
 export const goalDraftSchema = z

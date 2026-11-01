@@ -103,10 +103,10 @@ export function getStartedCourseScope({
   goal,
 }: {
   course: StartedCourse;
-  goal: { language: string; targetLanguage: string | null; title: string };
+  goal: { language: string; targetLanguage: string | null };
 }): CurriculumScope {
   return {
-    generalGoal: course.ownerId ? null : goal.title,
+    generalGoal: course.ownerId ? null : course.title,
     language: goal.language,
     ownerId: course.ownerId,
     targetLanguage: goal.targetLanguage,

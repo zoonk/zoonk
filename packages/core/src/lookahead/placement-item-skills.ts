@@ -212,7 +212,6 @@ export async function pickPlacementItemSkills({
       kind: true,
       plan: { select: { graph: true, settings: true } },
       targetLanguage: true,
-      title: true,
       userId: true,
     },
     where: { id: goalId },

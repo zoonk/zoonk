@@ -32,11 +32,7 @@ describe(toResearchPlanInput, () => {
   it("reads the exam the goal names, never the learner's own words", () => {
     const input = toResearchPlanInput(GOAL);
 
-    expect(input).toStrictEqual({
-      details: '{"examName":"OAB 1ª fase"}',
-      goal: "OAB 1ª fase",
-      personal: false,
-    });
+    expect(input).toStrictEqual({ details: "none", goal: "OAB 1ª fase", personal: false });
 
     expect(JSON.stringify(input)).not.toMatch(/Sofia|Pelotas|Maria|Estagiária|escritório/u);
   });
@@ -56,11 +52,7 @@ describe(toResearchPlanInput, () => {
       title: "Passar no ENEM com 750 em Medicina",
     });
 
-    expect(enem).toStrictEqual({
-      details: '{"examName":"ENEM","examYear":2027}',
-      goal: "ENEM",
-      personal: false,
-    });
+    expect(enem).toStrictEqual({ details: '{"examYear":2027}', goal: "ENEM", personal: false });
 
     const camara = toResearchPlanInput({
       ...GOAL,
