@@ -173,16 +173,20 @@ internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit)
     BeforeFold { beforeFold -> LessonColumn(beforeFold.padding(vertical = 24.dp), content) }
 }
 
-/** A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next] beside the way on. */
+/**
+ * A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next]
+ * beside the way on. [withMoment] is whether its moment is on screen yet, which waits for the save.
+ */
 @Composable
 internal fun LessonEndPages(
+    withMoment: Boolean,
     done: @Composable ColumnScope.() -> Unit,
     next: @Composable ColumnScope.() -> Unit,
 ) {
-    // Its moment plays once: made again after a fold or a rotation, the end shows as it finished.
-    var shown by rememberSaveable { mutableStateOf(false) }
-    val plays = remember { !shown }
-    SideEffect { shown = true }
+    // The moment plays once: made again after a fold or a rotation, the end shows it as it finished.
+    var played by rememberSaveable { mutableStateOf(false) }
+    val plays = remember { !played }
+    SideEffect { if (withMoment) played = true }
     // The one column keeps its own scroll, so folding back finds it where the learner left it.
     val scroll = rememberScrollState()
     val doneScroll = rememberScrollState()

@@ -434,6 +434,7 @@ internal fun ExplainEnding(
     LaunchedEffect(Unit) { if (explanation.goFurther.course == null) readAgain() }
 
     LessonEndPages(
+        withMoment = !saving,
         done = {
             ExplainHeading(explanation.title) {
                 SuccessEyebrow(stringResource(R.string.explain_now_you_know))

@@ -253,6 +253,7 @@ fun LessonCompletionView(
 
     if (completion.status == CompletionStatus.Ready) {
         LessonEndPages(
+            withMoment = false,
             done = {
                 Text(
                     stringResource(R.string.player_nothing_left_title),
@@ -271,6 +272,7 @@ fun LessonCompletionView(
     }
 
     LessonEndPages(
+        withMoment = completion.status == CompletionStatus.Saved,
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
