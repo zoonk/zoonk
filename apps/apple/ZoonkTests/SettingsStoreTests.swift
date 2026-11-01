@@ -268,6 +268,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(tokens, ["preview-session"])
   }
 
+  func testAWebPlusCancellationMadeAfterItsScreenClosedStillShows() async {
+    let api = SettingsAPIStub(webPlus: .renewing)
+    let store = makeStore(api: api)
+    await store.webPlus.load()
+    await api.holdWebPlusChangeAnswers()
+
+    let screen = Task { await store.cancelWebPlus() }
+    await api.waitForHeldWebPlusChangeAnswer()
+    screen.cancel()
+    await api.releaseWebPlusChangeAnswer()
+    _ = await screen.value
+
+    await waitUntil { store.webPlus.value?.state == .ending }
+  }
+
   func testCancelingAnUnpaidRenewalLeavesNoWebPlus() async {
     let store = makeStore(api: SettingsAPIStub(webPlus: WebPlus(state: .unpaid, periodEnd: nil)))
     await store.webPlus.load()
@@ -332,6 +347,8 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private(set) var webPlusReads = 0
   private var webPlus: WebPlus?
   private let webPlusChangeError: Error?
+  private var holdsWebPlusChangeAnswers = false
+  private var heldWebPlusChangeAnswer: CheckedContinuation<Void, Never>?
   private var beforeDelete: (@MainActor @Sendable () async -> Void)?
   private var holdsDeletes = false
   private var heldDelete: CheckedContinuation<Void, Error>?
@@ -496,16 +513,32 @@ private actor SettingsAPIStub: SettingsAPIClient {
   }
 
   func cancelWebPlus(token: String) async throws {
-    try changeWebPlus(token: token) {
+    try await changeWebPlus(token: token) {
       $0.state == .unpaid ? nil : WebPlus(state: .ending, periodEnd: $0.periodEnd)
     }
   }
 
   func keepWebPlus(token: String) async throws {
-    try changeWebPlus(token: token) { WebPlus(state: .renewing, periodEnd: $0.periodEnd) }
+    try await changeWebPlus(token: token) { WebPlus(state: .renewing, periodEnd: $0.periodEnd) }
   }
 
-  private func changeWebPlus(token: String, _ change: (WebPlus) -> WebPlus?) throws {
+  /// The change is made, then its answer waits until released.
+  func holdWebPlusChangeAnswers() {
+    holdsWebPlusChangeAnswers = true
+  }
+
+  func waitForHeldWebPlusChangeAnswer() async {
+    while heldWebPlusChangeAnswer == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseWebPlusChangeAnswer() {
+    heldWebPlusChangeAnswer?.resume()
+    heldWebPlusChangeAnswer = nil
+  }
+
+  private func changeWebPlus(token: String, _ change: (WebPlus) -> WebPlus?) async throws {
     webPlusChangeTokens.append(token)
 
     if let webPlusChangeError {
@@ -513,6 +546,10 @@ private actor SettingsAPIStub: SettingsAPIClient {
     }
 
     webPlus = webPlus.flatMap(change)
+
+    if holdsWebPlusChangeAnswers {
+      await withCheckedContinuation { heldWebPlusChangeAnswer = $0 }
+    }
   }
 
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }

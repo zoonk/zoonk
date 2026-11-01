@@ -86,16 +86,22 @@ final class SettingsStore {
     await changeWebPlus { [api] in try await api.keepWebPlus(token: $0.bearerToken) }
   }
 
-  private func changeWebPlus(_ write: (AuthenticatedSession) async throws -> Void) async -> Bool {
-    switch await cache.mutate(invalidating: [.userSubscription], write) {
-    case .done:
-      await webPlus.refresh()
-      return true
-    case .failed:
-      return false
-    case .obsolete:
-      return true
-    }
+  /// Runs to the end even when its caller stops waiting, as a closed screen does: the server may
+  /// already have made the change, and the plan must show it next time.
+  private func changeWebPlus(
+    _ write: @escaping @Sendable (AuthenticatedSession) async throws -> Void
+  ) async -> Bool {
+    await Task {
+      switch await cache.mutate(invalidating: [.userSubscription], write) {
+      case .done:
+        await webPlus.refresh()
+        return true
+      case .failed:
+        return false
+      case .obsolete:
+        return true
+      }
+    }.value
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {

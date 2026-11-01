@@ -450,8 +450,8 @@ struct PlusBenefits: View {
 struct PlusStatusView: View {
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
+  @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @State private var isAppStoreManagementPresented = false
-  @State private var webPlusChange: Task<Void, Never>?
 
   /// As it was when the screen opened, until the account says otherwise.
   let opened: AccountSubscription
@@ -515,26 +515,46 @@ struct PlusStatusView: View {
 
       if isWebsite {
         if let web {
-          WebPlusSection(web: web, beside: false, change: $webPlusChange)
+          WebPlusSection(web: web, beside: false)
         }
       } else {
         managedSection
 
         if let web {
-          WebPlusSection(web: web, beside: true, change: $webPlusChange)
+          WebPlusSection(web: web, beside: true)
         }
       }
     }
-    .loads(settings.webPlus)
-    .onDisappear {
-      webPlusChange?.cancel()
-      webPlusChange = nil
+    .loads(settings.webPlus, refreshable: false)
+    .refreshable {
+      await reloadPlan()
     }
     .manageSubscriptionsSheet(isPresented: $isAppStoreManagementPresented)
+    .onChange(of: isAppStoreManagementPresented) { _, isPresented in
+      if !isPresented {
+        Task { await reloadPlan() }
+      }
+    }
     .navigationTitle(
       Text("Subscription", tableName: "Account", comment: "Account option for subscription")
     )
     .toolbarTitleDisplayMode(.inline)
+  }
+
+  /// Apple's own settings change a renewal without a purchase, so its entitlement goes through the
+  /// sync a purchase does, which reads the renewal from Apple.
+  private func reloadPlan() async {
+    async let web: Void = settings.webPlus.refresh()
+
+    await subscriptions.reconcileCurrentEntitlements(
+      synchronizationScope: session.account?.user.id
+    ) { signedTransaction, expectedAccountID in
+      await session.synchronizeAppleSubscription(
+        signedTransaction: signedTransaction, expectedAccountID: expectedAccountID)
+    }
+
+    await session.reconcileSynchronizedCredential()
+    await web
   }
 
   /// Main and Android say the same.
@@ -629,8 +649,6 @@ struct PlusStatusView: View {
 
 /// Main's page for a website renewal that couldn't be charged, in place of the offer.
 private struct UnpaidPlusView: View {
-  @State private var webPlusChange: Task<Void, Never>?
-
   let web: WebPlus
 
   var body: some View {
@@ -648,11 +666,7 @@ private struct UnpaidPlusView: View {
         .listRowBackground(Color.clear)
       }
 
-      WebPlusSection(web: web, beside: false, change: $webPlusChange)
-    }
-    .onDisappear {
-      webPlusChange?.cancel()
-      webPlusChange = nil
+      WebPlusSection(web: web, beside: false)
     }
     .navigationTitle(Text.zoonkPlus)
     .toolbarTitleDisplayMode(.inline)
@@ -660,15 +674,15 @@ private struct UnpaidPlusView: View {
 }
 
 /// Main's `CancelPlusButton` and `KeepPlusButton`. Beside a store purchase it's titled and says
-/// its own date. The screen owns the change's task: a row scrolled away mustn't cancel it.
+/// its own date.
 private struct WebPlusSection: View {
   @Environment(SettingsStore.self) private var settings
   @State private var isConfirmingCancel = false
   @State private var failed = false
+  @State private var change: Task<Void, Never>?
 
   let web: WebPlus
   let beside: Bool
-  @Binding var change: Task<Void, Never>?
 
   var body: some View {
     Section {
@@ -781,12 +795,8 @@ private struct WebPlusSection: View {
   private func run(_ write: @escaping () async -> Bool) {
     failed = false
     change = Task {
-      let changed = await write()
-
-      if !Task.isCancelled {
-        failed = !changed
-        change = nil
-      }
+      failed = !(await write())
+      change = nil
     }
   }
 }
