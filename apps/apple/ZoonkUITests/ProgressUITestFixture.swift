@@ -172,24 +172,6 @@ let progressUITestSnapshotJSON =
   }
   """#
 
-let progressEmptyUITestSnapshotJSON =
-  #"""
-  {
-    "activity": {
-      "days": [],
-      "summary": {
-        "learningDays": 0,
-        "totalLearningSeconds": 0,
-        "totalLessonCompletions": 0
-      }
-    },
-    "energy": null,
-    "level": null,
-    "patterns": null,
-    "score": null
-  }
-  """#
-
 private let progressUITestDates: [String] = {
   var calendar = Calendar(identifier: .gregorian)
   calendar.timeZone = .gmt

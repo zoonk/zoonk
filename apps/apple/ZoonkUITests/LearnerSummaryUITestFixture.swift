@@ -1,5 +1,3 @@
-let uiTestGoalTitle = "Learn how plants grow"
-
 let learnerSummaryUITestJSON = """
   {
     "account": { "email": "ui-test@zoonk.test", "image": null, "name": "UI Test User" },
@@ -23,7 +21,7 @@ let learnerSummaryUITestJSON = """
         "status": "active",
         "targetDate": null,
         "targetLanguage": null,
-        "title": "\(uiTestGoalTitle)"
+        "title": "Learn how plants grow"
       }
     ],
     "identity": {

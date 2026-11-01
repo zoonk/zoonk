@@ -22,7 +22,6 @@ struct ZoonkApp: App {
   @State private var voice: VoiceServices
   private let cache: AppCache
   private let images: ImageLoader
-  private let initialSheet: AppSheet?
   private let lessonPlayer: LessonPlayerDependencies
   #if DEBUG
     private let uiTestFixtureFailure: String?
@@ -34,11 +33,9 @@ struct ZoonkApp: App {
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()
-      let initiallyPresentsAccount = configuration?.initiallyPresentsAccount ?? false
       uiTestFixtureFailure = configuration?.fixtureFailure
     #else
       let dependencies = AppDependencies.live()
-      let initiallyPresentsAccount = false
     #endif
 
     _buddy = State(initialValue: dependencies.buddyStore)
@@ -55,7 +52,6 @@ struct ZoonkApp: App {
     _onboarding = State(initialValue: dependencies.onboardingStore)
     _practice = State(initialValue: dependencies.practiceStore)
     _progress = State(initialValue: dependencies.progressStore)
-    initialSheet = initiallyPresentsAccount ? .account : nil
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
     _studySession = State(initialValue: dependencies.studySessionStore)
@@ -67,7 +63,7 @@ struct ZoonkApp: App {
 
   var body: some Scene {
     WindowGroup {
-      AppWindow(initialSheet: initialSheet, today: today)
+      AppWindow(today: today)
         #if DEBUG
           .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
         #endif
@@ -118,10 +114,8 @@ private struct AppWindow: View {
   @SceneStorage(TestOutScreen.openResultKey) private var openTestOutResult: URL?
   @State private var restoresTestOutResult = true
 
-  init(initialSheet: AppSheet?, today: TodayStore) {
-    _router = State(
-      initialValue: AppRouter(
-        sheet: initialSheet, openBlock: AppRouter.openingTodayBlocks(today: today)))
+  init(today: TodayStore) {
+    _router = State(initialValue: AppRouter(openBlock: AppRouter.openingTodayBlocks(today: today)))
   }
 
   var body: some View {
