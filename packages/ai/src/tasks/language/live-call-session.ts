@@ -126,7 +126,7 @@ export type LiveCallHangup = "alreadyEnded" | "hungUp";
  */
 export async function hangUpLiveCallSession(providerSessionId: string): Promise<LiveCallHangup> {
   // The SDK has no hangup helper: the session's REST path sits beside its WebSocket one.
-  const { headers, url } = getLiveCallModel().getServerWebSocketConfig();
+  const { headers, url } = await getLiveCallModel().getServerWebSocketConfig();
   const endpoint = new URL(`${url}/${encodeURIComponent(providerSessionId)}/hangup`);
   endpoint.protocol = endpoint.protocol === "ws:" ? "http:" : "https:";
 

@@ -29,7 +29,7 @@ import { type EvaluationRunAnswer, captureEvaluationRun } from "./evaluation-run
 import { EvaluationTimeoutError } from "./evaluation-timeout";
 import { formatUntrustedInput } from "./untrusted-input";
 
-type EvaluationQuestions = Record<string, Experimental_DecisionQuestion>;
+type EvaluationQuestions = Record<string, Exclude<Experimental_DecisionQuestion, { type: "box" }>>;
 
 function getEvaluationModel(modelId: string): Experimental_DecisionModel {
   if (isNativeEvaluationModel(modelId)) {
