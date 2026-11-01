@@ -1,7 +1,8 @@
 import "server-only";
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { type Goal, type PlanItem, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
+import { loadAnswerPerItem } from "../../learner/_utils/answer-per-item";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { getSkillRetrievability } from "../../learner/fsrs-scheduler";
 import { getDailyReviewCap, selectDueReviews } from "../../learner/review-load";
@@ -46,16 +47,14 @@ export async function loadRightAnswers({
   itemIds: readonly string[];
   userId: string;
 }): Promise<Set<string>> {
-  const lastAnswers = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    orderBy: [{ itemId: "asc" }, { answeredAt: "desc" }],
-    select: { isCorrect: true, itemId: true },
-    where: { itemId: { in: [...itemIds] }, userId },
+  const lastAnswers = await loadAnswerPerItem<{ isCorrect: boolean; itemId: string }>({
+    columns: sql`is_correct AS "isCorrect", item_id AS "itemId"`,
+    order: "last",
+    userId,
+    where: sql`item_id = ANY(${[...itemIds]}::uuid[])`,
   });
 
-  return new Set(
-    lastAnswers.flatMap((answer) => (answer.isCorrect && answer.itemId ? [answer.itemId] : [])),
-  );
+  return new Set(lastAnswers.flatMap((answer) => (answer.isCorrect ? [answer.itemId] : [])));
 }
 
 type ReviewHorizon = {

@@ -1,5 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Attempt, sql } from "@zoonk/db";
+import { loadAnswerPerItem } from "../../learner/_utils/answer-per-item";
+
+type EarlierAnswer = Pick<Attempt, "answer" | "answeredAt" | "isCorrect"> & { itemId: string };
 
 export function loadCapsuleHistory({
   itemIds,
@@ -10,14 +13,11 @@ export function loadCapsuleHistory({
   sessionId: string;
   userId: string;
 }) {
-  return prisma.attempt.findMany({
-    distinct: ["itemId"],
-    orderBy: [{ itemId: "asc" }, { answeredAt: "desc" }],
-    select: { answer: true, answeredAt: true, isCorrect: true, itemId: true },
-    where: {
-      OR: [{ studySessionId: null }, { studySessionId: { not: sessionId } }],
-      itemId: { in: [...itemIds] },
-      userId,
-    },
+  return loadAnswerPerItem<EarlierAnswer>({
+    columns: sql`answer, answered_at AS "answeredAt", is_correct AS "isCorrect", item_id AS "itemId"`,
+    order: "last",
+    userId,
+    where: sql`item_id = ANY(${[...itemIds]}::uuid[])
+      AND (study_session_id IS NULL OR study_session_id <> ${sessionId}::uuid)`,
   });
 }

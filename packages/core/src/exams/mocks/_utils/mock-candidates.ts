@@ -6,7 +6,9 @@ import {
   type Plan,
   type PlanItem,
   prisma,
+  sql,
 } from "@zoonk/db";
+import { loadAnswerPerItem } from "../../../learner/_utils/answer-per-item";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { getLessonSkillRows, toIdKey } from "../../../library/_utils/shared-rows";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
@@ -153,7 +155,7 @@ async function loadItems({
     : prisma.item.findMany({ orderBy: { id: "asc" }, where });
 }
 
-type LastAnswer = Omit<Attempt, "answer">;
+type LastAnswer = Pick<Attempt, "answeredAt" | "isCorrect"> & { itemId: string };
 
 function byReuseOrder(first: LastAnswer, second: LastAnswer): number {
   if (first.isCorrect !== second.isCorrect) {
@@ -170,11 +172,11 @@ async function loadLastAnswers({
   itemIds: readonly string[];
   userId: string;
 }): Promise<LastAnswer[]> {
-  const answers = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    omit: { answer: true },
-    orderBy: [{ itemId: "asc" }, { answeredAt: "desc" }],
-    where: { itemId: { in: [...itemIds] }, userId },
+  const answers = await loadAnswerPerItem<LastAnswer>({
+    columns: sql`item_id AS "itemId", answered_at AS "answeredAt", is_correct AS "isCorrect"`,
+    order: "last",
+    userId,
+    where: sql`item_id = ANY(${[...itemIds]}::uuid[])`,
   });
 
   return answers.toSorted(byReuseOrder);

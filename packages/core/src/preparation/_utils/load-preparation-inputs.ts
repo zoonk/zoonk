@@ -1,16 +1,19 @@
 import "server-only";
 import {
+  type Attempt,
   type ExamBlueprint,
   type Goal,
   type LearnerSkill,
   type Plan,
   type Subscription,
   prisma,
+  sql,
 } from "@zoonk/db";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
+import { loadAnswerPerItem } from "../../learner/_utils/answer-per-item";
 import { getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { isFadingRetrievability } from "../../learner/mastery-state";
@@ -25,6 +28,9 @@ import {
 import { type MeasuredSkill, type PlanReader, loadMeasuredSkills } from "./load-measured-skills";
 import { loadSkillImportance } from "./skill-importance";
 
+const DONT_KNOW = { dontKnow: true };
+const DONT_KNOW_ANSWER = { answer: { equals: DONT_KNOW } };
+
 async function loadUnseenAnswers({
   owners,
   skillIds,
@@ -34,11 +40,13 @@ async function loadUnseenAnswers({
   skillIds: string[];
   userId: string;
 }): Promise<UnseenAnswer[]> {
-  const firstAnswers = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    orderBy: [{ itemId: "asc" }, { answeredAt: "asc" }],
-    select: { answeredAt: true, isCorrect: true, skillId: true },
-    where: { NOT: DONT_KNOW_ANSWER, itemId: { not: null }, skillId: { in: skillIds }, userId },
+  const firstAnswers = await loadAnswerPerItem<
+    Pick<Attempt, "answeredAt" | "isCorrect" | "skillId">
+  >({
+    columns: sql`answered_at AS "answeredAt", is_correct AS "isCorrect", skill_id AS "skillId"`,
+    order: "first",
+    userId,
+    where: sql`skill_id = ANY(${skillIds}::uuid[]) AND answer <> ${JSON.stringify(DONT_KNOW)}::jsonb`,
   });
 
   return firstAnswers.flatMap((answer) => {
@@ -46,8 +54,6 @@ async function loadUnseenAnswers({
     return skillId ? [{ ...answer, skillId }] : [];
   });
 }
-
-const DONT_KNOW_ANSWER = { answer: { equals: { dontKnow: true } } };
 
 const SHOWING_ANSWER = {
   OR: [
