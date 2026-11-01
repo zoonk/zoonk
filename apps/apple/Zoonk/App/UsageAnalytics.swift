@@ -200,6 +200,7 @@ private struct UsageAnalyticsConsent: ViewModifier {
 /// asks for flags on reset: it checks the choice only when an event is captured. This answers what
 /// may leave. Only event batches do, as nothing else of PostHog's is used, and only with the sharing
 /// learner's events; a refused batch gets an answer PostHog doesn't retry, so it leaves the queue.
+/// The queued uploads: https://github.com/PostHog/posthog-ios/issues/1003
 final class UsageDataGate: URLProtocol, @unchecked Sendable {
   /// The sharing learner's id and the random one their events before identify went under; empty
   /// while nobody shares.
