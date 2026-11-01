@@ -4,20 +4,28 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
 import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.language.reading
+import com.zoonk.android.feature.player.language.vocabulary
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
+import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.api.ApiJson
+import kotlinx.serialization.decodeFromString
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -130,6 +138,50 @@ class LessonSpreadScreenshots {
     fun bookChallenge() = capture("book-challenge", challengeStep("challenge")) { tap("Start") }
 
     @Test
+    @Config(qualifiers = BOOK)
+    fun bookChartActivity() = capture("book-formula", ActivityFixtures.step("formulaModel"))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookChartActivityChecked() =
+        capture("book-formula-checked", ActivityFixtures.step("formulaModel")) {
+            rule.onNode(hasSetTextAction()).performTextInput("3869.68")
+            tap("Check")
+        }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookSortingActivity() = capture("book-categorize", ActivityFixtures.step("categorize"))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookReadingWithChart() = capture("book-reading-chart", explanationStep("idea", visual = chart()))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookCheckWithChart() = capture("book-check-chart", checkWithChart())
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookSummary() = capture("book-summary", summaryStep("summary"))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookVocabulary() = capture("book-vocabulary", vocabulary("word"))
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 1.75f)
+    fun bookTextOnlyAtLargeFont() = capture("book-text-only-font175", explanationStep("idea"))
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 1.75f)
+    fun bookChartActivityAtLargeFont() = capture("book-formula-font175", ActivityFixtures.step("formulaModel"))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookTextOnlyRightToLeft() = capture("book-text-only-rtl", explanationStep("idea"), layoutDirection = LayoutDirection.Rtl)
+
+    @Test
     @Config(qualifiers = BOOK, fontScale = 2f)
     fun bookAtTwiceTheFontSize() = capture("book-check-font200", checkStep("quiz"))
 
@@ -144,6 +196,20 @@ class LessonSpreadScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun phoneReadingWithPicture() = capture("phone-reading-picture", picturedExplanation(), open = false)
+
+    private fun chart(): StepVisual =
+        ApiJson.decodeFromString<StepVisual>(
+            """
+            {"kind":"chart","chart":"bar","title":"Rain by month","categoryLabel":"Month","valueLabel":"Rain","unit":"mm",
+             "axisStart":0,"categories":["Jan","Feb","Mar","Apr"],"series":[{"name":"2025","values":[120,90,60,30]}],"source":null}
+            """.trimIndent(),
+        )
+
+    private fun checkWithChart(): LessonStep {
+        val check = checkStep("quiz")
+        val content = (check.content as StepContent.Check).content
+        return check.copy(content = StepContent.Check(content.copy(visual = chart())))
+    }
 
     private fun picturedExplanation() =
         explanationStep("idea").copy(image = StepImage("cloud", "https://blob.zoonk.test/cloud.png", "A cloud over a hill", 1024, 1280))
