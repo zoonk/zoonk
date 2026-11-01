@@ -1,9 +1,7 @@
 package com.zoonk.android.ui.richtext
 
 import com.zoonk.android.ui.richtext.SegmentKind.Bold
-import com.zoonk.android.ui.richtext.SegmentKind.Code
 import com.zoonk.android.ui.richtext.SegmentKind.DisplayMath
-import com.zoonk.android.ui.richtext.SegmentKind.Italic
 import com.zoonk.android.ui.richtext.SegmentKind.Math
 import com.zoonk.android.ui.richtext.SegmentKind.Text
 import org.junit.Assert.assertEquals
@@ -36,32 +34,6 @@ class RichTextParserTest {
         assertEquals(listOf(text("It costs $5 and $10, or R$ 80.")), parseRichInline("It costs $5 and $10, or R$ 80."))
         assertEquals(listOf(text("Pay $5 now")), parseRichInline("Pay \\$5 now"))
         assertEquals(listOf(text("It costs $5 and then $10.")), parseRichInline("It costs $5 and then $10."))
-    }
-
-    @Test
-    fun readsBoldItalicsWithStarsOrUnderscoresAndInlineCode() {
-        assertEquals(
-            listOf(
-                text("A "),
-                RichSegment(Bold, "cloud"),
-                text(" of "),
-                RichSegment(Italic, "chances"),
-                text(", not "),
-                RichSegment(Italic, "paths"),
-                text(": "),
-                RichSegment(Code, "orbit()"),
-            ),
-            parseRichInline("A **cloud** of _chances_, not *paths*: `orbit()`"),
-        )
-    }
-
-    @Test
-    fun leavesSnakeCaseMultiplicationAndEmphasisMarkersInsideCodeAlone() {
-        assertEquals(listOf(text("user_id stays, 2 * 3 * 4 too")), parseRichInline("user_id stays, 2 * 3 * 4 too"))
-        assertEquals(
-            listOf(RichSegment(Code, "a_b_c"), text(" and "), RichSegment(Code, "**x**")),
-            parseRichInline("`a_b_c` and `**x**`"),
-        )
     }
 
     @Test

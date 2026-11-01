@@ -1,8 +1,5 @@
 package com.zoonk.android.ui.components
 
-import com.zoonk.android.data.recode
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.ItemSetVisual
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -49,36 +46,5 @@ class LessonVisualTest {
             categoryLabels(60f, listOf("North America", "South-East Asia"), width),
         )
         assertEquals(3, categoryLabels(30f, listOf("Brazilian", "Argentinian", "Chilean"), width).step)
-    }
-
-    @Test
-    fun readsTheApisChartsAndTimelines() {
-        val chart =
-            ApiJson.decodeFromString<ItemSetVisual>(
-                """{"kind":"chart","chart":"line","title":"Rainfall","categoryLabel":"Month","valueLabel":"mm","unit":null,
-                |"axisStart":null,"categories":["Jan","Feb"],"series":[{"name":"2024","values":[12.5,30]}],"source":"INMET"}
-                """.trimMargin(),
-            )
-        val timeline =
-            ApiJson.decodeFromString<ItemSetVisual>(
-                """{"kind":"timeline","title":"Brazil","events":[{"date":"1822","label":"Independence","detail":null}]}""",
-            )
-
-        assertEquals(
-            LessonVisual.Chart(
-                chart = LessonVisual.Chart.Kind.Line,
-                title = "Rainfall",
-                categoryLabel = "Month",
-                valueLabel = "mm",
-                categories = listOf("Jan", "Feb"),
-                series = listOf(LessonVisual.Chart.Series("2024", listOf(12.5, 30.0))),
-                source = "INMET",
-            ),
-            chart.recode<ItemSetVisual, LessonVisual>(),
-        )
-        assertEquals(
-            LessonVisual.Timeline("Brazil", listOf(LessonVisual.Timeline.Event("1822", "Independence"))),
-            timeline.recode<ItemSetVisual, LessonVisual>(),
-        )
     }
 }

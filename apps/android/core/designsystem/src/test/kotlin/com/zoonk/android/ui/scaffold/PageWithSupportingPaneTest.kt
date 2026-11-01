@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,21 +15,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsFocused
-import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.width
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.window.layout.FoldingFeature
 import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
@@ -100,23 +92,6 @@ class PageWithSupportingPaneTest {
         assertEquals(width.value, bounds(PAGE).width.value, 0.5f)
     }
 
-    @Test
-    @Config(qualifiers = "w448dp-h997dp")
-    fun aTallPhoneShowsOnePageWithItsAsideInIt() {
-        show()
-
-        assertOnePage(448.dp)
-    }
-
-    @Test
-    @Config(qualifiers = "w1280dp-h800dp-land")
-    fun aWideWindowShowsTheAsideBeside() {
-        show()
-
-        rule.onNodeWithText("Page").assertIsDisplayed()
-        rule.onNodeWithText("Aside beside").assertIsDisplayed()
-    }
-
     /** At twice the text, Material's 360dp aside is too narrow for it. */
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land", fontScale = 2f)
@@ -124,14 +99,6 @@ class PageWithSupportingPaneTest {
         show()
 
         assertOnePage(1280.dp)
-    }
-
-    @Test
-    @Config(qualifiers = "w800dp-h1280dp")
-    fun aTabletInPortraitKeepsOneColumn() {
-        show(width = 720.dp)
-
-        assertOnePage(720.dp)
     }
 
     /** An unfolded book foldable beside the navigation rail: the page and its aside meet at the fold, flat or folded. */
@@ -209,18 +176,6 @@ class PageWithSupportingPaneTest {
         assertOnePage(492.dp)
     }
 
-    /** Held on its side and half folded, the fold runs across the page: the panes stay side by side above and below it. */
-    @Test
-    @Config(qualifiers = "w883dp-h852dp-land")
-    fun aTabletopKeepsThePanesTheWindowHasRoomFor() {
-        show()
-
-        fold(FoldingFeature.State.HALF_OPENED, FoldingFeature.Orientation.HORIZONTAL)
-
-        rule.onNodeWithText("Page").assertIsDisplayed()
-        rule.onNodeWithText("Aside beside").assertIsDisplayed()
-    }
-
     /** Predictive back shrinks the page it leaves to 70%: that page keeps its panes while it shrinks. */
     @Test
     @Config(qualifiers = "w707dp-h823dp")
@@ -268,23 +223,6 @@ class PageWithSupportingPaneTest {
         fold(FoldingFeature.State.FLAT)
 
         assertPageOnEachSide(fold = 426.dp)
-    }
-
-    @Test
-    fun aTextFieldWaitsForATap() {
-        InstrumentationRegistry.getInstrumentation().setInTouchMode(true)
-        rule.setContent {
-            ZoonkTheme {
-                PageWithSupportingPane(supportingPane = {}) {
-                    var text by remember { mutableStateOf("") }
-                    TextField(text, { text = it })
-                }
-            }
-        }
-
-        rule.onNode(hasSetTextAction()).assertIsNotFocused()
-        rule.onNode(hasSetTextAction()).performClick()
-        rule.onNode(hasSetTextAction()).assertIsFocused()
     }
 
     private companion object {

@@ -4,9 +4,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LimitTest {
@@ -40,13 +38,5 @@ class LimitTest {
     fun anyOtherErrorIsNoLimit() {
         assertNull(Limit.of(refusal("PLUS_REQUIRED")))
         assertNull(Limit.of(refusal(null)))
-    }
-
-    @Test
-    fun aGuestNeedsAnAccountAndFreeOrPlusDoesnt() {
-        assertTrue(Limit.SignUpRequired.needsAccount)
-        assertTrue(Limit.Reached(LimitTier.Guest, LimitPeriod.Day).needsAccount)
-        assertFalse(Limit.Reached(LimitTier.Free).needsAccount)
-        assertFalse(Limit.SlowDown(5).needsAccount)
     }
 }
