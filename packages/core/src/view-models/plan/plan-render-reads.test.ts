@@ -10,6 +10,7 @@ import { describe, expect, it, vi } from "vitest";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { type readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
+import { listGoalMindMaps } from "../../mind-maps/list-goal-mind-maps";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getProgressView } from "../progress/get-progress-view";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
@@ -55,7 +56,7 @@ describe("the Plan's render reads", () => {
     expect(reads.rows).toBe(items.length);
   });
 
-  it("reads stand-in lessons and today's lessons once for the plan and its syllabus", async () => {
+  it("reads stand-in lessons and today's lessons once for the plan, its syllabus and mind maps", async () => {
     const { goal, plan, user } = await signedInCourseGoal();
     const skill = await skillFixture({ name: "Spin" });
 
@@ -79,7 +80,7 @@ describe("the Plan's render reads", () => {
     const sessions = await countDatabaseRows(
       () =>
         countDatabaseRows(
-          () => Promise.all([getPlanTabView(), getSyllabusView()]),
+          () => Promise.all([getPlanTabView(), getSyllabusView(), listGoalMindMaps()]),
           '"public"."courses"."user_id", "public"."courses"."visibility"',
         ),
       'SELECT "public"."study_sessions"."id" FROM',
@@ -87,7 +88,11 @@ describe("the Plan's render reads", () => {
 
     const standIns = sessions.result;
 
-    expect(standIns.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
+    expect(standIns.result.map((result) => result.status)).toStrictEqual([
+      "ready",
+      "ready",
+      "ready",
+    ]);
 
     expect({ sessions: sessions.rows, standIns: standIns.rows }).toStrictEqual({
       sessions: 1,

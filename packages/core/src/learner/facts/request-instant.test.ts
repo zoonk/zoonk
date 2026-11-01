@@ -13,9 +13,9 @@ import { getAnytimeMockAccess } from "../../exams/mocks/_utils/anytime-mock-acce
 import { findRunningAnytimeMock } from "../../exams/mocks/_utils/anytime-mock-setup";
 import { getMockOptions } from "../../exams/mocks/get-mock-options";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
-import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getCurrentUserReviewSchedule } from "../get-current-user-review-schedule";
 import * as requestClock from "./request-instant";
+import { readTodayLearnBlocks } from "./today-learn-blocks";
 import type * as ProgressDateContext from "../../progress/get-request-date-context";
 
 const INSTANT = new Date("2026-07-12T12:00:00Z");
@@ -284,7 +284,7 @@ describe("GET request instant", () => {
     vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
     vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(INSTANT);
 
-    const reads = await countDatabaseStatements(() => loadTodayLearnBlocks(goal));
+    const reads = await countDatabaseStatements(() => readTodayLearnBlocks(user.id, goal.id));
 
     expect(reads.writes).toBe(0);
 

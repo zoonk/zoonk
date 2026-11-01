@@ -24,7 +24,7 @@ export type GoalMap = {
   plan: GoalPlan;
   items: MapItem[];
   phases: MapPhase[];
-  /** Today's lessons not done yet, as Today opens them (`loadTodayLearnBlocks`). */
+  /** Today's lessons not done yet, as Today opens them (`readTodayLearnBlocks`). */
   todayBlocks: TodayLearnBlock[];
   /** Shared next-item identity across screens. */
   upNextItemId: string | null;

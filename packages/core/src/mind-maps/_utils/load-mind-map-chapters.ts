@@ -1,10 +1,10 @@
 import "server-only";
 import { type Goal, prisma, sql } from "@zoonk/db";
+import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { hasPlanDeadline, withinLessonScope } from "../../plans/_utils/plan-end";
 import { findUpNextItem } from "../../plans/_utils/up-next-item";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import {
   type MindMapChapterRow,
   mindMapChapterRows,
@@ -50,7 +50,7 @@ export async function loadMindMapChapters({
 
 /** Read-only; null without a chapter-backed next lesson or remaining lessons. */
 export async function loadUpNextChapter(
-  goal: Pick<Goal, "id" | "kind" | "targetDate" | "timezone" | "userId">,
+  goal: Pick<Goal, "id" | "kind" | "targetDate" | "userId">,
 ): Promise<{ chapterId: string; lessonsLeft: number } | null> {
   const [plan, todayBlocks] = await Promise.all([
     prisma.plan.findUnique({
@@ -71,7 +71,7 @@ export async function loadUpNextChapter(
       },
       where: { goalId: goal.id },
     }),
-    loadTodayLearnBlocks(goal),
+    readTodayLearnBlocks(goal.userId, goal.id),
   ]);
 
   const items = plan?.items ?? [];

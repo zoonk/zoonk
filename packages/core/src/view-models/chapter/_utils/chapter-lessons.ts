@@ -86,7 +86,7 @@ export function buildChapterLessons({
   lessons: readonly ChapterLessonRow[];
   /** Lessons a free exam plan past its first week opens with Plus only (`loadPlusOnlyLessonIds`). */
   plusOnlyLessonIds: ReadonlySet<string>;
-  /** Today's session's lessons, in the order it opens them (`loadTodayLearnBlocks`). */
+  /** Today's session's lessons, in the order it opens them (`readTodayLearnBlocks`). */
   sessionLessonIds: readonly string[];
   studied: ReadonlySet<string>;
 }): ChapterView["lessons"] {
