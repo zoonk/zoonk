@@ -1,5 +1,7 @@
 import "server-only";
 import { type Source, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { fetchDocument } from "./fetch-document";
 import { type DocumentImage, isCutText, parseDocument } from "./parse-document";
 import {
   DOCX_CONTENT_TYPE,
@@ -23,6 +25,22 @@ export type SourceDocument = {
   url: string | null;
 };
 
+/** Only private uploads keep a file; a public source's is the publisher's, read where it lives. */
+async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8Array | null> {
+  if (blobUrl) {
+    const blob = await readUploadedBlob(blobUrl);
+    return blob?.bytes ?? null;
+  }
+
+  if (!url) {
+    return null;
+  }
+
+  const { data: fetched } = await safeAsync(() => fetchDocument(url));
+
+  return fetched?.contentType === mimeType ? fetched.bytes : null;
+}
+
 async function loadSourceFiles(source: Source) {
   const mediaType = source.mimeType ?? "";
 
@@ -34,18 +52,20 @@ async function loadSourceFiles(source: Source) {
     return { file: { data: new URL(source.url), mediaType }, images: [] };
   }
 
-  const needsBlob = NATIVE_FILE_TYPES.has(mediaType) || OFFICE_TYPES.has(mediaType);
-  const blob = source.blobUrl && needsBlob ? await readUploadedBlob(source.blobUrl) : null;
+  const bytes =
+    NATIVE_FILE_TYPES.has(mediaType) || OFFICE_TYPES.has(mediaType)
+      ? await readSourceFile(source)
+      : null;
 
-  if (!blob) {
+  if (!bytes) {
     return { file: null, images: [] };
   }
 
   if (NATIVE_FILE_TYPES.has(mediaType)) {
-    return { file: { data: blob.bytes, mediaType }, images: [] };
+    return { file: { data: bytes, mediaType }, images: [] };
   }
 
-  const parsed = await parseDocument({ bytes: blob.bytes, contentType: mediaType });
+  const parsed = await parseDocument({ bytes, contentType: mediaType });
 
   return { file: null, images: parsed.images };
 }
