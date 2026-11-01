@@ -74,6 +74,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -96,6 +97,7 @@ internal class ReviewPlace(
     private val entries = HashMap<Int, LayoutCoordinates>()
     private var list: LayoutCoordinates? = null
     private var listAt: Offset? = null
+    private var restoresRunning = 0
 
     fun openSheet() {
         open = true
@@ -109,6 +111,15 @@ internal class ReviewPlace(
 
     /** The question a list shown now brings to its top. */
     fun restoring(): Int? = anchor
+
+    /** Brings that question back with [scroll]; where the list passes on the way isn't where the learner is. */
+    fun restore(
+        scope: CoroutineScope,
+        scroll: suspend () -> Unit,
+    ) {
+        restoresRunning++
+        scope.launch { scroll() }.invokeOnCompletion { restoresRunning-- }
+    }
 
     fun sectionPlaced(coordinates: LayoutCoordinates) {
         section = coordinates
@@ -127,7 +138,7 @@ internal class ReviewPlace(
         val scrolled = coordinates === list && at != listAt
         list = coordinates
         listAt = at
-        if (!scrolled) return
+        if (!scrolled || restoresRunning > 0) return
 
         val top = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
         val inline = section?.takeIf { it.isAttached }
@@ -226,7 +237,7 @@ private fun ReviewList(
                     place.entryPlaced(index, coordinates)
                     if (restore.at == index && !restore.done) {
                         restore.done = true
-                        scope.launch {
+                        place.restore(scope) {
                             if (sheetScroll != null) {
                                 // The sheet first lays out taller than the window as it slides up, so it scrolls to the question itself.
                                 sheetScroll.scrollTo(coordinates.positionInParent().y.roundToInt())
