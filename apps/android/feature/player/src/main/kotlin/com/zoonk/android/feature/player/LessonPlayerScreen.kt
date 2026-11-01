@@ -39,6 +39,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -121,6 +122,7 @@ import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.MeterPart
@@ -129,6 +131,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
@@ -162,6 +165,68 @@ internal fun LessonColumn(
             content = content,
         )
     }
+}
+
+/** For a screen with one decision, such as a gate or a wait. */
+@Composable
+internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit) {
+    BeforeFold { beforeFold -> LessonColumn(beforeFold.padding(vertical = 24.dp), content) }
+}
+
+/** A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next] beside the way on. */
+@Composable
+internal fun LessonEndPages(
+    done: @Composable ColumnScope.() -> Unit,
+    next: @Composable ColumnScope.() -> Unit,
+) {
+    // Its moment plays once: made again after a fold or a rotation, the end shows as it finished.
+    var shown by rememberSaveable { mutableStateOf(false) }
+    val plays = remember { !shown }
+    SideEffect { shown = true }
+    // The one column keeps its own scroll, so folding back finds it where the learner left it.
+    val scroll = rememberScrollState()
+    val doneScroll = rememberScrollState()
+    val nextScroll = rememberScrollState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    CelebrationScope(play = plays) {
+        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
+
+            if (fold == null) {
+                EndPage(Modifier.fillMaxSize(), scroll, Alignment.CenterHorizontally) {
+                    done()
+                    next()
+                }
+            } else {
+                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End, done)
+                EndPage(
+                    Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
+                    nextScroll,
+                    Alignment.Start,
+                    next,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EndPage(
+    modifier: Modifier,
+    scroll: ScrollState,
+    align: Alignment.Horizontal,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier
+            .verticalScroll(scroll)
+            .padding(vertical = 24.dp)
+            .wrapContentWidth(align)
+            .lessonColumnWidth(),
+        verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
+        content = content,
+    )
 }
 
 /**
@@ -555,9 +620,7 @@ private fun Content(
 
         state.phase == LessonPhase.Completed -> {
             MomentAfterCeremony(state.completion?.result?.ceremonyMilestone(), ceremony) {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
-                }
+                if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
             }
         }
 

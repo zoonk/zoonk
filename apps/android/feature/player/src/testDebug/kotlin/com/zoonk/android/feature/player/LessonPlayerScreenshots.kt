@@ -14,6 +14,10 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -63,10 +67,13 @@ import kotlin.time.Instant
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class LessonPlayerScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
-    @get:Rule
+    @get:Rule(order = 2)
     val temporary = TemporaryFolder()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -92,6 +99,10 @@ class LessonPlayerScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
 
     private val steps =
         listOf(
@@ -226,18 +237,28 @@ class LessonPlayerScreenshots {
             },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
+            "not-found" to { at(LessonAction.RunRefused(LessonRefusal.NotFound)) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
-            "completed" to {
-                at(
-                    *toQuiz(),
-                    LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
-                    LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
-                    LessonAction.Continue,
-                    LessonAction.SkipSteps(listOf("why", "say", "act", "case")),
-                    LessonAction.Continue,
-                    LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), COMPLETION)),
+            "completed" to { completed(COMPLETION) },
+            "completed-reached" to {
+                completed(
+                    COMPLETION.replace(
+                        """"reached":{"energy":null,"level":null}""",
+                        """"reached":{"energy":80,"level":{"color":"yellow","level":3}}""",
+                    ),
                 )
             },
+        )
+
+    private fun completed(json: String) =
+        at(
+            *toQuiz(),
+            LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
+            LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
+            LessonAction.Continue,
+            LessonAction.SkipSteps(listOf("why", "say", "act", "case")),
+            LessonAction.Continue,
+            LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), json)),
         )
 
     private fun pastHook() =
@@ -255,6 +276,7 @@ class LessonPlayerScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -304,6 +326,21 @@ class LessonPlayerScreenshots {
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
+            // Each state composes the player anew, and the publisher only tells what's listening when it publishes.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("${states[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }

@@ -92,7 +92,7 @@ private fun AccessLayout(
     description: String,
     actions: @Composable ColumnScope.() -> Unit = {},
 ) {
-    LessonColumn(Modifier.padding(vertical = 24.dp)) {
+    LessonColumnBeforeFold {
         Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
@@ -252,49 +252,55 @@ fun LessonCompletionView(
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
 
     if (completion.status == CompletionStatus.Ready) {
-        LessonColumn(Modifier.padding(vertical = 24.dp)) {
-            Text(
-                stringResource(R.string.player_nothing_left_title),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                stringResource(R.string.player_nothing_left_description),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
+        LessonEndPages(
+            done = {
+                Text(
+                    stringResource(R.string.player_nothing_left_title),
+                    Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    stringResource(R.string.player_nothing_left_description),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            },
+            next = {},
+        )
         return
     }
 
-    LessonColumn(Modifier.padding(vertical = 24.dp)) {
-        Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+    LessonEndPages(
+        done = {
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
-            if (completion.status == CompletionStatus.Saving) {
-                Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (completion.status == CompletionStatus.Saving) {
+                    Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                if (completion.status == CompletionStatus.Failed) {
+                    Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
+                }
+                if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
-            if (completion.status == CompletionStatus.Failed) {
-                Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
+        },
+        next = {
+            val result = completion.result
+            if (completion.status == CompletionStatus.Saved && result != null) {
+                val moment = buddy.momentBuddy()
+                DayMoment(result, moment.look, moment.name)
             }
-            if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
-        }
 
-        val result = completion.result
-        if (completion.status == CompletionStatus.Saved && result != null) {
-            val moment = buddy.momentBuddy()
-            DayMoment(result, moment.look, moment.name)
-        }
-
-        if (completion.status == CompletionStatus.Saved && ending.guest) {
-            ending.fit?.let { WhereItFits(it) }
-            Text(
-                stringResource(R.string.player_guest_save_note),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+            if (completion.status == CompletionStatus.Saved && ending.guest) {
+                ending.fit?.let { WhereItFits(it) }
+                Text(
+                    stringResource(R.string.player_guest_save_note),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        },
+    )
 }
 
 /** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */

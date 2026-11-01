@@ -53,6 +53,8 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.player.LessonColumn
+import com.zoonk.android.feature.player.LessonColumnBeforeFold
+import com.zoonk.android.feature.player.LessonEndPages
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
 import com.zoonk.android.feature.player.LessonReadouts
@@ -234,7 +236,7 @@ internal fun ExplainWaiting(
             },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
-            LessonColumn(Modifier.padding(vertical = 24.dp)) {
+            LessonColumnBeforeFold {
                 ExplainHeading(explanation.title, subtitle = stringResource(R.string.explain_no_plan))
                 if (!ready) GenerationWait(GenerationKind.Explanation, run, onRetry = viewModel::retry)
                 Outline(explanation.outline)
@@ -431,54 +433,57 @@ internal fun ExplainEnding(
     // The course to go further is linked a few seconds after the explanation can be read.
     LaunchedEffect(Unit) { if (explanation.goFurther.course == null) readAgain() }
 
-    LessonColumn(Modifier.padding(vertical = 24.dp)) {
-        ExplainHeading(explanation.title) {
-            SuccessEyebrow(stringResource(R.string.explain_now_you_know))
-        }
+    LessonEndPages(
+        done = {
+            ExplainHeading(explanation.title) {
+                SuccessEyebrow(stringResource(R.string.explain_now_you_know))
+            }
 
-        if (saving) {
-            Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        } else {
-            LessonReadouts(state, withReview = false)
-        }
+            if (saving) {
+                Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else {
+                LessonReadouts(state, withReview = false)
+            }
 
-        if (explanation.recap.isNotEmpty()) {
-            Column {
-                Text(
-                    pluralStringResource(
-                        R.plurals.explain_recap,
-                        explanation.recap.size,
-                        formatNumber(explanation.recap.size.toDouble(), locale),
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                explanation.recap.forEachIndexed { index, sentence ->
-                    if (index > 0) HorizontalDivider()
-                    Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(
-                            formatNumber((index + 1).toDouble(), locale),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                        Text(sentence, style = MaterialTheme.typography.bodyMedium)
+            if (explanation.recap.isNotEmpty()) {
+                Column {
+                    Text(
+                        pluralStringResource(
+                            R.plurals.explain_recap,
+                            explanation.recap.size,
+                            formatNumber(explanation.recap.size.toDouble(), locale),
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    explanation.recap.forEachIndexed { index, sentence ->
+                        if (index > 0) HorizontalDivider()
+                        Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text(
+                                formatNumber((index + 1).toDouble(), locale),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            Text(sentence, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
             }
-        }
-
-        if (!saving) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    stringResource(R.string.explain_go_further),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                DeeperRow(explanation, navigator)
-                explanation.goFurther.questions.forEach { question ->
-                    GoFurtherRow(R.drawable.ic_help, question, quickExplanationLabel()) { startGoal(question, navigator) }
+        },
+        next = {
+            if (!saving) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        stringResource(R.string.explain_go_further),
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    DeeperRow(explanation, navigator)
+                    explanation.goFurther.questions.forEach { question ->
+                        GoFurtherRow(R.drawable.ic_help, question, quickExplanationLabel()) { startGoal(question, navigator) }
+                    }
                 }
             }
-        }
-    }
+        },
+    )
 }

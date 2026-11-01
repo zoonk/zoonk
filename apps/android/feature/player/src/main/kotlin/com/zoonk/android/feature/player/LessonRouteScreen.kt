@@ -296,7 +296,7 @@ internal fun GuestGateView(
                 null
             },
     ) {
-        LessonColumn(Modifier.padding(vertical = 24.dp)) {
+        LessonColumnBeforeFold {
             Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             if (failed) {
                 Text(

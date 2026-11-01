@@ -2,10 +2,6 @@ package com.zoonk.android.feature.explain
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
@@ -34,6 +30,7 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Explanation
@@ -179,11 +176,7 @@ class ExplainScreenshots {
                 "outline" to
                     { ExplainWaiting(explanation(outline = OUTLINE), viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
                 "written" to { ExplainWaiting(written, viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
-                "ending" to {
-                    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                        ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {})
-                    }
-                },
+                "ending" to { SpreadScreen { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
             )
         var index by mutableIntStateOf(0)
 
