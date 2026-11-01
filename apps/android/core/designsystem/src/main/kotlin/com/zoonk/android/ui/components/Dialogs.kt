@@ -38,10 +38,10 @@ fun AlertDialog(
         onDismissRequest = onDismissRequest,
         // Material's dialog has no slot of its own for its window, and its confirm button is always there.
         confirmButton = {
-            place?.let { WindowAt(it) }
+            WindowAt(place)
             confirmButton()
         },
-        modifier = place?.width?.let { Modifier.widthIn(max = it - PAGE_MARGIN * 2) } ?: Modifier,
+        modifier = place.width?.let { Modifier.widthIn(max = it - PAGE_MARGIN * 2) } ?: Modifier,
         dismissButton = dismissButton,
         title = title,
         text = text,
@@ -64,7 +64,7 @@ fun DatePickerDialog(
         confirmButton = confirmButton,
         dismissButton = dismissButton,
     ) {
-        place?.let { WindowAt(it) }
+        WindowAt(place)
         content()
     }
 }
@@ -87,15 +87,15 @@ fun TimePickerDialog(
         title = title,
         dismissButton = dismissButton,
     ) {
-        place?.let { WindowAt(it) }
+        WindowAt(place)
         content()
     }
 }
 
 /**
- * Where a dialog's window sits on a foldable, from the window's middle: on the page after a book's
- * fold, as wide as that page ([width]), or on a tabletop's flat half. Taller than that half, the
- * window stays on screen and keeps its height.
+ * Where a dialog's window sits, from the window's middle: on the page after a book's fold, as wide
+ * as that page ([width]), on a tabletop's flat half, or in the middle. Taller than that half, the
+ * window stays on screen and keeps its height, with its buttons on the flat half.
  */
 private data class DialogPlace(
     val width: Dp?,
@@ -104,7 +104,7 @@ private data class DialogPlace(
 )
 
 @Composable
-private fun dialogPlace(): DialogPlace? {
+private fun dialogPlace(): DialogPlace {
     val density = LocalDensity.current
     val window =
         with(density) {
@@ -115,27 +115,34 @@ private fun dialogPlace(): DialogPlace? {
         val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
         return DialogPlace(width = window - fold.end, x = fold.end / 2 * towardEnd, y = 0.dp)
     }
-    val tabletop = currentWindowAdaptiveInfoV2().windowPosture.separatingHorizontalHingeBounds.firstOrNull() ?: return null
-    return DialogPlace(width = null, x = 0.dp, y = with(density) { (tabletop.bottom / 2).toDp() })
+    val tabletop = currentWindowAdaptiveInfoV2().windowPosture.separatingHorizontalHingeBounds.firstOrNull()
+    return DialogPlace(width = null, x = 0.dp, y = tabletop?.let { with(density) { (it.bottom / 2).toDp() } } ?: 0.dp)
 }
 
-/** Material centers a dialog's window in the app's; this moves it to [place] through the window itself, which only the dialog's own content can reach. */
+/**
+ * Material centers a dialog's window in the app's; this moves it to [place] through the window
+ * itself, which only the dialog's own content can reach. A book folding flat from a tabletop leaves
+ * the dialog open, so it moves back to the middle.
+ */
 @Composable
 private fun WindowAt(place: DialogPlace) {
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window ?: return
     val density = LocalDensity.current
 
     SideEffect {
-        window.attributes =
-            window.attributes.apply {
-                with(density) {
-                    place.width?.let { width = it.toPx().roundToInt() }
-                    x = place.x.toPx().roundToInt()
-                    y = place.y.toPx().roundToInt()
+        val attributes = window.attributes
+        val width = place.width?.let { with(density) { it.toPx().roundToInt() } } ?: attributes.width
+        val x = with(density) { place.x.toPx().roundToInt() }
+        val y = with(density) { place.y.toPx().roundToInt() }
+        if (attributes.width != width || attributes.x != x || attributes.y != y) {
+            window.attributes =
+                attributes.apply {
+                    this.width = width
+                    this.x = x
+                    this.y = y
                 }
-            }
+        }
     }
 }
 
-/** A dialog's room on each side within its page, as a phone leaves it beside a dialog. */
 private val PAGE_MARGIN = 24.dp
