@@ -128,8 +128,8 @@ function describeCancellation({
 }
 
 /**
- * Looked up apart from which Plus the learner sees: a store purchase made alongside it doesn't stop
- * the website's from billing. A renewing one comes before an unpaid one.
+ * Looked up apart from which Plus the learner sees: until a store purchase beside it is settled
+ * (`endWebPlusBesideStorePlus`), the website's still bills. A renewing one comes before an unpaid one.
  */
 async function findWebSubscription(userId: string) {
   const findByStatus = (statuses: string[]) =>

@@ -2,10 +2,8 @@ import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SubscriptionProvider } from "@zoonk/utils/subscription";
+import { APPLE_SUBSCRIPTIONS_URL, GOOGLE_PLAY_SUBSCRIPTIONS_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
-
-const APPLE_SUBSCRIPTION_MANAGEMENT_URL = "https://apps.apple.com/account/subscriptions";
-const GOOGLE_SUBSCRIPTION_MANAGEMENT_URL = "https://play.google.com/store/account/subscriptions";
 
 /** Web plan controls can't change a store or Zoonk-managed subscription. */
 export async function ManagedSubscription({
@@ -68,11 +66,11 @@ function getManagedSubscriptionAction({
   provider: Exclude<SubscriptionProvider, "stripe">;
 }) {
   if (provider === "apple") {
-    return { href: APPLE_SUBSCRIPTION_MANAGEMENT_URL };
+    return { href: APPLE_SUBSCRIPTIONS_URL };
   }
 
   if (provider === "google") {
-    return { href: GOOGLE_SUBSCRIPTION_MANAGEMENT_URL };
+    return { href: GOOGLE_PLAY_SUBSCRIPTIONS_URL };
   }
 
   return null;

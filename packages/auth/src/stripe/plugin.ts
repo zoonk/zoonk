@@ -5,6 +5,7 @@ import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
 import { reportSubscriptionChange } from "./subscription-events";
+import { endWebPlusBesideStorePlus } from "./web-plus-beside-store";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
@@ -47,15 +48,23 @@ export function stripePlugin() {
       // pending; a subscription ended right away (or by failed payments) was never pending.
       onSubscriptionCancel: ({ subscription }) => reportChange("canceled", subscription),
       // Stripe confirmed a checkout; the learner may never come back to the page it returns to.
-      // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook.
+      // Better Auth logs a failure here, and Stripe isn't asked to retry the webhook. A checkout
+      // opened while free can complete after a store purchase, which then keeps Plus, and a
+      // repeated delivery finds the subscription already ended.
       onSubscriptionComplete: async ({ stripeSubscription, subscription }) => {
-        await Promise.all([
+        const [, endedBesideStore] = await Promise.all([
           reportChange("started", subscription),
-          sendPlusPurchaseConfirmation({
-            referenceId: subscription.referenceId,
-            stripeSubscription,
-          }),
+          endWebPlusBesideStorePlus(subscription.referenceId),
         ]);
+
+        if (endedBesideStore || stripeSubscription.status !== "active") {
+          return;
+        }
+
+        await sendPlusPurchaseConfirmation({
+          referenceId: subscription.referenceId,
+          stripeSubscription,
+        });
       },
       onSubscriptionDeleted: async ({ subscription }) => {
         if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {

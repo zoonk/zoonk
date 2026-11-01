@@ -1,3 +1,6 @@
+import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
+import { sendPlusTwiceEmail } from "@zoonk/auth/duplicate-plus-emails";
+import { endWebPlusBesideStorePlus } from "@zoonk/auth/web-plus-beside-store";
 import {
   type Subscription,
   type TransactionClient,
@@ -182,31 +185,72 @@ function writeSnapshotRow(
     : updateReadSnapshot(tx, { data, existing, expectedSignedAt });
 }
 
+/**
+ * Whether this save is the learner's second store Plus: the chain starts giving Plus while another
+ * store's does. Read in the save's own transaction, which holds the learner's lock, so of two
+ * chains saved at once only the later one counts.
+ */
+async function startsSecondStorePlus(
+  tx: TransactionClient,
+  { chain, existing }: { chain: Subscription | null; existing: Subscription | null },
+) {
+  if (
+    !chain ||
+    !isActiveStoreSubscription(chain) ||
+    (existing && isActiveStoreSubscription(existing))
+  ) {
+    return false;
+  }
+
+  const { orderBy, where } = getActiveSubscriptionQuery({
+    now: new Date(),
+    userId: chain.referenceId,
+  });
+
+  const other = await tx.subscription.findFirst({
+    orderBy,
+    where: { ...where, id: { not: chain.id }, provider: { in: ["apple", "google"] } },
+  });
+
+  return other !== null;
+}
+
 /** A snapshot and its entitlement/input markers commit together, including first delivery. */
-function writeSnapshot(
+async function writeSnapshot(
   snapshot: StoreSubscriptionSnapshot,
   { expectedSignedAt, previousSubscriptionId }: ReconcileOptions,
 ) {
   const data = { ...snapshot, userId: snapshot.referenceId };
 
-  return writeLearnerChange({ planInputs: true, userId: snapshot.referenceId }, async (tx) => {
-    const existing = await tx.subscription.findUnique({
-      where: {
-        provider_providerSubscriptionId: {
-          provider: snapshot.provider,
-          providerSubscriptionId: snapshot.providerSubscriptionId,
-        },
-      },
-    });
+  const chainKey = {
+    provider_providerSubscriptionId: {
+      provider: snapshot.provider,
+      providerSubscriptionId: snapshot.providerSubscriptionId,
+    },
+  };
 
-    const written = await writeSnapshotRow(tx, { data, existing, expectedSignedAt });
+  const outcome = { isSecondStorePlus: false };
 
-    if (previousSubscriptionId) {
-      await endPreviousSubscription({ previousSubscriptionId, snapshot, tx });
-    }
+  const subscription = await writeLearnerChange(
+    { planInputs: true, userId: snapshot.referenceId },
+    async (tx) => {
+      const existing = await tx.subscription.findUnique({ where: chainKey });
+      const written = await writeSnapshotRow(tx, { data, existing, expectedSignedAt });
 
-    return written;
-  });
+      if (previousSubscriptionId) {
+        await endPreviousSubscription({ previousSubscriptionId, snapshot, tx });
+      }
+
+      outcome.isSecondStorePlus = await startsSecondStorePlus(tx, {
+        chain: await tx.subscription.findUnique({ where: chainKey }),
+        existing,
+      });
+
+      return written;
+    },
+  );
+
+  return { isSecondStorePlus: outcome.isSecondStorePlus, subscription };
 }
 
 export async function findStoreSubscription({
@@ -268,22 +312,51 @@ export async function endStoreSubscription(subscription: Subscription) {
   return ended;
 }
 
-/** Persists one ordered store snapshot and expires every cached entitlement derived from it. */
+/**
+ * Persists one ordered store snapshot and expires every cached entitlement derived from it. A store
+ * charges before we hear of its purchase, so Plus bought elsewhere meanwhile is settled here: website
+ * Plus ends with a refund, and a second store's is the learner's to cancel.
+ */
 export async function reconcileStoreSubscription(
   snapshot: StoreSubscriptionSnapshot,
   options: ReconcileOptions = {},
 ) {
-  const subscription = await writeSnapshot(snapshot, options).catch((error: unknown) => {
-    if (!isPrismaUniqueConstraintError(error)) {
-      throw error;
-    }
+  const { isSecondStorePlus, subscription } = await writeSnapshot(snapshot, options).catch(
+    (error: unknown) => {
+      if (!isPrismaUniqueConstraintError(error)) {
+        throw error;
+      }
 
-    /** A different account can race the provider-chain key: retry after the losing tx rolled back. */
-    return writeSnapshot(snapshot, options);
-  });
+      /** A different account can race the provider-chain key: retry after the losing tx rolled back. */
+      return writeSnapshot(snapshot, options);
+    },
+  );
 
   revalidateCacheTags([getUserSubscriptionCacheTag(snapshot.referenceId)]);
+
+  if (isActiveStoreSubscription(subscription)) {
+    await endWebPlusBesideStorePlus(snapshot.referenceId);
+  }
+
+  if (isSecondStorePlus) {
+    await askToCancelSecondStorePlus({ store: snapshot.provider, userId: snapshot.referenceId });
+  }
+
   return subscription;
+}
+
+async function askToCancelSecondStorePlus({
+  store,
+  userId,
+}: {
+  store: StoreProvider;
+  userId: string;
+}) {
+  const user = await prisma.user.findUnique({ select: { email: true }, where: { id: userId } });
+
+  if (user) {
+    await sendPlusTwiceEmail({ email: user.email, store });
+  }
 }
 
 /**
