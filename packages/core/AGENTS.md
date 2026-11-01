@@ -22,6 +22,11 @@
 - Normalize route values and other semantically equivalent inputs before calling a regular `"use cache"` leaf so encoded and decoded values share one canonical cache key.
 - Core mutations own cache-tag invalidation and return only their domain resource or outcome. Use `revalidateCacheTags(tags)` from `src/cache/revalidate-cache-tags.ts`, never `revalidateTag` directly: it expires the tags with `{ expire: 0 }` from both Server Actions and Route Handlers. Each Next.js app has its own cache. API course-content write steps collect the tags from `revalidateCourseContent(tags)` and return them with their result; the caller awaits an independent notification workflow’s start so delivery retries expire Main’s copies without repeating persistence or AI work or failing saved content. Direct writes await delivery after committing. Other cross-app shared reads must use a cheap fresh version key (as `getPlayableLibraryLesson` does), or the default revalidation where a short delay is harmless. Apps retain only route-specific `revalidatePath()` calls.
 
+## Admission
+
+- Work that costs (a model call, a download or parse, paid research) is admitted by a claim before it starts, inside the capability that does the work, so a new caller (another route, a correction, a guest, a background check) can't reach the work without it. A claim is a row under a unique key, or a count and an insert under the learner's lock in one short write ([`claimUsage`](src/entitlements/claim-usage.ts) and its siblings), never a transaction held open across the work. A cap counts its claims, not what the work saves afterward, and a claim keyed by the request lets a retry replay for free.
+- What decides a charge, a share, a replacement or "already done" lives in a column only core writes. A field clients send or edit (`details`, a reported length or count) can describe the learner, never stand in for that fact.
+
 ## Follow-ups and generation
 
 - Core can't start workflows, so a write records the work it owes with `oweFollowUps` in the branch that actually changes the row (the first time a session ends, not a repeat call that finds it ended), never as a "start this next" result for apps. A workflow that makes the write starts its next run itself, from the step's result.
