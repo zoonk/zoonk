@@ -93,7 +93,7 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
 const UNFOLLOWED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
 function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: () => void }) {
-  useRefreshUntilShown({ isReady, refresh: onCheck });
+  useRefreshUntilShown({ refresh: onCheck, status: isReady ? "ready" : "waiting" });
   return null;
 }
 

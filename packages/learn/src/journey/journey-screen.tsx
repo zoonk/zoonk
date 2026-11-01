@@ -84,7 +84,7 @@ export function JourneyBuilding({
 }) {
   const t = useExtracted();
 
-  useRefreshUntilShown({ isReady: run.status === "ready", refresh: onRefresh });
+  useRefreshUntilShown({ refresh: onRefresh, status: run.status });
 
   return (
     <Page data-slot="journey-preparing">
