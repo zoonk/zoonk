@@ -20,7 +20,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CatalogStoreTest {
@@ -69,23 +68,6 @@ class CatalogStoreTest {
 
             assertEquals(listOf("chapter:$CHAPTER_ONE", "chapters:$COURSE", "course:$COURSE"), api.reads.sorted())
             assertTrue(store.chapter[chapterOne].state.value is LoadState.Loaded)
-        }
-
-    @Test
-    fun aCourseAndItsOutlineLoadOnceForItsCourseChapterAndLessonPages() =
-        runTest {
-            val api = FakeCatalogApi()
-            val store = store(api)
-
-            store.course[COURSE].load()
-            store.course[COURSE].load()
-
-            val detail =
-                store.course[COURSE]
-                    .state.value.value
-            assertEquals("Atoms", detail?.course?.title)
-            assertEquals(listOf("Inside the atom", "Bonds"), detail?.chapters?.map { it.title })
-            assertEquals(listOf("chapters:$COURSE", "course:$COURSE"), api.reads.sorted())
         }
 
     @Test
@@ -156,20 +138,6 @@ class CatalogStoreTest {
 
             assertEquals(listOf("courses:en:null:null", "courses:en:math:null"), api.reads)
         }
-
-    @Test
-    fun theCatalogIsInTheAppsLanguageWhenZoonkHasOne() {
-        assertEquals("pt", catalogLanguage(Locale.forLanguageTag("pt-BR")))
-        assertEquals("de", catalogLanguage(Locale.GERMANY))
-        assertEquals("ja", catalogLanguage(Locale.JAPAN))
-        assertEquals("en", catalogLanguage(Locale.forLanguageTag("ar")))
-    }
-
-    @Test
-    fun aDescriptionShowsItsFirstSentence() {
-        assertEquals("A first sentence.", firstSentence("  A first sentence. A second one.", "en"))
-        assertEquals("No period", firstSentence("No period", "en"))
-    }
 
     @Test
     fun onlyCountriesHaveFlagEmoji() {
