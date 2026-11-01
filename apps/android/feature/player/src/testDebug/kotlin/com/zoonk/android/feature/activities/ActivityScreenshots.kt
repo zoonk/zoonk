@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -164,6 +165,7 @@ class ActivityScreenshots {
                 session,
                 TodayChoices(drafts),
                 drafts,
+                saved = SavedStateHandle(),
             )
         val exits =
             object : LessonPlayerExits {

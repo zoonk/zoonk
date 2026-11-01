@@ -172,7 +172,7 @@ class LessonPlayerViewModel(
     private val lessonStarted: Resource<Boolean>? = null,
     private val chapters: GoalContentStore? = null,
     private val analytics: EventTracker = EventTracker {},
-    private val saved: SavedStateHandle = SavedStateHandle(),
+    private val saved: SavedStateHandle,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)

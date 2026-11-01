@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -100,6 +101,7 @@ class LanguageStepsFlowTest {
                 drafts = drafts,
                 isGuest = { false },
                 activeGoalId = { null },
+                saved = SavedStateHandle(),
             )
 
         rule.setContent {
