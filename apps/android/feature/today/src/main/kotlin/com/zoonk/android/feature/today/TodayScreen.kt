@@ -60,6 +60,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -269,11 +270,22 @@ private fun FirstGoal(
                 it.status != LearnerSummaryGoal.Status.ARCHIVED
         }
 
-    TodayPage(padding) {
-        TodayPageHeader(date = localDayLine(summary), state = null, title = stringResource(R.string.today_title))
-        if (explanation != null) ExplanationContinue(explanation, navigator)
-        GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
-        GoalExamples(examples = rememberGoalExamples(), onPick = start)
+    PageWithSupportingPane(
+        supportingPane = {
+            GoalExamples(
+                examples = rememberGoalExamples(),
+                onPick = start,
+                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
+            )
+        },
+        modifier = Modifier.padding(padding),
+    ) { examplesBeside ->
+        TodayPage(PaddingValues()) {
+            TodayPageHeader(date = localDayLine(summary), state = null, title = stringResource(R.string.today_title))
+            if (explanation != null) ExplanationContinue(explanation, navigator)
+            GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
+            if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = start)
+        }
     }
 }
 

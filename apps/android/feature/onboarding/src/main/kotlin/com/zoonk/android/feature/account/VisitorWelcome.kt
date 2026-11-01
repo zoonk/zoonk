@@ -39,6 +39,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 
 /**
  * What a visitor sees on Today (DECISIONS #5): main's landing reduced to its one job, starting a
@@ -76,57 +77,64 @@ fun VisitorWelcome(
 ) {
     var goal by rememberSaveable { mutableStateOf("") }
 
-    Box(
+    PageWithSupportingPane(
+        supportingPane = {
+            GoalExamples(
+                examples = rememberGoalExamples(),
+                onPick = onSend,
+                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 32.dp),
+            )
+        },
         modifier =
             modifier
                 .fillMaxSize()
                 .padding(contentPadding)
                 .consumeWindowInsets(contentPadding)
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .widthIn(max = 640.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = stringResource(R.string.account_welcome_title),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.headlineMedium,
+                .imePadding(),
+    ) { examplesBeside ->
+        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            Column(
+                modifier =
+                    Modifier
+                        .widthIn(max = 640.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = stringResource(R.string.account_welcome_title),
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    Text(
+                        text = stringResource(R.string.account_welcome_description),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+
+                GoalBox(
+                    value = goal,
+                    onValueChange = { goal = it },
+                    onSubmit = onSend,
+                    note = stringResource(R.string.account_welcome_note),
+                    isSubmitting = isSending,
                 )
-                Text(
-                    text = stringResource(R.string.account_welcome_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
+
+                GoalErrorAlert(
+                    error,
+                    onCreateAccount = { navigator.open(AppRoute.Login) },
+                    onOpenPlan = { navigator.open(AppRoute.Plan()) },
+                    onSeePlus = { navigator.open(AppRoute.Subscription) },
                 )
-            }
 
-            GoalBox(
-                value = goal,
-                onValueChange = { goal = it },
-                onSubmit = onSend,
-                note = stringResource(R.string.account_welcome_note),
-                isSubmitting = isSending,
-            )
+                if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = onSend)
 
-            GoalErrorAlert(
-                error,
-                onCreateAccount = { navigator.open(AppRoute.Login) },
-                onOpenPlan = { navigator.open(AppRoute.Plan()) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
-            )
-
-            GoalExamples(examples = rememberGoalExamples(), onPick = onSend)
-
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = { navigator.open(AppRoute.Terms) }) { Text(stringResource(R.string.account_terms)) }
-                TextButton(onClick = { navigator.open(AppRoute.Privacy) }) { Text(stringResource(R.string.account_privacy)) }
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = { navigator.open(AppRoute.Terms) }) { Text(stringResource(R.string.account_terms)) }
+                    TextButton(onClick = { navigator.open(AppRoute.Privacy) }) { Text(stringResource(R.string.account_privacy)) }
+                }
             }
         }
     }
