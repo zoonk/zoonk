@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -73,12 +72,15 @@ fun LessonScreen(
         TrackShown(AnalyticsEvent.PublicPageViewed(route.lessonId, AnalyticsEvent.PublicPage.Lesson))
     }
     CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
-        val found = placeOf(value, route.chapterId) ?: return@CatalogPage
-        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, started, layout)
+        placeOf(value, route.chapterId)
+            ?.let {
+                lessonBlocks(app, navigator, value, it, route.lessonId, lesson, lessonState, started, layout)
+            }.orEmpty()
     }
 }
 
-private fun LazyListScope.lessonContent(
+/** Main moves the chapter's lessons beside the lesson where there's room, and its disclosure goes; an open book gives them the page after the fold. */
+private fun lessonBlocks(
     app: AppContainer,
     navigator: AppNavigator,
     detail: CourseDetail,
@@ -88,52 +90,80 @@ private fun LazyListScope.lessonContent(
     state: LoadState<CatalogLesson>,
     started: Boolean,
     layout: CatalogPageLayout,
-) {
-    val beside = layout.beside
-    val headline = layout.headline
+): List<CatalogBlock> {
     val outlineLesson = place.chapter.lessons.first { it.id.toString() == lessonId }
     val courseId = detail.course.id.toString()
     val page = state.value
 
-    item(key = "lesson", contentType = "lesson") {
-        // Main moves the chapter's lessons beside the lesson where there's room, and its disclosure goes.
-        Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
-            Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
-                CourseEyebrow(navigator, detail)
-                Spacer(Modifier.size(8.dp))
-                Text(outlineLesson.title, modifier = headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+    return buildList {
+        add(
+            CatalogBlock("lesson") {
+                Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+                    Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
+                        CourseEyebrow(navigator, detail)
+                        Spacer(Modifier.size(8.dp))
+                        Text(
+                            outlineLesson.title,
+                            modifier = layout.headline.semantics { heading() },
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
 
-                page?.description?.let {
-                    Spacer(Modifier.size(12.dp))
-                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                        page?.description?.let {
+                            Spacer(Modifier.size(12.dp))
+                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                        }
+
+                        Spacer(Modifier.size(32.dp))
+
+                        when (state) {
+                            is LoadState.Loaded -> {
+                                LessonFirstScreen(app, navigator, state.value, started)
+                            }
+
+                            is LoadState.Failed -> {
+                                val scope = rememberCoroutineScope()
+                                LoadFailedMessage(onRetry = { scope.launch { lesson.refresh() } })
+                            }
+
+                            else -> {
+                                Box(
+                                    Modifier.fillMaxWidth().padding(24.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) { CircularProgressIndicator() }
+                            }
+                        }
+
+                        Spacer(Modifier.size(48.dp))
+                        LessonMore(
+                            navigator,
+                            courseId,
+                            place,
+                            lessonId,
+                            page?.summaryIdeas.orEmpty(),
+                            chapterApart = layout.beside || layout.twoPages,
+                            disclosures = layout.disclosures,
+                        )
+                    }
+
+                    if (layout.beside) {
+                        LessonChapterAside(
+                            navigator,
+                            courseId,
+                            place,
+                            lessonId,
+                            Modifier.weight(1f).widthIn(max = ASIDE_WIDTH),
+                        )
+                    }
                 }
+            },
+        )
 
-                Spacer(Modifier.size(32.dp))
-
-                when (state) {
-                    is LoadState.Loaded -> {
-                        LessonFirstScreen(app, navigator, state.value, started)
-                    }
-
-                    is LoadState.Failed -> {
-                        val scope = rememberCoroutineScope()
-                        LoadFailedMessage(onRetry = { scope.launch { lesson.refresh() } })
-                    }
-
-                    else -> {
-                        Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                    }
-                }
-
-                Spacer(Modifier.size(48.dp))
-                LessonMore(navigator, courseId, place, lessonId, page?.summaryIdeas.orEmpty(), chapterBeside = beside)
-            }
-
-            if (beside) LessonChapterAside(navigator, courseId, place, lessonId, Modifier.weight(1f))
+        if (layout.twoPages) {
+            add(CatalogBlock("chapter", trailing = true) { LessonChapterAside(navigator, courseId, place, lessonId) })
         }
-    }
 
-    item(key = "plan-day", contentType = "plan-day") { LessonPlanDay(app, navigator, detail, place, lessonId) }
+        add(CatalogBlock("plan-day", trailing = true) { LessonPlanDay(app, navigator, detail, place, lessonId) })
+    }
 }
 
 @Composable
@@ -177,7 +207,7 @@ private fun LessonFirstScreen(
     }
 }
 
-/** What the lesson teaches and its chapter's lessons, each behind its own disclosure. */
+/** What the lesson teaches and, unless they show apart from it, its chapter's lessons, each behind its own disclosure. */
 @Composable
 private fun LessonMore(
     navigator: AppNavigator,
@@ -185,7 +215,8 @@ private fun LessonMore(
     place: ChapterPlace,
     lessonId: String,
     ideas: List<String>,
-    chapterBeside: Boolean,
+    chapterApart: Boolean,
+    disclosures: Disclosures,
 ) {
     val locale = currentLocale()
     val chapter = place.chapter
@@ -198,6 +229,7 @@ private fun LessonMore(
                 aside = pluralStringResource(R.plurals.catalog_ideas, ideas.size, ideas.size),
                 closedSummary = null,
                 openByDefault = false,
+                disclosures = disclosures,
             ) {
                 Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     ideas.forEach { idea ->
@@ -215,7 +247,7 @@ private fun LessonMore(
             }
         }
 
-        if (!chapterBeside) {
+        if (!chapterApart) {
             OutlineZone(
                 title = stringResource(R.string.catalog_chapter_heading, formatNumber(place.number.toDouble(), locale), chapter.title),
                 aside =
@@ -223,6 +255,7 @@ private fun LessonMore(
                         formatTotalDuration(minutes.toDouble(), locale),
                 closedSummary = null,
                 openByDefault = false,
+                disclosures = disclosures,
             ) {
                 Column(Modifier.padding(bottom = 16.dp)) {
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
@@ -248,7 +281,7 @@ private fun LessonChapterAside(
     lessonId: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.widthIn(max = ASIDE_WIDTH), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(chapterFacts(place), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         TextButton(
             onClick = { navigator.open(AppRoute.CatalogChapter(place.chapter.id.toString(), courseId)) },

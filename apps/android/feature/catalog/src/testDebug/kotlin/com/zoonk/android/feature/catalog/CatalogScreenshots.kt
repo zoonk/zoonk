@@ -2,18 +2,29 @@ package com.zoonk.android.feature.catalog
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.FakeSession
@@ -41,7 +52,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class CatalogScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -72,10 +86,21 @@ class CatalogScreenshots {
     @Config(qualifiers = "w1280dp-h2000dp-night-xhdpi")
     fun tabletDark() = captureAll("tablet-dark", dark = true)
 
+    /** A Pixel Fold unfolded flat: the page beside the 80dp navigation rail, the fold down the window's middle. */
+    @Test
+    @Config(qualifiers = "w852dp-h1800dp-xhdpi")
+    fun openBook() = captureAll("open-book", page = 772.dp, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h1800dp-night-xhdpi")
+    fun openBookDark() = captureAll("open-book-dark", dark = true, page = 772.dp, fold = true)
+
     private fun captureAll(
         prefix: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        page: Dp = Dp.Unspecified,
+        fold: Boolean = false,
     ) {
         val screens: List<Pair<String, @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit>> =
             listOf(
@@ -115,7 +140,11 @@ class CatalogScreenshots {
                             )
                         }
                     val navigator = rememberAppNavigator()
-                    screens[shown].second(app, navigator, store)
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                        Box(if (page == Dp.Unspecified) Modifier.fillMaxSize() else Modifier.width(page)) {
+                            screens[shown].second(app, navigator, store)
+                        }
+                    }
                 }
             }
         }
@@ -123,6 +152,21 @@ class CatalogScreenshots {
         screens.forEachIndexed { index, (name) ->
             shown = index
             compose.waitForIdle()
+            // Each screen reads the window's posture afresh, and the test's fold isn't replayed to it.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("$prefix-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }

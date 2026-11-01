@@ -2,6 +2,7 @@ package com.zoonk.android.feature.catalog
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasNoClickAction
@@ -50,6 +51,7 @@ class CourseOutlinePlaceTest {
                     levels = levels.map { level(it) },
                     goal = goal,
                     examples = goal == null,
+                    disclosures = remember { Disclosures() },
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                 )
             }

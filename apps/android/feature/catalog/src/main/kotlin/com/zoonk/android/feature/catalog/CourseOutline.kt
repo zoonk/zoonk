@@ -15,10 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -78,6 +74,7 @@ internal fun CourseOutline(
     levels: List<CourseResourceLevelsInner>,
     goal: LearnerSummaryGoal?,
     examples: Boolean,
+    disclosures: Disclosures,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
@@ -135,7 +132,7 @@ internal fun CourseOutline(
             chapters.isEmpty() -> {}
 
             dated != null -> {
-                AreaOutline(navigator, courseId, chapters, numbers, dated, examples = examples, hereChapter = hereChapter)
+                AreaOutline(navigator, courseId, chapters, numbers, dated, examples, hereChapter, disclosures)
             }
 
             else -> {
@@ -185,8 +182,9 @@ internal fun CourseOutline(
                             ).factsLine(),
                         closedSummary = levelChapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
                         openByDefault = level == openLevel,
+                        disclosures = disclosures,
                     ) {
-                        ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter) { chapter ->
+                        ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter, disclosures) { chapter ->
                             weeks[chapter.id.toString()]?.first?.takeIf { examples }?.let {
                                 stringResource(
                                     R.string.catalog_chapter_week,
@@ -211,6 +209,7 @@ private fun AreaOutline(
     estimate: CoursePlanEstimateAnyOf1,
     examples: Boolean,
     hereChapter: String?,
+    disclosures: Disclosures,
 ) {
     val rows = estimate.chapters.associateBy { it.chapterId.toString() }
     val groups = chapters.groupBy { rows[it.id.toString()]?.area }
@@ -233,7 +232,7 @@ private fun AreaOutline(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            ChapterRows(navigator, courseId, ordered(chapters), numbers, hereChapter, mark)
+            ChapterRows(navigator, courseId, ordered(chapters), numbers, hereChapter, disclosures, mark)
         }
         return
     }
@@ -247,8 +246,9 @@ private fun AreaOutline(
             closedSummary = if (examples) areaFitText(estimate.areas.firstOrNull { it.area == area }, areaChapters, rows) else null,
             openSummary = true,
             openByDefault = false,
+            disclosures = disclosures,
         ) {
-            ChapterRows(navigator, courseId, ordered(areaChapters), numbers, hereChapter, mark)
+            ChapterRows(navigator, courseId, ordered(areaChapters), numbers, hereChapter, disclosures, mark)
         }
     }
 }
@@ -373,12 +373,13 @@ internal fun OutlineZone(
     aside: String,
     closedSummary: String?,
     openByDefault: Boolean,
+    disclosures: Disclosures,
     openSummary: Boolean = false,
     titleMark: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    var toggled by rememberSaveable(title) { mutableStateOf<Boolean?>(null) }
-    val open = toggled ?: openByDefault
+    val key = "zone:$title"
+    val open = disclosures.isOpen(key, openByDefault)
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     Column {
@@ -390,7 +391,7 @@ internal fun OutlineZone(
                     .clickable(
                         onClickLabel = stringResource(if (open) R.string.catalog_collapse else R.string.catalog_expand),
                         role = Role.Button,
-                    ) { toggled = !open }
+                    ) { disclosures.toggle(key, openByDefault) }
                     .semantics { stateDescription = state }
                     .padding(vertical = 14.dp),
             verticalAlignment = Alignment.Top,
@@ -440,11 +441,13 @@ private fun ChapterRows(
     chapters: List<CourseChapter>,
     numbers: Map<String, Int>,
     hereChapter: String?,
+    disclosures: Disclosures,
     mark: @Composable (CourseChapter) -> String?,
 ) {
-    var toggled by rememberSaveable(chapters.firstOrNull()?.id?.toString()) { mutableStateOf<Boolean?>(null) }
+    val key = "chapters:${chapters.firstOrNull()?.id}"
     val folds = chapters.size >= CHAPTERS_SHOWN + 3
-    val showAll = toggled ?: chapters.drop(CHAPTERS_SHOWN).any { it.id.toString() == hereChapter }
+    val hidesHere = chapters.drop(CHAPTERS_SHOWN).any { it.id.toString() == hereChapter }
+    val showAll = disclosures.isOpen(key, hidesHere)
     val shown = if (folds && !showAll) chapters.take(CHAPTERS_SHOWN) else chapters
 
     Column {
@@ -460,7 +463,7 @@ private fun ChapterRows(
         }
 
         if (folds) {
-            TextButton(onClick = { toggled = !showAll }, modifier = Modifier.padding(start = 28.dp)) {
+            TextButton(onClick = { disclosures.toggle(key, hidesHere) }, modifier = Modifier.padding(start = 28.dp)) {
                 Text(
                     if (showAll) {
                         stringResource(R.string.catalog_show_fewer_chapters)

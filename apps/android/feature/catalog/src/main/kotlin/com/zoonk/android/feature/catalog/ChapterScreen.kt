@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -78,7 +77,10 @@ fun ChapterScreen(
 
     if (shown is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.chapterId, AnalyticsEvent.PublicPage.Chapter))
     CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report, alsoShown = listOf(chapter)) { value, layout ->
-        placeOf(value, route.chapterId)?.let { chapterContent(app, navigator, value, it, chapterState.value?.tryLesson, started, layout) }
+        placeOf(
+            value,
+            route.chapterId,
+        )?.let { chapterBlocks(app, navigator, value, it, chapterState.value?.tryLesson, started, layout) }.orEmpty()
     }
 }
 
@@ -96,7 +98,7 @@ internal fun placeOf(
     return detail.chapters.getOrNull(index)?.let { ChapterPlace(it, index + 1, detail.chapters.size) }
 }
 
-private fun LazyListScope.chapterContent(
+private fun chapterBlocks(
     app: AppContainer,
     navigator: AppNavigator,
     detail: CourseDetail,
@@ -104,95 +106,112 @@ private fun LazyListScope.chapterContent(
     tryLesson: CatalogTryLesson?,
     started: Boolean,
     layout: CatalogPageLayout,
-) {
+): List<CatalogBlock> {
     val chapter = place.chapter
     val courseId = detail.course.id.toString()
     val hasLesson = chapter.lessons.isNotEmpty()
     val startChapterId = chapter.id.toString().takeIf { hasLesson && place.number > 1 }
 
-    item(key = "hero", contentType = "hero") {
-        val hero = @Composable { modifier: Modifier ->
-            Column(modifier.widthIn(max = COLUMN_WIDTH)) {
-                CourseEyebrow(navigator, detail)
-                Spacer(Modifier.size(8.dp))
-                Text(chapter.title, modifier = layout.headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                Spacer(Modifier.size(16.dp))
-                Text(chapter.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-                Spacer(Modifier.size(16.dp))
-                PlanLine(startsHere = startChapterId != null)
-                Spacer(Modifier.size(24.dp))
-                ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
-            }
-        }
-
-        if (layout.beside && tryLesson != null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
-                hero(Modifier.weight(1f))
-                TryLessonCard(
-                    app,
-                    navigator,
-                    tryLesson,
-                    started,
-                    Modifier.weight(1f),
-                )
-            }
-        } else {
-            hero(Modifier)
-        }
-    }
-
-    if (tryLesson != null && !layout.beside) {
-        item(key = "try", contentType = "try") {
-            TryLessonCard(
-                app,
-                navigator,
-                tryLesson,
-                started,
-            )
-        }
-    }
-
-    if (place.total > 1) {
-        item(key = "strip", contentType = "strip") { ChapterStrip(navigator, detail, place) }
-    }
-
-    if (hasLesson) {
-        item(key = "lessons", contentType = "lessons") {
-            val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
-
-            if (layout.beside && chapter.objectives.isNotEmpty()) {
-                Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
-                    lessons(Modifier.weight(1f))
-                    ChapterObjectives(chapter.objectives, Modifier.weight(1f))
+    return buildList {
+        add(
+            CatalogBlock("hero") {
+                val hero = @Composable { modifier: Modifier ->
+                    Column(modifier.widthIn(max = COLUMN_WIDTH)) {
+                        CourseEyebrow(navigator, detail)
+                        Spacer(Modifier.size(8.dp))
+                        Text(
+                            chapter.title,
+                            modifier = layout.headline.semantics { heading() },
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        Text(
+                            chapter.description,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        PlanLine(startsHere = startChapterId != null)
+                        Spacer(Modifier.size(24.dp))
+                        ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
+                    }
                 }
-            } else {
-                lessons(Modifier)
-            }
-        }
-    }
 
-    if (chapter.objectives.isNotEmpty() && !(layout.beside && hasLesson)) {
-        item(key = "objectives", contentType = "objectives") { ChapterObjectives(chapter.objectives) }
-    }
+                if (layout.beside && tryLesson != null) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+                        hero(Modifier.weight(1f))
+                        TryLessonCard(
+                            app,
+                            navigator,
+                            tryLesson,
+                            started,
+                            Modifier.weight(1f),
+                        )
+                    }
+                } else {
+                    hero(Modifier)
+                }
+            },
+        )
 
-    item(key = "closing", contentType = "closing") {
-        Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
-            HorizontalDivider()
-            Spacer(Modifier.size(48.dp))
-            Text(
-                stringResource(if (startChapterId != null) R.string.catalog_chapter_closing else R.string.catalog_closing_start),
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Spacer(Modifier.size(8.dp))
-            Text(
-                stringResource(if (startChapterId != null) R.string.catalog_chapter_closing_steps else R.string.catalog_closing_steps),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Spacer(Modifier.size(24.dp))
-            ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
+        if (tryLesson != null && !layout.beside) {
+            add(CatalogBlock("try") { TryLessonCard(app, navigator, tryLesson, started) })
         }
+
+        if (place.total > 1) {
+            add(CatalogBlock("strip", trailing = true) { ChapterStrip(navigator, detail, place) })
+        }
+
+        if (hasLesson) {
+            add(
+                CatalogBlock("lessons", trailing = true) {
+                    val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
+
+                    if (layout.beside && chapter.objectives.isNotEmpty()) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+                            lessons(Modifier.weight(1f))
+                            ChapterObjectives(chapter.objectives, Modifier.weight(1f))
+                        }
+                    } else {
+                        lessons(Modifier)
+                    }
+                },
+            )
+        }
+
+        if (chapter.objectives.isNotEmpty() && !(layout.beside && hasLesson)) {
+            add(CatalogBlock("objectives", trailing = true) { ChapterObjectives(chapter.objectives) })
+        }
+
+        add(
+            CatalogBlock("closing", trailing = true) {
+                Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
+                    HorizontalDivider()
+                    Spacer(Modifier.size(48.dp))
+                    Text(
+                        stringResource(if (startChapterId != null) R.string.catalog_chapter_closing else R.string.catalog_closing_start),
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    Text(
+                        stringResource(
+                            if (startChapterId !=
+                                null
+                            ) {
+                                R.string.catalog_chapter_closing_steps
+                            } else {
+                                R.string.catalog_closing_steps
+                            },
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Spacer(Modifier.size(24.dp))
+                    ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
+                }
+            },
+        )
     }
 }
 

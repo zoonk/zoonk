@@ -110,6 +110,7 @@ class CatalogFlowTest {
                 levels = course().levels,
                 goal = null,
                 examples = true,
+                disclosures = remember { Disclosures() },
             )
         }
 
