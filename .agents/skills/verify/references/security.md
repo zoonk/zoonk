@@ -4,8 +4,9 @@ Start from what the change opens: new input, a new entry point, new data shown o
 
 ## Entry points
 
-- Every Server Action export and route handler is a public endpoint anyone can POST to. Each one authenticates, authorizes through a core capability (the [core contract](../../../../packages/core/AGENTS.md): the acting learner comes from the session, never from the request), validates its input at the boundary, and returns only what that caller may see.
+- Every Server Action export and route handler is a public endpoint anyone can POST to. Each one authenticates, authorizes through a core capability (the [core contract](../../../../packages/core/AGENTS.md): the acting learner comes from the session, never from the request), validates and bounds its input at the boundary, and returns only what that caller may see.
 - Ownership: an id in a URL, form or body (a goal, session, lesson, essay, upload) is checked against the signed-in learner on every read and write (`packages/core/src/learner/_utils/owned-goal.ts` is the pattern). Core's real-database tests cover each capability as its owner, another learner and signed out; HTTP tests only cover the transport. `--intruder` loads the pages as another learner after the learner warmed them, and fails if they carry the learner's email, account id or full name.
+- What a client sends or can later edit is a claim, not a fact: a field, an id it picks, a goal's `details`, a reported length or count, a file's own metadata, an email typed into a form, and text a model or a web page wrote (a link, a name). A decision that spends, publishes, grants, cancels or limits reads what the server wrote or measured, and acts only on what its check saw: share the bytes you compared, not the file whose title or first pages matched.
 - Better Auth's endpoints and defaults stay as they are (root `AGENTS.md`).
 
 ## Data exposure
@@ -23,9 +24,9 @@ Start from what the change opens: new input, a new entry point, new data shown o
 
 ## Abuse and cost
 
-- Model calls start only from a learner's POST, inside their plan's limits and the guest budget (root `AGENTS.md`); a GET, a render, `after()` in a render, metadata or a prefetch never starts one. A browser can't see a model call made inside a server GET, so core and API tests with the no-spend provider doubles assert none on GET, prefetch or a refused request, and a bounded number on a retry. Input size, tool rounds, retries and fallbacks are bounded before anything is spent.
-- Anything that spends, awards or charges is idempotent: a retry, a second tab or a race records it once (answers, Brain Power, test-outs, purchases).
-- New endpoints that can be called in a loop have a rate limit or a budget.
+- Model calls start only from a learner's POST, admitted by a claim on their plan's limits or the guest budget (root `AGENTS.md`); a GET, a render, `after()` in a render, metadata or a prefetch never starts one. A browser can't see a model call made inside a server GET, so core and API tests with the no-spend provider doubles assert none on GET, prefetch or a refused request, and a bounded number on a retry. The allowance, input size, tool rounds, retries and fallbacks are checked before anything is spent, downloads and parsing included.
+- Anything that spends, awards or charges is idempotent: a retry, a second tab or a race records it once (answers, Brain Power, test-outs, purchases). Send them at once to prove it (the verify skill's attack in step 3).
+- A guard protects only the paths that pass it, so put it where the effect happens: the claim beside the model call, consent where analytics events leave the device, the allowed schemes where a link opens. Find every caller of the costly or protected work (`rg`): a new route, a correction, a guest, a background check, an admin tool or a library's server API instead of its HTTP handler passes the same claim, budget or rate limit, and a new endpoint that can be called in a loop has one.
 
 ## Secrets, configuration and dependencies
 

@@ -23,7 +23,7 @@ Read the whole diff since the work started, then take every row it touches. A on
 | Screens, layout, flows, waits, limits, errors, AI output learners read                                | 2 to 6, with pages measured on `pnpm start` on every screen                                                                                                                                                                           |
 | Data reads, routes, layouts, caching, Suspense, prefetching, client components, bundle or server cost | Also 4 throttled, with `--nav` and a `--baseline`                                                                                                                                                                                     |
 | Effects, subscriptions, timers, long-lived client state, in-memory caches or workflows                | Also a memory soak (`--soak 10`)                                                                                                                                                                                                      |
-| Entry points (actions, routes, API), auth, learner data, model calls, uploads or dependencies         | Also the security review in 5, with `--intruder` on the pages that show that data                                                                                                                                                     |
+| Entry points (actions, routes, API), auth, learner data, model calls, uploads or dependencies         | Also the attack in 3 and the security review in 5, with `--intruder` on the pages that show that data                                                                                                                                 |
 | The Apple or Android app                                                                              | 2, and 3 in the simulator or emulator from the app's `AGENTS.md`; for data loading, stores, navigation or long-lived state, also [measuring the Apple app](references/apple.md) or [measuring the Android app](references/android.md) |
 | Opening a PR, marking it ready, or merging                                                            | Everything above for the whole branch (`pnpm verify:diff --base <base branch>`, `pnpm audit --audit-level high`), plus the root [PR verification gate](../../../AGENTS.md#pr-verification-gate)                                       |
 
@@ -53,6 +53,7 @@ Passing checks don't show the change working. Run the app and do what the change
 - **API:** call the endpoint as a learner (persona bearer token, development guide) and read the response against the OpenAPI contract.
 - **Native:** `pnpm iphone`, `pnpm ipad`, `pnpm android:phone` or `pnpm android:tablet`; tap through the screens. For the Apple app, [measuring the Apple app](references/apple.md) counts requests per screen and tab switch, memory, leaks, idle CPU and hangs on the simulator. For the Android app, [measuring the Android app](references/android.md) renders screens on the JVM at every size and counts requests per screen and tab switch, memory, leaks, idle CPU and jank on the emulator.
 - **AI:** nothing calls a model until a learner clicks. Prefer fixtures and seeded personas; when the change depends on what a model writes, walk one real run, keep it small, and say what it cost.
+- **Attack it:** for each new or changed entry point (action, route, API endpoint), send what a double tap, a second tab, a retry or someone acting in bad faith sends: the same request twice and several at once (background `curl`s with a persona bearer token, or `Promise.all` of fetches), a field the client shouldn't control (another learner's id, an edited `details`, a reported length or count), an oversized body or file, and the request again after the work failed halfway. Then count what was charged, recorded, started and published: each happens once, and a refusal comes before anything is spent. Turn each hole into a core real-database test that sends the requests together (`holdLearnerLock` and `waitForBlockedStatement` in `packages/core/src/_test-utils/learner-lock.ts` hold the learner's lock until every request waits on it). Sequential happy paths never show these.
 
 ## 4. Measure the pages
 
@@ -91,7 +92,7 @@ Say what you ran and what it returned, so nobody has to run it again:
 
 - each check's command and result (counts, failures with their output), and your answer to every `verify:diff` item
 - shared-rule searches, ownership and consumer coverage, including intentionally separate definitions and why they stay separate
-- what you did in the running app, with screenshot paths
+- what you did in the running app, with screenshot paths, and what each attack sent and caused
 - the `verify:pages` report path, its failures and what you changed for them, and the key numbers (before and after for speed work)
 - each review's findings and what you did about them, and the persona walk in that skill's format
 - what you couldn't verify and why
