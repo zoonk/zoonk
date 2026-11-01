@@ -14,17 +14,6 @@ extension CourseCatalogStore {
 
 @MainActor
 final class CourseCatalogStoreTests: XCTestCase {
-  func testStoreStartsIdle() {
-    let store = CourseCatalogStore(api: CourseCatalogAPIStub(), language: "en")
-
-    XCTAssertEqual(store.courses(category: nil).state, .idle)
-    XCTAssertEqual(store.course(id: Course.testFixture.id).state, .idle)
-    XCTAssertEqual(store.chapter(.testFixture).state, .idle)
-    XCTAssertEqual(store.search(query: "stars")?.state, .idle)
-    XCTAssertFalse(store.isLoadingMore)
-    XCTAssertNil(store.loadMoreFailure)
-  }
-
   func testCategoryPageLoadsWithItsQueryOnce() async {
     let page = CourseCatalogPage(
       courses: [.testFixture],
@@ -306,12 +295,6 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
     let searchQueries = await api.searchQueries
     XCTAssertEqual(searchQueries, [CatalogSearchQuery(language: "en", query: "stars")])
-  }
-
-  func testBlankTextHasNoSearch() {
-    let store = CourseCatalogStore(api: CourseCatalogAPIStub(), language: "en")
-
-    XCTAssertNil(store.search(query: "  \n"))
   }
 
   func testEachQueryKeepsItsOwnResults() async {

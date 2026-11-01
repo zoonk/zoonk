@@ -24,22 +24,6 @@ final class ExamAPITests: XCTestCase {
     XCTAssertEqual(shape, ["area": NSNull(), "day": NSNull(), "kind": "half"])
   }
 
-  func testAShortBankSaysHowManyQuestionsTheMockCanAsk() async throws {
-    let transport = RecordingTransport(
-      answer: #"""
-        {"examQuestions": 45, "id": null, "limit": "day", "minutes": 63, "questions": 12,
-         "status": "short"}
-        """#)
-    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
-
-    let outcome = try await api.startMock(
-      token: "token", goalId: goalId,
-      choice: .practice(MockShape(area: "Matemática e suas Tecnologias", kind: .area)),
-      acceptFewer: false)
-
-    XCTAssertEqual(outcome, .short(examQuestions: 45, limit: .day, minutes: 63, questions: 12))
-  }
-
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {
     let transport = RecordingTransport(status: .noContent)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))

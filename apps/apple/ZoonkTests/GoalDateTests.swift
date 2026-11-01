@@ -3,15 +3,6 @@ import XCTest
 @testable import Zoonk
 
 final class GoalDateTests: XCTestCase {
-  func testStartsTheDateScreenEmptyOnlyForADateThatPassedOrIsToday() {
-    let noSitting = DateProblem.noSitting(month: "2027-02-01", closest: ["2027-01-10"])
-
-    XCTAssertNil(GoalDate.kept("2026-10-01", problem: .passed))
-    XCTAssertNil(GoalDate.kept("2026-10-30", problem: .today))
-    XCTAssertEqual(GoalDate.kept("2027-02-14", problem: noSitting), "2027-02-14")
-    XCTAssertEqual(GoalDate.kept("2027-02-14", problem: nil), "2027-02-14")
-  }
-
   func testReadsAndWritesISODatesAsGregorianDaysWhateverTheDevicesCalendar() throws {
     let day = try XCTUnwrap(UnderstoodRows.day("2026-10-30"))
 

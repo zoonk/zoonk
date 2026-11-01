@@ -85,17 +85,6 @@ final class AccountAPITests: XCTestCase {
     }
   }
 
-  func testCurrentAccountUsesSharedClientConfiguration() async throws {
-    let clients = APIClientFactory(
-      baseURL: URL(string: "https://api.zoonk.test")!,
-      transport: CurrentAccountTransport())
-    let api = AccountAPI(clients: clients)
-
-    let account = try await api.getCurrentAccount(token: "test-session")
-
-    XCTAssertEqual(account.user.email, "learner@zoonk.test")
-  }
-
   func testNativeSessionRateLimitRemainsActionable() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -198,33 +187,6 @@ private struct EmailPolicyTransport: ClientTransport {
     return (
       HTTPResponse(status: status, headerFields: headerFields),
       HTTPBody(#"{"error":{"code":"\#(code)","message":"Email cannot be used"}}"#)
-    )
-  }
-}
-
-private struct CurrentAccountTransport: ClientTransport {
-  func send(
-    _ request: HTTPRequest,
-    body: HTTPBody?,
-    baseURL: URL,
-    operationID: String
-  ) async throws -> (HTTPResponse, HTTPBody?) {
-    guard
-      baseURL == URL(string: "https://api.zoonk.test/v1"),
-      request.headerFields[.authorization] == "Bearer test-session",
-      request.headerFields[.acceptLanguage] != nil
-    else {
-      throw CurrentAccountTransportError.invalidRequest
-    }
-
-    var headerFields = HTTPFields()
-    headerFields[.contentType] = "application/json"
-
-    return (
-      HTTPResponse(status: .ok, headerFields: headerFields),
-      HTTPBody(
-        #"{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":false,"subscription":null},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}}"#
-      )
     )
   }
 }

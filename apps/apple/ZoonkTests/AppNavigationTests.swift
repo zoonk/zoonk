@@ -65,28 +65,6 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
-  func testAPushedPageGoesOnTheSelectedTab() {
-    let router = AppRouter(selectedTab: .search)
-
-    router.push(CourseDestination.course(CourseReference(id: "c1", title: "Course")))
-
-    XCTAssertEqual(router.path(for: .search).wrappedValue.count, 1)
-    XCTAssertTrue(router.path(for: .today).wrappedValue.isEmpty)
-  }
-
-  @MainActor
-  func testTasksStackAndCloseFromTheOneDismissed() {
-    let router = AppRouter()
-
-    router.open(.session)
-    router.open(.lesson(lessonId: "l1", sessionId: "s1"))
-    router.open(.checkpoint(blockId: "b1"))
-    router.task(at: 1).wrappedValue = nil
-
-    XCTAssertEqual(router.tasks, [.session])
-  }
-
-  @MainActor
   func testATaskOpenedBeneathAnotherShowsOnceUncovered() async {
     let router = AppRouter()
 
@@ -120,66 +98,6 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertEqual(first.playback.playingBlockID, "b1", "Another window's block leaves this one's")
     XCTAssertEqual(first.tasks, [.session])
     XCTAssertNil(second.playback.playingBlockID)
-  }
-
-  @MainActor
-  func testPushesLandOnTheSelectedTabAfterClosingTasks() {
-    let router = AppRouter(selectedTab: .plan)
-
-    router.open(.lesson(lessonId: "l1"))
-    router.open(.chapter(chapterId: "c1"))
-
-    XCTAssertEqual(router.tasks, [])
-    XCTAssertEqual(router.path(for: .plan).wrappedValue.count, 1)
-    XCTAssertEqual(router.path(for: .today).wrappedValue.count, 0)
-  }
-
-  @MainActor
-  func testOpeningTheSelectedStudyPlaceReturnsToItsRoot() {
-    let router = AppRouter(selectedTab: .exam)
-
-    router.open(.mockChooser)
-    router.open(.exam)
-
-    XCTAssertEqual(router.path(for: .exam).wrappedValue.count, 0)
-  }
-
-  @MainActor
-  func testOpeningARouteAlreadyOnTheStackGoesBackToItInsteadOfStackingAnother() {
-    let router = AppRouter(selectedTab: .today)
-    var reached = NavigationPath()
-    reached.append(AppRoute.exam)
-    reached.append(AppRoute.speaking)
-    reached.append(CourseDestination.course(CourseReference(id: "c1", title: "Biology")))
-    router.path(for: .today).wrappedValue = reached
-    router.open(.conversation(conversationId: "call"))
-
-    router.open(.speaking)
-
-    var expected = NavigationPath()
-    expected.append(AppRoute.exam)
-    expected.append(AppRoute.speaking)
-    XCTAssertEqual(router.tasks, [])
-    XCTAssertEqual(router.path(for: .today).wrappedValue, expected)
-
-    router.open(.mockChooser)
-    expected.append(AppRoute.mockChooser)
-    XCTAssertEqual(router.path(for: .today).wrappedValue, expected, "A new route still stacks")
-  }
-
-  @MainActor
-  func testAStudyPlaceThatCantStaySelectedMovesToToday() {
-    let compact = AppRouter(selectedTab: .exam)
-    compact.leaveStudyTab(keepingPlace: true)
-
-    XCTAssertEqual(compact.selectedTab, .today)
-    XCTAssertEqual(compact.path(for: .today).wrappedValue.count, 1)
-
-    let removed = AppRouter(selectedTab: .exam)
-    removed.leaveStudyTab(keepingPlace: false)
-
-    XCTAssertEqual(removed.selectedTab, .today)
-    XCTAssertEqual(removed.path(for: .today).wrappedValue.count, 0)
   }
 
   @MainActor

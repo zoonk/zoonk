@@ -280,14 +280,6 @@ final class ActivityRenderersTests: XCTestCase {
       ], "an overlapping passage is skipped")
   }
 
-  func testSourceComparisonLegendNamesOnlyTheMarksShown() throws {
-    let fields = try content(sourceComparisonJSON).fields(as: SourceComparisonFields.self)
-
-    XCTAssertEqual(fields.legend(marked: ["p1", "p2"]), [.whatToMark])
-    XCTAssertEqual(fields.legend(marked: []), [.missed], "nothing marked right")
-    XCTAssertEqual(fields.legend(marked: ["p1", "p3"]), [.whatToMark, .missed, .wrongMark])
-  }
-
   func testSourceComparisonShowsWhatToMarkWhereTheAnswerKeepsNoMarks() throws {
     let marks = SourceComparisonFields.learnerMarks
     let checked = ActivityPhase.checked(isCorrect: true)

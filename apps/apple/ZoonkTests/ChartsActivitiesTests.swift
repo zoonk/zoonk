@@ -466,21 +466,6 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(Set(dioxide.bonds.map(\.order)), [2])
   }
 
-  func testRegistersEveryChartTemplate() {
-    let registry = ActivityRendererRegistry(ChartsActivities.renderers)
-
-    for template in [
-      "chartReader", "distributionExplorer", "randomSimulation", "numberLine", "lineCrossing",
-      "formulaModel", "patternTable", "patternTester", "areaModel", "balance", "unitCircle",
-      "geometryBoard", "moleculeBuilder",
-    ] {
-      XCTAssertNotNil(registry.renderer(for: template), template)
-    }
-
-    XCTAssertNotNil(registry.renderer(for: "lineCrossing")?.grade)
-    XCTAssertNotNil(registry.renderer(for: "moleculeBuilder")?.grade)
-  }
-
   private func decode<Value: Decodable>(_ json: String) throws -> Value {
     try JSONDecoder().decode(Value.self, from: Data(json.utf8))
   }

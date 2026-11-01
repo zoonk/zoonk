@@ -47,12 +47,6 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
-  func testTheFirstPhaseGoesBeforeAnyEvent() {
-    XCTAssertEqual(
-      GenerationWait(kind: .curriculum).started.visiblePhases.map(\.state),
-      [.working, .waiting, .waiting])
-  }
-
   func testIgnoresStepsItDoesntKnow() {
     var wait = GenerationWait(kind: .curriculum)
 

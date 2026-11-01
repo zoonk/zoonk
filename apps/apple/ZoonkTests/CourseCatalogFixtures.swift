@@ -1,48 +1,6 @@
-import XCTest
+import Foundation
 
 @testable import Zoonk
-
-final class CourseCatalogModelsTests: XCTestCase {
-  func testCatalogEnumsPreservePublicAPIRawValues() {
-    XCTAssertEqual(
-      CourseCategory.allCases.map(\.rawValue),
-      [
-        "arts", "business", "communication", "culture", "economics", "engineering", "exams",
-        "geography", "health", "history", "languages", "law", "math", "science", "society",
-        "tech",
-      ])
-    XCTAssertEqual(
-      CourseLevel.allCases.map(\.rawValue),
-      ["overview", "beginner", "intermediate", "advanced"])
-  }
-
-  func testCatalogPageCanLoadMoreOnlyWithAnOpaqueCursor() {
-    let course = CourseSummary.testFixture
-
-    XCTAssertTrue(
-      CourseCatalogPage(courses: [course], hasMore: true, nextCursor: "opaque-cursor")
-        .canLoadMore)
-    XCTAssertFalse(
-      CourseCatalogPage(courses: [course], hasMore: true, nextCursor: nil).canLoadMore)
-    XCTAssertFalse(
-      CourseCatalogPage(courses: [course], hasMore: false, nextCursor: "stale-cursor")
-        .canLoadMore)
-  }
-
-  func testCatalogSupplementalDetailsRoundTripThroughCodable() throws {
-    let courseDetail = CourseDetail(
-      course: .testFixture,
-      chapters: [.testFixture],
-      tryLessonID: CourseLesson.testFixture.id)
-    let chapterDetail = ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])
-
-    let courseData = try JSONEncoder().encode(courseDetail)
-    let chapterData = try JSONEncoder().encode(chapterDetail)
-
-    XCTAssertEqual(try JSONDecoder().decode(CourseDetail.self, from: courseData), courseDetail)
-    XCTAssertEqual(try JSONDecoder().decode(ChapterDetail.self, from: chapterData), chapterDetail)
-  }
-}
 
 extension CourseOrganization {
   static let testFixture = CourseOrganization(

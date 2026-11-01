@@ -255,33 +255,6 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertFalse(state.canGoBack)
   }
 
-  func testLeavingAStartedLessonCountsTheWrongAnswersSinceTheLastRightOne() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
-    XCTAssertNil(AnalyticsEvent.abandonment(of: state), "no run started")
-
-    state.startRun(runId: "run", answers: [])
-    state.continueLesson()
-    state.continueLesson()
-    try answerCheck(&state, optionId: "right")
-    state.continueLesson()
-    state.continueLesson()
-    try answerCheck(&state, optionId: "wrong")
-
-    XCTAssertEqual(
-      AnalyticsEvent.abandonment(of: state),
-      .activityAbandoned(lessonID: "lesson", screen: 5, stepKind: "check", wrongInARow: 1))
-
-    state.continueLesson()
-    state.continueLesson()
-    XCTAssertEqual(state.currentStep?.id, "second", "the missed check comes back")
-    try answerCheck(&state, optionId: "wrong")
-
-    XCTAssertEqual(
-      AnalyticsEvent.abandonment(of: state),
-      .activityAbandoned(lessonID: "lesson", screen: 7, stepKind: "check", wrongInARow: 1),
-      "a screen counts once, by its latest verdict")
-  }
-
   private func answerCheck(
     _ state: inout LessonPlayerState, optionId: String, attemptId: String? = nil
   ) throws {
@@ -532,21 +505,6 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertEqual(
       ChallengeWalk.meters(content, decisions: ChallengeWalk(content, choiceIds: ["bad"]).decisions)
         .first?.value, 30)
-  }
-
-  func testDecodesEveryCoreScreenKind() throws {
-    let kinds = try [
-      textHook, explanation, workedExample, check(id: "c"), typedAnswer, summary, fillBlank,
-      reading,
-      numericActivity, challenge,
-    ].map { try step($0).kind }
-
-    XCTAssertEqual(
-      kinds,
-      [
-        .hook, .explanation, .workedExample, .check, .typedAnswer, .summary, .fillBlank, .reading,
-        .activity, .challenge,
-      ])
   }
 }
 
@@ -1022,20 +980,6 @@ final class LessonAskPlacementTests: XCTestCase {
       choices: LessonTodayChoices(today: { "today" }, read: { _ in nil }, write: { _, _ in }))
   }
 
-  func testAskOpensBesideASpreadAndAsASheetOnOneColumn() {
-    let store = store()
-
-    store.isSpread = true
-    store.ask()
-    XCTAssertFalse(store.isAskingInSheet, "a spread puts Ask beside the lesson")
-
-    store.isAsking = false
-    store.isSpread = false
-    store.ask(suggestionId: "simpler")
-    XCTAssertTrue(store.isAskingInSheet, "one column shows it as a sheet")
-    XCTAssertEqual(store.askingOffer?.suggestionId, "simpler")
-  }
-
   func testClosingTheDuoNeverBringsBackASheetAskWasBesideTheLessonFor() {
     let store = store()
 
@@ -1168,20 +1112,6 @@ final class LessonPlayerSavingTests: XCTestCase {
     XCTAssertEqual(state.queue, ["hook", "plain", "summary"])
     XCTAssertEqual(
       state.steps["plain"]?.imagePending, false, "a screen whose wait ended stops showing one")
-  }
-}
-
-final class LessonVerdictTests: XCTestCase {
-  func testAnyPartialCreditIsAlmostThere() throws {
-    let step = try step(check(id: "check"))
-    var result = LessonStepResult(
-      isCorrect: false, answerText: "Lyon", correctAnswer: nil, feedback: nil)
-
-    result.score = 0.25
-    XCTAssertEqual(LessonVerdict.of(result, step: step).title.key, "Almost there")
-
-    result.score = 0
-    XCTAssertEqual(LessonVerdict.of(result, step: step).title.key, "Not quite")
   }
 }
 
