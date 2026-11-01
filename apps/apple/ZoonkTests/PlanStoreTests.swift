@@ -236,11 +236,17 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(store.suggestionState(goalId: "goal").dismissed, [.tooTight])
   }
 
-  private func makeStore(api: PlanAPIStub, clock: TestClock = TestClock(now: .now)) -> PlanStore {
-    PlanStore(
+  /// A fixed clock and zone: a real one in the minute after midnight puts a plan's read on the day before.
+  private func makeStore(
+    api: PlanAPIStub, clock: TestClock = TestClock(now: Date(timeIntervalSince1970: 1_800_000_000))
+  ) -> PlanStore {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .gmt
+
+    return PlanStore(
       api: api,
       cache: AppCache(session: .preview(account: .planTestAccount)),
-      calendar: Calendar(identifier: .gregorian),
+      calendar: calendar,
       now: { clock.now })
   }
 }
