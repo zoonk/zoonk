@@ -10,13 +10,7 @@ Report security problems privately, as [SECURITY.md](SECURITY.md) describes. For
 
 ## Translations
 
-At the moment, we support only these languages:
-
-- US English (en)
-- Brazilian Portuguese (pt)
-- Spanish (es)
-
-For commercial reasons, we’re not accepting new translations right now.
+Zoonk supports the languages in [`SUPPORTED_LOCALES`](packages/utils/src/locale.ts). For commercial reasons, we’re not accepting new translations right now.
 
 ## Commit Messages
 
