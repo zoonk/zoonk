@@ -192,7 +192,7 @@ struct PlanToolbar: ViewModifier {
   }
 
   private var shareURL: URL {
-    URL(string: "https://zoonk.com/plan-link/\(context.plan.planId)")!
+    URL(string: "https://www.zoonk.com/plan-link/\(context.plan.planId)")!
   }
 
   private var confirmationTitle: Text {
