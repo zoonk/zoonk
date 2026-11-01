@@ -3,13 +3,12 @@ package com.zoonk.android.feature.stats
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,6 +50,8 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageDirective
+import com.zoonk.android.ui.scaffold.pageFold
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -76,9 +81,11 @@ internal class StatsContext(
 
 /**
  * Main's stats layout: the page's name in the bar and "All goals" over its content. On phones the
- * overview's tiles lead to each page, as on main; from expanded widths the section's list sits
- * beside the page. Pull to refresh reads every read the page shows again.
+ * overview's tiles lead to each page, as on main; where the page splits into panes (expanded widths,
+ * an unfolded book foldable) the section's list sits beside the page, and the page lays out by the
+ * room its own pane has. Pull to refresh reads every read the page shows again.
  */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun StatsScreen(
     page: StatsPage,
@@ -86,57 +93,82 @@ fun StatsScreen(
     navigator: AppNavigator,
     stats: StatsStore = app.stats,
 ) {
-    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
-    val context =
-        StatsContext(
-            app,
-            navigator,
-            stats,
-            wide = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND),
-            expanded = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND),
-        )
-    val shown = shownBy(page, stats, context.wide)
+    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(page.title)) }) { padding ->
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+            val directive = pageDirective(maxWidth, panesTouch = true)
+            val listBeside = directive.maxHorizontalPartitions > 1
+            val fold = pageFold(maxWidth)
+            val pageWidth =
+                when {
+                    !listBeside -> maxWidth
+                    fold != null -> maxWidth - fold.end
+                    else -> maxWidth - NAV_WIDTH
+                }
+            val context =
+                StatsContext(
+                    app,
+                    navigator,
+                    stats,
+                    wide = pageWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp,
+                    expanded = listBeside && pageWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp,
+                )
+
+            ListDetailPaneScaffold(
+                directive = directive,
+                value =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary = if (listBeside) PaneAdaptedValue.Expanded else PaneAdaptedValue.Hidden,
+                        tertiary = PaneAdaptedValue.Hidden,
+                    ),
+                listPane = { AnimatedPane(Modifier.preferredWidth(NAV_WIDTH)) { StatsNavList(page, navigator) } },
+                detailPane = { AnimatedPane { StatsPageArea(page, context) } },
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatsPageArea(
+    page: StatsPage,
+    context: StatsContext,
+) {
+    val shown = shownBy(page, context.stats, context.wide)
     val state by shown.first().collectShown()
     val isRefreshing by remember(shown) { combine(shown.map { it.isRefreshing }) { reads -> reads.any { it } } }
         .collectAsStateWithLifecycle(false)
     val scope = rememberCoroutineScope()
     val refresh: () -> Unit = { shown.forEach { scope.launch { it.refresh() } } }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(page.title)) }) { padding ->
-        Row(Modifier.fillMaxSize().padding(padding)) {
-            if (context.expanded) StatsNavList(page, navigator, Modifier.width(NAV_WIDTH))
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.weight(1f).fillMaxSize()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                    LazyColumn(
-                        modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = if (context.wide) 24.dp else 16.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        item(key = "scope") {
-                            Text(
-                                stringResource(R.string.stats_all_goals),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelLarge,
-                            )
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            LazyColumn(
+                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = if (context.wide) 24.dp else 16.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item(key = "scope") {
+                    Text(
+                        stringResource(R.string.stats_all_goals),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+                item(key = "content") {
+                    when (state) {
+                        LoadState.Idle, LoadState.Loading -> {
+                            Box(
+                                Modifier.fillMaxWidth().padding(48.dp),
+                                contentAlignment = Alignment.Center,
+                            ) { CircularProgressIndicator() }
                         }
-                        item(key = "content") {
-                            when (state) {
-                                LoadState.Idle, LoadState.Loading -> {
-                                    Box(
-                                        Modifier.fillMaxWidth().padding(48.dp),
-                                        contentAlignment = Alignment.Center,
-                                    ) { CircularProgressIndicator() }
-                                }
 
-                                is LoadState.Failed -> {
-                                    LoadFailedMessage(onRetry = refresh)
-                                }
+                        is LoadState.Failed -> {
+                            LoadFailedMessage(onRetry = refresh)
+                        }
 
-                                else -> {
-                                    StatsPageContent(page, context)
-                                }
-                            }
+                        else -> {
+                            StatsPageContent(page, context)
                         }
                     }
                 }

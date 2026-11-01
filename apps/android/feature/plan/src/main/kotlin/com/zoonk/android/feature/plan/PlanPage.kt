@@ -394,31 +394,24 @@ internal fun PlanContent(
             }
         }
 
-    // The aside goes beside the page only when the page itself has the room, as on a subject's page.
-    BoxWithConstraints {
-        if (maxWidth < ASIDE_PAGE_WIDTH) {
-            main(false)
-        } else {
-            PageWithSupportingPane(
-                panesTouch = true,
-                supportingPane = {
-                    Row {
-                        VerticalDivider()
-                        Column(
-                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
-                            verticalArrangement = Arrangement.spacedBy(32.dp),
-                        ) {
-                            numbers(NumberVariant.Stats)
-                            suggestion(SuggestionLayout.Panel)
-                            NextOnPath(page, links)
-                            PlanProperties(page, links, onOpen = onAdjust)
-                        }
-                    }
-                },
-                mainPane = main,
-            )
-        }
-    }
+    PageWithSupportingPane(
+        panesTouch = true,
+        supportingPane = {
+            Row {
+                VerticalDivider()
+                Column(
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    numbers(NumberVariant.Stats)
+                    suggestion(SuggestionLayout.Panel)
+                    NextOnPath(page, links)
+                    PlanProperties(page, links, onOpen = onAdjust)
+                }
+            }
+        },
+        mainPane = main,
+    )
 
     if (pathOpen) PathSheet(page, links.closing { pathOpen = false }, onDismiss = { pathOpen = false })
 }
@@ -441,8 +434,6 @@ private fun PathSheet(
         )
     }
 }
-
-private val ASIDE_PAGE_WIDTH = 840.dp
 
 internal val PAGE_MARGIN = 16.dp
 

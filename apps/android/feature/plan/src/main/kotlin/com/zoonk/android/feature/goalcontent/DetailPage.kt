@@ -9,12 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -44,12 +42,15 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 
 /**
  * Main's detail page: [hero] heads it, and its title moves to the top app bar once it has scrolled
- * under the bar. Where the page itself is wide, [aside] runs beside it behind a hairline (main's
- * aside from 72rem); otherwise [content] places what it needs of it in the page. [ask] sits in the
- * bar, as the buddy's face on a narrow page, unless [askInAside] and the aside is showing.
+ * under the bar. Where the page splits into panes, [aside] runs beside it behind a hairline (main's
+ * aside from 72rem, an unfolded book's second page); otherwise [content] places what it needs of it
+ * in the page. [ask] sits in the bar, as the buddy's face on a narrow page, unless [askInAside] and
+ * the aside is showing.
  */
 @Composable
 internal fun DetailPage(
@@ -68,7 +69,7 @@ internal fun DetailPage(
     val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || titleUnderBar } }
 
     BoxWithConstraints(modifier) {
-        val asideBeside = aside != null && maxWidth >= ASIDE_FROM
+        val asideBeside = aside != null && supportingPaneBeside(maxWidth)
         val wide = maxWidth >= WIDE_FROM
 
         PageScaffold(
@@ -127,19 +128,24 @@ private fun DetailPageContent(
         return
     }
 
-    Row(Modifier.fillMaxSize()) {
-        LazyColumn(Modifier.weight(1f).then(listModifier), state = listState, contentPadding = listPadding) { items(true) }
-        VerticalDivider(Modifier.padding(top = padding.calculateTopPadding()))
-        Column(
-            modifier =
-                Modifier
-                    .width(ASIDE_WIDTH)
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-                    .padding(listPadding.copyWithoutStart(direction)),
-            verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-            content = aside,
-        )
+    PageWithSupportingPane(
+        panesTouch = true,
+        supportingPane = {
+            Row {
+                VerticalDivider(Modifier.padding(top = padding.calculateTopPadding()))
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(listPadding.copyWithoutStart(direction)),
+                    verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
+                    content = aside,
+                )
+            }
+        },
+    ) { beside ->
+        LazyColumn(Modifier.fillMaxSize().then(listModifier), state = listState, contentPadding = listPadding) { items(beside) }
     }
 }
 
@@ -201,10 +207,6 @@ internal fun PropertyRow(
 
 private fun PaddingValues.copyWithoutStart(direction: LayoutDirection) =
     PaddingValues(top = calculateTopPadding(), end = calculateEndPadding(direction), bottom = calculateBottomPadding())
-
-/** Room for the page's column beside a 320dp aside, about where main's aside appears. */
-private val ASIDE_FROM = 840.dp
-private val ASIDE_WIDTH = 320.dp
 
 /** Main's `md`: from here the hero's action sits at its end and Ask shows the buddy's name. */
 private val WIDE_FROM = 600.dp
