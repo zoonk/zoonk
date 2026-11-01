@@ -1418,19 +1418,19 @@ msgstr "名前とメールアドレスを確認して、もう一度試してく
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "dTs6Jp"
-msgid "We received your withdrawal."
-msgstr "契約の撤回を受け付けました。"
+msgctxt "vtYQXZ"
+msgid "We received your withdrawal request."
+msgstr "契約の撤回申請を受け付けました。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "aeHrbi"
-msgid "We received your cancellation."
-msgstr "解約を受け付けました。"
+msgctxt "iyYNjY"
+msgid "We received your cancellation request."
+msgstr "解約申請を受け付けました。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "S8L_pb"
-msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr "当サイトで{email}を使ってPlusに登録している場合、数分以内にそのアドレスへ確認メールが届きます。メールが届きませんか？登録時のメールアドレスか確認するか、hello@zoonk.comまでメールでご連絡ください。"
+msgctxt "JjecyL"
+msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
+msgstr "{email}でZoonkに登録している場合は、数分以内に受付確認メールが届きます。変更を行う前に、メールで確認します。メールが届きませんか？Zoonkで使っているメールアドレスか確認するか、hello@zoonk.comまでご連絡ください。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"

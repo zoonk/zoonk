@@ -1,6 +1,10 @@
 import { sendEmail } from "@zoonk/mailer";
 import { describe, expect, it, vi } from "vitest";
-import { sendPlusCancellationEmail, sendPlusPurchaseEmail } from "./plus-emails";
+import {
+  sendPlusCancellationEmail,
+  sendPlusCancellationRequestEmail,
+  sendPlusPurchaseEmail,
+} from "./plus-emails";
 
 // Email delivery is external; render the real templates and inspect the payload sent to the mailer.
 vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn().mockResolvedValue({}) }));
@@ -15,7 +19,6 @@ const cancellation = {
   email: "learner@zoonk.test",
   endsAt: new Date("2026-11-30T14:30:00Z"),
   interval: "month",
-  lateWithdrawal: false,
   locale: "en",
   name: "Ana",
   reason: null,
@@ -82,26 +85,13 @@ describe("Plus email formatting", () => {
 });
 
 describe(sendPlusCancellationEmail, () => {
-  it("tells the account's owner when the cancel form was used with their email, and how to undo it", async () => {
-    await sendPlusCancellationEmail({ ...cancellation, canKeepPlus: true, source: "form" });
-
-    expect(lastEmail()?.htmlBody).toContain(
-      "If it wasn&#39;t you, choose Keep Plus in Zoonk, under Settings › Subscription",
-    );
-
-    await sendPlusCancellationEmail({ ...cancellation, source: "form" });
-    expect(lastEmail()?.htmlBody).toContain("If it wasn&#39;t you, reply to this email.");
-  });
-
   it("offers Keep Plus to a learner who stopped the renewal in Settings", async () => {
     await sendPlusCancellationEmail({ ...cancellation, canKeepPlus: true });
     expect(lastEmail()?.htmlBody).toContain("Changed your mind? Choose Keep Plus in Zoonk");
   });
 
-  it("says nothing about the form for a cancellation from Settings", async () => {
+  it("doesn't offer Keep Plus once Plus can't be kept", async () => {
     await sendPlusCancellationEmail(cancellation);
-
-    expect(lastEmail()?.htmlBody).not.toContain("cancel form");
     expect(lastEmail()?.htmlBody).not.toContain("Keep Plus");
   });
 
@@ -122,5 +112,28 @@ describe(sendPlusCancellationEmail, () => {
 
     expect(lastEmail()?.htmlBody).toContain("refunded the full €9.99");
     expect(lastEmail()?.subject).toBe("Your Zoonk Plus subscription is canceled and refunded");
+  });
+});
+
+describe(sendPlusCancellationRequestEmail, () => {
+  it("tells the account's owner a request arrived, that nothing changes yet, and to reply if it wasn't them", async () => {
+    await sendPlusCancellationRequestEmail({
+      choice: "extraordinary",
+      email: "learner@zoonk.test",
+      locale: "en",
+      name: "Someone",
+      reason: "Moving abroad",
+      receivedAt: new Date("2026-10-31T14:30:00Z"),
+      timeZone: "UTC",
+    });
+
+    const email = lastEmail();
+
+    expect(email?.to).toBe("learner@zoonk.test");
+    expect(email?.htmlBody).toContain("October 31, 2026");
+    expect(email?.htmlBody).toContain("End now for an important reason");
+    expect(email?.htmlBody).toContain("Moving abroad");
+    expect(email?.htmlBody).toContain("before anything changes");
+    expect(email?.htmlBody).toContain("If it wasn&#39;t you, just reply to this email.");
   });
 });

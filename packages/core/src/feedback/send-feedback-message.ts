@@ -4,7 +4,12 @@ import { type FeedbackContext } from "./contract";
 const FEEDBACK_RECIPIENT = "hello@zoonk.com";
 const FEEDBACK_SUBJECT = "Zoonk Feedback";
 
-type SendFeedbackMessageParams = { context: FeedbackContext; email: string; message: string };
+type SendFeedbackMessageParams = {
+  context: FeedbackContext;
+  email: string;
+  message: string;
+  subject?: string;
+};
 
 function formatContext(context: FeedbackContext): string {
   const lines = [
@@ -21,7 +26,7 @@ function formatContext(context: FeedbackContext): string {
 export async function sendFeedbackMessage(params: SendFeedbackMessageParams) {
   return sendEmail({
     replyTo: params.email,
-    subject: FEEDBACK_SUBJECT,
+    subject: params.subject ?? FEEDBACK_SUBJECT,
     textBody: `From: ${params.email}\n\n${params.message}${formatContext(params.context)}`,
     to: FEEDBACK_RECIPIENT,
   });

@@ -1418,19 +1418,19 @@ msgstr "이름과 이메일 주소를 확인한 후 다시 시도해 보세요."
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "dTs6Jp"
-msgid "We received your withdrawal."
+msgctxt "vtYQXZ"
+msgid "We received your withdrawal request."
 msgstr "청약 철회 요청을 접수했어요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "aeHrbi"
-msgid "We received your cancellation."
+msgctxt "iyYNjY"
+msgid "We received your cancellation request."
 msgstr "해지 요청을 접수했어요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "S8L_pb"
-msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr "저희 웹사이트에서 {email} 주소로 Plus를 구독 중이라면 몇 분 안에 해당 주소로 확인 메일이 도착해요. 메일이 안 왔나요? 구독할 때 사용한 주소가 맞는지 확인하거나 hello@zoonk.com에 이메일을 보내 주세요."
+msgctxt "JjecyL"
+msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
+msgstr "Zoonk에 {email}로 가입한 계정이 있으면 몇 분 안에 해당 주소로 접수 확인 메일을 보내드리고, 변경 사항을 적용하기 전에 이메일로 확인을 요청드릴게요. 메일이 오지 않았나요? Zoonk에서 사용하는 이메일 주소가 맞는지 확인하거나 hello@zoonk.com으로 문의해 주세요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"

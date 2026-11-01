@@ -1,14 +1,12 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { logError } from "@zoonk/utils/logger";
 import { after } from "next/server";
 import { type AnalyticsEvent } from "../analytics/events";
 import { trackSystemEvent } from "../analytics/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { getSession } from "../users/get-session";
 import { findContentProvenance } from "./_utils/content-provenance";
+import { saveFeedbackMessage } from "./_utils/save-feedback-message";
 import { type FeedbackContext, type FeedbackMessageInput } from "./contract";
-import { sendFeedbackMessage } from "./send-feedback-message";
 
 async function getStoredContext({
   context,
@@ -35,15 +33,12 @@ export async function submitFeedback({ context = {}, email, message }: FeedbackM
   const session = await getSession();
   const userId = session?.user.id ?? null;
 
-  const feedback = await prisma.feedback.create({
-    data: { context: await getStoredContext({ context, userId }), email, message, userId },
+  const feedback = await saveFeedbackMessage({
+    context: await getStoredContext({ context, userId }),
+    email,
+    message,
+    userId,
   });
-
-  const { error } = await sendFeedbackMessage({ context, email, message });
-
-  if (error) {
-    logError("[submitFeedback] Failed to email feedback:", { error, feedbackId: feedback.id });
-  }
 
   const events: AnalyticsEvent[] = [
     { name: "Feedback Sent", properties: { content_kind: context.contentKind ?? null } },

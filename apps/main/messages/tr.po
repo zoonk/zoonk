@@ -1418,19 +1418,19 @@ msgstr "Adını ve e-posta adresini kontrol edip tekrar dene."
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "dTs6Jp"
-msgid "We received your withdrawal."
-msgstr "Cayma bildirimini aldık."
+msgctxt "vtYQXZ"
+msgid "We received your withdrawal request."
+msgstr "Cayma talebini aldık."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "aeHrbi"
-msgid "We received your cancellation."
-msgstr "İptal bildirimini aldık."
+msgctxt "iyYNjY"
+msgid "We received your cancellation request."
+msgstr "İptal talebini aldık."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "S8L_pb"
-msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr "Web sitemizden {email} adresiyle Plus’a aboneysen onay birkaç dakika içinde bu adrese gelir. E-posta gelmedi mi? Abone olurken bu adresi kullandığından emin ol veya hello@zoonk.com adresine yaz."
+msgctxt "JjecyL"
+msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
+msgstr "{email} adresine kayıtlı bir Zoonk hesabı varsa birkaç dakika içinde bu adrese talebini aldığımızı bildiren bir e-posta gelecek ve herhangi bir değişiklik yapmadan önce e-postayla onayını alacağız. E-posta gelmedi mi? Zoonk’ta kullandığın adresi girdiğinden emin ol veya hello@zoonk.com adresine yaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"

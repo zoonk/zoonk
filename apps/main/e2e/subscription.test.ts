@@ -122,8 +122,19 @@ test.describe("Subscription Page - With Plus Subscription", () => {
   });
 });
 
+/** Knowing an email isn't enough to end its Plus: support confirms with the owner first. */
+async function expectRequestForSupport(userId: string) {
+  await expect(prisma.feedback.findFirst({ where: { userId } })).resolves.toMatchObject({
+    context: { plusCancellation: { choice: "ordinary", userId } },
+  });
+
+  await expect(
+    prisma.subscription.findFirst({ where: { referenceId: userId } }),
+  ).resolves.toMatchObject({ cancelAtPeriodEnd: false, status: "active" });
+}
+
 test.describe("Subscription Page - Cancel Without Logging In", () => {
-  test("cancels a website subscription from its email, for a visitor who isn't logged in", async ({
+  test("passes a visitor's request to support without changing the subscription", async ({
     browser,
   }) => {
     const user = await createWebSubscriber();
@@ -139,11 +150,8 @@ test.describe("Subscription Page - Cancel Without Logging In", () => {
     await page.getByLabel("Email", { exact: true }).fill(user.email);
     await cancel.click();
 
-    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
-
-    await expect
-      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
-      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+    await expect(page.getByRole("status")).toContainText("We received your cancellation request.");
+    await expectRequestForSupport(user.id);
 
     await visitor.close();
   });
@@ -173,11 +181,8 @@ test.describe("Subscription Page - Cancel From France", () => {
     await next.click();
 
     await review.getByRole("button", { exact: true, name: "Notify cancellation" }).click();
-    await expect(page.getByRole("status")).toContainText("We received your cancellation.");
-
-    await expect
-      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
-      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
+    await expect(page.getByRole("status")).toContainText("We received your cancellation request.");
+    await expectRequestForSupport(user.id);
 
     await visitor.close();
   });

@@ -1,7 +1,9 @@
 import "server-only";
 import { isHumanRequest } from "@zoonk/auth/human-check";
-import { sendPlusCancellationEmail } from "@zoonk/auth/plus-emails";
-import { readSubscriptionMetadata } from "@zoonk/auth/stripe-subscription-metadata";
+import {
+  sendPlusCancellationEmail,
+  sendPlusCancellationRequestEmail,
+} from "@zoonk/auth/plus-emails";
 import { prisma } from "@zoonk/db";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
@@ -9,6 +11,8 @@ import { logError } from "@zoonk/utils/logger";
 import { io } from "next/cache";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { saveFeedbackMessage } from "../feedback/_utils/save-feedback-message";
+import { type PlusCancellationRequest } from "../feedback/contract";
 import { getSession } from "../users/get-session";
 import {
   type Learner,
@@ -43,7 +47,6 @@ export type WebPlusCancellationOutcome = CanceledOutcome | { status: "unavailabl
 
 type ReadyCancellation = Extract<WebPlusCancellation, { status: "ready" }>;
 type ChosenOption = { endsAt: Date; owed: number; refundAmount: number };
-type CancellationSource = Parameters<typeof sendPlusCancellationEmail>[0]["source"];
 
 async function getLearner(): Promise<Learner | null> {
   const session = await getSession();
@@ -94,73 +97,66 @@ function getOptions(
 /**
  * The refund goes first, so a failure never leaves Plus ended without it, and a retry finishes what
  * a failed request started. Once Stripe stops Plus, the receipt goes out before our copy of the
- * subscription is saved, which Stripe's webhook writes too. Without an option, Plus is already
- * ending as asked and only the receipt goes out.
+ * subscription is saved, which Stripe's webhook writes too.
  */
 async function applyCancellation({
   cancellation,
-  lateWithdrawal,
   learner,
   locale,
   option,
   receivedAt,
   request,
-  source,
   stripeSubscription,
 }: {
   cancellation: ReadyCancellation;
-  lateWithdrawal: boolean;
   learner: Learner;
   locale: string;
-  option: ChosenOption | null;
+  option: ChosenOption;
   receivedAt: Date;
   request: WebPlusCancellationRequest;
-  source: CancellationSource;
   stripeSubscription: Stripe.Subscription;
 }): Promise<CanceledOutcome> {
-  const endsAt = option?.endsAt ?? cancellation.endingAt ?? receivedAt;
+  const { endsAt } = option;
   const endsNow = endsAt <= receivedAt;
   const refundableUntil = endsNow ? null : (cancellation.withdrawal?.until ?? null);
   const reason = request.choice === "extraordinary" ? (request.reason ?? null) : null;
 
   const refund =
-    option && option.refundAmount > 0
+    option.refundAmount > 0
       ? { amount: option.refundAmount, currency: cancellation.currency }
       : null;
 
-  if (option && refund) {
+  if (refund) {
     await refundLatestPayment({ owed: option.owed, subscription: stripeSubscription });
   }
 
-  const stopped =
-    option &&
-    (await stopSubscription({ endsAt, endsNow, reason, subscription: stripeSubscription }));
+  const stopped = await stopSubscription({
+    endsAt,
+    endsNow,
+    reason,
+    subscription: stripeSubscription,
+  });
 
   await sendPlusCancellationEmail({
-    canKeepPlus: option ? !endsNow && !refund : cancellation.canResumeRenewal,
+    canKeepPlus: !endsNow && !refund,
     choice: request.choice,
     email: learner.email,
     endsAt,
     interval: cancellation.interval,
-    lateWithdrawal,
     locale,
     name: learner.name,
     reason,
     receivedAt,
     refund,
     refundableUntil,
-    source,
+    source: "settings",
     timeZone: cancellation.timeZone,
   });
 
-  if (stopped) {
-    const { error } = await safeAsync(() =>
-      saveStoppedSubscription({ stopped, userId: learner.id }),
-    );
+  const { error } = await safeAsync(() => saveStoppedSubscription({ stopped, userId: learner.id }));
 
-    if (error) {
-      logError("[applyCancellation] Saving the stopped subscription failed:", error);
-    }
+  if (error) {
+    logError("[applyCancellation] Saving the stopped subscription failed:", error);
   }
 
   return { endsAt, receivedAt, refund, refundableUntil, status: "canceled" };
@@ -195,72 +191,49 @@ export async function cancelWebPlus({
 
   return applyCancellation({
     cancellation,
-    lateWithdrawal: false,
     learner,
     locale,
     option,
     receivedAt,
     request,
-    source: "settings",
     stripeSubscription,
   });
 }
 
-async function cancelForDeclaration({
-  email,
-  locale,
-  name,
-  receivedAt,
-  request,
-}: {
-  email: string;
-  locale: string;
-  name: string;
-  receivedAt: Date;
-  request: WebPlusCancellationRequest;
-}): Promise<void> {
-  const user = await prisma.user.findUnique({
-    select: { email: true, id: true },
-    where: { email: email.trim().toLowerCase() },
-  });
+const CHOICE_LABELS: Record<WebPlusCancellationChoice, string> = {
+  extraordinary: "End now for an important reason, refunding the days left",
+  ordinary: "Cancel at the end of the period",
+  withdrawal: "Withdrawal, refunding everything (within 14 days of subscribing)",
+};
 
-  if (!user) {
-    return;
-  }
-
-  const learner = { email: user.email, id: user.id, name };
-  const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: receivedAt });
-
-  if (cancellation.status !== "ready" || !stripeSubscription) {
-    return;
-  }
-
-  const options = getOptions(cancellation, receivedAt);
-
-  // A visitor can't see which choices are open, so a withdrawal after its 14 days, or any choice
-  // on an unpaid renewal, becomes the ordinary cancellation it can still be (BGB § 140). The
-  // receipt is for the account's owner, so it's in the language they subscribed in.
-  await applyCancellation({
-    cancellation,
-    lateWithdrawal: request.choice === "withdrawal" && !options.withdrawal,
-    learner,
-    locale: readSubscriptionMetadata(stripeSubscription.metadata, locale).locale,
-    option: options[request.choice] ?? options.ordinary,
-    receivedAt,
-    request,
-    source: "form",
-    stripeSubscription,
-  });
+function describeRequest(request: PlusCancellationRequest): string {
+  return [
+    `Plus cancellation request from the cancel page, without logging in. Received ${request.receivedAt}: a genuine request counts from then.`,
+    "",
+    `Choice: ${CHOICE_LABELS[request.choice]}`,
+    ...(request.reason ? [`Reason: ${request.reason}`] : []),
+    `Name: ${request.name}`,
+    `Email: ${request.email}`,
+    `Account: ${request.userId ?? "no account has this email"}`,
+    "",
+    "Nothing changed in Stripe. Confirm with the account's owner before acting there.",
+  ].join("\n");
 }
 
 /**
  * The cancel page's form for visitors who aren't logged in (BGB § 312k; EU Consumer Rights
- * Directive art. 11a). Whoever knows an account's email can cancel its website Plus, as the law
- * asks, so the answer is the same whether or not the email matched, and the confirmation goes only
- * to the account's own address. A failure throws so the visitor can send it again, and the retry
- * finishes what the failed one started. Null when the request fails the human check.
+ * Directive art. 11a). Knowing an account's email mustn't be enough to end its Plus, so the form
+ * changes nothing: it reaches support like any message, and support confirms with the account's
+ * owner before acting in Stripe. The account's own address gets the receipt the law asks for, in the
+ * language and time zone of its newest goal, and the answer is the same whether or not the email
+ * matched. Null when the request fails the human check.
  */
-export async function requestWebPlusCancellation(declaration: {
+export async function requestWebPlusCancellation({
+  email,
+  locale,
+  name,
+  request,
+}: {
   email: string;
   locale: string;
   name: string;
@@ -271,7 +244,47 @@ export async function requestWebPlusCancellation(declaration: {
   }
 
   const receivedAt = new Date();
-  await cancelForDeclaration({ ...declaration, receivedAt });
+
+  const user = await prisma.user.findUnique({
+    select: {
+      email: true,
+      goals: { orderBy: { id: "desc" }, select: { language: true, timezone: true }, take: 1 },
+      id: true,
+    },
+    where: { email: email.trim().toLowerCase() },
+  });
+
+  const cancellation: PlusCancellationRequest = {
+    choice: request.choice,
+    email: email.trim(),
+    name,
+    reason: request.choice === "extraordinary" ? (request.reason ?? null) : null,
+    receivedAt: receivedAt.toISOString(),
+    userId: user?.id ?? null,
+  };
+
+  await saveFeedbackMessage({
+    context: { plusCancellation: cancellation },
+    email: cancellation.email,
+    message: describeRequest(cancellation),
+    subject: `Plus cancellation request received ${cancellation.receivedAt.slice(0, 10)}`,
+    userId: cancellation.userId,
+  });
+
+  if (user) {
+    const [goal] = user.goals;
+
+    await sendPlusCancellationRequestEmail({
+      choice: request.choice,
+      email: user.email,
+      locale: goal?.language ?? locale,
+      name,
+      reason: cancellation.reason,
+      receivedAt,
+      timeZone: goal?.timezone ?? null,
+    });
+  }
+
   return { receivedAt };
 }
 

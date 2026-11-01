@@ -1418,19 +1418,19 @@ msgstr "Prüf deinen Namen und deine E-Mail-Adresse und versuch es dann noch ein
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "dTs6Jp"
-msgid "We received your withdrawal."
+msgctxt "vtYQXZ"
+msgid "We received your withdrawal request."
 msgstr "Wir haben deinen Widerruf erhalten."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "aeHrbi"
-msgid "We received your cancellation."
-msgstr "Wir haben deine Kündigung erhalten."
+msgctxt "iyYNjY"
+msgid "We received your cancellation request."
+msgstr "Wir haben deine Kündigungsanfrage erhalten."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "S8L_pb"
-msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr "Wenn du Plus mit {email} über unsere Website abonniert hast, kommt die Bestätigung innerhalb weniger Minuten dort an. Keine E-Mail? Prüf, ob du diese Adresse für dein Abo verwendet hast, oder schreib an hello@zoonk.com."
+msgctxt "JjecyL"
+msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
+msgstr "Wenn {email} zu einem Zoonk-Konto gehört, erhältst du dort innerhalb weniger Minuten eine Eingangsbestätigung. Bevor sich etwas ändert, holen wir deine Bestätigung per E-Mail ein. Keine E-Mail erhalten? Prüf, ob das die Adresse ist, die du für Zoonk nutzt, oder schreib an hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"

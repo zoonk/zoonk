@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { isHumanRequest } from "@zoonk/auth/human-check";
-import { sendPlusCancellationEmail } from "@zoonk/auth/plus-emails";
+import {
+  sendPlusCancellationEmail,
+  sendPlusCancellationRequestEmail,
+} from "@zoonk/auth/plus-emails";
 import { prisma } from "@zoonk/db";
+import { sendEmail } from "@zoonk/mailer";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
@@ -33,7 +38,10 @@ vi.mock("@zoonk/auth/stripe-client", () => ({
   },
 }));
 
-vi.mock("@zoonk/auth/plus-emails", () => ({ sendPlusCancellationEmail: vi.fn() }));
+vi.mock("@zoonk/auth/plus-emails", () => ({
+  sendPlusCancellationEmail: vi.fn(),
+  sendPlusCancellationRequestEmail: vi.fn(),
+}));
 
 // BotID needs Vercel's request context.
 vi.mock("@zoonk/auth/human-check", () => ({ isHumanRequest: vi.fn() }));
@@ -206,7 +214,6 @@ describe("web Plus cancellation", () => {
       expect.objectContaining({
         choice: "withdrawal",
         email: user.email,
-        lateWithdrawal: false,
         locale: "de",
         name: user.name,
         refund: { amount: 999, currency: "eur" },
@@ -505,7 +512,11 @@ describe("web Plus cancellation", () => {
   });
 
   describe("without logging in", () => {
-    it("withdraws by email alone and confirms to the account's own address, in its language", async () => {
+    beforeEach(() => {
+      vi.mocked(sendEmail).mockResolvedValue({ data: Response.json({ ok: true }), error: null });
+    });
+
+    it("passes the request to support and sends the account's own address a receipt, changing nothing", async () => {
       const subscription = stripeSubscription({
         amountPaid: 999,
         interval: "month",
@@ -514,179 +525,100 @@ describe("web Plus cancellation", () => {
       });
 
       const user = await subscribedLearner({ subscription });
+      await goalFixture({ language: "pt", timezone: "America/Sao_Paulo", userId: user.id });
       vi.mocked(getSession).mockResolvedValue(null);
 
       const answer = await requestWebPlusCancellation({
         email: ` ${user.email.toUpperCase()} `,
         locale: "de",
         name: "Erika Mustermann",
-        request: { choice: "withdrawal" },
+        request: { choice: "extraordinary", reason: "Moving abroad" },
       });
 
       expect(answer).toStrictEqual({ receivedAt: expect.any(Date) });
+      const receivedAt = answer?.receivedAt.toISOString();
 
-      expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ amount: 999 }),
-        expect.anything(),
-      );
+      expect(stripe.retrieve).not.toHaveBeenCalled();
+      expect(stripe.cancel).not.toHaveBeenCalled();
+      expect(stripe.refund).not.toHaveBeenCalled();
+      expect(stripe.update).not.toHaveBeenCalled();
 
-      expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          choice: "withdrawal",
-          email: user.email,
-          lateWithdrawal: false,
-          locale: "pt",
-          name: "Erika Mustermann",
-          receivedAt: answer?.receivedAt,
-        }),
-      );
-    });
-
-    it("tells the account's owner the form was used, and that Keep Plus undoes a stopped renewal", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 50,
+      await expect(
+        prisma.feedback.findFirst({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({
+        context: {
+          plusCancellation: {
+            choice: "extraordinary",
+            email: user.email.toUpperCase(),
+            name: "Erika Mustermann",
+            reason: "Moving abroad",
+            receivedAt,
+            userId: user.id,
+          },
+        },
+        message: expect.stringContaining(String(receivedAt)),
+        status: "new",
       });
 
-      const user = await subscribedLearner({ subscription });
+      expect(sendEmail).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          subject: expect.stringContaining("cancel"),
+          textBody: expect.stringContaining(String(receivedAt)),
+          to: "hello@zoonk.com",
+        }),
+      );
 
-      await requestWebPlusCancellation({
+      expect(sendPlusCancellationRequestEmail).toHaveBeenCalledExactlyOnceWith({
+        choice: "extraordinary",
         email: user.email,
-        locale: "en",
-        name: "Someone Else",
-        request: { choice: "ordinary" },
+        locale: "pt",
+        name: "Erika Mustermann",
+        reason: "Moving abroad",
+        receivedAt: answer?.receivedAt,
+        timeZone: "America/Sao_Paulo",
       });
 
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          canKeepPlus: true,
-          email: user.email,
-          source: "form",
-          timeZone: "America/Sao_Paulo",
-        }),
-      );
+      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
     });
 
-    it("answers the same and does nothing for an email without an account", async () => {
+    it("answers the same and only tells support about an email without an account", async () => {
+      const email = `nobody-${randomUUID()}@zoonk.test`;
+
       const answer = await requestWebPlusCancellation({
-        email: `nobody-${randomUUID()}@zoonk.test`,
+        email,
         locale: "en",
         name: "Nobody",
         request: { choice: "withdrawal" },
       });
 
       expect(answer).toStrictEqual({ receivedAt: expect.any(Date) });
+
+      await expect(prisma.feedback.findFirst({ where: { email } })).resolves.toMatchObject({
+        context: { plusCancellation: { choice: "withdrawal", reason: null, userId: null } },
+        userId: null,
+      });
+
+      expect(sendEmail).toHaveBeenCalledOnce();
+      expect(sendPlusCancellationRequestEmail).not.toHaveBeenCalled();
       expect(stripe.retrieve).not.toHaveBeenCalled();
-      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
-    });
-
-    it("takes a withdrawal after its 14 days as stopping the renewal", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 20,
-      });
-
-      const user = await subscribedLearner({ subscription });
-
-      await requestWebPlusCancellation({
-        email: user.email,
-        locale: "en",
-        name: user.name,
-        request: { choice: "withdrawal" },
-      });
-
-      expect(stripe.refund).not.toHaveBeenCalled();
-
-      expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
-        cancel_at_period_end: true,
-      });
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ choice: "withdrawal", lateWithdrawal: true, refund: null }),
-      );
-    });
-
-    it("only confirms a cancellation when the renewal is already stopped", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        cancelAtPeriodEnd: true,
-        interval: "month",
-        periodStartDaysAgo: 20,
-        subscribedDaysAgo: 50,
-      });
-
-      const user = await subscribedLearner({ subscription });
-
-      await requestWebPlusCancellation({
-        email: user.email,
-        locale: "en",
-        name: user.name,
-        request: { choice: "ordinary" },
-      });
-
-      expect(stripe.update).not.toHaveBeenCalled();
-      expect(stripe.cancel).not.toHaveBeenCalled();
-
-      expect(sendPlusCancellationEmail).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          canKeepPlus: true,
-          choice: "ordinary",
-          endsAt: new Date(subscription.items.data[0]!.current_period_end * 1000),
-          refund: null,
-          source: "form",
-        }),
-      );
-    });
-
-    it("fails out loud when Stripe does, so sending it again finishes the job", async () => {
-      const subscription = stripeSubscription({
-        amountPaid: 999,
-        interval: "month",
-        periodStartDaysAgo: 3,
-        subscribedDaysAgo: 3,
-      });
-
-      const user = await subscribedLearner({ subscription });
-
-      const declaration = {
-        email: user.email,
-        locale: "en",
-        name: user.name,
-        request: { choice: "withdrawal" as const },
-      };
-
-      stripe.cancel.mockRejectedValueOnce(new Error("Stripe is down"));
-
-      await expect(requestWebPlusCancellation(declaration)).rejects.toThrow("Stripe is down");
-      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
-
-      stripe.paymentIntent.mockResolvedValue({ latest_charge: { amount_refunded: 999 } });
-      await requestWebPlusCancellation(declaration);
-
-      expect(stripe.refund).toHaveBeenCalledOnce();
-      expect(stripe.cancel).toHaveBeenCalledTimes(2);
-      expect(sendPlusCancellationEmail).toHaveBeenCalledOnce();
     });
 
     it("takes nothing from a request that fails the human check", async () => {
       vi.mocked(isHumanRequest).mockResolvedValue(false);
+      const email = `someone-${randomUUID()}@zoonk.test`;
 
       await expect(
         requestWebPlusCancellation({
-          email: "someone@zoonk.test",
+          email,
           locale: "en",
           name: "Someone",
           request: { choice: "ordinary" },
         }),
       ).resolves.toBeNull();
 
-      expect(sendPlusCancellationEmail).not.toHaveBeenCalled();
+      await expect(prisma.feedback.findFirst({ where: { email } })).resolves.toBeNull();
+      expect(sendEmail).not.toHaveBeenCalled();
+      expect(sendPlusCancellationRequestEmail).not.toHaveBeenCalled();
     });
   });
 

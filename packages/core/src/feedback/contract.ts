@@ -1,5 +1,6 @@
 import { type FeedbackContentKind } from "@zoonk/db";
 import { z } from "zod";
+import { webPlusCancellationRequestSchema } from "../subscriptions/web-plus-cancellation-contract";
 
 const MAX_FEEDBACK_MESSAGE_LENGTH = 5000;
 
@@ -39,6 +40,27 @@ export const feedbackMessageInputSchema = z.object({
   message: z.string().trim().min(1).max(MAX_FEEDBACK_MESSAGE_LENGTH),
 });
 
+/**
+ * A request to cancel website Plus sent from the cancel page without logging in. Support confirms
+ * it with the account's owner and acts in Stripe; a genuine one counts from `receivedAt`. Only core
+ * writes it, never a learner's feedback.
+ */
+export const plusCancellationRequestSchema = z.object({
+  choice: webPlusCancellationRequestSchema.shape.choice,
+  email: z.string(),
+  name: z.string(),
+  reason: z.string().nullable(),
+  receivedAt: z.iso.datetime(),
+  userId: z.uuid().nullable(),
+});
+
 export type FeedbackTarget = Required<Pick<FeedbackContext, "contentId" | "contentKind">>;
 export type FeedbackContext = z.infer<typeof feedbackContextSchema>;
+export type PlusCancellationRequest = z.infer<typeof plusCancellationRequestSchema>;
+
+/** What a message keeps beside the context it was sent with. */
+export type StoredFeedbackContext = FeedbackContext & {
+  plusCancellation?: PlusCancellationRequest;
+  provenance?: Record<string, string | null>;
+};
 export type FeedbackMessageInput = z.infer<typeof feedbackMessageInputSchema>;

@@ -65,9 +65,9 @@ function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
           ? t({
               description:
                 "The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.",
-              message: "We received your withdrawal.",
+              message: "We received your withdrawal request.",
             })
-          : t("We received your cancellation.")}
+          : t("We received your cancellation request.")}
       </p>
 
       <RequestDetails
@@ -80,7 +80,7 @@ function DeclarationReceipt({ receipt }: { receipt: Receipt }) {
 
       <p>
         {t(
-          "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com.",
+          "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com.",
           { email },
         )}
       </p>

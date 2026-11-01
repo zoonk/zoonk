@@ -13,8 +13,8 @@ type Translation = Awaited<ReturnType<typeof getTranslation>>;
 type BillingInterval = "month" | "year";
 type CancellationChoice = "extraordinary" | "ordinary" | "withdrawal";
 
-/** Who asked: the learner in Settings, anyone with the account's email on the cancel form, or deleting the account. */
-type CancellationSource = "accountDeletion" | "form" | "settings";
+/** Who asked: the learner in Settings or by deleting their account. */
+type CancellationSource = "accountDeletion" | "settings";
 
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
@@ -213,34 +213,13 @@ function receivedTemplate({
   }[choice];
 }
 
-/** Someone else may have used the form with the email: undoing it comes first, else a reply. */
-function formNoticeTemplate({
-  canKeepPlus,
-  source,
-  t,
-}: {
-  canKeepPlus: boolean;
-  source: CancellationSource;
-  t: Translation;
-}): string {
-  if (source === "form") {
-    return canKeepPlus ? t.plusCancelFormKeepPlus : t.plusCancelFormNotice;
-  }
-
-  return canKeepPlus ? t.plusKeepPlusHint : "";
-}
-
-/**
- * The receipt of a cancellation or withdrawal, with its date and time (BGB §§ 312k and 356a). One
- * sent because someone used the cancel form, which needs no login, tells the account's owner so.
- */
+/** The receipt of a cancellation or withdrawal, with its date and time (BGB §§ 312k and 356a). */
 export async function sendPlusCancellationEmail({
   canKeepPlus,
   choice,
   email,
   endsAt,
   interval,
-  lateWithdrawal,
   locale,
   name,
   reason,
@@ -256,8 +235,6 @@ export async function sendPlusCancellationEmail({
   email: string;
   endsAt: Date;
   interval: BillingInterval;
-  /** A withdrawal sent after its 14 days, carried out as an ordinary cancellation instead. */
-  lateWithdrawal: boolean;
   locale: string;
   name: string;
   reason: string | null;
@@ -270,19 +247,17 @@ export async function sendPlusCancellationEmail({
   const t = await getTranslation(locale);
   const format = formatters({ locale, timeZone });
   const endsNow = endsAt <= receivedAt;
-  const withdrawn = choice === "withdrawal" && !lateWithdrawal;
+  const withdrawn = choice === "withdrawal";
   const received = receivedTemplate({ choice, source, t });
-  const formNotice = formNoticeTemplate({ canKeepPlus, source, t });
 
   const refundSentence = refund
     ? `${html(refundTemplate({ choice, t, withdrawn }), { amount: format.money(refund) })} ${html(t.plusRefundTiming)}`
     : html(t.plusNoMoreCharges);
 
   const ending = endsNow ? html(t.plusEndedNow) : html(t.plusEndsOn, { date: format.date(endsAt) });
-  const lateNote = lateWithdrawal ? ` ${html(t.plusWithdrawalTooLate)}` : "";
 
   const body = renderEmail([
-    paragraph(`${html(received, { dateTime: format.dateTime(receivedAt) })}${lateNote}`),
+    paragraph(html(received, { dateTime: format.dateTime(receivedAt) })),
     details([
       ...(name ? [[t.plusNameLabel, name] as [string, string]] : []),
       [t.plusAccountLabel, email],
@@ -292,7 +267,7 @@ export async function sendPlusCancellationEmail({
       ...(refund ? [[t.plusRefundLabel, format.money(refund)] as [string, string]] : []),
     ]),
     paragraph(`${ending} ${refundSentence}`),
-    formNotice ? paragraph(html(formNotice)) : "",
+    canKeepPlus ? paragraph(html(t.plusKeepPlusHint)) : "",
     refundableUntil
       ? paragraph(
           html(
@@ -311,4 +286,53 @@ export async function sendPlusCancellationEmail({
     subject: withdrawn ? t.plusWithdrawalSubject : t.plusCancellationSubject,
     to: email,
   });
+}
+
+function choiceName(t: Translation, choice: CancellationChoice): string {
+  return {
+    extraordinary: t.plusChoiceExtraordinary,
+    ordinary: t.plusChoiceOrdinary,
+    withdrawal: t.plusChoiceWithdrawal,
+  }[choice];
+}
+
+/**
+ * The receipt of a request sent from the cancel form without logging in (BGB § 312k), to the
+ * account's own address. Knowing an email isn't enough to end its Plus, so nothing changes until
+ * support confirms with the owner, and a reply reaches support if it wasn't them.
+ */
+export async function sendPlusCancellationRequestEmail({
+  choice,
+  email,
+  locale,
+  name,
+  reason,
+  receivedAt,
+  timeZone,
+}: {
+  choice: CancellationChoice;
+  email: string;
+  locale: string;
+  name: string;
+  reason: string | null;
+  receivedAt: Date;
+  timeZone: string | null;
+}): Promise<void> {
+  const t = await getTranslation(locale);
+  const format = formatters({ locale, timeZone });
+
+  const body = renderEmail([
+    paragraph(html(t.plusRequestReceived, { dateTime: format.dateTime(receivedAt) })),
+    details([
+      [t.plusNameLabel, name],
+      [t.plusAccountLabel, email],
+      [t.plusRequestLabel, choiceName(t, choice)],
+      ...(reason ? [[t.plusReasonLabel, reason] as [string, string]] : []),
+    ]),
+    paragraph(html(t.plusRequestNextStep)),
+    paragraph(html(t.plusRequestNotYou)),
+    legalLinks(t),
+  ]);
+
+  await sendOnce({ body, subject: t.plusRequestSubject, to: email });
 }

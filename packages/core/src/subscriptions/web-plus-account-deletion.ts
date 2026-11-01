@@ -54,7 +54,6 @@ export async function endWebPlusForDeletedAccount({
     email: learner.email,
     endsAt: receivedAt,
     interval: cancellation.interval,
-    lateWithdrawal: false,
     locale: readSubscriptionMetadata(stripeSubscription.metadata).locale,
     name: learner.name,
     reason: null,

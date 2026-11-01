@@ -1,3 +1,7 @@
+import {
+  type PlusCancellationRequest,
+  plusCancellationRequestSchema,
+} from "@zoonk/core/feedback/contract";
 import { FeedbackContentKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
@@ -12,6 +16,7 @@ type FeedbackMessageContext = {
   contentId: string | null;
   contentKind: FeedbackContentKind | null;
   platform: string | null;
+  plusCancellation: PlusCancellationRequest | null;
   provenance: MessageProvenance | null;
   screen: string | null;
   url: string | null;
@@ -51,6 +56,7 @@ export function parseFeedbackMessageContext(context: unknown): FeedbackMessageCo
     contentId: readString(record, "contentId"),
     contentKind: readContentKind(record),
     platform: readString(record, "platform"),
+    plusCancellation: plusCancellationRequestSchema.safeParse(record.plusCancellation).data ?? null,
     provenance: readProvenance(record.provenance),
     screen: readString(record, "screen"),
     url: readString(record, "url"),

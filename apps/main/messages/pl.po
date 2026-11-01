@@ -1418,19 +1418,19 @@ msgstr "Sprawdź imię i nazwisko oraz adres e-mail, a potem spróbuj ponownie."
 
 #. The 14-day withdrawal from the contract with its full refund. Use the legal noun the confirm button uses (EU Consumer Rights Directive): German “Widerruf”, French “rétractation”, Spanish “desistimiento”, Portuguese “retratação”.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "dTs6Jp"
-msgid "We received your withdrawal."
+msgctxt "vtYQXZ"
+msgid "We received your withdrawal request."
 msgstr "Otrzymaliśmy twoje oświadczenie o odstąpieniu od umowy."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "aeHrbi"
-msgid "We received your cancellation."
-msgstr "Otrzymaliśmy twoją rezygnację."
+msgctxt "iyYNjY"
+msgid "We received your cancellation request."
+msgstr "Otrzymaliśmy twoją prośbę o rezygnację z subskrypcji."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
-msgctxt "S8L_pb"
-msgid "If {email} has Plus from our website, the confirmation will arrive there within a few minutes. No email? Check it's the address you subscribed with, or write to hello@zoonk.com."
-msgstr "Jeśli pakiet Plus kupiony na naszej stronie jest powiązany z adresem {email}, potwierdzenie dotrze tam w ciągu kilku minut. Nie ma wiadomości? Sprawdź, czy to adres użyty przy zakupie subskrypcji, lub napisz na hello@zoonk.com."
+msgctxt "JjecyL"
+msgid "If {email} has a Zoonk account, a receipt will arrive there within a few minutes, and we'll confirm with you by email before anything changes. No email? Check it's the address you use for Zoonk, or write to hello@zoonk.com."
+msgstr "Jeśli z adresem {email} jest powiązane konto Zoonk, w ciągu kilku minut wyślemy tam potwierdzenie otrzymania zgłoszenia, a zanim cokolwiek się zmieni, poprosimy cię o potwierdzenie e-mailem. Wiadomość nie dotarła? Sprawdź, czy to adres, którego używasz w Zoonku, lub napisz na hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel/cancel-without-login-form.tsx
 msgctxt "RKaCAK"

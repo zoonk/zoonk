@@ -6,6 +6,14 @@ import { feedbackContentKindLabels } from "../_utils/feedback-labels";
 import { MessageSender } from "./message-sender";
 import { MessageStatusBadge } from "./message-status-badge";
 
+function getAboutLabel(context: ListedFeedbackMessage["context"]): string {
+  if (context.plusCancellation) {
+    return "Plus cancellation";
+  }
+
+  return context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—";
+}
+
 /** Rows show where a message came from, never its text: that stays on the detail page. */
 export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
   const { context } = message;
@@ -30,7 +38,7 @@ export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
         {[context.platform, context.appVersion].filter(Boolean).join(" · ") || "—"}
       </TableCell>
       <TableCell className="text-xs">
-        {context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—"}
+        {getAboutLabel(context)}
       </TableCell>
     </AdminTableRow>
   );
