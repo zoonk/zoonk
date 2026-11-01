@@ -23,6 +23,7 @@ model AnonymousMockAnswer {
   durationMs      Int           @map("duration_ms")
 
   @@index([examBlueprintId, finishedOn])
+  @@index([mockKey], map: "anonymous_mock_answers_mock_key_idx")
   @@map("anonymous_mock_answers")
 }
 
