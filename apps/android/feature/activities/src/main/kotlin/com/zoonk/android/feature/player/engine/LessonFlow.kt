@@ -5,13 +5,21 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
+/** A screen's answer starts over, and with it what the learner did on its canvas. */
+private fun LessonPlayerState.startOver(id: String): Map<String, Int> = rounds + (id to round(id) + 1)
+
+fun LessonPlayerState.round(stepId: String): Int = rounds[stepId] ?: 0
+
 fun LessonPlayerState.enterPosition(
     position: Int,
     now: Long,
 ): LessonPlayerState {
     val id = queue.getOrNull(position)
+    // A screen entered with no answer keeps its round, so a canvas Android restores after closing the app in the background
+    // finds its work.
     return copy(
         answers = answers - id.orEmpty(),
+        rounds = if (id != null && (id in answers || id in results)) startOver(id) else rounds,
         checkFailed = false,
         checkIssue = null,
         phase = LessonPhase.Playing,
@@ -125,9 +133,11 @@ fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     if (!canGoBack || previousId == null) return this
 
     val reviewingPrevious = previousId in results
+    val current = queue.getOrNull(position)
 
     return copy(
-        answers = answers - queue.getOrNull(position).orEmpty(),
+        answers = answers - current.orEmpty(),
+        rounds = current?.let(::startOver) ?: rounds,
         checkFailed = false,
         checkIssue = null,
         notice = null,
@@ -204,7 +214,13 @@ fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
     val before = queue.take(position)
     val rest = queue.drop(position).filterNot(ids::contains)
 
-    return copy(answers = answers - step.id, helped = helped + step.id, queue = before + ids + rest, stepStartedAt = now)
+    return copy(
+        answers = answers - step.id,
+        rounds = startOver(step.id),
+        helped = helped + step.id,
+        queue = before + ids + rest,
+        stepStartedAt = now,
+    )
 }
 
 fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {

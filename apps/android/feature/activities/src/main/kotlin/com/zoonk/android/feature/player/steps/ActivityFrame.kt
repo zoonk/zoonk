@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -100,10 +99,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlin.math.abs
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
@@ -151,9 +147,6 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "unitCircle" to unitCircleRenderer,
     )
 
-private val KeptAnswer: Saver<ActivityAnswer?, String> =
-    Saver(save = { answer -> answer?.let { ApiJson.encodeToString(it) } }, restore = { ApiJson.decodeFromString(it) })
-
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */
 val StepContent.Activity.isPlayable: Boolean
     get() = frame.check !is InteractionCheckValue || frame.template in activityRenderers
@@ -174,18 +167,31 @@ internal fun ActivityView(
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
-    var kept by rememberSaveable(step.id, stateSaver = KeptAnswer) { mutableStateOf<ActivityAnswer?>(null) }
+    val kept = LocalScreenWork.current?.keptAnswer
     val onAnswerChange = { next: ActivityAnswer? ->
         if (!locked) {
-            kept = next
+            kept?.value = next
             actions.select(next?.let(LessonAnswer::Activity))
         }
     }
-    // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
-    LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.let(onAnswerChange) }
-    val shownAnswer = activityAnswer ?: kept.takeIf { result == null }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
-    val check = @Composable { ActivityCheckArea(frame.check, shownAnswer, phase, locked, onAnswerChange) }
+    val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, locked, onAnswerChange) }
+    val props =
+        ActivityProps(
+            content.content,
+            activityAnswer,
+            result?.expected,
+            result?.isCorrect,
+            phase,
+            locked,
+            onAnswerChange,
+            actions.cantListen,
+            actions::setCantListen,
+            content.baseMap,
+        )
+
+    // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
+    if (part.showsTurn) LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.value?.let(onAnswerChange) }
 
     QuestionScene {
         if (part.showsScreen) {
@@ -200,20 +206,7 @@ internal fun ActivityView(
             if (checkFirst) check()
             renderer?.let {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    it.canvas(
-                        ActivityProps(
-                            content.content,
-                            shownAnswer,
-                            result?.expected,
-                            result?.isCorrect,
-                            phase,
-                            locked,
-                            onAnswerChange,
-                            actions.cantListen,
-                            actions::setCantListen,
-                            content.baseMap,
-                        ),
-                    )
+                    ScreenCanvas { it.canvas(props) }
                     if (it.showsData(content.content)) ActivityDataNote(frame)
                 }
             }
@@ -322,19 +315,21 @@ internal fun ExploredActivityCanvas(
     val renderer = activityRenderers[explore.frame.template] ?: return
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        renderer.canvas(
-            ActivityProps(
-                explore.content,
-                answer = null,
-                expected = explore.expected,
-                isCorrect = null,
-                phase = ActivityPhase.Explore,
-                isLocked = false,
-                onAnswerChange = {},
-                cantListen = cantListen,
-                baseMap = explore.baseMap,
-            ),
-        )
+        ScreenCanvas {
+            renderer.canvas(
+                ActivityProps(
+                    explore.content,
+                    answer = null,
+                    expected = explore.expected,
+                    isCorrect = null,
+                    phase = ActivityPhase.Explore,
+                    isLocked = false,
+                    onAnswerChange = {},
+                    cantListen = cantListen,
+                    baseMap = explore.baseMap,
+                ),
+            )
+        }
         if (renderer.showsData(explore.content)) ActivityDataNote(explore.frame)
     }
 }

@@ -99,6 +99,27 @@ class LessonPlayerReducerTest {
         assertEquals(mapOf("quiz" to true), forward.firstVerdicts)
     }
 
+    /** A canvas keeps what the learner did on it for its round: exactly as long as the screen's answer. */
+    @Test
+    fun startsAScreensCanvasWorkOverExactlyWhereItsAnswerStartsOver() {
+        val steps = listOf(explanationStep("intro"), checkStep("quiz"), explanationStep("after"))
+        val atQuiz = play(steps, LessonAction.Continue)
+        assertEquals("entering a screen with nothing to start over", 0, atQuiz.round("quiz"))
+
+        val leftUnanswered = atQuiz.then(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right"))).then(LessonAction.GoBack)
+        assertEquals("Previous away from an unanswered screen", 1, leftUnanswered.round("quiz"))
+
+        val answered = play(steps, LessonAction.Continue, *answerCheck("quiz", false), LessonAction.Continue)
+        assertEquals("Previous onto an answered screen", 0, answered.then(LessonAction.GoBack).round("quiz"))
+
+        val missedComesBack = answered.then(LessonAction.Continue)
+        assertEquals("quiz", missedComesBack.currentId)
+        assertEquals("a missed question coming back", 1, missedComesBack.round("quiz"))
+
+        val explained = play(listOf(checkStep("quiz"), explanationStep("e1")), LessonAction.ExplainFirst)
+        assertEquals("Explain first", 1, explained.round("quiz"))
+    }
+
     @Test
     fun leavesOutTheRestOfTheWritingAndGoesOnFromWhereTheLearnerIs() {
         val steps = listOf(typedAnswerStep("write-1"), explanationStep("tip"), typedAnswerStep("write-2"), summaryStep("end"))

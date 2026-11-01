@@ -44,7 +44,9 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
@@ -98,6 +100,7 @@ import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.isReadStep
+import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.language.PromptAudio
@@ -109,12 +112,14 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
+import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
@@ -266,6 +271,7 @@ fun LessonPlayer(
         }
     val focus = remember { FocusRequester() }
     val primaryFocus = remember { FocusRequester() }
+    val canvasWork = rememberSaveableStateHolder()
     var asking by rememberSaveable { mutableStateOf(false) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
@@ -375,7 +381,22 @@ fun LessonPlayer(
             } else {
                 Segments(screen.segments, state)
                 CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
-                    Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony, offer, touches)
+                    Content(
+                        state,
+                        screen,
+                        ending,
+                        viewModel,
+                        actions,
+                        exits,
+                        navigator,
+                        ownEnd,
+                        language,
+                        buddy,
+                        ceremony,
+                        offer,
+                        touches,
+                        canvasWork,
+                    )
                 }
             }
         }
@@ -500,6 +521,7 @@ private fun Content(
     ceremony: MomentCeremony?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     touches: IntState,
+    canvasWork: SaveableStateHolder,
 ) {
     val run = state.run
 
@@ -533,6 +555,7 @@ private fun Content(
             // "From the lesson" sits in the one column or on the page before the fold, so whether it's open is kept here.
             var recapOpen by rememberSaveable(step.id, state.position) { mutableStateOf(false) }
             val recap = @Composable { LessonRecap(state, screen, recapOpen) { recapOpen = it } }
+            val work = rememberScreenWork(canvasWork, step.id, state.position, state.round(step.id))
 
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {
@@ -545,7 +568,7 @@ private fun Content(
 
             val layoutDirection = LocalLayoutDirection.current
 
-            CompositionLocalProvider(LocalFeedbackReveal provides reveal) {
+            CompositionLocalProvider(LocalFeedbackReveal provides reveal, LocalScreenWork provides work) {
                 BoxWithConstraints(
                     Modifier
                         .fillMaxSize()

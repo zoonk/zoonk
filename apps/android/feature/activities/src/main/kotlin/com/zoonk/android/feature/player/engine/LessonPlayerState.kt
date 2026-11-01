@@ -98,6 +98,8 @@ data class LessonPlayerState(
     val position: Int = 0,
     val phase: LessonPhase = LessonPhase.Playing,
     val answers: Map<String, LessonAnswer> = emptyMap(),
+    /** Moves on wherever a screen's answer starts over, so what the learner did on its canvas lasts exactly as long as the answer. */
+    val rounds: Map<String, Int> = emptyMap(),
     val results: Map<String, StepResult> = emptyMap(),
     val firstVerdicts: Map<String, Boolean> = emptyMap(),
     val checkFailed: Boolean = false,

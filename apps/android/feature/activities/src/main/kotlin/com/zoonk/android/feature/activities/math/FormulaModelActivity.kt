@@ -96,12 +96,12 @@ private fun FormulaModelBoard(
     val fields = content.fields
     val numeric = (content.check as? NumericCheckValue)?.value
     val locale = currentLocale()
-    // A numeric answer keeps only the number, so a model opened with one starts at the check's inputs, which puts the
-    // expected point on the drawn curve (main's `startingModel`).
+    // A checked model with nothing kept starts at the check's inputs, which puts the expected point on the drawn curve
+    // (main's `startingModel`). Before Check it never does: those inputs would read out the expected value.
     val answered =
         numeric
             ?.inputs
-            ?.takeIf { props.answer.numericValue != null }
+            ?.takeIf { props.isChecked }
             .orEmpty()
             .associate { it.name to it.`value` }
     var sliders by rememberSaveable {
