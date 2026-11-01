@@ -136,9 +136,8 @@ async function loadDrillMaterial({
     findTeachingLessonIds({ skillIds, userId }),
   ]);
 
-  const answered = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    select: { itemId: true },
+  const answered = await prisma.attempt.groupBy({
+    by: ["itemId"],
     where: { itemId: { in: items.map((item) => item.id) }, userId },
   });
 

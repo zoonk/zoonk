@@ -49,9 +49,9 @@ export function countFollowUps(userId: string): Promise<number> {
 
 /** Learners whose owed work no run has taken for a while, such as after a start that failed. */
 export async function listLearnersWithOldFollowUps(): Promise<string[]> {
-  const rows = await prisma.followUp.findMany({
-    distinct: ["userId"],
-    select: { userId: true },
+  const rows = await prisma.followUp.groupBy({
+    by: ["userId"],
+    orderBy: { userId: "asc" },
     take: SWEPT_LEARNERS,
     where: { requestedAt: { lt: new Date(Date.now() - OLD_AFTER_MS) } },
   });

@@ -331,9 +331,8 @@ export async function forgetAssumedSkills({
     return;
   }
 
-  const answered = await tx.attempt.findMany({
-    distinct: ["skillId"],
-    select: { skillId: true },
+  const answered = await tx.attempt.groupBy({
+    by: ["skillId"],
     where: { skillId: { in: [...skillIds] }, userId },
   });
 

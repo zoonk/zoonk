@@ -78,9 +78,8 @@ export async function loadWeekSkillIds({
   skillIds: readonly string[];
   userId: string;
 }): Promise<string[]> {
-  const rows = await prisma.attempt.findMany({
-    distinct: ["skillId"],
-    select: { skillId: true },
+  const rows = await prisma.attempt.groupBy({
+    by: ["skillId"],
     where: {
       answeredAt: { gte: new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY) },
       skillId: { in: [...skillIds] },

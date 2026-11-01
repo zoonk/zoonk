@@ -40,9 +40,8 @@ async function getKnownStepIds({
 }): Promise<string[]> {
   const itemIds = steps.flatMap((step) => (step.itemId ? [step.itemId] : []));
 
-  const rightAnswers = await prisma.attempt.findMany({
-    distinct: ["stepId", "itemId"],
-    select: { itemId: true, stepId: true },
+  const rightAnswers = await prisma.attempt.groupBy({
+    by: ["stepId", "itemId"],
     where: {
       OR: [{ stepId: { in: steps.map((step) => step.id) } }, { itemId: { in: itemIds } }],
       answeredAt: { lt: before },

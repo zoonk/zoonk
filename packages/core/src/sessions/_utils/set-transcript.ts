@@ -26,9 +26,8 @@ export async function loadAnsweredTranscript({
   const [row, asked, answers] = await Promise.all([
     prisma.item.findUnique({ include: ITEM_SET_INCLUDE, where: { id: itemId } }),
     prisma.item.count({ where: { id: { in: [...blockItemIds] }, setId } }),
-    prisma.attempt.findMany({
-      distinct: ["itemId"],
-      select: { itemId: true },
+    prisma.attempt.groupBy({
+      by: ["itemId"],
       where: {
         item: { setId },
         itemId: { in: [...blockItemIds] },

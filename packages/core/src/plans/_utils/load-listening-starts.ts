@@ -70,9 +70,8 @@ async function listMissedSkillIds({
   userId: string;
   tx?: TransactionClient;
 }): Promise<Set<string>> {
-  const missed = await tx.attempt.findMany({
-    distinct: ["skillId"],
-    select: { skillId: true },
+  const missed = await tx.attempt.groupBy({
+    by: ["skillId"],
     where: { isCorrect: false, skillId: { in: [...skillIds] }, userId },
   });
 

@@ -49,9 +49,8 @@ export async function loadCheckpointCandidates({
 }): Promise<CheckpointItemCandidate[]> {
   const items = await listCheckpointQuestions({ examBlueprintId, skillIds });
 
-  const seen = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    select: { itemId: true },
+  const seen = await prisma.attempt.groupBy({
+    by: ["itemId"],
     where: { itemId: { in: items.map((item) => item.id) }, userId },
   });
 

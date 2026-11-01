@@ -57,11 +57,7 @@ export async function loadListeningCandidates({
       },
       where: { setId: { in: setIds } },
     }),
-    prisma.attempt.findMany({
-      distinct: ["itemId"],
-      select: { itemId: true },
-      where: { item: { setId: { in: setIds } }, userId },
-    }),
+    prisma.attempt.groupBy({ by: ["itemId"], where: { item: { setId: { in: setIds } }, userId } }),
   ]);
 
   const answered = new Set(answers.map((answer) => answer.itemId));
