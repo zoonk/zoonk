@@ -114,6 +114,7 @@
     <string name="subscription_managed_zoonk">Questo abbonamento è gestito da Zoonk. Contatta l’assistenza se hai bisogno di aiuto per modificarlo o disdirlo.</string>
     <string name="subscription_manage_google">Gestisci su Google Play</string>
     <string name="subscription_contact_support">Contatta l’assistenza</string>
+    <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Disdici Plus</string>
     <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Non siamo riusciti a disdire Plus. Riprova o scrivi a hello@zoonk.com.</string>

@@ -25,6 +25,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -341,6 +342,17 @@ class WebPlusCancellationTest {
         assumeTrue(System.getProperty("zoonk.shots").orEmpty().isNotEmpty())
         RuntimeEnvironment.setFontScale(2f)
         renderStates("font200")
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "pl-w411dp-h891dp-xxhdpi")
+    fun renderPolishDialog() {
+        val folder = System.getProperty("zoonk.shots").orEmpty()
+        assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
+        show()
+        rule.onNodeWithText(rule.activity.getString(R.string.subscription_cancel)).performScrollTo().performClick()
+        capture(folder, "polish-paid-dialog", dialog = true)
     }
 
     private fun renderStates(

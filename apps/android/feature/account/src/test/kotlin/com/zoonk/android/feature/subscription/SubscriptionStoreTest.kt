@@ -26,9 +26,11 @@ import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -37,6 +39,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -486,6 +489,66 @@ class SubscriptionStoreTest {
             assertEquals(2, api.websiteReads)
             shown.cancel()
         }
+
+    @Test
+    fun aCancellationWaitsForItsUpdatedWebsiteState() = runTest { waitForWebsiteRefresh(cancel = true, conflict = false) }
+
+    @Test
+    fun keepingPlusWaitsForItsUpdatedWebsiteState() = runTest { waitForWebsiteRefresh(cancel = false, conflict = false) }
+
+    @Test
+    fun aCancellationConflictWaitsForItsUpdatedWebsiteState() = runTest { waitForWebsiteRefresh(cancel = true, conflict = true) }
+
+    @Test
+    fun aKeepConflictWaitsForItsUpdatedWebsiteState() = runTest { waitForWebsiteRefresh(cancel = false, conflict = true) }
+
+    private suspend fun TestScope.waitForWebsiteRefresh(
+        cancel: Boolean,
+        conflict: Boolean,
+    ) {
+        val (_, store) = store(ana)
+        val before = if (cancel) State.RENEWING else State.ENDING
+        val after = if (cancel) State.ENDING else State.RENEWING
+        api.websiteRead = { StripeSubscriptionCancellation(ENDS, before) }
+        val shown = launch { store.websiteSubscription.shown.collect {} }
+        advanceUntilIdle()
+
+        val refreshed = CompletableDeferred<StripeSubscriptionCancellation>()
+        api.websiteRead = { refreshed.await() }
+        if (conflict) {
+            if (cancel) {
+                api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
+            } else {
+                api.keepAnswer = { throw ApiException(ApiError.Unavailable, "CONFLICT", 409) }
+            }
+        }
+        val mutation = async { if (cancel) store.cancelWebPlus() else store.keepWebPlus() }
+        advanceUntilIdle()
+
+        assertEquals(
+            before,
+            store.websiteSubscription.state.value.value
+                ?.state,
+        )
+        assertEquals(2, api.websiteReads)
+        assertFalse("The action must stay pending until its refreshed state arrives", mutation.isCompleted)
+
+        refreshed.complete(StripeSubscriptionCancellation(ENDS, after))
+        advanceUntilIdle()
+        assertTrue(mutation.isCompleted)
+        if (conflict) {
+            assertEquals(409, (mutation.await() as MutationResult.Failed).status)
+        } else {
+            assertTrue(mutation.await() is MutationResult.Done)
+        }
+        assertEquals(
+            after,
+            store.websiteSubscription.state.value.value
+                ?.state,
+        )
+        assertEquals(2, api.websiteReads)
+        shown.cancel()
+    }
 
     @Test
     fun aGuestHasNoWebsitePlanAndKeepsItsSession() =

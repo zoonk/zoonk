@@ -62,7 +62,6 @@ import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.LocalEventTracker
-import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value

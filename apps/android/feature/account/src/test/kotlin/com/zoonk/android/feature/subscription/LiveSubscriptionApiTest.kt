@@ -66,11 +66,12 @@ class LiveSubscriptionApiTest {
     fun aGuestOrMissingPlanReturnsNotFoundAndAnExpiredSessionIsUnauthorized() =
         runTest {
             for ((code, expected) in listOf(404 to ApiError.NotFound, 401 to ApiError.Unauthorized)) {
+                val errorCode = if (code == 404) "NOT_FOUND" else "UNAUTHORIZED"
                 server.enqueue(
                     MockResponse
                         .Builder()
                         .code(code)
-                        .body("""{"error":{"code":"ERROR","message":"Unavailable"}}""")
+                        .body("""{"error":{"code":"$errorCode","message":"Unavailable"}}""")
                         .build(),
                 )
                 val error =
@@ -82,6 +83,7 @@ class LiveSubscriptionApiTest {
                     }
                 assertEquals(expected, error.error)
                 assertEquals(code, error.status)
+                assertEquals(errorCode, error.code)
             }
         }
 

@@ -183,12 +183,18 @@ class SubscriptionStore(
     suspend fun cancelWebPlus(): MutationResult<StripeSubscriptionCancellationReceipt> =
         cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it) }
-            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) cache.invalidate(SUBSCRIPTION_DOMAINS) }
+            .also { refreshWebsiteSubscription(it) }
 
     suspend fun keepWebPlus(): MutationResult<Unit> =
         cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.keepWebPlus(it) }
-            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) cache.invalidate(SUBSCRIPTION_DOMAINS) }
+            .also { refreshWebsiteSubscription(it) }
+
+    private suspend fun refreshWebsiteSubscription(result: MutationResult<*>) {
+        val conflict = result is MutationResult.Failed && result.status == HTTP_CONFLICT
+        if (conflict) cache.invalidate(SUBSCRIPTION_DOMAINS)
+        if (result is MutationResult.Done || conflict) websiteSubscription.load()
+    }
 
     /**
      * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read

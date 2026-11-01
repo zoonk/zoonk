@@ -114,6 +114,7 @@
     <string name="subscription_managed_zoonk">Bu abonelik Zoonk tarafından yönetiliyor. Değiştirmek veya iptal etmek için yardıma ihtiyacın olursa destek ekibine ulaş.</string>
     <string name="subscription_manage_google">Google Play’de yönet</string>
     <string name="subscription_contact_support">Destek ekibiyle iletişime geç</string>
+    <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Plus’ı iptal et</string>
     <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Plus’ı iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder.</string>

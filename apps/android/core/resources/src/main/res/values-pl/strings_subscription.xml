@@ -29,7 +29,7 @@
   "subscription_benefits_summary": "f3716f932134c8f696e302fdb6ee7e6c05df7fb53dad232471154fefa62c5156",
   "subscription_billed_monthly": "2cc27bfd25212e030918f53a7e84ec51fc962d4b5148bf7199af27d7c2ee95b7",
   "subscription_billing_period": "82cab75dac37e9405e3a756570669c448dbb97d884f738342431cb782ada7d52",
-  "subscription_cancel": "2304d8e22c90ac56a4b68be1bb8268c8b3f5ee9d360f899e526ba4afdf0c5ce9",
+  "subscription_cancel": "f3aea5e9bd7208fe6dc11cee214e4c19dabdfae2b62ad57d774aae785b0f13cc",
   "subscription_cancel_anytime": "247be9e394b8940f5ebb206de45d7a42c58c44a8e955e07703e4333518abe519",
   "subscription_cancel_at_period_end": "abf2f10b6fa6a9f59dfc961e295129e07d84f5f0eb3e69cbaf77d6954ed36362",
   "subscription_cancel_back": "00328fcedebcee743f5aa46d110616427e3bf9f644a9fcc74c937d26e1668360",
@@ -114,7 +114,8 @@
     <string name="subscription_managed_zoonk">Tą subskrypcją zarządza Zoonk. Jeśli potrzebujesz pomocy w jej zmianie lub anulowaniu, skontaktuj się z pomocą techniczną.</string>
     <string name="subscription_manage_google">Zarządzaj w Google Play</string>
     <string name="subscription_contact_support">Skontaktuj się z pomocą</string>
-    <string name="subscription_cancel">Rezygnacja z pakietu Plus</string>
+    <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
+    <string name="subscription_cancel">Zrezygnuj z pakietu Plus</string>
     <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Nie udało się zrezygnować z Plus. Spróbuj ponownie lub napisz na hello@zoonk.com.</string>
     <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->

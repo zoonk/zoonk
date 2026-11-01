@@ -114,6 +114,7 @@
     <string name="subscription_managed_zoonk">이 구독은 Zoonk가 관리해요. 변경하거나 해지하는 데 도움이 필요하면 고객 지원에 문의하세요.</string>
     <string name="subscription_manage_google">Google Play에서 관리하기</string>
     <string name="subscription_contact_support">고객센터 문의</string>
+    <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Plus 해지</string>
     <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Plus를 해지하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>

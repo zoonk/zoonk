@@ -114,6 +114,7 @@
     <string name="subscription_managed_zoonk">Zoonk administra esta suscripción. Contacta a soporte si necesitas ayuda para cambiarla o cancelarla.</string>
     <string name="subscription_manage_google">Administrar en Google Play</string>
     <string name="subscription_contact_support">Contactar a soporte</string>
+    <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Cancelar Plus</string>
     <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">No pudimos cancelar Plus. Inténtalo de nuevo o escribe a contacto@zoonk.com.</string>
