@@ -43,25 +43,21 @@ export const freePlanResponseSchema = z
 
 export const stripeSubscriptionCancellationSchema = z
   .object({
-    canResumeRenewal: z
-      .boolean()
-      .meta({ description: "The renewal is stopped, so DELETE turns it back on (Keep Plus)" }),
-    cancellation: z
-      .object({ endsAt: z.iso.datetime() })
+    periodEnd: z.iso
+      .datetime()
       .nullable()
       .meta({
         description:
-          "Plus ends with its paid period, or immediately for an unpaid renewal. Null when the renewal is already stopped",
+          "When renewing Plus would end if canceled, or when ending Plus ends. Null for an unpaid renewal.",
       }),
-    unpaid: z
-      .boolean()
+    state: z
+      .enum(["renewing", "ending", "unpaid"])
       .meta({
-        description:
-          "The renewal payment failed, so cancellation ends Plus immediately and stops charge retries",
+        description: "Saved website billing state. Unpaid renewals end immediately when canceled.",
       }),
   })
   .meta({ id: "StripeSubscriptionCancellation" });
 
 export const stripeSubscriptionCancellationReceiptSchema = z
-  .object({ endsAt: z.iso.datetime(), receivedAt: z.iso.datetime() })
+  .object({ endsAt: z.iso.datetime() })
   .meta({ id: "StripeSubscriptionCancellationReceipt" });

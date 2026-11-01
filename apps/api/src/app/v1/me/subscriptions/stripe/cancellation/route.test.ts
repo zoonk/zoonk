@@ -2,95 +2,65 @@ import {
   stripeSubscriptionCancellationReceiptSchema,
   stripeSubscriptionCancellationSchema,
 } from "@/lib/openapi/schemas/subscriptions";
-import {
-  cancelWebPlus,
-  getWebPlusCancellation,
-  keepWebPlus,
-} from "@zoonk/core/subscriptions/web-plus-cancellation";
+import { getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
+import { cancelWebPlus, keepWebPlus } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { describe, expect, it, vi } from "vitest";
-import { POST as cancel, DELETE as keep, GET as preview } from "./route";
+import { POST as cancel, DELETE as keep, GET as read } from "./route";
 
 vi.mock("@zoonk/core/subscriptions/web-plus-cancellation", () => ({
   cancelWebPlus: vi.fn(),
-  getWebPlusCancellation: vi.fn(),
   keepWebPlus: vi.fn(),
 }));
 
+vi.mock("@zoonk/core/subscriptions/get-web-plus-subscription", () => ({
+  getWebPlusSubscription: vi.fn(),
+}));
+
 describe("GET /v1/me/subscriptions/stripe/cancellation", () => {
-  it("answers the period end without cancellation choices or payment fields", async () => {
-    vi.mocked(getWebPlusCancellation).mockResolvedValue({
-      canResumeRenewal: false,
-      cancellation: { endsAt: new Date("2026-12-01T00:00:00Z") },
-      status: "ready",
-      unpaid: false,
-    });
+  it.each(["renewing", "ending", "unpaid"] as const)(
+    "returns the saved %s website state",
+    async (state) => {
+      const periodEnd = state === "unpaid" ? null : new Date("2026-12-01T00:00:00Z");
+      vi.mocked(getWebPlusSubscription).mockResolvedValue({ periodEnd, state, status: "ready" });
+      const response = await read();
+      expect(response.status).toBe(200);
 
-    const response = await preview();
-    expect(response.status).toBe(200);
+      expect(
+        stripeSubscriptionCancellationSchema.strict().parse(await response.json()),
+      ).toStrictEqual({ periodEnd: periodEnd?.toISOString() ?? null, state });
+    },
+  );
 
-    expect(
-      stripeSubscriptionCancellationSchema.strict().parse(await response.json()),
-    ).toStrictEqual({
-      canResumeRenewal: false,
-      cancellation: { endsAt: "2026-12-01T00:00:00.000Z" },
-      unpaid: false,
-    });
-  });
-
-  it("reports a stopped renewal", async () => {
-    vi.mocked(getWebPlusCancellation).mockResolvedValue({
-      canResumeRenewal: true,
-      cancellation: null,
-      status: "ready",
-      unpaid: false,
-    });
-
-    const response = await preview();
-
-    await expect(response.json()).resolves.toStrictEqual({
-      canResumeRenewal: true,
-      cancellation: null,
-      unpaid: false,
-    });
-  });
-
-  it("identifies an unpaid renewal so clients can explain immediate cancellation", async () => {
-    vi.mocked(getWebPlusCancellation).mockResolvedValue({
-      canResumeRenewal: false,
-      cancellation: { endsAt: new Date("2026-11-03T10:00:00Z") },
-      status: "ready",
-      unpaid: true,
-    });
-
-    const response = await preview();
-
-    await expect(response.json()).resolves.toStrictEqual({
-      canResumeRenewal: false,
-      cancellation: { endsAt: "2026-11-03T10:00:00.000Z" },
-      unpaid: true,
-    });
-  });
-
-  it("has nothing to cancel for a store subscription", async () => {
-    vi.mocked(getWebPlusCancellation).mockResolvedValue({ provider: "apple", status: "store" });
-    const response = await preview();
-
+  it("has no website state for a store-only subscriber", async () => {
+    vi.mocked(getWebPlusSubscription).mockResolvedValue({ status: "none" });
+    const response = await read();
     expect(response.status).toBe(404);
   });
 
-  it("requires a session", async () => {
-    vi.mocked(getWebPlusCancellation).mockResolvedValue(null);
-    const response = await preview();
+  it("keeps a signed-in guest signed in while reporting no website subscription", async () => {
+    vi.mocked(getWebPlusSubscription).mockResolvedValue({ status: "none" });
+    vi.mocked(cancelWebPlus).mockResolvedValue({ status: "none" });
+    vi.mocked(keepWebPlus).mockResolvedValue({ status: "none" });
+    const readResponse = await read();
+    const cancelResponse = await cancel();
+    const keepResponse = await keep();
 
+    expect([readResponse.status, cancelResponse.status, keepResponse.status]).toStrictEqual([
+      404, 404, 404,
+    ]);
+  });
+
+  it("requires a session", async () => {
+    vi.mocked(getWebPlusSubscription).mockResolvedValue(null);
+    const response = await read();
     expect(response.status).toBe(401);
   });
 });
 
 describe("POST /v1/me/subscriptions/stripe/cancellation", () => {
-  it("cancels without a request body and returns the end and received dates", async () => {
+  it("cancels without a request body and returns the end date", async () => {
     vi.mocked(cancelWebPlus).mockResolvedValue({
       endsAt: new Date("2026-12-01T00:00:00Z"),
-      receivedAt: new Date("2026-11-03T10:00:00Z"),
       status: "canceled",
     });
 
@@ -100,7 +70,7 @@ describe("POST /v1/me/subscriptions/stripe/cancellation", () => {
 
     expect(
       stripeSubscriptionCancellationReceiptSchema.strict().parse(await response.json()),
-    ).toStrictEqual({ endsAt: "2026-12-01T00:00:00.000Z", receivedAt: "2026-11-03T10:00:00.000Z" });
+    ).toStrictEqual({ endsAt: "2026-12-01T00:00:00.000Z" });
   });
 
   it("reports an unavailable subscription or a signed-out learner", async () => {

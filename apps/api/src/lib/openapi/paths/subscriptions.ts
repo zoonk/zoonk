@@ -84,14 +84,18 @@ export const subscriptionPaths = {
   "/me/subscriptions/stripe/cancellation": {
     delete: {
       description:
-        "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the preview's `canResumeRenewal` is true.",
+        "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the saved website state is ending.",
       operationId: "resumeStripeSubscription",
       responses: {
         "204": { description: "Plus renews again" },
         "401": unauthorizedResponse,
+        "404": {
+          ...notFoundResponse,
+          description: "A signed-in guest has no website subscription",
+        },
         "409": {
           ...conflictResponse,
-          description: "Plus isn't set to end with its paid period; read the preview again",
+          description: "Plus isn't set to end with its paid period; read the saved state again",
         },
         "500": internalErrorResponse,
       },
@@ -101,19 +105,22 @@ export const subscriptionPaths = {
     },
     get: {
       description:
-        "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
+        "The saved website subscription, including unpaid renewals and website billing alongside a newer store purchase. Store subscriptions are managed in their store.",
       operationId: "getStripeSubscriptionCancellation",
       responses: {
         "200": {
           content: { "application/json": { schema: stripeSubscriptionCancellationSchema } },
-          description: "What canceling or keeping Plus would do",
+          description: "Saved website subscription state",
         },
         "401": unauthorizedResponse,
-        "404": { ...notFoundResponse, description: "No web subscription left to cancel" },
+        "404": {
+          ...notFoundResponse,
+          description: "No website subscription, including signed-in guests",
+        },
         "500": internalErrorResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Preview canceling a web subscription",
+      summary: "Read a web subscription",
       tags: ["Subscriptions"],
     },
     post: {
@@ -126,9 +133,13 @@ export const subscriptionPaths = {
           description: "Canceled",
         },
         "401": unauthorizedResponse,
+        "404": {
+          ...notFoundResponse,
+          description: "A signed-in guest has no website subscription",
+        },
         "409": {
           ...conflictResponse,
-          description: "No renewing web subscription to cancel; read the preview again",
+          description: "No renewing web subscription to cancel; read the saved state again",
         },
         "500": internalErrorResponse,
       },

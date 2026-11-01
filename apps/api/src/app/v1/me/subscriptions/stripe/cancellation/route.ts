@@ -1,31 +1,25 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import {
-  cancelWebPlus,
-  getWebPlusCancellation,
-  keepWebPlus,
-} from "@zoonk/core/subscriptions/web-plus-cancellation";
+import { getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
+import { cancelWebPlus, keepWebPlus } from "@zoonk/core/subscriptions/web-plus-cancellation";
 import { NextResponse } from "next/server";
 
 const NO_CONTENT = 204;
 
 async function getStripeSubscriptionCancellation() {
-  const cancellation = await getWebPlusCancellation();
+  const subscription = await getWebPlusSubscription();
 
-  if (!cancellation) {
+  if (!subscription) {
     return errors.unauthorized();
   }
 
-  if (cancellation.status !== "ready") {
+  if (subscription.status !== "ready") {
     return errors.notFound("No web subscription left to cancel");
   }
 
   return NextResponse.json({
-    canResumeRenewal: cancellation.canResumeRenewal,
-    cancellation: cancellation.cancellation && {
-      endsAt: cancellation.cancellation.endsAt.toISOString(),
-    },
-    unpaid: cancellation.unpaid,
+    periodEnd: subscription.periodEnd?.toISOString() ?? null,
+    state: subscription.state,
   });
 }
 
@@ -36,14 +30,15 @@ async function cancelStripeSubscription() {
     return errors.unauthorized();
   }
 
+  if (outcome.status === "none") {
+    return errors.notFound("No web subscription left to manage");
+  }
+
   if (outcome.status === "unavailable") {
     return errors.conflict("No renewing web subscription to cancel");
   }
 
-  return NextResponse.json({
-    endsAt: outcome.endsAt.toISOString(),
-    receivedAt: outcome.receivedAt.toISOString(),
-  });
+  return NextResponse.json({ endsAt: outcome.endsAt.toISOString() });
 }
 
 async function resumeStripeSubscription() {
@@ -51,6 +46,10 @@ async function resumeStripeSubscription() {
 
   if (!outcome) {
     return errors.unauthorized();
+  }
+
+  if (outcome.status === "none") {
+    return errors.notFound("No web subscription left to manage");
   }
 
   if (outcome.status === "unavailable") {

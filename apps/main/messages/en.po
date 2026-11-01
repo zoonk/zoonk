@@ -1329,14 +1329,25 @@ msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "Your subscription will end on <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "xWINkR"
+msgid "Current billing period ends on <mono>{date}</mono>."
+msgstr "Current billing period ends on <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "HkeWp4"
+msgid "Your last renewal payment failed."
+msgstr "Your last renewal payment failed."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "Renews on <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "xWINkR"
-msgid "Current billing period ends on <mono>{date}</mono>."
-msgstr "Current billing period ends on <mono>{date}</mono>."
+msgctxt "iwAsxo"
+msgid "Website subscription"
+msgstr "Website subscription"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1432,11 +1443,6 @@ msgstr "Checking with Stripe…"
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "Check again"
-
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-msgctxt "HkeWp4"
-msgid "Your last renewal payment failed."
-msgstr "Your last renewal payment failed."
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"

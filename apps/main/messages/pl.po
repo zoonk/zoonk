@@ -1329,14 +1329,25 @@ msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "Twoja subskrypcja zakończy się <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "xWINkR"
+msgid "Current billing period ends on <mono>{date}</mono>."
+msgstr "Bieżący okres rozliczeniowy kończy się <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "HkeWp4"
+msgid "Your last renewal payment failed."
+msgstr "Nie udało się pobrać ostatniej opłaty za odnowienie."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "Odnowi się <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "xWINkR"
-msgid "Current billing period ends on <mono>{date}</mono>."
-msgstr "Bieżący okres rozliczeniowy kończy się <mono>{date}</mono>."
+msgctxt "iwAsxo"
+msgid "Website subscription"
+msgstr "Subskrypcja na stronie"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1432,11 +1443,6 @@ msgstr "Sprawdzamy status w Stripe…"
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "Sprawdź ponownie"
-
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-msgctxt "HkeWp4"
-msgid "Your last renewal payment failed."
-msgstr "Nie udało się pobrać ostatniej opłaty za odnowienie."
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"

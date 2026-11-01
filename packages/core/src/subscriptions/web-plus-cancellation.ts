@@ -1,37 +1,36 @@
 import "server-only";
 import { stripeClient } from "@zoonk/auth/stripe-client";
-import { io } from "next/cache";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { type WebPlusCancellation, loadCancellation } from "./_utils/load-web-plus-cancellation";
+import { isPendingCancel, loadStripeWebSubscription } from "./_utils/load-web-plus-cancellation";
 import {
   endSubscription,
   isUnpaid,
   resumeSubscription,
   saveStoppedSubscription,
   saveSubscription,
+  toDate,
 } from "@zoonk/auth/stop-web-plus";
+import type Stripe from "stripe";
 
 type WebPlusCancellationOutcome =
-  | { status: "canceled"; endsAt: Date; receivedAt: Date }
-  | { status: "unavailable" };
+  | { status: "canceled"; endsAt: Date }
+  | { status: "unavailable" }
+  | { status: "none" };
 
 async function getLearner() {
   const session = await getSession();
-  return session && !session.user.isAnonymous ? session.user : null;
+  return session?.user ?? null;
 }
 
-export async function getWebPlusCancellation(): Promise<WebPlusCancellation | null> {
-  const learner = await getLearner();
-
-  if (!learner) {
-    return null;
+function getCancellationEnd(subscription: Stripe.Subscription): Date | null {
+  if (isUnpaid(subscription)) {
+    return new Date();
   }
 
-  await io();
-  const { cancellation } = await loadCancellation({ learner, now: new Date() });
-  return cancellation;
+  const item = subscription.items.data[0];
+  return item && !isPendingCancel(subscription) ? toDate(item.current_period_end) : null;
 }
 
 export async function cancelWebPlus(): Promise<WebPlusCancellationOutcome | null> {
@@ -41,41 +40,44 @@ export async function cancelWebPlus(): Promise<WebPlusCancellationOutcome | null
     return null;
   }
 
-  const receivedAt = new Date();
-  const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: receivedAt });
+  if (learner.isAnonymous) {
+    return { status: "none" };
+  }
 
-  if (cancellation.status !== "ready" || !cancellation.cancellation || !stripeSubscription) {
+  const subscription = await loadStripeWebSubscription(learner.id);
+  const endsAt = subscription && getCancellationEnd(subscription);
+
+  if (!subscription || !endsAt) {
     return { status: "unavailable" };
   }
 
-  const unpaid = isUnpaid(stripeSubscription);
-
-  const stopped = unpaid
-    ? await endSubscription(stripeSubscription)
-    : await stripeClient.subscriptions.update(stripeSubscription.id, {
-        cancel_at_period_end: true,
-      });
+  const stopped = isUnpaid(subscription)
+    ? await endSubscription(subscription)
+    : await stripeClient.subscriptions.update(subscription.id, { cancel_at_period_end: true });
 
   await saveStoppedSubscription({ stopped, userId: learner.id });
   revalidateCacheTags([getUserSubscriptionCacheTag(learner.id)]);
-
-  return { endsAt: cancellation.cancellation.endsAt, receivedAt, status: "canceled" };
+  return { endsAt, status: "canceled" };
 }
 
-export async function keepWebPlus(): Promise<{ status: "kept" | "unavailable" } | null> {
+export async function keepWebPlus(): Promise<{ status: "kept" | "unavailable" | "none" } | null> {
   const learner = await getLearner();
 
   if (!learner) {
     return null;
   }
 
-  const { cancellation, stripeSubscription } = await loadCancellation({ learner, now: new Date() });
+  if (learner.isAnonymous) {
+    return { status: "none" };
+  }
 
-  if (cancellation.status !== "ready" || !cancellation.canResumeRenewal || !stripeSubscription) {
+  const subscription = await loadStripeWebSubscription(learner.id);
+
+  if (!subscription || isUnpaid(subscription) || !isPendingCancel(subscription)) {
     return { status: "unavailable" };
   }
 
-  const resumed = await resumeSubscription(stripeSubscription);
+  const resumed = await resumeSubscription(subscription);
   await saveSubscription(resumed);
   revalidateCacheTags([getUserSubscriptionCacheTag(learner.id)]);
   return { status: "kept" };

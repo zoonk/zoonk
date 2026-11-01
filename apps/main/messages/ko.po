@@ -1329,14 +1329,25 @@ msgid "Your subscription will end on <mono>{date}</mono>."
 msgstr "<mono>{date}</mono>에 구독이 종료돼요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "xWINkR"
+msgid "Current billing period ends on <mono>{date}</mono>."
+msgstr "현재 결제 기간은 <mono>{date}</mono>에 끝나요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "HkeWp4"
+msgid "Your last renewal payment failed."
+msgstr "최근 갱신 결제에 실패했어요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "<mono>{date}</mono>에 갱신돼요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "xWINkR"
-msgid "Current billing period ends on <mono>{date}</mono>."
-msgstr "현재 결제 기간은 <mono>{date}</mono>에 끝나요."
+msgctxt "iwAsxo"
+msgid "Website subscription"
+msgstr "웹사이트 구독"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -1432,11 +1443,6 @@ msgstr "Stripe에 확인하고 있어요…"
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "다시 확인하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-msgctxt "HkeWp4"
-msgid "Your last renewal payment failed."
-msgstr "최근 갱신 결제에 실패했어요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"

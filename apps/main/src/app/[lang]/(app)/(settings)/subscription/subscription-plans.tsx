@@ -4,7 +4,7 @@ import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plu
 import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
 import { getRequestBillingCurrency } from "@/data/subscriptions/get-request-billing-currency";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
-import { getWebPlusCancellation } from "@zoonk/core/subscriptions/web-plus-cancellation";
+import { getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
 import { getSession } from "@zoonk/core/users/session";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
@@ -29,10 +29,11 @@ export async function SubscriptionPlans({
 }) {
   const t = await getExtracted();
 
-  const [query, session, subscription, prices, allowance] = await Promise.all([
+  const [query, session, subscription, webSubscription, prices, allowance] = await Promise.all([
     searchParams,
     getSession(),
     getCurrentPlusSubscription(),
+    getWebPlusSubscription(),
     getRequestBillingCurrency().then((currency) => getPlusPrices(currency)),
     getAllowance(),
   ]);
@@ -43,7 +44,7 @@ export async function SubscriptionPlans({
     return (
       <>
         <StripeCheckoutReturn stripeCheckoutCompleted={stripeCheckoutCompleted} />
-        <CurrentPlan subscription={subscription} />
+        <CurrentPlan subscription={subscription} webSubscription={webSubscription} />
       </>
     );
   }
@@ -56,9 +57,7 @@ export async function SubscriptionPlans({
     return <StripeCheckoutConfirming />;
   }
 
-  const cancellation = hasAccount ? await getWebPlusCancellation() : null;
-
-  if (cancellation?.status === "ready" && cancellation.unpaid) {
+  if (webSubscription?.status === "ready" && webSubscription.state === "unpaid") {
     return (
       <Page className="max-w-form">
         <PageHeader>

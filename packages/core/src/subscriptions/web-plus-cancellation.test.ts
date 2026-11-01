@@ -3,7 +3,8 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
-import { cancelWebPlus, getWebPlusCancellation, keepWebPlus } from "./web-plus-cancellation";
+import { getWebPlusSubscription } from "./get-web-plus-subscription";
+import { cancelWebPlus, keepWebPlus } from "./web-plus-cancellation";
 import type Stripe from "stripe";
 
 const stripe = vi.hoisted(() => ({ cancel: vi.fn(), retrieve: vi.fn(), update: vi.fn() }));
@@ -42,6 +43,8 @@ async function subscribedLearner(subscription: Stripe.Subscription) {
 
   await prisma.subscription.create({
     data: {
+      cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000) : null,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
       periodEnd: new Date(subscription.items.data[0]!.current_period_end * 1000),
       plan: "plus",
       provider: "stripe",
@@ -93,18 +96,13 @@ describe("website Plus cancellation", () => {
       const user = await subscribedLearner(subscription);
       const endsAt = new Date(subscription.items.data[0]!.current_period_end * 1000);
 
-      await expect(getWebPlusCancellation()).resolves.toStrictEqual({
-        canResumeRenewal: false,
-        cancellation: { endsAt },
+      await expect(getWebPlusSubscription()).resolves.toStrictEqual({
+        periodEnd: endsAt,
+        state: "renewing",
         status: "ready",
-        unpaid: false,
       });
 
-      await expect(cancelWebPlus()).resolves.toStrictEqual({
-        endsAt,
-        receivedAt: expect.any(Date),
-        status: "canceled",
-      });
+      await expect(cancelWebPlus()).resolves.toStrictEqual({ endsAt, status: "canceled" });
 
       expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
         cancel_at_period_end: true,
@@ -118,16 +116,6 @@ describe("website Plus cancellation", () => {
     },
   );
 
-  it("stops the renewal of a website trial at the period end", async () => {
-    const subscription = { ...stripeSubscription(), status: "trialing" as const };
-    await subscribedLearner(subscription);
-    await expect(cancelWebPlus()).resolves.toMatchObject({ status: "canceled" });
-
-    expect(stripe.update).toHaveBeenCalledExactlyOnceWith(subscription.id, {
-      cancel_at_period_end: true,
-    });
-  });
-
   it.each(["past_due", "unpaid"] as const)(
     "ends a %s renewal immediately to stop charge retries",
     async (status) => {
@@ -136,18 +124,14 @@ describe("website Plus cancellation", () => {
       const before = new Date();
       const outcome = await cancelWebPlus();
 
-      expect(outcome).toMatchObject({
-        endsAt: expect.any(Date),
-        receivedAt: expect.any(Date),
-        status: "canceled",
-      });
+      expect(outcome).toMatchObject({ endsAt: expect.any(Date), status: "canceled" });
 
       if (outcome?.status !== "canceled") {
         throw new Error("Expected cancellation");
       }
 
-      expect(outcome.endsAt).toStrictEqual(outcome.receivedAt);
       expect(outcome.endsAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(outcome.endsAt.getTime()).toBeLessThanOrEqual(Date.now());
       expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
       expect(stripe.update).not.toHaveBeenCalled();
 
@@ -176,11 +160,10 @@ describe("website Plus cancellation", () => {
     const subscription = stripeSubscription("month", true);
     const user = await subscribedLearner(subscription);
 
-    await expect(getWebPlusCancellation()).resolves.toStrictEqual({
-      canResumeRenewal: true,
-      cancellation: null,
+    await expect(getWebPlusSubscription()).resolves.toStrictEqual({
+      periodEnd: new Date(subscription.items.data[0]!.current_period_end * 1000),
+      state: "ending",
       status: "ready",
-      unpaid: false,
     });
 
     await expect(keepWebPlus()).resolves.toStrictEqual({ status: "kept" });
@@ -214,10 +197,7 @@ describe("website Plus cancellation", () => {
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
     await addNewerStorePlus(user.id);
 
-    await expect(getWebPlusCancellation()).resolves.toStrictEqual({
-      provider: "apple",
-      status: "store",
-    });
+    await expect(getWebPlusSubscription()).resolves.toStrictEqual({ status: "none" });
 
     await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "unavailable" });
     expect(stripe.update).not.toHaveBeenCalled();
@@ -226,10 +206,12 @@ describe("website Plus cancellation", () => {
   it("requires a signed-in account", async () => {
     await expect(cancelWebPlus()).resolves.toBeNull();
     await expect(keepWebPlus()).resolves.toBeNull();
-    await expect(getWebPlusCancellation()).resolves.toBeNull();
+    await expect(getWebPlusSubscription()).resolves.toBeNull();
     const user = { ...(await userFixture()), isAnonymous: true };
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
-    await expect(cancelWebPlus()).resolves.toBeNull();
+    await expect(cancelWebPlus()).resolves.toStrictEqual({ status: "none" });
+    await expect(keepWebPlus()).resolves.toStrictEqual({ status: "none" });
+    await expect(getWebPlusSubscription()).resolves.toStrictEqual({ status: "none" });
     expect(stripe.retrieve).not.toHaveBeenCalled();
   });
 

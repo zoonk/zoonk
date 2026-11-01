@@ -13,8 +13,8 @@ export function toDate(seconds: number): Date {
   return new Date(seconds * 1000);
 }
 
-export function isUnpaid(subscription: Stripe.Subscription): boolean {
-  return UNPAID_STATUSES.includes(subscription.status);
+export function isUnpaid(subscription: { status: string | null }): boolean {
+  return subscription.status !== null && UNPAID_STATUSES.includes(subscription.status);
 }
 
 export function getLatestInvoice(subscription: Stripe.Subscription): Stripe.Invoice | null {

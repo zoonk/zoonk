@@ -14,5 +14,5 @@ export async function keepPlusAction(): Promise<KeepPlusResult> {
     return "failed";
   }
 
-  return data?.status ?? "unavailable";
+  return data?.status === "none" ? "unavailable" : (data?.status ?? "unavailable");
 }

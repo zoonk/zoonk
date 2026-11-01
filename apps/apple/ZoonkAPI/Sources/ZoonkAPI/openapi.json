@@ -12200,7 +12200,7 @@
     },
     "/me/subscriptions/stripe/cancellation": {
       "delete": {
-        "description": "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the preview's `canResumeRenewal` is true.",
+        "description": "Keep Plus: turns a stopped renewal back on, so Plus renews as before. Only while the saved website state is ending.",
         "operationId": "resumeStripeSubscription",
         "security": [
           {
@@ -12228,8 +12228,18 @@
               }
             }
           },
+          "404": {
+            "description": "A signed-in guest has no website subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "409": {
-            "description": "Plus isn't set to end with its paid period; read the preview again",
+            "description": "Plus isn't set to end with its paid period; read the saved state again",
             "content": {
               "application/json": {
                 "schema": {
@@ -12251,7 +12261,7 @@
         }
       },
       "get": {
-        "description": "For Plus bought on the web: what canceling would do. Store subscriptions are canceled in their store.",
+        "description": "The saved website subscription, including unpaid renewals and website billing alongside a newer store purchase. Store subscriptions are managed in their store.",
         "operationId": "getStripeSubscriptionCancellation",
         "security": [
           {
@@ -12261,13 +12271,13 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Preview canceling a web subscription",
+        "summary": "Read a web subscription",
         "tags": [
           "Subscriptions"
         ],
         "responses": {
           "200": {
-            "description": "What canceling or keeping Plus would do",
+            "description": "Saved website subscription state",
             "content": {
               "application/json": {
                 "schema": {
@@ -12287,7 +12297,7 @@
             }
           },
           "404": {
-            "description": "No web subscription left to cancel",
+            "description": "No website subscription, including signed-in guests",
             "content": {
               "application/json": {
                 "schema": {
@@ -12344,8 +12354,18 @@
               }
             }
           },
+          "404": {
+            "description": "A signed-in guest has no website subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "409": {
-            "description": "No renewing web subscription to cancel; read the preview again",
+            "description": "No renewing web subscription to cancel; read the saved state again",
             "content": {
               "application/json": {
                 "schema": {
@@ -73437,35 +73457,26 @@
       "StripeSubscriptionCancellation": {
         "type": "object",
         "properties": {
-          "canResumeRenewal": {
-            "type": "boolean",
-            "description": "The renewal is stopped, so DELETE turns it back on (Keep Plus)"
-          },
-          "cancellation": {
+          "periodEnd": {
             "nullable": true,
-            "description": "Plus ends with its paid period, or immediately for an unpaid renewal. Null when the renewal is already stopped",
-            "type": "object",
-            "properties": {
-              "endsAt": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-              }
-            },
-            "required": [
-              "endsAt"
-            ],
-            "additionalProperties": false
+            "description": "When renewing Plus would end if canceled, or when ending Plus ends. Null for an unpaid renewal.",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
-          "unpaid": {
-            "type": "boolean",
-            "description": "The renewal payment failed, so cancellation ends Plus immediately and stops charge retries"
+          "state": {
+            "type": "string",
+            "enum": [
+              "renewing",
+              "ending",
+              "unpaid"
+            ],
+            "description": "Saved website billing state. Unpaid renewals end immediately when canceled."
           }
         },
         "required": [
-          "canResumeRenewal",
-          "cancellation",
-          "unpaid"
+          "periodEnd",
+          "state"
         ],
         "additionalProperties": false
       },
@@ -73476,16 +73487,10 @@
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "receivedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           }
         },
         "required": [
-          "endsAt",
-          "receivedAt"
+          "endsAt"
         ],
         "additionalProperties": false
       },
