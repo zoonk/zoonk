@@ -4825,6 +4825,12 @@ msgctxt "r9koty"
 msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
 msgstr "{count, plural, =0 {# Tage} one {# Tag} other {# Tage}}"
 
+#. Link to the seller disclosure that Japan's Act on Specified Commercial Transactions requires; the page it opens is in Japanese. In Japanese it must read exactly “特定商取引法に基づく表記”. Elsewhere, name the page and say it's for Japan.
+#: src/components/public/commercial-disclosure-link.tsx
+msgctxt "Vd87M0"
+msgid "Commercial disclosure (Japan)"
+msgstr "Gesetzliche Anbieterangaben (Japan)"
+
 #: src/components/public/course-start-failure.tsx
 msgctxt "xANHtD"
 msgid "See Plus"

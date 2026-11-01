@@ -1,12 +1,16 @@
 import { Link } from "@/i18n/navigation";
+import { getExtracted } from "next-intl/server";
 
-/** Japan's statutory name for the page, which a buyer there looks for whatever the site's language. */
-export const COMMERCIAL_DISCLOSURE_TITLE = "特定商取引法に基づく表記";
+export async function CommercialDisclosureLink({ className }: { className?: string }) {
+  const t = await getExtracted();
 
-export function CommercialDisclosureLink({ className }: { className?: string }) {
   return (
-    <Link className={className} href="/commercial-disclosure" hrefLang="ja" lang="ja">
-      {COMMERCIAL_DISCLOSURE_TITLE}
+    <Link className={className} href="/commercial-disclosure" hrefLang="ja">
+      {t({
+        description:
+          "Link to the seller disclosure that Japan's Act on Specified Commercial Transactions requires; the page it opens is in Japanese. In Japanese it must read exactly “特定商取引法に基づく表記”. Elsewhere, name the page and say it's for Japan.",
+        message: "Commercial disclosure (Japan)",
+      })}
     </Link>
   );
 }
