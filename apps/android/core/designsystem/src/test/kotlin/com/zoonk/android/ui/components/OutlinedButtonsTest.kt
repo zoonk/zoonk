@@ -50,8 +50,9 @@ class OutlinedButtonsTest {
 
     private val looks = listOf(false, true).flatMap { dark -> listOf(false, true).map { Look(dark, it) } }
 
+    /** One capture pass: in Robolectric a second test's capture in this class read a half-drawn window. */
     @Test
-    fun anOutlinedButtonHasTheInputOutlineAndAnInkLabelInEveryLook() {
+    fun anOutlinedButtonHasTheInputOutlineAndAnInkLabelAndItsDisabledBorderIsTheOutlineDimmedToHalfInEveryLook() {
         val roles = mutableMapOf<Look, Roles>()
 
         compose.setContent {
@@ -61,7 +62,12 @@ class OutlinedButtonsTest {
                         val scheme = MaterialTheme.colorScheme
                         roles[look] = Roles(scheme.background, scheme.outline, scheme.outlineVariant, scheme.onSurface)
                         Surface {
-                            OutlinedButton(onClick = {}, modifier = Modifier.padding(8.dp).testTag("$look")) { Text("Not now") }
+                            Column {
+                                OutlinedButton(onClick = {}, modifier = Modifier.padding(8.dp).testTag("$look")) { Text("Not now") }
+                                OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.padding(8.dp).testTag("off $look")) {
+                                    Text("Not now")
+                                }
+                            }
                         }
                     }
                 }
@@ -71,7 +77,7 @@ class OutlinedButtonsTest {
         looks.forEach { look ->
             val role = roles.getValue(look)
             val pixels = compose.onNodeWithTag("$look").captureToImage().toPixelMap()
-            val border = (0 until 4).map { pixels[pixels.width / 2, it] }.maxBy { distance(it, role.background) }
+            val border = border(pixels, role.background)
 
             assertTrue(
                 "$look draws its border $border, not outline ${role.outline} (outlineVariant is ${role.outlineVariant})",
@@ -80,35 +86,9 @@ class OutlinedButtonsTest {
 
             val label = (0 until pixels.width).map { pixels[it, pixels.height / 2] }.maxBy { distance(it, role.background) }
             assertTrue("$look writes its label in $label, not onSurface ${role.onSurface}", distance(label, role.onSurface) < BLENDED)
-        }
-    }
 
-    @Test
-    fun aDisabledOutlinedButtonsBorderIsTheOutlineDimmedToHalfInEveryLook() {
-        val backgrounds = mutableMapOf<Look, Color>()
-        val outlines = mutableMapOf<Look, Color>()
-
-        compose.setContent {
-            Column {
-                looks.forEach { look ->
-                    ZoonkTheme(darkTheme = look.dark, moreContrast = look.moreContrast) {
-                        backgrounds[look] = MaterialTheme.colorScheme.background
-                        outlines[look] = MaterialTheme.colorScheme.outline
-                        Surface {
-                            OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.padding(8.dp).testTag("off $look")) {
-                                Text("Not now")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        looks.forEach { look ->
-            val background = backgrounds.getValue(look)
-            val dimmed = outlines.getValue(look).copy(alpha = 0.5f).compositeOver(background)
-            val off = border(compose.onNodeWithTag("off $look").captureToImage().toPixelMap(), background)
-
+            val dimmed = role.outline.copy(alpha = 0.5f).compositeOver(role.background)
+            val off = border(compose.onNodeWithTag("off $look").captureToImage().toPixelMap(), role.background)
             assertTrue("$look draws a disabled border $off, not the dimmed outline $dimmed", distance(off, dimmed) < BLENDED)
         }
     }
