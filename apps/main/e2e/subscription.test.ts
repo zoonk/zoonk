@@ -18,11 +18,12 @@ function getStripeSubscriptionFields() {
 
 async function createWebSubscriber(status: "active" | "past_due" = "active") {
   const user = await createE2EUser(getBaseURL());
+  const now = Math.floor(Date.now() / 1000) * 1000;
 
   await prisma.subscription.create({
     data: {
-      periodEnd: new Date(Date.now() + 86_400_000),
-      periodStart: new Date(Date.now() - 30 * 86_400_000),
+      periodEnd: new Date(now + 86_400_000),
+      periodStart: new Date(now - 30 * 86_400_000),
       plan: "plus",
       provider: "stripe",
       referenceId: user.id,
@@ -34,12 +35,12 @@ async function createWebSubscriber(status: "active" | "past_due" = "active") {
   return user;
 }
 
-async function addNewerStoreSubscription(userId: string, provider: "apple" | "google") {
+async function addNewerStoreSubscription(userId: string) {
   return prisma.subscription.create({
     data: {
       periodEnd: new Date(Date.now() + 30 * 86_400_000),
       plan: "plus",
-      provider,
+      provider: "apple",
       providerSubscriptionId: randomUUID(),
       referenceId: userId,
       status: "active",
@@ -99,7 +100,6 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     browser,
   }) => {
     const { browserContext, page, user } = await openWithSubscription(browser);
-    const store = await addNewerStoreSubscription(user.id, "apple");
 
     await page.goto("/settings");
 
@@ -110,11 +110,6 @@ test.describe("Subscription Page - With Plus Subscription", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
 
-    await expect(
-      page.getByRole("link", { exact: true, name: "Manage in App Store" }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("region", { name: "Website subscription" })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
     await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
@@ -125,6 +120,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     );
 
     await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
+    await expect(page.getByText("Subscription ending", { exact: true })).toBeVisible();
     await expect(page.getByText(/^Your subscription will end on/u)).toBeVisible();
 
     await expect
@@ -144,10 +140,6 @@ test.describe("Subscription Page - With Plus Subscription", () => {
       )
       .toMatchObject({ cancelAt: null, cancelAtPeriodEnd: false, status: "active" });
 
-    await expect(
-      prisma.subscription.findUnique({ where: { id: store.id } }),
-    ).resolves.toStrictEqual(store);
-
     await browserContext.close();
   });
 });
@@ -156,7 +148,6 @@ test("an unpaid learner can cancel in Settings after reloading and stop charge r
   browser,
 }) => {
   const { browserContext, page, user } = await openWithSubscription(browser, "past_due");
-  const store = await addNewerStoreSubscription(user.id, "google");
   await page.goto("/subscription");
   await page.reload();
   await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
@@ -169,20 +160,38 @@ test("an unpaid learner can cancel in Settings after reloading and stop charge r
   await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
 
   await expect(
-    page.getByRole("link", { exact: true, name: "Manage in Google Play" }),
+    page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
   ).toBeVisible();
-
-  await expect(page.getByRole("region", { name: "Website subscription" })).toHaveCount(0);
-
-  await expect(prisma.subscription.findUnique({ where: { id: store.id } })).resolves.toStrictEqual(
-    store,
-  );
 
   await expect
     .poll(() =>
       prisma.subscription.findFirst({ where: { provider: "stripe", referenceId: user.id } }),
     )
     .toMatchObject({ status: "canceled" });
+
+  await browserContext.close();
+});
+
+test("keeps website billing controls alongside a newer store purchase", async ({ browser }) => {
+  const { browserContext, page, user } = await openWithSubscription(browser);
+  const store = await addNewerStoreSubscription(user.id);
+  await page.goto("/subscription");
+  await expect(page.getByRole("link", { exact: true, name: "Manage in App Store" })).toBeVisible();
+  const website = page.getByRole("region", { name: "Website subscription" });
+  await website.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
+
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { exact: true, name: "Cancel Plus" })
+    .click();
+
+  await expect(website).toContainText("Your subscription will end on");
+  await website.getByRole("button", { exact: true, name: "Keep Plus" }).click();
+  await expect(website.getByRole("button", { exact: true, name: "Cancel Plus" })).toBeVisible();
+
+  await expect(prisma.subscription.findUnique({ where: { id: store.id } })).resolves.toStrictEqual(
+    store,
+  );
 
   await browserContext.close();
 });

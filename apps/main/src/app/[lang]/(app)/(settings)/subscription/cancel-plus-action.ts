@@ -14,5 +14,5 @@ export async function cancelPlusAction(): Promise<CancelPlusResult> {
     return "failed";
   }
 
-  return data?.status === "none" ? "unavailable" : (data?.status ?? "unavailable");
+  return data?.status === "canceled" ? "canceled" : "unavailable";
 }
