@@ -99,30 +99,59 @@ class LessonPlayerReducerTest {
         assertEquals(mapOf("quiz" to true), forward.firstVerdicts)
     }
 
-    /** A canvas keeps what the learner did on it for its round: exactly as long as the screen's answer. */
+    /** Going back is looking, not undoing: Previous and Explain first keep a screen's answer, revealed steps and round. */
     @Test
-    fun startsAScreensCanvasWorkOverExactlyWhereItsAnswerStartsOver() {
+    fun previousAndExplainFirstKeepTheScreenAsTheLearnerLeftIt() {
         val steps = listOf(explanationStep("intro"), checkStep("quiz"), explanationStep("after"))
-        val atQuiz = play(steps, LessonAction.Continue)
-        assertEquals("entering a screen with nothing to start over", 0, atQuiz.round("quiz"))
-
-        val leftUnanswered = atQuiz.then(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right"))).then(LessonAction.GoBack)
-        assertEquals("Previous away from an unanswered screen", 1, leftUnanswered.round("quiz"))
-
-        val answered = play(steps, LessonAction.Continue, *answerCheck("quiz", false), LessonAction.Continue)
-        assertEquals("Previous onto an answered screen", 0, answered.then(LessonAction.GoBack).round("quiz"))
-
-        val missedComesBack = answered.then(LessonAction.Continue)
-        assertEquals("quiz", missedComesBack.currentId)
-        assertEquals("a missed question coming back", 1, missedComesBack.round("quiz"))
-
-        val explained = play(listOf(checkStep("quiz"), explanationStep("e1")), LessonAction.ExplainFirst)
-        assertEquals("Explain first", 1, explained.round("quiz"))
+        val picked = play(steps, LessonAction.Continue, LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")))
+        val returned = picked.then(LessonAction.GoBack).then(LessonAction.Continue)
+        assertEquals("quiz", returned.currentId)
+        assertEquals(LessonAnswer.Check("right") to 0, returned.answers["quiz"] to returned.round("quiz"))
 
         val revealing = play(listOf(explanationStep("intro"), workedExampleStep("worked")), LessonAction.Continue, LessonAction.Continue)
-        assertEquals(2, revealing.revealed["worked"])
-        val revisited = revealing.then(LessonAction.GoBack).then(LessonAction.Continue)
-        assertEquals("a worked example's steps start over with it", 1 to null, revisited.round("worked") to revisited.revealed["worked"])
+        val reread = revealing.then(LessonAction.GoBack).then(LessonAction.Continue)
+        assertEquals(2 to 0, reread.revealed["worked"] to reread.round("worked"))
+
+        val explained = play(listOf(checkStep("quiz"), explanationStep("e1")), LessonAction.ExplainFirst, LessonAction.Continue)
+        assertEquals("quiz" to 0, explained.currentId to explained.round("quiz"))
+    }
+
+    /** Only a checked attempt coming back starts a screen over, and its canvas with it. */
+    @Test
+    fun aScreenStartsOverOnlyWhenACheckedAttemptComesBack() {
+        val missed = play(listOf(checkStep("quiz"), explanationStep("after")), *answerCheck("quiz", false), LessonAction.Continue)
+        val comesBack = missed.then(LessonAction.Continue)
+
+        assertEquals("quiz" to 1, comesBack.currentId to comesBack.round("quiz"))
+        assertNull(comesBack.answers["quiz"])
+        assertNull(comesBack.results["quiz"])
+    }
+
+    /** A missed question that comes back plays its attempt there, so Previous stops before its earlier copy. */
+    @Test
+    fun previousStopsBeforeAnEarlierCopyOfAQuestionThatComesBack() {
+        val steps = listOf(checkStep("quiz"), explanationStep("after"))
+        val atAfter = play(steps, *answerCheck("quiz", false), LessonAction.Continue, LessonAction.Continue, LessonAction.GoBack)
+
+        assertEquals("after" to false, atAfter.currentId to atAfter.canGoBack)
+        assertEquals(1, atAfter.then(LessonAction.GoBack).position)
+
+        val straightBack = play(listOf(checkStep("last")), *answerCheck("last", false), LessonAction.Continue)
+        assertEquals(1 to false, straightBack.position to straightBack.canGoBack)
+    }
+
+    /** A language answer still waiting for its one chance to fix itself shows the notice again when the learner returns. */
+    @Test
+    fun aScreenWaitingForItsSelfCorrectionShowsItsNoticeAgain() {
+        val built = LessonAnswer.FillBlank(listOf("wrong"))
+        val wrong = LessonAction.CheckResolved("order", stepResult(false), counts = true)
+        val steps = listOf(explanationStep("intro"), fillBlankStep("order"), summaryStep("end"))
+        val correcting = play(steps, LessonAction.Continue, LessonAction.SelectAnswer("order", built), wrong)
+
+        val left = correcting.then(LessonAction.GoBack)
+        assertNull(left.notice)
+        val returned = left.then(LessonAction.Continue)
+        assertEquals(LessonNotice.SelfCorrect to built, returned.notice to returned.answers["order"])
     }
 
     @Test

@@ -40,7 +40,6 @@ import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -625,8 +624,7 @@ private fun Content(
                             .padding(vertical = 16.dp),
                     ) {
                         Notice(state, screen, viewModel, part)
-                        // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
-                        key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language, part) }
+                        work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause.
                         if (help != null && fold != null && step.teachesInText) {
                             help()
@@ -649,9 +647,7 @@ private fun Content(
                                     .padding(vertical = 16.dp),
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
-                                key(step.id, state.position) {
-                                    StepView(step, state, screen, actions, navigator, language, StepPart.Screen)
-                                }
+                                work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }
                                 recap()
                             }
                         }

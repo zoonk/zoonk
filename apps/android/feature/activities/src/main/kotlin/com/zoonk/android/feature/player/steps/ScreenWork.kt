@@ -17,16 +17,25 @@ import kotlinx.serialization.Serializable
 
 /**
  * What the learner did on a screen, which the lesson keeps for the screen's round (exactly as long as
- * its answer) and both pages of a spread share: its canvas, drawn as one piece that moves between the
- * one column and a page with what it remembers, and a copy of an activity's answer, since the player
- * loses its answer when Android closes the app in the background while the canvas gets its work back.
+ * its answer) and both pages of a spread share: each page's own work, which comes back when the
+ * learner returns to the screen; its canvas, drawn as one piece that moves between the one column and
+ * a page with what it remembers; and a copy of an activity's answer, since the player loses its answer
+ * when Android closes the app in the background while the canvas gets its work back.
  */
 @Stable
 class ScreenWork internal constructor(
     private val id: String,
+    private val holder: SaveableStateHolder,
     internal val canvas: @Composable (@Composable () -> Unit) -> Unit,
     private val kept: MutableState<KeptAnswer?>,
 ) {
+    /** One of the screen's places: the learner's turn (the one column without a fold) or the screen's page before the fold. */
+    @Composable
+    fun Page(
+        turn: Boolean,
+        content: @Composable () -> Unit,
+    ) = holder.SaveableStateProvider(pageKey(id, turn), content)
+
     /** Only this screen's: Android may bring back a copy saved on another screen when the lesson resumes elsewhere. */
     internal var keptAnswer: ActivityAnswer?
         get() = kept.value?.takeIf { it.screen == id }?.answer
@@ -55,9 +64,14 @@ fun rememberScreenWork(
         }
     val kept = rememberSaveable(id, stateSaver = KeptAnswerSaver) { mutableStateOf<KeptAnswer?>(null) }
 
-    LaunchedEffect(stepId, round) { if (round > 0) holder.removeState(workKey(stepId, round - 1)) }
+    LaunchedEffect(stepId, round) {
+        if (round > 0) {
+            val ended = workKey(stepId, round - 1)
+            listOf(ended, pageKey(ended, turn = true), pageKey(ended, turn = false)).forEach(holder::removeState)
+        }
+    }
 
-    return remember(part, kept, id) { ScreenWork(id, { content -> part(id, content) }, kept) }
+    return remember(part, kept, id) { ScreenWork(id, holder, { content -> part(id, content) }, kept) }
 }
 
 /** Outside a lesson a canvas keeps its work itself. */
@@ -77,5 +91,10 @@ private fun workKey(
     stepId: String,
     round: Int,
 ) = "$stepId:$round"
+
+private fun pageKey(
+    id: String,
+    turn: Boolean,
+) = if (turn) "$id:turn" else "$id:screen"
 
 private val KeptAnswerSaver = jsonSaver(ApiJson, KeptAnswer.serializer())

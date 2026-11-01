@@ -6,6 +6,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -16,6 +19,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
+import com.zoonk.android.feature.player.language.reading
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.SpokenAnswerGrade
@@ -49,6 +53,22 @@ class LessonPlayerFlowTest {
     ) = harness.play(steps, configure = configure)
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
+
+    /** Going back to reread keeps the screen the learner left, so a sentence half built is still there when they return. */
+    @Test
+    fun previousKeepsAHalfBuiltSentenceForWhenTheLearnerReturns() {
+        play(listOf(explanationStep("intro"), reading("read"), summaryStep("end")))
+        tap("Next")
+        rule
+            .onAllNodesWithText("gato.")
+            .onFirst()
+            .performClick()
+
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+        tap("Next")
+
+        rule.onNodeWithContentDescription("Position 1: gato.").assertExists()
+    }
 
     @Test
     fun aSavedAnswerMarksTheLessonStartedWithoutReadingItAgain() {

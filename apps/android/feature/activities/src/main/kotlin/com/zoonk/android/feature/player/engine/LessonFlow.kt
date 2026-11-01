@@ -5,9 +5,9 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
-/** A screen's answer starts over, and with it the steps it revealed and what the learner did on its canvas. */
+/** A checked attempt comes back: the screen's answer, result and revealed steps start over, and its canvas with them. */
 private fun LessonPlayerState.startOver(id: String): LessonPlayerState =
-    copy(answers = answers - id, revealed = revealed - id, rounds = rounds + (id to round(id) + 1))
+    copy(answers = answers - id, results = results - id, revealed = revealed - id, rounds = rounds + (id to round(id) + 1))
 
 fun LessonPlayerState.round(stepId: String): Int = rounds[stepId] ?: 0
 
@@ -16,15 +16,14 @@ fun LessonPlayerState.enterPosition(
     now: Long,
 ): LessonPlayerState {
     val id = queue.getOrNull(position)
-    // A screen entered with nothing to clear keeps its round, so a canvas Android restores after closing the app in the
-    // background finds its work.
-    val entered = if (id != null && (id in answers || id in results || id in revealed)) startOver(id) else this
+    val entered = if (id != null && id in results) startOver(id) else this
+    val correcting = id != null && id !in results && id in selfCorrected
     return entered.copy(
         checkFailed = false,
         checkIssue = null,
+        notice = if (correcting) LessonNotice.SelfCorrect else entered.notice,
         phase = LessonPhase.Playing,
         position = position,
-        results = results - id.orEmpty(),
         reviewing = false,
         stepStartedAt = now,
     )
@@ -125,7 +124,13 @@ fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 }
 
 val LessonPlayerState.canGoBack: Boolean
-    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused
+    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused && !comesBackLater(position - 1)
+
+/** A question that comes back plays its attempt there, so its earlier copy, with no result, isn't played again. */
+private fun LessonPlayerState.comesBackLater(index: Int): Boolean {
+    val id = queue[index]
+    return id !in results && queue.lastIndexOf(id) > index
+}
 
 fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     val previousId = queue.getOrNull(position - 1)
@@ -133,9 +138,9 @@ fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     if (!canGoBack || previousId == null) return this
 
     val reviewingPrevious = previousId in results
-    val current = queue.getOrNull(position)
 
-    return (current?.let(::startOver) ?: this).copy(
+    // Going back is looking, not undoing: the screen left keeps its answer and work for when the learner returns.
+    return copy(
         checkFailed = false,
         checkIssue = null,
         notice = null,
@@ -212,7 +217,7 @@ fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {
     val before = queue.take(position)
     val rest = queue.drop(position).filterNot(ids::contains)
 
-    return startOver(step.id).copy(
+    return copy(
         helped = helped + step.id,
         queue = before + ids + rest,
         stepStartedAt = now,
