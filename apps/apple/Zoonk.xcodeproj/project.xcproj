@@ -23,7 +23,7 @@
       "kind": "remote",
       "repository": "https://github.com/google/GoogleSignIn-iOS",
       "version": {
-        "up-to-next-major-version": "10.0.0",
+        "up-to-next-major-version": "10.1.0",
       },
     }, {
       "kind": "remote",
@@ -50,13 +50,13 @@
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-runtime",
       "version": {
-        "up-to-next-major-version": "1.13.0",
+        "up-to-next-major-version": "1.13.3",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-urlsession",
       "version": {
-        "up-to-next-major-version": "1.3.2",
+        "up-to-next-major-version": "1.4.0",
       },
     }, {
       "kind": "remote",
