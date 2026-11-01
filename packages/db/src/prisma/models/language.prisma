@@ -106,6 +106,8 @@ model LanguageConversation {
   titleSnapshot       String                     @map("title_snapshot")
   liveModel           String?                    @map("live_model")
   objectivesMet       String[]                   @default([]) @map("objectives_met")
+  /// How many of the call's turns its live goal checks have read; each reads only newer ones.
+  checkedTurns        Int                        @default(0) @map("checked_turns") @db.SmallInt
   usedHelp            Boolean                    @default(false) @map("used_help")
   spokenSeconds       Int                        @default(0) @map("spoken_seconds")
   feedback            Json?

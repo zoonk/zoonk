@@ -449,13 +449,41 @@ describe("language conversations", () => {
     });
   });
 
+  it("reads each turn once: a transcript sent again or at once asks no model, a longer one only its new turns", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    const check = (turns: typeof TURNS) =>
+      checkLanguageConversationObjectives({ conversationId, input: { turns } });
+
+    await Promise.all([check(TURNS), check(TURNS), check(TURNS)]);
+    await check(TURNS);
+
+    expect(checkConversationObjectives).toHaveBeenCalledOnce();
+
+    const longer = [
+      ...TURNS,
+      { speaker: "character" as const, text: "Sure. Anything else?" },
+      { speaker: "learner" as const, text: "How much is the deposit?" },
+    ];
+
+    await check(longer);
+
+    expect(checkConversationObjectives).toHaveBeenCalledTimes(2);
+
+    expect(vi.mocked(checkConversationObjectives).mock.calls[1]?.[0]).toMatchObject({
+      turns: longer.slice(1),
+    });
+  });
+
   it("marks a goal two overlapping checks both found only once", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    const check = () =>
-      checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
+    const check = (turns: typeof TURNS) =>
+      checkLanguageConversationObjectives({ conversationId, input: { turns } });
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
       objectivesAnswer(["Is it available?"]),
@@ -463,12 +491,14 @@ describe("language conversations", () => {
 
     const writer = holdLearnerLock({ userId: user.id });
     const pid = await writer.pid;
-    const both = Promise.all([check(), check()]);
+    const first = check(TURNS.slice(0, 2));
+    await waitForBlockedStatement(pid, LEARNER_LOCK, 1);
+    const second = check(TURNS);
     await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     writer.release();
     await writer.done;
 
-    await expect(both).resolves.toStrictEqual([
+    await expect(Promise.all([first, second])).resolves.toStrictEqual([
       { objectivesMet: ["Is it available?"], status: "ready" },
       { objectivesMet: ["Is it available?"], status: "ready" },
     ]);
@@ -485,9 +515,10 @@ describe("language conversations", () => {
 
     await checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
     vi.mocked(checkConversationObjectives).mockRejectedValueOnce(new Error("model down"));
+    const longer = [...TURNS, { speaker: "learner" as const, text: "And the deposit?" }];
 
     await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
+      checkLanguageConversationObjectives({ conversationId, input: { turns: longer } }),
     ).resolves.toStrictEqual({
       objectivesMet: ["Is it available?", "Book a viewing"],
       status: "ready",

@@ -201,7 +201,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Only for a connected call that is still running.",
+        "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, or one sent again at once, answers the goals met so far without a new check. Only for a connected call that is still running.",
       operationId: "checkLanguageConversationObjectives",
       requestBody: {
         content: { "application/json": { schema: languageConversationObjectiveCheckInputSchema } },

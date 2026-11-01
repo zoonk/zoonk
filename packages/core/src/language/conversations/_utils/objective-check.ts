@@ -5,7 +5,7 @@ import { logError } from "@zoonk/utils/logger";
 import { type ConversationTurn } from "../conversation-contract";
 import { type SavedScenario } from "./conversation-view";
 
-/** Model failures leave objectives unmet so the next check can retry the same turns. */
+/** A model failure leaves objectives unmet; the call's review reads the whole transcript again. */
 export async function findNewlyMetObjectives({
   row,
   scenario,

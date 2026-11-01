@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type LanguageConversation, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { readSavedScenario } from "./_utils/conversation-view";
@@ -11,6 +11,32 @@ import { findOwnedConversation } from "./get-language-conversation";
 const MS_PER_MINUTE = 60_000;
 
 const LATE_CHECK_MS = 180_000;
+
+/** The exchange before a check's new turns, so a short answer reads with its question. */
+const CONTEXT_TURNS = 2;
+
+/**
+ * Claims the turns the call's checks haven't read before the model runs, so a transcript sent
+ * again or at once asks no model, and a call's checks read its transcript about once.
+ */
+async function checkNewTurns({
+  row,
+  ...check
+}: Parameters<typeof findNewlyMetObjectives>[0] & {
+  row: Pick<LanguageConversation, "checkedTurns" | "id">;
+}): Promise<string[]> {
+  const { count } = await prisma.languageConversation.updateMany({
+    data: { checkedTurns: check.turns.length },
+    where: { checkedTurns: { lt: check.turns.length }, id: row.id },
+  });
+
+  if (count === 0) {
+    return [];
+  }
+
+  const turns = check.turns.slice(Math.max(0, row.checkedTurns - CONTEXT_TURNS));
+  return findNewlyMetObjectives({ ...check, row, turns });
+}
 
 export type CheckLanguageConversationObjectivesResult =
   | { objectivesMet: string[]; status: "ready" }
@@ -58,7 +84,7 @@ export async function checkLanguageConversationObjectives({
 
   const newlyMet = scenario.examTask
     ? []
-    : await findNewlyMetObjectives({ row, scenario, turns: input.turns, userId });
+    : await checkNewTurns({ row, scenario, turns: input.turns, userId });
 
   const labels =
     newlyMet.length === 0
