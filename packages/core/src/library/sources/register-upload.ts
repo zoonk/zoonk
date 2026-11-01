@@ -75,6 +75,15 @@ function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
   });
 }
 
+/** A document counts once per learner, under the upload id it first claimed. */
+async function hasUploaded({ hash, userId }: { hash: string; userId: string }): Promise<boolean> {
+  const uploads = await prisma.learnerSource.count({
+    where: { origin: "upload", source: { contentHash: hash }, userId },
+  });
+
+  return uploads > 0;
+}
+
 async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId: string }) {
   if (!goalId || !isUuid(goalId)) {
     return null;
@@ -193,15 +202,15 @@ async function storeUpload({
   input: SourceUploadInput;
   userId: string;
 }): Promise<SourceUploadResult> {
-  const [goalId, storedCopy] = await Promise.all([
+  const [goalId, storedCopy, uploadedBefore] = await Promise.all([
     getOwnGoalId({ goalId: input.goalId, userId }),
     findStoredCopy({ hash: content.hash, userId }),
+    hasUploaded({ hash: content.hash, userId }),
   ]);
 
   const uploadKey = input.kind === "file" ? input.pathname : `${userId}:${content.hash}`;
   const uploadId = getUploadClaimId(uploadKey);
-  const sourceId = storedCopy?.id ?? uploadId;
-  const refusal = await claimUpload(input.kind === "file" ? uploadId : sourceId);
+  const refusal = uploadedBefore ? null : await claimUpload(uploadId);
 
   if (refusal) {
     await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
@@ -210,7 +219,7 @@ async function storeUpload({
 
   const { created, source } = storedCopy
     ? { created: false, source: storedCopy }
-    : await createPrivateSource({ content, id: sourceId, input, userId });
+    : await createPrivateSource({ content, id: uploadId, input, userId });
 
   const fileId = input.kind === "file" ? uploadId : null;
   await linkUpload({ fileId, goalId, sourceId: source.id, userId });

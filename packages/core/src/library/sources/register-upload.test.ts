@@ -58,6 +58,22 @@ function uniqueText() {
   return `${NOTICE_TEXT} ${randomUUID()}`;
 }
 
+function servePublisherCopy(text: string) {
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(text, { headers: { "content-type": "text/plain" } }),
+  );
+}
+
+function shareNotice(sourceId: string) {
+  return shareSourceUpload({
+    language: "pt",
+    publisher: null,
+    sourceId,
+    title: "Edital",
+    url: "https://www.example.com/edital.txt",
+  });
+}
+
 function uploadNotice({ text, userId }: { text: string; userId: string }) {
   const pathname = `sources/${userId}/${randomUUID()}-edital.md`;
   const bytes = new TextEncoder().encode(text);
@@ -436,6 +452,36 @@ describe(registerSourceUpload, () => {
     ).resolves.toBe(1);
 
     await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(1);
+  });
+
+  it("charges nothing more for pasted text sent again after sharing merged it into another copy", async () => {
+    const [first, second] = await Promise.all([userFixture(), userFixture()]);
+    const text = uniqueText();
+    servePublisherCopy(text);
+
+    mockSession(first.id);
+    const shared = await registerSourceUpload({ kind: "text", language: "pt", text });
+    mockSession(second.id);
+    const merged = await registerSourceUpload({ kind: "text", language: "pt", text });
+
+    if (shared.status !== "ready" || merged.status !== "ready") {
+      throw new Error("Both uploads should be stored.");
+    }
+
+    await shareNotice(shared.source.id);
+
+    await expect(shareNotice(merged.source.id)).resolves.toStrictEqual({
+      merged: true,
+      sourceId: shared.source.id,
+    });
+
+    await expect(
+      registerSourceUpload({ kind: "text", language: "pt", text }),
+    ).resolves.toMatchObject({ source: { id: shared.source.id }, status: "ready" });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "upload", userId: second.id } }),
+    ).resolves.toBe(1);
   });
 
   it("links the upload to the learner's goal but not to someone else's", async () => {
