@@ -135,6 +135,8 @@ class MistakesNotebookFlowTest {
 
     private fun bounds(text: String) = rule.onNodeWithText(text).getUnclippedBoundsInRoot()
 
+    private val tab = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)
+
     @Test
     @Config(qualifiers = "w852dp-h883dp")
     fun anOpenBookShowsWhatsToFixBeforeTheFoldAndWhatsFixedAfterIt() {
@@ -143,7 +145,7 @@ class MistakesNotebookFlowTest {
         rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
         unfold()
 
-        rule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).assertCountEquals(0)
+        rule.onAllNodes(tab).assertCountEquals(0)
         assertTrue("Practice mistakes before the fold", bounds("Practice mistakes").right <= 426.dp)
         assertTrue("what's to fix before the fold", bounds("Percentages").right <= 426.dp)
         assertTrue("what's fixed after the fold", bounds("Fractions").left >= 426.dp)
@@ -151,7 +153,7 @@ class MistakesNotebookFlowTest {
         assertEquals("its title level with the page before it", bounds("ENEM").top.value, bounds("Fixed").top.value, 0.5f)
     }
 
-    /** Scrolled until the tabs reach the top, the Fixed list opens on its title as the book opens, not partway down it. */
+    /** Scrolled until the tabs reach the top, the Fixed list opens with its whole title where the tabs were, on the page after the fold. */
     @Test
     @Config(qualifiers = "w707dp-h823dp")
     fun theFixedListScrolledToItsTabsOpensOnItsTitle() {
@@ -160,14 +162,17 @@ class MistakesNotebookFlowTest {
         rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
         rule.onNodeWithText("Fixed").performClick()
         val list = rule.onNode(hasScrollToIndexAction()).getUnclippedBoundsInRoot()
-        val tabs = rule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).onFirst().getUnclippedBoundsInRoot()
+        val tabs = rule.onAllNodes(tab).onFirst().getUnclippedBoundsInRoot()
         val toTabs = with(rule.density) { (tabs.top - list.top).toPx() }
         rule.onNode(hasScrollToIndexAction()).performSemanticsAction(SemanticsActions.ScrollBy) { scrollBy -> scrollBy(0f, toTabs) }
         rule.waitForIdle()
 
         unfold()
 
-        rule.onNodeWithText("Fixed").assertIsDisplayed()
+        rule.onAllNodes(tab).assertCountEquals(0)
+        val title = bounds("Fixed")
+        assertEquals("the title where the tabs were", list.top.value, title.top.value, 0.5f)
+        assertTrue("the title after the fold", title.left >= 353.5.dp)
     }
 
     /** Opening the book recreates the screen, and the list to fix is the one the tabs showed. */

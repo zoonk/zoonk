@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -56,7 +52,6 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -356,7 +351,7 @@ private fun NarrowNotebook(
     open: String?,
     listState: LazyListState,
 ) {
-    LazyColumn(Modifier.fillMaxSize(), listState, listPadding(lead), verticalArrangement = Arrangement.spacedBy(ITEM_GAP)) {
+    LazyColumn(Modifier.fillMaxSize(), listState, detailPagePadding()) {
         notebookHead(page, actions, lead)
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
@@ -377,20 +372,6 @@ private fun NarrowNotebook(
     }
 }
 
-/** Without its hero, a list keeps the hero's empty slot and starts a gap higher, so the gap after that slot doesn't show. */
-@Composable
-private fun listPadding(lead: NotebookLead): PaddingValues {
-    val padding = detailPagePadding()
-    if (lead.hero) return padding
-    val direction = LocalLayoutDirection.current
-    return PaddingValues(
-        start = padding.calculateStartPadding(direction),
-        top = (padding.calculateTopPadding() - ITEM_GAP).coerceAtLeast(0.dp),
-        end = padding.calculateEndPadding(direction),
-        bottom = padding.calculateBottomPadding(),
-    )
-}
-
 @Composable
 private fun WideNotebook(
     page: NotebookPage,
@@ -406,7 +387,6 @@ private fun WideNotebook(
             Modifier.width(SKILLS_WIDTH).fillMaxSize(),
             listState,
             contentPadding = padding,
-            verticalArrangement = Arrangement.spacedBy(ITEM_GAP),
         ) {
             notebookHead(page, actions, lead)
             notebookBody(page, actions) {
@@ -443,23 +423,25 @@ private fun LazyListScope.notebookBody(
     groups: @Composable () -> Unit,
 ) {
     item {
-        when {
-            page.list == null && page.failed -> {
-                LoadFailedMessage(onRetry = actions.onRetry)
-            }
-
-            page.list == null -> {
-                Box(Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+        Box(Modifier.padding(top = ITEM_GAP)) {
+            when {
+                page.list == null && page.failed -> {
+                    LoadFailedMessage(onRetry = actions.onRetry)
                 }
-            }
 
-            page.groups.isEmpty() -> {
-                EmptyNotebook(page.fixed)
-            }
+                page.list == null -> {
+                    Box(Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
 
-            else -> {
-                groups()
+                page.groups.isEmpty() -> {
+                    EmptyNotebook(page.fixed)
+                }
+
+                else -> {
+                    groups()
+                }
             }
         }
     }
@@ -470,8 +452,9 @@ private fun LazyListScope.notebookHead(
     actions: NotebookActions,
     lead: NotebookLead,
 ) {
-    // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes.
-    item { if (lead.hero) NotebookHero(page, actions.onPractice) }
+    // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes. Each
+    // item brings its own gap: a list's spacing would also follow the hero's empty slot.
+    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page, actions.onPractice) } }
     item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
@@ -479,7 +462,7 @@ private fun LazyListScope.notebookHead(
                 typos = pattern.kind == GoalMistakePatternPattern.Kind.TYPOS,
                 title = pattern.title,
                 onOpen = { actions.onPattern(pattern.id) },
-                modifier = Modifier.bleed(LIST_ITEM_INSET),
+                modifier = Modifier.padding(top = ITEM_GAP).bleed(LIST_ITEM_INSET),
             )
         }
     }
@@ -491,7 +474,7 @@ private fun LazyListScope.notebookMore(
 ) {
     if (page.list?.pagination?.nextCursor == null) return
     item {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.padding(top = ITEM_GAP), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (page.moreFailed) {
                 Text(
                     stringResource(R.string.mistakes_more_failed),
