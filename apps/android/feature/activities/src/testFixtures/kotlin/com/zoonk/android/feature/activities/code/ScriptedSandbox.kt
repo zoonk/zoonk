@@ -55,7 +55,7 @@ class ScriptedSandbox(
         fun printed(output: String): JsonElement = sandboxJson.encodeToJsonElement(ProgramRun.printed(output))
 
         /** A `testRegex` reply worked out with Kotlin's engine, which agrees with JavaScript's on simple patterns. */
-        fun regexTested(request: JsonObject): JsonElement {
+        private fun regexTested(request: JsonObject): JsonElement {
             val pattern = request.getValue("pattern").jsonPrimitive.content
             val regex = if (pattern.isEmpty()) null else runCatching { Regex(pattern) }.getOrNull()
             val test: RegexTest =
