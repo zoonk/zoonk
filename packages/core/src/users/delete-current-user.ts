@@ -10,7 +10,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
-import { endWebPlusForDeletedAccount } from "../subscriptions/web-plus-account-deletion";
 import { getSession } from "./get-session";
 
 type AccountDeletionAuthorization = {
@@ -127,10 +126,6 @@ async function logAccountDeletion(userId: string) {
   }
 }
 
-function endWebPlus(learner: { email: string; id: string; name: string }) {
-  return endWebPlusForDeletedAccount({ learner });
-}
-
 /** Permanently deletes the session's user through Better Auth's fresh-session checks and cleanup hooks. */
 export async function deleteCurrentUser({
   appleCredentials,
@@ -140,7 +135,6 @@ export async function deleteCurrentUser({
 
   if (!session) {
     const cleanup = await captureAccountDeletionCleanup({
-      endWebPlus,
       operation: () => auth.api.deleteUser({ body: {}, headers: requestHeaders }),
     });
 
@@ -156,7 +150,6 @@ export async function deleteCurrentUser({
 
   try {
     const cleanup = await captureAccountDeletionCleanup({
-      endWebPlus,
       operation: () => auth.api.deleteUser({ body: {}, headers: authorization.headers }),
     });
 

@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
-import { endWebPlusForDeletedAccount } from "./web-plus-account-deletion";
 import { cancelWebPlus, getWebPlusCancellation, keepWebPlus } from "./web-plus-cancellation";
 import type Stripe from "stripe";
 
@@ -242,36 +241,5 @@ describe("website Plus cancellation", () => {
     await expect(
       prisma.subscription.findFirst({ where: { referenceId: user.id } }),
     ).resolves.toMatchObject({ cancelAtPeriodEnd: false });
-  });
-
-  describe("account deletion", () => {
-    it.each(["month", "year"] as const)(
-      "ends the website %s immediately, even alongside a newer store purchase",
-      async (interval) => {
-        const subscription = stripeSubscription(interval, true);
-        const user = await subscribedLearner(subscription);
-        await addNewerStorePlus(user.id);
-        await endWebPlusForDeletedAccount({ learner: user });
-        expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscription.id, { prorate: false });
-        expect(stripe.update).not.toHaveBeenCalled();
-
-        await expect(
-          prisma.subscription.findFirst({ where: { stripeSubscriptionId: subscription.id } }),
-        ).resolves.toMatchObject({ status: "canceled" });
-
-        await expect(
-          prisma.subscription.findFirst({ where: { provider: "apple", userId: user.id } }),
-        ).resolves.toMatchObject({ status: "active" });
-      },
-    );
-
-    it("stops deletion when Stripe cannot end the subscription", async () => {
-      const user = await subscribedLearner(stripeSubscription());
-      stripe.cancel.mockRejectedValue(new Error("Stripe unavailable"));
-
-      await expect(endWebPlusForDeletedAccount({ learner: user })).rejects.toThrow(
-        "Stripe unavailable",
-      );
-    });
   });
 });

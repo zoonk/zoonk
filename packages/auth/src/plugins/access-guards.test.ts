@@ -158,10 +158,9 @@ describe("access guards", () => {
     });
   });
 
-  it("lets only core's deletion, which ends website Plus first, delete an account", async () => {
+  it("requires the deletion channel that reports provider cleanup", async () => {
     const { headers } = await signInAsBrandOwner();
     const session = await organizationAuth.api.getSession({ headers });
-    const endWebPlus = vi.fn();
 
     await expect(organizationAuth.api.deleteUser({ body: {}, headers })).rejects.toMatchObject({
       body: { code: "ACCOUNT_DELETION_ELSEWHERE" },
@@ -169,11 +168,9 @@ describe("access guards", () => {
     });
 
     await captureAccountDeletionCleanup({
-      endWebPlus,
       operation: () => organizationAuth.api.deleteUser({ body: {}, headers }),
     });
 
-    expect(endWebPlus).toHaveBeenCalledOnce();
     await expect(prisma.user.findUnique({ where: { id: session?.user.id } })).resolves.toBeNull();
   });
 });

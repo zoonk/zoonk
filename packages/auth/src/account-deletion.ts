@@ -5,11 +5,9 @@ import { revokeStoredAppleAuthorization } from "./providers/apple-revocation";
 import { stripeClient } from "./stripe/client";
 import { deleteUserBlobs } from "./user-blobs";
 
-type DeletedUser = { email: string; id: string; name: string };
-type EndWebPlus = (user: DeletedUser) => Promise<void>;
+type DeletedUser = { email: string; id: string };
 
 type AccountDeletionCleanup = {
-  endWebPlus: EndWebPlus;
   reportAppleAuthorizationRevocation: (revoked: boolean | null) => void;
 };
 
@@ -22,20 +20,18 @@ const ENDED_STATUSES = ["canceled", "incomplete_expired"];
 const ANONYMIZE_TIMEOUT_MS = 60_000;
 
 /**
- * Better Auth ignores `beforeDelete`'s return value. The request-local channel reports Apple's
- * revocation result and lets core end website Plus before the account is deleted.
+ * Better Auth ignores `beforeDelete`'s return value, so the request-local channel reports Apple's
+ * revocation result.
  */
 export async function captureAccountDeletionCleanup<Result>({
-  endWebPlus,
   operation,
 }: {
-  endWebPlus: EndWebPlus;
   operation: () => Promise<Result>;
 }) {
   const appleRevocation = Promise.withResolvers<boolean | null>();
 
   const result = await accountDeletionCleanup.run(
-    { endWebPlus, reportAppleAuthorizationRevocation: appleRevocation.resolve },
+    { reportAppleAuthorizationRevocation: appleRevocation.resolve },
     operation,
   );
 
@@ -93,7 +89,7 @@ export function isAccountDeletionCleanupReady(): boolean {
 
 /**
  * App Store and Google Play don't let a server cancel a user's purchase, so only Stripe is canceled
- * here, once `endWebPlus` has ended the live one.
+ * here.
  */
 async function cancelStripeSubscriptions(userId: string) {
   const subscriptions = await prisma.subscription.findMany({
@@ -123,7 +119,6 @@ export async function deleteUserDependenciesBeforeAuthDelete(user: DeletedUser) 
   const appleAuthorizationRevoked = await revokeAppleAuthorizations(user.id);
   cleanup?.reportAppleAuthorizationRevocation(appleAuthorizationRevoked);
 
-  await cleanup?.endWebPlus(user);
   await cancelStripeSubscriptions(user.id);
   await deleteLocalUserDependencies({ email: user.email, userId: user.id });
 }

@@ -570,7 +570,6 @@
     "./subscriptions/google-play-renewal": "./src/subscriptions/check-google-play-renewal.ts",
     "./subscriptions/google-play-sync": "./src/subscriptions/sync-google-play-subscription.ts",
     "./subscriptions/settle-store-plus": "./src/subscriptions/settle-store-plus.ts",
-    "./subscriptions/web-plus-account-deletion": "./src/subscriptions/web-plus-account-deletion.ts",
     "./subscriptions/web-plus-cancellation": "./src/subscriptions/web-plus-cancellation.ts",
     "./users/current": "./src/users/current-user.ts",
     "./users/delete-current": "./src/users/delete-current-user.ts",

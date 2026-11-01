@@ -114,7 +114,7 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     ).resolves.toBeNull();
   });
 
-  it("lets core end website Plus first, then cancels only what's still live", async () => {
+  it("cancels only live website subscriptions, even alongside a newer store purchase", async () => {
     const user = await createTestUser();
 
     const [live, ended] = await Promise.all(
@@ -131,16 +131,20 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
       ),
     );
 
-    const endWebPlus = vi.fn(async () => {
-      expect(mocks.cancelStripeSubscription).not.toHaveBeenCalled();
+    await prisma.subscription.create({
+      data: {
+        plan: "plus",
+        provider: "apple",
+        providerSubscriptionId: randomUUID(),
+        referenceId: user.id,
+        status: "active",
+        userId: user.id,
+      },
     });
 
     await captureAccountDeletionCleanup({
-      endWebPlus,
       operation: () => deleteUserDependenciesBeforeAuthDelete(user),
     });
-
-    expect(endWebPlus).toHaveBeenCalledExactlyOnceWith(user);
 
     expect(mocks.cancelStripeSubscription).toHaveBeenCalledExactlyOnceWith(
       live?.stripeSubscriptionId,
@@ -187,7 +191,6 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
     });
 
     const cleanup = await captureAccountDeletionCleanup({
-      endWebPlus: vi.fn(),
       operation: async () => {
         await deleteUserDependenciesBeforeAuthDelete(user);
         return "deleted" as const;
