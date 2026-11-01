@@ -1,21 +1,13 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -28,9 +20,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -67,7 +59,11 @@ import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
@@ -167,48 +163,55 @@ fun GoalSetupScreen(
             }
         },
     ) { padding ->
-        PageWithSupportingPane(
-            supportingPane = { view?.let { PlanSoFar(it.goal) } },
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-        ) { asideBeside ->
-            when (val shown = state) {
-                is LoadState.Loaded -> {
-                    SetupColumn {
-                        if (vm.saveFailed) {
-                            Text(
-                                vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
-                                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                        step?.let {
-                            SetupStep(
-                                it,
-                                shown.value,
-                                vm,
-                                store,
-                                plans,
-                                mocks,
-                                isGuest,
-                                navigator,
-                                route,
-                                asideBeside,
-                                prepareToday,
-                            )
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+
+        BoxWithConstraints(Modifier.padding(padding).consumeWindowInsets(padding).onPageSpan { span = it }) {
+            val panesBeside = supportingPaneBeside(maxWidth)
+            val fold = pageFold(maxWidth, span)?.takeIf { panesBeside }
+            val planSoFar: @Composable () -> Unit = { view?.let { PlanSoFar(it.goal) } }
+
+            // At an open book's fold the setup lays out both pages itself, so a test's question takes the plan so far's
+            // page at once rather than as Material's panes animate.
+            PageWithSupportingPane(supportingPane = planSoFar.takeIf { fold == null }) { asideBeside ->
+                when (val shown = state) {
+                    is LoadState.Loaded -> {
+                        SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
+                            if (vm.saveFailed) {
+                                Text(
+                                    vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
+                                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+                            step?.let {
+                                SetupStep(
+                                    it,
+                                    shown.value,
+                                    vm,
+                                    store,
+                                    plans,
+                                    mocks,
+                                    isGuest,
+                                    navigator,
+                                    route,
+                                    asideBeside || fold != null,
+                                    prepareToday,
+                                )
+                            }
                         }
                     }
-                }
 
-                is LoadState.Failed -> {
-                    if (shown.error == ApiError.NotFound) {
-                        NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
-                    } else {
-                        LoadFailedMessage(onRetry = { vm.reload() })
+                    is LoadState.Failed -> {
+                        if (shown.error == ApiError.NotFound) {
+                            NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
+                        } else {
+                            LoadFailedMessage(onRetry = { vm.reload() })
+                        }
                     }
-                }
 
-                else -> {}
+                    else -> {}
+                }
             }
         }
     }
@@ -392,26 +395,6 @@ private fun ColumnScope.QuestionStep(
 
         OnboardingStep.PLAN -> {
             PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, plans, navigator, route, prepareToday)
-        }
-    }
-}
-
-/** At least the window's height, so a step's actions can sit at its bottom on phones. */
-@Composable
-internal fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        val windowHeight = maxHeight
-        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = windowHeight)
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                content = content,
-            )
         }
     }
 }

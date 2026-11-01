@@ -360,32 +360,35 @@ internal fun ColumnScope.PlacementQuestion(
         }
     }
     val confirm = { answer?.let(send) }
-
-    eyebrow?.let { Eyebrow(it) }
-    media()
-    item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
-    item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
-    visual?.let { LessonVisual(it) }
-    RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
 
-    if (item.format == PlacementFormat.Typed) {
-        val typedFocus = remember { FocusRequester() }
-        LaunchedEffect(Unit) { typedFocus.requestFocus() }
-        OutlinedTextField(
-            value = typed,
-            onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
-            modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
-            label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
-            minLines = 3,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { confirm() }),
-        )
-    } else {
-        AnswerList(choices, picked, onPick = { picked = it })
-    }
-
-    OnboardingActions {
+    QuestionPages(
+        read = {
+            eyebrow?.let { Eyebrow(it) }
+            media()
+            item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
+            item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
+            visual?.let { LessonVisual(it) }
+            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        },
+        answer = {
+            if (item.format == PlacementFormat.Typed) {
+                val typedFocus = remember { FocusRequester() }
+                LaunchedEffect(Unit) { typedFocus.requestFocus() }
+                OutlinedTextField(
+                    value = typed,
+                    onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
+                    modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
+                    label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
+                    minLines = 3,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { confirm() }),
+                )
+            } else {
+                AnswerList(choices, picked, onPick = { picked = it })
+            }
+        },
+    ) {
         if (answerFailed && sent && !pending) {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
                 Text(

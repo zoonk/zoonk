@@ -409,20 +409,24 @@ private fun ColumnScope.LevelTestSpeaking(
     navigator: AppNavigator,
     onSkip: () -> Unit,
 ) {
-    OnboardingHeading(stringResource(R.string.onboarding_language_test_say_it))
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
-            sentence.sentence,
-            fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.titleLarge.copy(localeList = TextLocales(targetLanguage)),
-        )
-        Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-    }
     val recorderKey = "level-test-sentence:$goalId"
     val context = LocalContext.current
     // The recorder's own model, shared by its key: skipping while a sentence is graded would race the grade.
     val voice = viewModel(key = recorderKey) { VoiceAnswerModel(context) }
-    OnboardingActions {
+    QuestionPages(
+        read = {
+            OnboardingHeading(stringResource(R.string.onboarding_language_test_say_it))
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    sentence.sentence,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleLarge.copy(localeList = TextLocales(targetLanguage)),
+                )
+                Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            }
+        },
+        answer = {},
+    ) {
         VoiceAnswerRecorder(
             grade = { store.speakLevelTest(goalId, it) },
             onGraded = {},
