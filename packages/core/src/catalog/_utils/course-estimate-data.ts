@@ -27,6 +27,7 @@ import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 import { choosePace } from "../../plans/planner/plan-pace";
 import { getCourseEstimateAreas } from "./course-estimate-areas";
+import { loadCoursePublishedContent } from "./course-published-content";
 
 async function loadEstimateSourceGraph({
   chapters,
@@ -128,15 +129,18 @@ export async function loadCourseEstimateData(courseId: string, today: string) {
 
   const skillIds = graph.skills.map((skill) => skill.skillId);
 
-  const [lessons, prerequisites, facts, skills, quickLessons] = await Promise.all([
-    loadGoalPlannerLessons({ courseChapters: chapters, goal, graph, userId: null }),
-    loadSkillPrerequisites(skillIds),
-    loadExamFacts({ goal, graph }),
-    prisma.skill.findMany({ where: { id: { in: skillIds } } }),
-    loadQuickBaseLessons({
-      baseChoices: skillIds.map((skillId) => ({ choice: "quick", skillId })),
-    }),
-  ]);
+  const [lessons, prerequisites, facts, skills, quickLessons, publishedContent] = await Promise.all(
+    [
+      loadGoalPlannerLessons({ courseChapters: chapters, goal, graph, userId: null }),
+      loadSkillPrerequisites(skillIds),
+      loadExamFacts({ goal, graph }),
+      prisma.skill.findMany({ where: { id: { in: skillIds } } }),
+      loadQuickBaseLessons({
+        baseChoices: skillIds.map((skillId) => ({ choice: "quick", skillId })),
+      }),
+      loadCoursePublishedContent(chapters),
+    ],
+  );
 
   if (lessons.length === 0) {
     return null;
@@ -194,6 +198,7 @@ export async function loadCourseEstimateData(courseId: string, today: string) {
     lessons,
     pace,
     prerequisites,
+    publishedContent,
     quickLessons,
     sourceGraph,
     title: course.title,

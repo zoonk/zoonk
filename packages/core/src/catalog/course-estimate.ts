@@ -12,7 +12,6 @@ import { withBuiltSettings } from "../plans/planner/run-outcome";
 import { assertTargetDates } from "../plans/target-date-range";
 import { type CourseEstimateData, loadCourseEstimateData } from "./_utils/course-estimate-data";
 import { getCourseEstimateWorkload } from "./_utils/course-estimate-workload";
-import { loadCoursePublishedContent } from "./_utils/course-published-content";
 import { summarizeCourseEstimate } from "./_utils/summarize-course-estimate";
 import {
   type CoursePlanEstimate,
@@ -35,12 +34,11 @@ type EstimateKey = Pick<CoursePlanEstimateInput, "courseId" | "dailyMinutes" | "
 function planCourse({
   data,
   input,
-  publishedContent,
 }: {
   data: CourseEstimateData;
   input: EstimateKey;
-  publishedContent: CoursePlanEstimate["publishedContent"];
 }): CoursePlanEstimate | null {
+  const { publishedContent } = data;
   const { today } = input;
   const start = fromIsoDate(today);
   const targetDate = input.targetDate ? fromIsoDate(input.targetDate) : null;
@@ -170,13 +168,7 @@ async function getCachedCourseEstimate(key: EstimateKey): Promise<CoursePlanEsti
   "use cache";
   cacheTag(getCourseCacheTag(key.courseId), getCourseCurriculumCacheTag(key.courseId));
   const data = await loadCourseEstimateData(key.courseId, key.today);
-
-  if (!data) {
-    return null;
-  }
-
-  const publishedContent = await loadCoursePublishedContent(data.chapters);
-  return planCourse({ data, input: key, publishedContent });
+  return data ? planCourse({ data, input: key }) : null;
 }
 
 /** Public courses only. Never reads learner data, calls models, or writes. */
