@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -161,10 +160,7 @@ internal fun RunFrame(
     }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val crossing = pageFold(maxWidth, span)
-        val fold = crossing?.takeIf { supportingPaneBeside(maxWidth) }
-        // Where the text is too large for two pages, the one column keeps to the page before the fold.
-        val column = if (fold == null && crossing != null) Modifier.widthIn(max = crossing.start) else Modifier
+        val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
 
         LaunchedEffect(Unit) { focus.requestFocus() }
 
@@ -195,11 +191,11 @@ internal fun RunFrame(
             val shown = asideShown(hasAside, fold)
 
             Column(Modifier.padding(padding).fillMaxSize()) {
-                Box(if (fold == null) column else Modifier.width(fold.start)) { progress(shown) }
+                Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
                     ScrollingPage(
-                        column
+                        Modifier
                             .fillMaxSize()
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }),
                         if (fold == null) scroll else turnScroll,

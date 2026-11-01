@@ -78,7 +78,9 @@ fun supportingPaneBeside(width: Dp): Boolean = pageDirective(width).maxHorizonta
  * with the text. That's where Material splits the window (expanded and wider), and on a page an
  * unfolded book foldable's fold crosses ([pageFold]), where the panes meet at the fold, flat or
  * folded, so each is a page of the book and folding moves nothing. [atFoldOnly] keeps one column
- * where there's no fold, and [alone] everywhere.
+ * where there's no fold, and [alone] everywhere. Where a fold crosses a page too narrow for two
+ * panes, as with large text, its one pane keeps to the page before the fold if that page holds a
+ * phone's column.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -112,11 +114,11 @@ fun pageDirective(
                     (room / preferred)
             }
         }
-    val twoPanes =
-        !alone &&
-            window.maxHorizontalPartitions > 1 &&
+    val panesFit =
+        window.maxHorizontalPartitions > 1 &&
             (fold != null || !atFoldOnly) &&
             narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
+    val twoPanes = !alone && panesFit
 
     // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
     // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
@@ -128,8 +130,9 @@ fun pageDirective(
         verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
         defaultPanePreferredWidth = window.defaultPanePreferredWidth,
         defaultPanePreferredHeight = window.defaultPanePreferredHeight,
-        // Material splits at an excluded fold, but it would also squeeze a lone pane beside one.
-        excludedBounds = if (twoPanes && fold != null) listOf(fold.bounds) else emptyList(),
+        // Material splits at an excluded fold, and lays a lone pane in the space before it: that's the page before the
+        // fold where two panes don't fit but the page holds a phone's column, and a squeeze beside the fold elsewhere.
+        excludedBounds = fold?.takeIf { twoPanes || (!panesFit && it.start >= MINIMUM_PANE) }?.let { listOf(it.bounds) }.orEmpty(),
         shouldAutoFocusCurrentDestination = false,
     )
 }

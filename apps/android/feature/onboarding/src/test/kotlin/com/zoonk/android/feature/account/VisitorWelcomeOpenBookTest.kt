@@ -57,6 +57,24 @@ class VisitorWelcomeOpenBookTest {
         assertEquals(emptyList<String>(), sent)
     }
 
+    /** Text twice as large leaves no room for the examples beside the box, and the box keeps off the fold. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp", fontScale = 2f)
+    fun largeTextKeepsTheGoalBoxBeforeTheFold() {
+        rule.setContent {
+            ZoonkTheme { VisitorWelcome(rememberAppNavigator(), PaddingValues(), isSending = false, error = null, onSend = { sent += it }) }
+        }
+        folds.overrideWindowLayoutInfo(
+            TestWindowLayoutInfo(
+                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
+            ),
+        )
+        rule.waitForIdle()
+
+        val box = rule.onNode(hasSetTextAction()).getUnclippedBoundsInRoot()
+        assertTrue("the box ends before the fold: $box", box.right.value <= FOLD)
+    }
+
     /** Tablets keep main's one column: only a book's fold faces the box with its examples. */
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land")

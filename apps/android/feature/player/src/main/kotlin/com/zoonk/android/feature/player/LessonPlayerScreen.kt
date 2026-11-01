@@ -565,15 +565,12 @@ private fun Content(
                 ) {
                     // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
                     val pagesFit = supportingPaneBeside(maxWidth)
-                    val crossing = pageFold(maxWidth, span)
-                    val fold = crossing?.takeIf { pagesFit }
-                    // Where the text is too large for two pages, the one column keeps to the page before the fold.
-                    val column = if (fold == null && crossing != null) Modifier.widthIn(max = crossing.start) else Modifier
+                    val fold = pageFold(maxWidth, span)?.takeIf { pagesFit }
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
 
                     StepColumn(
-                        column
+                        Modifier
                             .fillMaxSize()
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
                             .onGloballyPositioned { reveal.viewport = it }

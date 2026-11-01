@@ -157,14 +157,18 @@ class PageWithSupportingPaneTest {
         assertPageOnEachSide(fold = 353.5.dp)
     }
 
+    /** Large text leaves each page too narrow for a pane, so the page keeps one column, on the page before the fold. */
     @Test
     @Config(qualifiers = "w707dp-h823dp", fontScale = 1.3f)
-    fun largeTextKeepsOneColumnWhereAPageWouldBeTooNarrowForIt() {
+    fun largeTextKeepsOneColumnOnThePageBeforeTheFold() {
         show(width = 627.dp)
 
         fold(FoldingFeature.State.FLAT)
 
-        assertOnePage(627.dp)
+        rule.onNodeWithText("Page with its aside below").assertIsDisplayed()
+        rule.onNodeWithText("Aside beside").assertDoesNotExist()
+        assertEquals(80f, bounds(PAGE).left.value, 0.5f)
+        assertEquals(353.5f, bounds(PAGE).right.value, 0.5f)
     }
 
     /** A page a drawer leaves narrow has no room for a page on each side; folding it must not squeeze it beside the fold. */
