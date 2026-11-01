@@ -178,9 +178,10 @@ internal fun PlayingLesson(
 
     val suggestions = remember(load.lesson) { load.lesson.tutorSuggestions.map { TutorSuggestion(it.label, it.id.value) } }
     val identity = tutorIdentity(summary.value)
+    val guest = (session as? SessionState.SignedIn)?.isGuest == true
     val tutor =
-        remember(identity, suggestions) {
-            LessonTutor(identity, suggestions) { scope, worded, open, offer, onOfferTaken, onOpenChange ->
+        remember(identity, suggestions, guest) {
+            LessonTutor(identity, suggestions, canAsk = !guest) { scope, worded, open, offer, onOfferTaken, onOpenChange ->
                 TutorAskButton(scope, app, navigator, worded, open, onOpenChange, suggestions, offer, onOfferTaken)
             }
         }

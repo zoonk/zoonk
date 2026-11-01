@@ -49,13 +49,15 @@ import com.zoonk.android.ui.components.OutlinedButton
 import kotlinx.coroutines.delay
 
 /**
- * The buddy beside a lesson: who it is, the lesson's suggestions, and its ask button, whose conversation
- * shows while `open`, with [offer] in its composer once.
+ * The buddy beside a lesson: who it is, the lesson's suggestions, whether the learner can ask it (a
+ * guest can't yet, so nothing offers it beside a screen), and its ask button, whose conversation shows
+ * while `open`, with [offer] in its composer once.
  */
 @Immutable
 class LessonTutor(
     val identity: TutorIdentity,
     val suggestions: List<TutorSuggestion> = emptyList(),
+    val canAsk: Boolean = true,
     val askButton: @Composable (
         scope: TutorScope,
         worded: Boolean,

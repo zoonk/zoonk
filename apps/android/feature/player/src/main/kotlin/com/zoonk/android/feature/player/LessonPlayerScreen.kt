@@ -298,7 +298,7 @@ fun LessonPlayer(
             }
         }
     val help: (@Composable () -> Unit)? =
-        tutor?.let { buddy ->
+        tutor?.takeIf { it.canAsk }?.let { buddy ->
             {
                 ScreenHelp(buddy) { suggestion ->
                     offerId = suggestion?.id
