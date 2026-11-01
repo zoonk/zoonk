@@ -777,8 +777,8 @@ private struct CheckedWord: View {
 
 /// A right pair locks, a wrong one counts as a mistake.
 private struct MatchColumnsView: View {
-  @State private var pickedLeft: Int?
-  @State private var mistakes = 0
+  @ActivityState("pickedLeft") private var pickedLeft: Int? = nil
+  @ActivityState("mistakes") private var mistakes = 0
   @State private var lastMiss: Int?
 
   let exercise: LanguageExercise

@@ -78,8 +78,9 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var phase: Phase
   private(set) var run = Run.idle
   private(set) var answers: [String: LessonAnswer] = [:]
-  /// Moves on wherever a screen's answer is cleared, so what the learner did on its canvas
-  /// (`ActivityWork`) lasts exactly as long as the answer.
+  /// Moves on wherever a screen starts over (a checked attempt coming back, the lesson loading
+  /// again), so what the learner did on its canvas (`ActivityWork`) lasts exactly as long as the
+  /// answer; moving between screens never clears either.
   private(set) var rounds: [String: Int] = [:]
   private(set) var results: [String: LessonStepResult] = [:]
   /// The first verdict on each answerable screen, which is what the lesson counts.
@@ -171,6 +172,14 @@ struct LessonPlayerState: Equatable, Sendable {
   /// Previous is on every screen after the first while it's being played, not during "I know this".
   var canGoBack: Bool {
     phase == .playing && position > 0 && quickCheck == nil && !isRefused
+      && !isEarlierCopy(at: position - 1)
+  }
+
+  /// A missed question that came back holds its attempt in the later copy, so the earlier one, its
+  /// result cleared, would show it unanswered and let the learner answer it twice.
+  private func isEarlierCopy(at index: Int) -> Bool {
+    let id = queue[index]
+    return results[id] == nil && queue[(index + 1)...].contains(id)
   }
 
   var progress: Double {
@@ -291,14 +300,14 @@ struct LessonPlayerState: Equatable, Sendable {
     }
   }
 
-  /// Previous: one screen back. An answered screen shows its result again; Continue goes on.
+  /// Previous: one screen back, keeping what the learner did on the screen they leave. An answered
+  /// screen shows its result again; Continue goes on.
   mutating func goBack(now: Date = .now) {
     guard canGoBack else {
       return
     }
 
     let previousId = queue[position - 1]
-    clearAnswer(queue[position])
     checkFailed = false
     notice = nil
     reviewing = results[previousId] != nil
@@ -317,7 +326,6 @@ struct LessonPlayerState: Equatable, Sendable {
     let ids = explanationsAfterCurrent
     let rest = queue[position...].filter { !ids.contains($0) }
     queue = Array(queue[..<position]) + ids + rest
-    clearAnswer(step.id)
     helped.insert(step.id)
     stepStartedAt = now
   }
@@ -647,10 +655,18 @@ struct LessonPlayerState: Equatable, Sendable {
     completion?.status = .failed
   }
 
+  /// A checked screen entered again (a missed question coming back) starts over; any other shows
+  /// what the learner left, with its self-correct notice if it still waits for one.
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
-    clearAnswer(id)
-    results[id] = nil
+
+    if results[id] != nil {
+      clearAnswer(id)
+      results[id] = nil
+    } else if selfCorrected.contains(id) {
+      notice = .selfCorrect
+    }
+
     checkFailed = false
     phase = .playing
     position = newPosition

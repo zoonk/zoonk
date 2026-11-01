@@ -157,7 +157,7 @@ struct ActivityDataNote: View {
 /// The field keeps what the learner typed ("0," on the way to "0,17") and answers with the number it
 /// reads.
 private struct NumericAnswerField: View {
-  @State private var typed: String?
+  @ActivityState("typedNumber") private var typed: String? = nil
 
   let value: Double?
   let expected: Double
