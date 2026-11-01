@@ -4,22 +4,16 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.startOnLoopback
-import com.zoonk.api.models.Money
-import com.zoonk.api.models.StripeSubscriptionCancellation
-import com.zoonk.api.models.StripeSubscriptionCancellationAccountDeletion
-import com.zoonk.api.models.StripeSubscriptionCancellationExtraordinary
-import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
-import com.zoonk.api.models.StripeSubscriptionCancellationWithdrawal
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.Json
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
-import kotlin.time.Instant
 
 class LiveSubscriptionApiTest {
     private val server = MockWebServer()
@@ -36,43 +30,33 @@ class LiveSubscriptionApiTest {
     fun stop() = server.close()
 
     @Test
-    fun aCancellationSendsOnlyTheChoice() =
+    fun aCancellationSendsNoBodyAndDecodesTheDates() =
         runTest {
-            server.enqueue(json("""{"endsAt":"2026-10-31T12:00:00.000Z","receivedAt":"2026-10-31T12:00:00.000Z","refund":null}"""))
+            server.enqueue(json("""{"endsAt":"2026-10-31T12:00:00.000Z","receivedAt":"2026-10-31T12:00:00.000Z"}"""))
 
-            api.cancelWebPlus(ana, Choice.WITHDRAWAL)
+            val receipt = api.cancelWebPlus(ana)
 
             val request = server.takeRequest(5, TimeUnit.SECONDS)!!
             assertEquals("POST", request.method)
             assertEquals("/v1/me/subscriptions/stripe/cancellation", request.url.encodedPath)
-            assertEquals(Json.parseToJsonElement("""{"choice":"withdrawal"}"""), Json.parseToJsonElement(request.body!!.utf8()))
+            assertEquals(0L, request.bodySize)
+            assertEquals("Bearer token-a", request.headers["Authorization"])
+            assertEquals("2026-10-31T12:00:00Z", receipt.endsAt.toString())
         }
 
     @Test
-    fun aStoppedRenewalStillReadsItsRefund() =
+    fun aStoppedRenewalReadsItsScheduledEnd() =
         runTest {
-            server.enqueue(
-                json(
-                    """
-                    {"accountDeletion":{"refund":{"amount":29.9,"currency":"BRL"}},
-                     "canResumeRenewal":true,
-                     "cancellation":null,
-                     "extraordinary":{"refund":{"amount":19.5,"currency":"BRL"}},
-                     "withdrawal":{"refund":{"amount":29.9,"currency":"BRL"},"until":"2026-11-14T12:00:00.000Z"}}
-                    """.trimIndent(),
-                ),
-            )
+            server.enqueue(json("""{"canResumeRenewal":true,"cancellation":{"endsAt":"2026-12-01T12:00:00Z"},"unpaid":false}"""))
 
-            assertEquals(
-                StripeSubscriptionCancellation(
-                    accountDeletion = StripeSubscriptionCancellationAccountDeletion(Money(29.9, "BRL")),
-                    canResumeRenewal = true,
-                    cancellation = null,
-                    extraordinary = StripeSubscriptionCancellationExtraordinary(Money(19.5, "BRL")),
-                    withdrawal = StripeSubscriptionCancellationWithdrawal(Money(29.9, "BRL"), Instant.parse("2026-11-14T12:00:00Z")),
-                ),
-                api.webPlusCancellation(ana),
-            )
+            val status = api.webPlusCancellation(ana)
+            assertNotNull(status.cancellation)
+            assertEquals("2026-12-01T12:00:00Z", status.cancellation?.endsAt.toString())
+            assertFalse(status.unpaid)
+            val request = server.takeRequest(5, TimeUnit.SECONDS)!!
+            assertEquals("GET", request.method)
+            assertEquals("/v1/me/subscriptions/stripe/cancellation", request.url.encodedPath)
+            assertEquals("Bearer token-a", request.headers["Authorization"])
         }
 
     @Test
@@ -84,6 +68,7 @@ class LiveSubscriptionApiTest {
 
             val request = server.takeRequest(5, TimeUnit.SECONDS)!!
             assertEquals("DELETE", request.method)
+            assertEquals(0L, request.bodySize)
             assertEquals("/v1/me/subscriptions/stripe/cancellation", request.url.encodedPath)
             assertEquals("Bearer token-a", request.headers["Authorization"])
         }

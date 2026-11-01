@@ -20,8 +20,6 @@ import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
-import com.zoonk.api.models.StripeSubscriptionCancellationRequest
-import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -49,10 +47,7 @@ interface SubscriptionApi {
 
     suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation
 
-    suspend fun cancelWebPlus(
-        session: AuthenticatedSession,
-        choice: Choice,
-    ): StripeSubscriptionCancellationReceipt
+    suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt
 
     suspend fun keepWebPlus(session: AuthenticatedSession)
 }
@@ -78,11 +73,8 @@ class LiveSubscriptionApi(
     override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation =
         perform { api.clients(session).subscriptions.getStripeSubscriptionCancellation() }
 
-    override suspend fun cancelWebPlus(
-        session: AuthenticatedSession,
-        choice: Choice,
-    ): StripeSubscriptionCancellationReceipt =
-        perform { api.clients(session).subscriptions.cancelStripeSubscription(StripeSubscriptionCancellationRequest(choice)) }
+    override suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt =
+        perform { api.clients(session).subscriptions.cancelStripeSubscription() }
 
     override suspend fun keepWebPlus(session: AuthenticatedSession) =
         perform { api.clients(session).subscriptions.resumeStripeSubscription() }
@@ -141,11 +133,7 @@ class SubscriptionStore(
 
     val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
-    /**
-     * What canceling, keeping Plus or deleting the account does to a Plus bought on the web. It asks
-     * Stripe, so only a screen showing such a Plus collects it.
-     */
-    val webPlusChoices: Resource<StripeSubscriptionCancellation> =
+    val webPlusStatus: Resource<StripeSubscriptionCancellation> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.UserSubscription)) { session ->
             session?.let { api.webPlusCancellation(it) }
         }
@@ -186,19 +174,20 @@ class SubscriptionStore(
 
     private var reconciledFor: AuthenticatedSession? = null
 
-    /**
-     * What canceling a Plus bought on the web would do, read only from the learner's tap. `NotFound`
-     * means it changed elsewhere and nothing is left to cancel, so the plan is read again.
-     */
     suspend fun webPlusCancellation(): MutationResult<StripeSubscriptionCancellation> =
         cache
             .mutate { api.webPlusCancellation(it) }
-            .also { if (it is MutationResult.Failed && it.error == ApiError.NotFound) readPlanAgain() }
+            .also {
+                if ((it is MutationResult.Failed && it.error == ApiError.NotFound) ||
+                    (it is MutationResult.Done && it.value.cancellation != null)
+                ) {
+                    readPlanAgain()
+                }
+            }
 
-    /** A 409 means the chosen option closed meanwhile, so the plan is read again. */
-    suspend fun cancelWebPlus(choice: Choice): MutationResult<StripeSubscriptionCancellationReceipt> =
+    suspend fun cancelWebPlus(): MutationResult<StripeSubscriptionCancellationReceipt> =
         cache
-            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, choice) }
+            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it) }
             .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
 
     /**
@@ -319,5 +308,4 @@ private fun MeResponse.renewing() =
 
 fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
 
-/** The web Plus answer when the chosen option, or keeping Plus, closed meanwhile. */
 const val HTTP_CONFLICT = 409

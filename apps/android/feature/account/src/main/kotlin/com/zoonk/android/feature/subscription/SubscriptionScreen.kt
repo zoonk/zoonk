@@ -76,7 +76,6 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
-import com.zoonk.api.models.Money
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -85,7 +84,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
-import kotlin.math.roundToLong
 import kotlin.time.Instant
 
 /**
@@ -160,7 +158,7 @@ private fun Account(
             if (subscription != null) {
                 PageColumn {
                     if (purchase == PurchaseState.AlreadyPlus) AlreadyPlusMessage(subscription.provider)
-                    CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices)
+                    CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusStatus)
                 }
             } else {
                 Offer(app, navigator, PlanViewer.Free)
@@ -190,10 +188,10 @@ internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
     cancellation: WebPlusCancellationViewModel,
-    endingChoices: Resource<StripeSubscriptionCancellation>,
+    endingStatus: Resource<StripeSubscriptionCancellation>,
 ) {
     val context = LocalContext.current
-    val isEnding = subscription.cancelAt != null
+    val isEnding = subscription.cancelAt != null || subscription.cancelAtPeriodEnd == true
     val provider = subscription.provider
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -213,7 +211,7 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     if (provider == STRIPE) {
-        if (isEnding) EndingWebPlus(endingChoices, cancellation) else WebPlusCancelButton(cancellation)
+        if (isEnding) EndingWebPlus(endingStatus, cancellation) else WebPlusCancelButton(cancellation)
         return
     }
 
@@ -268,7 +266,7 @@ private fun AlreadyPlusMessage(provider: String) {
 @Composable
 private fun dateLine(subscription: MeSubscription): String? {
     val locale = currentLocale()
-    val cancelAt = subscription.cancelAt
+    val cancelAt = subscription.cancelAt ?: subscription.periodEnd.takeIf { subscription.cancelAtPeriodEnd == true }
     val periodEnd = subscription.periodEnd
     return when {
         cancelAt != null -> stringResource(R.string.subscription_ends_on, planDate(cancelAt, locale))
@@ -623,11 +621,6 @@ internal fun planDate(
                 .ofEpochMilli(instant.toEpochMilliseconds())
                 .atZone(ZoneId.systemDefault()),
         )
-
-internal fun money(
-    amount: Money,
-    locale: Locale,
-): String = money((amount.amount * 1_000_000).roundToLong(), amount.currency, locale)
 
 internal fun money(
     micros: Long,

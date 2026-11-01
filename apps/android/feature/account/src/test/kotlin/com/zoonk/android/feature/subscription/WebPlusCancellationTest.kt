@@ -1,23 +1,26 @@
 package com.zoonk.android.feature.subscription
 
-import android.content.res.Configuration
+import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.R
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -28,26 +31,23 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MeSubscription
-import com.zoonk.api.models.Money
 import com.zoonk.api.models.StripeSubscriptionCancellation
-import com.zoonk.api.models.StripeSubscriptionCancellationAccountDeletion
-import com.zoonk.api.models.StripeSubscriptionCancellationCancellation
-import com.zoonk.api.models.StripeSubscriptionCancellationExtraordinary
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
-import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
-import com.zoonk.api.models.StripeSubscriptionCancellationWithdrawal
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import java.util.Locale
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -56,59 +56,56 @@ class WebPlusCancellationTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private var options: MutationResult<StripeSubscriptionCancellation> =
-        MutationResult.Done(choices(cancellation = AT_PERIOD_END, withdrawal = WITHDRAWAL))
-    private var answer: MutationResult<StripeSubscriptionCancellationReceipt> = MutationResult.Done(receipt(REFUND))
-    private var optionsArrive: CompletableDeferred<Unit>? = null
-    private val sent = mutableListOf<Choice>()
+    private var status: MutationResult<StripeSubscriptionCancellation> =
+        MutationResult.Done(cancellationStatus())
+    private var answer: MutationResult<StripeSubscriptionCancellationReceipt> = MutationResult.Done(RECEIPT)
+    private var statusArrives: CompletableDeferred<Unit>? = null
+    private var cancellationArrives: CompletableDeferred<Unit>? = null
+    private var darkTheme = false
+    private var higherContrast = false
+    private var sent = 0
     private var keepAnswer: MutationResult<Unit> = MutationResult.Done(Unit)
     private var keeps = 0
     private var subscription by mutableStateOf<MeSubscription?>(null)
-    private var endingChoices: () -> StripeSubscriptionCancellation = { choices(cancellation = null, withdrawal = WITHDRAWAL) }
+    private var endingStatus: () -> StripeSubscriptionCancellation = { cancellationStatus() }
     private var endingReads = 0
-    private val endingWebPlusChoices =
+    private val endingWebPlusStatus =
         AppCache(FakeSession(AuthenticatedSession(ANA, "token-a", "local-a")), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
             .resource(Audience.SignedIn) {
                 endingReads++
-                endingChoices()
+                endingStatus()
             }
 
     private fun show(
         provider: String = "stripe",
         cancelAt: Instant? = null,
+        cancelAtPeriodEnd: Boolean = cancelAt != null,
     ) {
-        subscription =
-            MeSubscription(
-                cancelAt = cancelAt,
-                cancelAtPeriodEnd = cancelAt != null,
-                id = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0d4"),
-                periodEnd = null,
-                periodStart = null,
-                plan = "plus",
-                provider = provider,
-                status = "active",
-            )
+        subscription = plan(provider, cancelAt, cancelAtPeriodEnd)
         rule.setContent {
-            ZoonkTheme {
-                val cancellation =
-                    viewModel {
-                        WebPlusCancellationViewModel(
-                            readOptions = {
-                                optionsArrive?.await()
-                                options
-                            },
-                            send = {
-                                sent += it
-                                answer
-                            },
-                            keepPlus = {
-                                keeps++
-                                keepAnswer
-                            },
-                        )
-                    }
-                WebPlusCancellationDialog(cancellation)
-                Column { subscription?.let { CurrentPlan(it, rememberAppNavigator(), cancellation, endingWebPlusChoices) } }
+            ZoonkTheme(darkTheme = darkTheme, moreContrast = higherContrast) {
+                Surface {
+                    val cancellation =
+                        viewModel {
+                            WebPlusCancellationViewModel(
+                                readStatus = {
+                                    statusArrives?.await()
+                                    status
+                                },
+                                send = {
+                                    sent++
+                                    cancellationArrives?.await()
+                                    answer
+                                },
+                                keepPlus = {
+                                    keeps++
+                                    keepAnswer
+                                },
+                            )
+                        }
+                    WebPlusCancellationDialog(cancellation)
+                    Column { subscription?.let { CurrentPlan(it, rememberAppNavigator(), cancellation, endingWebPlusStatus) } }
+                }
             }
         }
     }
@@ -116,217 +113,171 @@ class WebPlusCancellationTest {
     private fun inDialog(text: String) = rule.onNode(hasText(text) and hasAnyAncestor(isDialog()))
 
     @Test
-    fun aNewWebPlusIsWithdrawnWithAFullRefundAndTheReceiptStaysOnceItEnds() {
+    fun aPaidCancellationShowsTheEndDateAndCanBeUndone() {
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
+        rule.onNodeWithText("Cancel Plus").performClick()
         inDialog("Cancel Plus?").assertExists()
-        inDialog("Until Nov 14, 2026, you can get a full refund of R$29.90. Plus ends right away.").assertExists()
-        inDialog("You keep Plus until Nov 21, 2026, then it ends. You won't be charged again.").assertExists()
-        inDialog("We'll email you the confirmation.").assertExists()
-        inDialog("Confirm withdrawal").performClick()
+        inDialog("You keep Plus until the end of the period you already paid for.").assertExists()
+        inDialog("Cancel Plus").performClick()
+        rule.waitForIdle()
+        assertEquals(1, sent)
+        endingStatus = { cancellationStatus(ending = true) }
+        subscription = plan(cancelAt = ENDS)
+
+        rule.onNode(isDialog()).assertDoesNotExist()
+        rule.onNodeWithText("Your subscription will end on Dec 1, 2026.").assertExists()
+        rule.onNodeWithText("Keep Plus").performClick()
+        rule.waitForIdle()
+        assertEquals(1, keeps)
+        assertEquals(1, endingReads)
+    }
+
+    @Test
+    fun anUnpaidRenewalEndsImmediatelyWithoutAReceiptDialog() {
+        status = MutationResult.Done(cancellationStatus(unpaid = true))
+        show()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Plus ends right away, and we stop retrying your renewal payment.").assertExists()
+        inDialog("Cancel Plus").performClick()
         subscription = null
 
-        assertEquals(listOf(Choice.WITHDRAWAL), sent)
-        assertEquals(0, endingReads)
-        inDialog("We've refunded R$29.90 to the payment method you used. Plus is canceled. We emailed you the confirmation.")
-            .assertExists()
-        inDialog("OK").performClick()
         rule.onNode(isDialog()).assertDoesNotExist()
+        assertEquals(1, sent)
     }
 
     @Test
-    fun aRenewalStoppedAfterAYearlyRenewalRefundsTheMonthsNotStarted() {
-        options = MutationResult.Done(choices(cancellation = AT_PERIOD_END.copy(refund = REFUND), withdrawal = null))
+    fun goingBackSendsNothing() {
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        inDialog("You keep Plus until Nov 21, 2026. We refund R$29.90 for the months that haven't started.").assertExists()
-        inDialog("Confirm withdrawal").assertDoesNotExist()
-        inDialog("Cancel now").performClick()
-
-        assertEquals(listOf(Choice.ORDINARY), sent)
-    }
-
-    @Test
-    fun aStoppedRenewalWithoutRefundSaysPlusIsCanceled() {
-        answer = MutationResult.Done(receipt(refund = null))
-        show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        inDialog("Cancel now").performClick()
-
-        inDialog("Plus is canceled. We emailed you the confirmation.").assertExists()
-    }
-
-    @Test
-    fun keepingPlusSendsNothing() {
-        show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        inDialog("Keep Plus").performClick()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Go back").performClick()
 
         rule.onNode(isDialog()).assertDoesNotExist()
-        assertTrue(sent.isEmpty())
+        assertEquals(0, sent)
     }
 
     @Test
-    fun theButtonWaitsForTheOptions() {
-        optionsArrive = CompletableDeferred()
+    fun theButtonWaitsForTheStatus() {
+        statusArrives = CompletableDeferred()
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        rule.onNodeWithText("Cancel subscription").assertIsNotEnabled()
-        optionsArrive?.complete(Unit)
-
+        rule.onNodeWithText("Cancel Plus").performClick()
+        rule.onNodeWithText("Cancel Plus").assertIsNotEnabled()
+        statusArrives?.complete(Unit)
         inDialog("Cancel Plus?").assertExists()
+    }
+
+    @Test
+    fun theConfirmationWaitsAndPreventsAnotherCancellation() {
+        cancellationArrives = CompletableDeferred()
+        show()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Cancel Plus").performClick()
+        inDialog("Cancel Plus").assertIsNotEnabled()
+        inDialog("Go back").assertIsNotEnabled()
+        rule.waitForIdle()
+        assertEquals(1, sent)
+        cancellationArrives?.complete(Unit)
+        rule.onNode(isDialog()).assertDoesNotExist()
     }
 
     @Test
     fun nothingLeftToCancelOpensNothing() {
-        options = MutationResult.Failed(ApiError.NotFound, status = 404)
+        status = MutationResult.Failed(ApiError.NotFound, status = 404)
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-
+        rule.onNodeWithText("Cancel Plus").performClick()
         rule.onNode(isDialog()).assertDoesNotExist()
         rule.onNodeWithText(FAILED).assertDoesNotExist()
     }
 
     @Test
-    fun optionsThatWontLoadSayWhomToContact() {
-        options = MutationResult.Failed(ApiError.Unavailable, status = 500)
+    fun anAlreadyScheduledCancellationOpensNothing() {
+        status = MutationResult.Done(cancellationStatus(ending = true))
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-
-        rule.onNodeWithText(FAILED).assertExists()
-        rule.onNodeWithText("Cancel subscription").assertIsEnabled()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        assertEquals(0, sent)
     }
 
     @Test
-    fun anOptionThatClosedMeanwhileSaysSo() {
+    fun statusThatWontLoadCanBeRetried() {
+        status = MutationResult.Failed(ApiError.Unavailable, status = 500)
+        show()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        rule.onNodeWithText(FAILED).assertExists()
+        rule.onNodeWithText("Cancel Plus").assertIsEnabled()
+        status = MutationResult.Done(cancellationStatus())
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Cancel Plus?").assertExists()
+    }
+
+    @Test
+    fun aSubscriptionThatChangedMeanwhileClosesTheDialog() {
         answer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        inDialog("Confirm withdrawal").performClick()
-
-        inDialog("That option isn't available anymore.").assertExists()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        rule.onNodeWithText(FAILED).assertDoesNotExist()
     }
 
     @Test
-    fun aCancellationThatFailsKeepsTheChoicesAndSaysWhomToContact() {
+    fun aFailedCancellationKeepsTheConfirmationForRetry() {
         answer = MutationResult.Failed(ApiError.Unavailable, status = 500)
         show()
-
-        rule.onNodeWithText("Cancel subscription").performClick()
-        inDialog("Confirm withdrawal").performClick()
-
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Cancel Plus").performClick()
         inDialog(FAILED).assertExists()
-        inDialog("Confirm withdrawal").assertIsEnabled()
+        inDialog("Cancel Plus").assertIsEnabled()
+        answer = MutationResult.Done(RECEIPT)
+        inDialog("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        assertEquals(2, sent)
     }
 
     @Test
-    @Config(qualifiers = "de")
-    fun germanCancelButtonsReadAsGermanLawRequires() {
+    fun anObsoleteCancellationClosesTheOldAccountsDialog() {
+        answer = MutationResult.Obsolete
         show()
-
-        rule.onNodeWithText("Abo kündigen").performClick()
-
-        inDialog("Widerruf bestätigen").assertExists()
-        inDialog("Jetzt kündigen").assertExists()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        inDialog("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
     }
 
     @Test
-    fun theWithdrawalButtonUsesTheDirectivesWordingInEveryLanguage() {
-        mapOf(
-            "de" to "Widerruf bestätigen",
-            "es" to "Confirmar desistimiento",
-            "fr" to "Confirmer la rétractation",
-            "pt" to "Confirmar retratação",
-        ).forEach { (language, label) ->
-            val configuration = Configuration().apply { setLocale(Locale.forLanguageTag(language)) }
-            assertEquals(label, rule.activity.createConfigurationContext(configuration).getString(R.string.subscription_cancel_withdraw))
-        }
-    }
-
-    @Test
-    fun aStoppedRenewalStillOffersTheFullRefundUntilItsLastDay() {
-        show(cancelAt = ENDS)
-
-        rule.onNodeWithText("Cancel subscription").assertDoesNotExist()
-        rule.onNodeWithText("Until Nov 14, 2026, you can still end Plus now and get a full refund.").assertExists()
-        rule.onNodeWithText("Get a full refund").performClick()
-        inDialog("Until Nov 14, 2026, you can get a full refund of R$29.90. Plus ends right away.").assertExists()
-        inDialog("Cancel now").assertDoesNotExist()
-        inDialog("Confirm withdrawal").performClick()
-
-        assertEquals(listOf(Choice.WITHDRAWAL), sent)
-        assertEquals(1, endingReads)
-        inDialog("We've refunded R$29.90 to the payment method you used. Plus is canceled. We emailed you the confirmation.")
-            .assertExists()
-    }
-
-    @Test
-    fun aStoppedRenewalPastTheRefundHasNothingToCancel() {
-        endingChoices = { choices(cancellation = null, withdrawal = null) }
-        show(cancelAt = ENDS)
-
-        rule.waitForIdle()
-        assertEquals(1, endingReads)
-        rule.onNodeWithText("Cancel subscription").assertDoesNotExist()
-        rule.onNodeWithText("Get a full refund").assertDoesNotExist()
+    fun aPeriodEndCancellationWithoutCancelAtStillOffersKeepPlus() {
+        endingStatus = { cancellationStatus(ending = true) }
+        show(cancelAtPeriodEnd = true)
+        rule.onNodeWithText("Subscription ending").assertExists()
+        rule.onNodeWithText("Your subscription will end on Dec 1, 2026.").assertExists()
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
+        rule.onNodeWithText("Keep Plus").assertExists()
     }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp")
-    fun aStoppedRenewalWhoseChoicesWontLoadOffersToTryAgain() {
-        endingChoices = { throw ApiException(ApiError.Unavailable, status = 500) }
+    fun anEndingSubscriptionWhoseStatusWontLoadOffersToTryAgain() {
+        endingStatus = { throw ApiException(ApiError.Unavailable, status = 500) }
         show(cancelAt = ENDS)
-
         rule.onNodeWithText("This page didn't load").assertExists()
-        rule.onNodeWithText("Get a full refund").assertDoesNotExist()
-        endingChoices = { choices(cancellation = null, withdrawal = WITHDRAWAL) }
+        endingStatus = { cancellationStatus(ending = true) }
         rule.onNodeWithText("Try again").performClick()
-
-        rule.onNodeWithText("Get a full refund").assertExists()
-        rule.onNodeWithText("This page didn't load").assertDoesNotExist()
+        rule.onNodeWithText("Keep Plus").assertExists()
+        rule.waitForIdle()
         assertEquals(2, endingReads)
     }
 
     @Test
-    fun aStoppedRenewalWithNothingLeftToCancelShowsNoError() {
-        endingChoices = { throw ApiException(ApiError.NotFound, status = 404) }
+    fun anEndingSubscriptionThatCantBeKeptShowsNoAction() {
         show(cancelAt = ENDS)
-
-        rule.waitForIdle()
-        assertEquals(1, endingReads)
-        rule.onNodeWithText("This page didn't load").assertDoesNotExist()
-        rule.onNodeWithText("Get a full refund").assertDoesNotExist()
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
+        rule.onNodeWithText("Keep Plus").assertDoesNotExist()
     }
 
     @Test
-    fun aStoppedRenewalCanBeKeptBesideTheRefund() {
-        endingChoices = { choices(cancellation = null, withdrawal = WITHDRAWAL, canResumeRenewal = true) }
-        show(cancelAt = ENDS)
-
-        rule.onNodeWithText("Changed your mind? Keep Plus, and it renews as before.").assertExists()
-        rule.onNodeWithText("Get a full refund").assertExists()
-        rule.onNodeWithText("Keep Plus").performClick()
-
-        assertEquals(1, keeps)
-        rule.onNodeWithText(KEEP_FAILED).assertDoesNotExist()
-    }
-
-    @Test
-    fun keepingPlusThatFailsSaysWhomToContact() {
+    fun keepingPlusThatFailsCanBeRetried() {
         keepAnswer = MutationResult.Failed(ApiError.Unavailable, status = 500)
-        endingChoices = { choices(cancellation = null, withdrawal = null, canResumeRenewal = true) }
+        endingStatus = { cancellationStatus(ending = true) }
         show(cancelAt = ENDS)
-
         rule.onNodeWithText("Keep Plus").performClick()
-
         rule.onNodeWithText(KEEP_FAILED).assertExists()
         rule.onNodeWithText("Keep Plus").assertIsEnabled()
     }
@@ -334,101 +285,147 @@ class WebPlusCancellationTest {
     @Test
     fun keepingPlusThatCantBeKeptAnymoreShowsNoError() {
         keepAnswer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
-        endingChoices = { choices(cancellation = null, withdrawal = null, canResumeRenewal = true) }
+        endingStatus = { cancellationStatus(ending = true) }
         show(cancelAt = ENDS)
-
         rule.onNodeWithText("Keep Plus").performClick()
-
+        rule.waitForIdle()
         assertEquals(1, keeps)
         rule.onNodeWithText(KEEP_FAILED).assertDoesNotExist()
     }
 
     @Test
-    fun deletingTheAccountSaysWhatItRefunds() {
+    fun deletingTheAccountNeedsNoStripeRead() {
         showDeletionNotice()
-
-        rule.onNodeWithText("Your Plus ends right away, and we refund R$29.90 to the payment method you used.").assertExists()
-    }
-
-    @Test
-    fun deletingTheAccountWithoutARefundSaysNothingMoreIsCharged() {
-        endingChoices = { choices(cancellation = AT_PERIOD_END, withdrawal = null) }
-        showDeletionNotice()
-
-        rule.onNodeWithText("Your Plus ends right away, without a refund. You won't be charged again.").assertExists()
-    }
-
-    @Test
-    fun aDeletionNoticeThatWontLoadSaysNothing() {
-        endingChoices = { throw ApiException(ApiError.Unavailable, status = 500) }
-        showDeletionNotice()
-
-        rule.waitForIdle()
-        assertEquals(1, endingReads)
-        rule.onNodeWithText("Your Plus ends right away", substring = true).assertDoesNotExist()
-        rule.onNodeWithText("This page didn't load").assertDoesNotExist()
-    }
-
-    @Test
-    fun deletingAPlayAccountDoesntAskStripe() {
-        showDeletionNotice(provider = "google")
-
-        rule.waitForIdle()
+        rule.onNodeWithText("Deleting your account ends Plus right away.").assertExists()
         assertEquals(0, endingReads)
-        rule.onNodeWithText("Your Plus ends right away", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun deletingAPlayAccountShowsNoWebsiteNotice() {
+        showDeletionNotice(provider = "google")
+        rule.onNodeWithText("Deleting your account ends Plus right away.").assertDoesNotExist()
+        assertEquals(0, endingReads)
     }
 
     private fun showDeletionNotice(provider: String = "stripe") {
-        val subscription =
-            MeSubscription(
-                cancelAt = null,
-                cancelAtPeriodEnd = false,
-                id = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0d4"),
-                periodEnd = null,
-                periodStart = null,
-                plan = "plus",
-                provider = provider,
-                status = "active",
-            )
         rule.setContent {
-            ZoonkTheme { webPlusDeletionNotice(subscription, endingWebPlusChoices)?.let { Text(it) } }
+            ZoonkTheme { webPlusDeletionNotice(plan(provider))?.let { Text(it) } }
         }
     }
 
     @Test
     fun aPlayPlusIsManagedInPlayWithoutAskingStripe() {
         show("google", cancelAt = ENDS)
-
-        rule.onNodeWithText("Cancel subscription").assertDoesNotExist()
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
         rule.onNodeWithText("Manage in Google Play").assertExists()
         assertEquals(0, endingReads)
     }
 
+    @Test
+    fun anApplePlusIsManagedInTheAppStoreWithoutAskingStripe() {
+        show("apple", cancelAt = ENDS)
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
+        rule.onNodeWithText("Keep Plus").assertDoesNotExist()
+        rule.onNodeWithText("This subscription is managed through the App Store.", substring = true).assertExists()
+        assertEquals(0, endingReads)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun renderPhone() = renderCancellation("phone")
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w800dp-h1000dp-xhdpi")
+    fun renderMedium() = renderCancellation("medium")
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun renderExpanded() = renderCancellation("expanded")
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun renderDarkMoreContrast() = renderCancellation("dark-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun renderLargeFont() {
+        assumeTrue(System.getProperty("zoonk.shots").orEmpty().isNotEmpty())
+        RuntimeEnvironment.setFontScale(2f)
+        renderCancellation("font200")
+    }
+
+    private fun renderCancellation(
+        prefix: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val folder = System.getProperty("zoonk.shots").orEmpty()
+        assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
+        darkTheme = dark
+        higherContrast = moreContrast
+        endingStatus = { cancellationStatus(ending = true) }
+        show()
+        rule.onNodeWithText("Cancel Plus").performClick()
+        capture(folder, "$prefix-paid-dialog", dialog = true)
+        inDialog("Go back").performClick()
+        capture(folder, "$prefix-active", dialog = false)
+        status = MutationResult.Done(cancellationStatus(unpaid = true))
+        rule.onNodeWithText("Cancel Plus").performClick()
+        capture(folder, "$prefix-unpaid-dialog", dialog = true)
+        inDialog("Go back").performClick()
+        subscription = plan(cancelAt = ENDS)
+        rule.onNodeWithText("Keep Plus").assertExists()
+        capture(folder, "$prefix-ending", dialog = false)
+    }
+
+    private fun capture(
+        folder: String,
+        name: String,
+        dialog: Boolean,
+    ) {
+        rule.mainClock.advanceTimeByFrame()
+        rule.waitForIdle()
+        val root = if (dialog) rule.onNode(isDialog()) else rule.onRoot()
+        val bitmap = root.captureToImage().asAndroidBitmap()
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
     private companion object {
-        const val FAILED = "Unable to manage your subscription. Contact us at hello@zoonk.com"
+        const val FAILED = "We couldn't cancel Plus. Try again or email hello@zoonk.com."
         const val KEEP_FAILED = "We couldn't keep Plus. Try again or email hello@zoonk.com."
-        val REFUND = Money(29.9, "BRL")
-        val ENDS: Instant = Instant.parse("2026-12-01T00:00:00Z")
-        val WITHDRAWAL = StripeSubscriptionCancellationWithdrawal(refund = REFUND, until = Instant.parse("2026-11-14T12:00:00Z"))
-        val AT_PERIOD_END = StripeSubscriptionCancellationCancellation(endsAt = Instant.parse("2026-11-21T12:00:00Z"), refund = null)
-
-        fun choices(
-            cancellation: StripeSubscriptionCancellationCancellation?,
-            withdrawal: StripeSubscriptionCancellationWithdrawal?,
-            canResumeRenewal: Boolean = false,
-        ) = StripeSubscriptionCancellation(
-            accountDeletion = StripeSubscriptionCancellationAccountDeletion(refund = withdrawal?.refund ?: cancellation?.refund),
-            canResumeRenewal = canResumeRenewal,
-            cancellation = cancellation,
-            extraordinary = StripeSubscriptionCancellationExtraordinary(refund = REFUND),
-            withdrawal = withdrawal,
-        )
-
-        fun receipt(refund: Money?) =
-            StripeSubscriptionCancellationReceipt(
-                endsAt = Instant.parse("2026-10-31T12:00:00Z"),
-                receivedAt = Instant.parse("2026-10-31T12:00:00Z"),
-                refund = refund,
+        val ENDS: Instant = Instant.parse("2026-12-01T12:00:00Z")
+        val RECEIPT =
+            ApiJson.decodeFromString<StripeSubscriptionCancellationReceipt>(
+                """{"endsAt":"2026-12-01T12:00:00Z","receivedAt":"2026-11-01T12:00:00Z"}""",
             )
+
+        fun cancellationStatus(
+            ending: Boolean = false,
+            unpaid: Boolean = false,
+        ): StripeSubscriptionCancellation =
+            ApiJson.decodeFromString(
+                """{"cancellation":${if (ending) """{"endsAt":"2026-12-01T12:00:00Z"}""" else "null"},"unpaid":$unpaid,"canResumeRenewal":$ending}""",
+            )
+
+        fun plan(
+            provider: String = "stripe",
+            cancelAt: Instant? = null,
+            cancelAtPeriodEnd: Boolean = cancelAt != null,
+        ) = MeSubscription(
+            cancelAt = cancelAt,
+            cancelAtPeriodEnd = cancelAtPeriodEnd,
+            id = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0d4"),
+            periodEnd = ENDS,
+            periodStart = null,
+            plan = "plus",
+            provider = provider,
+            status = "active",
+        )
     }
 }
