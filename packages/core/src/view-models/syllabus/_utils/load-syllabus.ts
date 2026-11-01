@@ -24,7 +24,7 @@ import {
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
 import { loadAreaCourses, loadChapterTitles, withSkills } from "./syllabus-content";
-import { type SyllabusInput, type SyllabusSkill } from "./syllabus-input";
+import { type SyllabusInput, type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 import { getPastBasicsSkillIds, withTestedOutSkills } from "./syllabus-known-skills";
 import { loadNotice } from "./syllabus-notice";
 import { getSkillSubjects } from "./syllabus-subjects";
@@ -42,6 +42,22 @@ const itemSelect = {
   titleSnapshot: true,
 } as const;
 
+/** Copies only these fields: saved items carry more, and every reader of the cached input decodes all of it. */
+function toSyllabusItem(item: SyllabusItem): SyllabusItem {
+  return {
+    chapterId: item.chapterId,
+    id: item.id,
+    kind: item.kind,
+    lessonId: item.lessonId,
+    lessons: item.lessons,
+    phase: item.phase,
+    scheduledFor: item.scheduledFor,
+    skillId: item.skillId,
+    status: item.status,
+    titleSnapshot: item.titleSnapshot,
+  };
+}
+
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
     area: getSkillArea({ graph, skill }),
@@ -56,7 +72,9 @@ function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: Save
     ? {
         goal: { primaryCourseId: goal.primaryCourseId ?? null },
         graph: saved.graph,
-        items: saved.items.filter((item) => LEARN_KINDS.has(item.kind)),
+        items: saved.items
+          .filter((item) => LEARN_KINDS.has(item.kind))
+          .map((item) => toSyllabusItem(item)),
         settings: saved.settings,
       }
     : null;
