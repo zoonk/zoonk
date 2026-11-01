@@ -115,34 +115,26 @@ internal fun matchColumns(id: String) =
 internal fun vocabulary(id: String) =
     step(id, StepKind.Vocabulary, "vocabulary", word = WORD, hints = """{"note":"You say it to a cat.","pronunciationTip":null}""")
 
-internal fun translation(
-    id: String,
-    hints: String? = null,
-    gatoAudio: String? = null,
-) = step(
-    id,
-    StepKind.Translation,
-    "translation",
-    word = WORD,
-    translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":${gatoAudio?.let {
-        "\"$it\""
-    }},"id":"w-1",
-        "romanization":"ga-to","word":"gato"}]""",
-    hints = hints,
-)
+internal fun translation(id: String) =
+    step(
+        id,
+        StepKind.Translation,
+        "translation",
+        word = WORD,
+        translations = """[{"audioUrl":null,"id":"w-2","romanization":null,"word":"perro"},{"audioUrl":null,"id":"w-1",
+            "romanization":"ga-to","word":"gato"}]""",
+    )
 
-internal fun multipleChoice(
-    id: String,
-    image: String? = null,
-) = step(
-    id,
-    StepKind.MultipleChoice,
-    "multipleChoice",
-    content =
-        """{"options":[{"feedback":"Yes.","id":"bed","isCorrect":true,"text":"On the bed"},{"feedback":"No.","id":"sofa",
-            "isCorrect":false,"text":"On the sofa"}],
-           "question":"Where is the cat?"${image?.let { ""","image":$it""" }.orEmpty()}}""",
-)
+internal fun multipleChoice(id: String) =
+    step(
+        id,
+        StepKind.MultipleChoice,
+        "multipleChoice",
+        content =
+            """{"options":[{"feedback":"Yes.","id":"bed","isCorrect":true,"text":"On the bed"},{"feedback":"No.","id":"sofa",
+                "isCorrect":false,"text":"On the sofa"}],
+               "question":"Where is the cat?"}""",
+    )
 
 internal fun alphabet(id: String) =
     step(

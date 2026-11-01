@@ -35,14 +35,10 @@ class GeometryFlowTest {
 
     private fun add(element: String) = rule.onNodeWithContentDescription(element).performScrollTo().performClick()
 
-    private fun buildCarbonDioxide(doubleBonds: Boolean) {
+    private fun buildCarbonDioxide() {
         add("Add Carbon")
         add("Add Oxygen bonded to Carbon 1")
         add("Add Oxygen bonded to Carbon 1")
-        if (doubleBonds) {
-            rule.onNodeWithContentDescription("Oxygen 1: 1 of 2 bonds").performClick()
-            rule.onNodeWithContentDescription("Oxygen 2: 1 of 2 bonds").performClick()
-        }
     }
 
     @Test
@@ -50,7 +46,7 @@ class GeometryFlowTest {
         val restoration = StateRestorationTester(rule)
         play("moleculeBuilder", isCorrect = true, restoration = restoration)
 
-        buildCarbonDioxide(doubleBonds = false)
+        buildCarbonDioxide()
         restoration.emulateSavedInstanceStateRestore()
         rule.onNodeWithContentDescription("Undo").performScrollTo().performClick()
 

@@ -27,7 +27,6 @@ class ExampleLineFlowTest {
     private val api get() = harness.api
 
     private val discount = "At the pharmacy where you work, 25% off a \$40 kit saves \$10."
-    private val interest = "Your scooter's 12 payments of \$110 for \$1,200 add \$120 of interest."
 
     @Test
     fun writesTheLessonsExamplesFromTheLearnersFirstMoveNeverFromItsOpening() {
