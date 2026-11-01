@@ -269,6 +269,25 @@ class LevelTestStepFlowTest {
     }
 
     @Test
+    fun aListeningMessageOnItsWayShowsUntilARereadBringsIt() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
+        show(speech = speech())
+
+        rule.onNodeWithText("The voice message is on its way…").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Play the message").assertDoesNotExist()
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        val reads = api.levelTestReads
+
+        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1)
+        rule.mainClock.advanceTimeBy(POLL_MS)
+
+        assertEquals(reads + 1, api.levelTestReads)
+        rule.onNodeWithText("The voice message is on its way…").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsDisplayed()
+        rule.onNodeWithText("I didn't understand the audio").assertIsDisplayed()
+    }
+
+    @Test
     fun skippingAListeningQuestionWhoseMessageIsOnItsWayDoesNotScoreIt() {
         api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
         show(speech = speech())
