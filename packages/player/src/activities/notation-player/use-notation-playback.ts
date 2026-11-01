@@ -41,18 +41,15 @@ export function useNotationPlayback({
     setBar(null);
   }
 
-  const stopPiano = piano.stop;
-
   useEffect(
     () => () => {
       timing.current?.stop();
       timing.current = null;
-      stopPiano();
       lit.current.forEach((element) => element.classList.remove(PLAYING_CLASS));
       lit.current = [];
       setBar(null);
     },
-    [stopPiano],
+    [],
   );
 
   function play() {

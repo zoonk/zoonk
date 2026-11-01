@@ -21,8 +21,9 @@ import {
 import type * as ActivityAudio from "../activities/_utils/activity-audio";
 
 const piano = vi.hoisted(() => {
-  const stop = vi.fn();
-  return { stop, voice: () => ({ ready: Promise.resolve(), start: vi.fn(), stop }) };
+  const silenced = vi.fn();
+  const start = vi.fn(() => silenced);
+  return { silenced, start, voice: () => ({ ready: Promise.resolve(), start, stop: vi.fn() }) };
 });
 
 vi.mock("smplr", () => ({ Soundfont: piano.voice, SplendidGrandPiano: piano.voice }));
@@ -92,6 +93,8 @@ async function goBackAndReturn() {
 describe("going back to reread", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    piano.start.mockClear();
+    piano.silenced.mockClear();
     audioStart.hold = Promise.resolve();
     audioStart.started = 0;
     localStorage.removeItem(DEVICE_DELAY_KEY);
@@ -163,7 +166,8 @@ describe("going back to reread", () => {
 
     await goBackAndReturn();
 
-    expect(immediateStops(stop)).toBeGreaterThan(0);
+    const soundCheckStops = immediateStops(stop);
+    expect(soundCheckStops).toBeGreaterThan(0);
 
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
     await page.getByRole("button", { name: "Skip for now" }).click();
@@ -175,6 +179,7 @@ describe("going back to reread", () => {
 
     await goBackAndReturn();
 
+    expect(immediateStops(stop)).toBeGreaterThan(soundCheckStops);
     await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
   });
 
@@ -229,16 +234,31 @@ describe("going back to reread", () => {
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
   });
 
-  it("stops a melody when the learner leaves it", async () => {
+  it("stops every note of a melody when the learner leaves it", async () => {
     playLesson([reading, activity(activityContentFixtures.notationPlayer)]);
     await page.getByRole("button", { name: /^Next/u }).click();
     await page.getByRole("button", { name: "Play the melody" }).click();
     await expect.element(page.getByText(/^Bar \d of 4$/u)).toBeVisible();
-    const stopsBefore = piano.stop.mock.calls.length;
+    expect(piano.silenced).not.toHaveBeenCalled();
 
     await goBackAndReturn();
 
-    expect(piano.stop.mock.calls.length).toBeGreaterThan(stopsBefore);
+    expect(piano.silenced).toHaveBeenCalledTimes(piano.start.mock.calls.length);
     await expect.element(page.getByRole("button", { name: "Play the melody" })).toBeVisible();
+  });
+
+  it("never plays a melody its screen was left before its sound came on", async () => {
+    const sound = Promise.withResolvers<null>();
+    audioStart.hold = sound.promise;
+
+    playLesson([reading, activity(activityContentFixtures.notationPlayer)]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: "Play the melody" }).click();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
+    sound.resolve(null);
+    await expect.poll(() => audioStart.started).toBe(1);
+
+    expect(piano.start).not.toHaveBeenCalled();
   });
 });

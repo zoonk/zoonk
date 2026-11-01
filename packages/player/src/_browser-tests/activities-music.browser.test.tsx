@@ -24,7 +24,7 @@ import type * as RhythmClock from "../activities/rhythm-tapper/rhythm-clock";
 
 const instrument = vi.hoisted(() => () => ({
   ready: Promise.resolve(),
-  start: vi.fn(),
+  start: vi.fn(() => vi.fn()),
   stop: vi.fn(),
 }));
 

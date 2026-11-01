@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getActivityAudioContext, startActivityAudio } from "./activity-audio";
 import { type SoundEvent } from "./sound-events";
 
 type InstrumentName = "guitar" | "piano";
 
+type StopNote = () => void;
+
 type Voice = {
-  start: (note: { duration?: number; note: number; time?: number; velocity?: number }) => unknown;
-  stop: () => void;
+  start: (note: { duration?: number; note: number; time?: number; velocity?: number }) => StopNote;
 };
 
 const PIANO_VELOCITY = 76;
@@ -60,6 +61,8 @@ export type InstrumentStatus = "loading" | "ready" | "unavailable";
 
 export function useInstrument(name: InstrumentName) {
   const [status, setStatus] = useState<InstrumentStatus>("loading");
+  const plays = useRef(0);
+  const notes = useRef<StopNote[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -72,11 +75,28 @@ export function useInstrument(name: InstrumentName) {
     return () => controller.abort();
   }, [name]);
 
+  // The voice is shared by every screen, so this stops only the notes this one started, queued ones
+  // included (the voice's own stop leaves notes queued past its lookahead), and drops a play still
+  // starting. It also runs when the screen is hidden or gone.
+  const stop = useCallback(() => {
+    plays.current += 1;
+    notes.current.forEach((stopNote) => stopNote());
+    notes.current = [];
+  }, []);
+
+  useEffect(() => stop, [stop]);
+
   const play = useCallback(
     async (events: readonly SoundEvent[], duration = DEFAULT_DURATION) => {
+      const played = plays.current;
+
       const [context, voice] = await Promise.all([startActivityAudio(), getVoice(name)]).catch(
         () => [null, null] as const,
       );
+
+      if (played !== plays.current) {
+        return;
+      }
 
       if (!context || !voice) {
         setStatus("unavailable");
@@ -85,23 +105,18 @@ export function useInstrument(name: InstrumentName) {
 
       const start = context.currentTime + SCHEDULE_AHEAD;
 
-      events.forEach((event) => {
-        voice.start({
-          duration: event.duration ?? duration,
-          note: event.midi,
-          time: start + event.at,
-        });
-      });
+      notes.current.push(
+        ...events.map((event) =>
+          voice.start({
+            duration: event.duration ?? duration,
+            note: event.midi,
+            time: start + event.at,
+          }),
+        ),
+      );
     },
     [name],
   );
-
-  const stop = useCallback(() => {
-    void getVoice(name).then(
-      (voice) => voice.stop(),
-      () => null,
-    );
-  }, [name]);
 
   return { play, status, stop };
 }
