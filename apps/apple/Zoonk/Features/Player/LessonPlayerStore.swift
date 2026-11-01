@@ -235,6 +235,7 @@ final class LessonPlayerStore {
 
     self.lesson = lesson
     self.state = state
+    works = [:]
     soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam
     openedAt = .now

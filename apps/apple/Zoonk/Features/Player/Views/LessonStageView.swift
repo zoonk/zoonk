@@ -176,7 +176,9 @@ struct LessonStageView: View {
           store.isSpread = isSpread
         }
       }
-      .id(step.id)
+      // A screen whose answer starts over (a missed question coming straight back) is made anew,
+      // as another screen would be, so its canvas starts over too.
+      .id("\(step.id)/\(state.rounds[step.id] ?? 0)")
       .onChange(of: step.id, initial: true) {
         store.promptAudio.enter()
       }

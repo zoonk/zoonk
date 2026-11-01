@@ -87,6 +87,24 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(reopened.state?.steps["check"]?.image?.url, "https://example.com/a.png")
   }
 
+  /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
+  /// so what was done on a canvas starts over with it.
+  func testALessonLoadedAgainStartsItsCanvasWorkOver() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try pictureLesson(isDrawn: true))
+    }
+    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    await store.load()
+    store.work(for: "check", round: try XCTUnwrap(store.state).rounds["check"] ?? 0)
+      .set(["left": "right"], for: "pairs")
+
+    await store.load()
+
+    let work = store.work(for: "check", round: try XCTUnwrap(store.state).rounds["check"] ?? 0)
+    XCTAssertNil(work.value("pairs") as [String: String]?)
+  }
+
   func testASessionLessonEndsWithTheMissionsItCompletedAndItsOwnBrainPower() async throws {
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
