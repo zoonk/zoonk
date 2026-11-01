@@ -192,7 +192,7 @@ describe("mind maps read from the saved plan", () => {
   });
 
   it("keeps a chapter the plan files a lesson under only by the lesson's home", async () => {
-    const { beginner, goal, plan, user } = await signedInCourseGoal({
+    const { beginner, chapters, goal, plan, user } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
 
@@ -226,6 +226,14 @@ describe("mind maps read from the saved plan", () => {
     const mindMaps = await readyMindMaps(goal.id);
 
     expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual([beginner.id]);
+
+    await expect(
+      Promise.all(
+        [[beginner.id], chapters.map((chapter) => chapter.id)].map((chapterIds) =>
+          hasGoalMindMaps({ chapterIds, goalId: goal.id }),
+        ),
+      ),
+    ).resolves.toStrictEqual([true, false]);
 
     await expect(loadLearnerFacts(user.id)).resolves.toMatchObject({ mindMapGoalIds: [goal.id] });
 

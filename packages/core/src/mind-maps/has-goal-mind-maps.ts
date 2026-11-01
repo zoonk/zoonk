@@ -4,8 +4,10 @@ import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { getMindMapStatus } from "./_utils/mind-map-view";
 
-/** Whether `listGoalMindMaps` lists any chapter for the goal (the active one by default), without building the list. */
-export async function hasGoalMindMaps(input: { goalId?: string } = {}): Promise<boolean> {
+/** Whether `listGoalMindMaps` lists any chapter for the goal (the active one by default), or any of `chapterIds`, without building the list. */
+export async function hasGoalMindMaps(
+  input: { chapterIds?: string[]; goalId?: string } = {},
+): Promise<boolean> {
   "use cache: private";
 
   const resolved = await resolveViewGoal(input.goalId);
@@ -15,7 +17,7 @@ export async function hasGoalMindMaps(input: { goalId?: string } = {}): Promise<
   }
 
   const [chapters, now] = await Promise.all([
-    loadMindMapChapters({ goal: resolved.goal }),
+    loadMindMapChapters({ chapterIds: input.chapterIds, goal: resolved.goal }),
     getRequestInstant(),
   ]);
 

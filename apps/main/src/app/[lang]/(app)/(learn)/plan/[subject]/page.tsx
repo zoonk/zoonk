@@ -2,8 +2,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
-import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
-import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
+import { hasGoalMindMaps } from "@zoonk/core/mind-maps/has-any";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -35,28 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: subject?.shortName ?? t("Plan") };
 }
 
-function hasSubjectMindMaps({
-  mindMaps,
-  subject,
-}: {
-  mindMaps: Awaited<ReturnType<typeof listGoalMindMaps>>;
-  subject: SyllabusSubject;
-}): boolean {
-  if (mindMaps.status !== "ready") {
-    return false;
-  }
-
-  const listed = new Set(mindMaps.mindMaps.chapters.map((chapter) => chapter.chapterId));
-  return subject.chapters.some((chapter) => chapter.chapterId && listed.has(chapter.chapterId));
-}
-
 async function SubjectBody({ params }: Props) {
-  const [{ subject: key }, mindMaps, tutor] = await Promise.all([
-    params,
-    listGoalMindMaps(),
-    getTutorViewer(),
-  ]);
-
+  const [{ subject: key }, tutor] = await Promise.all([params, getTutorViewer()]);
   const { result, subject } = await findSubject(decodeURIComponent(key));
 
   if (result.status === "noGoal" || result.status === "unauthorized") {
@@ -80,10 +59,14 @@ async function SubjectBody({ params }: Props) {
     );
   }
 
+  const hasMindMaps = await hasGoalMindMaps({
+    chapterIds: subject.chapters.flatMap((chapter) => chapter.chapterId ?? []),
+  });
+
   return (
     <SubjectScreenClient
       goalId={result.syllabus.goal.id}
-      hasMindMaps={hasSubjectMindMaps({ mindMaps, subject })}
+      hasMindMaps={hasMindMaps}
       subject={subject}
       syllabus={{
         examDocument: result.syllabus.examDocument,
