@@ -8,6 +8,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { getSession } from "../../users/get-session";
 import { type PlanChangeView } from "../plan-view-contract";
@@ -68,6 +69,7 @@ export async function loadOwnedPlanContext(
   const context = await loadPlanContext({
     goal: owned.goal,
     now: currentInstant,
+    saved: await readSavedPlan(owned.userId, goalId),
     timeZone: goalZone && isValidTimeZone(goalZone) ? goalZone : timeZone,
   });
 

@@ -46,7 +46,7 @@ export async function getProgressView(
     isExplanation ? null : getGoalPreparation(goal.id),
     listCurrentUserSkills({ goalId: goal.id }),
     countOpenGoalMistakes({ goalId: goal.id }),
-    loadStillNeededWork({ goalId: goal.id, now: new Date() }),
+    loadStillNeededWork(goal),
   ]);
 
   if ((preparation && preparation.status !== "ready") || skills.status !== "ready") {

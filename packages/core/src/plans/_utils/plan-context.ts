@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import {
@@ -56,6 +57,26 @@ const itemSelect = {
   titleSnapshot: true,
 } as const;
 
+/** The same item fields whether the plan was read here or by `readSavedPlan`. */
+function toContextItem(item: Pick<PlanItem, keyof typeof itemSelect>): ContextPlanItem {
+  return {
+    chapterId: item.chapterId,
+    completedAt: item.completedAt,
+    facts: readSelectedItemFacts(item.facts),
+    id: item.id,
+    kind: item.kind,
+    lessonId: item.lessonId,
+    lessons: item.lessons,
+    minutes: item.minutes,
+    phase: item.phase,
+    position: item.position,
+    scheduledFor: item.scheduledFor,
+    skillId: item.skillId,
+    status: item.status,
+    titleSnapshot: item.titleSnapshot,
+  };
+}
+
 export function getPlanState({
   goal,
   plan,
@@ -77,19 +98,26 @@ export function getStateTargetDate(state: PlanState): Date | null {
   return state.goal.targetDate ? fromIsoDate(state.goal.targetDate) : null;
 }
 
+function loadPlan(goalId: string) {
+  return prisma.plan.findUnique({
+    include: { items: { orderBy: { position: "asc" }, select: itemSelect } },
+    where: { goalId },
+  });
+}
+
 export async function loadPlanContext({
   goal,
   now = new Date(),
+  saved,
   timeZone,
 }: {
   goal: Goal;
   now?: Date;
+  /** A GET's `readSavedPlan` row, so the request reads the plan once; writes leave it out. */
+  saved?: SavedPlan | null;
   timeZone?: string | null;
 }): Promise<PlanContext | null> {
-  const plan = await prisma.plan.findUnique({
-    include: { items: { orderBy: { position: "asc" }, select: itemSelect } },
-    where: { goalId: goal.id },
-  });
+  const plan = saved === undefined ? await loadPlan(goal.id) : saved;
 
   if (!plan) {
     return null;
@@ -99,7 +127,7 @@ export async function loadPlanContext({
 
   return {
     goal,
-    items: plan.items.map((item) => ({ ...item, facts: readSelectedItemFacts(item.facts) })),
+    items: plan.items.map((item) => toContextItem(item)),
     phases: parsePlanPhases(plan.phases),
     plan: {
       coveredShare: plan.coveredShare,

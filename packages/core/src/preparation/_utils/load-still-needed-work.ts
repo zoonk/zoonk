@@ -1,37 +1,32 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
-import { loadPlanContext } from "../../plans/_utils/plan-context";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getMinutesPerItem } from "../plan-status";
 
-export async function loadStillNeededWork({
-  goalId,
-  now,
-  timeZone,
-}: {
-  goalId: string;
-  now: Date;
-  timeZone?: string;
-}) {
-  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-  const context = goal ? await loadPlanContext({ goal, now, timeZone }) : null;
+/** GETs only, after ownership authorization. */
+export async function loadStillNeededWork(goal: Pick<Goal, "id" | "userId">) {
+  const [saved, plan] = await Promise.all([
+    readSavedPlan(goal.userId, goal.id),
+    readGoalPlan(goal.id),
+  ]);
 
-  if (!context) {
+  if (!saved) {
     return { weights: new Map<string, number | null>(), work: [] };
   }
 
-  const plan = await readGoalPlan(context.goal.id);
-  const planned = new Map(context.items.map((item) => [item.id, item.minutes]));
+  const planned = new Map(saved.items.map((item) => [item.id, item.minutes]));
 
   const averageMinutes = getMinutesPerItem({
-    estimateHours: context.plan.estimateHours,
-    itemCount: context.items.length,
+    estimateHours: saved.estimateHours,
+    itemCount: saved.items.length,
   });
 
-  const graph = context.state.graph;
-
   return {
-    weights: new Map(graph.skills.map((skill) => [skill.skillId, skill.weight])),
+    weights: new Map(
+      parsePlanGraph(saved.graph).skills.map((skill) => [skill.skillId, skill.weight]),
+    ),
     work: plan.items
       .filter((item) => item.status === "todo")
       .map((item) => ({

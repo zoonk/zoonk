@@ -9,6 +9,7 @@ import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
@@ -103,6 +104,16 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
   };
 }
 
+function useHasMindMaps(goalId: string): boolean {
+  const learner = useLearnerSummary();
+
+  return (
+    learner.status === "ready" &&
+    learner.summary.activeGoalId === goalId &&
+    learner.summary.places.mindMaps
+  );
+}
+
 type JourneyClientProps = Omit<
   JourneyScreenProps,
   "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
@@ -110,7 +121,6 @@ type JourneyClientProps = Omit<
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
-  hasMindMaps: boolean;
   language: LanguageProgressView | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
   readAt: number;
@@ -150,7 +160,6 @@ export function JourneyClient({
   buddy,
   goalId,
   goalStatus,
-  hasMindMaps,
   language,
   next,
   preparation,
@@ -164,6 +173,7 @@ export function JourneyClient({
   const status = useGoalStatus({ goalId, resume, status: goalStatus });
   const arrival = useArrivalChoice();
   const outlineActions = useTopicOutlineActions(goalId);
+  const hasMindMaps = useHasMindMaps(goalId);
 
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
     const started = await onContinue();
