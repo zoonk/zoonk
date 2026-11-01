@@ -64,6 +64,7 @@ import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.WordBankScene
+import com.zoonk.android.feature.player.steps.questionColor
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
 import kotlinx.coroutines.launch
@@ -326,18 +327,16 @@ private const val NONE = "\u0000"
 
 /**
  * Reading's prompt: the sentence in the learner's language, each word that stands for a word of the
- * answer showing it on a tap. It steps back once the answer is checked.
+ * answer showing it on a tap.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun ReadingPrompt(
     sentence: String,
     words: List<ReadingPromptWord>,
-    answered: Boolean,
 ) {
     val prompt = remember(sentence) { stripWrappingQuotes(sentence) }
-    val color = if (answered) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-    val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = color)
+    val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = questionColor())
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         LabelChip(stringResource(R.string.player_language_translate))

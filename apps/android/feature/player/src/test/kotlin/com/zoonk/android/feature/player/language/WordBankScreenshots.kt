@@ -97,4 +97,8 @@ class WordBankScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneFillBlank() = build("fill-blank-phone", fillBlank("blank"), listOf("pay"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneFillBlankDark() = build("fill-blank-phone-dark", fillBlank("blank"), listOf("pay"))
 }

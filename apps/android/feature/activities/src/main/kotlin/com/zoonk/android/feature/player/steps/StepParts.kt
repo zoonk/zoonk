@@ -9,8 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -112,12 +114,16 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** A question as a TalkBack heading, with any table of data above it; it steps back once answered. */
+/** Main's `data-phase=feedback`: once a screen is checked, its question steps back so the learner's eyes go to the verdict. */
+internal val LocalStepChecked = compositionLocalOf { false }
+
 @Composable
-fun QuestionText(
-    text: String,
-    answered: Boolean = false,
-) {
+internal fun questionColor(): Color =
+    if (LocalStepChecked.current) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+
+/** A question as a TalkBack heading, with any table of data above it. */
+@Composable
+fun QuestionText(text: String) {
     val (data, question) = remember(text) { splitQuestionData(text) }
 
     if (data != null) ContextText(data)
@@ -126,10 +132,7 @@ fun QuestionText(
             text = question,
             modifier = Modifier.semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
-                MaterialTheme.typography.titleLarge.copy(
-                    color = if (answered) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                MaterialTheme.typography.titleLarge.copy(color = questionColor(), fontWeight = FontWeight.SemiBold),
         )
     }
 }

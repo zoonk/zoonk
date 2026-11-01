@@ -152,7 +152,7 @@ fun LanguageStepView(
                     language = languages.target,
                     speech = speech,
                     onAnswer = select,
-                ) { ReadingPrompt(sentence.translation, exercise.readingPromptWords, answered = result != null) }
+                ) { ReadingPrompt(sentence.translation, exercise.readingPromptWords) }
             }
         }
 
@@ -188,7 +188,7 @@ fun LanguageStepView(
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             LabelChip(stringResource(R.string.player_language_translate))
-                            QuestionText(stripWrappingQuotes(sentence.sentence), answered = result != null)
+                            QuestionText(stripWrappingQuotes(sentence.sentence))
                         }
                     }
                 }
@@ -359,7 +359,7 @@ private fun MultipleChoiceView(
                 ContextText(content.context?.let(::stripWrappingQuotes))
             }
         }
-        content.question?.let { QuestionText(stripWrappingQuotes(it), answered = result != null) }
+        content.question?.let { QuestionText(stripWrappingQuotes(it)) }
         ChoiceOptions(
             options = content.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
             selectedId = selectedId,
@@ -402,7 +402,7 @@ private fun TranslationView(
                     if (languages.definesWords) R.string.player_language_which_means_this else R.string.player_language_translate,
                 ),
             )
-            QuestionText(word.translation, answered = result != null)
+            QuestionText(word.translation)
         }
         ChoiceOptions(
             options = options.map { ChoiceOption(it.id, it.word, it.id == word.id) },

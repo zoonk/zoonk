@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.focus.FocusRequester
@@ -84,18 +85,20 @@ fun StepView(
     val result = state.results[step.id]
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
 
-    when (val content = step.content) {
-        is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
-        is StepContent.Fact -> FactHookView(step, content)
-        is StepContent.Explanation -> ExplanationView(step, content, actions)
-        is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1)
-        is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
-        is StepContent.Summary -> SummaryView(content)
-        is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
-        is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language)
-        is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
-        is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
-        is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)
+    CompositionLocalProvider(LocalStepChecked provides (state.phase == LessonPhase.Feedback)) {
+        when (val content = step.content) {
+            is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
+            is StepContent.Fact -> FactHookView(step, content)
+            is StepContent.Explanation -> ExplanationView(step, content, actions)
+            is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1)
+            is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
+            is StepContent.Summary -> SummaryView(content)
+            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
+            is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language)
+            is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
+            is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
+            is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)
+        }
     }
 
     step.citation?.let { LessonCitation(it) }

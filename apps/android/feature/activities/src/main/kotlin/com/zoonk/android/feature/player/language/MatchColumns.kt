@@ -126,7 +126,7 @@ internal fun MatchColumnsView(
     }
 
     QuestionScene {
-        QuestionText(stripWrappingQuotes(content.question ?: stringResource(R.string.player_language_match_the_pairs)), answered = checked)
+        QuestionText(stripWrappingQuotes(content.question ?: stringResource(R.string.player_language_match_the_pairs)))
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             lefts.indices.forEach { row ->

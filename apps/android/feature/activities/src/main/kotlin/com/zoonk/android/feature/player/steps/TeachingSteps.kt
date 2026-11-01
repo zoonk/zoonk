@@ -176,7 +176,7 @@ internal fun GuessHookView(
             LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
             StepPicture(step, PictureFrame.Question)
             LessonStepVisual(guess.visual)
-            QuestionText(guess.question, answered = result != null)
+            QuestionText(guess.question)
         }
 
         ChoiceOptions(
@@ -338,7 +338,7 @@ internal fun CheckView(
             screen.step?.let { StepPicture(it, PictureFrame.Question) }
             ContextText(check.context)
             LessonStepVisual(check.visual)
-            QuestionText(check.question, answered = result != null)
+            QuestionText(check.question)
         }
 
         val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
@@ -425,7 +425,7 @@ internal fun TypedAnswerView(
             if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
             ContextText(typed.context)
             LessonStepVisual(typed.visual)
-            QuestionText(typed.question, answered = state.phase == LessonPhase.Feedback)
+            QuestionText(typed.question)
         }
 
         AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
@@ -479,7 +479,7 @@ internal fun SpokenAnswerView(
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            QuestionText(spoken.prompt, answered = state.phase == LessonPhase.Feedback)
+            QuestionText(spoken.prompt)
             TargetText(spoken)
         }
 

@@ -189,7 +189,7 @@ internal fun ActivityView(
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             renderer?.badge?.invoke(content.content)?.let { LabelChip(stringResource(it.label), icon = it.icon) }
-            QuestionText(frame.prompt, answered = result != null)
+            QuestionText(frame.prompt)
         }
         StepPicture(step, PictureFrame.Question)
 

@@ -38,6 +38,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.WordBankScene
+import com.zoonk.android.feature.player.steps.questionColor
 
 private const val BLANK = "[BLANK]"
 
@@ -87,7 +88,7 @@ internal fun FillBlankView(
         question = {
             content.question?.let { QuestionText(stripWrappingQuotes(it)) }
 
-            val words = if (checked) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style
+            val words = style.copy(color = questionColor())
             TargetDirection(language) {
                 // Words read as one stop with the empty blanks in it; a filled blank is its own stop.
                 FlowRow(

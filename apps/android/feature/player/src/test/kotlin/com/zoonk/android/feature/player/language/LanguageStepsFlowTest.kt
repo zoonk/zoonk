@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.player.language
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -8,7 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -37,6 +41,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -81,6 +86,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -102,6 +108,7 @@ class LanguageStepsFlowTest {
     private val session = FakeSession(AuthenticatedSession(ANA, "token-a", "local-a"))
     private lateinit var api: FakeLessonPlayerApi
     private lateinit var speech: SpeechPlayer
+    private lateinit var colors: ColorScheme
 
     private val exits =
         object : LessonPlayerExits {
@@ -139,6 +146,7 @@ class LanguageStepsFlowTest {
 
         rule.setContent {
             ZoonkTheme {
+                colors = MaterialTheme.colorScheme
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides SnackbarHostState(),
                     LocalLessonSpeech provides previewSpeech().also { speech = it },
@@ -237,6 +245,37 @@ class LanguageStepsFlowTest {
         tap("Check")
 
         assertEquals(Json.parseToJsonElement("""{"kind":"fillBlank","userAnswers":["pay"]}"""), sent("blank"))
+    }
+
+    /** The color [text] is drawn in, where it first shows: a placed word before its tile in the bank. */
+    private fun color(text: String): Color {
+        val layouts = mutableListOf<TextLayoutResult>()
+        rule
+            .onAllNodesWithText(text, useUnmergedTree = true)
+            .onFirst()
+            .fetchSemanticsNode()
+            .config[SemanticsActions.GetTextLayoutResult]
+            .action
+            ?.invoke(layouts)
+        return layouts
+            .single()
+            .layoutInput.style.color
+    }
+
+    @Test
+    fun aCheckedBlanksQuestionAndSentenceStepBackWhileThePlacedWordStays() {
+        play(listOf(fillBlank("blank"), summaryStep("end")))
+        tap("pay")
+
+        assertEquals(colors.onSurface, color("Fill in the blank"))
+        assertEquals(colors.onSurface, color("rent."))
+
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+
+        assertEquals(colors.onSurfaceVariant, color("Fill in the blank"))
+        assertEquals(colors.onSurfaceVariant, color("rent."))
+        assertNotEquals(colors.onSurfaceVariant, color("pay"))
     }
 
     @Test
