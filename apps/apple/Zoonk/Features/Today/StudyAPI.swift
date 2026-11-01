@@ -34,6 +34,7 @@ protocol StudyAPIClient: Sendable {
   func prepareLessons(token: String, goalID: String) async throws
   /// Only on the learner's tap: research reads their uploads instead of searching again.
   func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws
+    -> UploadAnswer
   func dismissUploadRequest(token: String, goalID: String) async throws
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
@@ -326,13 +327,23 @@ struct StudyAPI: StudyAPIClient {
     try await OnboardingAPI(clients: clients).prepareLessons(goalID: goalID, token: token)
   }
 
-  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {
+  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws
+    -> UploadAnswer
+  {
     try await clients.perform(token: token) { client in
       switch try await client.createResearch(
         body: .json(.init(goalId: goalID, sourceIds: sourceIDs)))
       {
       case .accepted:
-        return
+        return .answered
+      case .conflict(let response):
+        let problem: APIProblem = try StudyJSON.recode(try response.body.json)
+
+        guard problem.error.code == "UPLOAD_ALREADY_READ" else {
+          throw APIError.unavailable
+        }
+
+        return .alreadyRead
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:

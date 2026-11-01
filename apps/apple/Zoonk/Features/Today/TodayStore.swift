@@ -270,7 +270,9 @@ final class TodayStore {
     }
   }
 
-  func answer(_ request: TodayView.UploadRequest, sourceID: String) async -> MutationResult<Void> {
+  func answer(_ request: TodayView.UploadRequest, sourceID: String) async
+    -> MutationResult<UploadAnswer>
+  {
     await cache.mutate(invalidating: [.goals]) { identity in
       try await api.answerUploadRequest(
         token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])

@@ -76,6 +76,9 @@ sealed interface Refusal {
 
     data object Unsupported : Refusal
 
+    /** Research already read this upload for an earlier ask, so it needs a different one. */
+    data object AlreadyRead : Refusal
+
     /** The security check refused to make this visitor a guest: only an account gets past it. */
     data object GuestBlocked : Refusal
 
@@ -507,6 +510,7 @@ internal fun ApiException.refusal(): Refusal? =
         "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> Refusal.SignUpRequired
         "SLOW_DOWN", "RATE_LIMIT_EXCEEDED" -> Refusal.SlowDown
         "UNPROCESSABLE_ENTITY" -> Refusal.Unsupported
+        "UPLOAD_ALREADY_READ" -> Refusal.AlreadyRead
         "USAGE_LIMIT_REACHED" -> details?.decode<LimitDetails>()?.limit?.let(Refusal::Limit)
         "GOAL_LIMIT_REACHED" -> details?.decode<UsageLimit>()?.let(Refusal::Limit)
         "DAY_TOO_SHORT" -> details?.decode<Refusal.DayTooShort>()

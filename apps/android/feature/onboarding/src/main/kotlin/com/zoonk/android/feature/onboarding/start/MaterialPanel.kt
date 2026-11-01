@@ -95,6 +95,10 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
                 R.string.onboarding_attach_sign_in
             }
 
+            Refusal.AlreadyRead -> {
+                R.string.onboarding_attach_already_read
+            }
+
             is Refusal.DayTooShort, Refusal.GuestBlocked, null -> {
                 R.string.onboarding_attach_failed
             }

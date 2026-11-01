@@ -9,6 +9,7 @@
   "onboarding_another_date": "29cab0bfe5f938bba942899c4d849628931cb699412396889231687c81596734",
   "onboarding_answers_saved": "95720d61e4547ae341f314025b0ae5d095a267491d38ba4e0a4a6a2a543a7dae",
   "onboarding_ask": "053572b57dfcca6a47e32555e78af1683b7c972e6c4fb01efe9694d8d2369fd6",
+  "onboarding_attach_already_read": "99c9c09db444ed83385653f2ca9f165164ce1aec71710f478de09266c4b235b4",
   "onboarding_attach_failed": "fc4f3f21de4cc88c93ec8baf8b04ca35615e3512930de17585ab9dd9cda919c8",
   "onboarding_attach_limit_day": "44680e92d42814aab6538cd061322d339607e0d4f5b43d0006b6151d383ec51b",
   "onboarding_attach_limit_month": "e63992f4a4cb01f80c81d141892cdd3445f768d28f10ba93633b7b8c73988457",
@@ -591,6 +592,8 @@
     <string name="onboarding_attach_slow_down">Kısa sürede çok materyal ekledin. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_attach_unsupported">Bu dosyayı okuyamıyoruz. PDF, fotoğraf, Word, PowerPoint veya metin eklemeyi dene.</string>
     <string name="onboarding_attach_sign_in">Kendi materyalini eklemek için hesap oluştur.</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">Bu belgeyi daha önce okuduk. Farklı bir belge yükle.</string>
     <string name="onboarding_attach_failed">Bunu ekleyemedik. Birazdan tekrar dene.</string>
     <string name="onboarding_intent_title">Ne yapmak istiyorsun?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->

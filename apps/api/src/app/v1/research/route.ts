@@ -1,4 +1,4 @@
-import { errors } from "@/lib/api-errors";
+import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { createResearchRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { readBody } from "@/lib/request-input";
@@ -44,7 +44,11 @@ async function createResearch(request: NextRequest) {
   }
 
   if (access.status === "alreadyAnswered") {
-    return errors.conflict("These uploads already answered an upload request; add a new one");
+    return createErrorResponse({
+      code: "UPLOAD_ALREADY_READ",
+      message: "Research already read these uploads; add a different document",
+      status: httpStatus.conflict,
+    });
   }
 
   const followed =

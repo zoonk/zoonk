@@ -11,13 +11,18 @@ import { ChangeSaveError } from "../_components/save-error";
 import { AttachControls } from "../onboarding/entry/attach-panel";
 import { type GoalAttachActions } from "../onboarding/onboarding-actions";
 
+/** `alreadyRead`: research read these uploads for an earlier ask, so it needs a different one. */
+export type UploadAnswer = "alreadyRead" | "answered" | "failed";
+
 type UploadRequestActions = {
-  answer: (sourceIds: string[]) => Promise<boolean>;
+  answer: (sourceIds: string[]) => Promise<UploadAnswer>;
   attach: GoalAttachActions;
   dismiss: () => Promise<boolean>;
 };
 
 type CardState = "answered" | "asking" | "dismissed" | "uploading";
+
+type Failure = Exclude<UploadAnswer, "answered">;
 
 export function useRequestCopy({
   examDocument: document,
@@ -88,19 +93,24 @@ export function UploadRequestCard({
   const titleId = useId();
   const copy = useRequestCopy(request);
   const [state, setState] = useState<CardState>("asking");
-  const [failed, setFailed] = useState(false);
+  const [failure, setFailure] = useState<Failure | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const run = (action: () => Promise<boolean>, done: CardState) =>
+  const run = (action: () => Promise<Failure | null>, done: CardState) =>
     startTransition(async () => {
-      setFailed(false);
-      const saved = await action();
-      setFailed(!saved);
+      setFailure(null);
+      const failed = await action();
+      setFailure(failed);
 
-      if (saved) {
+      if (!failed) {
         setState(done);
       }
     });
+
+  const answer = async (sourceId: string): Promise<Failure | null> => {
+    const outcome = await actions.answer([sourceId]);
+    return outcome === "answered" ? null : outcome;
+  };
 
   if (state === "dismissed") {
     return null;
@@ -146,7 +156,9 @@ export function UploadRequestCard({
 
           <Button
             disabled={isPending}
-            onClick={() => run(actions.dismiss, "dismissed")}
+            onClick={() =>
+              run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
+            }
             size="sm"
             variant="ghost"
           >
@@ -159,7 +171,7 @@ export function UploadRequestCard({
         <AttachControls
           attach={actions.attach}
           language={language}
-          onAttached={(source) => run(() => actions.answer([source.id]), "answered")}
+          onAttached={(source) => run(() => answer(source.id), "answered")}
         />
       )}
 
@@ -170,7 +182,13 @@ export function UploadRequestCard({
         </p>
       )}
 
-      {failed && <ChangeSaveError />}
+      {failure === "alreadyRead" && (
+        <ChangeSaveError>
+          {t("We already read this document. Upload a different one.")}
+        </ChangeSaveError>
+      )}
+
+      {failure === "failed" && <ChangeSaveError />}
     </section>
   );
 }

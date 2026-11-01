@@ -126,6 +126,18 @@ class UploadRequestFlowTest {
     }
 
     @Test
+    fun aDocumentResearchAlreadyReadAsksForADifferentOne() {
+        api.researchFailure = ApiException(ApiError.Unavailable, "UPLOAD_ALREADY_READ", status = 409)
+        show()
+
+        pasteText("Edital 2027")
+
+        rule.onNodeWithText("We already read this document. Upload a different one.").assertIsDisplayed()
+        rule.onNodeWithText("That didn't save. Try again.").assertDoesNotExist()
+        thanks().assertDoesNotExist()
+    }
+
+    @Test
     fun notNowRemovesTheAskForGood() {
         request = uploadAskOf(reason = "classMaterial")
         show()

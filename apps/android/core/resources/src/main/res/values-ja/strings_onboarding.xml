@@ -9,6 +9,7 @@
   "onboarding_another_date": "d5eefd57942365ce30584d1101ae9bb984f288f6286dbb4695d4f5d4bc2d28d1",
   "onboarding_answers_saved": "cbe8f6ed526431737e94ecba7e78006c79381f90b104d8c52973ac1933ac73ed",
   "onboarding_ask": "70bc25ad5dd15a22397ecb08fb48065b9a42e2ab09d549112e126434d39992e3",
+  "onboarding_attach_already_read": "6cf010b161b8ebe242f03f75b6609ee4325e1b6333f16b960bd631bed77ea77b",
   "onboarding_attach_failed": "1b36d782aec03cdc2c4048e31340e437d1f51b0bd771605d986724cad1475d87",
   "onboarding_attach_limit_day": "ab1167daaba7b029258903596e4fc3cf4ecefe51a9e58c99e813497713c4dc28",
   "onboarding_attach_limit_month": "98150f18e9f7dd95350783016fa693de4ddd4ab275d3314e1d2d93b76cf8ee13",
@@ -589,6 +590,8 @@
     <string name="onboarding_attach_slow_down">短時間に資料が続けて追加されています。数分後にもう一度お試しください。</string>
     <string name="onboarding_attach_unsupported">このファイルを読み取れません。PDF、写真、Word、PowerPoint、テキストのいずれかをお試しください。</string>
     <string name="onboarding_attach_sign_in">アカウントを作成すると、自分の資料を追加できます。</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">この資料はすでに読みました。別の資料をアップロードしてください。</string>
     <string name="onboarding_attach_failed">追加できませんでした。少し待ってからもう一度お試しください。</string>
     <string name="onboarding_intent_title">何をしたいですか？</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->

@@ -1116,7 +1116,9 @@ private actor StudyAPIStub: StudyAPIClient {
     preparedGoals.append(goalID)
   }
 
-  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {}
+  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws
+    -> UploadAnswer
+  { .answered }
   func dismissUploadRequest(token: String, goalID: String) async throws {}
 
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {}

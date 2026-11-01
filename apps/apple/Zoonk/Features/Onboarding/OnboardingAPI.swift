@@ -20,6 +20,9 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// A schedule shorter than the goals typed together need, at least 5 minutes each
   /// (`DAY_TOO_SHORT`): `minutes` is the least the day takes.
   case dayTooShort(minutes: Int, goals: Int)
+  /// Research already read this upload for an earlier ask, so it needs a different one
+  /// (`UPLOAD_ALREADY_READ`).
+  case alreadyRead
   case failed(APIError)
 }
 

@@ -11825,6 +11825,11 @@ msgctxt "n1aLEA"
 msgid "Sending it to be read…"
 msgstr "내용을 읽을 수 있도록 보내고 있어요…"
 
+#: src/research/upload-request-card.tsx
+msgctxt "Ib7UhK"
+msgid "We already read this document. Upload a different one."
+msgstr "이미 읽은 문서예요. 다른 문서를 업로드해 주세요."
+
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"

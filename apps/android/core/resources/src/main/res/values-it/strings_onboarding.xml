@@ -9,6 +9,7 @@
   "onboarding_another_date": "a45d37671ce0eeb0b359a72b663cd17f33a07a8ca7d1eba75b78dca9810f2496",
   "onboarding_answers_saved": "c2231bd9148391dc51e2e5d59aed1e5a35c419c3a061ade28dc77f850a84cd8f",
   "onboarding_ask": "43705d3276d50b5265004e1845ebe7491c60126fe1e1f4342ab1c704e14c1b78",
+  "onboarding_attach_already_read": "52b40f4e941c063085c902c2fe98598360ac18510cbbd6b4d3b38c749fea033a",
   "onboarding_attach_failed": "841cdf0f06ef2436877971c8b8081e88f21cf0c647e4e5f6625d95ae1b971e1a",
   "onboarding_attach_limit_day": "f745814a803663ae86d585dc4c202d01d3ed4fc98749525bf4a887f479cbe29d",
   "onboarding_attach_limit_month": "69158f01ab4236a2b1e3cd7aa33c5b43de465762c13e077e411a4a03f5773d23",
@@ -593,6 +594,8 @@
     <string name="onboarding_attach_slow_down">Stai aggiungendo materiale molto velocemente. Riprova tra qualche minuto.</string>
     <string name="onboarding_attach_unsupported">Non riusciamo a leggere questo file. Prova con un PDF, una foto, Word, PowerPoint o del testo.</string>
     <string name="onboarding_attach_sign_in">Crea un account per aggiungere il tuo materiale.</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">Abbiamo già letto questo documento. Caricane un altro.</string>
     <string name="onboarding_attach_failed">Non siamo riusciti ad aggiungerlo. Riprova tra un momento.</string>
     <string name="onboarding_intent_title">Cosa vuoi fare?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->

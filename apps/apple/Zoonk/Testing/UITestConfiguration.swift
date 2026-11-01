@@ -453,7 +453,9 @@
       throw APIError.network
     }
 
-    func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {
+    func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws
+      -> UploadAnswer
+    {
       throw APIError.network
     }
 

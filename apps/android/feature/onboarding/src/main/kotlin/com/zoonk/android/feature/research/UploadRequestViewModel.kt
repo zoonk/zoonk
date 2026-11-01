@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
+import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.AttachDraft
 import com.zoonk.api.models.TodayUploadRequest
@@ -97,13 +98,17 @@ internal class UploadRequestViewModel(
             when (val attached = attach()) {
                 is WriteOutcome.Done -> {
                     work = UploadWork.Sending
-                    when (store.answerUploadRequest(goalId, listOf(attached.value.id))) {
+                    when (val answered = store.answerUploadRequest(goalId, listOf(attached.value.id))) {
                         is WriteOutcome.Done -> {
                             draft.clear()
                             update(visit) { it.copy(answered = request) }
                         }
 
                         WriteOutcome.Obsolete -> {}
+
+                        WriteOutcome.Refused(Refusal.AlreadyRead) -> {
+                            update(visit) { it.copy(attachFailure = answered) }
+                        }
 
                         else -> {
                             update(visit) { it.copy(saveFailed = true) }

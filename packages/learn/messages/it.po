@@ -11825,6 +11825,11 @@ msgctxt "n1aLEA"
 msgid "Sending it to be read…"
 msgstr "Stiamo inviando il documento per la lettura…"
 
+#: src/research/upload-request-card.tsx
+msgctxt "Ib7UhK"
+msgid "We already read this document. Upload a different one."
+msgstr "Abbiamo già letto questo documento. Caricane un altro."
+
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"

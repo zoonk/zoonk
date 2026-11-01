@@ -269,11 +269,14 @@ struct TodayUploadRequestSection: View {
               Image(systemName: "arrow.up.doc")
             }
           } onAttached: { source in
-            if case .failed(let error) = await store.answer(request, sourceID: source.id) {
+            switch await store.answer(request, sourceID: source.id) {
+            case .done(.alreadyRead):
+              throw OnboardingError.alreadyRead
+            case .failed(let error):
               throw error
+            case .done(.answered), .obsolete:
+              onAnswered()
             }
-
-            onAnswered()
           }
 
           Button(action: dismiss) {

@@ -160,7 +160,7 @@ export const researchSourcePaths = {
         "409": {
           ...conflictResponse,
           description:
-            "The goal has no upload request to answer, or every upload already answered one",
+            "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
         },
       },
       security: AUTHENTICATED_SECURITY,

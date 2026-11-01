@@ -198,6 +198,12 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 }
 
+enum UploadAnswer: Equatable, Sendable {
+  case answered
+  /// Research read these uploads for an earlier ask (`UPLOAD_ALREADY_READ`).
+  case alreadyRead
+}
+
 struct APIProblem: Decodable, Sendable {
   struct Body: Decodable, Sendable {
     let code: String

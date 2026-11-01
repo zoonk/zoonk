@@ -21668,6 +21668,65 @@
         }
       }
     },
+    "We already read this document. Upload a different one." : {
+      "comment" : "The learner sent again a document research already read for an earlier ask",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir haben dieses Dokument schon gelesen. Lad ein anderes hoch."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya leímos este documento. Sube uno diferente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On a déjà lu ce document. Importe-en un autre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbiamo già letto questo documento. Caricane un altro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この資料はすでに読み込み済みです。別の資料をアップロードしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 문서는 이미 읽었어요. 다른 문서를 올려 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten dokument już przeczytaliśmy. Prześlij inny."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente já leu esse documento. Envie outro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu belgeyi daha önce okuduk. Farklı bir belge yükle."
+          }
+        }
+      }
+    },
     "We can't estimate a finish date for this schedule. Try more time or more study days." : {
       "comment" : "No finish date fits the time and days picked",
       "localizations" : {

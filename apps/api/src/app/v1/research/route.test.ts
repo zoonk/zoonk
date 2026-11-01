@@ -128,17 +128,18 @@ describe("POST /v1/research", () => {
     ]);
   });
 
-  it.each(["noUploadRequest", "alreadyAnswered"] as const)(
-    "refuses uploads that can't answer the ask (%s)",
-    async (status) => {
-      vi.mocked(answerGoalUploadRequest).mockResolvedValue({ status });
+  it.each([
+    { code: "CONFLICT", status: "noUploadRequest" },
+    { code: "UPLOAD_ALREADY_READ", status: "alreadyAnswered" },
+  ] as const)("refuses uploads that can't answer the ask ($status)", async ({ code, status }) => {
+    vi.mocked(answerGoalUploadRequest).mockResolvedValue({ status });
 
-      const response = await createResearch(
-        researchRequest({ goalId: GOAL_ID, sourceIds: [SOURCE_ID] }),
-      );
+    const response = await createResearch(
+      researchRequest({ goalId: GOAL_ID, sourceIds: [SOURCE_ID] }),
+    );
 
-      expect(response.status).toBe(409);
-      expect(start).not.toHaveBeenCalled();
-    },
-  );
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({ error: { code } });
+    expect(start).not.toHaveBeenCalled();
+  });
 });

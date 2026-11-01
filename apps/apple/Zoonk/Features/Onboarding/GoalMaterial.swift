@@ -294,6 +294,10 @@ struct MaterialAttachControls<Label: View>: View {
       LocalizedStringResource(
         "Create an account to add your own material.", table: "Onboarding",
         comment: "Only accounts add material")
+    case .alreadyRead:
+      LocalizedStringResource(
+        "We already read this document. Upload a different one.", table: "Onboarding",
+        comment: "The learner sent again a document research already read for an earlier ask")
     default:
       LocalizedStringResource(
         "We couldn't add that. Try again in a moment.", table: "Onboarding",

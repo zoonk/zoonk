@@ -9,6 +9,7 @@
   "onboarding_another_date": "15c7f1049cc3ee1152081eb0a4b7ab186c11b2c1459bc9597d3c6d4be49d0b0a",
   "onboarding_answers_saved": "8df23ef363caaf1efc9dd2a34bd0ea2956a879f68cf330e6ef5f1ff7c5dad759",
   "onboarding_ask": "9bff2a9fc0111554cdd92ec058b3557afe004b78008ef7d8570d812ae02f6c14",
+  "onboarding_attach_already_read": "7ce4397b7c466c10c587a319d6d8e6243fcff0943f26d70d2ba69b4de79925d5",
   "onboarding_attach_failed": "b2991c0d0497d618d924836eeb2a664f5ee5d78fdc4bc6e25b9e5fdb43fe3a39",
   "onboarding_attach_limit_day": "4a4ddb7e765550c095b439dc494a6e3ed6d646f0ccc6ecedcbfa4c87fde83cfb",
   "onboarding_attach_limit_month": "62a1171daa5143c591f49833a0545b4174d1f2e66b58c4c2da75d2478052e3db",
@@ -593,6 +594,8 @@
     <string name="onboarding_attach_slow_down">Tu ajoutes des documents rapidement. Réessaie dans quelques minutes.</string>
     <string name="onboarding_attach_unsupported">Nous ne pouvons pas lire ce fichier. Essaie un PDF, une photo, un fichier Word ou PowerPoint, ou du texte.</string>
     <string name="onboarding_attach_sign_in">Crée un compte pour ajouter tes propres documents.</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">Nous avons déjà lu ce document. Importe-en un autre.</string>
     <string name="onboarding_attach_failed">Nous n’avons pas pu l’ajouter. Réessaie dans un instant.</string>
     <string name="onboarding_intent_title">Que veux-tu faire ?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->

@@ -83,8 +83,11 @@ export function UploadRequestClient({
         ) : (
           <UploadRequestCard
             actions={{
-              answer: (sourceIds) =>
-                answerUploadRequest({ goalId, sourceIds }).then(settle("answered")),
+              answer: async (sourceIds) => {
+                const outcome = await answerUploadRequest({ goalId, sourceIds });
+                settle("answered")(outcome === "answered");
+                return outcome;
+              },
               attach: {
                 file: (input) => attachGoalFile({ ...input, goalId }),
                 link: (input) => attachGoalLink({ ...input, goalId }),

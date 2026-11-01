@@ -179,6 +179,8 @@
     <string name="onboarding_attach_slow_down">You\'re adding material quickly. Try again in a few minutes.</string>
     <string name="onboarding_attach_unsupported">We can\'t read this file. Try a PDF, a photo, Word, PowerPoint or text.</string>
     <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">We already read this document. Upload a different one.</string>
     <string name="onboarding_attach_failed">We couldn\'t add that. Try again in a moment.</string>
     <string name="onboarding_intent_title">What do you want to do?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->

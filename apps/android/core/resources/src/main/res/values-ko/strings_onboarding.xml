@@ -9,6 +9,7 @@
   "onboarding_another_date": "2edf4a97b3b30173533bf947338f4eacaa86ebe3dfd8bc24fe09326fddba7caa",
   "onboarding_answers_saved": "11521174df588b2f02da291e709d2a4e01c30f76d16aea315520b9564414026b",
   "onboarding_ask": "c60e8af5444cf93a69e2eb98350b7e4fefe519fcf40d4ca3c1d5605ebe3739a1",
+  "onboarding_attach_already_read": "31a69ad8546197eba232de6eea3ec8735bfbab73a946015b56344ec713335ee7",
   "onboarding_attach_failed": "0464451e61c4d97e3517c7ef1e1b20cbf7e4fe4775c0206f841c66da061f3e36",
   "onboarding_attach_limit_day": "e3736a4b24922a53cd66c290544c9c6b7bd6d4e42fc4836d038f89b295fa1002",
   "onboarding_attach_limit_month": "ba064976fb841ecc6af1d783948acd16970a53c965f820278e322a6e336ebd6c",
@@ -589,6 +590,8 @@
     <string name="onboarding_attach_slow_down">짧은 시간에 자료를 여러 번 추가했어요. 몇 분 후에 다시 시도해 보세요.</string>
     <string name="onboarding_attach_unsupported">이 파일은 읽을 수 없어요. PDF, 사진, Word, PowerPoint 또는 텍스트로 다시 시도해 보세요.</string>
     <string name="onboarding_attach_sign_in">내 자료를 추가하려면 계정을 만드세요.</string>
+    <!-- The learner sent again a document research already read for an earlier ask. -->
+    <string name="onboarding_attach_already_read">이 문서는 이미 읽었어요. 다른 문서를 올려 주세요.</string>
     <string name="onboarding_attach_failed">자료를 추가하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="onboarding_intent_title">무엇을 하고 싶으세요?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
