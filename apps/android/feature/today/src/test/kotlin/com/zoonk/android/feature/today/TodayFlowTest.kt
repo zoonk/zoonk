@@ -28,7 +28,6 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock

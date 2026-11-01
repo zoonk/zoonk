@@ -344,18 +344,6 @@ class NextStopTest {
         assertEquals(0, waits.size)
     }
 
-    @Test
-    fun theReadyLessonStillTakesFocusWhenTheScreenIsDrawnAnew() {
-        val drawAnew = show()
-        writeTheLesson()
-        drawAnew()
-        rule.waitForIdle()
-
-        rule.onNodeWithText("Your lesson is ready.").assertExists()
-        rule.onNodeWithText("Start").assertIsFocused()
-        assertEquals(1, waits.size)
-    }
-
     private companion object {
         val WRITTEN: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
     }

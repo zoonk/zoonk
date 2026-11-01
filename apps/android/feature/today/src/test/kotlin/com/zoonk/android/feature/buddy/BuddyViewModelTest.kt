@@ -80,13 +80,6 @@ class BuddyViewModelTest {
         )
     }
 
-    private object NoBuddyApi : BuddyApi {
-        override suspend fun status(
-            session: AuthenticatedSession,
-            timeZone: String,
-        ): BuddyStatus = error("Not read")
-    }
-
     private object NoProfileApi : LearningProfileApi {
         override suspend fun profile(session: AuthenticatedSession): LearningProfile = error("Not used")
 
@@ -98,7 +91,6 @@ class BuddyViewModelTest {
 
     private companion object {
         const val GOAL = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
-        val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d55")
         val BLOCK: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77")
     }
 }
