@@ -552,10 +552,10 @@ private fun PurchaseMessage(purchase: PurchaseState) {
             PurchaseState.OtherAccount -> R.string.subscription_purchase_other_account
             PurchaseState.PlayFailed -> R.string.subscription_purchase_play_failed
             PurchaseState.ConfirmFailed -> R.string.subscription_purchase_confirm_failed
+            PurchaseState.PlanCheckFailed -> R.string.account_failure_network
             PurchaseState.Idle, PurchaseState.Buying, PurchaseState.Done, PurchaseState.AlreadyPlus -> return
         }
-    val isProblem =
-        purchase == PurchaseState.OtherAccount || purchase == PurchaseState.PlayFailed || purchase == PurchaseState.ConfirmFailed
+    val isProblem = purchase != PurchaseState.Pending && purchase != PurchaseState.Confirming
     Text(
         text = stringResource(message),
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

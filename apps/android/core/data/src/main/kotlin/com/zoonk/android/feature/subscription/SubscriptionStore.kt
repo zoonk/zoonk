@@ -23,6 +23,7 @@ import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -111,6 +112,9 @@ sealed interface PurchaseState {
 
     /** The learner has Plus, bought anywhere, so Play's sheet never opened: a second subscription would charge them twice. */
     data object AlreadyPlus : PurchaseState
+
+    /** Zoonk couldn't read the learner's plan, so Play's sheet never opened: they may have Plus already. */
+    data object PlanCheckFailed : PurchaseState
 }
 
 /**
@@ -221,7 +225,7 @@ class SubscriptionStore(
 
     /**
      * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
-     * leaves Play's sheet to open, since the server settles a second subscription that lands anyway.
+     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere.
      */
     suspend fun buy(
         activity: Activity,
@@ -232,14 +236,18 @@ class SubscriptionStore(
         mutablePurchase.value = PurchaseState.Buying
         try {
             // Play's details go stale, and Plus may have been bought elsewhere since; a checkout always starts from fresh ones.
-            val offers =
+            val (offers, plan) =
                 coroutineScope {
-                    launch { account.refresh() }
-                    billing.offers()
+                    val plan = async { readPlan() }
+                    billing.offers() to plan.await()
                 }
             if (offers != null) this.offers.replace(offers)
             val offer = offers?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
             if (fullAccount() != session) return
+            if (plan !is MutationResult.Done) {
+                mutablePurchase.value = PurchaseState.PlanCheckFailed
+                return
+            }
             if (shownPlan() != null) {
                 mutablePurchase.value = PurchaseState.AlreadyPlus
                 return
@@ -249,6 +257,14 @@ class SubscriptionStore(
         } catch (e: CancellationException) {
             if (fullAccount() == session && mutablePurchase.value == PurchaseState.Buying) mutablePurchase.value = PurchaseState.Idle
             throw e
+        }
+    }
+
+    /** Shown only when nothing changed the plan meanwhile, such as a purchase linked while it was read. */
+    private suspend fun readPlan(): MutationResult<MeResponse> {
+        val revision = account.revision
+        return cache.mutate(replacing = { if (account.revision == revision) listOf(account.replacing(it)) else emptyList() }) {
+            api.account(it)
         }
     }
 

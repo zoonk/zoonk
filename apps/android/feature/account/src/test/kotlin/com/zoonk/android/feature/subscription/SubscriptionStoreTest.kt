@@ -325,14 +325,45 @@ class SubscriptionStoreTest {
         }
 
     @Test
-    fun aPlanThatCantBeReadLeavesTheCheckoutToTheServer() =
+    fun aPlanThatCantBeReadAgainNeverOpensPlayFromTheCachedOne() =
         runTest {
             val (_, store) = store(ana)
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
             api.accountRead = { throw ApiException(ApiError.Network) }
 
             store.buy(activity, BillingPeriod.Monthly)
 
-            assertEquals(listOf(BillingPeriod.Monthly to ANA), billing.bought)
+            assertTrue(billing.bought.isEmpty())
+            assertEquals(PurchaseState.PlanCheckFailed, store.purchase.value)
+            shown.cancel()
+        }
+
+    @Test
+    fun aPlusLinkedWhileThePlanWasReadIsKeptOverTheOlderReadAndNeverBoughtAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+            val planRead = CompletableDeferred<MeResponse>()
+            api.accountRead = { planRead.await() }
+
+            val checkout = launch { store.buy(activity, BillingPeriod.Monthly) }
+            advanceUntilIdle()
+            billing.updates.emit(PlayPurchaseUpdate.Purchased("out-of-app"))
+            advanceUntilIdle()
+            planRead.complete(account(ANA))
+            advanceUntilIdle()
+
+            assertTrue(checkout.isCompleted)
+            assertTrue(billing.bought.isEmpty())
+            assertEquals(PurchaseState.AlreadyPlus, store.purchase.value)
+            assertNotNull(
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription,
+            )
+            shown.cancel()
         }
 
     @Test
