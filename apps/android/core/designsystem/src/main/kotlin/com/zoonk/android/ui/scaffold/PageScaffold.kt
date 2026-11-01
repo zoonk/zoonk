@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.scaffold
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,9 +21,13 @@ fun PageScaffold(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopBarAcrossFold(actions) { modifier, barActions ->
-                TopAppBar(title = title, navigationIcon = { BackButton(onClick = onBack) }, actions = barActions, modifier = modifier)
-            }
+            // Across an unfolded book's fold the title ends at the fold. The actions keep their slot at the bar's end, past
+            // the fold, so what they opened stays open as the book folds.
+            TopAppBar(
+                title = { BeforeFold { beforeFold -> Box(beforeFold) { title() } } },
+                navigationIcon = { BackButton(onClick = onBack) },
+                actions = actions,
+            )
         },
         content = content,
     )

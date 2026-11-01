@@ -3,11 +3,13 @@ package com.zoonk.android.ui.scaffold
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +28,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -37,6 +41,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,6 +71,47 @@ class TaskAside(
     val footer: (@Composable () -> Unit)? = null,
     val content: @Composable ColumnScope.() -> Unit,
 )
+
+/**
+ * One bar either way, so what its [actions] opened stays open as the book folds. Across an unfolded
+ * book's fold the title sits beside the way out, centered over the page before the fold, as main's
+ * title sits over the task's column; the actions stay at the bar's end, past the fold.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TaskTopBar(
+    title: @Composable () -> Unit,
+    actions: @Composable RowScope.() -> Unit,
+    onClose: () -> Unit,
+    closeLabel: String?,
+) {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val fold = pageFold(maxWidth, span)
+
+        CenterAlignedTopAppBar(
+            title = { if (fold == null) title() },
+            navigationIcon = {
+                if (fold == null) {
+                    CloseButton(onClick = onClose, label = closeLabel)
+                } else {
+                    Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
+                        CloseButton(onClick = onClose, label = closeLabel)
+                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() }
+                        }
+                        Spacer(Modifier.width(CLOSE_WIDTH))
+                    }
+                }
+            },
+            actions = actions,
+        )
+    }
+}
+
+/** Material's icon button, which the way out is: the space that keeps the title centered over its page. */
+private val CLOSE_WIDTH = 48.dp
 
 /** In a [TaskScaffold]'s slots, whether its aside shows beside the task; where it doesn't, the screen shows that content its own way. */
 @Composable
@@ -100,18 +146,7 @@ fun TaskScaffold(
 
     val frame: @Composable () -> Unit = {
         Scaffold(
-            topBar = {
-                // Across an unfolded book's fold the title stays centered over the page before it, as main's
-                // title sits over the task's column.
-                TopBarAcrossFold(actions) { modifier, barActions ->
-                    CenterAlignedTopAppBar(
-                        title = title,
-                        navigationIcon = { CloseButton(onClick = leave, label = closeLabel) },
-                        actions = barActions,
-                        modifier = modifier,
-                    )
-                }
-            },
+            topBar = { TaskTopBar(title, actions, onClose = leave, closeLabel) },
             bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
             snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
             content = content,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -157,5 +158,29 @@ class TaskScaffoldTest {
         aside = passage
         rule.waitForIdle()
         rule.onNodeWithText("Picked 1").assertIsDisplayed()
+    }
+
+    /** Opening the book moves the title, never the actions, so what an action opened (a report's sheet and its draft) stays open. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun keepsWhatAnActionOpenedAsTheBookOpens() {
+        rule.setContent {
+            CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                TaskScaffold(
+                    onClose = {},
+                    actions = {
+                        var open by rememberSaveable { mutableStateOf(false) }
+                        TextButton(onClick = { open = true }) { Text(if (open) "Report open" else "Report") }
+                    },
+                ) {}
+            }
+        }
+        rule.onNodeWithText("Report").performClick()
+
+        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Report open").assertIsDisplayed()
     }
 }

@@ -6,12 +6,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
@@ -58,5 +66,29 @@ class PageScaffoldTest {
         val action = rule.onNodeWithTag("action").getUnclippedBoundsInRoot()
         assertTrue("the title ends before the fold: $title", title.right <= 426.dp)
         assertTrue("the actions start after the fold: $action", action.left >= 426.dp)
+    }
+
+    /** Opening the book caps the title, never moves the actions, so what an action opened stays open. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun keepsWhatAnActionOpenedAsTheBookOpens() {
+        rule.setContent {
+            ZoonkTheme {
+                PageScaffold(
+                    onBack = {},
+                    actions = {
+                        var open by rememberSaveable { mutableStateOf(false) }
+                        TextButton(onClick = { open = true }) { Text(if (open) "Report open" else "Report") }
+                    },
+                ) {}
+            }
+        }
+        rule.onNodeWithText("Report").performClick()
+
+        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Report open").assertIsDisplayed()
     }
 }
