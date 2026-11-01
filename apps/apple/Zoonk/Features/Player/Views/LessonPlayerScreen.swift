@@ -165,26 +165,32 @@ private struct LessonPlayerContent: View {
     case .loading:
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .lonePage()
     case .failed:
       LessonUnavailableView(refusal: .failed) {
         Task { await store.load() }
       }
+      .lonePage()
     case .notFound:
       LessonUnavailableView(refusal: .notFound, retry: {})
+        .lonePage()
     case .sessionRequired(let outline):
       LessonGuestGateView(outline: outline) {
         Task { await store.load() }
       }
+      .lonePage()
     case .waiting(let outline, let writing):
       LessonWaitingView(outline: outline, writing: writing) {
         Task { await store.writeLesson() }
       }
+      .lonePage()
     case .playing:
       if let state = store.state {
         if case .refused(let refusal) = state.run {
           LessonUnavailableView(refusal: refusal) {
             Task { await store.load() }
           }
+          .lonePage()
         } else if state.phase == .completed, let completion = state.completion {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,

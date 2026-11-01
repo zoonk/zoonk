@@ -31,11 +31,6 @@ struct LessonStageView: View {
     AccessibilityNotification.Announcement(announcement).post()
   }
 
-  /// The two pages where the stage splits, or nil for one column.
-  private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
-    PaneSpace(proxy).panes(primaryShare: 0.5, stacked: isStacked)
-  }
-
   private func visit(_ step: LessonStep) -> String {
     "\(step.id)/\(state.rounds[step.id] ?? 0)"
   }
@@ -56,7 +51,8 @@ struct LessonStageView: View {
     if let step = state.currentStep {
       // A reader, so a wide screen never shows the one-column version first.
       GeometryReader { proxy in
-        let pages = pages(proxy)
+        let space = PaneSpace(proxy)
+        let pages = space.panes(primaryShare: 0.5, stacked: isStacked)
         // While asking on a spread, the screen shows whole in one column on the leading page, so the
         // learner sees what they're asking about, and the buddy has the trailing page.
         let isAskingBeside = pages != nil && store.isAsking
@@ -175,13 +171,12 @@ struct LessonStageView: View {
             }
           }
           .safeAreaBar(edge: .bottom) {
-            // On the trailing page the bar is already past the fold; one column moves it there.
             LessonActionBar(store: store, state: state, step: step)
-              .keepsOffFold()
           }
           // The hinge is the trailing page's safe area, so its content and the action bar stay
-          // clear of the crease.
+          // clear of the crease. One column keeps to the page before it, as `PaneSplit`'s does.
           .safeAreaPadding(.leading, spread?.gap ?? 0)
+          .safeAreaPadding(.trailing, pages == nil ? space.lonePageInset : 0)
           .frame(width: isAskingBeside ? pages?.primary : nil)
           .frame(maxWidth: isAskingBeside ? nil : .infinity, maxHeight: .infinity, alignment: .top)
 
