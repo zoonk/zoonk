@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
@@ -108,6 +110,7 @@ class EssayScreenshots {
         rewrite: Boolean = false,
         secondStep: Boolean = false,
         status: String = "active",
+        refusal: String? = null,
     ) {
         val read = essay(drafted, tooShort, status)
         val api =
@@ -122,7 +125,7 @@ class EssayScreenshots {
                     session: AuthenticatedSession,
                     blockId: UUID,
                     input: EssaySubmissionInput,
-                ): EssayGrade = awaitCancellation()
+                ): EssayGrade = refusal?.let { throw ApiException(ApiError.Unavailable, it, status = 403) } ?: awaitCancellation()
 
                 override suspend fun finish(
                     session: AuthenticatedSession,
@@ -143,7 +146,7 @@ class EssayScreenshots {
         rule.waitForIdle()
         if (rewrite) viewModel.rewrite()
         if (text.isNotEmpty()) viewModel.write(text)
-        if (grading) viewModel.send()
+        if (grading || refusal != null) viewModel.send()
 
         rule.setContent {
             ZoonkTheme {
@@ -187,6 +190,10 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneGrading() = show("phone-grading", text = "A mobilidade urbana é um desafio.", grading = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneSignUpRequired() = show("phone-sign-up-required", text = "A mobilidade urbana é um desafio.", refusal = "SIGN_UP_REQUIRED")
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")

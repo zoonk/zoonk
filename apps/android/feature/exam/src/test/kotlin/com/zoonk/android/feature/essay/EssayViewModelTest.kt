@@ -331,6 +331,20 @@ class EssayViewModelTest {
         }
 
     @Test
+    fun aGuestPastTheSharedAiBudgetIsAskedToSignUpAndKeepsTheText() =
+        runTest(dispatcher) {
+            submit = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
+            val viewModel = viewModel()
+            viewModel.write("Cities grow.")
+
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(EssaySend.SignUpRequired, viewModel.ui.value.send)
+            assertEquals("Cities grow.", viewModel.ui.value.text)
+        }
+
+    @Test
     fun aCompletedEssayShowsItsLastGradeAndTakesNoDraft() =
         runTest(dispatcher) {
             drafted = true

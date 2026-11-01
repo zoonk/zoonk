@@ -88,6 +88,9 @@ import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
@@ -227,7 +230,7 @@ internal fun EssayWrite(
             },
         bottomBar = {
             TaskActionBar {
-                StatusLine(ui.send, ui.gradesLeft) { navigator.open(AppRoute.Preferences) }
+                StatusLine(ui.send, ui.gradesLeft, navigator)
                 if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
                 TaskActions { width ->
                     if (rewriting) {
@@ -398,8 +401,18 @@ private fun EssayBox(
 private fun StatusLine(
     send: EssaySend,
     gradesLeft: Int,
-    onChangeLimit: () -> Unit,
+    navigator: AppNavigator,
 ) {
+    if (send == EssaySend.SignUpRequired) {
+        LimitNotice(
+            limit = Limit.SignUpRequired,
+            subject = LimitSubject.Help,
+            onCreateAccount = { navigator.open(AppRoute.Login) },
+            onSeePlus = { navigator.open(AppRoute.Subscription) },
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        )
+        return
+    }
     var slow by remember(send) { mutableStateOf(false) }
     LaunchedEffect(send) {
         if (send == EssaySend.Pending) {
@@ -417,7 +430,7 @@ private fun StatusLine(
             send == EssaySend.DailyLimitReached -> {
                 val reached = stringResource(R.string.essay_daily_limit_reached)
                 AnnotatedString(reached + spaceAfterSentence(reached)) +
-                    statusLink(stringResource(R.string.today_change_limit), onChangeLimit)
+                    statusLink(stringResource(R.string.today_change_limit)) { navigator.open(AppRoute.Preferences) }
             }
 
             send == EssaySend.LimitReached || gradesLeft == 0 -> {
