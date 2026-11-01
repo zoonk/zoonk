@@ -42,8 +42,8 @@ function getEventDayIndex(target: EventTarget | null): number | null {
 }
 
 const CALENDAR_SIZE_CLASS = cn(
-  "@container/calendar [--calendar-gap:0.125rem]",
-  "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),1rem)]",
+  "@container/calendar [--calendar-gap:round(down,clamp(0.125rem,0.25cqw,0.375rem),1px)]",
+  "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),2.5rem)]",
   "pointer-coarse:[--calendar-cell:1.25rem]",
 );
 

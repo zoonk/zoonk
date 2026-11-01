@@ -139,7 +139,7 @@ export function PageSectionFooter({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
+        "text-muted-foreground max-w-column text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
         className,
       )}
       data-slot="page-section-footer"

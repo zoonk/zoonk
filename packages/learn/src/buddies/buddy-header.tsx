@@ -8,7 +8,8 @@ import { type BuddyStatusView } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
 /** `-mb-12` takes back the page's bottom padding, since the composer has its own. */
-export const BUDDY_COLUMN_CLASS = "-mb-12 flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
+export const BUDDY_COLUMN_CLASS =
+  "-mb-12 mx-auto flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
 
 function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
   const t = useExtracted();

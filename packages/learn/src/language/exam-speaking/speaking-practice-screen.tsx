@@ -84,7 +84,7 @@ export function SpeakingPracticeScreen({
             </DetailHeroText>
           </DetailHero>
 
-          <p className="text-muted-foreground text-sm text-pretty">
+          <p className="text-muted-foreground max-w-column text-sm text-pretty">
             {t(
               "{exam} is an official exam. Practice its speaking tasks whether or not you plan to take it.",
               { exam: paper.title },
