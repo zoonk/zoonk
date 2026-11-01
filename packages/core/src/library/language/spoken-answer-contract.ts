@@ -15,7 +15,7 @@ const SPOKEN_AUDIO_MEDIA_TYPES = [
 
 export const MAX_SPOKEN_AUDIO_BYTES = 2_000_000;
 
-const MAX_SPOKEN_ANSWER_DURATION_MS = 60_000;
+export const MAX_SPOKEN_ANSWER_DURATION_MS = 60_000;
 
 export function isSpokenAudioMediaType(mediaType: string): boolean {
   const base = normalizeContentType(mediaType);

@@ -6,11 +6,17 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "word.webm" };
+const RECORDING = {
+  buffer: Buffer.from(ONE_SECOND_RECORDING),
+  mimeType: "audio/webm",
+  name: "word.webm",
+};
+
 const DAY_MS = 86_400_000;
 
 async function learnerWithReviews(userId: string) {

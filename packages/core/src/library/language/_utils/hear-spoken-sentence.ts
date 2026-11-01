@@ -2,18 +2,40 @@ import "server-only";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { MAX_SPOKEN_AUDIO_BYTES, isSpokenAudioMediaType } from "../spoken-answer-contract";
+import { ALL_FORMATS, BufferSource, Input } from "mediabunny";
+import {
+  MAX_SPOKEN_ANSWER_DURATION_MS,
+  MAX_SPOKEN_AUDIO_BYTES,
+  isSpokenAudioMediaType,
+} from "../spoken-answer-contract";
 import { type SpokenAnswerMatch, matchSpokenAnswer } from "../spoken-answer-match";
 
 export type SpokenAudio = { bytes: Uint8Array; mediaType: string };
 
-export function isValidSpokenAudio(audio: SpokenAudio): boolean {
-  return (
-    audio.bytes.byteLength > 0 &&
-    audio.bytes.byteLength <= MAX_SPOKEN_AUDIO_BYTES &&
-    isSpokenAudioMediaType(audio.mediaType)
-  );
+/**
+ * Speech models are paid by the minute, and a low-bitrate encoder fits many minutes in any byte
+ * limit, so the length comes from the recording itself, never the `durationMs` the client reports.
+ */
+async function readDurationMs(bytes: Uint8Array): Promise<number | null> {
+  using input = new Input({ formats: ALL_FORMATS, source: new BufferSource(bytes) });
+  const { data: seconds } = await safeAsync(() => input.computeDuration());
+
+  return seconds === null ? null : seconds * 1000;
+}
+
+export async function isValidSpokenAudio(audio: SpokenAudio): Promise<boolean> {
+  if (
+    audio.bytes.byteLength === 0 ||
+    audio.bytes.byteLength > MAX_SPOKEN_AUDIO_BYTES ||
+    !isSpokenAudioMediaType(audio.mediaType)
+  ) {
+    return false;
+  }
+
+  const durationMs = await readDurationMs(audio.bytes);
+  return durationMs !== null && durationMs <= MAX_SPOKEN_ANSWER_DURATION_MS;
 }
 
 type HeardSentence = { match: SpokenAnswerMatch; transcript: string };

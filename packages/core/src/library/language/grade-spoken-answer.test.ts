@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { explainSpokenAnswer } from "@zoonk/ai/tasks/language/explain-spoken-answer";
@@ -6,6 +7,7 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -24,7 +26,13 @@ function sentTips() {
 }
 
 const TARGET_TEXT = "How much is the rent?";
-const AUDIO = { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm;codecs=opus" };
+const AUDIO = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm;codecs=opus" };
+
+/** 61 seconds of Opus at 6 kbps: 18 KB, far under the size limit. */
+const OVER_A_MINUTE = new Uint8Array(
+  readFileSync(new URL("_test-utils/over-a-minute.webm", import.meta.url)),
+);
+
 const FIELDS = { durationMs: 2400, timeZone: "America/Sao_Paulo" };
 
 function mockTranscript(text: string) {
@@ -101,16 +109,22 @@ describe(gradeSpokenAnswer, () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
 
-    const results = await Promise.all(
+    const results = await Promise.allSettled(
       [
         { bytes: new Uint8Array(), mediaType: "audio/webm" },
         { bytes: new Uint8Array([1]), mediaType: "video/mp4" },
         { bytes: new Uint8Array(2_000_001), mediaType: "audio/webm" },
+        { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
+        { bytes: OVER_A_MINUTE, mediaType: "audio/webm" },
       ].map((audio) => gradeSpokenAnswer({ audio, fields: FIELDS, stepId: step.id })),
     );
 
-    expect(results).toStrictEqual(Array.from({ length: 3 }, () => ({ status: "invalidAudio" })));
     expect(transcribeSpeech).not.toHaveBeenCalled();
+    expect(assessPronunciation).not.toHaveBeenCalled();
+
+    expect(results).toStrictEqual(
+      Array.from({ length: 5 }, () => ({ status: "fulfilled", value: { status: "invalidAudio" } })),
+    );
   });
 
   it("hides another learner's private lesson and steps that aren't spoken", async () => {

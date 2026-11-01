@@ -34,6 +34,7 @@
     "./fixtures/playable-step-contents": "./src/fixtures/playable-step-contents.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/pronunciation-reviews": "./src/fixtures/pronunciation-reviews.ts",
+    "./fixtures/recordings": "./src/fixtures/recordings.ts",
     "./fixtures/skills": "./src/fixtures/skills.ts",
     "./fixtures/sources": "./src/fixtures/sources.ts",
     "./fixtures/usage": "./src/fixtures/usage.ts",

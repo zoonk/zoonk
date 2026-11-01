@@ -81,7 +81,7 @@ export async function gradeSpokenAnswer({
 
   const userId = session.user.id;
 
-  if (!isValidSpokenAudio(audio)) {
+  if (!(await isValidSpokenAudio(audio))) {
     return { status: "invalidAudio" };
   }
 

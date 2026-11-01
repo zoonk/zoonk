@@ -1,6 +1,7 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -668,7 +669,7 @@ describe("language level test", () => {
     });
 
     const result = await gradeLevelTestSpeech({
-      audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
+      audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" },
       goalId: goal.id,
     });
 
@@ -755,7 +756,7 @@ describe("language level test", () => {
 
     await expect(
       gradeLevelTestSpeech({
-        audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
+        audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" },
         goalId: goal.id,
       }),
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);

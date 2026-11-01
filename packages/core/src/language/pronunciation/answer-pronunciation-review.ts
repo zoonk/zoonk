@@ -44,7 +44,7 @@ export async function answerPronunciationReview({
 
   const userId = session.user.id;
 
-  if (!isValidSpokenAudio(audio)) {
+  if (!(await isValidSpokenAudio(audio))) {
     return { status: "invalidAudio" };
   }
 

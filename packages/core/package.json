@@ -631,6 +631,7 @@
     "@zoonk/utils": "workspace:*",
     "acorn": "8.19.0",
     "jose": "catalog:",
+    "mediabunny": "1.65.0",
     "officeparser": "8.5.0",
     "opencc-js": "1.4.2",
     "posthog-js": "catalog:",

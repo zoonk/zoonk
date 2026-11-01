@@ -5,12 +5,17 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 
-const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "answer.webm" };
+const RECORDING = {
+  buffer: Buffer.from(ONE_SECOND_RECORDING),
+  mimeType: "audio/webm",
+  name: "answer.webm",
+};
 
 const GUEST_DAILY_HELP = getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0;
 

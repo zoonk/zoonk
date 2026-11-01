@@ -6,6 +6,7 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
@@ -19,7 +20,7 @@ import { finishPronunciationRound } from "./finish-pronunciation-round";
 import { getPronunciationReviews } from "./get-pronunciation-reviews";
 import { schedulePronunciationReviews } from "./schedule-pronunciation-reviews";
 
-const AUDIO = { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm;codecs=opus" };
+const AUDIO = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm;codecs=opus" };
 const TIME_ZONE = "America/Sao_Paulo";
 const DAY_MS = 86_400_000;
 

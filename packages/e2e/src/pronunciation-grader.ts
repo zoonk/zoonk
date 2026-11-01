@@ -1,4 +1,4 @@
-export const PRONUNCIATION_RECORDING = "zoonk-e2e-pronunciation-recording";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 
 /** @public Next's E2E alias replaces only the paid audio assessment, keeping persistence real. */
 export async function assessPronunciation(input: { audio: Uint8Array; expectedText: string }) {
@@ -6,7 +6,7 @@ export async function assessPronunciation(input: { audio: Uint8Array; expectedTe
     throw new Error("The pronunciation test grader is restricted to E2E builds.");
   }
 
-  if (new TextDecoder().decode(input.audio) !== PRONUNCIATION_RECORDING) {
+  if (!Buffer.from(input.audio).equals(ONE_SECOND_RECORDING)) {
     throw new Error("The pronunciation test grader only accepts its fixture recording.");
   }
 

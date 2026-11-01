@@ -47,7 +47,7 @@ export async function gradeLevelTestSpeech({
     return { status: "unauthorized" };
   }
 
-  if (!isValidSpokenAudio(audio)) {
+  if (!(await isValidSpokenAudio(audio))) {
     return { status: "invalidAudio" };
   }
 

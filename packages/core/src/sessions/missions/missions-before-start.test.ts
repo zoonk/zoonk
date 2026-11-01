@@ -8,6 +8,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { MS_PER_DAY } from "@zoonk/utils/date";
@@ -116,7 +117,7 @@ function answerWord({
   roundId?: string;
 }) {
   return answerPronunciationReview({
-    audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm;codecs=opus" },
+    audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm;codecs=opus" },
     fields: { durationMs: 1200, goalId, roundId, timeZone: TIME_ZONE },
     reviewId,
   });
