@@ -16,9 +16,9 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
-import { writeLessonContent } from "./write-lesson-content";
 
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";

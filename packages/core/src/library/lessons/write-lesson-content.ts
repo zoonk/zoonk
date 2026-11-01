@@ -4,16 +4,25 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
-import { type LessonGateProblem } from "../quality/lesson-quality-gate";
+import { type LessonGateProblem, runLessonQualityGate } from "../quality/lesson-quality-gate";
+import { repairWrittenLesson } from "../quality/lesson-repairs";
 import { getReasoningCheckReason } from "../quality/reasoning-check-policy";
 import {
+  type GateResult,
   type LessonAnalytics,
-  checkVersion,
+  type LessonGate,
+  type WrittenVersion,
+  checkFixedLesson,
+  fixVersionDraft,
   getLessonDocuments,
   toScreensToSave,
 } from "./_utils/checked-version";
 import { pickDraftWriter } from "./_utils/draft-writer";
-import { loadLessonWritingInputs, toWritingContext } from "./_utils/lesson-writing-inputs";
+import {
+  type LessonWritingInputs,
+  loadLessonWritingInputs,
+  toWritingContext,
+} from "./_utils/lesson-writing-inputs";
 import { saveLessonContent } from "./_utils/save-lesson-content";
 
 export type LessonCheckPlan = {
@@ -24,11 +33,23 @@ export type LessonCheckPlan = {
   writerModel: string;
 };
 
-type WriteLessonContentResult =
+type LessonContentOutcome =
   | { status: "notClaimed" }
   | { status: "missingSpec" }
   | { status: "heldBack"; problems: LessonGateProblem[] }
   | { check: LessonCheckPlan; fixed: boolean; status: "published"; stepCount: number };
+
+export type LessonDraftState = {
+  cite: boolean;
+  gate: LessonGate;
+  inputs: LessonWritingInputs;
+  previous: { first: GateResult; lesson: WrittenLesson } | null;
+  remainingFixes: number;
+  review: boolean;
+  version: WrittenVersion;
+};
+
+export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; status: "needsFix" };
 
 const PRIVATE_FIX_PASSES = 2;
 
@@ -49,7 +70,10 @@ export async function writeLessonContent({
   reuse?: CallReuse;
   serviceTier?: ServiceTier;
   workflowRunId: string;
-}): Promise<WriteLessonContentResult> {
+}): Promise<
+  | Extract<LessonContentOutcome, { status: "missingSpec" | "notClaimed" }>
+  | { draft: LessonDraftState; status: "drafted" }
+> {
   const state = await loadLessonWritingInputs({ lessonId, workflowRunId });
 
   if (state.status !== "ready") {
@@ -85,52 +109,98 @@ export async function writeLessonContent({
         level: inputs.level,
       }) !== null);
 
-  const checked = await checkVersion({
+  return {
     draft: {
-      lesson: draft.data,
-      provenanceByScreen: draft.data.screens.map(() => draft.provenance),
+      cite,
+      gate: { analytics: taskAnalytics, context, reuse, serviceTier, writerModel },
+      inputs,
+      previous: null,
+      remainingFixes: reusable ? 1 : PRIVATE_FIX_PASSES,
+      review,
+      version: {
+        lesson: repairWrittenLesson({ language: inputs.language, lesson: draft.data }),
+        provenanceByScreen: draft.data.screens.map(() => draft.provenance),
+      },
     },
-    fixPasses: reusable ? 1 : PRIVATE_FIX_PASSES,
-    gate: { analytics: taskAnalytics, context, reuse, serviceTier, writerModel },
-    review: false,
-  });
+    status: "drafted",
+  };
+}
 
-  if (checked.status === "heldBack") {
-    logError(`[lessons] Lesson ${lessonId} held back after its fix pass:`, checked.problems);
+/** Internal workflow bridge; one fix call, with the previous draft carried by its step result. */
+export async function fixLessonContent({
+  draft,
+  first,
+}: LessonDraftToFix): Promise<LessonDraftState> {
+  const version = await fixVersionDraft({ draft: draft.version, first, gate: draft.gate });
+
+  return {
+    ...draft,
+    previous: { first, lesson: draft.version.lesson },
+    remainingFixes: draft.remainingFixes - 1,
+    version,
+  };
+}
+
+/** Internal workflow bridge; checks and persistence are separate from the paid model calls. */
+export async function checkLessonContent({
+  draft,
+  lessonId,
+  workflowRunId,
+}: {
+  draft: LessonDraftState;
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<LessonContentOutcome | LessonDraftToFix> {
+  const { cite, gate, inputs, previous, review, version: written } = draft;
+
+  const checked = previous
+    ? await checkFixedLesson({
+        draft: previous.lesson,
+        first: previous.first,
+        fixed: written.lesson,
+        gate,
+        review: false,
+      })
+    : await runLessonQualityGate({ ...gate, lesson: written.lesson, review: false });
+
+  if (checked.blocking.length > 0) {
+    if (draft.remainingFixes > 0) {
+      return { draft, first: checked, status: "needsFix" };
+    }
+
+    logError(`[lessons] Lesson ${lessonId} held back after its fix pass:`, checked.blocking);
 
     await holdBackLessonDraft({
       lessonId,
-      model: writerModel,
-      problems: checked.problems.map(({ problem, screen }) => ({ problem, screen })),
+      model: gate.writerModel,
+      problems: checked.blocking.map(({ problem, screen }) => ({ problem, screen })),
       workflowRunId,
     });
 
-    return { problems: checked.problems, status: "heldBack" };
+    return { problems: checked.blocking, status: "heldBack" };
   }
 
   const screens = toScreensToSave({
     citations: [],
     inputs,
     screens: checked.screens,
-    version: checked.version,
+    version: written,
   });
 
   const version = await saveLessonContent({
     language: inputs.language,
     lessonId,
     screens,
-    summary: checked.version.lesson.summary.map((idea) => idea.trim()),
+    summary: written.lesson.summary.map((idea) => idea.trim()),
     workflowRunId,
   });
 
-  if (version === null) {
-    return { status: "notClaimed" };
-  }
-
-  return {
-    check: { cite, lesson: checked.version.lesson, review, version, writerModel },
-    fixed: checked.fixed,
-    status: "published",
-    stepCount: screens.length,
-  };
+  return version === null
+    ? { status: "notClaimed" }
+    : {
+        check: { cite, lesson: written.lesson, review, version, writerModel: gate.writerModel },
+        fixed: previous !== null,
+        status: "published",
+        stepCount: screens.length,
+      };
 }

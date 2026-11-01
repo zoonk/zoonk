@@ -21,7 +21,14 @@ import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-le
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
-import { type LessonWriteOutcome, writeLessonContentStep } from "./steps/write-lesson-content-step";
+import {
+  type LessonWriteOutcome,
+  type LessonWriteStage,
+  type WriteInput,
+  checkLessonContentStep,
+  fixLessonContentStep,
+  writeLessonContentStep,
+} from "./steps/write-lesson-content-step";
 import { type LessonSpecOutcome, writeLessonSpecStep } from "./steps/write-lesson-spec-step";
 
 export type LessonContentInput = {
@@ -97,6 +104,29 @@ function planWhenFree({
   });
 }
 
+async function checkDraft({
+  input,
+  stage,
+}: {
+  input: WriteInput;
+  stage: Extract<LessonWriteStage, { status: "drafted" }>;
+}): Promise<LessonWriteOutcome> {
+  const checked = await checkLessonContentStep({
+    draft: stage.draft,
+    imageScope: stage.imageScope,
+    input,
+  });
+
+  return checked.status === "needsFix"
+    ? checkDraft({ input, stage: { ...stage, draft: await fixLessonContentStep(checked) } })
+    : checked;
+}
+
+async function writeLesson(input: WriteInput): Promise<LessonWriteOutcome> {
+  const stage = await writeLessonContentStep(input);
+  return stage.status === "drafted" ? checkDraft({ input, stage }) : stage;
+}
+
 async function redraft({
   input,
   workflowRunId,
@@ -110,7 +140,7 @@ async function redraft({
     return { redraft: false, status: "heldBack" };
   }
 
-  return writeLessonContentStep({ ...input, workflowRunId });
+  return writeLesson({ ...input, workflowRunId });
 }
 
 function writeUntilPublished({
@@ -123,9 +153,7 @@ function writeUntilPublished({
   return repeatUntil<LessonWriteOutcome>({
     done: (outcome) => outcome.status !== "heldBack" || !outcome.redraft,
     run: (previous) =>
-      previous
-        ? redraft({ input, workflowRunId })
-        : writeLessonContentStep({ ...input, workflowRunId }),
+      previous ? redraft({ input, workflowRunId }) : writeLesson({ ...input, workflowRunId }),
     times: MAX_LESSON_DRAFTS,
   });
 }

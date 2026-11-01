@@ -13,8 +13,8 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import * as refresh from "../../plans/refresh-goal-plan";
-import { writeLessonContent } from "../lessons/write-lesson-content";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import {

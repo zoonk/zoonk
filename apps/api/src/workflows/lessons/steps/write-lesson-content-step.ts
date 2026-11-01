@@ -8,6 +8,10 @@ import { writeLanguageLessonContent } from "@zoonk/core/library/language/write-l
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import {
   type LessonCheckPlan,
+  type LessonDraftState,
+  type LessonDraftToFix,
+  checkLessonContent,
+  fixLessonContent,
   writeLessonContent,
 } from "@zoonk/core/library/lessons/write-content";
 import { prisma } from "@zoonk/db";
@@ -21,9 +25,13 @@ export type LessonWriteOutcome =
 
 export type ImageScope = "personal" | "shared" | null;
 
-type WriteResult = Exclude<LessonWriteOutcome, { status: "heldBack" }> | { status: "heldBack" };
+type WriteResult =
+  | Exclude<LessonWriteOutcome, { status: "heldBack" }>
+  | { status: "heldBack" }
+  | { draft: LessonDraftState; imageScope: ImageScope; status: "drafted" };
+export type LessonWriteStage = LessonWriteOutcome | Extract<WriteResult, { status: "drafted" }>;
 
-type WriteInput = {
+export type WriteInput = {
   analytics?: ContentAnalytics;
   forExam?: boolean;
   forceReview?: boolean;
@@ -97,12 +105,14 @@ async function write({
 
   const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
 
-  return result.status === "published"
-    ? { check: result.check, imageScope: getImageScope(lesson), status: "published" }
-    : toOutcome(result.status);
+  if (result.status === "drafted") {
+    return { ...result, imageScope: getImageScope(lesson) };
+  }
+
+  return toOutcome(result.status);
 }
 
-export async function writeLessonContentStep(input: WriteInput): Promise<LessonWriteOutcome> {
+export async function writeLessonContentStep(input: WriteInput): Promise<LessonWriteStage> {
   "use step";
 
   const lesson = await prisma.lesson.findUnique({
@@ -132,6 +142,10 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   const written = await write({ input, lesson });
 
+  if (written.status === "drafted") {
+    return written;
+  }
+
   await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
   if (written.status !== "heldBack") {
@@ -142,4 +156,50 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
     redraft: canRedraftLesson(await getLessonGenerationState(input.lessonId)),
     status: "heldBack",
   };
+}
+
+export async function fixLessonContentStep(draft: LessonDraftToFix): Promise<LessonDraftState> {
+  "use step";
+  return fixLessonContent(draft);
+}
+
+export async function checkLessonContentStep({
+  draft,
+  imageScope,
+  input,
+}: {
+  draft: LessonDraftState;
+  imageScope: ImageScope;
+  input: WriteInput;
+}): Promise<LessonWriteOutcome | LessonDraftToFix> {
+  "use step";
+
+  const published = await prisma.lesson.findUnique({
+    select: { contentRunId: true, contentStatus: true },
+    where: { id: input.lessonId },
+  });
+
+  if (published?.contentStatus === "completed" && published.contentRunId === input.workflowRunId) {
+    return { check: null, imageScope, status: "published" };
+  }
+
+  const checked = await checkLessonContent({ ...input, draft });
+
+  if (checked.status === "needsFix") {
+    return checked;
+  }
+
+  await using stream = createStepStream<LessonStreamStep>();
+  await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
+
+  if (checked.status === "published") {
+    return { check: checked.check, imageScope, status: "published" };
+  }
+
+  return checked.status === "heldBack"
+    ? {
+        redraft: canRedraftLesson(await getLessonGenerationState(input.lessonId)),
+        status: "heldBack",
+      }
+    : { status: "notWritten" };
 }

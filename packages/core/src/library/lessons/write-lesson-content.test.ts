@@ -18,11 +18,11 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it, vi } from "vitest";
+import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
-import { writeLessonContent } from "./write-lesson-content";
 
 function provenance(model = "openai/gpt-6-sol") {
   return {

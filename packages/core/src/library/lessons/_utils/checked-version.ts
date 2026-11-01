@@ -137,7 +137,7 @@ export async function citeScreensIfPossible(
   return data ?? [];
 }
 
-async function checkFixedLesson({
+export async function checkFixedLesson({
   draft,
   first,
   fixed,
@@ -172,6 +172,35 @@ async function checkFixedLesson({
   };
 }
 
+export async function fixVersionDraft({
+  draft,
+  first,
+  gate,
+}: {
+  draft: WrittenVersion;
+  first: GateResult;
+  gate: LessonGate;
+}): Promise<WrittenVersion> {
+  const fix = await fixLessonDraft({
+    ...gate.context,
+    analytics: gate.analytics,
+    lesson: draft.lesson,
+    problems: [...first.blocking, ...first.minor],
+    serviceTier: gate.serviceTier,
+  });
+
+  const changed = new Set(fix.data.changedScreens);
+  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: fix.data.lesson });
+
+  return {
+    lesson,
+    provenanceByScreen: fix.data.lesson.screens.map(
+      (_, index) =>
+        (changed.has(index) ? fix.provenance : draft.provenanceByScreen[index]) ?? fix.provenance,
+    ),
+  };
+}
+
 export async function fixVersion({
   draft,
   first,
@@ -185,29 +214,12 @@ export async function fixVersion({
   passes?: number;
   review: boolean;
 }): Promise<CheckedVersion> {
-  const fix = await fixLessonDraft({
-    ...gate.context,
-    analytics: gate.analytics,
-    lesson: draft.lesson,
-    problems: [...first.blocking, ...first.minor],
-    serviceTier: gate.serviceTier,
-  });
-
-  const changed = new Set(fix.data.changedScreens);
-  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: fix.data.lesson });
-
-  const version: WrittenVersion = {
-    lesson,
-    provenanceByScreen: fix.data.lesson.screens.map(
-      (_, index) =>
-        (changed.has(index) ? fix.provenance : draft.provenanceByScreen[index]) ?? fix.provenance,
-    ),
-  };
+  const version = await fixVersionDraft({ draft, first, gate });
 
   const checked = await checkFixedLesson({
     draft: draft.lesson,
     first,
-    fixed: lesson,
+    fixed: version.lesson,
     gate,
     review,
   });
