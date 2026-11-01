@@ -31,6 +31,10 @@ async function mergeIntoPublicSource({
   });
 
   await prisma.$transaction([
+    // An ask answered with the upload meanwhile waits, so its answer is the one carried over.
+    prisma.$queryRaw`
+      SELECT id FROM learner_sources WHERE source_id = ${privateSourceId}::uuid FOR UPDATE
+    `,
     // A learner who already follows the shared copy keeps that link: it takes on their upload and
     // the ask it answered, so sending it again can't answer another ask.
     prisma.$executeRaw`
