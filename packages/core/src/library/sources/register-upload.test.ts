@@ -9,6 +9,7 @@ import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken } from "./create-upload-token";
+import { answerGoalUploadRequest, recordGoalResearchOutcome } from "./goal-upload-request";
 import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
 import { shareSourceUpload } from "./share-upload";
@@ -485,29 +486,49 @@ describe(registerSourceUpload, () => {
     ).resolves.toBe(1);
   });
 
-  it("stores pasted text again after the shared copy it became was updated", async () => {
+  it("answers pasted text sent again with the shared copy it became, after that copy was updated", async () => {
     const user = await userFixture();
+    const goal = await goalFixture({ researchUploadReason: "noOfficialSource", userId: user.id });
     const text = uniqueText();
     servePublisherCopy(text);
     mockSession(user.id);
 
-    const first = await registerSourceUpload({ kind: "text", language: "pt", text });
+    const first = await registerSourceUpload({
+      goalId: goal.id,
+      kind: "text",
+      language: "pt",
+      text,
+    });
 
     if (first.status !== "ready") {
       throw new Error("The first upload should be stored.");
     }
 
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.source.id] }),
+    ).resolves.toMatchObject({ status: "ready" });
+
     await shareNotice(first.source.id);
     servePublisherCopy(uniqueText());
     await expect(refreshWebSource(first.source.id)).resolves.toMatchObject({ status: "changed" });
+    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "unverified" });
 
-    const again = await registerSourceUpload({ kind: "text", language: "pt", text });
+    const again = await registerSourceUpload({
+      goalId: goal.id,
+      kind: "text",
+      language: "pt",
+      text,
+    });
 
     expect(again).toMatchObject({
-      checkVisibility: true,
-      source: { ownerId: user.id, visibility: "private" },
+      checkVisibility: false,
+      source: { id: first.source.id },
       status: "ready",
     });
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.source.id] }),
+    ).resolves.toStrictEqual({ status: "alreadyAnswered" });
 
     await expect(
       prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),

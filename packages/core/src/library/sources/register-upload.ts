@@ -31,23 +31,21 @@ export type SourceUploadResult =
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
 async function linkUpload({
-  fileId,
   goalId,
   sourceId,
+  uploadId,
   userId,
 }: {
-  fileId: string | null;
   goalId: string | null;
   sourceId: string;
+  uploadId: string;
   userId: string;
 }) {
   await writeLearnerChange({ userId }, async (tx) => {
-    const files = fileId
-      ? await tx.uploadedFile.createMany({
-          data: { id: fileId, sourceId, userId },
-          skipDuplicates: true,
-        })
-      : { count: 0 };
+    const uploads = await tx.sourceUpload.createMany({
+      data: { id: uploadId, sourceId, userId },
+      skipDuplicates: true,
+    });
 
     const { count } = await tx.learnerSource.createMany({
       data: { goalId, origin: "upload", sourceId, userId },
@@ -63,7 +61,7 @@ async function linkUpload({
       where: { origin: { not: "upload" }, sourceId, userId },
     });
 
-    return uploaded.count + files.count === 0 ? unchanged(null) : null;
+    return uploaded.count + uploads.count === 0 ? unchanged(null) : null;
   });
 }
 
@@ -193,10 +191,12 @@ async function removeUnusedBlob({
 async function storeUpload({
   content,
   input,
+  uploadId,
   userId,
 }: {
   content: UploadContent;
   input: SourceUploadInput;
+  uploadId: string;
   userId: string;
 }): Promise<SourceUploadResult> {
   const [goalId, storedCopy, uploadedBefore] = await Promise.all([
@@ -205,8 +205,6 @@ async function storeUpload({
     hasUploaded({ hash: content.hash, userId }),
   ]);
 
-  const uploadKey = input.kind === "file" ? input.pathname : `${userId}:${content.hash}`;
-  const uploadId = getUploadClaimId(uploadKey);
   const refusal = uploadedBefore ? null : await claimUpload(uploadId);
 
   if (refusal) {
@@ -218,37 +216,38 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  const fileId = input.kind === "file" ? uploadId : null;
-  await linkUpload({ fileId, goalId, sourceId: source.id, userId });
+  await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
   await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
 
   return { checkVisibility: created, source, status: "ready" };
 }
 
-/** A file is removed once its source matches a stored copy or is shared, so a retry answers from the source it became. */
-async function replayRegisteredFile({
+/**
+ * An upload sent again answers with the source it became: its file may be gone, and its text may
+ * be stored nowhere once a shared copy moved to a newer edition.
+ */
+async function answerSentUpload({
   input,
+  uploadId,
   userId,
 }: {
   input: SourceUploadInput;
+  uploadId: string;
   userId: string;
 }): Promise<SourceUploadResult | null> {
-  const file =
-    input.kind === "file"
-      ? await prisma.uploadedFile.findFirst({
-          include: { source: { omit: { extractedText: true } } },
-          where: { id: getUploadClaimId(input.pathname), userId },
-        })
-      : null;
+  const upload = await prisma.sourceUpload.findFirst({
+    include: { source: { omit: { extractedText: true } } },
+    where: { id: uploadId, userId },
+  });
 
-  if (!file) {
+  if (!upload) {
     return null;
   }
 
   const goalId = await getOwnGoalId({ goalId: input.goalId, userId });
-  await linkUpload({ fileId: null, goalId, sourceId: file.sourceId, userId });
+  await linkUpload({ goalId, sourceId: upload.sourceId, uploadId, userId });
 
-  return { checkVisibility: false, source: file.source, status: "ready" };
+  return { checkVisibility: false, source: upload.source, status: "ready" };
 }
 
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {
@@ -264,10 +263,11 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
     return { status: "invalidPathname" };
   }
 
-  const replayed = await replayRegisteredFile({ input, userId });
+  const fileId = input.kind === "file" ? getUploadClaimId(input.pathname) : null;
+  const sentFile = fileId ? await answerSentUpload({ input, uploadId: fileId, userId }) : null;
 
-  if (replayed) {
-    return replayed;
+  if (sentFile) {
+    return sentFile;
   }
 
   const refusal = input.kind === "link" ? await findLinkRefusal() : null;
@@ -282,5 +282,8 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
     return read;
   }
 
-  return storeUpload({ content: read.content, input, userId });
+  const uploadId = fileId ?? getUploadClaimId(`${userId}:${read.content.hash}`);
+  const sent = fileId ? null : await answerSentUpload({ input, uploadId, userId });
+
+  return sent ?? storeUpload({ content: read.content, input, uploadId, userId });
 }
