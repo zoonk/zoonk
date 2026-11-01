@@ -9,23 +9,30 @@ struct CourseCatalogGrid: View {
 
   let category: CourseCategory?
   let page: CourseCatalogPage
+  let isAtHinge: Bool
 
   private static let minimumColumn = 240.0
   private static let spacing = 24.0
 
   var body: some View {
     Section {
-      if usesColumns {
-        LazyVGrid(columns: columns, alignment: .leading, spacing: Self.spacing) {
-          ForEach(page.courses) { course in
-            cell(course, isColumn: true)
-          }
+      if usesColumns, let hinge = hingeColumns {
+        // A list row per line of the grid: one row as tall as the whole grid draws nothing once
+        // the text grows.
+        ForEach(lines(of: hinge.count), id: \.lowerBound) { line in
+          grid(page.courses[line], columns: hinge)
+            .listRowInsets(.vertical, 0)
+            .padding(.top, line.lowerBound == 0 ? 8 : Self.spacing / 2)
+            .padding(.bottom, line.upperBound == page.courses.count ? 8 : Self.spacing / 2)
         }
-        .onGeometryChange(for: PaneSpace.self) {
-          PaneSpace($0)
-        } action: {
-          space = $0
-        }
+        .listRowSeparator(.hidden)
+      } else if usesColumns {
+        grid(
+          page.courses[...],
+          columns: [
+            GridItem(.adaptive(minimum: Self.minimumColumn), spacing: Self.spacing, alignment: .top)
+          ]
+        )
         .padding(.vertical, 8)
       } else {
         ForEach(page.courses) { course in
@@ -44,19 +51,34 @@ struct CourseCatalogGrid: View {
     }
   }
 
+  /// At a hinge each side's column is about a phone wide, so it keeps at any text size.
   private var usesColumns: Bool {
-    horizontalSizeClass == .regular && !isStacked
+    horizontalSizeClass == .regular && (!isStacked || isAtHinge)
   }
 
-  private var columns: [GridItem] {
-    guard let hinge = space.columnsAroundHinge(minimum: Self.minimumColumn, spacing: Self.spacing)
-    else {
-      return [
-        GridItem(.adaptive(minimum: Self.minimumColumn), spacing: Self.spacing, alignment: .top)
-      ]
+  private var hingeColumns: [GridItem]? {
+    space.columnsAroundHinge(minimum: Self.minimumColumn, spacing: Self.spacing)?.map {
+      GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top)
     }
+  }
 
-    return hinge.map { GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top) }
+  private func lines(of columns: Int) -> [Range<Int>] {
+    stride(from: 0, to: page.courses.count, by: columns).map {
+      $0..<min($0 + columns, page.courses.count)
+    }
+  }
+
+  private func grid(_ courses: ArraySlice<CourseSummary>, columns: [GridItem]) -> some View {
+    LazyVGrid(columns: columns, alignment: .leading, spacing: Self.spacing) {
+      ForEach(courses) { course in
+        cell(course, isColumn: true)
+      }
+    }
+    .onGeometryChange(for: PaneSpace.self) {
+      PaneSpace($0)
+    } action: {
+      space = $0
+    }
   }
 
   @ViewBuilder

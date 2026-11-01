@@ -19,16 +19,14 @@ struct MindMapsScreen: View {
     }
   }
 
+  /// At a hinge each side's columns keep at any text size, each side about a phone wide.
   private var columns: [GridItem] {
-    if isStacked {
-      return [GridItem(.flexible())]
+    if let hinge = gridSpace.columnsAroundHinge(minimum: tileWidth, spacing: 16) {
+      return hinge.map { GridItem(.fixed($0.width), spacing: $0.spacing) }
     }
 
-    guard let hinge = gridSpace.columnsAroundHinge(minimum: tileWidth, spacing: 16) else {
-      return [GridItem(.adaptive(minimum: tileWidth), spacing: 16)]
-    }
-
-    return hinge.map { GridItem(.fixed($0.width), spacing: $0.spacing) }
+    return isStacked
+      ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: tileWidth), spacing: 16)]
   }
 
   @ViewBuilder
@@ -79,6 +77,7 @@ struct MindMapsScreen: View {
           "Finish a chapter to make its mind map: its main ideas in one picture.",
           tableName: "MindMaps", comment: "Explains how a chapter gets a mind map")
       }
+      .lonePage()
     case .failed:
       ContentUnavailableView {
         Label {
@@ -96,6 +95,7 @@ struct MindMapsScreen: View {
         }
         .buttonStyle(.bordered)
       }
+      .lonePage()
     case .idle, .loading:
       ProgressView()
     }

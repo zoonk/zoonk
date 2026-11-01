@@ -37,7 +37,7 @@ struct AllCoursesView: View {
         .listSectionMargins(.trailing, leadingPageMargin)
       }
 
-      CatalogCourses(category: category)
+      CatalogCourses(category: category, isAtHinge: leadingPageMargin != nil)
     }
     // Section margins count from the list's whole bounds, which run under the vertical bar.
     .onGeometryChange(for: CGFloat?.self) { proxy in
@@ -67,6 +67,7 @@ private struct CatalogCourses: View {
   @Environment(AppRouter.self) private var router
 
   let category: CourseCategory?
+  let isAtHinge: Bool
 
   var body: some View {
     switch catalog.courses(category: category).state {
@@ -79,7 +80,7 @@ private struct CatalogCourses: View {
             "Loading courses", tableName: "Courses",
             comment: "Accessibility status while the course catalog loads."))
     case .loaded(let page):
-      CourseCatalogGrid(category: category, page: page)
+      CourseCatalogGrid(category: category, page: page, isAtHinge: isAtHinge)
     case .empty:
       CourseCatalogEmptyView(category: category) { router.open(.startGoal()) }
         .listRowBackground(Color.clear)
@@ -121,5 +122,6 @@ private struct CourseCatalogEmptyView: View {
         .buttonStyle(.bordered)
       }
     }
+    .lonePage()
   }
 }
