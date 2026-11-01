@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import java.util.UUID
 
-internal val PATTERN_ID: UUID = UUID.fromString("5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b")
+private val PATTERN_ID: UUID = UUID.fromString("5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b")
 
 internal fun pattern(
     kind: MistakePattern.Kind = MistakePattern.Kind.PATTERN,

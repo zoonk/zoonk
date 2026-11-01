@@ -61,7 +61,6 @@ internal fun practiceFeedback(
     isCorrect: Boolean = true,
     fixed: Boolean = false,
     fixedMistakeIds: List<String> = emptyList(),
-    status: String = if (fixed) "fixed" else "open",
     answerId: String = UUID.randomUUID().toString(),
 ): MistakePracticeFeedback =
     decodeFixture(
@@ -70,7 +69,7 @@ internal fun practiceFeedback(
         "isCorrect" to isCorrect,
         "fixed" to fixed,
         "fixedMistakeIds" to JsonArray(fixedMistakeIds.map(::JsonPrimitive)),
-        "mistakeStatus" to status,
+        "mistakeStatus" to if (fixed) "fixed" else "open",
     )
 
 internal fun completion(

@@ -22,8 +22,8 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.UUID
 
-internal const val PRACTICE_SESSION = "1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-internal const val PRACTICE_BLOCK = "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+private const val PRACTICE_SESSION = "1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
+private const val PRACTICE_BLOCK = "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
 
 internal fun strings(vararg values: String) = JsonArray(values.map(::JsonPrimitive))
 
