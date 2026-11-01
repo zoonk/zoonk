@@ -2,6 +2,7 @@ import Foundation
 // For `persistOptOut`: the summary decides consent, so PostHog mustn't restore its own at launch.
 @_spi(PostHogInternal) import PostHog
 import SwiftUI
+import Synchronization
 
 /// The learner PostHog counts, with what main sends for them: the person properties it identifies
 /// them with and the properties every event carries.
@@ -89,6 +90,8 @@ enum UsageAnalytics {
     self.consent = consent
 
     guard case .granted(let learner) = consent else {
+      UsageDataGate.share(as: [])
+
       // A visitor's events wait for the session they lead to; a learner's end with their session.
       if consent == .declined || previous != .undecided(nil) {
         waiting = []
@@ -114,6 +117,8 @@ enum UsageAnalytics {
     if postHog.getDistinctId() != learner.userID {
       postHog.reset()
     }
+
+    UsageDataGate.share(as: [learner.userID, postHog.getDistinctId(), postHog.getAnonymousId()])
 
     postHog.register(learner.sharedProperties)
     postHog.optIn()
@@ -160,6 +165,9 @@ enum UsageAnalytics {
     config.capturePushNotificationOpened = false
     config.preloadFeatureFlags = false
     config.sendFeatureFlagEvent = false
+    // Plain JSON, so the gate can read whose events a batch carries.
+    config.compression = .none
+    config.urlSessionConfiguration = UsageDataGate.sessionConfiguration
     return config
   }
 }
@@ -185,5 +193,110 @@ private struct UsageAnalyticsConsent: ViewModifier {
     AnalyticsConsent(
       session: session.authenticatedSession, summary: learnerSummary.summary.value,
       locale: currentCourseCatalogLanguage())
+  }
+}
+
+/// Opted out, PostHog still uploads the events it queued before, such as those from offline, and
+/// asks for flags on reset: it checks the choice only when an event is captured. This answers what
+/// may leave. Only event batches do, as nothing else of PostHog's is used, and only with the sharing
+/// learner's events; a refused batch gets an answer PostHog doesn't retry, so it leaves the queue.
+final class UsageDataGate: URLProtocol, @unchecked Sendable {
+  /// The sharing learner's id and the random one their events before identify went under; empty
+  /// while nobody shares.
+  private static let sendingAs = Mutex<Set<String>>([])
+  private var forwarding: URLSessionDataTask?
+
+  static func share(as ids: Set<String>) {
+    sendingAs.withLock { $0 = ids }
+  }
+
+  static var sessionConfiguration: URLSessionConfiguration {
+    let configuration = URLSessionConfiguration.default
+    configuration.protocolClasses = [Self.self] + (configuration.protocolClasses ?? [])
+    return configuration
+  }
+
+  static func mayLeave(_ request: URLRequest, body: Data, as ids: Set<String>) -> Bool {
+    guard !ids.isEmpty, request.url?.path().hasSuffix("/batch") == true,
+      let sent = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
+      let batch = sent["batch"] as? [[String: Any]]
+    else {
+      return false
+    }
+
+    return batch.allSatisfy { ($0["distinct_id"] as? String).map(ids.contains) == true }
+  }
+
+  override class func canInit(with request: URLRequest) -> Bool {
+    true
+  }
+
+  override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+    request
+  }
+
+  override func startLoading() {
+    // An upload's body reaches a protocol only as a stream.
+    let body = request.httpBodyStream.map(Self.read) ?? request.httpBody ?? Data()
+
+    guard Self.mayLeave(request, body: body, as: Self.sendingAs.withLock { $0 }) else {
+      return refuse()
+    }
+
+    var forwarded = request
+    forwarded.httpBody = body
+
+    forwarding = URLSession.shared.dataTask(with: forwarded) { [self] data, response, error in
+      if let response {
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+      }
+
+      if let data {
+        client?.urlProtocol(self, didLoad: data)
+      }
+
+      if let error {
+        client?.urlProtocol(self, didFailWithError: error)
+      } else {
+        client?.urlProtocolDidFinishLoading(self)
+      }
+    }
+
+    forwarding?.resume()
+  }
+
+  override func stopLoading() {
+    forwarding?.cancel()
+  }
+
+  private func refuse() {
+    guard let url = request.url,
+      let refusal = HTTPURLResponse(url: url, statusCode: 403, httpVersion: nil, headerFields: nil)
+    else {
+      client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+      return
+    }
+
+    client?.urlProtocol(self, didReceive: refusal, cacheStoragePolicy: .notAllowed)
+    client?.urlProtocolDidFinishLoading(self)
+  }
+
+  private static func read(_ stream: InputStream) -> Data {
+    var data = Data()
+    var buffer = [UInt8](repeating: 0, count: 16_384)
+    stream.open()
+    defer { stream.close() }
+
+    while stream.hasBytesAvailable {
+      let count = stream.read(&buffer, maxLength: buffer.count)
+
+      guard count > 0 else {
+        break
+      }
+
+      data.append(buffer, count: count)
+    }
+
+    return data
   }
 }
