@@ -58,9 +58,9 @@ fun TaskActions(
 @Composable
 fun Modifier.taskOption(): Modifier = if (isWideWindow()) this else fillMaxWidth()
 
+/** Main's `lg` for a task: wide enough that its actions spread out and its aside shows beside it. */
 @Composable
-private fun isWideWindow() =
-    currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+fun isWideWindow() = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
 /** Main's 40rem task column less its 16dp sides, so the bar lines up with the task's content. */
 private val TASK_COLUMN_WIDTH = 608.dp

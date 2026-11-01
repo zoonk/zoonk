@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -58,6 +59,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -72,6 +75,8 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -99,6 +104,7 @@ import com.zoonk.android.feature.player.language.promptAudioUrl
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
@@ -136,15 +142,49 @@ internal fun LessonColumn(
 ) {
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Column(
-            modifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.lessonColumnWidth(),
+            verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
             content = content,
         )
     }
 }
 
+/**
+ * A [LessonColumn] as tall as the view at least: the part with the [FillsView] id stretches over
+ * the height the other parts leave, never shorter than its own content.
+ */
+@Composable
+private fun StepColumn(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier.wrapContentWidth().lessonColumnWidth()) { measurables, constraints ->
+        val spacing = COLUMN_SPACING.roundToPx()
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val filling = measurables.indexOfFirst { it.layoutId == FillsView }
+        val others = measurables.mapIndexed { index, part -> if (index == filling) null else part.measure(loose) }
+        val gaps = spacing * (measurables.size - 1).coerceAtLeast(0)
+        val left = (constraints.minHeight - gaps - others.sumOf { it?.height ?: 0 }).coerceAtLeast(0)
+        val parts = others.mapIndexed { index, part -> part ?: measurables[index].measure(loose.copy(minHeight = left)) }
+
+        layout(
+            constraints.constrainWidth(parts.maxOfOrNull { it.width } ?: 0),
+            constraints.constrainHeight(parts.sumOf { it.height } + gaps),
+        ) {
+            var y = 0
+            parts.forEach {
+                it.placeRelative(0, y)
+                y += it.height + spacing
+            }
+        }
+    }
+}
+
+private fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
+
 private val COLUMN_WIDTH = 640.dp
 private val COLUMN_PADDING = 20.dp
+private val COLUMN_SPACING = 20.dp
 
 @Composable
 fun LessonPlayer(
@@ -470,37 +510,35 @@ private fun Content(
 
             val layoutDirection = LocalLayoutDirection.current
 
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .onGloballyPositioned { reveal.viewport = it }
-                    .verticalScroll(scroll)
-                    .pointerInput(screen.canGoBack, screen.canGoForward) {
-                        var travelled = 0f
-                        detectHorizontalDragGestures(
-                            onDragStart = { travelled = 0f },
-                            onHorizontalDrag = { _, amount -> travelled += amount },
-                            onDragEnd = {
-                                val forward = if (layoutDirection == LayoutDirection.Rtl) travelled > 0 else travelled < 0
-                                if (abs(travelled) > SWIPE_DISTANCE * density) {
-                                    if (forward && screen.canGoForward) viewModel.dispatch(LessonAction.Continue)
-                                    if (!forward && screen.canGoBack) viewModel.dispatch(LessonAction.GoBack)
-                                }
-                            },
-                        )
-                    }.padding(vertical = 16.dp),
-            ) {
-                CompositionLocalProvider(LocalFeedbackReveal provides reveal) {
-                    LessonColumn {
-                        Notice(state, screen, viewModel)
-                        // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
-                        key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
-                        if (offer != null && screen.quickCheck == null) {
-                            StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
-                        }
-                        Result(state, screen, scroll, reveal, viewModel, exits, offer)
-                        LessonRecap(state, screen)
+            CompositionLocalProvider(LocalFeedbackReveal provides reveal) {
+                StepColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { reveal.viewport = it }
+                        .verticalScroll(scroll)
+                        .pointerInput(screen.canGoBack, screen.canGoForward) {
+                            var travelled = 0f
+                            detectHorizontalDragGestures(
+                                onDragStart = { travelled = 0f },
+                                onHorizontalDrag = { _, amount -> travelled += amount },
+                                onDragEnd = {
+                                    val forward = if (layoutDirection == LayoutDirection.Rtl) travelled > 0 else travelled < 0
+                                    if (abs(travelled) > SWIPE_DISTANCE * density) {
+                                        if (forward && screen.canGoForward) viewModel.dispatch(LessonAction.Continue)
+                                        if (!forward && screen.canGoBack) viewModel.dispatch(LessonAction.GoBack)
+                                    }
+                                },
+                            )
+                        }.padding(vertical = 16.dp),
+                ) {
+                    Notice(state, screen, viewModel)
+                    // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
+                    key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
+                    if (offer != null && screen.quickCheck == null) {
+                        StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                     }
+                    Result(state, screen, scroll, reveal, viewModel, exits, offer)
+                    LessonRecap(state, screen)
                 }
             }
         }

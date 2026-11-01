@@ -71,6 +71,21 @@ internal fun reading(id: String) =
                    "translation":"cat","word":"gato."}]""",
     )
 
+/** A sentence long enough to wrap the answer onto more lines on a phone, in the order it's built. */
+internal val LONG_SENTENCE = listOf("The", "common", "thread", "in", "my", "experience", "is", "improving", "processes")
+
+internal fun longReading(id: String) =
+    step(
+        id,
+        StepKind.Reading,
+        "reading",
+        sentence =
+            """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-2","romanization":null,
+               "sentence":"${LONG_SENTENCE.joinToString(" ")}",
+               "translation":"O fio condutor da minha experiência é melhorar processos","translationDistractors":[]}""",
+        wordBank = bank("in", "common", "processes", "my", "improves", "am", "experience", "The", "those", "thread", "is", "improving"),
+    )
+
 internal fun listening(
     id: String,
     audioUrl: String?,

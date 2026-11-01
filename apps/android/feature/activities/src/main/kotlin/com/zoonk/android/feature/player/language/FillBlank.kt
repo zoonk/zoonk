@@ -36,8 +36,8 @@ import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
-import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.player.steps.QuestionText
+import com.zoonk.android.feature.player.steps.WordBankScene
 
 private const val BLANK = "[BLANK]"
 
@@ -82,66 +82,69 @@ internal fun FillBlankView(
         }
     }
 
-    QuestionScene {
-        content.question?.let { QuestionText(stripWrappingQuotes(it)) }
+    WordBankScene(
+        question = {
+            content.question?.let { QuestionText(stripWrappingQuotes(it)) }
 
-        val words = if (checked) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style
-        TargetDirection(language) {
-            // Words read as one stop with the empty blanks in it; a filled blank is its own stop.
-            FlowRow(
-                Modifier.semantics(mergeDescendants = true) {},
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                itemVerticalAlignment = Alignment.Bottom,
-            ) {
-                segments.forEachIndexed { index, segment ->
-                    if (segment.startsWith(' ') && index > 0) Spacer(Modifier.width(WORD_SPACE))
-                    WORD.findAll(segment).forEach { word ->
-                        // The blank's word sits 4dp up on its line, so plain words sit there too.
-                        Text(word.value, style = words, modifier = Modifier.padding(bottom = 4.dp))
-                    }
-                    if (index < segments.lastIndex) {
-                        BlankSlot(
-                            index = index,
-                            word = blanks.getOrNull(index),
-                            correct =
-                                if (checked) {
-                                    blanks
-                                        .getOrNull(
-                                            index,
-                                        )?.equals(content.answers.getOrNull(index), ignoreCase = true)
-                                } else {
-                                    null
+            val words = if (checked) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style
+            TargetDirection(language) {
+                // Words read as one stop with the empty blanks in it; a filled blank is its own stop.
+                FlowRow(
+                    Modifier.semantics(mergeDescendants = true) {},
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    itemVerticalAlignment = Alignment.Bottom,
+                ) {
+                    segments.forEachIndexed { index, segment ->
+                        if (segment.startsWith(' ') && index > 0) Spacer(Modifier.width(WORD_SPACE))
+                        WORD.findAll(segment).forEach { word ->
+                            // The blank's word sits 4dp up on its line, so plain words sit there too.
+                            Text(word.value, style = words, modifier = Modifier.padding(bottom = 4.dp))
+                        }
+                        if (index < segments.lastIndex) {
+                            BlankSlot(
+                                index = index,
+                                word = blanks.getOrNull(index),
+                                correct =
+                                    if (checked) {
+                                        blanks
+                                            .getOrNull(
+                                                index,
+                                            )?.equals(content.answers.getOrNull(index), ignoreCase = true)
+                                    } else {
+                                        null
+                                    },
+                                enabled = editable,
+                                style = style,
+                                onRemove = {
+                                    blanks = blanks.toMutableList().also { it[index] = null }
+                                    if (answer != null) onAnswer(null)
                                 },
-                            enabled = editable,
-                            style = style,
-                            onRemove = {
-                                blanks = blanks.toMutableList().also { it[index] = null }
-                                if (answer != null) onAnswer(null)
-                            },
-                        )
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        Romanization(romanization)
-
-        WordBank(
-            words = options,
-            used = usedBlankTiles(options, blanks),
-            enabled = editable,
-            language = language,
-            onPlace = { tile ->
-                val empty = blanks.indexOf(null)
-                if (empty == -1) return@WordBank
-                val option = options[tile]
-                option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
-                val next = blanks.toMutableList().also { it[empty] = option.word }
-                blanks = next
-                if (next.none { it == null }) onAnswer(LessonAnswer.FillBlank(next.filterNotNull()))
-            },
-        )
-    }
+            Romanization(romanization)
+        },
+        bank = {
+            WordBank(
+                words = options,
+                used = usedBlankTiles(options, blanks),
+                enabled = editable,
+                language = language,
+                onPlace = { tile ->
+                    val empty = blanks.indexOf(null)
+                    if (empty == -1) return@WordBank
+                    val option = options[tile]
+                    option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
+                    val next = blanks.toMutableList().also { it[empty] = option.word }
+                    blanks = next
+                    if (next.none { it == null }) onAnswer(LessonAnswer.FillBlank(next.filterNotNull()))
+                },
+            )
+        },
+    )
 }
 
 /** A tile is in use once as many blanks hold its word as tiles up to it show that word. */

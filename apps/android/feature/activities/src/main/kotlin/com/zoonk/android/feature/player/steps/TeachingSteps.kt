@@ -43,6 +43,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -86,6 +87,7 @@ import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.MathText
@@ -113,7 +115,31 @@ internal fun ReadScene(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING), content = content)
+}
+
+private val QUESTION_SPACING = 24.dp
+
+/** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
+object FillsView
+
+/**
+ * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
+ * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the
+ * view, the bank follows its content. A wide window keeps it under the answer.
+ */
+@Composable
+internal fun WordBankScene(
+    question: @Composable ColumnScope.() -> Unit,
+    bank: @Composable () -> Unit,
+) {
+    Column(
+        Modifier.fillMaxWidth().then(if (isWideWindow()) Modifier else Modifier.layoutId(FillsView)),
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        QuestionScene(question)
+        Box(Modifier.padding(top = QUESTION_SPACING)) { bank() }
+    }
 }
 
 @Composable
@@ -445,11 +471,9 @@ internal fun SpokenAnswerView(
     val listening = content.listening?.takeIf { actions.cantTalk }
 
     if (listening != null) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
-            LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions)
-            if (!locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
-        }
+        val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
+        LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions)
+        if (!locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
         return
     }
 

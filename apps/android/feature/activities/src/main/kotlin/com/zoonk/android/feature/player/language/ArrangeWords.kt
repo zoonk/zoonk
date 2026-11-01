@@ -63,7 +63,7 @@ import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
-import com.zoonk.android.feature.player.steps.QuestionScene
+import com.zoonk.android.feature.player.steps.WordBankScene
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
 import kotlinx.coroutines.launch
@@ -110,29 +110,33 @@ internal fun ArrangeWordsView(
         }
     }
 
-    QuestionScene {
-        prompt()
-        AnswerArea(
-            placed = placed,
-            correctWords = correctWords.takeIf { checked },
-            editable = editable,
-            language = language,
-            onRemove = { index -> update(placed.filterIndexed { i, _ -> i != index }) },
-            onMove = { from, to -> update(placed.toMutableList().apply { add(to, removeAt(from)) }) },
-        )
-        WordBank(
-            words = bank,
-            used = usedTiles(bank, placed),
-            enabled = editable,
-            language = language,
-            onPlace = { index ->
-                if (placed.size >= correctWords.size) return@WordBank
-                val option = bank[index]
-                option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
-                update(placed + PlacedWord(option.word, option.romanization, index))
-            },
-        )
-    }
+    WordBankScene(
+        question = {
+            prompt()
+            AnswerArea(
+                placed = placed,
+                correctWords = correctWords.takeIf { checked },
+                editable = editable,
+                language = language,
+                onRemove = { index -> update(placed.filterIndexed { i, _ -> i != index }) },
+                onMove = { from, to -> update(placed.toMutableList().apply { add(to, removeAt(from)) }) },
+            )
+        },
+        bank = {
+            WordBank(
+                words = bank,
+                used = usedTiles(bank, placed),
+                enabled = editable,
+                language = language,
+                onPlace = { index ->
+                    if (placed.size >= correctWords.size) return@WordBank
+                    val option = bank[index]
+                    option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
+                    update(placed + PlacedWord(option.word, option.romanization, index))
+                },
+            )
+        },
+    )
 }
 
 private fun ArrangeKind.answer(words: List<String>): LessonAnswer =

@@ -8,10 +8,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AnalyticsEvent
@@ -96,6 +98,7 @@ internal class LessonPlayerHarness(
         restoration: StateRestorationTester? = null,
         withTutor: Boolean = false,
         pictures: PrivatePictures? = null,
+        layoutDirection: LayoutDirection? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -134,6 +137,7 @@ internal class LessonPlayerHarness(
                     LocalSnackbarHostState provides SnackbarHostState(),
                     LocalCodeSandbox provides sandbox,
                     LocalPrivatePictures provides pictures,
+                    LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
                 ) {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()

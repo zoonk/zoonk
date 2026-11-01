@@ -14,6 +14,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -29,6 +30,8 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.height
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -72,10 +75,13 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** A learner answering each language screen, through the real player and what it sends to check. */
 @RunWith(AndroidJUnit4::class)
@@ -170,6 +176,46 @@ class LanguageStepsFlowTest {
             sent("read"),
         )
         rule.onNodeWithText("Correct!").assertIsDisplayed()
+    }
+
+    private fun bounds(description: String) = rule.onNodeWithContentDescription(description).getUnclippedBoundsInRoot()
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aPhonesWordBankStaysAboveTheActionsWhileTheSentenceGrows() {
+        play(listOf(longReading("read"), summaryStep("end")), learner = "pt", target = "en")
+        val bank = bounds("Word bank")
+        val emptyAnswer = bounds("Your answer")
+
+        LONG_SENTENCE.forEach { word ->
+            tap(word)
+            assertEquals(bank, bounds("Word bank"))
+        }
+
+        assertTrue(bounds("Your answer").height > emptyAnswer.height * 2)
+        assertTrue(rule.onNodeWithText("Check").getUnclippedBoundsInRoot().top - bank.bottom < 48.dp)
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aWideWindowKeepsTheWordBankUnderTheAnswer() {
+        play(listOf(longReading("read"), summaryStep("end")), learner = "pt", target = "en")
+
+        assertTrue(bounds("Word bank").top - bounds("Your answer").bottom < 48.dp)
+    }
+
+    @Test
+    @Config(qualifiers = "w360dp-h480dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aWordBankThatNoLongerFitsFollowsTheAnswerAndScrolls() {
+        play(listOf(longReading("read"), summaryStep("end")), learner = "pt", target = "en")
+        LONG_SENTENCE.forEach(::tap)
+
+        val gap = bounds("Word bank").top - bounds("Your answer").bottom
+        assertTrue(gap >= 0.dp && gap < 48.dp)
+        rule.onNodeWithText("those").performScrollTo().assertIsDisplayed()
     }
 
     @Test
