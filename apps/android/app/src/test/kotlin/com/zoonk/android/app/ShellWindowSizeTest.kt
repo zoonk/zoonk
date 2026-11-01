@@ -72,9 +72,14 @@ class ShellWindowSizeTest {
     @Config(qualifiers = "w700dp-h1000dp")
     fun aMediumWindowGetsARail() = assertRail()
 
+    /** An unfolded foldable: a drawer would take most of the fold's first side. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun anExpandedWindowGetsARail() = assertRail()
+
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land")
-    fun anExpandedWindowGetsADrawerWithTheStudyPlaces() {
+    fun aLargeWindowGetsADrawerWithTheStudyPlaces() {
         rule.onNodeWithText("Study").assertIsDisplayed()
         listOf("Mistakes notebook", "Exam", "Speaking", "Mind maps", "Statistics").forEach {
             tab(it).assertIsDisplayed()

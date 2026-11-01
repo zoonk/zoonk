@@ -5,7 +5,7 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -114,6 +114,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.LocalTabRootBar
 import com.zoonk.android.ui.scaffold.TabRootBar
+import com.zoonk.android.ui.scaffold.pageDirective
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
 
@@ -248,14 +249,15 @@ fun AppShell(
             ) {
                 var contentBottom by remember { mutableFloatStateOf(0f) }
 
-                Box(
+                BoxWithConstraints(
                     Modifier
                         .consumeWindowInsets(navigationSuiteInsets(navigationSuiteType))
                         .onGloballyPositioned { contentBottom = it.boundsInRoot().bottom },
                 ) {
                     NavDisplay(
                         entries = entries,
-                        sceneStrategies = listOf(rememberListDetailSceneStrategy()),
+                        // A list and its detail split as a page and its aside do, so they meet at an unfolded book's fold.
+                        sceneStrategies = listOf(rememberListDetailSceneStrategy(directive = pageDirective(maxWidth))),
                         transitionSpec = {
                             if (navigator.isSwitchingTabs) NO_TRANSITION else defaultTransitionSpec<NavKey>()(this)
                         },
@@ -300,9 +302,10 @@ private fun ShellSnackbarHost(
 private val NO_TRANSITION = ContentTransform(EnterTransition.None, ExitTransition.None)
 
 /**
- * Material's choice for the window (a bar on compact windows and tabletop, a rail on medium
- * ones), with a drawer where an expanded window has the height for one. Tasks hide it, and so
- * does onboarding where there's no drawer, as main hides its tab bar under `lg`.
+ * Material's choice for the window (a bar on compact windows and tabletop, a rail elsewhere), with
+ * a drawer where a large window has the height for one and still leaves two panes beside it: on an
+ * unfolded foldable a drawer would take most of the fold's first side. Tasks hide it, and so does
+ * onboarding where there's no drawer, as main hides its tab bar under `lg`.
  */
 private fun navigationSuiteType(
     adaptiveInfo: WindowAdaptiveInfo,
@@ -312,7 +315,7 @@ private fun navigationSuiteType(
     val default = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
     val type =
         if (default == NavigationSuiteType.NavigationRail &&
-            sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) &&
+            sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND) &&
             sizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
         ) {
             NavigationSuiteType.NavigationDrawer
