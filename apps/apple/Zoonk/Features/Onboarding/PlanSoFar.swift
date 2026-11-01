@@ -78,7 +78,9 @@ struct PlanFact: Identifiable, Equatable {
       "targetScore",
     ]
 
-    return facts.filter { shown.contains($0.id) }.map { $0.daysLeft ?? $0.value }.joinedFacts()
+    return facts.filter { shown.contains($0.id) }
+      .flatMap { [$0.daysLeft ?? $0.value, $0.note].compactMap { $0 } }
+      .joinedFacts()
   }
 
   private struct Details: Decodable {
