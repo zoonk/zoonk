@@ -8,11 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,17 +43,18 @@ import com.zoonk.android.ui.theme.withTabularFigures
 internal fun LessonRecap(
     state: LessonPlayerState,
     screen: LessonScreen,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
 ) {
     val step = screen.step ?: return
     val recap = remember(state) { state.recap()?.takeIf { state.explanationsAfter().isEmpty() } } ?: return
     val mark = if (state.showsMiss(screen)) step.recapMark(recap) else null
-    var expanded by rememberSaveable(step.id, state.position) { mutableStateOf(false) }
     val title = recap.recapTitle
 
     DisclosureRow(
         title = stringResource(R.string.player_from_the_lesson),
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onExpandedChange = onExpandedChange,
         leading = { Icon(painterResource(R.drawable.ic_format_quote), contentDescription = null) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         supporting = title?.let { { RichInlineText(it) } },

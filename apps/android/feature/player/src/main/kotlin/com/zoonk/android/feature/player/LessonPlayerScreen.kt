@@ -530,6 +530,9 @@ private fun Content(
             // A new screen starts at its top; the same one recreated (the book folding, a rotation) stays where it was.
             var scrolledTo by rememberSaveable { mutableStateOf<String?>(null) }
             val screenKey = "${step.id}:${state.position}"
+            // "From the lesson" sits in the one column or on the page before the fold, so whether it's open is kept here.
+            var recapOpen by rememberSaveable(step.id, state.position) { mutableStateOf(false) }
+            val recap = @Composable { LessonRecap(state, screen, recapOpen) { recapOpen = it } }
 
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {
@@ -581,7 +584,7 @@ private fun Content(
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
                         Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
-                        if (fold == null) LessonRecap(state, screen)
+                        if (fold == null) recap()
                     }
 
                     if (fold != null) {
@@ -599,7 +602,7 @@ private fun Content(
                                 key(step.id, state.position) {
                                     StepView(step, state, screen, actions, navigator, language, StepPart.Screen)
                                 }
-                                LessonRecap(state, screen)
+                                recap()
                             }
                         }
                     }
