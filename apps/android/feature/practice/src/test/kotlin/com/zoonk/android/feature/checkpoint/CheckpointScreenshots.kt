@@ -21,7 +21,9 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -290,3 +292,5 @@ class CheckpointScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneResultLostFresh() = showResult("phone-result-lost-fresh")
 }
+
+private val ZU = MomentBuddy(BuddyLook(), "Zu")

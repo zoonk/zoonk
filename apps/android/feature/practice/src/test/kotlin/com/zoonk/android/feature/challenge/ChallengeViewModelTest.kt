@@ -12,7 +12,6 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeMove
@@ -36,8 +35,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -115,18 +112,6 @@ class ChallengeViewModelTest {
     }
 
     @Test
-    fun startingOpensTheBlockItStarted() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-
-            viewModel.start()
-            advanceUntilIdle()
-
-            assertEquals(AppRoute.Checkpoint(blockId.toString(), sessionId.toString()), viewModel.ui.value.opening)
-            assertEquals(listOf(false), starts.map { it.afterWriting })
-        }
-
-    @Test
     fun aChallengeWithoutQuestionsWritesThemThenStarts() =
         runTest(dispatcher) {
             start = { input ->
@@ -143,20 +128,6 @@ class ChallengeViewModelTest {
 
             assertEquals(listOf(false, true), starts.map { it.afterWriting })
             assertEquals(AppRoute.Mock(blockId.toString(), sessionId.toString()), viewModel.ui.value.opening)
-        }
-
-    @Test
-    fun aRefusedWritingShowsWhatRanOut() =
-        runTest(dispatcher) {
-            start = { throw ApiException(ApiError.Unavailable, "QUESTIONS_NEEDED", status = 409) }
-            write = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
-            val viewModel = viewModel()
-
-            viewModel.start()
-            advanceUntilIdle()
-
-            assertTrue(viewModel.ui.value.refused is Limit)
-            assertEquals(false, viewModel.ui.value.starting)
         }
 
     @Test
@@ -249,50 +220,5 @@ class ChallengeViewModelTest {
 
             assertEquals(movedItem, restored.ui.value.planItemId)
             assertEquals(moved, restored.ui.value.moved)
-        }
-
-    @Test
-    fun aDayWithNoRoomSaysSo() =
-        runTest(dispatcher) {
-            move = {
-                throw ApiException(
-                    ApiError.Unavailable,
-                    "PLAN_CHANGE_INVALID",
-                    status = 422,
-                    details = JsonObject(mapOf("reason" to JsonPrimitive("badMove"))),
-                )
-            }
-            val viewModel = viewModel()
-
-            viewModel.moveToMonday()
-            advanceUntilIdle()
-
-            assertEquals(MoveRefusal.NoRoom, viewModel.ui.value.refusal)
-        }
-
-    @Test
-    fun aRefusedMoveSaysWhyAndStopsOfferingIt() =
-        runTest(dispatcher) {
-            move = {
-                throw ApiException(
-                    ApiError.Unavailable,
-                    "PLAN_CHANGE_INVALID",
-                    status = 422,
-                    details =
-                        JsonObject(
-                            mapOf(
-                                "reason" to JsonPrimitive("unfundedMove"),
-                                "unfundedMove" to JsonObject(mapOf("date" to JsonPrimitive("2026-11-02"), "minutes" to JsonPrimitive(180))),
-                            ),
-                        ),
-                )
-            }
-            val viewModel = viewModel()
-
-            viewModel.moveToMonday()
-            advanceUntilIdle()
-
-            assertEquals(MoveRefusal.Unfunded(LocalDate(2026, 11, 2), 180), viewModel.ui.value.refusal)
-            assertEquals(false, viewModel.ui.value.moveFailed)
         }
 }

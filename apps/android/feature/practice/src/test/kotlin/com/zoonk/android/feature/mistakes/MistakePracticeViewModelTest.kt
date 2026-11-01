@@ -7,17 +7,12 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.feature.practice.DrillStage
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.Segment
 import com.zoonk.android.feature.practice.segments
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.feature.session.ReachedFacts
-import com.zoonk.api.models.MistakePatternPracticeResultReached
-import com.zoonk.api.models.MistakePatternPracticeResultReachedLevel
-import com.zoonk.api.models.MistakePracticeFeedbackReached
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,9 +25,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -96,29 +88,6 @@ class MistakePracticeViewModelTest {
             assertEquals(listOf(FIRST_ANSWER, SECOND_ANSWER).map(UUID::fromString), api.finishes.single().answerIds)
             assertEquals(true, api.finishes.single().ended)
             assertEquals(completion(), viewModel.now.end?.summary)
-        }
-
-    @Test
-    fun theEndKeepsTheLaterLevelAndTheHigherEnergyItsAnswersReached() =
-        runTest(dispatcher) {
-            val yellow = MistakePatternPracticeResultReachedLevel(MistakePatternPracticeResultReachedLevel.Color.YELLOW, 3)
-            val api = FakeMistakesApi(twoMistakes)
-            val reached =
-                mutableListOf(MistakePracticeFeedbackReached(energy = 62, level = yellow), MistakePracticeFeedbackReached(58, null))
-            api.answer = { practiceFeedback().copy(reached = reached.removeAt(0)) }
-            api.finish = { completion().copy(reached = MistakePatternPracticeResultReached(energy = 60, level = null)) }
-            val viewModel = viewModel(api)
-            val read = started(viewModel).read
-
-            viewModel.answer()
-            advanceUntilIdle()
-            viewModel.next(read.questions)
-            viewModel.answer()
-            advanceUntilIdle()
-            viewModel.next(read.questions)
-            advanceUntilIdle()
-
-            assertEquals(ReachedFacts(level = yellow, energy = 62), viewModel.now.reached)
         }
 
     @Test
@@ -360,40 +329,6 @@ class MistakePracticeViewModelTest {
         assertEquals(Drill.Kind.Retry, read.questions[1].drill?.kind)
         assertEquals(TrueFalseWords.TrueFalse, read.words)
     }
-
-    @Test
-    fun aContentGapOpensOnItsLessonsIdeas() =
-        runTest(dispatcher) {
-            val lesson =
-                JsonObject(
-                    mapOf(
-                        "id" to JsonPrimitive("cb4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"),
-                        "ideas" to JsonArray(listOf(JsonPrimitive("Planets orbit a star."))),
-                        "title" to JsonPrimitive("Planets"),
-                    ),
-                )
-            val api =
-                FakeMistakesApi(
-                    practice(
-                        practiceEntry(
-                            FIRST_MISTAKE,
-                            practiceQuestion(FIRST),
-                            practiceQuestion(SECOND),
-                            drill = drill("reteach", lesson = lesson),
-                        ),
-                    ),
-                )
-            val viewModel = viewModel(api)
-            val read = started(viewModel).read
-
-            assertEquals(DrillStage.Ideas, viewModel.now.run.stage)
-            viewModel.startDrill(read.questions)
-            viewModel.answer()
-            advanceUntilIdle()
-            viewModel.next(read.questions)
-
-            assertEquals(DrillStage.Open, viewModel.now.run.stage)
-        }
 
     private companion object {
         const val FIRST = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"

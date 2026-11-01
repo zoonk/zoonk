@@ -3,14 +3,11 @@ package com.zoonk.android.feature.practice
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.MutationResult
-import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.practice.block.BlockKey
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.practice.block.QuestionBlockViewModel
 import com.zoonk.android.feature.session.fixture
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyAnswerInput
@@ -53,14 +50,11 @@ internal fun blockQuestion(
     vararg fields: Pair<String, Any?>,
 ) = fixture("checkpoint-question", "itemId" to itemId, *fields)
 
-internal fun blockDetail(
-    questions: List<JsonObject>,
-    vararg blockFields: Pair<String, Any?>,
-): StudyBlockDetail =
+internal fun blockDetail(questions: List<JsonObject>): StudyBlockDetail =
     ApiJson.decodeFromJsonElement(
         JsonObject(
             mapOf(
-                "block" to fixture("study-block", "id" to PRACTICE_BLOCK, "status" to "active", "kind" to "practice", *blockFields),
+                "block" to fixture("study-block", "id" to PRACTICE_BLOCK, "status" to "active", "kind" to "practice"),
                 "hints" to JsonPrimitive(true),
                 "questions" to JsonArray(questions),
                 "trueFalseLabels" to JsonPrimitive("trueFalse"),
@@ -70,33 +64,26 @@ internal fun blockDetail(
 
 internal fun studyFeedback(
     isCorrect: Boolean,
-    correctAnswer: String = """{"selectedIndex":0}""",
     explanation: String? = null,
-    workedSteps: List<String> = emptyList(),
     streak: Int = 0,
 ): StudyAnswerFeedback =
     ApiJson.decodeFromString(
         StudyAnswerFeedback.serializer(),
-        """{"blank":false,"correctAnswer":$correctAnswer,"explanation":${explanation?.let {
+        """{"blank":false,"correctAnswer":{"selectedIndex":0},"explanation":${explanation?.let {
             ApiJson.encodeToString(
                 JsonElement.serializer(),
                 JsonPrimitive(it),
             )
         } ?: "null"},
         |"hyperdrive":{"level":1,"streak":$streak},"isCorrect":$isCorrect,"mistakeFixed":false,"pauseSuggested":false,"reinforcementLessons":null,
-        |"savedToNotebook":${!isCorrect},"transcript":null,"trap":null,"workedSteps":${ApiJson.encodeToString(
-            JsonElement.serializer(),
-            JsonArray(workedSteps.map(::JsonPrimitive)),
-        )}}
+        |"savedToNotebook":${!isCorrect},"transcript":null,"trap":null,"workedSteps":[]}
         """.trimMargin(),
     )
 
-/** A runner over [detail] whose answers get [feedback] and whose finish gets [completion]; without one, finishing fails. */
+/** A runner over [detail] whose answers get [feedback] and whose finish fails. */
 internal fun practiceViewModel(
     cache: AppCache,
     detail: StudyBlockDetail,
-    steps: SessionSteps = UnusedSessionSteps,
-    completion: StudyBlockCompletion? = null,
     feedback: (StudyAnswerInput) -> StudyAnswerFeedback = { studyFeedback(isCorrect = true) },
 ): QuestionBlockViewModel {
     val api =
@@ -116,7 +103,7 @@ internal fun practiceViewModel(
                 session: AuthenticatedSession,
                 key: BlockKey,
                 timeZone: String,
-            ): StudyBlockCompletion = completion ?: error("Not used")
+            ): StudyBlockCompletion = error("Not used")
         }
     return QuestionBlockViewModel(
         BlockKey(
@@ -126,7 +113,7 @@ internal fun practiceViewModel(
         QuestionBlockStore(api, cache) {
             "UTC"
         },
-        steps,
+        UnusedSessionSteps,
     )
 }
 

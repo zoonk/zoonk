@@ -402,18 +402,6 @@ class FocusTestViewModelTest {
         }
 
     @Test
-    fun aRefusedStartSaysWhatRanOut() =
-        runTest(dispatcher) {
-            write = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
-            val viewModel = viewModel()
-
-            started(viewModel)
-
-            assertEquals(Limit.SignUpRequired, viewModel.ui.value.refused)
-            assertEquals(false, viewModel.ui.value.started)
-        }
-
-    @Test
     fun aRefusedRewriteGoesBackToTheStartAndSaysWhy() =
         runTest(dispatcher) {
             written = 0

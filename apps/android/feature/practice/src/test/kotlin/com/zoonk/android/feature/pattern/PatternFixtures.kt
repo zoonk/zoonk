@@ -66,7 +66,6 @@ internal class FakePatternApi(
 ) : PatternApi {
     val practices = mutableListOf<MistakePatternPracticeInput>()
     var saved = 0
-    var dismissals = 0
 
     override suspend fun pattern(
         session: AuthenticatedSession,
@@ -99,9 +98,7 @@ internal class FakePatternApi(
     override suspend fun dismiss(
         session: AuthenticatedSession,
         patternId: UUID,
-    ) {
-        dismissals++
-    }
+    ) = Unit
 }
 
 internal fun patternViewModel(

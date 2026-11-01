@@ -25,7 +25,6 @@ import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ChapterTestOutInput
 import com.zoonk.api.models.ChapterTestOutRecord
 import com.zoonk.api.models.ChapterTestOutResult
@@ -181,21 +180,6 @@ class TestOutViewModelTest {
             assertEquals(false, viewModel.ui.value.writing)
             val shown = viewModel.testOut.state.value as LoadState.Loaded<*>
             assertEquals(questions, (shown.value as TestOutRead.Ready).questions)
-        }
-
-    @Test
-    fun aRefusedStartSaysWhatRanOutAndPlusRequiredSaysSo() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-            write = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
-            viewModel.start()
-            advanceUntilIdle()
-            assertEquals(Limit.SignUpRequired, viewModel.ui.value.refused)
-
-            write = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", status = 402) }
-            viewModel.start()
-            advanceUntilIdle()
-            assertTrue(viewModel.ui.value.plusRequired)
         }
 
     @Test

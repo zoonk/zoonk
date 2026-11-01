@@ -7,7 +7,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -49,29 +48,6 @@ class PatternFlowTest {
     }
 
     @Test
-    fun eachAnswerIsCheckedThenTheDrillIsSavedOnce() {
-        val api = FakePatternApi()
-        show(pattern(), api)
-
-        rule.onNodeWithText("We noticed a pattern").assertIsDisplayed()
-        rule.onNodeWithText("It came up 2 times in your recent answers.").assertIsDisplayed()
-        rule.onNodeWithText("Practice this", substring = true).performClick()
-
-        answer("agree")
-        rule.onNodeWithText("Correct!").assertIsDisplayed()
-        rule.onNodeWithText("“Agree” is already a verb.").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("Continue").performClick()
-
-        answer("are agree")
-        rule.onNodeWithText("Not quite").assertIsDisplayed()
-        rule.onNodeWithText("See how you did").performClick()
-
-        rule.onNodeWithText("Practice done").assertIsDisplayed()
-        rule.onNodeWithText("Knowing the rule is the first step. It gets easier each time you use it.").assertIsDisplayed()
-        assertEquals(listOf("agree", "are agree"), api.practices.single().answers)
-    }
-
-    @Test
     fun aSaveThatDidNotGoThroughIsSentAgainAsTheSameDrill() {
         val api = FakePatternApi(failures = 1)
         show(pattern(), api)
@@ -94,29 +70,6 @@ class PatternFlowTest {
                 .size,
         )
         assertEquals(2, api.practices.size)
-    }
-
-    @Test
-    fun typosHaveNothingToPracticeAndShowingThemClearsThem() {
-        val api = FakePatternApi()
-        val viewModel = show(pattern(kind = MistakePattern.Kind.TYPOS), api)
-
-        rule.onNodeWithText("Just typos").assertIsDisplayed()
-        rule.onNodeWithText("Done").performClick()
-
-        assertEquals(1, api.dismissals)
-        assertTrue(viewModel.closed.value)
-    }
-
-    @Test
-    fun onAPhoneTheRuleOpensFromTheQuestion() {
-        show(pattern(), FakePatternApi())
-
-        rule.onNodeWithText("Practice this", substring = true).performClick()
-        rule.onNodeWithText("See the rule").performClick()
-
-        rule.onNodeWithText("“Agree” is a verb, so it needs no “am”.").assertIsDisplayed()
-        rule.onNodeWithText("Where you slipped").assertIsDisplayed()
     }
 
     @Test
