@@ -159,4 +159,21 @@ class MistakesNotebookFlowTest {
         rule.onNodeWithText("If 3 cost 12, what do 5 cost?").assertExists()
         assertTrue("on the page before the fold", bounds("Ratios").right <= 426.dp)
     }
+
+    /** What the Fixed tab showed is the list on the page after the fold, so what's open in it stays as the book opens. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun whatsOpenInTheFixedListStaysAsTheBookOpens() {
+        fixed = notebook(listOf("Fractions" to "What is a half of a half?", "Decimals" to "What is 0.5 + 0.25?"))
+        fixedGate.complete(Unit)
+        rule.setContent { ZoonkTheme { Notebook(goalId, "ENEM", store(), rememberAppNavigator()) } }
+        rule.onNodeWithText("Fixed").performClick()
+        rule.onNodeWithText("Decimals").performScrollTo().performClick()
+        rule.onNodeWithText("What is 0.5 + 0.25?").assertExists()
+
+        unfold()
+
+        rule.onNodeWithText("What is 0.5 + 0.25?").assertExists()
+        assertTrue("what's fixed after the fold", bounds("Decimals").left >= 426.dp)
+    }
 }

@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -108,8 +109,7 @@ fun MistakesNotebookScreen(
     val summary by app.learnerSummary.summary.collectShown()
     val read = summary.value
     val goal = read?.let { it.goals.firstOrNull { goal -> goal.id == it.activeGoalId } }
-    val listState = rememberLazyListState()
-    val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    var titleAway by remember { mutableStateOf(false) }
 
     PageScaffold(
         onBack = { navigator.back() },
@@ -118,7 +118,7 @@ fun MistakesNotebookScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goal != null -> {
-                    Notebook(goal.id, goal.title, app.mistakesNotebook, navigator, listState, read.nextChangeAt)
+                    Notebook(goal.id, goal.title, app.mistakesNotebook, navigator, read.nextChangeAt, onHeroAway = { titleAway = it })
                 }
 
                 summary is LoadState.Failed -> {
@@ -149,16 +149,22 @@ internal fun Notebook(
     goalTitle: String,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
-    listState: LazyListState = rememberLazyListState(),
     nextChangeAt: Long? = null,
+    onHeroAway: (Boolean) -> Unit = {},
 ) {
     var fixed by rememberSaveable { mutableStateOf(false) }
-    val fixedListState = rememberLazyListState()
+    // Each list keeps what's open in it and where it's scrolled, under the tabs or on its own page of a book.
+    val toFix = rememberListMemory()
+    val fixedOnes = rememberListMemory()
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
         val fold = pageFold(maxWidth, span)?.takeIf { supportingPaneBeside(maxWidth) }
         val wide = fold == null && maxWidth >= INBOX_WIDTH
+        val first = if (fold == null && fixed) fixedOnes else toFix
+        val heroAway by remember(first) { derivedStateOf { first.scroll.firstVisibleItemIndex > 0 } }
+
+        LaunchedEffect(heroAway) { onHeroAway(heroAway) }
 
         // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
         Row(Modifier.fillMaxSize()) {
@@ -168,7 +174,7 @@ internal fun Notebook(
                 fixed = fixed && fold == null,
                 store = store,
                 navigator = navigator,
-                listState = listState,
+                memory = first,
                 nextChangeAt = nextChangeAt,
                 hero = true,
                 onTab = if (fold == null) ({ fixed = it }) else null,
@@ -182,7 +188,7 @@ internal fun Notebook(
                     fixed = true,
                     store = store,
                     navigator = navigator,
-                    listState = fixedListState,
+                    memory = fixedOnes,
                     nextChangeAt = nextChangeAt,
                     hero = false,
                     onTab = null,
@@ -202,7 +208,7 @@ private fun NotebookList(
     fixed: Boolean,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
-    listState: LazyListState,
+    memory: ListMemory,
     nextChangeAt: Long?,
     hero: Boolean,
     onTab: ((Boolean) -> Unit)?,
@@ -216,8 +222,6 @@ private fun NotebookList(
     var loadingMore by remember(key) { mutableStateOf(false) }
     var moreFailed by remember(key) { mutableStateOf(false) }
     var lastLoaded by remember(goalId) { mutableStateOf<MistakeList?>(null) }
-    var picked by rememberSaveable(fixed) { mutableStateOf<String?>(null) }
-    var collapsed by rememberSaveable(fixed) { mutableStateOf(false) }
 
     // What's ready to practice changes at the learner's day change, with no write to mark it.
     LaunchedEffect(nextChangeAt, key) {
@@ -252,13 +256,13 @@ private fun NotebookList(
             moreFailed = moreFailed,
         )
     val keys = page.groups.map { it.groupKey() }
-    val selectedKey = picked?.takeIf { it in keys } ?: keys.firstOrNull()
+    val selectedKey = memory.picked?.takeIf { it in keys } ?: keys.firstOrNull()
     val actions =
         NotebookActions(
             onTab = { onTab?.invoke(it) },
             onPick = { groupKey, open ->
-                if (open) picked = groupKey
-                collapsed = !open
+                if (open) memory.picked = groupKey
+                memory.collapsed = !open
             },
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
             onPractice = { navigator.open(AppRoute.MistakePractice()) },
@@ -277,11 +281,29 @@ private fun NotebookList(
     val lead = NotebookLead(hero, tabs = onTab != null)
     Box(modifier) {
         if (wide && page.groups.isNotEmpty()) {
-            WideNotebook(page, actions, lead, selectedKey, listState)
+            WideNotebook(page, actions, lead, selectedKey, memory.scroll)
         } else {
-            NarrowNotebook(page, actions, lead, selectedKey.takeUnless { collapsed }, listState)
+            NarrowNotebook(page, actions, lead, selectedKey.takeUnless { memory.collapsed }, memory.scroll)
         }
     }
+}
+
+/** What's open in one of the notebook's lists and where it's scrolled. */
+private class ListMemory(
+    val scroll: LazyListState,
+    picked: MutableState<String?>,
+    collapsed: MutableState<Boolean>,
+) {
+    var picked by picked
+    var collapsed by collapsed
+}
+
+@Composable
+private fun rememberListMemory(): ListMemory {
+    val scroll = rememberLazyListState()
+    val picked = rememberSaveable { mutableStateOf<String?>(null) }
+    val collapsed = rememberSaveable { mutableStateOf(false) }
+    return remember(scroll) { ListMemory(scroll, picked, collapsed) }
 }
 
 private class NotebookPage(
