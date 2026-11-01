@@ -625,7 +625,7 @@ describe("set-aside selection admission", () => {
     }
 
     const outcomes = await calls;
-    expect(outcomes.toSorted()).toStrictEqual([false, true]);
+    expect(outcomes.toSorted((a, b) => Number(a) - Number(b))).toStrictEqual([false, true]);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: plans[0]!.id } }),

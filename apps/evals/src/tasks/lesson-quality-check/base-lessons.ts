@@ -368,10 +368,13 @@ export const BASE_LESSONS = {
           steps: [
             { math: null, text: "Mantenha a obra fixa: é o mesmo muro." },
             {
-              math: "\\frac{4}{8}",
+              math: String.raw`\frac{4}{8}`,
               text: "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes.",
             },
-            { math: "6\\times\\frac{4}{8}=3", text: "Multiplique o prazo inicial por essa razão." },
+            {
+              math: String.raw`6\times\frac{4}{8}=3`,
+              text: "Multiplique o prazo inicial por essa razão.",
+            },
           ],
           title: "Mais gente, menos dias",
           visual: null,
@@ -440,17 +443,17 @@ export const BASE_LESSONS = {
             "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
           result: "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
           steps: [
-            { math: "4\\text{ horas}", text: "Comece pelo prazo conhecido." },
+            { math: String.raw`4\text{ horas}`, text: "Comece pelo prazo conhecido." },
             {
-              math: "\\frac{600}{240}",
+              math: String.raw`\frac{600}{240}`,
               text: "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo.",
             },
             {
-              math: "\\frac{3}{5}",
+              math: String.raw`\frac{3}{5}`,
               text: "O número de impressoras também aumenta. Para o tempo, use a razão inversa.",
             },
             {
-              math: "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6",
+              math: String.raw`4\times\frac{600}{240}\times\frac{3}{5}=6`,
               text: "Junte os dois efeitos.",
             },
           ],

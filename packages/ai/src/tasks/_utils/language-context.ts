@@ -67,8 +67,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   fr: {
     place: "France",
     money: "euro, written 1 234,56 € (a space between thousands, the symbol after the number)",
-    formats:
-      "1 234,56 (inside LaTeX math, 1\\,234{,}56); dates as 27/09/2026; 24-hour clock (14 h 30); metric units and °C",
+    formats: String.raw`1 234,56 (inside LaTeX math, 1\,234{,}56); dates as 27/09/2026; 24-hour clock (14 h 30); metric units and °C`,
     names: "Léa, Lucas, Emma, Hugo, Chloé, Louis, Inès, Gabriel, Camille, Nathan",
     places:
       "Paris, Lyon, Marseille, Toulouse, Lille, Bordeaux, Nantes, Strasbourg, Nice, Rennes; the boulangerie, the marché, the métro, the SNCF and the TGV",
@@ -139,8 +138,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   pl: {
     place: "Poland",
     money: "Polish złoty, written 1234,56 zł or 12 345,67 zł (the symbol after the number)",
-    formats:
-      "1234,56 and 12 345,67, with a space between thousands only from five digits up (inside LaTeX math, 1234{,}56 and 12\\,345{,}67); dates as 27.09.2026; 24-hour clock (14:30); metric units and °C",
+    formats: String.raw`1234,56 and 12 345,67, with a space between thousands only from five digits up (inside LaTeX math, 1234{,}56 and 12\,345{,}67); dates as 27.09.2026; 24-hour clock (14:30); metric units and °C`,
     names: "Zofia, Jakub, Anna, Antoni, Julia, Piotr, Maja, Kacper, Katarzyna, Nikodem",
     places:
       "Warszawa, Kraków, Wrocław, Łódź, Poznań, Gdańsk, Szczecin, Bydgoszcz, Lublin, Katowice; Żabka, Biedronka and Lidl, the osiedle of bloki, the tram, InPost paczkomaty, PKP Intercity and the Pendolino, the bar mleczny, the działka",
@@ -173,8 +171,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     place: "Türkiye",
     money:
       "Turkish lira, written 1.234,56 TL in text; on price tags and in tables the ₺ sign goes before the number with no space (₺1.234,56)",
-    formats:
-      "1.234,56 (inside LaTeX math, 1.234{,}56); the percent sign before the number (%20; inside LaTeX math, \\%20); dates as 27.09.2026; 24-hour clock (14.30, or 14:30 on screens); metric units and °C",
+    formats: String.raw`1.234,56 (inside LaTeX math, 1.234{,}56); the percent sign before the number (%20; inside LaTeX math, \%20); dates as 27.09.2026; 24-hour clock (14.30, or 14:30 on screens); metric units and °C`,
     names: "Zeynep, Mehmet, Elif, Yusuf, Ayşe, Emre, Defne, Mustafa, Merve, Burak",
     places:
       "İstanbul, Ankara, İzmir, Bursa, Antalya, Konya, Adana, Gaziantep, Mersin, Diyarbakır; the bakkal and chains like BİM, A101 and Migros, the semt pazarı and the çarşı, the dolmuş, İstanbul's metrobüs and vapur, the simitçi and the çay ocağı, intercity buses from the otogar and the YHT high-speed train",

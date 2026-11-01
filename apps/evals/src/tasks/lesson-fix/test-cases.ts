@@ -208,7 +208,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           explore: null,
           image: null,
           kind: "explanation",
-          text: "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante.",
+          text: String.raw`Grandezas inversamente proporcionais têm produto constante: $x \cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante.`,
           title: "O que fica fixo?",
           visual: null,
         },

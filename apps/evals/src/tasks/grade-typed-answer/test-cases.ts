@@ -606,7 +606,7 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
       language: "en",
       question:
         "Light travels about 300,000,000 meters per second. Write that speed in scientific notation.",
-      sampleAnswer: "$3 \\times 10^8$ m/s",
+      sampleAnswer: String.raw`$3 \times 10^8$ m/s`,
     },
   },
 ];

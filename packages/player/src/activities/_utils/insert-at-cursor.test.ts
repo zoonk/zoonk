@@ -7,10 +7,10 @@ describe(insertAtCursor, () => {
       insertAtCursor({
         selectionEnd: 3,
         selectionStart: 3,
-        snippet: { before: "\\d" },
+        snippet: { before: String.raw`\d` },
         value: "^ab$",
       }),
-    ).toStrictEqual({ cursor: 5, value: "^ab\\d$" });
+    ).toStrictEqual({ cursor: 5, value: String.raw`^ab\d$` });
   });
 
   it("puts the cursor between a pair so the learner types inside it", () => {
@@ -19,9 +19,9 @@ describe(insertAtCursor, () => {
         selectionEnd: 4,
         selectionStart: 4,
         snippet: { after: "}", before: "{" },
-        value: "\\d{5",
+        value: String.raw`\d{5`,
       }),
-    ).toStrictEqual({ cursor: 5, value: "\\d{5{}" });
+    ).toStrictEqual({ cursor: 5, value: String.raw`\d{5{}` });
   });
 
   it("wraps a selection", () => {
@@ -30,9 +30,9 @@ describe(insertAtCursor, () => {
         selectionEnd: 7,
         selectionStart: 1,
         snippet: { after: ")", before: "(" },
-        value: "^-\\d{4}$",
+        value: String.raw`^-\d{4}$`,
       }),
-    ).toStrictEqual({ cursor: 8, value: "^(-\\d{4})$" });
+    ).toStrictEqual({ cursor: 8, value: String.raw`^(-\d{4})$` });
   });
 
   it("keeps a stale selection inside the text", () => {

@@ -5,10 +5,10 @@ import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 
 const MATH_DELIMITERS = [
-  { close: "\\\\)", kind: "math" as const, open: "\\\\(" },
-  { close: "\\\\]", kind: "displayMath" as const, open: "\\\\[" },
-  { close: "\\)", kind: "math" as const, open: "\\(" },
-  { close: "\\]", kind: "displayMath" as const, open: "\\[" },
+  { close: String.raw`\\)`, kind: "math" as const, open: String.raw`\\(` },
+  { close: String.raw`\\]`, kind: "displayMath" as const, open: String.raw`\\[` },
+  { close: String.raw`\)`, kind: "math" as const, open: String.raw`\(` },
+  { close: String.raw`\]`, kind: "displayMath" as const, open: String.raw`\[` },
 ];
 
 function findNextMathDelimiter(text: string) {

@@ -9,7 +9,9 @@ function createDocumentCookieStub(writtenCookies: string[]): { cookie: string } 
   Object.defineProperty(documentStub, "cookie", {
     configurable: true,
     get: () => writtenCookies.at(-1) ?? "",
-    set: (value: string) => writtenCookies.push(value),
+    set: (value: string) => {
+      writtenCookies.push(value);
+    },
   });
 
   return documentStub as { cookie: string };

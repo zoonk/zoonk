@@ -456,8 +456,7 @@ describe(writeLessonContent, () => {
     expect(result).toStrictEqual({
       problems: [
         {
-          problem:
-            'fields.expectedOutput: The solution prints "2\\n"; the expected output must be exactly what it prints',
+          problem: String.raw`fields.expectedOutput: The solution prints "2\n"; the expected output must be exactly what it prints`,
           screen: 5,
           source: "code",
         },

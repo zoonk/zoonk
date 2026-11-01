@@ -103,8 +103,7 @@ describe(verifyActivityPrograms, () => {
     expect(issues).toStrictEqual([
       {
         code: "answerMismatch",
-        message:
-          'The solution prints "[ 2, 4, 6 ]\\n"; the expected output must be exactly what it prints',
+        message: String.raw`The solution prints "[ 2, 4, 6 ]\n"; the expected output must be exactly what it prints`,
         path: "fields.expectedOutput",
       },
     ]);

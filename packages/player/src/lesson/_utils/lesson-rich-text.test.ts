@@ -12,7 +12,7 @@ describe(parseRichInline, () => {
       parseRichInline(String.raw`So $0.75 \times 80 = 60$ and $$A = P(1+r)^t$$ too`),
     ).toStrictEqual([
       { kind: "text", text: "So " },
-      { kind: "math", text: "0.75 \\times 80 = 60" },
+      { kind: "math", text: String.raw`0.75 \times 80 = 60` },
       { kind: "text", text: " and " },
       { kind: "displayMath", text: "A = P(1+r)^t" },
       { kind: "text", text: " too" },

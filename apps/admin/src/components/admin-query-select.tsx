@@ -17,7 +17,7 @@ export function AdminQuerySelect({
   options: AdminQuerySelectOption[];
 }) {
   const [query, setQuery] = useQueryStates(
-    { page: parseAsString, [name]: parseAsString },
+    { [name]: parseAsString, page: parseAsString },
     { shallow: false },
   );
 
@@ -25,7 +25,7 @@ export function AdminQuerySelect({
     <NativeSelect
       aria-label={label}
       className="max-w-60"
-      onChange={(event) => setQuery({ page: null, [name]: event.target.value || null })}
+      onChange={(event) => setQuery({ [name]: event.target.value || null, page: null })}
       size="sm"
       value={query[name] ?? ""}
     >

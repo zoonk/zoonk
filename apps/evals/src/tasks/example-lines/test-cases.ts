@@ -174,7 +174,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
       screens: [
         {
           idea: "A corrente em um resistor ligado a uma fonte de tensão.",
-          text: "Se a resistência de um componente permanece constante, você pode calcular a corrente pela **lei de Ohm**: $V = R \\times I$. Aqui, $V$ é a tensão, $R$ é a resistência e $I$ é a corrente. Para achar a corrente, divida a tensão pela resistência: $I = V \\div R$.",
+          text: String.raw`Se a resistência de um componente permanece constante, você pode calcular a corrente pela **lei de Ohm**: $V = R \times I$. Aqui, $V$ é a tensão, $R$ é a resistência e $I$ é a corrente. Para achar a corrente, divida a tensão pela resistência: $I = V \div R$.`,
         },
       ],
     },

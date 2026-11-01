@@ -65,8 +65,8 @@ describe(collectMathMarkup, () => {
   });
 
   it("draws a formula field's LaTeX on its own line", () => {
-    const markup = collectMathMarkup({ lines: [{ label: "Area", math: "A = \\pi r^2" }] });
-    const formula = { displayMode: true, text: "A = \\pi r^2" };
+    const markup = collectMathMarkup({ lines: [{ label: "Area", math: String.raw`A = \pi r^2` }] });
+    const formula = { displayMode: true, text: String.raw`A = \pi r^2` };
 
     expect(markup[mathMarkupKey(formula)]).toBe(renderMathMarkup(formula));
   });

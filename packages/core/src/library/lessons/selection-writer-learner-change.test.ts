@@ -252,7 +252,7 @@ describe("D5 sibling writer admission", () => {
       }
 
       const results = await calls;
-      expect(results.toSorted()).toStrictEqual([false, true]);
+      expect(results.toSorted((a, b) => Number(a) - Number(b))).toStrictEqual([false, true]);
 
       await expect(versions(scope)).resolves.toStrictEqual(
         changedVersions({ before, scope, writes: 1 }),

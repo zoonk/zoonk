@@ -57,8 +57,11 @@ export const TEST_CASES: TestCase<never, StepVariantInput>[] = [
           result: "O preço subiu 25%.",
           steps: [
             { math: "100 - 80 = 20", text: "Calcule a variação: preço novo menos o antigo." },
-            { math: "\\frac{20}{80} = 0{,}25", text: "Divida a variação pelo preço inicial." },
-            { math: "0{,}25 = 25\\%", text: "Escreva como porcentagem." },
+            {
+              math: String.raw`\frac{20}{80} = 0{,}25`,
+              text: "Divida a variação pelo preço inicial.",
+            },
+            { math: String.raw`0{,}25 = 25\%`, text: "Escreva como porcentagem." },
           ],
           title: "De R$ 80 para R$ 100",
         },

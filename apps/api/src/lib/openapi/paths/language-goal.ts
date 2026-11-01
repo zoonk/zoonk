@@ -47,88 +47,7 @@ const common = { security: AUTHENTICATED_SECURITY, tags: ["Language"] };
 
 const levelTestPath = "/goals/{goalId}/language-level-test";
 
-export const languageGoalPaths = {
-  "/goals/{goalId}/alphabet-skips": {
-    post: {
-      ...common,
-      description:
-        "The learner already reads the script of a language goal whose script isn't Latin: their sessions stop opening with its alphabet lesson, starting with today's if it hasn't begun. The lesson stays open as practice. Skipping again changes nothing.",
-      operationId: "skipAlphabetIntro",
-      requestParams: { path: goalPathParamsSchema },
-      responses: { "204": { description: "Skipped" }, ...readErrors },
-      summary: "Skip the alphabet intro",
-    },
-  },
-  "/goals/{goalId}/language-progress": {
-    get: {
-      ...common,
-      description:
-        "A language goal's Progress: each skill's CEFR level with how it moved since the level test, the target level, \"I can\" checks from the units, and the last four weeks in words, minutes spoken and conversations. `NOT_LANGUAGE` for other goals.",
-      operationId: "getLanguageProgress",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(languageProgressViewSchema, "The goal's language progress"),
-        ...readErrors,
-      },
-      summary: "Get a language goal's progress",
-    },
-  },
-  "/goals/{goalId}/language-today": {
-    get: {
-      ...common,
-      description:
-        "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the exam-style speaking tasks to practice any time. The pattern noticed in recent mistakes comes with the day, in GET /v1/today.",
-      operationId: "getLanguageToday",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(languageTodayViewSchema, "Today's language cards"),
-        ...readErrors,
-      },
-      summary: "Get Today's language cards",
-    },
-  },
-  "/goals/{goalId}/language-units": {
-    get: {
-      ...common,
-      description:
-        "A language goal's units in teaching order, each a real situation with its own page: lessons done and whether the learner can already do it.",
-      operationId: "getLanguageUnits",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(languageUnitsViewSchema, "The goal's units"),
-        ...readErrors,
-      },
-      summary: "List a language goal's units",
-    },
-  },
-  "/goals/{goalId}/mistake-pattern": {
-    get: {
-      ...common,
-      description:
-        "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
-      operationId: "getGoalMistakePattern",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(goalMistakePatternSchema, "The notebook's pattern"),
-        ...readErrors,
-      },
-      summary: "Get the notebook's mistake pattern",
-    },
-  },
-  "/goals/{goalId}/speaking-paper": {
-    get: {
-      ...common,
-      description:
-        "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus while calls aren't paused (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
-      operationId: "getSpeakingPaper",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(speakingPaperViewSchema, "The goal's speaking paper"),
-        ...readErrors,
-      },
-      summary: "Get a language goal's speaking practice",
-    },
-  },
+const levelTestPaths = {
   [levelTestPath]: {
     get: {
       ...common,
@@ -215,6 +134,91 @@ export const languageGoalPaths = {
       summary: "Say the level test's sentence",
     },
   },
+};
+
+export const languageGoalPaths = {
+  "/goals/{goalId}/alphabet-skips": {
+    post: {
+      ...common,
+      description:
+        "The learner already reads the script of a language goal whose script isn't Latin: their sessions stop opening with its alphabet lesson, starting with today's if it hasn't begun. The lesson stays open as practice. Skipping again changes nothing.",
+      operationId: "skipAlphabetIntro",
+      requestParams: { path: goalPathParamsSchema },
+      responses: { "204": { description: "Skipped" }, ...readErrors },
+      summary: "Skip the alphabet intro",
+    },
+  },
+  "/goals/{goalId}/language-progress": {
+    get: {
+      ...common,
+      description:
+        "A language goal's Progress: each skill's CEFR level with how it moved since the level test, the target level, \"I can\" checks from the units, and the last four weeks in words, minutes spoken and conversations. `NOT_LANGUAGE` for other goals.",
+      operationId: "getLanguageProgress",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(languageProgressViewSchema, "The goal's language progress"),
+        ...readErrors,
+      },
+      summary: "Get a language goal's progress",
+    },
+  },
+  "/goals/{goalId}/language-today": {
+    get: {
+      ...common,
+      description:
+        "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the exam-style speaking tasks to practice any time. The pattern noticed in recent mistakes comes with the day, in GET /v1/today.",
+      operationId: "getLanguageToday",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(languageTodayViewSchema, "Today's language cards"),
+        ...readErrors,
+      },
+      summary: "Get Today's language cards",
+    },
+  },
+  "/goals/{goalId}/language-units": {
+    get: {
+      ...common,
+      description:
+        "A language goal's units in teaching order, each a real situation with its own page: lessons done and whether the learner can already do it.",
+      operationId: "getLanguageUnits",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(languageUnitsViewSchema, "The goal's units"),
+        ...readErrors,
+      },
+      summary: "List a language goal's units",
+    },
+  },
+  "/goals/{goalId}/mistake-pattern": {
+    get: {
+      ...common,
+      description:
+        "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
+      operationId: "getGoalMistakePattern",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(goalMistakePatternSchema, "The notebook's pattern"),
+        ...readErrors,
+      },
+      summary: "Get the notebook's mistake pattern",
+    },
+  },
+  "/goals/{goalId}/speaking-paper": {
+    get: {
+      ...common,
+      description:
+        "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus while calls aren't paused (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
+      operationId: "getSpeakingPaper",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(speakingPaperViewSchema, "The goal's speaking paper"),
+        ...readErrors,
+      },
+      summary: "Get a language goal's speaking practice",
+    },
+  },
+  ...levelTestPaths,
   "/language-units/{chapterId}": {
     get: {
       ...common,

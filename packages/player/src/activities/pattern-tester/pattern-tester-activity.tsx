@@ -29,9 +29,9 @@ function useRegexSnippets(): NamedSnippet[] {
   return [
     { before: "^", label: "^", name: t("Start of the text") },
     { before: "$", label: "$", name: t("End of the text") },
-    { before: "\\d", label: "\\d", name: t("Any digit") },
-    { before: "\\w", label: "\\w", name: t("Any letter, digit or underscore") },
-    { before: "\\s", label: "\\s", name: t("Any space") },
+    { before: String.raw`\d`, label: String.raw`\d`, name: t("Any digit") },
+    { before: String.raw`\w`, label: String.raw`\w`, name: t("Any letter, digit or underscore") },
+    { before: String.raw`\s`, label: String.raw`\s`, name: t("Any space") },
     { before: ".", label: ".", name: t("Any character") },
     { after: "]", before: "[", label: "[ ]", name: t("One of these characters") },
     { after: "}", before: "{", label: "{ }", name: t("Repeat a number of times") },

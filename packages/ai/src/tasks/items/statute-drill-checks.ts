@@ -86,7 +86,7 @@ function checkGap(drill: DrillOf<"typed">, article: readonly string[]): Problem[
     return ["Has no accepted answer for its gap."];
   }
 
-  const filled = toWords(drill.question.replace(GAP_PATTERN, ` ${answer} `));
+  const filled = toWords(drill.question.replaceAll(GAP_PATTERN, ` ${answer} `));
 
   return [
     !containsWords(article, filled) &&

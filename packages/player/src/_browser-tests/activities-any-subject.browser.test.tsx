@@ -73,7 +73,7 @@ describe("any-subject activities", () => {
     openActivity({
       content: {
         ...cited,
-        fields: { ...cited.fields, takeaway: "Africa is about $14 \\times$ Greenland." },
+        fields: { ...cited.fields, takeaway: String.raw`Africa is about $14 \times$ Greenland.` },
         prompt: "How many Greenlands fit in $A_{Africa}$?",
       },
       template: "guessReveal",

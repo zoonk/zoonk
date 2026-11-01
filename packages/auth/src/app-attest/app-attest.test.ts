@@ -115,7 +115,7 @@ describe("App Attest", () => {
         registerAppAttestKey(RECORDED_PRODUCTION_ATTESTATION),
       ]);
 
-      expect(results.toSorted()).toStrictEqual([false, true]);
+      expect(results.toSorted((a, b) => Number(a) - Number(b))).toStrictEqual([false, true]);
     });
 
     it("refuses a challenge the server didn't issue or that expired", async () => {
@@ -203,7 +203,7 @@ describe("App Attest", () => {
 
       const results = await Promise.all([isAttested(headers), isAttested(headers)]);
 
-      expect(results.toSorted()).toStrictEqual([false, true]);
+      expect(results.toSorted((a, b) => Number(a) - Number(b))).toStrictEqual([false, true]);
       await expect(isAttested(headers)).resolves.toBe(false);
     });
 

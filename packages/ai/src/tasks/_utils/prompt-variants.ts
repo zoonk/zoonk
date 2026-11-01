@@ -12,7 +12,7 @@ function resolveBlocks({
   text: string;
   variants: Readonly<Record<string, boolean>>;
 }): string {
-  return text.replace(VARIANT_BLOCK, (_block, name: string, body: string) => {
+  return text.replaceAll(VARIANT_BLOCK, (_block, name: string, body: string) => {
     if (!Object.hasOwn(variants, name)) {
       throw new Error(`Unknown prompt variant "${name}"`);
     }
@@ -29,7 +29,7 @@ export function selectPromptVariants({
   template: string;
   variants: Readonly<Record<string, boolean>>;
 }): string {
-  const text = resolveBlocks({ text: template.replace(OWN_LINE_MARKER, "$<marker>"), variants });
+  const text = resolveBlocks({ text: template.replaceAll(OWN_LINE_MARKER, "$<marker>"), variants });
 
   if (LEFTOVER_MARKER.test(text)) {
     throw new Error("A prompt variant block isn't closed");

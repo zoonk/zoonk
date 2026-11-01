@@ -118,7 +118,7 @@ describe(findAnswerKeyProblems, () => {
     expect(
       findAnswerKeyProblems({
         acceptedAnswers: ["3 × 10^8", "3e8"],
-        sampleAnswer: "$3 \\times 10^8$ m/s",
+        sampleAnswer: String.raw`$3 \times 10^8$ m/s`,
       }),
     ).toStrictEqual([]);
 

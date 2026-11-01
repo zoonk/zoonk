@@ -76,7 +76,7 @@ export function normalizeMistakePattern({
     .filter((question) => isWellFormedDrillQuestion(question))
     .map((question) => ({
       ...question,
-      sentence: question.sentence.replace(BLANK_PATTERN, DRILL_BLANK),
+      sentence: question.sentence.replaceAll(BLANK_PATTERN, DRILL_BLANK),
     }));
 
   return { ...pattern, drill, mistakeNumbers };
