@@ -11,6 +11,7 @@ import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { markSkillsKnown } from "../learner/_utils/known-skills";
+import * as requestClock from "../learner/facts/request-instant";
 import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { measureSessionState } from "../sessions/_utils/capture-snapshot";
@@ -21,6 +22,8 @@ const DAY_MS = 86_400_000;
 const daysAgo = (days: number) => new Date(NOW.getTime() - days * DAY_MS);
 
 function mockClock(now = NOW) {
+  vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(now);
+
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())),
     currentInstant: now,
