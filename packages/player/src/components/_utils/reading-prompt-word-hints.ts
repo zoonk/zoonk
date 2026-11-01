@@ -1,5 +1,10 @@
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { normalizeString, segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import {
+  normalizeString,
+  segmentWords,
+  stripPunctuation,
+  trimPunctuation,
+} from "@zoonk/utils/string";
 
 type TargetWordHint = { key: string; translation: string };
 
@@ -10,17 +15,13 @@ type DirectTargetIndexAssignment = {
 
 export type ReadingPromptWordHint = { translation: string | null; word: string };
 
-function stripEdgePunctuation(word: string): string {
-  return word.replaceAll(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
-}
-
 function getPromptWordKey(word?: string | null): string {
   return normalizeString(stripPunctuation(word ?? ""));
 }
 
 function toTargetWordHint(option: WordBankOption): TargetWordHint | null {
   const key = getPromptWordKey(option.translation);
-  const translation = stripEdgePunctuation(option.word);
+  const translation = trimPunctuation(option.word);
 
   if (!key || !translation) {
     return null;

@@ -68,4 +68,19 @@ describe(buildReadingPromptWordHints, () => {
       { translation: "day", word: "dia!" },
     ]);
   });
+
+  it("keeps the vowel signs that end a target word", () => {
+    const hints = buildReadingPromptWordHints({
+      prompt: "Hello, good!",
+      sentenceWordOptions: [
+        makeOption({ translation: "hello", word: "नमस्ते," }),
+        makeOption({ translation: "good", word: "ดี!" }),
+      ],
+    });
+
+    expect(hints).toStrictEqual([
+      { translation: "नमस्ते", word: "Hello," },
+      { translation: "ดี", word: "good!" },
+    ]);
+  });
 });
