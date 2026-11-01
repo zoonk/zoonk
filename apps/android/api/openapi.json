@@ -26045,7 +26045,7 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/__schema0"
             },
-            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role"
+            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },
           "examBlueprintId": {
             "type": "string",
@@ -26118,7 +26118,7 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/__schema0"
             },
-            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role"
+            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },
           "status": {
             "description": "Pause, resume, archive or complete the goal",
@@ -91194,7 +91194,7 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/__schema1"
             },
-            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role"
+            "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },
           "examBlueprintId": {
             "type": "string",
