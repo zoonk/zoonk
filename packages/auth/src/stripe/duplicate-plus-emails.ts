@@ -22,8 +22,8 @@ type StoreProvider = "apple" | "google";
 export type EndedWebPlus = {
   email: string;
   interval: BillingInterval;
-  /** The store whose Plus the learner keeps, or null when it was a second website subscription. */
-  keptStore: StoreProvider | null;
+  /** The store whose Plus the learner keeps. */
+  keptStore: StoreProvider;
   locale: string;
   refund: Money | null;
   timeZone: string | null;
@@ -33,17 +33,6 @@ export type EndedWebPlus = {
 export async function readStorePurchaseLocale(): Promise<string> {
   const { data: locale } = await safeAsync(getRequestLocale);
   return locale ?? DEFAULT_LOCALE;
-}
-
-function endedIntro(
-  t: Awaited<ReturnType<typeof getTranslation>>,
-  keptStore: StoreProvider | null,
-) {
-  if (keptStore === "apple") {
-    return t.plusWebEndedBesideApple;
-  }
-
-  return keptStore === "google" ? t.plusWebEndedBesideGoogle : t.plusWebEndedTwice;
 }
 
 export async function sendWebPlusEndedEmail({
@@ -62,7 +51,7 @@ export async function sendWebPlusEndedEmail({
     : html(t.plusNoMoreCharges);
 
   const body = renderEmail([
-    paragraph(html(endedIntro(t, keptStore))),
+    paragraph(html(keptStore === "apple" ? t.plusWebEndedBesideApple : t.plusWebEndedBesideGoogle)),
     details([
       [t.plusAccountLabel, email],
       [t.plusPlanLabel, planName(t, interval)],

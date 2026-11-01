@@ -7,7 +7,7 @@ import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { sendWebPlusEndedEmail } from "./duplicate-plus-emails";
 import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
-import { findStorePlus, settleWebPlusCheckout } from "./settle-web-plus";
+import { endWebPlusBesideStorePlus, findStorePlus } from "./settle-web-plus";
 import { reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
 
@@ -34,19 +34,13 @@ function reportChange(change: "canceled" | "started", subscription: ReportedSubs
  * fails the webhook, so Stripe delivers it again until the learner holds one Plus.
  */
 async function settleCompletedCheckout(event: Stripe.Event) {
-  if (event.type !== "checkout.session.completed") {
+  if (event.type !== "checkout.session.completed" || event.data.object.mode !== "subscription") {
     return;
   }
 
   const checkout = event.data.object;
   const userId = checkout.client_reference_id ?? checkout.metadata?.referenceId;
-  const subscriptionId = typeof checkout.subscription === "string" ? checkout.subscription : null;
-
-  if (checkout.mode !== "subscription" || !userId || !subscriptionId) {
-    return;
-  }
-
-  const ended = await settleWebPlusCheckout({ subscriptionId, userId });
+  const ended = userId ? await endWebPlusBesideStorePlus(userId) : [];
 
   await Promise.all(
     ended.map(async (notice) => {

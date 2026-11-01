@@ -50,7 +50,7 @@ vi.mock("./client", () => ({
 
 vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn().mockResolvedValue({ error: null }) }));
 
-type Billed = { refunded: number; status: Stripe.Subscription.Status };
+type Billed = { customer: string; refunded: number; status: Stripe.Subscription.Status };
 
 /** Stripe's side of a learner's website subscriptions: refunds and cancels change what it reads next. */
 function fakeStripe() {
@@ -58,13 +58,16 @@ function fakeStripe() {
   const now = Math.floor(Date.now() / 1000);
 
   const read = (id: string) => {
-    const { status } = subscriptions.get(id) ?? { status: "canceled" };
+    const { customer, status } = subscriptions.get(id) ?? {
+      customer: CUSTOMER,
+      status: "canceled",
+    };
 
     return {
       cancel_at: null,
       cancel_at_period_end: false,
       canceled_at: status === "canceled" ? now : null,
-      customer: CUSTOMER,
+      customer,
       ended_at: status === "canceled" ? now : null,
       id,
       items: {
@@ -99,9 +102,9 @@ function fakeStripe() {
     return { id, state: subscriptions.get(id) };
   };
 
-  stripe.list.mockImplementation(async () => ({
+  stripe.list.mockImplementation(async ({ customer }: { customer: string }) => ({
     data: [...subscriptions.entries()]
-      .filter(([, { status }]) => status !== "canceled")
+      .filter(([, billed]) => billed.customer === customer && billed.status !== "canceled")
       .map(([id]) => read(id)),
   }));
 
@@ -134,9 +137,9 @@ function fakeStripe() {
   });
 
   return {
-    add(status: Stripe.Subscription.Status) {
+    add(status: Stripe.Subscription.Status, customer = CUSTOMER) {
       const id = `sub_${randomUUID()}`;
-      subscriptions.set(id, { refunded: 0, status });
+      subscriptions.set(id, { customer, refunded: 0, status });
       return id;
     },
   };
@@ -268,34 +271,25 @@ describe("one Plus per learner on the website", () => {
     expect(sentSubjects()).toStrictEqual([pt.plusAlreadyActiveSubject]);
   });
 
-  it("keeps one of two website checkouts the learner paid, refunding the other", async () => {
+  it("ends website Plus under each Stripe customer two checkouts started at once made", async () => {
     const stripeFake = fakeStripe();
     const { userId } = await learner();
-    const row = await addCheckoutRow(userId);
-    const earlier = stripeFake.add("active");
-    await deliverCheckoutCompleted({ rowId: row.id, subscriptionId: earlier, userId });
+    await addStorePlus({ userId });
+    const otherRow = await addCheckoutRow(userId);
 
-    // The second checkout was already open, and writes the same row when it completes.
-    const later = stripeFake.add("active");
-    await deliverCheckoutCompleted({ rowId: row.id, subscriptionId: later, userId });
+    await prisma.subscription.update({
+      data: { stripeCustomerId: "cus_other" },
+      where: { id: otherRow.id },
+    });
 
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(earlier, expect.anything());
+    const first = stripeFake.add("active");
+    const second = stripeFake.add("active", "cus_other");
 
-    expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ amount: 999, payment_intent: `pi_${earlier}` }),
-      expect.anything(),
-    );
+    await expect(endWebPlusBesideStorePlus(userId)).resolves.toHaveLength(2);
 
-    await expect(
-      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
-    ).resolves.toMatchObject({ status: "active", stripeSubscriptionId: later });
-
-    expect(vi.mocked(sendEmail)).toHaveBeenCalledWith(
-      expect.objectContaining({
-        htmlBody: expect.stringContaining(pt.plusWebEndedTwice),
-        subject: pt.plusAlreadyActiveSubject,
-      }),
-    );
+    expect(stripe.cancel).toHaveBeenCalledTimes(2);
+    expect(stripe.cancel).toHaveBeenCalledWith(first, expect.anything());
+    expect(stripe.cancel).toHaveBeenCalledWith(second, expect.anything());
   });
 
   it("stops charging an unpaid website renewal once store Plus starts, with nothing to refund", async () => {

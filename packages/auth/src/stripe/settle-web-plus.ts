@@ -1,4 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { ACTIVE_SUBSCRIPTION_STATUSES, getActiveSubscriptionQuery } from "../active-subscription";
 import { stripeClient } from "./client";
 import { type EndedWebPlus } from "./duplicate-plus-emails";
@@ -13,7 +15,7 @@ import { readSubscriptionMetadata } from "./subscription-metadata";
 import type Stripe from "stripe";
 
 type StoreProvider = "apple" | "google";
-type Learner = { email: string; id: string; stripeCustomerId: string };
+type Learner = { email: string; id: string };
 
 /** An unpaid renewal gives no Plus, but Stripe keeps trying to charge it. */
 function isBilled(subscription: Stripe.Subscription): boolean {
@@ -33,31 +35,47 @@ export async function findStorePlus(userId: string): Promise<StoreProvider | nul
     : null;
 }
 
-async function findLearner(userId: string): Promise<Learner | null> {
-  const user = await prisma.user.findUnique({
-    select: { email: true, id: true, stripeCustomerId: true },
-    where: { id: userId },
-  });
+/**
+ * Two checkouts started at once can each make the learner a Stripe customer; each of their rows
+ * keeps its own.
+ */
+async function findStripeCustomers(userId: string): Promise<string[]> {
+  const [user, rows] = await Promise.all([
+    prisma.user.findUnique({ select: { stripeCustomerId: true }, where: { id: userId } }),
+    prisma.subscription.findMany({
+      distinct: ["stripeCustomerId"],
+      select: { stripeCustomerId: true },
+      where: { provider: "stripe", referenceId: userId, stripeCustomerId: { not: null } },
+    }),
+  ]);
 
-  return user?.stripeCustomerId ? { ...user, stripeCustomerId: user.stripeCustomerId } : null;
+  const ids = [user?.stripeCustomerId, ...rows.map((row) => row.stripeCustomerId)];
+  return [...new Set(ids.filter((id) => id !== null && id !== undefined))];
 }
 
 /** Stripe's own list, so a subscription no row points to is found too. */
-async function listBilledWebPlus(customerId: string): Promise<string[]> {
-  const { data } = await stripeClient.subscriptions.list({ customer: customerId, limit: 100 });
-  return data.filter((subscription) => isBilled(subscription)).map(({ id }) => id);
+async function listBilledWebPlus(customerIds: string[]): Promise<string[]> {
+  const lists = await Promise.all(
+    customerIds.map((customer) => stripeClient.subscriptions.list({ customer, limit: 100 })),
+  );
+
+  return lists.flatMap(({ data }) =>
+    data.filter((subscription) => isBilled(subscription)).map(({ id }) => id),
+  );
 }
 
 /**
  * The refund goes first, so a failure never leaves it canceled unrefunded, and it acts only on a
- * subscription Stripe still bills, so a retry finishes a failed run without repeating it.
+ * subscription Stripe still bills, so a retry finishes a failed run without repeating it. Once
+ * Stripe has ended it, the learner is told even if our copy isn't saved: Stripe's webhook writes
+ * the same fields.
  */
 async function endWebPlus({
   keptStore,
   learner,
   subscriptionId,
 }: {
-  keptStore: StoreProvider | null;
+  keptStore: StoreProvider;
   learner: Learner;
   subscriptionId: string;
 }): Promise<EndedWebPlus | null> {
@@ -79,13 +97,17 @@ async function endWebPlus({
   const stopped = await stopSubscription({
     endsAt: new Date(),
     endsNow: true,
-    reason: keptStore
-      ? `Plus through ${keptStore === "apple" ? "the App Store" : "Google Play"} too`
-      : "A second website Plus",
+    reason: `Plus through ${keptStore === "apple" ? "the App Store" : "Google Play"} too`,
     subscription,
   });
 
-  await saveSubscription({ subscription: stopped, userId: learner.id });
+  const { error } = await safeAsync(() =>
+    saveSubscription({ subscription: stopped, userId: learner.id }),
+  );
+
+  if (error) {
+    logError("Saving website Plus ended beside store Plus failed", { error, subscriptionId });
+  }
 
   return {
     ...readSubscriptionMetadata(subscription.metadata),
@@ -96,54 +118,28 @@ async function endWebPlus({
   };
 }
 
-async function endWebPlusOtherThan({
-  keep,
-  keptStore,
-  learner,
-}: {
-  keep: string | null;
-  keptStore: StoreProvider | null;
-  learner: Learner;
-}): Promise<EndedWebPlus[]> {
-  const billed = await listBilledWebPlus(learner.stripeCustomerId);
+/**
+ * A store charges before we hear of its purchase, so it can't be refused: when the learner has
+ * store Plus, every website subscription Stripe still bills ends now, its last payment refunded in
+ * full. Every caller reaches the same end, however often or in whatever order it runs. Returns
+ * what to tell the learner.
+ */
+export async function endWebPlusBesideStorePlus(userId: string): Promise<EndedWebPlus[]> {
+  const [keptStore, customerIds, learner] = await Promise.all([
+    findStorePlus(userId),
+    findStripeCustomers(userId),
+    prisma.user.findUnique({ select: { email: true, id: true }, where: { id: userId } }),
+  ]);
+
+  if (!keptStore || !learner || customerIds.length === 0) {
+    return [];
+  }
+
+  const billed = await listBilledWebPlus(customerIds);
 
   const ended = await Promise.all(
-    billed
-      .filter((subscriptionId) => subscriptionId !== keep)
-      .map((subscriptionId) => endWebPlus({ keptStore, learner, subscriptionId })),
+    billed.map((subscriptionId) => endWebPlus({ keptStore, learner, subscriptionId })),
   );
 
   return ended.filter((notice) => notice !== null);
-}
-
-/**
- * A checkout opened while free can complete after a store purchase, or beside another checkout
- * the learner also paid: the learner keeps store Plus, or the website subscription this checkout
- * made, and every other website subscription ends now with its last payment refunded in full.
- */
-export async function settleWebPlusCheckout({
-  subscriptionId,
-  userId,
-}: {
-  subscriptionId: string;
-  userId: string;
-}): Promise<EndedWebPlus[]> {
-  const [learner, keptStore] = await Promise.all([findLearner(userId), findStorePlus(userId)]);
-
-  if (!learner) {
-    return [];
-  }
-
-  return endWebPlusOtherThan({ keep: keptStore ? null : subscriptionId, keptStore, learner });
-}
-
-/** A store charges before we hear of its purchase, so website Plus beside store Plus ends instead. */
-export async function endWebPlusBesideStorePlus(userId: string): Promise<EndedWebPlus[]> {
-  const [learner, keptStore] = await Promise.all([findLearner(userId), findStorePlus(userId)]);
-
-  if (!learner || !keptStore) {
-    return [];
-  }
-
-  return endWebPlusOtherThan({ keep: null, keptStore, learner });
 }

@@ -195,7 +195,10 @@ describe(processAppleSubscriptionNotification, () => {
   });
 });
 
-/** Plus bought on the website: Stripe bills it until it's canceled, refunded once. */
+/**
+ * A website checkout the learner opened while free: our copy still says incomplete, while Stripe
+ * already bills it, as when its webhook hasn't arrived.
+ */
 async function addWebPlus(userId: string) {
   const now = Math.floor(Date.now() / 1000);
   const state = { refunded: 0, status: "active" };
@@ -251,7 +254,7 @@ async function addWebPlus(userId: string) {
   await prisma.user.update({ data: { stripeCustomerId: "cus_plus" }, where: { id: userId } });
 
   return prisma.subscription.create({
-    data: { plan: "plus", referenceId: userId, status: "active", stripeSubscriptionId: id },
+    data: { plan: "plus", referenceId: userId, status: "incomplete", stripeCustomerId: "cus_plus" },
   });
 }
 
@@ -304,9 +307,9 @@ describe("an App Store purchase beside other Plus", () => {
     vi.unstubAllEnvs();
   });
 
-  it("owes ending website Plus beside it, which ends it with a full refund once", async () => {
+  it("owes ending a website checkout beside it, which ends it with a full refund once", async () => {
     const user = await userFixture();
-    const webPlus = await addWebPlus(user.id);
+    await addWebPlus(user.id);
 
     const signedPayload = appStoreSubscribed({
       originalTransactionId: randomUUID(),
@@ -336,14 +339,10 @@ describe("an App Store purchase beside other Plus", () => {
       expect.anything(),
     );
 
-    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(webPlus.stripeSubscriptionId, {
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(expect.stringMatching(/^sub_/u), {
       cancellation_details: { comment: "Plus through the App Store too" },
       prorate: false,
     });
-
-    await expect(
-      prisma.subscription.findUniqueOrThrow({ where: { id: webPlus.id } }),
-    ).resolves.toMatchObject({ status: "canceled" });
   });
 
   it("owes asking the learner, once, to cancel a second store's Plus", async () => {

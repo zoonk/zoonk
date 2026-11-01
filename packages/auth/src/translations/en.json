@@ -57,7 +57,6 @@
   "plusTwiceSubject": "You're paying for Zoonk Plus twice",
   "plusWebEndedBesideApple": "You already have Zoonk Plus through the App Store, so we canceled the Plus you bought on our website.",
   "plusWebEndedBesideGoogle": "You already have Zoonk Plus through Google Play, so we canceled the Plus you bought on our website.",
-  "plusWebEndedTwice": "You subscribed to Zoonk Plus twice on our website, so we canceled the extra subscription.",
   "plusWithdrawalReceived": "We received your withdrawal on {dateTime}.",
   "plusWithdrawalSubject": "Your Zoonk Plus subscription is canceled and refunded",
   "withdrawalFormIntro": "Fill it in and send it to us only if you want to withdraw from the contract.",

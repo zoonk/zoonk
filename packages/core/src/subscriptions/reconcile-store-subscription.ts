@@ -1,9 +1,5 @@
-import {
-  ACTIVE_SUBSCRIPTION_STATUSES,
-  getActiveSubscriptionQuery,
-} from "@zoonk/auth/active-subscription";
+import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
 import { readStorePurchaseLocale } from "@zoonk/auth/duplicate-plus-emails";
-import { UNPAID_STATUSES } from "@zoonk/auth/stop-web-plus";
 import {
   type Subscription,
   type TransactionClient,
@@ -190,9 +186,6 @@ function writeSnapshotRow(
     : updateReadSnapshot(tx, { data, existing, expectedSignedAt });
 }
 
-/** Stripe still bills an unpaid renewal, which gives no Plus. */
-const BILLED_WEB_PLUS_STATUSES = [...ACTIVE_SUBSCRIPTION_STATUSES, ...UNPAID_STATUSES];
-
 /**
  * A store charges before we hear of its purchase, so Plus bought elsewhere meanwhile is settled
  * after the save: website Plus ends with a refund, and a second store's is the learner's to
@@ -214,14 +207,10 @@ async function findPlusSettlements(
     userId: chain.referenceId,
   });
 
-  const [webPlus, otherStorePlus] = await Promise.all([
-    tx.subscription.findFirst({
-      where: {
-        provider: "stripe",
-        referenceId: chain.referenceId,
-        status: { in: BILLED_WEB_PLUS_STATUSES },
-      },
-    }),
+  // A website checkout can complete after this save; once the learner is a Stripe customer, the
+  // settlement asks Stripe rather than our copy, which its webhook may not have written yet.
+  const [webCheckout, otherStorePlus] = await Promise.all([
+    tx.subscription.findFirst({ where: { provider: "stripe", referenceId: chain.referenceId } }),
     startsPlus
       ? tx.subscription.findFirst({
           orderBy,
@@ -230,7 +219,7 @@ async function findPlusSettlements(
       : null,
   ]);
 
-  const endWebPlus: FollowUp[] = webPlus ? [{ input: {}, kind: "endWebPlusBesideStore" }] : [];
+  const endWebPlus: FollowUp[] = webCheckout ? [{ input: {}, kind: "endWebPlusBesideStore" }] : [];
 
   const askToCancel: FollowUp[] = otherStorePlus
     ? [
