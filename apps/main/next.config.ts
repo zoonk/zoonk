@@ -90,6 +90,7 @@ const withNextIntl = createNextIntlPlugin({
     },
     srcPath: "./src",
   },
+  requestConfig: "./src/i18n/request.ts",
 });
 
 export default withSentryConfig(withBotId(withNextIntl(withMDX(nextConfig))), {
