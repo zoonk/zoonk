@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "f750d62e45387f33c4e91d5bbb3b27cc8c24923165ff485e0e7aec45040f862e",
+  "subscription_already_plus": "20e0fc303633edcaf709a456bc9a4e5b43b3d3ccfbfb81ef52bb6a5645b9a1ca",
+  "subscription_already_plus_apple": "a6ad9b1f38ca6fae19805b70be5edd0e1e97d24b7c328aa0a564fc6ca6b00c3b",
+  "subscription_already_plus_google": "bca7e9c6fc99624b8707ea9eff61a066d33156aedb32df824c99caff11e74b02",
+  "subscription_already_plus_website": "3b0dfb3f41d795800d87aba152ca601ceb75edfbc440a1f421887c462f7b44b4",
   "subscription_answer_cancel": "3d3817d32579f48968f8c61f9ebbb843a1c75dfb7bdb326b81cda6b90d37e915",
   "subscription_answer_fair_use": "9a906c5e45ab2edbaef7fae5e46a1888219509d0eb961445aa1c8e599a00d582",
   "subscription_answer_free_buddy": "b6ef655f5f2b943c30272fed0acb78f66433a98f07732594e39136281010b7e3",
@@ -181,6 +185,11 @@
     <string name="subscription_purchase_other_account">Dieses Abo bei Google Play gehört zu einem anderen Zoonk-Konto. Meld dich mit diesem Konto an, um es zu nutzen.</string>
     <string name="subscription_purchase_play_failed">Google Play konnte den Kauf nicht abschließen. Versuch es noch einmal.</string>
     <string name="subscription_purchase_confirm_failed">Dein Kauf war erfolgreich, aber wir konnten ihn noch nicht bestätigen. Wir versuchen es noch einmal, wenn du zurückkommst.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Du hast bereits Plus.</string>
+    <string name="subscription_already_plus_apple">Du hast bereits Plus über den App Store.</string>
+    <string name="subscription_already_plus_google">Du hast bereits Plus über Google Play.</string>
+    <string name="subscription_already_plus_website">Du hast bereits Plus über die Zoonk-Website.</string>
     <string name="subscription_benefits_summary">Jedes Ziel · jede Lektion</string>
     <string name="subscription_benefit_exam">Dein ganzer Prüfungsplan, für jeden Tag bis zur Prüfung</string>
     <string name="subscription_benefit_mocks">Probeprüfungen mit denselben Zeitvorgaben wie bei der echten Prüfung</string>

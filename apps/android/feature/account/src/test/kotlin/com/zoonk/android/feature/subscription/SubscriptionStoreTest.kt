@@ -301,6 +301,59 @@ class SubscriptionStoreTest {
         }
 
     @Test
+    fun plusBoughtAnywhereSinceThePlanWasReadIsNeverBoughtAgainOnPlay() =
+        runTest {
+            val (_, store) = store(ana)
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            listOf("stripe", "apple", "google", "zoonk").forEach { provider ->
+                api.accountRead = { subscribed(it.accountId, provider = provider) }
+                store.buy(activity, BillingPeriod.Monthly)
+
+                assertEquals(PurchaseState.AlreadyPlus, store.purchase.value)
+                assertEquals(
+                    provider,
+                    store.account.state.value.value
+                        ?.account
+                        ?.subscription
+                        ?.provider,
+                )
+            }
+            assertTrue(billing.bought.isEmpty())
+            shown.cancel()
+        }
+
+    @Test
+    fun aPlanThatCantBeReadLeavesTheCheckoutToTheServer() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { throw ApiException(ApiError.Network) }
+
+            store.buy(activity, BillingPeriod.Monthly)
+
+            assertEquals(listOf(BillingPeriod.Monthly to ANA), billing.bought)
+        }
+
+    @Test
+    fun aCheckoutWhoseSessionEndedWhileThePlanWasReadOpensNothing() =
+        runTest {
+            val (sessions, store) = store(ana)
+            val planRead = CompletableDeferred<MeResponse>()
+            api.accountRead = { planRead.await() }
+
+            val checkout = launch { store.buy(activity, BillingPeriod.Monthly) }
+            advanceUntilIdle()
+            sessions.signOut()
+            planRead.complete(subscribed(ANA, provider = "stripe"))
+            advanceUntilIdle()
+
+            assertTrue(checkout.isCompleted)
+            assertTrue(billing.bought.isEmpty())
+            assertEquals(PurchaseState.Idle, store.purchase.value)
+        }
+
+    @Test
     fun aWithdrawalIsSentWithTheSessionsTokenAndShowsThePlanWithoutPlus() =
         runTest {
             val (_, store) = store(ana)

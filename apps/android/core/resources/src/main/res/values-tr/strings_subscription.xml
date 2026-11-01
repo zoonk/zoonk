@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "3313f6f9d7755d0325736f39d5d0108135a22a8d595087082d44961ac01b9308",
+  "subscription_already_plus": "19822966279764fa2100c6ec644f777be37a1b328b8204ab949b10ef4062866c",
+  "subscription_already_plus_apple": "b133804f77c7957c2c1d070114c5b7e4f6f4c659d4c4e4d2f062856ce380ddef",
+  "subscription_already_plus_google": "1aee577a25d7ec62df2f1aabb42d703d5e398d3eb2e1b2ff6adb59e7354e5855",
+  "subscription_already_plus_website": "3c00e8be11ea5ad143a167493dc7e4d31405b53fc45be30306cebd2f7a3b1a43",
   "subscription_answer_cancel": "1ac8fa58bfce9e43ea23ad1498fa522da5247ad18e700a6fadeb9cce37f5b95c",
   "subscription_answer_fair_use": "13ae49f8d5d74a90547f787ae90bbd80faacd5af98ab6c407c049a0d8d08968b",
   "subscription_answer_free_buddy": "f691549cb86fd1c63f9f1d1ec228296a0827f28c0a8ac4329b922ed3287e63e0",
@@ -181,6 +185,11 @@
     <string name="subscription_purchase_other_account">Bu Google Play aboneliği başka bir Zoonk hesabına ait. Kullanmak için o hesaba giriş yap.</string>
     <string name="subscription_purchase_play_failed">Google Play satın alma işlemini tamamlayamadı. Tekrar dene.</string>
     <string name="subscription_purchase_confirm_failed">Satın alma işlemin tamamlandı, ancak henüz doğrulayamadık. Geri döndüğünde tekrar deneyeceğiz.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Zaten Plus aboneliğin var.</string>
+    <string name="subscription_already_plus_apple">App Store üzerinden zaten Plus aboneliğin var.</string>
+    <string name="subscription_already_plus_google">Google Play üzerinden zaten Plus aboneliğin var.</string>
+    <string name="subscription_already_plus_website">Zoonk web sitesi üzerinden zaten Plus aboneliğin var.</string>
     <string name="subscription_benefits_summary">Her hedef · her ders</string>
     <string name="subscription_benefit_exam">Sınava kadar her günü kapsayan eksiksiz planın</string>
     <string name="subscription_benefit_mocks">Gerçek sınavla aynı süre sınırına sahip deneme sınavları</string>

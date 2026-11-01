@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "b32e7f7687ecb6922532bfed7d3d168c6f933aaa8245f18ee2f07bcee4d6c295",
+  "subscription_already_plus": "192bbc5e90a24f52280ef0e4f0496be33a3c9fc6b0e93c54213356553014aafd",
+  "subscription_already_plus_apple": "edb93dd5b0a07efa2b400af010cd0e762646ca65ebcc21edf2dc0842d9463f52",
+  "subscription_already_plus_google": "b3c30c6698879fbfba5509d37facd07e84065194a215c8b76b701c33ea6ad9dc",
+  "subscription_already_plus_website": "8cd0a46fa31bff3a8c7bfe30bb59a603b85f2d1dd7b6ce022d62633e1010519a",
   "subscription_answer_cancel": "56ff054fb4c78251e36200f960fa71edd4919f16faa3a9f95aecb28e427d048b",
   "subscription_answer_fair_use": "491ea654357621d1d304a0bac96dc5cb1c1aaf06603b8f645a5a86c211039640",
   "subscription_answer_free_buddy": "cd55e311713f910ae3f00208b6bbb33bbdccb2c17149916a4e33029499271de4",
@@ -180,6 +184,11 @@
     <string name="subscription_purchase_other_account">このGoogle Playのサブスクリプションは、別のZoonkアカウントのものです。利用するには、そのアカウントでログインしてください。</string>
     <string name="subscription_purchase_play_failed">Google Playで購入を完了できませんでした。もう一度お試しください。</string>
     <string name="subscription_purchase_confirm_failed">購入は完了しましたが、まだ確認できていません。次にアプリに戻ったときに、もう一度確認します。</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">すでにPlusに登録しています。</string>
+    <string name="subscription_already_plus_apple">すでにApp StoreでPlusに登録しています。</string>
+    <string name="subscription_already_plus_google">すでにGoogle PlayでPlusに登録しています。</string>
+    <string name="subscription_already_plus_website">すでにZoonkのウェブサイトでPlusに登録しています。</string>
     <string name="subscription_benefits_summary">すべての目標 · すべてのレッスン</string>
     <string name="subscription_benefit_exam">試験当日までの毎日の学習計画をまるごと</string>
     <string name="subscription_benefit_mocks">本番と同じ制限時間の模試</string>

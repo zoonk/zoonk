@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "e979e3d0df9c7eee1126367c8057e7415b9418f6bd95f6a6e6a2adf913ee2be3",
+  "subscription_already_plus": "83747012615d71f6066a9c4635eda96038c937a57ec2262814d032426486be36",
+  "subscription_already_plus_apple": "ebcffc1ffafadcdddf5d535a988157340f8a0ebcc4b548072a03e97b0028b1ba",
+  "subscription_already_plus_google": "35f64a285070a45d297f4179bfd275383717e5664f2703bf3f53c07ca421a167",
+  "subscription_already_plus_website": "1ecdb459c7ede4d935ce058a6a036542741543ba0e600a8f838afd5c5b44a1bd",
   "subscription_answer_cancel": "a27b122ed11ad09bd9fc8486a49bf48933b1358a71560ff6f7439370535fa12f",
   "subscription_answer_fair_use": "e7291d7e4bd03f34716e4faf766c88bced805ceca5a4af83e8629f595660e571",
   "subscription_answer_free_buddy": "a45cc9db05a2fb1aff28d95187d08fdfd4f69a42fad76a0c2fe073860ee46d1b",
@@ -182,6 +186,11 @@
     <string name="subscription_purchase_other_account">Esta suscripción de Google Play pertenece a otra cuenta de Zoonk. Inicia sesión en esa cuenta para usarla.</string>
     <string name="subscription_purchase_play_failed">Google Play no pudo completar la compra. Inténtalo de nuevo.</string>
     <string name="subscription_purchase_confirm_failed">Tu compra se completó, pero aún no pudimos confirmarla. Volveremos a intentarlo cuando regreses.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Ya tienes Plus.</string>
+    <string name="subscription_already_plus_apple">Ya tienes Plus a través del App Store.</string>
+    <string name="subscription_already_plus_google">Ya tienes Plus a través de Google Play.</string>
+    <string name="subscription_already_plus_website">Ya tienes Plus a través del sitio web de Zoonk.</string>
     <string name="subscription_benefits_summary">Todos los objetivos · todas las lecciones</string>
     <string name="subscription_benefit_exam">Tu plan completo de preparación, día a día hasta el examen</string>
     <string name="subscription_benefit_mocks">Simulacros, con el mismo límite de tiempo que el examen real</string>

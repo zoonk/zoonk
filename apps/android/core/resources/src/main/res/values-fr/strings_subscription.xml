@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "10c8e8de707d432e118da243816d9354896de75ce0dc7cfeef185f85e351f079",
+  "subscription_already_plus": "3b34a0f67d82d8c6e93f7aa9fadadb1e4fe69b0c571d7b3ed1a67ed0b9e1a4c2",
+  "subscription_already_plus_apple": "5660e6f6554af8a8af12c9eb87942cdaa94444e53b7710ae906d5643aab2ec41",
+  "subscription_already_plus_google": "a86067444006dc0f060285edb3df2dec786b842efaa1e678773305eb9e3612fa",
+  "subscription_already_plus_website": "ebdcef7c593ef793f4bdc56424f3de335d0a4ca7565a5ca0e441f8033097b21a",
   "subscription_answer_cancel": "d3132813b894ffe378a842b5ce29953128c4f2753be236c43de0689bf3eff1b0",
   "subscription_answer_fair_use": "6523e9ef70c2e1f4586d637f2a43cb3f112ab7ee92bcfa97b952c9e5b1fbbf9f",
   "subscription_answer_free_buddy": "63c190dd1186e249b909a371b44b0dc35260aa84bfc3e5b572141ca6581c5a1b",
@@ -182,6 +186,11 @@
     <string name="subscription_purchase_other_account">Cet abonnement Google Play appartient à un autre compte Zoonk. Connecte-toi à ce compte pour l’utiliser.</string>
     <string name="subscription_purchase_play_failed">Google Play n’a pas pu finaliser l’achat. Réessaie.</string>
     <string name="subscription_purchase_confirm_failed">Ton achat a bien été effectué, mais nous n’avons pas encore pu le confirmer. Nous réessaierons à ton retour.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Tu as déjà Plus.</string>
+    <string name="subscription_already_plus_apple">Tu as déjà Plus via l’App Store.</string>
+    <string name="subscription_already_plus_google">Tu as déjà Plus via Google Play.</string>
+    <string name="subscription_already_plus_website">Tu as déjà Plus via le site web de Zoonk.</string>
     <string name="subscription_benefits_summary">Tous les objectifs · toutes les leçons</string>
     <string name="subscription_benefit_exam">Tout ton plan d’examen, chaque jour jusqu’à l’examen</string>
     <string name="subscription_benefit_mocks">Des examens blancs chronométrés comme le vrai</string>

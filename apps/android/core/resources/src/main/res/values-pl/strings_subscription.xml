@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "0b3444aee990fe7f3722e5888203528de9ec775edad0fd5cf936e44cf1e75c8d",
+  "subscription_already_plus": "7f2bd48bb7e15ef02153acc12ecadb4232b8c1325270b3dfd89373d4c52fe0b6",
+  "subscription_already_plus_apple": "1867ec29e0f713715394051755b348b3414637857e01d8bf040fab63f3932988",
+  "subscription_already_plus_google": "406944b393621715faa3380a6db5421c37ce15c93a9edb43270c9d981f99ddf6",
+  "subscription_already_plus_website": "45719405f6d2b983720fa4e04508f922c61e7c2e0846adf07034afe93dbcf507",
   "subscription_answer_cancel": "56364d61c4a566c3a12cb77b2fd955bb6644b29d9a9e9e56aa8c7df095eca14e",
   "subscription_answer_fair_use": "5ec5e8ede4bed3eaa7c114f774b099840148be2368f04fc4d2706f04503d04fa",
   "subscription_answer_free_buddy": "0307b290c14b1c2dabbbbbb5b2ee905c9001ce0609e346484ffe37e51177b129",
@@ -183,6 +187,11 @@
     <string name="subscription_purchase_other_account">Ta subskrypcja Google Play jest przypisana do innego konta w Zoonku. Zaloguj się na to konto, aby z niej korzystać.</string>
     <string name="subscription_purchase_play_failed">Nie udało się dokończyć zakupu w Google Play. Spróbuj ponownie.</string>
     <string name="subscription_purchase_confirm_failed">Zakup się powiódł, ale nie udało nam się go jeszcze potwierdzić. Spróbujemy ponownie, gdy wrócisz.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Masz już Plus.</string>
+    <string name="subscription_already_plus_apple">Masz już Plus wykupiony w App Store.</string>
+    <string name="subscription_already_plus_google">Masz już Plus wykupiony w Google Play.</string>
+    <string name="subscription_already_plus_website">Masz już Plus wykupiony na stronie Zoonka.</string>
     <string name="subscription_benefits_summary">Każdy cel · każda lekcja</string>
     <string name="subscription_benefit_exam">Cały twój plan nauki, dzień po dniu aż do egzaminu</string>
     <string name="subscription_benefit_mocks">Egzaminy próbne z limitem czasu jak na prawdziwym egzaminie</string>

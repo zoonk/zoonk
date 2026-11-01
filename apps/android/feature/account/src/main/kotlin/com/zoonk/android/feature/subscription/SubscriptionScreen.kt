@@ -141,6 +141,7 @@ private fun Account(
     sessionKey: String,
 ) {
     val account by app.subscriptions.account.collectShown()
+    val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val cancellation =
         viewModel(key = "web-plus-cancellation:$sessionKey") {
@@ -157,7 +158,10 @@ private fun Account(
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
             if (subscription != null) {
-                PageColumn { CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices) }
+                PageColumn {
+                    if (purchase == PurchaseState.AlreadyPlus) AlreadyPlusMessage(subscription.provider)
+                    CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusChoices)
+                }
             } else {
                 Offer(app, navigator, PlanViewer.Free)
             }
@@ -242,6 +246,23 @@ internal fun CurrentPlan(
             ) { Text(stringResource(R.string.subscription_contact_support)) }
         }
     }
+}
+
+@Composable
+private fun AlreadyPlusMessage(provider: String) {
+    Text(
+        text =
+            stringResource(
+                when (provider) {
+                    APPLE -> R.string.subscription_already_plus_apple
+                    GOOGLE -> R.string.subscription_already_plus_google
+                    STRIPE -> R.string.subscription_already_plus_website
+                    else -> R.string.subscription_already_plus
+                },
+            ),
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        style = MaterialTheme.typography.bodyLarge,
+    )
 }
 
 @Composable
@@ -531,7 +552,7 @@ private fun PurchaseMessage(purchase: PurchaseState) {
             PurchaseState.OtherAccount -> R.string.subscription_purchase_other_account
             PurchaseState.PlayFailed -> R.string.subscription_purchase_play_failed
             PurchaseState.ConfirmFailed -> R.string.subscription_purchase_confirm_failed
-            PurchaseState.Idle, PurchaseState.Buying, PurchaseState.Done -> return
+            PurchaseState.Idle, PurchaseState.Buying, PurchaseState.Done, PurchaseState.AlreadyPlus -> return
         }
     val isProblem =
         purchase == PurchaseState.OtherAccount || purchase == PurchaseState.PlayFailed || purchase == PurchaseState.ConfirmFailed

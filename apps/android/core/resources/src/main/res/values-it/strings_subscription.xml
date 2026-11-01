@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "c806686a035ddffbe5bda031b5a28ddb790106ac61d80076182ae50f29cd99a7",
+  "subscription_already_plus": "97d6ac7cdef2676b9339a43fbe909beab2e006bd3a4d93dc625bfb432aeb2c60",
+  "subscription_already_plus_apple": "9388333e340f92ada66f87509429ec15406f7dc31ed20af25bd88057075cf797",
+  "subscription_already_plus_google": "a7f2915d9a377f28afd084877e0e83223c709e2974e250dc15381ed153bdd5f9",
+  "subscription_already_plus_website": "3d7ac3e69c68ddb0013adf78596f7aa6f5102b333f8117b688e435a3a96ca482",
   "subscription_answer_cancel": "efbdc917463cb1324d560909d132d8176b86db4ef8d0869713f786265e0e02b1",
   "subscription_answer_fair_use": "77431b2f61fc2965da35b69486f205696c2824554bc722ab5113b8cdf90fe5c4",
   "subscription_answer_free_buddy": "893cb863313c670a14c4855e1481e19b7b83726360d35de889d1ede557464c34",
@@ -182,6 +186,11 @@
     <string name="subscription_purchase_other_account">Questo abbonamento Google Play appartiene a un altro account Zoonk. Accedi a quell’account per usarlo.</string>
     <string name="subscription_purchase_play_failed">Google Play non ha potuto completare l’acquisto. Riprova.</string>
     <string name="subscription_purchase_confirm_failed">L’acquisto è andato a buon fine, ma non abbiamo ancora potuto confermarlo. Riproveremo quando tornerai.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Hai già Plus.</string>
+    <string name="subscription_already_plus_apple">Hai già Plus tramite l’App Store.</string>
+    <string name="subscription_already_plus_google">Hai già Plus tramite Google Play.</string>
+    <string name="subscription_already_plus_website">Hai già Plus tramite il sito web di Zoonk.</string>
     <string name="subscription_benefits_summary">Ogni obiettivo · ogni lezione</string>
     <string name="subscription_benefit_exam">Il tuo piano completo, per ogni giorno fino all’esame</string>
     <string name="subscription_benefit_mocks">Simulazioni con gli stessi tempi dell’esame</string>

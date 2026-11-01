@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "58f7101a4efae06c8db931526c52a31222608ce167763b6d6ffe197da301661a",
+  "subscription_already_plus": "9bcec4957ab5096b0acfee28b72037b65f7128248cacfe33f45374fb869ff991",
+  "subscription_already_plus_apple": "1481742fd58c7b8752485d2b2f4d847f8d9b3ace6a6c58da720158149af732fb",
+  "subscription_already_plus_google": "5494de3fb73b85cac1d142c72be7c8bea2e23e7dc51a6c955c1131cc77f9f6d9",
+  "subscription_already_plus_website": "3861b672cd9ea3e2f7ba85a2b0cb3c1e3c6577021ee40ea284ec4cc9ffeb72bf",
   "subscription_answer_cancel": "4a4b6d9a6dc80a1c4171413ca44128c84630cf878c92675c6db35f1857e549da",
   "subscription_answer_fair_use": "c9896a888cf5c9381e65de9b79f6a3ed5155624b70b58b4b42d53cad7a30cd0b",
   "subscription_answer_free_buddy": "6cc8c956530e3cc7c5c46b63f3b731245903ffdbaa213f72babd88fb12151e85",
@@ -180,6 +184,11 @@
     <string name="subscription_purchase_other_account">이 Google Play 구독은 다른 Zoonk 계정에 연결되어 있어요. 이용하려면 그 계정으로 로그인하세요.</string>
     <string name="subscription_purchase_play_failed">Google Play에서 구매를 완료하지 못했어요. 다시 시도해 보세요.</string>
     <string name="subscription_purchase_confirm_failed">구매는 완료됐지만 아직 확인하지 못했어요. 돌아오면 다시 확인할게요.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">이미 Plus를 이용 중이에요.</string>
+    <string name="subscription_already_plus_apple">이미 App Store에서 Plus를 구독 중이에요.</string>
+    <string name="subscription_already_plus_google">이미 Google Play에서 Plus를 구독 중이에요.</string>
+    <string name="subscription_already_plus_website">이미 Zoonk 웹사이트에서 Plus를 구독 중이에요.</string>
     <string name="subscription_benefits_summary">모든 목표 · 모든 레슨</string>
     <string name="subscription_benefit_exam">시험일까지 매일 이어지는 전체 시험 준비 계획</string>
     <string name="subscription_benefit_mocks">실제 시험과 시간 제한이 같은 모의고사</string>

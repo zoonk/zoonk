@@ -2,6 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "3dc9d545d611ca4c70c1ab8e9e588573f192e16ac9289df8f55d9e8186866273",
+  "subscription_already_plus": "9f34b37becb0491c279b9da04445b25c6291734135e0ed0048bef232c587f40e",
+  "subscription_already_plus_apple": "e145f20c9bd042a620dec624636e330acb32475effa0dfef767c9d658aacca6f",
+  "subscription_already_plus_google": "a3a1b8eb73ca965bf8c260bcee097385e2b271e3dd3a9cc8e563a34e1bf8cb07",
+  "subscription_already_plus_website": "8c56425ae6f28301db85ec1327ddf49104c62d0307a8d0044e4f0ef0ccfb6c1a",
   "subscription_answer_cancel": "a222fbfd437f859fcc174034c63b6da7ca82a184d4e9978c072c8f133ac68eda",
   "subscription_answer_fair_use": "32fff06623b9c38bdd6d5f02ff7590c2e8bc3ab95ebd9d34a5f5e07e29e93a45",
   "subscription_answer_free_buddy": "a8695882ed47e4edf6116fe8b6bbb4108298c99e9eb13f85a18df0a5e45253fe",
@@ -182,6 +186,11 @@
     <string name="subscription_purchase_other_account">Esta assinatura do Google Play pertence a outra conta do Zoonk. Entre nessa conta para usar a assinatura.</string>
     <string name="subscription_purchase_play_failed">O Google Play não conseguiu concluir a compra. Tente de novo.</string>
     <string name="subscription_purchase_confirm_failed">Sua compra foi concluída, mas a gente ainda não conseguiu confirmar. Vamos tentar de novo quando você voltar.</string>
+    <!-- Shown instead of a second purchase when the learner tries to subscribe but already has Plus. -->
+    <string name="subscription_already_plus">Você já tem o Plus.</string>
+    <string name="subscription_already_plus_apple">Você já tem o Plus pela App Store.</string>
+    <string name="subscription_already_plus_google">Você já tem o Plus pelo Google Play.</string>
+    <string name="subscription_already_plus_website">Você já tem o Plus pelo site do Zoonk.</string>
     <string name="subscription_benefits_summary">Todas as metas · todas as aulas</string>
     <string name="subscription_benefit_exam">Seu plano completo de estudos, para cada dia até a prova</string>
     <string name="subscription_benefit_mocks">Simulados com tempo marcado, como na prova de verdade</string>

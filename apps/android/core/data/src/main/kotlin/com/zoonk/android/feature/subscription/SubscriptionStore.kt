@@ -23,6 +23,7 @@ import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest
 import com.zoonk.api.models.StripeSubscriptionCancellationRequest.Choice
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -107,6 +108,9 @@ sealed interface PurchaseState {
 
     /** Paid on Play, but Zoonk couldn't confirm it yet; it's tried again when the app returns. */
     data object ConfirmFailed : PurchaseState
+
+    /** The learner has Plus, bought anywhere, so Play's sheet never opened: a second subscription would charge them twice. */
+    data object AlreadyPlus : PurchaseState
 }
 
 /**
@@ -215,7 +219,10 @@ class SubscriptionStore(
 
     private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)
 
-    /** Only an account can buy: a guest creates one first, as main asks. */
+    /**
+     * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
+     * leaves Play's sheet to open, since the server settles a second subscription that lands anyway.
+     */
     suspend fun buy(
         activity: Activity,
         period: BillingPeriod,
@@ -224,11 +231,19 @@ class SubscriptionStore(
         if (mutablePurchase.value == PurchaseState.Buying || mutablePurchase.value == PurchaseState.Confirming) return
         mutablePurchase.value = PurchaseState.Buying
         try {
-            // Play's details go stale; a checkout always starts from fresh ones.
-            val offers = billing.offers()
+            // Play's details go stale, and Plus may have been bought elsewhere since; a checkout always starts from fresh ones.
+            val offers =
+                coroutineScope {
+                    launch { account.refresh() }
+                    billing.offers()
+                }
             if (offers != null) this.offers.replace(offers)
             val offer = offers?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
             if (fullAccount() != session) return
+            if (shownPlan() != null) {
+                mutablePurchase.value = PurchaseState.AlreadyPlus
+                return
+            }
             val opened = offers != null && offer != null && billing.buy(activity, offers, offer, session.accountId)
             if (!opened && fullAccount() == session) mutablePurchase.value = PurchaseState.PlayFailed
         } catch (e: CancellationException) {
