@@ -22,7 +22,6 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -53,6 +54,7 @@ import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -326,8 +328,8 @@ private val PlacedWordsSaver =
 private const val NONE = "\u0000"
 
 /**
- * Reading's prompt: the sentence in the learner's language, each word that stands for a word of the
- * answer showing it on a tap.
+ * Reading's prompt: the sentence in the learner's language, each word or phrase that stands for
+ * words of the answer showing them on a tap.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -341,7 +343,7 @@ internal fun ReadingPrompt(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         LabelChip(stringResource(R.string.player_language_translate))
         FlowRow(
-            // One stop reads the whole sentence; each word with a translation is its own stop after it.
+            // One stop reads the whole sentence; each word or phrase with a translation is its own stop after it.
             Modifier.semantics(mergeDescendants = true) {
                 contentDescription = prompt
                 heading()
@@ -371,7 +373,7 @@ private fun HintedWord(
     val tooltip = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
     val dots = MaterialTheme.colorScheme.onSurfaceVariant
-    var baseline by remember { mutableFloatStateOf(0f) }
+    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
@@ -389,7 +391,7 @@ private fun HintedWord(
         Text(
             word,
             style = style,
-            onTextLayout = { baseline = it.firstBaseline },
+            onTextLayout = { layout = it },
             modifier =
                 Modifier
                     .heightIn(min = 48.dp)
@@ -397,16 +399,42 @@ private fun HintedWord(
                         role = Role.Button,
                         onClickLabel = stringResource(R.string.player_language_show_translation),
                     ) { scope.launch { tooltip.show() } }
-                    .drawBehind {
-                        val y = baseline + 4.dp.toPx()
-                        val radius = 1.25.dp.toPx()
-                        val step = 4.dp.toPx()
-                        var x = radius
-                        while (x < size.width) {
-                            drawCircle(dots, radius, Offset(x, y))
-                            x += step
-                        }
-                    },
+                    .drawBehind { layout?.let { drawDottedUnderline(it, dots) } },
         )
     }
 }
+
+/**
+ * Under the letters on every line, so a phrase that wraps stays marked as one and the punctuation
+ * around it ("por mês?"), which the hint doesn't translate, stays out.
+ */
+private fun DrawScope.drawDottedUnderline(
+    text: TextLayoutResult,
+    color: Color,
+) {
+    val word = text.layoutInput.text.text
+    val start = word.indexOfFirst { it.isWordCharacter() }
+    if (start < 0) return
+    val end = word.indexOfLast { it.isWordCharacter() } + 1
+    val radius = 1.25.dp.toPx()
+    val step = 4.dp.toPx()
+    val belowDescenders =
+        text.layoutInput.style.fontSize
+            .toPx() * 0.3f
+
+    for (line in text.getLineForOffset(start)..text.getLineForOffset(end - 1)) {
+        val letters = maxOf(start, text.getLineStart(line)) until minOf(end, text.getLineEnd(line, visibleEnd = true))
+        val boxes = letters.map(text::getBoundingBox)
+        if (boxes.isEmpty()) continue
+        val right = boxes.maxOf { it.right }
+        val y = text.getLineBaseline(line) + belowDescenders
+        var x = boxes.minOf { it.left } + radius
+        while (x < right) {
+            drawCircle(color, radius, Offset(x, y))
+            x += step
+        }
+    }
+}
+
+/** A letter outside the Basic Multilingual Plane ("𠮷") is two surrogates, each a letter here. */
+private fun Char.isWordCharacter() = isSurrogate() || category.code.first() in "LMN"
