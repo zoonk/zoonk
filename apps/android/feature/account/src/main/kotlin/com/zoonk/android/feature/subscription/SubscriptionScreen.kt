@@ -98,7 +98,7 @@ fun SubscriptionScreen(
     navigator: AppNavigator,
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    val signedIn = (session as? SessionState.SignedIn)?.takeUnless { it.isGuest }
+    val scope = rememberCoroutineScope()
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.account_menu_subscription)) }) { padding ->
         Box(
@@ -110,10 +110,22 @@ fun SubscriptionScreen(
                     .padding(16.dp),
             contentAlignment = Alignment.TopCenter,
         ) {
-            when {
-                signedIn != null -> Account(app, navigator, signedIn.session.localId)
-                session is SessionState.SignedOut -> Offer(app, navigator, PlanViewer.Visitor)
-                else -> Offer(app, navigator, PlanViewer.Guest)
+            when (val state = session) {
+                is SessionState.SignedIn -> {
+                    if (state.isGuest) Offer(app, navigator, PlanViewer.Guest) else Account(app, navigator, state.session.localId)
+                }
+
+                is SessionState.SignedOut -> {
+                    Offer(app, navigator, PlanViewer.Visitor)
+                }
+
+                SessionState.Restoring -> {
+                    CircularProgressIndicator()
+                }
+
+                SessionState.Unavailable -> {
+                    LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } })
+                }
             }
         }
     }
@@ -302,7 +314,7 @@ internal fun PlanOffer(
     val hasAccount = viewer == PlanViewer.Free
 
     BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-        val sideBySide = maxWidth >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
+        val sideBySide = minOf(maxWidth, TWO_PLANS_WIDTH) >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
 
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
             Text(

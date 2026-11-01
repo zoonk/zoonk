@@ -136,7 +136,7 @@ class PlanOfferTest {
     }
 
     @Test
-    @Config(qualifiers = "w800dp-h1280dp")
+    @Config(qualifiers = "w1600dp-h1000dp")
     fun largerTextStacksThePlansWhereTheyWouldBeTooNarrow() {
         RuntimeEnvironment.setFontScale(2f)
         show(PlanViewer.Free)
