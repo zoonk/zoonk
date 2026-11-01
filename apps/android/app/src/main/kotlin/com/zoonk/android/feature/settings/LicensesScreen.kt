@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -41,6 +40,7 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
