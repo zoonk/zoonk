@@ -160,7 +160,7 @@ extension StudyBlock {
     if fullReview {
       return String(
         localized: "\(questions) questions on every topic, your weakest first", table: "Today",
-        comment: "A full review's questions")
+        comment: "A full review's questions: the count is the total, drawn from every topic")
     }
 
     if practisesTopics {

@@ -4319,7 +4319,7 @@
       }
     },
     "%lld questions on every topic, your weakest first" : {
-      "comment" : "A full review's questions",
+      "comment" : "A full review's questions: the count is the total, drawn from every topic",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -4429,7 +4429,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "문제 %lld개 · 모든 주제, 취약한 주제부터"
+                  "value" : "모든 주제에서 총 %lld문제, 가장 약한 주제부터"
                 }
               }
             }
@@ -4465,13 +4465,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta sobre cada tópico, começando pelos mais difíceis para você"
+                  "value" : "%lld pergunta ao todo, de todos os tópicos, começando pelos que você menos domina"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas sobre cada tópico, começando pelos mais difíceis para você"
+                  "value" : "%lld perguntas ao todo, de todos os tópicos, começando pelos que você menos domina"
                 }
               }
             }
