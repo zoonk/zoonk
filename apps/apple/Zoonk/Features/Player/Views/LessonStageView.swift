@@ -59,7 +59,7 @@ struct LessonStageView: View {
           }
 
           ScrollViewReader { scroll in
-            LessonPage(store: store) {
+            LessonPage(store: store, fillsHeight: spread == nil && step.hasWordBank) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
               }
@@ -184,7 +184,10 @@ struct LessonStageView: View {
 }
 
 private struct LessonPage<Content: View>: View {
+  @State private var visibleHeight: CGFloat?
+
   let store: LessonPlayerStore
+  var fillsHeight = false
   @ViewBuilder let content: Content
 
   var body: some View {
@@ -195,6 +198,10 @@ private struct LessonPage<Content: View>: View {
       .frame(maxWidth: 680, alignment: .leading)
       .frame(maxWidth: .infinity)
       .scenePadding()
+      .frame(minHeight: fillsHeight ? visibleHeight : nil, alignment: .top)
+    }
+    .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
+      visibleHeight = height
     }
     .onScrollPhaseChange { _, phase in
       if phase != .idle {
@@ -422,6 +429,14 @@ struct LessonActionBar: View {
 extension LessonStep {
   var showsOwnResult: Bool {
     kind == .challenge || kind == .matchColumns
+  }
+
+  fileprivate var hasWordBank: Bool {
+    guard case .language(let exercise, _) = content else {
+      return false
+    }
+
+    return [.reading, .listening, .fillBlank].contains(exercise.kind)
   }
 }
 

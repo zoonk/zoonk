@@ -328,6 +328,23 @@ private struct TranslationView: View {
   }
 }
 
+/// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
+/// stays put while the answer grows.
+private struct LessonWordBank<Tiles: View>: View {
+  @ViewBuilder let tiles: Tiles
+
+  var body: some View {
+    FlowLayout(spacing: 8) {
+      tiles
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(
+      Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
+    )
+    .frame(maxHeight: .infinity, alignment: .bottom)
+  }
+}
+
 /// A tile fills the first empty blank, and a filled blank empties on a tap.
 private struct FillBlankView: View {
   let exercise: LanguageExercise
@@ -359,7 +376,7 @@ private struct FillBlankView: View {
       }
     }
 
-    FlowLayout(spacing: 8) {
+    LessonWordBank {
       ForEach(Array(exercise.fillBlankOptions.enumerated()), id: \.offset) { _, option in
         LessonWordTile(
           word: option.word, romanization: option.romanization,
@@ -371,9 +388,6 @@ private struct FillBlankView: View {
         }
       }
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Word bank", tableName: "Player", comment: "The words to build an answer from"))
   }
 
   @ViewBuilder
@@ -527,7 +541,7 @@ private struct ArrangeWordsView: View {
     .padding(8)
     .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
 
-    FlowLayout(spacing: 8) {
+    LessonWordBank {
       ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
         LessonWordTile(
           word: exercise.wordBankOptions[index].word,
@@ -538,9 +552,6 @@ private struct ArrangeWordsView: View {
         }
       }
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Word bank", tableName: "Player", comment: "The words to build an answer from"))
   }
 
   private func set(_ indices: [Int]) {
