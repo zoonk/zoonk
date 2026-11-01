@@ -257,12 +257,6 @@ private struct CheckStepView: View {
           .foregroundStyle(.secondary)
       }
 
-      if let basis = content.basis {
-        Text("“\(basis.quote)”")
-          .font(.callout.italic())
-          .foregroundStyle(.secondary)
-      }
-
       LessonQuestionText(text: content.question)
       StepMedia(step: step, visual: content.visual, asks: true)
     case .turn:
