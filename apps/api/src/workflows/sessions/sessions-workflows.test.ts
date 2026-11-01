@@ -554,7 +554,8 @@ describe(sessionPreparationWorkflow, () => {
           courseId: course.id,
           scope: {
             exams: [],
-            generalGoal: goal.title,
+            // Named by the language it teaches, never the goal's title.
+            generalGoal: "Inglês",
             language: course.language,
             ownerId: null,
             targetLanguage: course.targetLanguage,
