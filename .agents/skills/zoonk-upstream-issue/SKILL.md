@@ -13,7 +13,7 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 ## 1. Confirm it's theirs
 
-- Reproduce on the latest release (`npm view <package> dist-tags`) and check its changelog and recent commits for a fix.
+- Reproduce on the latest release (`npm view <package> dist-tags`), or the latest canary when the project publishes one (Next.js does), and check its changelog and recent commits for a fix.
 - Read the library's code at that version and name the functions where it goes wrong.
 - Search open and closed issues and discussions with several phrasings. If one already covers it, add your evidence there instead.
 - Read the docs for the feature: issue templates ask whether the docs cover it.
@@ -21,7 +21,7 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 ## 2. Build the reproduction
 
 - Create a new public repository on the user's personal GitHub (`gh api user --jq .login`), named after the bug. Keep its local copy outside this repository, so its install stays separate.
-- Start from nothing, or from the maintainers' reproduction template, with the latest stable versions. Keep only what the bug needs. Leave out product, company and customer names, internal paths, data and secrets.
+- Start from nothing, or from the maintainers' reproduction template, with the latest versions: the latest canary for Next.js and other projects with a canary channel, otherwise the latest stable. Keep only what the bug needs. Leave out product, company and customer names, internal paths, data and secrets.
 - Make it fail by command, with npm so it runs on what ships with Node: `npm install`, then one `npm run` script. Commit `package-lock.json` and pin exact versions. Use another package manager only when the bug depends on it (such as pnpm's `node_modules/.pnpm` layout), and say why in the README.
 - For a timing bug, add a script that shows the mechanism on an unmodified run (for example, polling a file the build rewrites). Separately, add an opt-in, clearly labeled shim that widens the window so the failure happens every time. Never patch the library.
 - Write the README with: what's broken in one paragraph; Reproduction, with the commands and their exact output; Expected; Actual, naming where in the library's code it goes wrong; Environment (versions and OS).
