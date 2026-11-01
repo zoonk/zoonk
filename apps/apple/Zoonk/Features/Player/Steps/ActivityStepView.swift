@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ActivityStepView: View {
   @Environment(\.activityRenderers) private var activityRenderers
+  @Environment(\.isPaneSplit) private var isPaneSplit
 
   let step: LessonStep
   let content: ActivityStepContent
@@ -14,6 +15,16 @@ struct ActivityStepView: View {
     }
 
     return nil
+  }
+
+  /// On a spread, a canvas the question asks about sits under its prompt, and the learner's page
+  /// holds the question and its answer. An interaction's canvas is the answer, so it stays there.
+  private var isCanvasOnScreen: Bool {
+    if case .interaction = content.check {
+      return false
+    }
+
+    return isPaneSplit
   }
 
   var body: some View {
@@ -31,20 +42,37 @@ struct ActivityStepView: View {
       LessonQuestionText(text: content.prompt)
       LessonPictureView(
         image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: true)
+
+      if isCanvasOnScreen {
+        canvas
+      }
     case .turn:
       turn
     }
   }
 
+  /// The question keeps its place through a fold, so a number half typed ("0,") stays as it is.
   @ViewBuilder
   private var turn: some View {
-    let renderer = activityRenderers.renderer(for: content.template)
-    let checkFirst = renderer?.showsCheckFirst(content) ?? false
+    let checkLeads =
+      !isCanvasOnScreen
+      && activityRenderers.renderer(for: content.template)?.showsCheckFirst(content) == true
 
-    if checkFirst {
+    if checkLeads {
       checkArea
     }
 
+    if !isCanvasOnScreen {
+      canvas
+    }
+
+    if !checkLeads {
+      checkArea
+    }
+  }
+
+  @ViewBuilder
+  private var canvas: some View {
     let canvasContext = ActivityCanvasContext(
       template: content.template, payload: content.payload, check: content.check,
       phase: context.result.map { .checked(isCorrect: $0.isCorrect) } ?? .answering,
@@ -55,17 +83,13 @@ struct ActivityStepView: View {
         }
       }, baseMap: content.baseMap)
 
-    if let renderer {
+    if let renderer = activityRenderers.renderer(for: content.template) {
       renderer.canvas(canvasContext)
     } else {
       ActivityFallbackCanvas(context: canvasContext)
     }
 
     ActivityDataNote(data: content.data)
-
-    if !checkFirst {
-      checkArea
-    }
   }
 
   @ViewBuilder
