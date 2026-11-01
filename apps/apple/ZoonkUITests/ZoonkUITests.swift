@@ -4,8 +4,11 @@ import XCTest
 
 private enum UITestScenario: Equatable {
   case appleSubscription
+  case appleSubscriptionBesideUnpaidWebsite
   case freeSubscription
   case googleSubscription
+  case unpaidWebsiteSubscription
+  case websiteSubscription
   case catalog
   case progress
   case progressActivityFailure
@@ -18,12 +21,14 @@ private enum UITestScenario: Equatable {
     switch self {
     case .requiredSetup:
       requiredSetupAccountJSON
-    case .appleSubscription:
+    case .appleSubscription, .appleSubscriptionBesideUnpaidWebsite:
       accountJSON(provider: "apple")
-    case .freeSubscription:
+    case .freeSubscription, .unpaidWebsiteSubscription:
       accountJSON(provider: nil)
     case .googleSubscription:
       accountJSON(provider: "google")
+    case .websiteSubscription:
+      accountJSON(provider: "stripe")
     case .catalog, .progress, .progressActivityFailure, .progressActivityUnauthorized,
       .progressEmpty:
       accountJSON(provider: nil)
@@ -43,7 +48,23 @@ private enum UITestScenario: Equatable {
       progressUITestSnapshotJSON
     case .progressEmpty:
       progressEmptyUITestSnapshotJSON
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .requiredSetup,
+    case .appleSubscription, .appleSubscriptionBesideUnpaidWebsite, .catalog, .freeSubscription,
+      .googleSubscription, .requiredSetup, .signedOut, .unpaidWebsiteSubscription,
+      .websiteSubscription:
+      nil
+    }
+  }
+
+  /// Plus bought on the website; `periodEnd` is in seconds since the reference date, as the app
+  /// decodes a date.
+  var webPlusJSON: String? {
+    switch self {
+    case .websiteSubscription:
+      #"{ "state": "renewing", "periodEnd": \#(uiTestPeriodEnd.timeIntervalSinceReferenceDate) }"#
+    case .appleSubscriptionBesideUnpaidWebsite, .unpaidWebsiteSubscription:
+      #"{ "state": "unpaid", "periodEnd": null }"#
+    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .progress,
+      .progressActivityFailure, .progressActivityUnauthorized, .progressEmpty, .requiredSetup,
       .signedOut:
       nil
     }
@@ -55,8 +76,9 @@ private enum UITestScenario: Equatable {
       "activity-network"
     case .progressActivityUnauthorized:
       "activity-unauthorized"
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .progress,
-      .progressEmpty, .requiredSetup, .signedOut:
+    case .appleSubscription, .appleSubscriptionBesideUnpaidWebsite, .catalog, .freeSubscription,
+      .googleSubscription, .progress, .progressEmpty, .requiredSetup, .signedOut,
+      .unpaidWebsiteSubscription, .websiteSubscription:
       nil
     }
   }
@@ -285,6 +307,99 @@ final class ZoonkUITests: XCTestCase {
     let subscription = app.buttons["Subscription"]
     XCTAssertTrue(subscription.waitForExistence(timeout: 5))
     XCTAssertEqual(subscription.value as? String, "App Store")
+    subscription.tap()
+
+    XCTAssertTrue(
+      app.buttons["Manage in App Store"].waitForExistence(timeout: 5),
+      "Expected the App Store's own subscription settings to change an App Store purchase")
+    XCTAssertFalse(
+      app.staticTexts["Website subscription"].exists,
+      "Expected no website plan without one")
+  }
+
+  @MainActor
+  func testAppStorePlusShowsAnUnpaidWebsitePlanBesideIt() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .appleSubscriptionBesideUnpaidWebsite)
+    launch(app)
+    openAccount(in: app)
+    app.buttons["Subscription"].tap()
+
+    XCTAssertTrue(
+      app.buttons["Manage in App Store"].waitForExistence(timeout: 5),
+      "Expected the App Store purchase's own management")
+    XCTAssertTrue(
+      app.staticTexts["Website subscription"].waitForExistence(timeout: 5),
+      "Expected the website plan beside the App Store purchase")
+    XCTAssertTrue(app.staticTexts["Your last renewal payment failed."].exists)
+
+    app.buttons["Cancel Plus"].tap()
+    XCTAssertTrue(
+      app.staticTexts["Plus ends right away, and we stop retrying your renewal payment."]
+        .waitForExistence(timeout: 5),
+      "Expected canceling an unpaid renewal to say it ends now")
+    app.sheets.buttons["Cancel Plus"].tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Website subscription"].waitForNonExistence(timeout: 5),
+      "Expected the canceled website plan to leave")
+    XCTAssertTrue(app.buttons["Manage in App Store"].exists)
+  }
+
+  @MainActor
+  func testWebsitePlusCancelsAndIsKept() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .websiteSubscription)
+    launch(app)
+    openAccount(in: app)
+
+    let subscription = app.buttons["Subscription"]
+    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
+    XCTAssertEqual(subscription.value as? String, "Active")
+    subscription.tap()
+
+    let renews = "Renews on \(uiTestPeriodEndText)."
+    XCTAssertTrue(app.staticTexts[renews].waitForExistence(timeout: 5))
+    app.buttons["Cancel Plus"].tap()
+    XCTAssertTrue(
+      app.staticTexts["You keep Plus until the end of the period you already paid for."]
+        .waitForExistence(timeout: 5))
+    app.sheets.buttons["Cancel Plus"].tap()
+
+    let ends = "Your subscription will end on \(uiTestPeriodEndText)."
+    XCTAssertTrue(app.staticTexts[ends].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["Subscription ending"].exists)
+    app.buttons["Keep Plus"].tap()
+
+    XCTAssertTrue(
+      app.staticTexts[renews].waitForExistence(timeout: 5), "Expected Plus to renew again")
+    XCTAssertTrue(app.buttons["Cancel Plus"].exists)
+  }
+
+  @MainActor
+  func testUnpaidWebsiteRenewalReplacesTheOfferUntilCanceled() throws {
+    continueAfterFailure = false
+    storeKitSession = try makeStoreKitSession()
+
+    let app = makeApp(for: .unpaidWebsiteSubscription)
+    addTeardownBlock {
+      app.terminate()
+    }
+    launch(app)
+    openAccount(in: app)
+    app.buttons["Subscription"].tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Your last renewal payment failed."].waitForExistence(timeout: 5),
+      "Expected the failed renewal in place of the offer")
+    app.buttons["Cancel Plus"].tap()
+    app.sheets.buttons["Cancel Plus"].tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Subscribe to Zoonk Plus"].waitForExistence(timeout: 5),
+      "Expected the offer once the unpaid renewal ends")
   }
 
   @MainActor
@@ -301,12 +416,9 @@ final class ZoonkUITests: XCTestCase {
     subscription.tap()
 
     XCTAssertTrue(
-      app.alerts["Managed on Google Play"].waitForExistence(timeout: 5),
-      "Expected informational Google Play management guidance")
-    XCTAssertTrue(
       app.staticTexts[
         "Use Google Play on an Android device to change or cancel this subscription."
-      ].exists,
+      ].waitForExistence(timeout: 5),
       "Expected guidance without an external Google Play purchase link")
   }
 
@@ -791,6 +903,10 @@ final class ZoonkUITests: XCTestCase {
       app.launchEnvironment["ZOONK_UI_TEST_PROGRESS_FAILURE"] = progressFailure
     }
 
+    if let webPlusJSON = scenario.webPlusJSON {
+      app.launchEnvironment["ZOONK_UI_TEST_WEB_PLUS"] = webPlusJSON
+    }
+
     return app
   }
 
@@ -866,4 +982,12 @@ extension XCUIElement {
       swipeLeft(velocity: .fast)
     }
   }
+}
+
+private let uiTestPeriodEnd = Date(timeIntervalSince1970: 1_796_140_800)
+
+/// As the app writes it in the en_US locale the tests run in.
+private var uiTestPeriodEndText: String {
+  uiTestPeriodEnd.formatted(
+    Date.FormatStyle(date: .abbreviated, time: .omitted, locale: Locale(identifier: "en_US")))
 }

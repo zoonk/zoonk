@@ -17,8 +17,6 @@ enum AccountAPIError: Error, Equatable {
   case unauthorized
   case usernameTaken
   case validation
-  /// Nothing to cancel or keep anymore: the plan changed meanwhile.
-  case webPlusChanged
 }
 
 protocol AccountAPIClient {
@@ -45,12 +43,6 @@ protocol AccountAPIClient {
   func getUsernameSuggestion(token: String) async throws -> String?
   /// Advisory: saving the profile can still find it taken.
   func isUsernameAvailable(_ username: String) async throws -> Bool
-  /// Stops the renewal of Plus bought on the web, or ends an unpaid one right away. Throws
-  /// `webPlusChanged` when nothing renews anymore.
-  func cancelWebPlus(token: String) async throws
-  /// Turns a stopped renewal back on. Throws `webPlusChanged` when Plus isn't set to end with its
-  /// paid period anymore.
-  func keepWebPlus(token: String) async throws
 }
 
 extension AccountAPIClient {
@@ -278,40 +270,6 @@ struct AccountAPI {
     case .ok(let response):
       return try response.body.json.isAvailable
     default:
-      throw AccountAPIError.invalidResponse
-    }
-  }
-
-  func cancelWebPlus(token: String) async throws {
-    let output = try await perform(token: token) { client in
-      try await client.cancelStripeSubscription()
-    }
-
-    switch output {
-    case .ok:
-      return
-    case .unauthorized:
-      throw AccountAPIError.unauthorized
-    case .conflict:
-      throw AccountAPIError.webPlusChanged
-    case .internalServerError, .undocumented:
-      throw AccountAPIError.invalidResponse
-    }
-  }
-
-  func keepWebPlus(token: String) async throws {
-    let output = try await perform(token: token) { client in
-      try await client.resumeStripeSubscription()
-    }
-
-    switch output {
-    case .noContent:
-      return
-    case .unauthorized:
-      throw AccountAPIError.unauthorized
-    case .conflict:
-      throw AccountAPIError.webPlusChanged
-    case .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
   }

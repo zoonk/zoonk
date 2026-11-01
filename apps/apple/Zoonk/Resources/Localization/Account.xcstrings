@@ -5325,6 +5325,65 @@
         }
       }
     },
+    "Manage in App Store" : {
+      "comment" : "Button that opens Apple's subscription settings for Plus bought in the App Store",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Store-Abo verwalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administrar en el App Store"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérer dans l’App Store"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestisci su App Store"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Storeで管理する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store에서 관리하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zarządzaj w App Store"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerenciar via App Store"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store’da yönet"
+          }
+        }
+      }
+    },
     "Manage Sign in with Apple" : {
       "comment" : "Opens Apple account authorization management after deletion",
       "localizations" : {
@@ -5385,7 +5444,7 @@
       }
     },
     "Managed on Google Play" : {
-      "comment" : "Identifies Google Play as the owner of subscription billing\nTitle explaining where a Google-owned subscription is managed",
+      "comment" : "Identifies Google Play as the owner of subscription billing",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5857,7 +5916,7 @@
       }
     },
     "OK" : {
-      "comment" : "Dismisses a subscription status message\nDismisses subscription management guidance",
+      "comment" : "Dismisses a subscription status message",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8639,6 +8698,65 @@
         }
       }
     },
+    "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings." : {
+      "comment" : "Where Plus bought in the App Store is changed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Abo wird über den App Store verwaltet. In Apples Abo-Einstellungen kannst du es ändern oder kündigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta suscripción se administra a través del App Store. Para cambiarla o cancelarla, usa la configuración de suscripciones de Apple."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet abonnement est géré via l’App Store. Pour le modifier ou le résilier, utilise les réglages d’abonnement d’Apple."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo abbonamento è gestito tramite App Store. Per modificarlo o disdirlo, usa le impostazioni degli abbonamenti di Apple."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このサブスクリプションはApp Storeで管理されています。変更や解約はAppleのサブスクリプション設定で行ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store에서 관리하는 구독이에요. 변경하거나 해지하려면 Apple의 구독 설정을 이용하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tą subskrypcją zarządzasz w App Store. Aby ją zmienić lub anulować, otwórz ustawienia subskrypcji Apple."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta assinatura é gerenciada pela App Store. Para alterar ou cancelar, use os ajustes de assinaturas da Apple."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu abonelik App Store üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Apple’ın abonelik ayarlarını kullan."
+          }
+        }
+      }
+    },
     "Too many attempts. Wait a moment, then try again." : {
       "comment" : "Error shown when sign-in attempts are temporarily rate limited",
       "localizations" : {
@@ -9504,6 +9622,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-posta adresine bir giriş kodu gönderdik. Kod 5 dakika geçerli."
+          }
+        }
+      }
+    },
+    "Website subscription" : {
+      "comment" : "Plus bought on the website, shown beside a store purchase",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website-Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripción del sitio web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abonnement via le site web"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbonamento acquistato sul sito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウェブサイトで登録したサブスクリプション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹사이트 구독"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subskrypcja kupiona na stronie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assinatura pelo site"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web sitesinden alınan abonelik"
           }
         }
       }

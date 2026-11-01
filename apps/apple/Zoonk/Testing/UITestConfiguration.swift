@@ -54,6 +54,9 @@
           learnerSummaryAPI: UITestLearnerSummaryAPI(summary: summary.map(makeLearnerSummary)),
           mindMapsAPI: UITestMindMapsAPI(environment: environment),
           progressAPI: try progressAPI(from: fixtures),
+          settingsAPI: try fixtures.decode(WebPlus.self, "ZOONK_UI_TEST_WEB_PLUS").map {
+            UITestSettingsAPI(live: SettingsAPI(clients: clients), webPlus: $0)
+          },
           studyAPI: try studyAPI(from: fixtures),
           tutorAPI: buddyStatus.map { _ in
             UITestTutorAPI(turns: Int(environment["ZOONK_UI_TEST_TUTOR_TURNS"] ?? "") ?? 0)
@@ -322,6 +325,84 @@
     }
 
     func switchGoal(token: String, goalID: String) async throws {}
+  }
+
+  /// The live settings, with Plus bought on the website that canceling and keeping change as the
+  /// API does.
+  private actor UITestSettingsAPI: SettingsAPIClient {
+    let live: SettingsAPI
+    var webPlus: WebPlus?
+
+    init(live: SettingsAPI, webPlus: WebPlus) {
+      self.live = live
+      self.webPlus = webPlus
+    }
+
+    func getWebPlus(token: String) async throws -> WebPlus {
+      guard let webPlus else {
+        throw APIError.notFound
+      }
+
+      return webPlus
+    }
+
+    func cancelWebPlus(token: String) async throws {
+      webPlus = webPlus.flatMap {
+        $0.state == .unpaid ? nil : WebPlus(state: .ending, periodEnd: $0.periodEnd)
+      }
+    }
+
+    func keepWebPlus(token: String) async throws {
+      webPlus = webPlus.map { WebPlus(state: .renewing, periodEnd: $0.periodEnd) }
+    }
+
+    func getPreferences(token: String) async throws -> LearningPreferences {
+      try await live.getPreferences(token: token)
+    }
+
+    func updatePreferences(token: String, _ update: PreferencesUpdate) async throws
+      -> LearningPreferences
+    {
+      try await live.updatePreferences(token: token, update)
+    }
+
+    func getMemory(token: String) async throws -> LearnerMemory {
+      try await live.getMemory(token: token)
+    }
+
+    func setMemoryEnabled(token: String, _ enabled: Bool) async throws {
+      try await live.setMemoryEnabled(token: token, enabled)
+    }
+
+    func updateMemoryFact(token: String, factId: String, statement: String) async throws
+      -> MemoryFact
+    {
+      try await live.updateMemoryFact(token: token, factId: factId, statement: statement)
+    }
+
+    func deleteMemoryFact(token: String, factId: String) async throws -> MemoryFact {
+      try await live.deleteMemoryFact(token: token, factId: factId)
+    }
+
+    func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact] {
+      try await live.restoreMemoryFact(token: token, factId: factId)
+    }
+
+    func getAllowance(token: String) async throws -> PlanAllowance {
+      try await live.getAllowance(token: token)
+    }
+
+    func getFreePlan() async throws -> FreePlan {
+      try await live.getFreePlan()
+    }
+
+    func exportMemory(token: String) async throws -> Data {
+      try await live.exportMemory(token: token)
+    }
+
+    func exportAccountData(token: String) async throws -> Data {
+      try await live.exportAccountData(token: token)
+    }
   }
 
   private struct UITestBuddyAPI: BuddyAPIClient {

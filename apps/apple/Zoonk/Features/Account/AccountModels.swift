@@ -28,10 +28,18 @@ struct AccountSubscription: Decodable, Equatable, Hashable {
   var periodEnd: Date? = nil
 }
 
-/// Plus bought on the website that can still be canceled or kept.
-struct WebPlusCancellation: Equatable {
-  /// The renewal payment failed, so canceling ends Plus right away and stops the retries.
-  let unpaid: Bool
+/// Plus bought on the website, which can sit beside a newer store purchase.
+struct WebPlus: Decodable, Equatable {
+  enum State: String, Decodable {
+    case renewing
+    case ending
+    /// The renewal payment failed, so canceling ends Plus right away and stops the retries.
+    case unpaid
+  }
+
+  let state: State
+  /// When renewing Plus would end if canceled, or when ending Plus ends; nil when unpaid.
+  let periodEnd: Date?
 }
 
 struct AppleSubscriptionSynchronization: Equatable {

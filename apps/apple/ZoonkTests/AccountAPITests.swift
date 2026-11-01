@@ -127,26 +127,6 @@ final class AccountAPITests: XCTestCase {
     XCTAssertEqual(synchronization.account.account.subscription?.provider, "apple")
   }
 
-  func testAWebPlusThatAlreadyChangedIsNotAFailure() async {
-    let api = AccountAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: WebPlusConflictTransport()))
-
-    do {
-      try await api.cancelWebPlus(token: "test-session")
-      XCTFail("Expected the plan to have changed")
-    } catch {
-      XCTAssertEqual(error as? AccountAPIError, .webPlusChanged)
-    }
-
-    do {
-      try await api.keepWebPlus(token: "test-session")
-      XCTFail("Expected the plan to have changed")
-    } catch {
-      XCTAssertEqual(error as? AccountAPIError, .webPlusChanged)
-    }
-  }
-
   func testInvalidAppleSubscriptionResponseRemainsDistinct() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -245,23 +225,6 @@ private struct CurrentAccountTransport: ClientTransport {
       HTTPBody(
         #"{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":false,"subscription":null},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}}"#
       )
-    )
-  }
-}
-
-private struct WebPlusConflictTransport: ClientTransport {
-  func send(
-    _ request: HTTPRequest,
-    body: HTTPBody?,
-    baseURL: URL,
-    operationID: String
-  ) async throws -> (HTTPResponse, HTTPBody?) {
-    XCTAssertTrue(["cancelStripeSubscription", "resumeStripeSubscription"].contains(operationID))
-    XCTAssertNil(body)
-
-    return (
-      HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
-      HTTPBody(#"{"error":{"code":"CONFLICT","message":"Nothing renews"}}"#)
     )
   }
 }

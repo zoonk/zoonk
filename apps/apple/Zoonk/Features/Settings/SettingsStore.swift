@@ -14,9 +14,8 @@ final class SettingsStore {
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
   let freePlan: Resource<FreePlan>
-  /// Plus bought on the web that can still be canceled or kept, or `.notFound` without one. It asks
-  /// Stripe.
-  let webPlus: Resource<WebPlusCancellation>
+  /// `.notFound` without Plus bought on the website, and for a guest.
+  let webPlus: Resource<WebPlus>
 
   /// Kept with the learner it's about, so the next learner never sees it.
   private struct Notice {
@@ -73,17 +72,30 @@ final class SettingsStore {
     preferenceSaves = QueuedSaves(preferences, cache: cache)
     memorySaves = QueuedSaves(memory, cache: cache)
     freePlan = cache.resource(audience: .everyone) { _ in try await api.getFreePlan() }
-    webPlus = signedIn([.userSubscription]) {
-      try await api.getWebPlusCancellation(token: $0)
-    }
+    webPlus = signedIn([.userSubscription]) { try await api.getWebPlus(token: $0) }
   }
 
-  /// Without Plus, a renewal the website couldn't charge can still be canceled. A guest has none,
-  /// and the API answers a guest as signed out.
-  func unpaidWebPlus(
-    for subscription: AccountSubscription?, hasAccount: Bool
-  ) -> Resource<WebPlusCancellation>? {
-    hasAccount && subscription == nil ? webPlus : nil
+  /// False when it failed. Otherwise the plan is read again before this returns, so it shows what
+  /// canceling did, or what changed meanwhile.
+  func cancelWebPlus() async -> Bool {
+    await changeWebPlus { [api] in try await api.cancelWebPlus(token: $0.bearerToken) }
+  }
+
+  /// False when it failed. Otherwise the plan is read again before this returns.
+  func keepWebPlus() async -> Bool {
+    await changeWebPlus { [api] in try await api.keepWebPlus(token: $0.bearerToken) }
+  }
+
+  private func changeWebPlus(_ write: (AuthenticatedSession) async throws -> Void) async -> Bool {
+    switch await cache.mutate(invalidating: [.userSubscription], write) {
+    case .done:
+      await webPlus.refresh()
+      return true
+    case .failed:
+      return false
+    case .obsolete:
+      return true
+    }
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {

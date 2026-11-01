@@ -318,85 +318,6 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  /// False when it failed. Plus set to end, or nothing left to cancel anymore, refreshes the account
-  /// and what's left to cancel. A session that ended meanwhile fails; an unauthorized answer signs
-  /// that session out.
-  func cancelWebPlus() async -> Bool {
-    guard let authenticatedSession else {
-      return false
-    }
-
-    do {
-      try await api.cancelWebPlus(token: authenticatedSession.bearerToken)
-    } catch AccountAPIError.webPlusChanged {
-      // Already canceled elsewhere: reading the plan again shows that.
-    } catch AccountAPIError.unauthorized {
-      await expire(authenticatedSession)
-      return false
-    } catch {
-      return false
-    }
-
-    guard self.authenticatedSession == authenticatedSession else {
-      return false
-    }
-
-    subscriptionChanged?()
-    await reloadAccount(for: authenticatedSession)
-    return true
-  }
-
-  /// False when it failed. Plus renewing again, or a renewal that can't be turned back on anymore,
-  /// refreshes the account and what's left to cancel; Plus renewing again shows even when that read
-  /// fails, unless the account changed meanwhile. A session that ended meanwhile fails; an
-  /// unauthorized answer signs that session out.
-  func keepWebPlus() async -> Bool {
-    guard let authenticatedSession else {
-      return false
-    }
-
-    let keepRevision = accountRefreshRevision
-    let renews: Bool
-    do {
-      try await api.keepWebPlus(token: authenticatedSession.bearerToken)
-      renews = true
-    } catch AccountAPIError.webPlusChanged {
-      renews = false
-    } catch AccountAPIError.unauthorized {
-      await expire(authenticatedSession)
-      return false
-    } catch {
-      return false
-    }
-
-    guard self.authenticatedSession == authenticatedSession else {
-      return false
-    }
-
-    if renews, accountRefreshRevision == keepRevision, var account {
-      account.account.subscription?.endsAt = nil
-      state = .signedIn(account)
-    }
-
-    subscriptionChanged?()
-    await reloadAccount(for: authenticatedSession)
-    return true
-  }
-
-  /// A refresh that started before the change must not bring back the account it replaced.
-  private func reloadAccount(for session: AuthenticatedSession) async {
-    accountRefreshRevision = UUID()
-    let revision = accountRefreshRevision
-
-    guard let account = try? await api.getCurrentAccount(token: session.bearerToken),
-      isCurrentAccountSession(session), accountRefreshRevision == revision
-    else {
-      return
-    }
-
-    state = .signedIn(account)
-  }
-
   func updateProfile(name: String, username: String) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut
@@ -891,7 +812,7 @@ final class SessionStore {
       return .disposableEmail
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase, .webPlusChanged:
+    case .invalidAppStorePurchase:
       return .signIn
     case .invalidEmail:
       return .invalidEmail
@@ -924,7 +845,7 @@ final class SessionStore {
       return .accountDeletion
     case .invalidCode:
       return .invalidCode
-    case .invalidAppStorePurchase, .webPlusChanged:
+    case .invalidAppStorePurchase:
       return .accountDeletion
     case .invalidEmail:
       return .invalidEmail
