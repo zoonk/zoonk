@@ -512,7 +512,9 @@ private struct ArrangeWordsView: View {
         text: Text(
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
-      LessonQuestionText(text: sentence.translation)
+      ReadingPromptText(
+        sentence: sentence.translation, sentenceWordOptions: exercise.sentenceWordOptions,
+        isAnswered: context.result != nil)
     }
   }
 
@@ -573,6 +575,79 @@ private struct ArrangeWordsView: View {
     } else {
       context.select(
         isListening ? .listening(arrangedWords: words) : .reading(arrangedWords: words))
+    }
+  }
+}
+
+private struct ReadingPromptText: View {
+  @ScaledMetric(relativeTo: .title2) private var wordSpacing = 6
+  @State private var shownHint: Int?
+
+  let sentence: String
+  let sentenceWordOptions: [LanguageExercise.WordOption]
+  let isAnswered: Bool
+
+  var body: some View {
+    let prompt = ReadingPromptHints.stripWrappingQuotes(sentence)
+    let words = ReadingPromptHints.words(in: prompt, sentenceWordOptions: sentenceWordOptions)
+    let hinted = words.indices.filter { words[$0].translation != nil }
+
+    FlowLayout(spacing: prompt.contains(" ") ? wordSpacing : 0, alignment: .firstTextBaseline) {
+      ForEach(words.indices, id: \.self) { index in
+        if let translation = words[index].translation {
+          HintedWord(word: words[index].word, translation: translation, isShown: shows(index))
+        } else {
+          Text(words[index].word)
+        }
+      }
+    }
+    .font(.title2.weight(.semibold))
+    .foregroundStyle(isAnswered ? .secondary : .primary)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(prompt)
+    .accessibilityAddTraits(.isHeader)
+    .accessibilityActions {
+      ForEach(hinted, id: \.self) { index in
+        Button(words[index].word) { shownHint = index }
+      }
+    }
+  }
+
+  private func shows(_ index: Int) -> Binding<Bool> {
+    Binding {
+      shownHint == index
+    } set: { isShown in
+      if isShown {
+        shownHint = index
+      } else if shownHint == index {
+        shownHint = nil
+      }
+    }
+  }
+}
+
+/// Main's dotted underline: the word has more to show, without reading as a link.
+private struct HintedWord: View {
+  let word: String
+  let translation: String
+  @Binding var isShown: Bool
+
+  var body: some View {
+    Button {
+      isShown = true
+    } label: {
+      Text(word)
+        .underline(pattern: .dot, color: .secondary)
+        .contentShape(.rect.inset(by: -8))
+    }
+    .buttonStyle(.plain)
+    .popover(isPresented: $isShown, arrowEdge: .top) {
+      Text(translation)
+        .font(.headline)
+        .foregroundStyle(.primary)
+        .padding(.horizontal)
+        .padding(.vertical, 10)
+        .presentationCompactAdaptation(.popover)
     }
   }
 }

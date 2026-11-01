@@ -271,7 +271,7 @@ enum LessonGrading {
   }
 
   /// JavaScript's `\p{L}`, `\p{M}` and `\p{N}`.
-  private static func isWordCharacter(_ scalar: Unicode.Scalar) -> Bool {
+  static func isWordCharacter(_ scalar: Unicode.Scalar) -> Bool {
     switch scalar.properties.generalCategory {
     case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter, .modifierLetter, .otherLetter,
       .nonspacingMark, .spacingMark, .enclosingMark,
@@ -286,14 +286,18 @@ enum LessonGrading {
   /// it: at spaces, with punctuation kept on its word, and without a space it's one word, as core
   /// keeps "Mexa-se!" whole. Japanese, the one app language without spaces, splits into phrases.
   static func segmentWords(_ text: String) -> [String] {
-    // Spaces before punctuation go, so "Oui !" is one word.
-    let normalized = text.replacing(/(\S)\s+([!?.,;:。、！？؟])/) { "\($0.output.1)\($0.output.2)" }
+    let normalized = normalizePunctuation(text)
 
     guard normalized.contains(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/) else {
       return normalized.split(separator: " ").map(String.init)
     }
 
     return normalized.split(whereSeparator: \.isWhitespace).flatMap { japanesePhrases(String($0)) }
+  }
+
+  /// Spaces before punctuation go, so "Oui !" is one word.
+  static func normalizePunctuation(_ text: String) -> String {
+    text.replacing(/\s+(?=[!?.,;:。、！？؟])/, with: "")
   }
 
   private enum PhraseScript {
