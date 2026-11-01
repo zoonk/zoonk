@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.stats
 
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -17,8 +15,7 @@ import java.time.temporal.TemporalAdjusters
 internal class FakeStatsApi(
     val studied: Boolean,
 ) : StatsApi {
-    var activityFails = false
-    var verdicts =
+    private val verdicts =
         """"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},""" +
             """"weekSpread":{"high":90,"low":60}"""
 
@@ -50,23 +47,19 @@ internal class FakeStatsApi(
         )
 
     override suspend fun activity(session: AuthenticatedSession): CurrentUserActivityResponseActivity =
-        if (activityFails) {
-            throw ApiException(ApiError.Network)
-        } else {
-            ApiJson.decodeFromString(
-                """{"learningDays":12,"totalLearningSeconds":5400,"totalLessonCompletions":20,"days":[${yearOf { day, ago ->
-                    val count =
-                        if (ago == 0) {
-                            5
-                        } else if (ago == 1) {
-                            3
-                        } else {
-                            (ago * 7 % 11).takeIf { ago < 60 && it < 5 } ?: 0
-                        }
-                    """{"activitiesCompleted":$count,"date":"$day","lessonCompletions":0}"""
-                }}]}""",
-            )
-        }
+        ApiJson.decodeFromString(
+            """{"learningDays":12,"totalLearningSeconds":5400,"totalLessonCompletions":20,"days":[${yearOf { day, ago ->
+                val count =
+                    if (ago == 0) {
+                        5
+                    } else if (ago == 1) {
+                        3
+                    } else {
+                        (ago * 7 % 11).takeIf { ago < 60 && it < 5 } ?: 0
+                    }
+                """{"activitiesCompleted":$count,"date":"$day","lessonCompletions":0}"""
+            }}]}""",
+        )
 
     override suspend fun score(session: AuthenticatedSession): CurrentUserScoreResponseScore =
         ApiJson.decodeFromString(

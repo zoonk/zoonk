@@ -129,6 +129,19 @@ class SignInTest {
         }
 
     @Test
+    fun closingGooglesSheetIsNotAFailure() =
+        runTest {
+            val (sessions, account) = stores()
+            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+
+            signIn.startGoogle()
+            signIn.finishGoogle(GoogleIdToken.Canceled)
+
+            assertNull(signIn.work)
+            assertNull(signIn.failure)
+        }
+
+    @Test
     fun aGoogleAnswerArrivingAfterAnotherSignInChangesNothing() =
         runTest {
             val (sessions, account) = stores()

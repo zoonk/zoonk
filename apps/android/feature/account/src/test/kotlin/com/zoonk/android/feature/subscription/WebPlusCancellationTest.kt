@@ -12,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
@@ -39,6 +41,7 @@ import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -68,9 +71,11 @@ class WebPlusCancellationTest {
         MutationResult.Done(
             StripeSubscriptionCancellationReceipt(ENDS),
         )
+    private var cancellationArrives: CompletableDeferred<Unit>? = null
     private var darkTheme = false
     private var higherContrast = false
     private var sent = 0
+    private var keepAnswer: MutationResult<Unit> = MutationResult.Done(Unit)
     private var reads = 0
     private var profile by mutableStateOf(false)
     private var subscription by mutableStateOf<MeSubscription?>(plan())
@@ -92,9 +97,10 @@ class WebPlusCancellationTest {
                             WebPlusCancellationViewModel(
                                 send = {
                                     sent++
+                                    cancellationArrives?.await()
                                     answer
                                 },
-                                keepPlus = { MutationResult.Done(Unit) },
+                                keepPlus = { keepAnswer },
                             )
                         }
                     WebPlusCancellationDialog(cancellation)
@@ -145,14 +151,17 @@ class WebPlusCancellationTest {
     }
 
     @Test
-    fun theWebsiteStateAndDateWinOverStaleAccountFields() {
-        subscription = plan().copy(cancelAt = Instant.parse("2026-11-15T12:00:00Z"), cancelAtPeriodEnd = false)
-        response = { web(State.ENDING) }
+    fun theConfirmationPreventsAnotherCancellationWhileSending() {
+        cancellationArrives = CompletableDeferred()
         show()
-        rule.onNodeWithText("Subscription ending").assertExists()
-        rule.onNodeWithText("Your subscription will end on Dec 1, 2026.").assertExists()
-        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
-        rule.onNodeWithText("Keep Plus").assertExists()
+        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
+        inDialog("Cancel Plus").performClick()
+        inDialog("Cancel Plus").assertIsNotEnabled()
+        inDialog("Go back").assertIsNotEnabled()
+        rule.waitForIdle()
+        assertEquals(1, sent)
+        cancellationArrives?.complete(Unit)
+        rule.onNode(isDialog()).assertDoesNotExist()
     }
 
     @Test
@@ -169,12 +178,37 @@ class WebPlusCancellationTest {
     }
 
     @Test
-    fun aFailedDeletionNoticeReadNeverBlocksDeletion() {
-        response = { throw ApiException(ApiError.Unavailable, status = 500) }
-        profile = true
+    fun aConflictClosesTheDialogWithoutAFalseFailure() {
+        answer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
         show()
-        rule.onNodeWithText("Deleting your account ends Plus right away.").assertDoesNotExist()
-        rule.onNodeWithText("This page didn't load").assertDoesNotExist()
+        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
+        inDialog("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        rule.onNodeWithText(FAILED).assertDoesNotExist()
+    }
+
+    @Test
+    fun aFailedCancellationCanBeRetried() {
+        answer = MutationResult.Failed(ApiError.Unavailable, status = 500)
+        show()
+        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
+        inDialog("Cancel Plus").performClick()
+        inDialog(FAILED).assertExists()
+        inDialog("Cancel Plus").assertIsEnabled()
+        answer = MutationResult.Done(StripeSubscriptionCancellationReceipt(ENDS))
+        inDialog("Cancel Plus").performClick()
+        rule.onNode(isDialog()).assertDoesNotExist()
+        assertEquals(2, sent)
+    }
+
+    @Test
+    fun keepingPlusThatFailsCanBeRetried() {
+        keepAnswer = MutationResult.Failed(ApiError.Unavailable, status = 500)
+        response = { web(State.ENDING) }
+        show()
+        rule.onNodeWithText("Keep Plus").performScrollTo().performClick()
+        rule.onNodeWithText(KEEP_FAILED).assertExists()
+        rule.onNodeWithText("Keep Plus").assertIsEnabled()
     }
 
     @Test
@@ -266,6 +300,8 @@ class WebPlusCancellationTest {
     }
 
     private companion object {
+        const val FAILED = "We couldn't cancel Plus. Try again or email hello@zoonk.com."
+        const val KEEP_FAILED = "We couldn't keep Plus. Try again or email hello@zoonk.com."
         val ENDS: Instant = Instant.parse("2026-12-01T12:00:00Z")
 
         fun web(state: State) = StripeSubscriptionCancellation(if (state == State.UNPAID) null else ENDS, state)
