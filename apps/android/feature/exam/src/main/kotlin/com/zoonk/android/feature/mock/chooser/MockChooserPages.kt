@@ -322,7 +322,6 @@ private fun ChooserHero(
     }
 }
 
-/** Under the picked mock: what the last Start found, then Start, which fills the page's width as on a phone. */
 @Composable
 private fun StartBar(
     status: ChooserStatus,

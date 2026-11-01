@@ -88,10 +88,6 @@ internal fun SetupColumn(
     }
 }
 
-/**
- * What [SetupColumn] lays a step out in: the [fold] of an open book a test's question spreads across, the one
- * column's [scroll], and the [height] the one column's content fills at least.
- */
 internal data class SetupPage(
     val fold: PageFold?,
     val scroll: ScrollState,

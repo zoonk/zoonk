@@ -131,7 +131,6 @@ fun pageDirective(
     )
 }
 
-/** What a page has room for: where a [fold] crosses it, Material's [window] directive and the [spacer] between panes. */
 private class PageRoom(
     val fold: PageFold?,
     val window: PaneScaffoldDirective,
@@ -140,7 +139,6 @@ private class PageRoom(
     private val splits: Boolean,
     private val fontScale: Float,
 ) {
-    /** Two panes fit, each a phone's column, one that grows [withText] when the text is large. */
     fun fits(withText: Boolean): Boolean = splits && narrowestPane >= MINIMUM_PANE * (if (withText) fontScale.coerceAtLeast(1f) else 1f)
 }
 
