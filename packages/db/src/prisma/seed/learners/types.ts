@@ -1,4 +1,11 @@
 import { type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
+import { type CefrLevel } from "@zoonk/utils/cefr";
+import { type toLevelLabels } from "../../../../../core/src/language/level-test/level-test-rules";
+import { type ExplanationView } from "../../../../../core/src/view-models/explain/explanation-contract";
+import {
+  type OnboardingAnswerInput,
+  type OnboardingOwnLevel,
+} from "../../../../../core/src/view-models/onboarding/onboarding-contract";
 import {
   type BuddyGlasses,
   type BuddyKind,
@@ -62,7 +69,23 @@ export type SeedGoal = {
   exam?: string;
   prompt: string;
   title: string;
-  details: Omit<UnderstoodGoal, "kind" | "subject" | "title"> & Prisma.InputJsonObject;
+  details: Pick<
+    UnderstoodGoal,
+    | "examName"
+    | "examTarget"
+    | "examYear"
+    | "institution"
+    | "purpose"
+    | "reason"
+    | "targetCourse"
+    | "targetScore"
+  > & {
+    answered?: OnboardingAnswerInput["question"][];
+    level?: OnboardingOwnLevel | CefrLevel | `${CefrLevel}+`;
+    levelNote?: UnderstoodGoal["level"];
+    skillLevels?: ReturnType<typeof toLevelLabels>;
+    question?: ExplanationView["question"];
+  };
   targetDate?: Date;
   dailyMinutes: number;
   studyTime: string;

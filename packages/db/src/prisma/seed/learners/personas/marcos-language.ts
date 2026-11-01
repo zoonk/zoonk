@@ -72,7 +72,7 @@ const marcos: SeedLearner = {
       level: "A2",
       reason: "Mudança para Toronto com a esposa",
       skillLevels: { listening: "A2", reading: "B1", speaking: "A2", writing: "A2" },
-      targetLevel: "B1+",
+      targetScore: "B1+",
     },
     key: "toronto",
     kind: "language",

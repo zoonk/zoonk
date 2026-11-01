@@ -55,7 +55,8 @@ export const lucasBuddy: SeedLearner = {
     dailyMinutes: 15,
     details: {
       answered: ["purpose", "targetDate", "level", "buddy", "placement", "schedule"],
-      level: "nada ainda",
+      level: "none",
+      levelNote: "nada ainda",
       purpose: "overview",
     },
     key: "quantum-overview",

@@ -52,7 +52,8 @@ export const mayaHugeGoal: SeedLearner = {
     dailyMinutes: 45,
     details: {
       answered: ["purpose", "targetDate", "level", "buddy", "placement", "schedule"],
-      level: "nothing yet",
+      level: "none",
+      levelNote: "nothing yet",
       purpose: "deep",
       reason: "Wants to read papers about quantum computers",
     },
