@@ -7,22 +7,87 @@ private struct MockResultChoices {
   var essayComments: [String: Set<String>] = [:]
   var plan = MockPlanAnswers()
   var speakingTask: MockSpeaking.Task?
+  /// The question to review at the top of its list where the learner last left it, nil at the
+  /// list's start: either layout opens the list there.
+  var reviewPlace: String?
+}
+
+extension EnvironmentValues {
+  /// Called as a question to review, or the header over them, comes on or leaves its list's screen.
+  @Entry fileprivate var reviewRowShown: ((_ id: String, _ isShown: Bool) -> Void)?
+}
+
+private let reviewHeader = "questions-to-review"
+
+/// The list holding the questions to review, which folding makes again: it opens where the
+/// learner left them. The place settles once its rows stop moving, since a `List` reports no
+/// scroll phases; a list taken away by a fold settles nothing, as its task ends with it.
+private struct ReviewList<Content: View>: View {
+  let review: [MockReviewItem]
+  @Binding var place: String?
+  @ViewBuilder let content: Content
+
+  @State private var shown: Set<String> = []
+
+  var body: some View {
+    let top = shown.contains(reviewHeader) ? nil : review.first { shown.contains($0.id) }?.id
+
+    ScrollViewReader { proxy in
+      List {
+        content
+      }
+      .environment(\.reviewRowShown) { id, isShown in
+        if isShown {
+          shown.insert(id)
+        } else {
+          shown.remove(id)
+        }
+      }
+      // At its first size, and again as unfolding resizes it, which scrolls it away.
+      .onGeometryChange(for: CGSize.self) {
+        $0.size
+      } action: { _ in
+        if let place {
+          proxy.scrollTo(place, anchor: .top)
+        }
+      }
+      .task(id: top) {
+        try? await Task.sleep(for: .milliseconds(300))
+
+        if !Task.isCancelled {
+          place = top
+        }
+      }
+    }
+  }
 }
 
 struct MockResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var choices = MockResultChoices()
+  @State private var isAtHinge = false
   let run: MockRun
   let view: MockView
 
   var body: some View {
+    // With nothing to review, an open book reads the areas and what the mock showed after the
+    // fold, so that page isn't left with only the notes. Tablets keep them with the score.
+    let diagnosisAfterFold = isAtHinge && view.review.isEmpty
+
     PaneSplit {
       List {
-        resultSections
+        scoreSections
+        if !diagnosisAfterFold {
+          diagnosisSections
+        }
+        partSections
       }
     } secondary: {
-      List {
+      ReviewList(review: view.review, place: $choices.reviewPlace) {
+        if diagnosisAfterFold {
+          diagnosisSections
+        }
         planSections
         reviewSections
       }
@@ -32,12 +97,19 @@ struct MockResultView: View {
       .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) { actionBar }
     } single: {
-      List {
-        resultSections
+      ReviewList(review: view.review, place: $choices.reviewPlace) {
+        scoreSections
+        diagnosisSections
+        partSections
         planSections
         reviewSections
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+    }
+    .onGeometryChange(for: Bool.self) {
+      PaneSpace($0).hinge != nil
+    } action: {
+      isAtHinge = $0
     }
     .navigationTitle(MockLabels.title(number: view.number))
     .milestoneCeremony(view.day.ceremony)
@@ -53,12 +125,16 @@ struct MockResultView: View {
   }
 
   @ViewBuilder
-  private var resultSections: some View {
-    if let result = view.result {
-      if result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
-        MockScoreSections(view: view, result: result)
-      }
+  private var scoreSections: some View {
+    if let result = view.result, result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
+      MockScoreSections(view: view, result: result)
+    }
+  }
 
+  /// The areas and what the mock showed.
+  @ViewBuilder
+  private var diagnosisSections: some View {
+    if let result = view.result {
       if result.areas.count > 1 {
         MockAreaSection(result: result, opened: $choices.opened)
       } else if result.topics.count > 1 {
@@ -71,7 +147,10 @@ struct MockResultView: View {
 
       MockInsightsSection(result: result)
     }
+  }
 
+  @ViewBuilder
+  private var partSections: some View {
     DayMomentSections(result: view.day)
 
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
@@ -1017,6 +1096,8 @@ private struct MockPlanSection: View {
 }
 
 private struct MockReviewSection: View {
+  @Environment(\.reviewRowShown) private var rowShown
+
   let items: [MockReviewItem]
   @Binding var opened: Set<String>
 
@@ -1076,9 +1157,12 @@ private struct MockReviewSection: View {
               .lineLimit(2)
           }
         }
+        .id(item.id)
+        .onScrollVisibilityChange(threshold: 0.5) { rowShown?(item.id, $0) }
       }
     } header: {
       Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
+        .onScrollVisibilityChange(threshold: 0.5) { rowShown?(reviewHeader, $0) }
     }
   }
 }
