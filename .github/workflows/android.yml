@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 env:
-  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx6g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
+  # Each job compiles from scratch, so Kotlin's incremental bookkeeping only slows it down.
+  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx6g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g -Pkotlin.incremental=false
 
 jobs:
   changes:
@@ -29,13 +30,10 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      COMPILE_VARIANT: release
-      COMPILE_TASKS: compileReleaseKotlin
     concurrency:
       group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps: &compile-steps
+    steps:
       - &checkout
         name: Check out code
         uses: actions/checkout@v7
@@ -47,12 +45,6 @@ jobs:
           distribution: temurin
           java-version: 25
 
-      - &android
-        name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: platform-tools platforms;android-37.0 build-tools;36.0.0
-
       - &gradle
         name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
@@ -61,12 +53,12 @@ jobs:
           cache-read-only: false
 
       - name: Compile shared inputs
-        run: make -C apps/android build BUILD_TASKS="${{ env.COMPILE_TASKS }}"
+        run: make -C apps/android build BUILD_TASKS=compileReleaseKotlin
 
       - name: Share compiled task outputs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: android-compile-cache-${{ env.COMPILE_VARIANT }}
+          name: android-compile-cache-release
           path: |
             ~/.gradle/caches/build-cache-1/*
             !~/.gradle/caches/build-cache-1/*.lock
@@ -82,47 +74,30 @@ jobs:
           name: profile-${{ github.job }}
           path: apps/android/build/reports/profile/
 
-  compile-tests:
-    name: compile (tests)
+  tests:
+    name: tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      COMPILE_VARIANT: tests
-      COMPILE_TASKS: compileDebugUnitTestKotlin :api:compileTestKotlin
     concurrency:
-      group: ${{ github.workflow }}-compile-tests-${{ github.event.pull_request.number || github.ref }}
+      group: ${{ github.workflow }}-tests-${{ matrix.shard }}-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps: *compile-steps
-
-  tests:
-    name: tests
-    needs: compile-tests
-    if: ${{ !cancelled() && needs.compile-tests.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: ${{ github.workflow }}-tests-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - *checkout
       - *java
-      - *android
       - *gradle
-      - name: Restore compiled task outputs
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: android-compile-cache-tests
-          path: ~/.gradle/caches/build-cache-1
-          digest-mismatch: error
       - name: Run Gradle
-        run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testForks=2"
+        run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testShard=${{ matrix.shard }}/${{ strategy.job-total }}"
       - name: Upload task profiles
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: profile-gradle-tests
+          name: profile-tests-${{ matrix.shard }}
           path: apps/android/build/reports/profile/
 
   gradle:
@@ -147,7 +122,6 @@ jobs:
     steps:
       - *checkout
       - *java
-      - *android
       - *gradle
 
       - name: Restore compiled task outputs
@@ -179,7 +153,6 @@ jobs:
     steps:
       - *checkout
       - *java
-      - *android
       - *gradle
       - name: Check formatting and lint detectors
         run: make -C apps/android lint LINT_TASKS="spotlessCheck :lint-checks:test"
