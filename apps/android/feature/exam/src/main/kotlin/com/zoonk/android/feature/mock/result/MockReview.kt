@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mock.result
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,11 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,23 +75,27 @@ import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * Where the learner is in the questions to review. A phone reads them in a sheet and an open book on
  * the page after the fold, and folding recreates the screen, so the screen saves whether the learner
- * is in them and the question at the top of what they read. Each list that shows them brings that
- * question back to its top once, since a recreated screen can lay out without its fold first.
+ * is in them and the question at the top of what they read. Both are noted as the learner scrolls,
+ * since the screen lays out again without its fold before it's saved. Each list that shows them
+ * brings that question back to its top once.
  */
 @Stable
 internal class ReviewPlace(
     open: Boolean,
     private var anchor: Int?,
 ) {
-    /** Whether a phone shows the sheet. */
+    /** Whether the learner is in the questions, which a phone shows in the sheet. */
     var open by mutableStateOf(open)
         private set
     private var section: LayoutCoordinates? = null
     private val entries = HashMap<Int, LayoutCoordinates>()
+    private var list: LayoutCoordinates? = null
+    private var listAt: Offset? = null
 
     fun openSheet() {
         open = true
@@ -113,28 +121,43 @@ internal class ReviewPlace(
         entries[index] = coordinates
     }
 
-    private fun saved(): IntArray {
+    /** Notes where the learner is once a list they see moves, which a scroll does; a list just placed somewhere new hasn't. */
+    fun listMoved(coordinates: LayoutCoordinates) {
+        val at = coordinates.positionInWindow()
+        val scrolled = coordinates === list && at != listAt
+        list = coordinates
+        listAt = at
+        if (!scrolled) return
+
         val top = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
         val inline = section?.takeIf { it.isAttached }
-        val (reading, at) =
-            when {
-                inline == null -> open to (if (open) top ?: anchor ?: 0 else null)
-
-                top == null -> false to null
-
-                // On the page, the learner reads the questions once their title has scrolled away.
-                inline.boundsInWindow().top > inline.positionInWindow().y -> true to top
-
-                // With their title in view, they're as open as they were, at the question in view.
-                else -> open to top
+        when {
+            inline == null -> {
+                anchor = top ?: anchor
             }
-        return intArrayOf(if (reading) 1 else 0, at ?: -1)
+
+            top == null -> {
+                open = false
+                anchor = null
+            }
+
+            // On the page, the learner reads the questions once their title has scrolled away.
+            inline.boundsInWindow().top > inline.positionInWindow().y -> {
+                open = true
+                anchor = top
+            }
+
+            // With their title in view, they're as far in as they were, at the question in view.
+            else -> {
+                anchor = top
+            }
+        }
     }
 
     companion object {
         val Saver =
             Saver<ReviewPlace, IntArray>(
-                save = { it.saved() },
+                save = { intArrayOf(if (it.open) 1 else 0, it.anchor ?: -1) },
                 restore = { ReviewPlace(open = it[0] == 1, anchor = it[1].takeIf { at -> at >= 0 }) },
             )
     }
@@ -167,7 +190,8 @@ internal fun ReviewSheet(
         // The title stays while a long review scrolls under it.
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.mock_result_review), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) { ReviewList(view, app, place) }
+            val scroll = rememberScrollState()
+            Column(Modifier.weight(1f, fill = false).verticalScroll(scroll)) { ReviewList(view, app, place, scroll) }
         }
     }
 }
@@ -177,13 +201,14 @@ private fun ReviewList(
     view: MockExam,
     app: AppContainer,
     place: ReviewPlace,
+    sheetScroll: ScrollState? = null,
 ) {
     val words = view.trueFalseWords
     val scope = rememberCoroutineScope()
     val requesters = remember(view.review.size) { List(view.review.size) { BringIntoViewRequester() } }
     val restore = remember { Restore(place.restoring()) }
 
-    Column {
+    Column(Modifier.onGloballyPositioned(place::listMoved)) {
         view.review.forEachIndexed { index, entry ->
             if (index > 0) HorizontalDivider()
             val continued =
@@ -201,12 +226,15 @@ private fun ReviewList(
                     place.entryPlaced(index, coordinates)
                     if (restore.at == index && !restore.done) {
                         restore.done = true
-                        // Asked to show a rect as tall as the window, whatever scrolls the list brings the question's top to its own.
-                        val window = coordinates.findRootCoordinates().size
                         scope.launch {
-                            requesters[index].bringIntoView(
-                                Rect(0f, 0f, coordinates.size.width.toFloat(), window.height.toFloat()),
-                            )
+                            if (sheetScroll != null) {
+                                // The sheet first lays out taller than the window as it slides up, so it scrolls to the question itself.
+                                sheetScroll.scrollTo(coordinates.positionInParent().y.roundToInt())
+                            } else {
+                                // Asked to show a rect as tall as the window, whatever scrolls the page brings the question's top to its own.
+                                val window = coordinates.findRootCoordinates().size
+                                requesters[index].bringIntoView(Rect(0f, 0f, coordinates.size.width.toFloat(), window.height.toFloat()))
+                            }
                         }
                     }
                 },
