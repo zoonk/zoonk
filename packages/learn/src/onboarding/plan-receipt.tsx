@@ -4,6 +4,7 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { Fragment } from "react";
 import { FactChip, FactChips } from "../_components/fact-chips";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -143,12 +144,14 @@ export function PlanReceiptChips({ className, goal }: { className?: string; goal
   return (
     <FactChips aria-label={t("Your plan so far")} className={className}>
       {facts.map((fact) => (
-        <FactChip
-          className={cn(fact.id === "title" && "text-foreground", fact.count && "font-mono")}
-          key={fact.id}
-        >
-          {fact.count ?? fact.value}
-        </FactChip>
+        <Fragment key={fact.id}>
+          <FactChip
+            className={cn(fact.id === "title" && "text-foreground", fact.count && "font-mono")}
+          >
+            {fact.count ?? fact.value}
+          </FactChip>
+          {fact.note && <FactChip>{fact.note}</FactChip>}
+        </Fragment>
       ))}
     </FactChips>
   );
