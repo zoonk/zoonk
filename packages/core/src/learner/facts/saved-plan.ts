@@ -5,7 +5,12 @@ import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 
 function loadSavedPlan(goalId: string) {
   return prisma.plan.findUnique({
-    include: { items: { orderBy: { position: "asc" } } },
+    include: {
+      items: {
+        omit: { createdAt: true, planId: true, updatedAt: true },
+        orderBy: { position: "asc" },
+      },
+    },
     where: { goalId },
   });
 }
