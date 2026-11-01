@@ -95,6 +95,15 @@ jobs:
       - *checkout
       - *java
       - *gradle
+      - name: Read the Robolectric version
+        id: robolectric
+        run: echo "version=$(sed -n 's/^robolectric = "\(.*\)"$/\1/p' apps/android/gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+      # Robolectric fetches its Android jars from Maven Central while the tests run, and a failed fetch fails them.
+      - name: Cache Robolectric's Android jars
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ steps.robolectric.outputs.version }}-${{ hashFiles('apps/android/core/data/src/testFixtures/resources/robolectric.properties') }}
       - name: Run Gradle
         run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testShard=${{ matrix.shard }}/${{ strategy.job-total }}"
       - name: Upload task profiles
