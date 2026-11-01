@@ -61,6 +61,10 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
   }
 };
 
+const tap: BrowserCommand<[{ x: number; y: number }]> = async ({ page }, { x, y }) => {
+  await page.touchscreen.tap(x, y);
+};
+
 export default defineConfig({
   // Discovering a dependency mid-test makes Vite reload the page; prebundle lazy imports too.
   optimizeDeps: {
@@ -87,7 +91,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { emulateMedia, touch },
+            commands: { emulateMedia, tap, touch },
             enabled: true,
             headless: true,
             instances: [

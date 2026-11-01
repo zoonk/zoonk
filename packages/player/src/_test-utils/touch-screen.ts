@@ -21,6 +21,8 @@ type TouchStep = {
 declare module "vitest/browser" {
   // oxlint-disable-next-line typescript/consistent-type-definitions -- Only an interface merges.
   interface BrowserCommands {
+    /** Playwright sends both touches at once, so a busy runner can't stretch a tap into a hold. */
+    tap: (point: Point) => Promise<void>;
     /** Uses driver input because synthetic events skip scrolling and pointer cancellation. */
     touch: (steps: TouchStep[]) => Promise<void>;
   }
@@ -97,10 +99,5 @@ export function swipeUpFrom(from: Locator, distance: number) {
 
 export async function tap(locator: Locator) {
   await expect.element(locator).toBeVisible();
-  const point = centerOf(locator);
-
-  await commands.touch([
-    { touchPoints: [point], type: "touchStart" },
-    { touchPoints: [], type: "touchEnd" },
-  ]);
+  await commands.tap(centerOf(locator));
 }
