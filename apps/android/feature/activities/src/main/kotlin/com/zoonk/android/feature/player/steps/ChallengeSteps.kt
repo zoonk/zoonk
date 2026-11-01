@@ -96,6 +96,7 @@ internal fun ChallengeView(
     result: StepResult?,
     state: LessonPlayerState,
     actions: StepActions,
+    part: StepPart,
 ) {
     val challenge = content.content
     val team = LocalChallengeTeam.current
@@ -103,19 +104,28 @@ internal fun ChallengeView(
 
     when (val progress = challengeProgress(challenge, answer, state.revealed[step.id] ?: 0)) {
         ChallengeProgress.Intro -> {
-            ChallengeIntro(challenge, names)
+            if (part.showsScreen) ChallengeIntro(challenge, names)
         }
 
         is ChallengeProgress.Ended -> {
-            if (result != null) {
-                ChallengeDebriefView(challenge, names, progress.walk.moves)
-            } else {
-                ChallengeConversation(challenge, names, progress.walk.moves, progress, state, actions)
+            when {
+                // On a spread the conversation stays beside its debrief; its outcome opens the debrief.
+                result != null && part == StepPart.Screen -> {
+                    ChallengeConversation(challenge, names, progress.walk.moves, progress, state, actions, part, showsOutcome = false)
+                }
+
+                result != null -> {
+                    ChallengeDebriefView(challenge, names, progress.walk.moves)
+                }
+
+                part.showsScreen -> {
+                    ChallengeConversation(challenge, names, progress.walk.moves, progress, state, actions, part)
+                }
             }
         }
 
         is ChallengeProgress.Deciding -> {
-            ChallengeConversation(challenge, names, progress.walk.moves, progress, state, actions)
+            ChallengeConversation(challenge, names, progress.walk.moves, progress, state, actions, part)
         }
     }
 }
@@ -210,6 +220,8 @@ private fun ChallengeConversation(
     progress: ChallengeProgress,
     state: LessonPlayerState,
     actions: StepActions,
+    part: StepPart,
+    showsOutcome: Boolean = true,
 ) {
     val newest = remember { BringIntoViewRequester() }
     val resources = LocalResources.current
@@ -226,81 +238,97 @@ private fun ChallengeConversation(
 
     LaunchedEffect(moves.size) { if (moves.isNotEmpty()) newest.bringIntoView() }
     // Main's conversation log reads out what a decision brings, in the order it shows.
-    ActivityAnnouncement(
-        if (latest == null) {
-            ""
-        } else {
-            val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
-            (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
-        },
-    )
+    if (part.showsScreen) {
+        ActivityAnnouncement(
+            if (latest == null) {
+                ""
+            } else {
+                val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
+                (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
+            },
+        )
+    }
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        ChallengeMeters(challengeMeters(content, moves), names, moved = moves.isNotEmpty())
-
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            moves.forEach { move ->
-                move.node.messages.forEach { ChallengeMessageView(it, content.team, names) }
-                ChallengePick(names.fill(move.choice.text))
-                ChallengeEffects(move, content, names)
-                move.choice.replies.forEach { ChallengeMessageView(it, content.team, names) }
-                move.choice.timeJump?.let { jump ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        HorizontalDivider(Modifier.weight(1f))
-                        Icon(
-                            painterResource(R.drawable.ic_event_upcoming),
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            names.fill(jump.label),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        HorizontalDivider(Modifier.weight(1f))
-                    }
-                    jump.panel?.let { ChallengePanelView(it, names) }
-                }
-            }
-            if (progress is ChallengeProgress.Deciding) {
-                progress.walk.node.messages.forEach {
-                    ChallengeMessageView(
-                        it,
-                        content.team,
-                        names,
-                    )
-                }
-            }
-        }
+        if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
 
         Box(Modifier.bringIntoViewRequester(newest)) {
             if (progress is ChallengeProgress.Deciding) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    RichText(
-                        text = names.fill(progress.walk.node.prompt),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    )
-                    ChoiceOptions(
-                        options =
-                            progress.walk.node.choices
-                                .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
-                        selectedId = progress.pendingChoiceId,
-                        isChecked = false,
-                        isGuess = false,
-                        locked = state.phase != LessonPhase.Playing,
-                        onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
-                        label = stringResource(R.string.player_challenge_your_options),
-                    )
+                    if (part.showsScreen) {
+                        RichText(
+                            text = names.fill(progress.walk.node.prompt),
+                            modifier = Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        )
+                    }
+                    if (part.showsTurn) {
+                        ChoiceOptions(
+                            options =
+                                progress.walk.node.choices
+                                    .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
+                            selectedId = progress.pendingChoiceId,
+                            isChecked = false,
+                            isGuess = false,
+                            locked = state.phase != LessonPhase.Playing,
+                            onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
+                            label = stringResource(R.string.player_challenge_your_options),
+                        )
+                    }
                 }
-            } else if (progress is ChallengeProgress.Ended) {
+            } else if (progress is ChallengeProgress.Ended && showsOutcome) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
                     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         ChallengeLabel(stringResource(R.string.player_challenge_what_happened), heading = true)
                         RichText(text = names.fill(progress.walk.ending.outcome), style = MaterialTheme.typography.bodyLarge)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChallengeMoves(
+    content: ChallengeStepContent,
+    names: ChallengeNames,
+    moves: List<ChallengeMove>,
+    progress: ChallengeProgress,
+) {
+    ChallengeMeters(challengeMeters(content, moves), names, moved = moves.isNotEmpty())
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        moves.forEach { move ->
+            move.node.messages.forEach { ChallengeMessageView(it, content.team, names) }
+            ChallengePick(names.fill(move.choice.text))
+            ChallengeEffects(move, content, names)
+            move.choice.replies.forEach { ChallengeMessageView(it, content.team, names) }
+            move.choice.timeJump?.let { jump ->
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    HorizontalDivider(Modifier.weight(1f))
+                    Icon(
+                        painterResource(R.drawable.ic_event_upcoming),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        names.fill(jump.label),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    HorizontalDivider(Modifier.weight(1f))
+                }
+                jump.panel?.let { ChallengePanelView(it, names) }
+            }
+        }
+        if (progress is ChallengeProgress.Deciding) {
+            progress.walk.node.messages.forEach {
+                ChallengeMessageView(
+                    it,
+                    content.team,
+                    names,
+                )
             }
         }
     }

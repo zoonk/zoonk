@@ -58,6 +58,7 @@ import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.ReadScene
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.richtext.RichInlineText
 
@@ -106,6 +107,7 @@ fun LanguageStepView(
     locked: Boolean,
     language: LessonLanguage,
     actions: StepActions,
+    part: StepPart,
 ) {
     val languages = language.languages
     val prompt = language.prompt
@@ -115,60 +117,65 @@ fun LanguageStepView(
 
     when (content.kind) {
         StepKind.Alphabet -> {
-            (exercise.content as? ExerciseContent.Alphabet)?.let { AlphabetView(it.content) }
+            if (part.showsScreen) (exercise.content as? ExerciseContent.Alphabet)?.let { AlphabetView(it.content) }
         }
 
         StepKind.Vocabulary -> {
-            exercise.word?.let { VocabularyView(it, content.wordHints, languages.target) }
+            if (part.showsScreen) exercise.word?.let { VocabularyView(it, content.wordHints, languages.target) }
         }
 
         StepKind.MultipleChoice -> {
             (exercise.content as? ExerciseContent.MultipleChoice)?.let {
-                MultipleChoiceView(it.content, (answer as? LessonAnswer.MultipleChoice)?.optionId, result, locked, select)
+                MultipleChoiceView(it.content, (answer as? LessonAnswer.MultipleChoice)?.optionId, result, locked, select, part)
             }
         }
 
         StepKind.Translation -> {
             exercise.word?.let { word ->
-                TranslationView(word, exercise.translationOptions, answer, result, locked, languages, speech, select, actions)
+                TranslationView(word, exercise.translationOptions, answer, result, locked, languages, speech, select, actions, part)
             }
         }
 
         StepKind.FillBlank -> {
-            (exercise.content as? ExerciseContent.FillBlank)?.let {
-                FillBlankView(it.content, exercise.fillBlankOptions, answer, result, locked, languages.target, speech, select)
+            (exercise.content as? ExerciseContent.FillBlank)?.let { blanks ->
+                QuestionWithTurn(part, { blanks.content.question?.let { QuestionText(stripWrappingQuotes(it)) } }) { question ->
+                    FillBlankView(
+                        blanks.content,
+                        exercise.fillBlankOptions,
+                        answer,
+                        result,
+                        locked,
+                        languages.target,
+                        speech,
+                        select,
+                        question,
+                    )
+                }
             }
         }
 
         StepKind.Reading -> {
             exercise.sentence?.let { sentence ->
-                ArrangeWordsView(
-                    answerText = sentence.sentence,
-                    kind = ArrangeKind.Reading,
-                    bank = exercise.wordBankOptions,
-                    answer = answer,
-                    result = result,
-                    locked = locked,
-                    language = languages.target,
-                    speech = speech,
-                    onAnswer = select,
-                ) { ReadingPrompt(sentence.translation, exercise.readingPromptWords) }
+                QuestionWithTurn(part, { ReadingPrompt(sentence.translation, exercise.readingPromptWords) }) { question ->
+                    ArrangeWordsView(
+                        answerText = sentence.sentence,
+                        kind = ArrangeKind.Reading,
+                        bank = exercise.wordBankOptions,
+                        answer = answer,
+                        result = result,
+                        locked = locked,
+                        language = languages.target,
+                        speech = speech,
+                        onAnswer = select,
+                        prompt = question,
+                    )
+                }
             }
         }
 
         StepKind.Listening -> {
             exercise.sentence?.let { sentence ->
-                ArrangeWordsView(
-                    answerText = sentence.translation,
-                    kind = ArrangeKind.Listening,
-                    bank = exercise.wordBankOptions,
-                    answer = answer,
-                    result = result,
-                    locked = locked,
-                    language = languages.learner,
-                    speech = speech,
-                    onAnswer = select,
-                ) {
+                val listen = @Composable {
                     val url = sentence.audioUrl
                     if (url != null && prompt != null) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -192,17 +199,48 @@ fun LanguageStepView(
                         }
                     }
                 }
+                QuestionWithTurn(part, listen) { question ->
+                    ArrangeWordsView(
+                        answerText = sentence.translation,
+                        kind = ArrangeKind.Listening,
+                        bank = exercise.wordBankOptions,
+                        answer = answer,
+                        result = result,
+                        locked = locked,
+                        language = languages.learner,
+                        speech = speech,
+                        onAnswer = select,
+                        prompt = question,
+                    )
+                }
             }
         }
 
         StepKind.MatchColumns -> {
-            (exercise.content as? ExerciseContent.MatchColumns)?.let {
-                MatchColumnsView(it, exercise.matchColumnsRightItems, answer, result != null, locked, select)
+            (exercise.content as? ExerciseContent.MatchColumns)?.let { pairs ->
+                val instruction = stripWrappingQuotes(pairs.question ?: stringResource(R.string.player_language_match_the_pairs))
+                QuestionWithTurn(part, { QuestionText(instruction) }) { question ->
+                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, question)
+                }
             }
         }
 
         else -> {}
     }
+}
+
+/**
+ * A screen whose view keeps the learner's unsent work (words placed, blanks filled, pairs matched)
+ * draws its [question] inside that view, which a spread's turn draws without it, so the work stays
+ * where it was when the book opens or closes.
+ */
+@Composable
+private fun QuestionWithTurn(
+    part: StepPart,
+    question: @Composable () -> Unit,
+    turn: @Composable (question: @Composable () -> Unit) -> Unit,
+) {
+    if (part == StepPart.Screen) QuestionScene { question() } else turn(if (part.showsScreen) question else ({}))
 }
 
 /** The answer a number key picks on a language screen of options; null where keys pick nothing. */
@@ -350,24 +388,29 @@ private fun MultipleChoiceView(
     result: StepResult?,
     locked: Boolean,
     select: (LessonAnswer?) -> Unit,
+    part: StepPart,
 ) {
     QuestionScene {
-        val image = content.image
-        if (image != null || content.context != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                image?.let { ChoicePicture(it.url, it.prompt) }
-                ContextText(content.context?.let(::stripWrappingQuotes))
+        if (part.showsScreen) {
+            val image = content.image
+            if (image != null || content.context != null) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    image?.let { ChoicePicture(it.url, it.prompt) }
+                    ContextText(content.context?.let(::stripWrappingQuotes))
+                }
             }
+            content.question?.let { QuestionText(stripWrappingQuotes(it)) }
         }
-        content.question?.let { QuestionText(stripWrappingQuotes(it)) }
-        ChoiceOptions(
-            options = content.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-            selectedId = selectedId,
-            isChecked = result != null,
-            isGuess = false,
-            locked = locked,
-            onSelect = { id -> select(id?.let(LessonAnswer::MultipleChoice)) },
-        )
+        if (part.showsTurn) {
+            ChoiceOptions(
+                options = content.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                selectedId = selectedId,
+                isChecked = result != null,
+                isGuess = false,
+                locked = locked,
+                onSelect = { id -> select(id?.let(LessonAnswer::MultipleChoice)) },
+            )
+        }
     }
 }
 
@@ -382,6 +425,7 @@ private fun TranslationView(
     speech: SpeechPlayer?,
     select: (LessonAnswer?) -> Unit,
     actions: StepActions,
+    part: StepPart,
 ) {
     val sounds = speech?.let { rememberSpokenAudio(it, languages.target) }
     val pick = { id: String? ->
@@ -390,35 +434,41 @@ private fun TranslationView(
     }
     val latestPick by rememberUpdatedState(pick)
 
-    DisposableEffect(actions) {
-        actions.takeKeyPicks { answer -> latestPick((answer as? LessonAnswer.Translation)?.optionId) }
-        onDispose { actions.takeKeyPicks(null) }
+    if (part.showsTurn) {
+        DisposableEffect(actions) {
+            actions.takeKeyPicks { answer -> latestPick((answer as? LessonAnswer.Translation)?.optionId) }
+            onDispose { actions.takeKeyPicks(null) }
+        }
     }
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            LabelChip(
-                stringResource(
-                    if (languages.definesWords) R.string.player_language_which_means_this else R.string.player_language_translate,
-                ),
-            )
-            QuestionText(word.translation)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LabelChip(
+                    stringResource(
+                        if (languages.definesWords) R.string.player_language_which_means_this else R.string.player_language_translate,
+                    ),
+                )
+                QuestionText(word.translation)
+            }
         }
-        ChoiceOptions(
-            options = options.map { ChoiceOption(it.id, it.word, it.id == word.id) },
-            selectedId = (answer as? LessonAnswer.Translation)?.optionId,
-            isChecked = result != null,
-            isGuess = false,
-            locked = locked,
-            optionContent = { option ->
-                Column {
-                    Text(targetText(option.text, languages.target), style = MaterialTheme.typography.bodyLarge)
-                    Romanization(options.find { it.id == option.id }?.romanization)
-                }
-            },
-            // A pick tapped again stays picked and says its word again.
-            onSelect = { tapped -> pick(tapped ?: (answer as? LessonAnswer.Translation)?.optionId) },
-        )
+        if (part.showsTurn) {
+            ChoiceOptions(
+                options = options.map { ChoiceOption(it.id, it.word, it.id == word.id) },
+                selectedId = (answer as? LessonAnswer.Translation)?.optionId,
+                isChecked = result != null,
+                isGuess = false,
+                locked = locked,
+                optionContent = { option ->
+                    Column {
+                        Text(targetText(option.text, languages.target), style = MaterialTheme.typography.bodyLarge)
+                        Romanization(options.find { it.id == option.id }?.romanization)
+                    }
+                },
+                // A pick tapped again stays picked and says its word again.
+                onSelect = { tapped -> pick(tapped ?: (answer as? LessonAnswer.Translation)?.optionId) },
+            )
+        }
     }
 }
 

@@ -151,11 +151,12 @@ private fun BodyText(text: String) {
 internal fun FactHookView(
     step: LessonStep,
     content: StepContent.Fact,
+    part: StepPart,
 ) {
     ReadScene {
-        StepPicture(step, PictureFrame.Hero)
-        BodyText(content.content.text)
-        LessonStepVisual(content.content.visual)
+        if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
+        if (part.showsScreen) BodyText(content.content.text)
+        if (part.showsTurn) LessonStepVisual(content.content.visual)
     }
 }
 
@@ -167,33 +168,38 @@ internal fun GuessHookView(
     result: StepResult?,
     locked: Boolean,
     actions: StepActions,
+    part: StepPart,
 ) {
     val guess = content.content
     val selectedId = (answer as? LessonAnswer.Hook)?.optionId
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
-            StepPicture(step, PictureFrame.Question)
-            LessonStepVisual(guess.visual)
-            QuestionText(guess.question)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
+                StepPicture(step, PictureFrame.Question)
+                LessonStepVisual(guess.visual)
+                QuestionText(guess.question)
+            }
         }
 
-        ChoiceOptions(
-            options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-            selectedId = selectedId,
-            isChecked = result != null,
-            isGuess = true,
-            locked = locked,
-            onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
-        )
-
-        if (result == null) {
-            Text(
-                text = stringResource(R.string.player_guess_hint),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+        if (part.showsTurn) {
+            ChoiceOptions(
+                options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                selectedId = selectedId,
+                isChecked = result != null,
+                isGuess = true,
+                locked = locked,
+                onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
             )
+
+            if (result == null) {
+                Text(
+                    text = stringResource(R.string.player_guess_hint),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
     }
 }
@@ -203,24 +209,29 @@ internal fun ExplanationView(
     step: LessonStep,
     content: StepContent.Explanation,
     actions: StepActions,
+    part: StepPart,
 ) {
     val explanation = content.content
 
     ReadScene {
-        StepPicture(step, PictureFrame.Hero)
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            explanation.title?.let { title ->
-                RichInlineText(
-                    text = title,
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleMedium,
-                )
+        if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                explanation.title?.let { title ->
+                    RichInlineText(
+                        text = title,
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                BodyText(explanation.text)
             }
-            BodyText(explanation.text)
         }
-        LessonStepVisual(explanation.visual)
-        content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
-        if (explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
+        if (part.showsTurn) {
+            LessonStepVisual(explanation.visual)
+            content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
+        }
+        if (part.showsScreen && explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
     }
 }
 
@@ -251,6 +262,7 @@ internal fun WorkedExampleView(
     step: LessonStep,
     content: StepContent.WorkedExample,
     revealed: Int,
+    part: StepPart,
 ) {
     val worked = content.content
     val steps = worked.steps.take(revealed)
@@ -264,58 +276,66 @@ internal fun WorkedExampleView(
     }
 
     ReadScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
-            worked.title?.let { QuestionText(it) }
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
+                worked.title?.let { QuestionText(it) }
+            }
+            BodyText(worked.problem)
         }
-        BodyText(worked.problem)
-        StepPicture(step, PictureFrame.Inline)
-        LessonStepVisual(worked.visual)
-
-        val stepsLabel = stringResource(R.string.player_worked_example_steps)
-        val words = rememberMathWords()
-        val arrived = steps.lastOrNull()?.takeIf { revealed > 1 }
-        Box {
-            // Main's polite list reads out each line as it's revealed; a live region on the list would reread every line.
-            ActivityAnnouncement(
-                arrived
-                    ?.let { line -> listOfNotNull(plainText(line.text), line.math?.let { typesetMath(it, words).spoken }) }
-                    .orEmpty()
-                    .joinToString(" "),
-            )
-            Column(modifier = Modifier.semantics { contentDescription = stepsLabel }, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                steps.forEachIndexed { index, line ->
-                    Row(
-                        Modifier.then(if (index == steps.lastIndex && !isDone) Modifier.bringIntoViewRequester(newest) else Modifier),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Text(
-                            text = count(index + 1),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
-                        )
-                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
-                            line.math?.let { MathText(it) }
+        if (part.showsTurn) {
+            StepPicture(step, PictureFrame.Inline)
+            LessonStepVisual(worked.visual)
+        }
+        if (part.showsScreen) {
+            val stepsLabel = stringResource(R.string.player_worked_example_steps)
+            val words = rememberMathWords()
+            val arrived = steps.lastOrNull()?.takeIf { revealed > 1 }
+            Box {
+                // Main's polite list reads out each line as it's revealed; a live region on the list would reread every line.
+                ActivityAnnouncement(
+                    arrived
+                        ?.let { line -> listOfNotNull(plainText(line.text), line.math?.let { typesetMath(it, words).spoken }) }
+                        .orEmpty()
+                        .joinToString(" "),
+                )
+                Column(
+                    modifier = Modifier.semantics { contentDescription = stepsLabel },
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    steps.forEachIndexed { index, line ->
+                        Row(
+                            Modifier.then(if (index == steps.lastIndex && !isDone) Modifier.bringIntoViewRequester(newest) else Modifier),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            Text(
+                                text = count(index + 1),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
+                            )
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
+                                line.math?.let { MathText(it) }
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (isDone) {
-            Surface(
-                modifier = Modifier.bringIntoViewRequester(newest),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = stringResource(R.string.player_worked_example_result),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                    BodyText(worked.result)
+            if (isDone) {
+                Surface(
+                    modifier = Modifier.bringIntoViewRequester(newest),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = stringResource(R.string.player_worked_example_result),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                        BodyText(worked.result)
+                    }
                 }
             }
         }
@@ -330,40 +350,49 @@ internal fun CheckView(
     locked: Boolean,
     screen: LessonScreen,
     actions: StepActions,
+    part: StepPart,
 ) {
     val check = content.content
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            screen.step?.let { StepPicture(it, PictureFrame.Question) }
-            ContextText(check.context)
-            LessonStepVisual(check.visual)
-            QuestionText(check.question)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                screen.step?.let { StepPicture(it, PictureFrame.Question) }
+                ContextText(check.context)
+                LessonStepVisual(check.visual)
+                QuestionText(check.question)
+            }
         }
 
-        val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
-        // Picture options sit side by side until a description still being drawn doesn't fit its frame there.
-        var crowded by remember(pictured?.id) { mutableStateOf(false) }
-        ChoiceOptions(
-            options = check.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-            selectedId = (answer as? LessonAnswer.Check)?.optionId,
-            isChecked = result != null,
-            isGuess = false,
-            locked = locked,
-            onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
-            columns = if (pictured != null && !crowded) 2 else 1,
-            keysAtTop = pictured != null,
-            optionContent =
-                if (pictured != null) {
-                    { option ->
-                        PictureOption(pictured, check.options.first { it.id == option.id }, isChecked = result != null) { crowded = true }
-                    }
-                } else {
-                    { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
-                },
-        )
+        if (part.showsTurn) {
+            val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
+            // Picture options sit side by side until a description still being drawn doesn't fit its frame there.
+            var crowded by remember(pictured?.id) { mutableStateOf(false) }
+            ChoiceOptions(
+                options = check.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                selectedId = (answer as? LessonAnswer.Check)?.optionId,
+                isChecked = result != null,
+                isGuess = false,
+                locked = locked,
+                onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
+                columns = if (pictured != null && !crowded) 2 else 1,
+                keysAtTop = pictured != null,
+                optionContent =
+                    if (pictured != null) {
+                        { option ->
+                            PictureOption(
+                                pictured,
+                                check.options.first { it.id == option.id },
+                                isChecked = result != null,
+                            ) { crowded = true }
+                        }
+                    } else {
+                        { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
+                    },
+            )
 
-        ExplainFirstButton(screen, actions)
+            ExplainFirstButton(screen, actions)
+        }
     }
 }
 
@@ -413,6 +442,7 @@ internal fun TypedAnswerView(
     state: LessonPlayerState,
     screen: LessonScreen,
     actions: StepActions,
+    part: StepPart,
 ) {
     val typed = content.content
     val isNumber = isNumberAnswer(typed.acceptedAnswers)
@@ -421,16 +451,18 @@ internal fun TypedAnswerView(
     val text = (answer as? LessonAnswer.Typed)?.text.orEmpty()
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
-            ContextText(typed.context)
-            LessonStepVisual(typed.visual)
-            QuestionText(typed.question)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
+                ContextText(typed.context)
+                LessonStepVisual(typed.visual)
+                QuestionText(typed.question)
+            }
         }
 
-        AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
+        if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (!locked) {
+        if (part.showsTurn && !locked) {
             Column {
                 ExplainFirstButton(screen, actions)
                 if (!isNumber) {
@@ -458,6 +490,7 @@ internal fun SpokenAnswerView(
     actions: StepActions,
     navigator: AppNavigator,
     language: LessonLanguage,
+    part: StepPart,
 ) {
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
@@ -472,55 +505,59 @@ internal fun SpokenAnswerView(
 
     if (listening != null) {
         val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
-        LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions)
-        if (!locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
+        LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions, part)
+        if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
         return
     }
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            QuestionText(spoken.prompt)
-            TargetText(spoken)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                QuestionText(spoken.prompt)
+                TargetText(spoken)
+            }
         }
 
-        when {
-            types -> {
-                if (micBlocked && !locked) {
-                    Text(
-                        stringResource(R.string.player_microphone_blocked),
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
+        if (part.showsTurn) {
+            when {
+                types -> {
+                    if (micBlocked && !locked) {
+                        Text(
+                            stringResource(R.string.player_microphone_blocked),
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    AnswerField(
+                        (answer as? LessonAnswer.Spoken)?.text.orEmpty(),
+                        { actions.select(it?.let(LessonAnswer::Spoken)) },
+                        state,
+                        actions,
                     )
                 }
-                AnswerField(
-                    (answer as? LessonAnswer.Spoken)?.text.orEmpty(),
-                    { actions.select(it?.let(LessonAnswer::Spoken)) },
-                    state,
-                    actions,
-                )
+
+                !locked -> {
+                    VoiceAnswerRecorder(
+                        grade = { recording -> actions.gradeSpoken(step.id, recording) },
+                        onGraded = {},
+                        navigator = navigator,
+                        key = "spoken:${step.id}",
+                        onBlocked = { micBlocked = true },
+                    )
+                }
             }
 
-            !locked -> {
-                VoiceAnswerRecorder(
-                    grade = { recording -> actions.gradeSpoken(step.id, recording) },
-                    onGraded = {},
-                    navigator = navigator,
-                    key = "spoken:${step.id}",
-                    onBlocked = { micBlocked = true },
-                )
-            }
-        }
-
-        if (!locked) {
-            if (types) {
-                GhostAction(
-                    R.drawable.ic_mic,
-                    stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
-                ) { switchTo(false) }
-            } else {
-                val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
-                GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+            if (!locked) {
+                if (types) {
+                    GhostAction(
+                        R.drawable.ic_mic,
+                        stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
+                    ) { switchTo(false) }
+                } else {
+                    val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
+                    GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                }
             }
         }
     }

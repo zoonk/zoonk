@@ -73,6 +73,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -484,7 +485,15 @@ class LanguageStepsFlowTest {
             ZoonkTheme {
                 CompositionLocalProvider(LocalLessonSpeech provides previewSpeech()) {
                     val language = rememberLessonLanguage("en", "es")
-                    LanguageStepView(content, current, result = null, locked = false, language = language, actions = actions)
+                    LanguageStepView(
+                        content,
+                        current,
+                        result = null,
+                        locked = false,
+                        language = language,
+                        actions = actions,
+                        part = StepPart.Whole,
+                    )
                 }
             }
         }

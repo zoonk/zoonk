@@ -68,6 +68,22 @@ interface StepActions {
 }
 
 /**
+ * What of a screen a step view draws: all of it in one column, or one page of an unfolded book's
+ * spread, the screen (its question or teaching) on the page before the fold and the learner's turn
+ * (options, fields, canvases, a reading's picture) on the page after it. A view draws its turn at
+ * the same place for [Whole] and [Turn], so work not yet sent stays when the book opens or closes.
+ */
+enum class StepPart {
+    Whole,
+    Screen,
+    Turn,
+    ;
+
+    val showsScreen get() = this != Turn
+    val showsTurn get() = this != Screen
+}
+
+/**
  * The one place a screen kind gets its view. A kind without one here ([isPlayable]) is left out
  * when the lesson can do without it, and otherwise the lesson doesn't open: the server finishes a
  * run only once every screen it needs has an answer.
@@ -80,6 +96,7 @@ fun StepView(
     actions: StepActions,
     navigator: AppNavigator,
     language: LessonLanguage,
+    part: StepPart,
 ) {
     val answer = state.answers[step.id]
     val result = state.results[step.id]
@@ -87,21 +104,21 @@ fun StepView(
 
     CompositionLocalProvider(LocalStepChecked provides (state.phase == LessonPhase.Feedback)) {
         when (val content = step.content) {
-            is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
-            is StepContent.Fact -> FactHookView(step, content)
-            is StepContent.Explanation -> ExplanationView(step, content, actions)
-            is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1)
-            is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
-            is StepContent.Summary -> SummaryView(content)
-            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
-            is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language)
-            is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
-            is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
-            is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)
+            is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions, part)
+            is StepContent.Fact -> FactHookView(step, content, part)
+            is StepContent.Explanation -> ExplanationView(step, content, actions, part)
+            is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1, part)
+            is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part)
+            is StepContent.Summary -> if (part.showsScreen) SummaryView(content)
+            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part)
+            is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language, part)
+            is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, part)
+            is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions, part)
+            is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions, part)
         }
     }
 
-    step.citation?.let { LessonCitation(it) }
+    if (part.showsScreen) step.citation?.let { LessonCitation(it) }
 }
 
 fun isPlayable(step: LessonStep): Boolean =

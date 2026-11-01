@@ -167,6 +167,7 @@ internal fun ActivityView(
     result: StepResult?,
     state: LessonPlayerState,
     actions: StepActions,
+    part: StepPart,
 ) {
     val frame = content.frame
     val renderer = activityRenderers[frame.template]
@@ -187,35 +188,39 @@ internal fun ActivityView(
     val check = @Composable { ActivityCheckArea(frame.check, shownAnswer, phase, locked, onAnswerChange) }
 
     QuestionScene {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            renderer?.badge?.invoke(content.content)?.let { LabelChip(stringResource(it.label), icon = it.icon) }
-            QuestionText(frame.prompt)
-        }
-        StepPicture(step, PictureFrame.Question)
-
-        if (checkFirst) check()
-        renderer?.let {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                it.canvas(
-                    ActivityProps(
-                        content.content,
-                        shownAnswer,
-                        result?.expected,
-                        result?.isCorrect,
-                        phase,
-                        locked,
-                        onAnswerChange,
-                        actions.cantListen,
-                        actions::setCantListen,
-                        content.baseMap,
-                    ),
-                )
-                if (it.showsData(content.content)) ActivityDataNote(frame)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                renderer?.badge?.invoke(content.content)?.let { LabelChip(stringResource(it.label), icon = it.icon) }
+                QuestionText(frame.prompt)
             }
+            StepPicture(step, PictureFrame.Question)
         }
-        if (!checkFirst) check()
 
-        if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect)
+        if (part.showsTurn) {
+            if (checkFirst) check()
+            renderer?.let {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    it.canvas(
+                        ActivityProps(
+                            content.content,
+                            shownAnswer,
+                            result?.expected,
+                            result?.isCorrect,
+                            phase,
+                            locked,
+                            onAnswerChange,
+                            actions.cantListen,
+                            actions::setCantListen,
+                            content.baseMap,
+                        ),
+                    )
+                    if (it.showsData(content.content)) ActivityDataNote(frame)
+                }
+            }
+            if (!checkFirst) check()
+
+            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect)
+        }
     }
 }
 

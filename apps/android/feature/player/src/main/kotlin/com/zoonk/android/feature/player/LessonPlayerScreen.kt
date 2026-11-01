@@ -8,14 +8,17 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -70,6 +73,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -107,6 +111,7 @@ import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
@@ -120,8 +125,12 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlin.math.abs
 
@@ -513,19 +522,23 @@ private fun Content(
         else -> {
             val step = screen.step ?: return
             val scroll = rememberScrollState()
+            val screenScroll = rememberScrollState()
             val reveal = remember(step.id, state.position) { FeedbackReveal() }
+            var span by remember { mutableStateOf<PageSpan?>(null) }
 
-            LaunchedEffect(step.id, state.position) { scroll.scrollTo(0) }
+            LaunchedEffect(step.id, state.position) {
+                scroll.scrollTo(0)
+                screenScroll.scrollTo(0)
+            }
             PrefetchPictures(state)
 
             val layoutDirection = LocalLayoutDirection.current
 
             CompositionLocalProvider(LocalFeedbackReveal provides reveal) {
-                StepColumn(
+                BoxWithConstraints(
                     Modifier
                         .fillMaxSize()
-                        .onGloballyPositioned { reveal.viewport = it }
-                        .verticalScroll(scroll)
+                        .onPageSpan { span = it }
                         .pointerInput(screen.canGoBack, screen.canGoForward) {
                             var travelled = 0f
                             detectHorizontalDragGestures(
@@ -539,16 +552,51 @@ private fun Content(
                                     }
                                 },
                             )
-                        }.padding(vertical = 16.dp),
+                        },
                 ) {
-                    Notice(state, screen, viewModel)
-                    // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
-                    key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
-                    if (offer != null && screen.quickCheck == null) {
-                        StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
+                    // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
+                    val pagesFit = supportingPaneBeside(maxWidth)
+                    val fold = pageFold(maxWidth, span)?.takeIf { pagesFit }
+                    // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
+                    val part = if (fold == null) StepPart.Whole else StepPart.Turn
+
+                    StepColumn(
+                        Modifier
+                            .fillMaxSize()
+                            .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
+                            .onGloballyPositioned { reveal.viewport = it }
+                            .verticalScroll(scroll)
+                            .padding(vertical = 16.dp),
+                    ) {
+                        Notice(state, screen, viewModel, part)
+                        // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
+                        key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language, part) }
+                        if (offer != null && screen.quickCheck == null) {
+                            StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
+                        }
+                        Result(state, screen, scroll, reveal, viewModel, exits, offer)
+                        if (fold == null) LessonRecap(state, screen)
                     }
-                    Result(state, screen, scroll, reveal, viewModel, exits, offer)
-                    LessonRecap(state, screen)
+
+                    if (fold != null) {
+                        // Feedback scrolls into view on the turn's page; the question here doesn't scroll with it.
+                        CompositionLocalProvider(LocalFeedbackReveal provides null) {
+                            StepColumn(
+                                Modifier
+                                    .width(fold.start)
+                                    .fillMaxHeight()
+                                    .semantics { isTraversalGroup = true }
+                                    .verticalScroll(screenScroll)
+                                    .padding(vertical = 16.dp),
+                            ) {
+                                Notice(state, screen, viewModel, StepPart.Screen)
+                                key(step.id, state.position) {
+                                    StepView(step, state, screen, actions, navigator, language, StepPart.Screen)
+                                }
+                                LessonRecap(state, screen)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -579,8 +627,13 @@ private fun Notice(
     state: LessonPlayerState,
     screen: LessonScreen,
     viewModel: LessonPlayerViewModel,
+    part: StepPart,
 ) {
     val quickCheck = screen.quickCheck
+    // Asking to fix a wrong answer is part of the learner's turn, beside the answer.
+    val shown = if (quickCheck == null && state.notice == LessonNotice.SelfCorrect) part.showsTurn else part.showsScreen
+
+    if (!shown) return
 
     if (quickCheck != null) {
         LabelChip(

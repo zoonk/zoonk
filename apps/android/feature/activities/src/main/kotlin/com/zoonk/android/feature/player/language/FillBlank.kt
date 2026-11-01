@@ -36,7 +36,6 @@ import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
-import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.WordBankScene
 import com.zoonk.android.feature.player.steps.questionColor
 
@@ -59,6 +58,7 @@ internal fun FillBlankView(
     language: String,
     speech: SpeechPlayer?,
     onAnswer: (LessonAnswer?) -> Unit,
+    question: @Composable () -> Unit,
 ) {
     val blankCount = content.answers.size
     var blanks by rememberSaveable(stateSaver = BlanksSaver) {
@@ -86,7 +86,7 @@ internal fun FillBlankView(
 
     WordBankScene(
         question = {
-            content.question?.let { QuestionText(stripWrappingQuotes(it)) }
+            question()
 
             val words = style.copy(color = questionColor())
             TargetDirection(language) {

@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.QuestionScene
-import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import kotlinx.coroutines.delay
@@ -69,6 +68,7 @@ internal fun MatchColumnsView(
     checked: Boolean,
     locked: Boolean,
     onAnswer: (LessonAnswer?) -> Unit,
+    question: @Composable () -> Unit,
 ) {
     val lefts = content.pairs.map(MatchPair::left)
     var matched by rememberSaveable { mutableStateOf(initialMatches(answer, lefts, rightItems)) }
@@ -126,7 +126,7 @@ internal fun MatchColumnsView(
     }
 
     QuestionScene {
-        QuestionText(stripWrappingQuotes(content.question ?: stringResource(R.string.player_language_match_the_pairs)))
+        question()
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             lefts.indices.forEach { row ->
