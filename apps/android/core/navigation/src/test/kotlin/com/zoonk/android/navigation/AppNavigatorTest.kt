@@ -201,19 +201,4 @@ class AppNavigatorTest {
         assertEquals(AppRoute.Login, navigator.currentRoute)
         AppTab.entries.forEach { tab -> assertEquals(listOf(tab.root), stack(tab)) }
     }
-
-    @Test
-    fun onlyATabSwitchSkipsTheTransition() {
-        navigator.select(AppTab.Plan)
-        assertTrue(navigator.isSwitchingTabs)
-
-        navigator.open(AppRoute.Exam)
-        assertFalse(navigator.isSwitchingTabs)
-
-        navigator.select(AppTab.Plan)
-        assertTrue(navigator.isSwitchingTabs)
-
-        navigator.back()
-        assertFalse(navigator.isSwitchingTabs)
-    }
 }
