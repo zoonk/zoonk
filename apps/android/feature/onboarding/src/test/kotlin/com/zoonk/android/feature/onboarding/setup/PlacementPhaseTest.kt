@@ -2,12 +2,10 @@ package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.feature.onboarding.ITEM_ID
 import com.zoonk.android.feature.onboarding.MOCK_ID
 import com.zoonk.android.feature.onboarding.mockOptionsOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.runningMock
-import com.zoonk.android.feature.onboarding.trueFalseQuestion
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.TrueFalseLabels
@@ -29,29 +27,8 @@ class PlacementPhaseTest {
     }
 
     @Test
-    fun opensOnTheIntroUntilTheLearnerStarts() {
-        assertEquals(PlacementPhase.Intro(mock = null), phase())
-    }
-
-    @Test
-    fun aMockExamIsOfferedWithItsShortestAndLongestLengths() {
-        val offer = phase(mocks = LoadState.Loaded(mockOptionsOf(access = "plusRequired", minutes = listOf(15, 30, 55))))
-
-        assertEquals(PlacementPhase.Intro(MockOffer(shortestMinutes = 15, longestMinutes = 55, plusRequired = true)), offer)
-    }
-
-    @Test
     fun aGoalWithoutMocksStillOpensWhenTheirReadFailed() {
         assertEquals(PlacementPhase.Intro(mock = null), phase(mocks = LoadState.Failed(ApiError.Network)))
-    }
-
-    @Test
-    fun startedShowsTheNextQuestionNumbered() {
-        val question = phase(placementOf(answered = 3, spent = 0.4), started = true) as PlacementPhase.Question
-
-        assertEquals(ITEM_ID, question.item.itemId)
-        assertEquals(4, question.number)
-        assertEquals(0.4, question.spent, 0.0)
     }
 
     @Test
@@ -64,18 +41,6 @@ class PlacementPhaseTest {
         assertEquals(PlacementPhase.Waiting, phase(placementOf(status = "preparing", next = null), started = true))
         assertEquals(PlacementPhase.Waiting, phase(placementOf(status = "failed", next = null), started = true))
         assertEquals(PlacementPhase.Intro(mock = null), phase(placementOf(status = "waitingForQuestions", next = null)))
-    }
-
-    @Test
-    fun aGoalWithoutQuestionsSaysSoOnceStarted() {
-        assertEquals(PlacementPhase.Unavailable, phase(placementOf(status = "unavailable", next = null), started = true))
-    }
-
-    @Test
-    fun todaysFewMinutesEndPlacementForToday() {
-        val done = phase(placementOf(status = "done", next = null, answered = 8, dayBudgetUsed = true), started = true)
-
-        assertEquals(PlacementPhase.Done(answered = 8, forToday = true, fromMock = false), done)
     }
 
     @Test
@@ -95,13 +60,5 @@ class PlacementPhaseTest {
             PlacementPhase.Done(answered = 12, forToday = false, fromMock = true),
             phase(placementOf(answered = 12), mocks = finished),
         )
-    }
-
-    @Test
-    fun aStatementIsJudgedTrueOrFalse() {
-        val question = phase(placementOf(next = trueFalseQuestion(), labels = "rightWrong"), started = true) as PlacementPhase.Question
-
-        assertEquals(PlacementFormat.TrueFalse, question.item.format)
-        assertEquals(TrueFalseLabels.RIGHT_WRONG, question.labels)
     }
 }

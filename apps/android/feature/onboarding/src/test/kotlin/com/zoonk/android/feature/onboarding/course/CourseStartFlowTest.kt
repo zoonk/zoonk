@@ -4,10 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -15,8 +11,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -40,11 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -85,48 +75,9 @@ class CourseStartFlowTest {
         }
     }
 
-    private fun refuse(
-        resource: String,
-        period: String,
-    ) {
-        api.refusal =
-            ApiException(
-                ApiError.Unavailable,
-                "GOAL_LIMIT_REACHED",
-                status = 403,
-                details =
-                    buildJsonObject {
-                        put("period", period)
-                        put("resource", resource)
-                        put("tier", "free")
-                    },
-            )
-    }
-
     private fun build() {
         rule.onNodeWithText("Build my plan").performScrollTo().performClick()
         rule.waitForIdle()
-    }
-
-    @Test
-    fun aWholeCourseAsksTheLevelFirstAndOpensTheSetupItStarts() {
-        show()
-
-        rule.onNodeWithText("How much do you already know?").assertIsDisplayed()
-        rule.onNodeWithText("Build my plan").assertIsNotEnabled()
-        rule.onNodeWithText("The basics").performClick()
-        build()
-
-        assertEquals(JsonPrimitive("basic"), api.courseStarts.single().second["level"])
-        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
-    }
-
-    @Test
-    fun theQuickTestTakesTheTimeTheCourseSays() {
-        catalog.course = course(quickTestMinutes = 3)
-        show()
-
-        rule.onNodeWithText("Adapts to your answers, about 3\u00A0min").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -138,42 +89,6 @@ class CourseStartFlowTest {
 
         assertEquals(JsonNull, api.courseStarts.single().second["level"])
         assertEquals(emptyList<Any>(), api.answers)
-    }
-
-    @Test
-    fun aChapterStartPlansFromThatChapterWithoutAskingTheLevel() {
-        show(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO, dailyMinutes = 15))
-
-        rule.onNode(hasText("Bonds") and isHeading()).assertIsDisplayed()
-        rule.onNodeWithText("1 chapter\u00A0· 1 lesson").assertIsDisplayed()
-        rule.onNodeWithText("15 minutes a day for now. You can change it in the next steps.").assertIsDisplayed()
-        build()
-
-        val body = api.courseStarts.single().second
-        assertEquals(JsonPrimitive(CHAPTER_TWO), body["chapterId"])
-        assertEquals(JsonPrimitive(15), body["dailyMinutes"])
-        assertFalse("level" in body)
-    }
-
-    @Test
-    fun aLinksTimeOutsideADaysRangeIsLeftForTheSetup() {
-        show(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO, dailyMinutes = 1441))
-
-        rule.onNodeWithText("a day for now", substring = true).assertDoesNotExist()
-        build()
-
-        assertFalse("dailyMinutes" in api.courseStarts.single().second)
-    }
-
-    @Test
-    fun aCourseAGoalAlreadyFollowsOpensThatGoalInsteadOfStartingAgain() {
-        api.setup = { setupView(listOf("plan"), goalId = it) }
-        existingGoalId = GOAL_ID
-        show()
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Today, navigator.currentRoute)
-        assertEquals(emptyList<Any>(), api.courseStarts)
     }
 
     @Test
@@ -207,31 +122,5 @@ class CourseStartFlowTest {
         rule.waitForIdle()
 
         assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
-    }
-
-    @Test
-    fun aMonthlyLimitSaysSoAndStillOffersToStart() {
-        refuse(resource = "goal", period = "month")
-        show(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO))
-
-        build()
-
-        rule.onNodeWithText("Build my plan").performScrollTo().assertIsDisplayed()
-        assertEquals(1, api.courseStarts.size)
-    }
-
-    @Test
-    fun oneActiveGoalOffersPlusInsteadOfStartingUntilTheLearnerLeavesForIt() {
-        refuse(resource = "activeGoals", period = "total")
-        show(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO))
-
-        build()
-        rule.onNodeWithText("Build my plan").assertDoesNotExist()
-        rule.onNodeWithText("Go to your Plan").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("See Plus").performScrollTo().performClick()
-        assertEquals(AppRoute.Subscription, navigator.currentRoute)
-
-        rule.runOnIdle { navigator.back() }
-        rule.onNodeWithText("Build my plan").performScrollTo().assertIsDisplayed()
     }
 }

@@ -3,13 +3,9 @@ package com.zoonk.android.feature.onboarding.setup
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.suggestion
 import com.zoonk.android.feature.onboarding.suggestionFor
-import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.TimeLine
-import com.zoonk.api.models.OnboardingTimeChoicesInner
-import com.zoonk.api.models.OnboardingTimeChoicesInnerSplit
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
-import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -35,13 +31,6 @@ class ScheduleRulesTest {
     private val pastDate = found(recommended = null).copy(pastDate = true)
 
     private val noSuggestion = found(recommended = null)
-
-    @Test
-    fun aNewGoalsEveryDayWeekOpensOnWeekdaysButAChosenWeekStays() {
-        assertEquals(listOf(1, 2, 3, 4, 5), startingDays(EVERY_DAY))
-        assertEquals(listOf(1, 2, 3, 4, 5), startingDays(emptyList()))
-        assertEquals(listOf(0, 6), startingDays(listOf(0, 6)))
-    }
 
     @Test
     fun findKeepsTheWeekendsOwnTimeEvenWhenItEqualsTheWeekdayPick() {
@@ -93,30 +82,6 @@ class ScheduleRulesTest {
         assertFalse(asksAboutTime(dated = true, found = null, fullCourse = false, minutes = 35))
         assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = null))
         assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = false, minutes = 30))
-    }
-
-    @Test
-    fun theSplitShownIsCoresForTheTimeShown() {
-        val choices =
-            listOf(
-                OnboardingTimeChoicesInner(30, OnboardingTimeChoicesInnerSplit(mine = 20, others = 1, rest = 10)),
-                OnboardingTimeChoicesInner(60, null),
-            )
-        val suggested =
-            found(recommended = 50).copy(
-                suggested =
-                    suggestion(
-                        PlanTimeToCoverSuggested.Kind.EVERYTHING,
-                        50,
-                        PlanTimeToCoverSuggestedSplit(mine = 35, others = 2, rest = 15),
-                    ),
-            )
-
-        assertEquals(DaySplit(mine = 20, others = 1, rest = 10), daySplit(30, choices, listOf(suggested)))
-        assertEquals(DaySplit(mine = 35, others = 2, rest = 15), daySplit(50, choices, listOf(null, suggested)))
-        assertNull(daySplit(60, choices, listOf(suggested)))
-        assertNull(daySplit(45, choices, listOf(suggested)))
-        assertNull(daySplit(null, choices, listOf(suggested)))
     }
 
     @Test

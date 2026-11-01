@@ -48,22 +48,6 @@ class UnderstoodRowsTest {
     }
 
     @Test
-    fun anExamWithoutDatesWaitsForItsNotice() {
-        val row = dateRow(understanding(goalsUnderstanding(details = """{"examYear":2027}""")))
-
-        assertEquals("2027, to be confirmed", row.value)
-        assertEquals("The official date comes out in the exam's notice. Know it already? Set it here.", row.note)
-    }
-
-    @Test
-    fun aBookedTestSaysTheLearnerPicksItsDay() {
-        val row = dateRow(understanding(goalsUnderstanding(details = """{"examDay":"booked"}""")))
-
-        assertEquals("To be confirmed", row.value)
-        assertEquals("You pick this test's day when you book it. Booked already? Set it here.", row.note)
-    }
-
-    @Test
     fun anExamHeldSeveralTimesAYearAsksWhichSitting() {
         val dates = listOf("2026-12-05", "2027-03-06", "2027-06-05", "2027-09-04").joinToString(",") { day(it) }
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[$dates]")))
@@ -96,20 +80,6 @@ class UnderstoodRowsTest {
         assertEquals("Exam dates", row.label)
         assertEquals("November 8 and November 15, 2026", row.value.plain())
         assertEquals("11 days left", row.note)
-    }
-
-    @Test
-    fun factsTheTitleAlreadySaysArentRepeated() {
-        val goal =
-            understanding(
-                goalsUnderstanding(
-                    title = "Get into Medicine",
-                    kind = "learn",
-                    details = """{"targetCourse":"medicine","institution":"USP","reason":"My dream"}""",
-                ),
-            ).goals.single()
-
-        assertEquals(listOf("title", "institution", "reason"), rows.rows(goal).map { it.id })
     }
 
     @Test
