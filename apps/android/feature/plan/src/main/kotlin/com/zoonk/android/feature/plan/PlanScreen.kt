@@ -51,8 +51,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -320,27 +323,35 @@ private fun PlanLoadFailed(
     }
 }
 
-/** A quick explanation has no plan, so the Plan offers to start a goal. */
+/** A quick explanation has no plan, so the Plan offers to start a goal; on an open book it faces the goal's examples, as Today's does. */
 @Composable
 private fun PlanNoGoal(
     navigator: AppNavigator,
     padding: PaddingValues,
 ) {
     var words by rememberSaveable { mutableStateOf("") }
+    val start = { goal: String -> navigator.open(AppRoute.StartGoal(goal = goal)) }
 
-    PlanStateColumn(padding) {
-        PlanTitle()
-        Text(
-            text = stringResource(R.string.plan_no_goal_description),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        GoalBox(
-            value = words,
-            onValueChange = { words = it },
-            onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) },
-            modifier = Modifier.padding(top = 16.dp),
-        )
+    PageWithSupportingPane(
+        atFoldOnly = true,
+        supportingPane = {
+            GoalExamples(
+                examples = rememberGoalExamples(),
+                onPick = start,
+                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
+            )
+        },
+        modifier = Modifier.padding(padding),
+    ) {
+        PlanStateColumn(PaddingValues()) {
+            PlanTitle()
+            Text(
+                text = stringResource(R.string.plan_no_goal_description),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            GoalBox(value = words, onValueChange = { words = it }, onSubmit = start, modifier = Modifier.padding(top = 16.dp))
+        }
     }
 }
 
