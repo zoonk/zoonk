@@ -412,6 +412,11 @@ describe(stripPunctuation, () => {
     expect(stripPunctuation("고양이")).toBe("고양이");
   });
 
+  it("keeps the vowel signs that tell words apart", () => {
+    expect(stripPunctuation("काम।")).toBe("काम");
+    expect(stripPunctuation("สวัสดี!")).toBe("สวัสดี");
+  });
+
   it("handles empty string", () => {
     expect(stripPunctuation("")).toBe("");
   });

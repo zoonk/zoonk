@@ -96,8 +96,9 @@ export function trimPunctuation(text: string): string {
   return text.replaceAll(/^[^\p{L}\p{M}\p{N}]+|[^\p{L}\p{M}\p{N}]+$/gu, "");
 }
 
+/** Keeps combining marks: Devanagari and Thai vowel signs tell words apart ("कम", "काम"). */
 export function stripPunctuation(text: string): string {
-  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
+  return text.replaceAll(/[^\p{L}\p{M}\p{N}\s]/gu, "");
 }
 
 function endsWithConnector(token: string): boolean {
