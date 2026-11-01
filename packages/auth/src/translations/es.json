@@ -1,7 +1,6 @@
 {
-  "checkoutMonthlyRenewal": "Plus empieza en cuanto pagas y se renueva automáticamente cada mes hasta que lo canceles. Cancélalo cuando quieras en Zoonk, en Configuración › Suscripción, y conservas Plus hasta el final del periodo que ya pagaste. ¿Cambiaste de opinión? Cancélalo ahí en los primeros 14 días y te devolvemos todo tu dinero.",
-  "checkoutTermsConsent": "Leí y acepto los [Términos de servicio]({termsUrl}), incluidos la renovación automática y el reembolso en los primeros 14 días.",
-  "checkoutYearlyRenewal": "Plus empieza en cuanto pagas y se renueva automáticamente cada año hasta que lo canceles. Cancélalo cuando quieras en Zoonk, en Configuración › Suscripción, y conservas Plus hasta el final del periodo que ya pagaste. ¿Cambiaste de opinión? Cancélalo ahí en los primeros 14 días y te devolvemos todo tu dinero.",
+  "checkoutMonthlyRenewal": "Plus se renueva automáticamente cada mes hasta que canceles la suscripción. Puedes cancelar cuando quieras en Configuración › Suscripción.",
+  "checkoutYearlyRenewal": "Plus se renueva automáticamente cada año hasta que canceles la suscripción. Puedes cancelar cuando quieras en Configuración › Suscripción.",
   "otpDisclaimer": "Si no pediste este código, puedes ignorar este mensaje.",
   "otpExpiry": "Este código expira en 5 minutos.",
   "otpIntro": "Este es tu código para iniciar sesión en Zoonk:",

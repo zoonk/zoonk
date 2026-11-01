@@ -6,7 +6,6 @@ import { useAppLocale } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -83,7 +82,6 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
         annual: period === "yearly",
         cancelUrl: "/subscription",
         locale: STRIPE_LOCALE_OVERRIDES[locale],
-        metadata: { timeZone: getLocalTimeZone() },
         plan: "plus",
         successUrl: "/subscription?stripe_checkout=complete",
       });

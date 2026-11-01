@@ -18,7 +18,6 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 const upgradeBodySchema = z.object({
   annual: z.boolean().optional(),
   locale: z.string().optional(),
-  metadata: z.object({ timeZone: z.string().optional() }).optional(),
 });
 
 type ReportedSubscription = { plan: string; referenceId: string };
@@ -119,15 +118,9 @@ export function stripePlugin() {
     subscription: {
       enabled: true,
       getCheckoutSessionParams: async (_data, _request, ctx) => {
-        const { annual, locale, metadata } = upgradeBodySchema.parse(ctx.body);
+        const { annual, locale } = upgradeBodySchema.parse(ctx.body);
 
-        return {
-          params: await getCheckoutSessionParams({
-            annual: annual === true,
-            locale,
-            timeZone: metadata?.timeZone,
-          }),
-        };
+        return { params: await getCheckoutSessionParams({ annual: annual === true, locale }) };
       },
       // Canceling keeps Plus until the period ends, so the decision counts when it becomes
       // pending; a subscription ended right away (or by failed payments) was never pending.

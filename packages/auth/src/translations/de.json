@@ -1,7 +1,6 @@
 {
-  "checkoutMonthlyRenewal": "Plus startet sofort nach der Zahlung und verlängert sich automatisch jeden Monat, bis du kündigst. Du kannst jederzeit in Zoonk unter Einstellungen › Abonnement kündigen und behältst Plus bis zum Ende des bezahlten Zeitraums. Du hast es dir anders überlegt? Widerruf dort innerhalb von 14 Tagen, und du bekommst den vollen Betrag zurück.",
-  "checkoutTermsConsent": "Ich habe die [Nutzungsbedingungen]({termsUrl}) gelesen und stimme ihnen zu, einschließlich der automatischen Verlängerung und der Erstattung innerhalb von 14 Tagen.",
-  "checkoutYearlyRenewal": "Plus startet sofort nach der Zahlung und verlängert sich automatisch jedes Jahr, bis du kündigst. Du kannst jederzeit in Zoonk unter Einstellungen › Abonnement kündigen und behältst Plus bis zum Ende des bezahlten Zeitraums. Du hast es dir anders überlegt? Widerruf dort innerhalb von 14 Tagen, und du bekommst den vollen Betrag zurück.",
+  "checkoutMonthlyRenewal": "Plus verlängert sich jeden Monat automatisch, bis du kündigst. Du kannst jederzeit unter Einstellungen › Abonnement kündigen.",
+  "checkoutYearlyRenewal": "Plus verlängert sich jedes Jahr automatisch, bis du kündigst. Du kannst jederzeit unter Einstellungen › Abonnement kündigen.",
   "otpDisclaimer": "Wenn du diesen Code nicht angefordert hast, kannst du diese Nachricht ignorieren.",
   "otpExpiry": "Dieser Code läuft in 5 Minuten ab.",
   "otpIntro": "Hier ist dein Code, um dich bei Zoonk anzumelden:",

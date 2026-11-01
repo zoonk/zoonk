@@ -1,7 +1,6 @@
 {
-  "checkoutMonthlyRenewal": "Plus는 결제하면 바로 시작되고, 해지할 때까지 매월 자동으로 갱신돼요. Zoonk의 설정 › 구독에서 언제든지 해지할 수 있고, 이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요. 마음이 바뀌었나요? 14일 이내에 같은 화면에서 해지하면 전액 환불해 드려요.",
-  "checkoutTermsConsent": "자동 갱신과 14일 이내 환불을 포함한 [이용약관]({termsUrl})을 읽었고 이에 동의해요.",
-  "checkoutYearlyRenewal": "Plus는 결제하면 바로 시작되고, 해지할 때까지 매년 자동으로 갱신돼요. Zoonk의 설정 › 구독에서 언제든지 해지할 수 있고, 이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요. 마음이 바뀌었나요? 14일 이내에 같은 화면에서 해지하면 전액 환불해 드려요.",
+  "checkoutMonthlyRenewal": "Plus는 해지할 때까지 매월 자동 갱신돼요. 설정 › 구독에서 언제든지 해지할 수 있어요.",
+  "checkoutYearlyRenewal": "Plus는 해지할 때까지 매년 자동 갱신돼요. 설정 › 구독에서 언제든지 해지할 수 있어요.",
   "otpDisclaimer": "이 코드를 요청하지 않았다면 이 메일은 무시해도 돼요.",
   "otpExpiry": "이 코드는 5분 후에 만료돼요.",
   "otpIntro": "Zoonk 로그인 코드예요:",

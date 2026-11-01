@@ -1,7 +1,6 @@
 {
-  "checkoutMonthlyRenewal": "Plus działa od razu po zapłacie i odnawia się automatycznie co miesiąc, dopóki go nie anulujesz. Możesz go anulować w każdej chwili w Zoonku, w sekcji Ustawienia › Subskrypcja, a Plus zostaje z tobą do końca opłaconego okresu. Zmieniasz zdanie? Anuluj tam w ciągu 14 dni, a zwrócimy ci całą kwotę.",
-  "checkoutTermsConsent": "Znam i akceptuję [Regulamin]({termsUrl}), w tym automatyczne odnawianie i zwrot w ciągu 14 dni.",
-  "checkoutYearlyRenewal": "Plus działa od razu po zapłacie i odnawia się automatycznie co rok, dopóki go nie anulujesz. Możesz go anulować w każdej chwili w Zoonku, w sekcji Ustawienia › Subskrypcja, a Plus zostaje z tobą do końca opłaconego okresu. Zmieniasz zdanie? Anuluj tam w ciągu 14 dni, a zwrócimy ci całą kwotę.",
+  "checkoutMonthlyRenewal": "Plus odnawia się automatycznie co miesiąc, dopóki nie anulujesz subskrypcji. Możesz ją anulować w dowolnej chwili w sekcji Ustawienia › Subskrypcja.",
+  "checkoutYearlyRenewal": "Plus odnawia się automatycznie co rok, dopóki nie anulujesz subskrypcji. Możesz ją anulować w dowolnej chwili w sekcji Ustawienia › Subskrypcja.",
   "otpDisclaimer": "Jeśli to nie ty chcesz się zalogować, zignoruj tę wiadomość.",
   "otpExpiry": "Ten kod wygaśnie za 5 minut.",
   "otpIntro": "Oto twój kod do logowania w Zoonku:",
