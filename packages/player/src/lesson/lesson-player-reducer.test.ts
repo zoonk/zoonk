@@ -155,16 +155,24 @@ describe(lessonPlayerReducer, () => {
     ]);
 
     expect(lessonPlayerReducer(atTip, back).position).toBe(1);
+  });
 
-    const missedLast = play(
+  it("stops Previous on a missed last question that comes straight back", () => {
+    const retry = play(
       [explanationStep("tip"), checkStep("quiz")],
       [{ type: "continue" }, ...answerCheck("quiz", false), { type: "continue" }],
     );
 
-    expect([getCurrentStep(missedLast)?.id, getLessonScreen(missedLast).canGoBack]).toStrictEqual([
+    expect([getCurrentStep(retry)?.id, retry.queue]).toStrictEqual([
       "quiz",
-      false,
+      ["tip", "quiz", "quiz"],
     ]);
+
+    expect(getLessonScreen(retry).canGoBack).toBe(false);
+
+    const stillThere = lessonPlayerReducer(retry, { direction: "prev", type: "navigate" });
+
+    expect([stillThere.position, stillThere.answers.quiz]).toStrictEqual([2, undefined]);
   });
 
   it("brings a pending self-correction back with its notice after the learner goes back", () => {
