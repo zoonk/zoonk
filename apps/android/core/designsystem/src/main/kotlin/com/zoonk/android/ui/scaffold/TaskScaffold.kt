@@ -3,6 +3,7 @@ package com.zoonk.android.ui.scaffold
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -37,6 +39,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -99,18 +102,26 @@ fun TaskScaffold(
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable () -> Unit = {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = title,
-                    navigationIcon = { CloseButton(onClick = leave, label = closeLabel) },
-                    actions = actions,
-                )
-            },
-            bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
-            snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
-            content = content,
-        )
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            // Across an unfolded book foldable a centered title would sit on the fold; it starts the page before it.
+            val acrossFold = pageFold(maxWidth, span) != null
+
+            Scaffold(
+                topBar = {
+                    val close: @Composable () -> Unit = { CloseButton(onClick = leave, label = closeLabel) }
+                    if (acrossFold) {
+                        TopAppBar(title = title, navigationIcon = close, actions = actions)
+                    } else {
+                        CenterAlignedTopAppBar(title = title, navigationIcon = close, actions = actions)
+                    }
+                },
+                bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
+                snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
+                content = content,
+            )
+        }
     }
 
     // The screen's modifier (focus, keys) stays on one node when an aside comes or goes.

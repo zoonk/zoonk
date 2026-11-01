@@ -2,6 +2,7 @@ package com.zoonk.android.ui.scaffold
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
@@ -26,7 +28,6 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import kotlin.math.min
 
 /**
  * A page with what helps with it beside it where there's room (main's page aside and task aside):
@@ -35,7 +36,8 @@ import kotlin.math.min
  * own way, below its content or in a sheet, as main does under `lg`. With [panesTouch], the panes
  * meet without Material's room between them, for an aside that starts with its own hairline, so the
  * page's lists reach that hairline as they reach the window's edge. With [halfWidth], the supporting
- * pane takes half the room, for a long passage.
+ * pane takes half the room, for a long passage. With [atFoldOnly], the panes split only at an
+ * unfolded book foldable's fold, for a spread that wider windows show as one column.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -44,12 +46,13 @@ fun PageWithSupportingPane(
     modifier: Modifier = Modifier,
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
+    atFoldOnly: Boolean = false,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    BoxWithConstraints(modifier.onPlaced { span = it.boundsInWindow().let { bounds -> PageSpan(bounds.left, bounds.right) } }) {
-        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth)
+    BoxWithConstraints(modifier.onPageSpan { span = it }) {
+        val directive = pageDirective(maxWidth, span, panesTouch, halfWidth, atFoldOnly)
         val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = directive)
         val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
@@ -70,9 +73,9 @@ fun supportingPaneBeside(width: Dp): Boolean = pageDirective(width).maxHorizonta
  * How a page [width] wide splits into panes, for every pane scaffold of a page (the supporting pane
  * here, the shell's list and detail): two where each keeps a phone's column, [MINIMUM_PANE] growing
  * with the text. That's where Material splits the window (expanded and wider), and on a page an
- * unfolded book foldable's fold crosses, where the panes meet at the fold, flat or folded, so each is
- * a page of the book and folding moves nothing. The page spans [span] of the window, or the window's
- * end before it's placed, where the shell lays pages beside its navigation.
+ * unfolded book foldable's fold crosses ([pageFold]), where the panes meet at the fold, flat or
+ * folded, so each is a page of the book and folding moves nothing. [atFoldOnly] keeps one column
+ * where there's no fold.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -81,28 +84,22 @@ fun pageDirective(
     span: PageSpan? = null,
     panesTouch: Boolean = false,
     halfWidth: Boolean = false,
+    atFoldOnly: Boolean = false,
 ): PaneScaffoldDirective {
     val info = currentWindowAdaptiveInfoV2()
-    val density = LocalDensity.current
-    val pageWidth = with(density) { width.toPx() }
-    val page =
-        span ?: PageSpan.atWindowEnd(
-            LocalWindowInfo.current.containerSize.width
-                .toFloat(),
-            pageWidth,
-            LocalLayoutDirection.current,
-        )
-    val fold = info.windowPosture.allVerticalHingeBounds.firstOrNull { it.left > page.left && it.right < page.right }
+    val fold = info.foldAcross(width, span)
     val window =
         if (fold == null) calculatePaneScaffoldDirective(info) else calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(info)
     val narrowestPane =
         when {
-            fold != null -> min(fold.left - page.left, page.right - fold.right)
-            halfWidth -> pageWidth / 2
-            else -> pageWidth - with(density) { window.defaultPanePreferredWidth.toPx() }
+            fold != null -> minOf(fold.start, width - fold.end)
+            halfWidth -> width / 2
+            else -> width - window.defaultPanePreferredWidth
         }
     val twoPanes =
-        window.maxHorizontalPartitions > 1 && narrowestPane >= with(density) { MINIMUM_PANE.toPx() } * density.fontScale.coerceAtLeast(1f)
+        window.maxHorizontalPartitions > 1 &&
+            (fold != null || !atFoldOnly) &&
+            narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
 
     // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
     // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
@@ -115,10 +112,48 @@ fun pageDirective(
         defaultPanePreferredWidth = window.defaultPanePreferredWidth,
         defaultPanePreferredHeight = window.defaultPanePreferredHeight,
         // Material splits at an excluded fold, but it would also squeeze a lone pane beside one.
-        excludedBounds = if (twoPanes && fold != null) listOf(fold) else emptyList(),
+        excludedBounds = if (twoPanes && fold != null) listOf(fold.bounds) else emptyList(),
         shouldAutoFocusCurrentDestination = false,
     )
 }
+
+/**
+ * Where an unfolded book foldable's fold crosses a page [width] wide, flat or folded, or null where
+ * none does. The page spans [span] of the window ([onPageSpan]), or the window's end before it's
+ * placed, where the shell lays pages beside its navigation.
+ */
+@Composable
+fun pageFold(
+    width: Dp,
+    span: PageSpan? = null,
+): PageFold? = currentWindowAdaptiveInfoV2().foldAcross(width, span)
+
+@Composable
+private fun WindowAdaptiveInfo.foldAcross(
+    width: Dp,
+    span: PageSpan?,
+): PageFold? {
+    val density = LocalDensity.current
+    val direction = LocalLayoutDirection.current
+    val page =
+        span ?: PageSpan.atWindowEnd(
+            LocalWindowInfo.current.containerSize.width
+                .toFloat(),
+            with(density) { width.toPx() },
+            direction,
+        )
+    val fold = windowPosture.allVerticalHingeBounds.firstOrNull { it.left > page.left && it.right < page.right } ?: return null
+    val start = if (direction == LayoutDirection.Ltr) fold.left - page.left else page.right - fold.right
+
+    return with(density) { PageFold(start.toDp(), (start + fold.width).toDp(), fold) }
+}
+
+/** A fold across a page: where it starts and ends from the page's start edge, and its [bounds] in the window. */
+data class PageFold(
+    val start: Dp,
+    val end: Dp,
+    val bounds: Rect,
+)
 
 /** Where a page sits across its window, in pixels. */
 data class PageSpan(
@@ -133,6 +168,10 @@ data class PageSpan(
         ) = if (direction == LayoutDirection.Ltr) PageSpan(windowWidth - pageWidth, windowWidth) else PageSpan(0f, pageWidth)
     }
 }
+
+/** Reports where this layout sits across its window, for [pageFold] and [pageDirective]. */
+fun Modifier.onPageSpan(onSpan: (PageSpan) -> Unit): Modifier =
+    onPlaced { onSpan(it.boundsInWindow().let { bounds -> PageSpan(bounds.left, bounds.right) }) }
 
 /** The narrowest page a book foldable leaves beside the navigation rail: a 673dp Galaxy Z Fold's 256dp, with room to spare. */
 private val MINIMUM_PANE = 240.dp

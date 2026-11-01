@@ -49,13 +49,17 @@ class PageWithSupportingPaneTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     /** A page [width] wide at the window's end, where the shell lays a page beside its navigation; the whole window when unspecified. */
-    private fun show(width: Dp = Dp.Unspecified) {
+    private fun show(
+        width: Dp = Dp.Unspecified,
+        atFoldOnly: Boolean = false,
+    ) {
         rule.setContent {
             ZoonkTheme {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
                     PageWithSupportingPane(
                         supportingPane = { Box(Modifier.fillMaxSize().testTag(ASIDE)) { Text("Aside beside") } },
                         modifier = if (width == Dp.Unspecified) Modifier.fillMaxSize() else Modifier.width(width),
+                        atFoldOnly = atFoldOnly,
                     ) { beside ->
                         Box(Modifier.fillMaxSize().testTag(PAGE)) { Text(if (beside) "Page" else "Page with its aside below") }
                     }
@@ -173,6 +177,25 @@ class PageWithSupportingPaneTest {
 
         rule.onNodeWithText("Page").assertIsDisplayed()
         rule.onNodeWithText("Aside beside").assertIsDisplayed()
+    }
+
+    /** A lesson's spread: a page on each side of the fold, but the column main keeps on a wide window without one. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun aSpreadKeepsOneColumnWithoutAFold() {
+        show(atFoldOnly = true)
+
+        assertOnePage(1280.dp)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun aSpreadSplitsAtAnOpenBooksFold() {
+        show(atFoldOnly = true)
+
+        fold(FoldingFeature.State.FLAT)
+
+        assertPageOnEachSide(fold = 426.dp)
     }
 
     @Test

@@ -5,20 +5,31 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class TaskScaffoldTest {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private var closed = 0
@@ -71,5 +82,22 @@ class TaskScaffoldTest {
 
         rule.onNodeWithText("Leave").performClick()
         rule.runOnIdle { assertEquals(1, closed) }
+    }
+
+    /** Across an unfolded book foldable: the title starts the page before the fold, and the actions sit on the page after it. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun keepsItsTitleAndActionsOffAnOpenBooksFold() {
+        show(exitConfirmation = null)
+        rule.waitForIdle()
+        val fold =
+            FoldingFeature(rule.activity, state = FoldingFeature.State.HALF_OPENED, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.waitForIdle()
+
+        val title = rule.onNodeWithText("Essay").getUnclippedBoundsInRoot()
+        val actions = rule.onNodeWithText("Hand in").getUnclippedBoundsInRoot()
+        assertTrue("the title ends before the fold: $title", title.right <= 426.dp)
+        assertTrue("the actions start after the fold: $actions", actions.left >= 426.dp)
     }
 }
