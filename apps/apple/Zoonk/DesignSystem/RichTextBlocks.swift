@@ -4,22 +4,34 @@ import SwiftUI
 /// screen's layout. Each caller reads the inline markup its own way: lessons typeset math, items don't.
 struct RichTextBlocks: View {
   let text: String
+  /// A quote of the text, in its markup, to highlight where it first shows.
+  let mark: String?
   let inline: (String) -> AttributedString
 
-  init(_ text: String, inline: @escaping (String) -> AttributedString) {
+  init(
+    _ text: String, mark: String? = nil, inline: @escaping (String) -> AttributedString
+  ) {
     self.text = text
+    self.mark = mark
     self.inline = inline
   }
 
   var body: some View {
+    let blocks = RichTextBlock.parse(text)
+    let marked = mark.flatMap { quote in
+      RichTextBlock.mark(quote, in: blocks) { String(inline($0).characters) }
+    }
+
     VStack(alignment: .leading, spacing: 12) {
-      ForEach(Array(RichTextBlock.parse(text).enumerated()), id: \.offset) { _, block in
+      ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
+        let mark = marked?.block == index ? marked : nil
+
         switch block {
         case .paragraph(let lines):
-          Text(inline(lines.joined(separator: "\n")))
+          Text(highlighting(inline(lines.joined(separator: "\n")), mark))
             .fixedSize(horizontal: false, vertical: true)
         case .list(let items, let ordered):
-          list(items, ordered: ordered)
+          list(items, ordered: ordered, mark: mark)
         case .table(let header, let rows):
           table(header: header, rows: rows)
         }
@@ -28,7 +40,7 @@ struct RichTextBlocks: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  private func list(_ items: [String], ordered: Bool) -> some View {
+  private func list(_ items: [String], ordered: Bool, mark: RichTextBlock.Mark?) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       ForEach(Array(items.enumerated()), id: \.offset) { index, item in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -37,11 +49,23 @@ struct RichTextBlocks: View {
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
-          Text(inline(item))
+          Text(highlighting(inline(item), mark?.item == index ? mark : nil))
             .fixedSize(horizontal: false, vertical: true)
         }
       }
     }
+  }
+
+  private func highlighting(_ text: AttributedString, _ mark: RichTextBlock.Mark?)
+    -> AttributedString
+  {
+    guard let mark, let range = text.range(of: mark.text) else {
+      return text
+    }
+
+    var marked = text
+    marked[range].backgroundColor = .warning.opacity(0.15)
+    return marked
   }
 
   private func table(header: [String], rows: [[String]]) -> some View {
@@ -96,6 +120,46 @@ enum RichTextBlock: Equatable {
     }
 
     return blocks
+  }
+
+  struct Mark: Equatable {
+    let block: Int
+    /// The list item it's in; 0 in a paragraph.
+    let item: Int
+    let text: String
+  }
+
+  /// Main's `markRichBlocks`: the quote is read as one line of the text, list marker and all, and only
+  /// the first paragraph or list item that shows it is marked. `shown` turns markup into what it
+  /// displays.
+  static func mark(_ quote: String, in blocks: [RichTextBlock], shown: (String) -> String) -> Mark?
+  {
+    let text: String
+
+    switch Line(quote.trimmingCharacters(in: .whitespacesAndNewlines)) {
+    case .blank: return nil
+    case .item(let item, _): text = shown(item)
+    case .text(let line): text = shown(line)
+    }
+
+    guard !text.isEmpty else {
+      return nil
+    }
+
+    for (index, block) in blocks.enumerated() {
+      switch block {
+      case .paragraph(let lines) where shown(lines.joined(separator: "\n")).contains(text):
+        return Mark(block: index, item: 0, text: text)
+      case .list(let items, _):
+        if let item = items.firstIndex(where: { shown($0).contains(text) }) {
+          return Mark(block: index, item: item, text: text)
+        }
+      case .paragraph, .table:
+        break
+      }
+    }
+
+    return nil
   }
 
   private static func appending(_ line: Line, after previous: Line?, to blocks: [RichTextBlock])

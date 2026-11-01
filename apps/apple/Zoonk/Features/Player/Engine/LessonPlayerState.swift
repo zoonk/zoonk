@@ -799,7 +799,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
   /// The explanation screens right after the question in view, up to the next question or the
   /// first one about another skill: what "Explain first" moves in front of it.
-  private var explanationsAfterCurrent: [String] {
+  var explanationsAfterCurrent: [String] {
     guard let question = currentStep, position + 1 < queue.count else {
       return []
     }

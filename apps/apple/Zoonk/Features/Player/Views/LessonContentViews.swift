@@ -52,13 +52,15 @@ struct LessonRichText: View {
 
 struct LessonTextBlocks: View {
   let text: String
+  let mark: String?
 
-  init(_ text: String) {
+  init(_ text: String, mark: String? = nil) {
     self.text = text
+    self.mark = mark
   }
 
   var body: some View {
-    RichTextBlocks(text) { LessonRichText.attributed($0) }
+    RichTextBlocks(text, mark: mark) { LessonRichText.attributed($0) }
   }
 }
 

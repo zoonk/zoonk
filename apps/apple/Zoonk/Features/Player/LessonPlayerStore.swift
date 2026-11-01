@@ -52,6 +52,9 @@ final class LessonPlayerStore {
   /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
   /// learner asks to speak again. Kept here, since both halves of a spread show it.
   var isMicBlocked = false
+  /// The screen and answer round whose "From the lesson" is open, so a fold keeps it open and the
+  /// screen's next round starts it folded.
+  var openRecap: String?
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
   var isAsking = false
@@ -236,6 +239,7 @@ final class LessonPlayerStore {
     self.lesson = lesson
     self.state = state
     works = [:]
+    openRecap = nil
     soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam
     openedAt = .now

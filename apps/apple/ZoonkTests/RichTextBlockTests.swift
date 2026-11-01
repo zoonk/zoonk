@@ -47,4 +47,15 @@ final class RichTextBlockTests: XCTestCase {
       RichTextBlock.parse("| a | b |\n|---|\nrest"),
       [.paragraph(lines: ["| a | b |", "|---|", "rest"])])
   }
+
+  func testAQuoteMarksOnlyTheFirstLineThatShowsItAsALineOfTheText() {
+    let blocks = RichTextBlock.parse(
+      "Prices move.\n\n- Rises **add** up.\n- Falls too.\n\nRises add up again.")
+    let shown = { (text: String) in text.replacingOccurrences(of: "**", with: "") }
+
+    XCTAssertEqual(
+      RichTextBlock.mark("- Rises **add** up.", in: blocks, shown: shown),
+      RichTextBlock.Mark(block: 1, item: 0, text: "Rises add up."))
+    XCTAssertNil(RichTextBlock.mark("Falls back.", in: blocks, shown: shown))
+  }
 }
