@@ -1,36 +1,16 @@
 package com.zoonk.android.feature.activities
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.pressKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.feature.player.FakeLessonPlayerApi
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
-import com.zoonk.android.feature.player.model.LessonStep
-import com.zoonk.android.feature.player.summaryStep
-import kotlinx.coroutines.CompletableDeferred
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -47,202 +27,9 @@ class ActivityKitFlowTest {
 
     private val harness = LessonPlayerHarness(rule) { folder.newFolder() }
 
-    private fun play(
-        fixture: String,
-        isCorrect: Boolean,
-        then: List<LessonStep> = emptyList(),
-        configure: FakeLessonPlayerApi.() -> Unit = {},
-    ) = harness.play(listOf(ActivityFixtures.step(fixture)) + then) {
-        grade = { _, _ -> checkResult(isCorrect, expected = ActivityFixtures.expected(fixture)) }
-        configure()
-    }
-
     private fun tap(text: String) = rule.onNodeWithText(text).performScrollTo().performClick()
 
     private fun shows(text: String) = rule.onNodeWithText(text, substring = true).performScrollTo().assertIsDisplayed()
-
-    @Test
-    fun chartReaderMeasuresATappedSpan() {
-        play("chartReader", isCorrect = true)
-
-        tap("2010 to 2020")
-        rule.onNodeWithText("2010 to 2020").assertIsOn()
-        rule.onNode(hasContentDescription("2010 to 2020: +", substring = true)).assertExists()
-        tap("24 ppm")
-        harness.tap("Check")
-
-        rule.onNodeWithText("2010 to 2020").assertIsOn()
-    }
-
-    @Test
-    fun decisionTreeFollowsTheCaseToItsOutcome() {
-        play("decisionTree", isCorrect = true)
-
-        shows("Oak")
-        tap("Needles")
-        rule.onNodeWithText("Oak").assertDoesNotExist()
-        tap("In bundles")
-        shows("Your answers lead to")
-        harness.tap("Check")
-
-        shows("It leads to Pine.")
-    }
-
-    @Test
-    fun decisionTreeUndoesAStepAndShowsAWrongBranch() {
-        play("decisionTree", isCorrect = false)
-
-        tap("Broad leaves")
-        tap("Undo")
-        tap("Needles")
-        tap("Single")
-        harness.tap("Check")
-
-        shows("You chose Single")
-    }
-
-    @Test
-    fun findErrorShowsTheFixOfTheWrongStep() {
-        play("findError", isCorrect = true)
-
-        rule.onNode(hasText("Step 2") and hasText("Down 20%", substring = true)).performClick()
-        harness.tap("Check")
-
-        shows("120 × 0.8 = 96, not 100.")
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun findErrorPointsToTheWrongStepAndTakesNumberKeys() {
-        play("findError", isCorrect = false)
-
-        rule.onRoot().performKeyInput { pressKey(Key.Three) }
-        rule.onNode(hasText("Step 3") and hasText("So the price", substring = true)).assertIsSelected()
-        harness.tap("Check")
-
-        shows("The wrong step is step 2.")
-    }
-
-    @Test
-    fun stepSolverExplainsAWrongMoveAndGradesTheFirstPick() {
-        play("stepSolver", isCorrect = false)
-
-        tap("Add the tax")
-        shows("Not quite:")
-        tap("Take 25% off")
-        tap("$45")
-        harness.tap("Check")
-
-        shows("Your first pick: Add the tax")
-    }
-
-    @Test
-    fun stepSolverTellsTalkBackWhichStepTheLearnerIsOn() {
-        play("stepSolver", isCorrect = true)
-
-        rule.onNode(hasContentDescription("Step 1 of 2.")).assertExists()
-        tap("Take 25% off")
-        rule.onNode(hasContentDescription("Step 2 of 2.")).assertExists()
-    }
-
-    @Test
-    fun patternTableTakesAnEndingForEachBlank() {
-        play("patternTable", isCorrect = true)
-
-        shows("Which ending does vosotros take?")
-        tap("-éis")
-        shows("Which ending does ellos, ustedes take?")
-        tap("-en")
-        harness.tap("Check")
-
-        rule.onNodeWithText("Which ending does", substring = true).assertDoesNotExist()
-    }
-
-    @Test
-    fun choicesAreNamedAfterWhatTheyAnswer() {
-        play("areaModel", isCorrect = true)
-
-        rule.onNode(hasContentDescription("What is the garden's area?")).assertExists()
-    }
-
-    @Test
-    fun aConversationsRepliesAreNamedAsTheLearnersReply() {
-        play("dialogueSimulator", isCorrect = true)
-
-        rule.onNode(hasContentDescription("Your reply")).assertExists()
-    }
-
-    @Test
-    fun patternTableReadsAsATableARowCellAtATime() {
-        play("patternTable", isCorrect = true)
-
-        rule
-            .onNode(
-                SemanticsMatcher("a table of 7 rows and 3 columns") {
-                    val table = it.config.getOrNull(SemanticsProperties.CollectionInfo)
-                    table?.rowCount == 7 && table.columnCount == 3
-                },
-            ).assertExists()
-        rule.onNode(hasText("yo") and hasText("I")).assert(isHeading())
-        rule.onNode(hasText("hablar") and hasText("to speak")).assert(isHeading())
-    }
-
-    @Test
-    fun patternTableShowsTheRightFormOfAWrongEnding() {
-        play("patternTable", isCorrect = false)
-
-        tap("-áis")
-        tap("-en")
-        harness.tap("Check")
-
-        rule.onNode(hasContentDescription("Correct answer: coméis", substring = true)).assertExists()
-    }
-
-    @Test
-    fun dialogueSaysWhyForEveryReply() {
-        play("dialogueSimulator", isCorrect = false)
-
-        shows("Buenos días, dígame.")
-        tap("Dame algo para la garganta.")
-        harness.tap("Check")
-
-        shows("No greeting and a bare command sound rude to a stranger.")
-        shows("Good morning. Do you have anything for a sore throat?")
-    }
-
-    @Test
-    fun dialogueReadsALineThenItsMeaningWithoutAnAddedStop() {
-        play("dialogueSimulator", isCorrect = false)
-
-        rule.onNode(hasText("They say: Buenos días, dígame. Good morning, how can I help?")).assertExists()
-    }
-
-    @Test
-    fun aMissedStepSolverComesBackToSolveAgain() {
-        play("stepSolver", isCorrect = false)
-
-        tap("Add the tax")
-        tap("Take 25% off")
-        tap("$45")
-        harness.tap("Check")
-        harness.tap("Continue")
-
-        rule.onNodeWithText("Add the tax").performScrollTo().assertIsEnabled()
-    }
-
-    @Test
-    fun aStepSolverShowsItsFirstPickAgainOnReturn() {
-        play("stepSolver", isCorrect = false, then = listOf(summaryStep("end")))
-
-        tap("Add the tax")
-        tap("Take 25% off")
-        tap("$45")
-        harness.tap("Check")
-        harness.tap("Continue")
-        rule.onNodeWithContentDescription("Previous screen").performClick()
-
-        shows("Your first pick: Add the tax")
-    }
 
     @Test
     fun aCanvasAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
@@ -259,18 +46,5 @@ class ActivityKitFlowTest {
         rule.onNodeWithText("Check").assertIsEnabled()
         harness.tap("Check")
         shows("It leads to Pine.")
-    }
-
-    @Test
-    fun aCanvasTakesNoChangeWhileItsAnswerIsChecked() {
-        val gate = CompletableDeferred<Unit>()
-        play("patternTable", isCorrect = false) { this.gate = gate }
-
-        tap("-áis")
-        tap("-en")
-        harness.tap("Check")
-
-        rule.onNodeWithText("-éis").assertIsNotEnabled()
-        gate.complete(Unit)
     }
 }

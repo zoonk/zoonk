@@ -174,9 +174,6 @@ private const val ACTIVITY_CHECK =
 /** A check only the template's own canvas can answer, so a template without a renderer can't be played. */
 const val INTERACTION_ACTIVITY_CHECK = """{"kind":"interaction","explanation":"The lines cross at x = 2."}"""
 
-const val NUMERIC_ACTIVITY_CHECK =
-    """{"kind":"numeric","question":"How much do you pay?","answer":52,"tolerance":{"kind":"absolute","value":0},"unit":"R$","explanation":"You pay 65% of R$80."}"""
-
 private const val RENDERERLESS_FIELDS = """{"elements":["C","O","H"],"formula":"CO2"}"""
 
 /** Every real template gets a renderer in time, so the frame names one that never will. */

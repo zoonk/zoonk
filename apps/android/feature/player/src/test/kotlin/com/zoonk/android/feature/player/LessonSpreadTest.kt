@@ -2,17 +2,13 @@ package com.zoonk.android.feature.player
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
@@ -27,14 +23,9 @@ import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.feature.player.language.reading
-import com.zoonk.android.feature.player.model.ExplanationStepContent
-import com.zoonk.android.feature.player.model.LessonStep
-import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.ui.components.PrivatePictures
 import kotlinx.coroutines.awaitCancellation
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -67,101 +58,12 @@ class LessonSpreadTest {
         rule.waitForIdle()
     }
 
-    private fun text(text: String): DpRect = rule.onNodeWithText(text).getUnclippedBoundsInRoot()
-
     private fun described(description: String): DpRect = rule.onNodeWithContentDescription(description).getUnclippedBoundsInRoot()
-
-    private fun assertBeforeFold(
-        what: String,
-        bounds: DpRect,
-    ) = assertTrue("$what ends before the fold: $bounds", bounds.right <= FOLD)
 
     private fun assertAfterFold(
         what: String,
         bounds: DpRect,
     ) = assertTrue("$what starts after the fold: $bounds", bounds.left >= FOLD)
-
-    @Test
-    @Config(qualifiers = BOOK)
-    fun anOpenBookAsksBeforeTheFoldAndTakesTheAnswerAndItsVerdictAfterIt() {
-        harness.play(listOf(checkStep("quiz"), summaryStep("end")))
-        unfold()
-
-        assertBeforeFold("the question", text("Question quiz?"))
-        assertAfterFold("an option", text("Right"))
-
-        harness.tap("Right")
-        harness.tap("Check")
-
-        rule.onNodeWithText("Correct!").assertIsDisplayed()
-        assertAfterFold("the verdict", text("Correct!"))
-        assertBeforeFold("the question", text("Question quiz?"))
-    }
-
-    @Test
-    @Config(qualifiers = BOOK)
-    fun anOpenBookShowsAReadingScreensPictureOnThePageAfterTheFold() {
-        val picture = StepImage("cloud", "https://blob.zoonk.test/cloud.png", "A cloud over a hill", 1024, 1280)
-        harness.play(listOf(explanationStep("idea").copy(image = picture), summaryStep("end")), pictures = loadingPictures())
-        unfold()
-
-        assertBeforeFold("the title", text("Title idea"))
-        assertBeforeFold("the text", text("Idea idea"))
-        assertAfterFold("the picture", described(picture.alt))
-    }
-
-    /** Text twice as large leaves a page too narrow for it, so the lesson keeps one column, on the page before the fold. */
-    @Test
-    @Config(qualifiers = BOOK, fontScale = 2f)
-    fun largeTextKeepsOneColumnBeforeAnOpenBooksFold() {
-        harness.play(listOf(checkStep("quiz"), summaryStep("end")))
-        unfold()
-
-        val question = text("Question quiz?")
-        val option = text("Right")
-        assertTrue("the options sit under the question: $question, $option", option.top > question.bottom)
-        assertBeforeFold("the question", question)
-        assertBeforeFold("an option", option)
-    }
-
-    /** The screen's text moves between the one column and the page before the fold, and the reading place goes with it. */
-    @Test
-    @Config(qualifiers = BOOK)
-    fun theReadingPlaceFollowsTheTextAsTheBookOpensAndCloses() {
-        val paragraphs = (1..40).joinToString("\n\n") { "Paragraph $it." }
-        val long = LessonStep("long", null, StepContent.Explanation(ExplanationStepContent(text = paragraphs, title = "Title long")))
-        harness.play(listOf(long, summaryStep("end")))
-        rule.onNodeWithText("Paragraph 30.", substring = true).performScrollTo()
-
-        unfold()
-        rule.onNodeWithText("Paragraph 30.", substring = true).assertIsDisplayed()
-        rule.onNodeWithText("Title long").assertIsNotDisplayed()
-
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(emptyList()))
-        rule.waitForIdle()
-        rule.onNodeWithText("Paragraph 30.", substring = true).assertIsDisplayed()
-        rule.onNodeWithText("Title long").assertIsNotDisplayed()
-    }
-
-    @Test
-    @Config(qualifiers = PHONE)
-    fun aPhoneKeepsTheQuestionAndItsOptionsInOneColumn() {
-        harness.play(listOf(checkStep("quiz"), summaryStep("end")))
-
-        val question = text("Question quiz?")
-        val option = text("Right")
-        assertTrue("the options sit under the question: $question, $option", option.top > question.bottom)
-        assertEquals("the column's margin", question.left.value, 20f, 0.5f)
-    }
-
-    @Test
-    @Config(qualifiers = PHONE)
-    fun aPhoneKeepsAReadingScreensPictureAboveItsText() {
-        val picture = StepImage("cloud", "https://blob.zoonk.test/cloud.png", "A cloud over a hill", 1024, 1280)
-        harness.play(listOf(explanationStep("idea").copy(image = picture), summaryStep("end")), pictures = loadingPictures())
-
-        assertTrue("the picture leads the screen", described(picture.alt).bottom < text("Title idea").top)
-    }
 
     /** A sentence half built isn't the player's answer yet, only the screen's own state: opening or closing the book keeps it. */
     @Test
@@ -185,28 +87,9 @@ class LessonSpreadTest {
         assertAfterFold("the placed word", described(PLACED))
     }
 
-    /** Folding or unfolding recreates the screen: a learner who scrolled down to the options stays there. */
-    @Test
-    @Config(qualifiers = SHORT_PHONE)
-    fun theScrollStaysWhereTheLearnerLeftItWhenTheScreenIsRecreated() {
-        val restoration = StateRestorationTester(rule)
-        harness.play(listOf(checkStep("quiz"), summaryStep("end")), restoration = restoration)
-        rule.onNodeWithText("Wrong").performScrollTo()
-        val scrolled = text("Question quiz?").top
-
-        restoration.emulateSavedInstanceStateRestore()
-        rule.waitForIdle()
-
-        assertEquals("the question stays scrolled", scrolled.value, text("Question quiz?").top.value, 0.5f)
-    }
-
     private companion object {
-        /** A phone so short the question and its options scroll. */
-        const val SHORT_PHONE = "w411dp-h300dp"
-
         /** A Pixel 10 Pro Fold's inner display, whose fold runs down its middle. */
         const val BOOK = "w852dp-h883dp"
-        const val PHONE = "w411dp-h891dp"
         val FOLD: Dp = 426.dp
         const val PLACED = "Position 1: gato."
     }

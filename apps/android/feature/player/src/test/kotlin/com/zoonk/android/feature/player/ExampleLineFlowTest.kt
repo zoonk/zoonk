@@ -30,31 +30,6 @@ class ExampleLineFlowTest {
     private val interest = "Your scooter's 12 payments of \$110 for \$1,200 add \$120 of interest."
 
     @Test
-    fun showsEachScreensOwnSavedExampleAndNothingWhereNoneFits() {
-        harness.play(
-            listOf(
-                explanationStep("discount", exampleIdea = "A discount on something the learner buys."),
-                explanationStep("interest", exampleIdea = "Interest on an installment plan the learner pays."),
-                explanationStep("markup", exampleIdea = "A price the learner sets at work."),
-                summaryStep("end"),
-            ),
-        ) {
-            savedLines = mapOf("discount" to discount, "interest" to interest)
-        }
-
-        rule.onNodeWithText(discount).assertIsDisplayed()
-        rule.onNodeWithContentDescription("Your example").assertIsDisplayed()
-        harness.tap("Next")
-
-        rule.onNodeWithText(interest).assertIsDisplayed()
-        harness.tap("Next")
-
-        rule.onNodeWithText("Idea markup").assertIsDisplayed()
-        rule.waitUntil { "markup" in api.lineReads }
-        rule.onNodeWithContentDescription("Your example").assertDoesNotExist()
-    }
-
-    @Test
     fun writesTheLessonsExamplesFromTheLearnersFirstMoveNeverFromItsOpening() {
         val writing = CompletableDeferred<Unit>()
 

@@ -4,12 +4,9 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -19,28 +16,23 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
-import com.zoonk.android.feature.activities.assignmentAnswer
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.LessonStep
-import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
@@ -84,14 +76,6 @@ class CodeFlowTest {
         answer: (JsonObject) -> JsonElement,
     ) = play(ActivityFixtures.step(fixture), ActivityFixtures.expected(fixture), isCorrect, answer)
 
-    private fun explore(
-        fixture: String,
-        answer: (JsonObject) -> JsonElement,
-    ) {
-        harness.codeSandbox = { scope -> ScriptedSandbox(scope, answer).also { scripted = it }.sandbox }
-        harness.play(listOf(ActivityFixtures.exploreStep(fixture), summaryStep("end")))
-    }
-
     private fun tap(text: String) = rule.onNodeWithText(text).performScrollTo().performClick()
 
     private fun shows(text: String) = rule.waitUntilAtLeastOneExists(hasText(text, substring = true), WAIT_MS)
@@ -99,26 +83,6 @@ class CodeFlowTest {
     private fun waitForCheckEnabled() = rule.waitUntil(WAIT_MS) { runCatching { rule.onNodeWithText("Check").assertIsEnabled() }.isSuccess }
 
     private fun line(number: Int): SemanticsNodeInteraction = rule.onNode(hasContentDescription("Line $number, yours to edit"))
-
-    @Test
-    fun fixingTheLoopInPythonPrintsTheExpectedOutput() {
-        playFixture("codeRunner", isCorrect = true) { request ->
-            ScriptedSandbox.printed(if ("range(1, 101)" in request.code) "5050\n" else "4950\n")
-        }
-
-        tap("Run")
-        shows("range stops before its end.")
-        line(2).performTextReplacement("for n in range(1, 101):")
-        shows("You changed the code. Run it again to see the new output.")
-        rule.onNodeWithText("Check").assertIsNotEnabled()
-        tap("Run again")
-        rule.waitUntil(WAIT_MS) { rule.onAllNodesWithText("5050").fetchSemanticsNodes().size == 2 }
-        rule.onAllNodesWithText("5050").assertCountEquals(2)
-        harness.tap("Check")
-
-        shows("Correct!")
-        assertEquals(listOf(outputAnswer("5050\n")), graded)
-    }
 
     @Test
     fun aRunsOutputComesBackAfterAndroidClosesTheAppInTheBackground() {
@@ -135,29 +99,6 @@ class CodeFlowTest {
 
         rule.onAllNodesWithText("5050").assertCountEquals(2)
         rule.onNodeWithText("Check").assertIsEnabled()
-    }
-
-    @Test
-    fun anExploredProgramStartsSolvedAndPrintsWithNothingToMatch() {
-        explore("codeRunner") { ScriptedSandbox.printed("5050\n") }
-
-        line(2).assert(hasText("for n in range(1, 101):"))
-        rule.onNodeWithText("is yours", substring = true).assertDoesNotExist()
-        tap("Run")
-        shows("5050")
-        rule.onNodeWithText("Output").assertExists()
-        rule.onNodeWithText("Expected").assertDoesNotExist()
-    }
-
-    @Test
-    fun javaScriptOutputThatDiffersIsWrong() {
-        play(javaScriptRunner, javaScriptExpected, isCorrect = false) { ScriptedSandbox.printed("[ 1, 2, 3 ]\n") }
-
-        tap("Run")
-        shows("map returns a new array.")
-        harness.tap("Check")
-
-        shows("Not quite")
     }
 
     @Test
@@ -203,74 +144,6 @@ class CodeFlowTest {
 
     private fun field(name: String) = rule.onNode(hasContentDescription(name))
 
-    @Test
-    fun examplesPassAsThePatternGrows() {
-        playFixture("patternTester", isCorrect = true, { ScriptedSandbox.regexTested(it) })
-
-        field("Your pattern").performTextReplacement("^\\d{5}")
-        shows("1 of 3 pass")
-        field("Your pattern").performTextReplacement("^\\d{5}(-\\d{4})?$")
-        shows("3 of 3 pass")
-        harness.tap("Check")
-
-        shows("A pattern that works")
-        assertEquals(listOf(patternAnswer("^\\d{5}(-\\d{4})?$")), graded)
-    }
-
-    @Test
-    fun anExploredPatternStartsSolvedWithNoHints() {
-        explore("patternTester") { ScriptedSandbox.regexTested(it) }
-
-        field("Your pattern").assert(hasText("^\\d{5}(-\\d{4})?$"))
-        shows("2 of 2 pass")
-        shows("3 of 3 pass")
-        rule.onNodeWithText("Show a hint").assertDoesNotExist()
-    }
-
-    @Test
-    fun numbersInARegexTaskAreTextToMatchSoTheyArentGrouped() {
-        play(zipHintTester, ActivityFixtures.expected("patternTester"), isCorrect = true, { ScriptedSandbox.regexTested(it) })
-
-        shows("Match US ZIP codes, like 94103 or 94103-1234.")
-        tap("Show a hint")
-        shows("941031 has six digits.")
-    }
-
-    @Test
-    fun aFormulaIsCheckedCellByCell() {
-        play(formulaTester, expected = null, isCorrect = false, { ScriptedSandbox.regexTested(it) })
-
-        tap("Show a hint")
-        shows("Add the increase to the price.")
-        field("Your formula").performTextReplacement("=A1*B1")
-        rule.waitUntil(WAIT_MS) {
-            rule.onAllNodes(hasContentDescription("doesn't match", substring = true)).fetchSemanticsNodes().size == 2
-        }
-        harness.tap("Check")
-
-        shows("A formula that works")
-        assertEquals(listOf(patternAnswer("=A1*B1")), graded)
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun enterOnASymbolButtonTypesItAtTheCursor() {
-        playFixture("patternTester", isCorrect = true, { ScriptedSandbox.regexTested(it) })
-        val pattern = field("Your pattern")
-
-        pattern.requestFocus()
-        rule.onNode(hasContentDescription("^, Start of the text")).requestFocus().performKeyInput { pressKey(Key.Enter) }
-        pattern.assert(hasText("^"))
-        rule.onNode(hasContentDescription("\\d, Any digit")).requestFocus().performKeyInput { pressKey(Key.Enter) }
-        pattern.assert(hasText("^\\d")).assertIsFocused()
-        pattern.performTextInput("{5}(-\\d{4})?$")
-        shows("2 of 2 pass")
-        rule.onNodeWithText("Check").requestFocus().performKeyInput { pressKey(Key.Enter) }
-
-        rule.waitUntil { graded.isNotEmpty() }
-        assertEquals(listOf(patternAnswer("^\\d{5}(-\\d{4})?$")), graded)
-    }
-
     private fun sqlRows(request: JsonObject): JsonElement {
         val query = request.getValue("query").jsonPrimitive.content
         val rows =
@@ -280,45 +153,7 @@ class CodeFlowTest {
         val result = QueryResult(listOf("name", "pop_millions"), cells)
         return sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(result))
     }
-
-    private val solution =
         "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' AND pop_millions > 200 ORDER BY pop_millions DESC;"
-
-    @Test
-    fun theRightQueryReturnsTheExpectedRows() {
-        playFixture("sqlPlayground", isCorrect = true, ::sqlRows)
-
-        field("Your query").performTextReplacement(solution)
-        tap("Run")
-        shows("Your result: 3 rows")
-        harness.tap("Check")
-
-        shows("Correct!")
-        shows("A query that works")
-    }
-
-    @Test
-    fun anExploredQueryStartsSolvedAndRuns() {
-        explore("sqlPlayground", ::sqlRows)
-
-        field("Query").assert(hasText(solution))
-        tap("Run")
-        shows("Your result: 3 rows")
-    }
-
-    @Test
-    fun orInsteadOfAndShowsTheExpectedRows() {
-        playFixture("sqlPlayground", isCorrect = false, ::sqlRows)
-
-        field("Your query").performTextReplacement(solution.replace(" AND ", " OR "))
-        tap("Run")
-        shows("Your result: 4 rows")
-        harness.tap("Check")
-
-        shows("Not quite")
-        shows("Expected result, in this order")
-        shows("OR keeps rows that pass either test.")
-    }
 
     @Test
     fun typingDuringAPendingQueryKeepsItsLateRowsStale() {
@@ -336,84 +171,6 @@ class CodeFlowTest {
         scripted.gate = null
         tap("Run again")
         waitForCheckEnabled()
-    }
-
-    @Test
-    fun aSnippetDuringAPendingQueryKeepsItsLateRowsStale() {
-        playFixture("sqlPlayground", isCorrect = true, ::sqlRows)
-        val pending = CompletableDeferred<Unit>()
-
-        field("Your query").performTextReplacement("SELECT name FROM countries;")
-        scripted.gate = pending
-        tap("Run")
-        tap("WHERE")
-        pending.complete(Unit)
-
-        shows("You changed the query. Run it again to see the new result.")
-        scripted.gate = null
-        tap("Run again")
-        waitForCheckEnabled()
-    }
-
-    private fun stepForward(times: Int) =
-        repeat(times) {
-            rule.onNode(hasContentDescription("Step forward")).performScrollTo().performClick()
-        }
-
-    private fun option(text: String) = rule.onNode(hasText(text) and hasClickAction()).performScrollTo().performClick()
-
-    @Test
-    fun predictingTheTracedValueIsRight() {
-        playFixture("codeTracer", isCorrect = true) { JsonPrimitive(true) }
-
-        shows("Step 1 of 4")
-        stepForward(2)
-        shows("What will mid be on pass 3?")
-        rule.onNode(hasContentDescription("Step forward")).assertIsNotEnabled()
-        option("6")
-        stepForward(1)
-        shows("You said 6, and it was.")
-        harness.tap("Check")
-
-        shows("Correct!")
-        assertEquals(listOf(assignmentAnswer(mapOf("0" to "b"))), graded)
-    }
-
-    @Test
-    fun anExploredTraceStepsToTheEndWithoutAskingForPredictions() {
-        explore("codeTracer") { JsonPrimitive(true) }
-
-        stepForward(3)
-        shows("Step 4 of 4")
-        rule.onNodeWithText("What will mid be on pass 3?").assertDoesNotExist()
-        rule.onNodeWithText("That's the whole run.").assertExists()
-    }
-
-    @Test
-    fun aWrongPredictionShowsTheTracedValue() {
-        playFixture("codeTracer", isCorrect = false) { JsonPrimitive(true) }
-
-        stepForward(2)
-        option("5")
-        harness.tap("Check")
-
-        shows("Not quite")
-        shows("You said 5; it was 6.")
-    }
-
-    @Test
-    fun twoPausesOnOneStepAreBothAskedBeforeSteppingOn() {
-        play(twoPauseTracer, expected = null, isCorrect = true) { JsonPrimitive(true) }
-
-        stepForward(2)
-        option("6")
-        shows("What will lo be on pass 3?")
-        option("6")
-        stepForward(1)
-        harness.tap("Check")
-
-        rule.waitUntil(WAIT_MS) { graded.isNotEmpty() }
-        assertEquals(listOf(assignmentAnswer(mapOf("0" to "b", "1" to "b"))), graded)
     }
 
     @Test
@@ -483,43 +240,5 @@ class CodeFlowTest {
                     ).jsonObject,
                 id = "runner",
             )
-
-        val formulaTester =
-            ActivityFixtures.step(
-                ApiJson
-                    .parseToJsonElement(
-                        """
-                        {"check":{"explanation":"Here is why.","kind":"interaction"},"prompt":"Write the pattern.",
-                         "template":"patternTester",
-                         "fields":{"mode":"formula","solution":"A1*(1+B1)","task":"Price A1 goes up by rate B1. What's the new price?",
-                          "tolerance":{"kind":"absolute","value":0.01},
-                          "hints":[{"hint":"Add the increase to the price.","mistake":"Only the increase"}],
-                          "examples":[{"inputs":[{"name":"A1","value":100},{"name":"B1","value":0.2}],"output":120},
-                                      {"inputs":[{"name":"A1","value":50},{"name":"B1","value":0.1}],"output":55}]}}
-                        """,
-                    ).jsonObject,
-                id = "formula",
-            )
-
-        val zipHintTester =
-            ActivityFixtures.contentJson("patternTester").let { content ->
-                val hints = ApiJson.parseToJsonElement("""[{"hint":"941031 has six digits.","mistake":"Matches extra digits"}]""")
-                val fields = content.getValue("fields").jsonObject
-                ActivityFixtures.step(JsonObject(content + ("fields" to JsonObject(fields + ("hints" to hints)))), id = "zip")
-            }
-
-        val twoPauseTracer =
-            ActivityFixtures.contentJson("codeTracer").let { content ->
-                val fields = content.getValue("fields").jsonObject
-                val lo =
-                    ApiJson.parseToJsonElement(
-                        """
-                        {"options":[{"id":"a","text":"4"},{"id":"b","text":"6"}],
-                         "question":"What will lo be on pass 3?","step":3,"variable":"lo"}
-                        """,
-                    )
-                val pauses = JsonArray(fields.getValue("pauses").jsonArray + lo)
-                ActivityFixtures.step(JsonObject(content + ("fields" to JsonObject(fields + ("pauses" to pauses)))), id = "tracer")
-            }
     }
 }

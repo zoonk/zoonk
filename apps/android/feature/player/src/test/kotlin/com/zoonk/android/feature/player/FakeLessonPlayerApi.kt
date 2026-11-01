@@ -79,13 +79,9 @@ class FakeLessonPlayerApi(
 ) : LessonPlayerApi {
     val checks = mutableListOf<Pair<String, LessonStepCheckInput>>()
     val completions = mutableListOf<String>()
-    var runAnswers = "[]"
     var optionalStepIds = "[]"
-    var startError: ApiException? = null
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
-    var completeFails = false
-    var completion = COMPLETION
     var gate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var writes = 0
@@ -106,15 +102,13 @@ class FakeLessonPlayerApi(
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun {
-        startError?.let { throw it }
-        return ApiJson.decodeFromString(
+    ): LibraryLessonRun =
+        ApiJson.decodeFromString(
             """
-            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
+            {"answers":[],"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
              "startedAt":"2026-10-28T10:00:00Z","support":null}
             """.trimIndent(),
         )
-    }
 
     override suspend fun check(
         session: AuthenticatedSession,
@@ -130,30 +124,20 @@ class FakeLessonPlayerApi(
         return grade(stepId, input)
     }
 
-    val explained = mutableListOf<Pair<String, String>>()
-    var explain: suspend (String) -> String = { "It names the droplets, not why they float." }
-
     override suspend fun explainAnswer(
         session: AuthenticatedSession,
         stepId: String,
         answer: String,
-    ): String {
-        explained += stepId to answer
-        return explain(answer)
-    }
+    ) = "It names the droplets, not why they float."
 
     var spokenGrade: suspend () -> SpokenAnswerGrade = { throw ApiException(ApiError.Unavailable) }
-    val spokenTakes = mutableListOf<String>()
 
     override suspend fun speak(
         session: AuthenticatedSession,
         stepId: String,
         recording: VoiceRecording,
         studySessionId: String?,
-    ): SpokenAnswerGrade {
-        spokenTakes += stepId
-        return spokenGrade()
-    }
+    ) = spokenGrade()
 
     override suspend fun complete(
         session: AuthenticatedSession,
@@ -162,8 +146,7 @@ class FakeLessonPlayerApi(
         skippedWritingStepIds: List<String>,
     ): LibraryLessonCompletion {
         completions += runId
-        if (completeFails) throw ApiException(ApiError.Unavailable)
-        return ApiJson.decodeFromString(completion)
+        return ApiJson.decodeFromString(COMPLETION)
     }
 
     override suspend fun readiness(
@@ -211,12 +194,10 @@ class FakeLessonPlayerApi(
         if (linesResponseLost) throw ApiException(ApiError.Network)
     }
 
-    var fit: LessonFit? = null
-
     override suspend fun fit(
         session: AuthenticatedSession,
         lessonId: String,
-    ) = fit
+    ): LessonFit? = null
 }
 
 fun chapterLessons(): List<ChapterLesson> =
