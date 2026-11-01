@@ -117,7 +117,7 @@ fun TabSearchBar(
             SearchBar(
                 state = state,
                 inputField = inputField,
-                modifier = modifier.then(width).then(beforeFold).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                modifier = modifier.then(beforeFold).then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }
     }

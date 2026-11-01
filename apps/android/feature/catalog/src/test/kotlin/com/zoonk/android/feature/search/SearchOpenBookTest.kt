@@ -124,6 +124,16 @@ class SearchOpenBookTest {
         assertBeforeFold("a result", rule.onNodeWithText("Explore courses").getUnclippedBoundsInRoot())
     }
 
+    /** A window too short for the docked panel, such as half of an open book in split screen, keeps the bar off the fold too. */
+    @Test
+    @Config(qualifiers = "w852dp-h400dp")
+    fun aShortWindowsBarEndsBeforeTheFold() {
+        show(BOOK_PAGE) { app, navigator -> Column { TabSearchBar(app, navigator) } }
+        unfold()
+
+        assertBeforeFold("the bar", field())
+    }
+
     /** As on the open iPhone Duo: the learner's own matches face the ways to ask. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")
