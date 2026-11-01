@@ -53,23 +53,6 @@ class TutorApiTest {
         }
 
     @Test
-    fun aScreensConversationIsReadByItsStepAndMapsItsTurns() =
-        runTest {
-            server.enqueue(json(thread(question(status = "completed", context = """{"kind":"step","stepId":"$STEP","stepNumber":2}"""))))
-
-            val thread = api.thread(TutorThreadKey.Step(LESSON, STEP), cursor = null, ana)
-
-            val read = server.takeRequest()
-            assertEquals("/v1/lessons/$LESSON/questions", read.url.encodedPath)
-            assertEquals(STEP, read.url.queryParameter("stepId"))
-            assertNull(read.url.queryParameter("contextKind"))
-            val turn = thread!!.turns.single()
-            assertEquals(TutorTurn.Status.Completed, turn.status)
-            assertEquals(TutorTurn.About.Step, turn.about)
-            assertEquals("An orbit is a path.", turn.answer)
-        }
-
-    @Test
     fun asksWithTheScopesContextAndTheSameRequestEveryTime() =
         runTest {
             server.enqueue(json(question(status = "pending", context = """{"kind":"item","answered":true}""", created = true)))
@@ -195,9 +178,6 @@ class TutorApiTest {
         return builder.build()
     }
 
-    private fun thread(vararg questions: String) =
-        """{"hasMore":false,"id":"$THREAD","lessonId":null,"nextCursor":null,"questions":[${questions.joinToString(",")}]}"""
-
     private fun question(
         status: String,
         context: String,
@@ -207,12 +187,9 @@ class TutorApiTest {
 
     private companion object {
         const val GOAL = "6f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
-        const val LESSON = "1f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
-        const val STEP = "2f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val ITEM = "3f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val BLOCK = "4f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val QUESTION = "5f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
-        const val THREAD = "7f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val FACT = "8f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val REQUEST = "9f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
     }

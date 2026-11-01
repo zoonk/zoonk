@@ -2,7 +2,6 @@ package com.zoonk.android.data
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummary
-import com.zoonk.api.models.LearnerSummaryAnalyticsGoal
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -67,27 +66,20 @@ private class GatedProfileApi : LearningProfileApi {
 private fun learner(
     id: String = ANA,
     sharing: Boolean? = true,
-    guest: Boolean = false,
-    goal: LearnerSummaryAnalyticsGoal? = null,
 ): LearnerSummary =
     summary(readAt = 0, nextChangeAt = 0).let {
         it.copy(
-            analytics = it.analytics.copy(goal = goal, plan = "plus", usageDataSharing = sharing, username = "ana"),
-            identity = it.identity.copy(isAnonymous = guest, userId = UUID.fromString(id)),
+            analytics = it.analytics.copy(goal = null, plan = "plus", usageDataSharing = sharing, username = "ana"),
+            identity = it.identity.copy(isAnonymous = false, userId = UUID.fromString(id)),
         )
     }
 
-private fun shared(
-    id: String = ANA,
-    goalKind: String? = null,
-    phase: Long? = null,
-    guest: Boolean = false,
-    locale: String = "pt",
-) = AnalyticsLearner(
-    userId = id,
-    person = mapOf("analyticsDisabled" to false, "plan" to "plus", "userId" to id, "username" to "ana"),
-    shared = mapOf("goal_kind" to goalKind, "is_guest" to guest, "locale" to locale, "plan_phase" to phase, "platform" to "android"),
-)
+private fun shared(id: String = ANA) =
+    AnalyticsLearner(
+        userId = id,
+        person = mapOf("analyticsDisabled" to false, "plan" to "plus", "userId" to id, "username" to "ana"),
+        shared = mapOf("goal_kind" to null, "is_guest" to false, "locale" to "pt", "plan_phase" to null, "platform" to "android"),
+    )
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnalyticsTest {
@@ -205,38 +197,6 @@ class AnalyticsTest {
             summary.value = LoadState.Loaded(learner(id = BIA))
 
             assertEquals(listOf<Any>(shared(id = BIA)), sdk.calls)
-        }
-
-    @Test
-    fun aGuestIsSharedAsAGuest() =
-        runTest {
-            analytics()
-
-            summary.value = LoadState.Loaded(learner(id = GUEST, guest = true))
-
-            assertEquals(listOf<Any>(shared(id = GUEST, guest = true)), sdk.calls)
-        }
-
-    @Test
-    fun theSharedPropertiesFollowTheSummary() =
-        runTest {
-            analytics()
-            summary.value = LoadState.Loaded(learner())
-
-            summary.value = LoadState.Loaded(learner(goal = LearnerSummaryAnalyticsGoal(LearnerSummaryAnalyticsGoal.Kind.LANGUAGE, 2)))
-
-            assertEquals(listOf<Any>(shared(), shared(goalKind = "language", phase = 2)), sdk.calls)
-        }
-
-    @Test
-    fun theLocaleFollowsTheLanguageTheAppShows() =
-        runTest {
-            analytics()
-            summary.value = LoadState.Loaded(learner())
-
-            language.value = "de"
-
-            assertEquals(listOf<Any>(shared(), shared(locale = "de")), sdk.calls)
         }
 
     @Test

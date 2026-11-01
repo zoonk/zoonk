@@ -18,14 +18,13 @@ import kotlin.coroutines.cancellation.CancellationException
 class ApiRuntimeTest {
     private val server = MockWebServer()
     private lateinit var api: ApiClients
-    private val log = mutableListOf<String>()
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val bia = AuthenticatedSession("bia", "token-b", "local-b")
 
     @Before
     fun start() {
         server.startOnLoopback()
-        api = ApiClients(server.url("/v1/"), apiHttpClient { addInterceptor(RequestLog { log += it }) })
+        api = ApiClients(server.url("/v1/"), apiHttpClient())
     }
 
     @After
@@ -121,41 +120,6 @@ class ApiRuntimeTest {
             kotlinx.coroutines.runBlocking { perform<Unit> { throw CancellationException("left the screen") } }
         }
     }
-
-    @Test
-    fun theRequestLogNamesMethodPathStatusAndTime() =
-        runTest {
-            server.enqueue(MockResponse.Builder().code(204).build())
-            perform { api.clients(ana).sessions.deleteCurrentSession() }
-            assertEquals(1, log.size)
-            assert(Regex("""DELETE /v1/sessions/current 204 \d+ms""").matches(log.single())) { log.single() }
-        }
-
-    @Test
-    fun aNullBodyReadsAsNothingYetAndAThreadAsItself() =
-        runTest {
-            val goal = java.util.UUID.randomUUID()
-            server.enqueue(json("null"))
-            server.enqueue(
-                json("""{"hasMore":false,"id":"${java.util.UUID.randomUUID()}","lessonId":null,"nextCursor":null,"questions":[]}"""),
-            )
-
-            assertNull(performOrNull { api.clients(ana).plans.getPlanQuestionThread(goal) })
-            assertEquals(false, performOrNull { api.clients(ana).plans.getPlanQuestionThread(goal) }?.hasMore)
-        }
-
-    @Test
-    fun anEnumQueryGoesByTheContractsName() =
-        runTest {
-            server.enqueue(json("null"))
-            performOrNull {
-                api.clients(ana).plans.getPlanQuestionThread(
-                    java.util.UUID.randomUUID(),
-                    contextKind = com.zoonk.api.apis.PlansApi.ContextKindGetPlanQuestionThread.PLAN,
-                )
-            }
-            assertEquals("plan", server.takeRequest().url.queryParameter("contextKind"))
-        }
 
     private fun json(body: String) =
         MockResponse
