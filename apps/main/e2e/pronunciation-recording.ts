@@ -1,5 +1,5 @@
 import { type Page } from "@playwright/test";
-import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
+import { PRONUNCIATION_RECORDING } from "../../../packages/e2e/src/pronunciation-grader";
 
 export async function allowPronunciationRecording(page: Page) {
   await page.addInitScript(
@@ -41,6 +41,6 @@ export async function allowPronunciationRecording(page: Page) {
         }),
       });
     },
-    [...ONE_SECOND_RECORDING],
+    [...PRONUNCIATION_RECORDING],
   );
 }
