@@ -93,9 +93,9 @@ const withNextIntl = createNextIntlPlugin({
 });
 
 export default withSentryConfig(withBotId(withNextIntl(withMDX(nextConfig))), {
+  bundleSizeOptimizations: { excludeDebugStatements: true },
   org: "zoonk",
   project: "zoonk",
   silent: true,
-  webpack: { treeshake: { removeDebugLogging: true } },
   widenClientFileUpload: true,
 });
