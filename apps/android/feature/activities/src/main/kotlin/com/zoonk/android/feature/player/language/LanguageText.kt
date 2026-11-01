@@ -19,13 +19,13 @@ fun stripWrappingQuotes(value: String): String {
 }
 
 private val SPACE_BEFORE_PUNCTUATION = Regex("""(?<!\s)\s+([!?.,;:。、！？؟])""")
-private val NOT_LETTER_NUMBER_OR_SPACE = Regex("""[^\p{L}\p{N}\s]""")
+private val PUNCTUATION = Regex("""[^\p{L}\p{M}\p{N}\s]""")
 private val COMBINING_MARKS = Regex("[̀-ͯ]")
 private val SPACES = Regex("""\s+""")
 
 fun normalizePunctuation(text: String): String = text.replace(SPACE_BEFORE_PUNCTUATION, "$1")
 
-fun stripPunctuation(text: String): String = text.replace(NOT_LETTER_NUMBER_OR_SPACE, "")
+fun stripPunctuation(text: String): String = text.replace(PUNCTUATION, "")
 
 fun normalizeString(text: String): String =
     Normalizer
@@ -183,7 +183,7 @@ fun readingPromptHints(
     val targets =
         sentenceWordOptions.mapNotNull { option ->
             val key = promptKey(option.translation)
-            val translation = stripEdgePunctuation(option.word)
+            val translation = trimPunctuation(option.word)
             if (key.isEmpty() || translation.isEmpty()) null else key to translation
         }
     val used = mutableSetOf<Int>()
@@ -200,8 +200,8 @@ fun readingPromptHints(
     }
 }
 
-private val EDGE_PUNCTUATION = Regex("""^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$""")
+private val EDGE_PUNCTUATION = Regex("""^[^\p{L}\p{M}\p{N}]+|[^\p{L}\p{M}\p{N}]+$""")
 
-private fun stripEdgePunctuation(word: String) = word.replace(EDGE_PUNCTUATION, "")
+private fun trimPunctuation(word: String) = word.replace(EDGE_PUNCTUATION, "")
 
 private fun promptKey(word: String?) = normalizeString(stripPunctuation(word.orEmpty()))

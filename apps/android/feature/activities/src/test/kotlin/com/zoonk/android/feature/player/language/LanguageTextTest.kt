@@ -105,4 +105,18 @@ class LanguageTextTest {
             ),
         )
     }
+
+    @Test
+    fun vowelSignsStayOnTheWordsTheyTellApart() {
+        assertEquals("काम", stripPunctuation("काम।"))
+        assertEquals("สวัสดี", stripPunctuation("สวัสดี!"))
+        assertEquals(
+            listOf(PromptWordHint("काम", "work"), PromptWordHint("कम", "little")),
+            readingPromptHints("काम कम", listOf(option("little", "कम"), option("work", "काम"))),
+        )
+        assertEquals(
+            listOf(PromptWordHint("Hello,", "नमस्ते"), PromptWordHint("good!", "ดี")),
+            readingPromptHints("Hello, good!", listOf(option("नमस्ते,", "hello"), option("ดี!", "good"))),
+        )
+    }
 }
