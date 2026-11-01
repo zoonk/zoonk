@@ -13,6 +13,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.value
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
@@ -221,7 +222,7 @@ class SubscriptionStore(
                 mutablePurchase.value = PurchaseState.PlanCheckFailed
                 return
             }
-            if (shownPlan() != null) {
+            if (account.state.value.value?.account?.subscription != null) {
                 mutablePurchase.value = PurchaseState.AlreadyPlus
                 return
             }

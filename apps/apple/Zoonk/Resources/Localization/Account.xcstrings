@@ -2963,65 +2963,6 @@
         }
       }
     },
-    "Continue with Google" : {
-      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Google fortfahren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar con Google"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer avec Google"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continua con Google"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Googleで続ける"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google로 계속하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontynuuj z Google"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar com o Google"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google ile devam et"
-          }
-        }
-      }
-    },
     "Continue with email" : {
       "comment" : "Email sign-in button label",
       "localizations" : {
@@ -3077,6 +3018,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-posta ile devam et"
+          }
+        }
+      }
+    },
+    "Continue with Google" : {
+      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Google fortfahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar con Google"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer avec Google"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua con Google"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Googleで続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google로 계속하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontynuuj z Google"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar com o Google"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google ile devam et"
           }
         }
       }
@@ -3618,6 +3618,65 @@
         }
       }
     },
+    "Deleting your account ends Plus right away." : {
+      "comment" : "Before deleting the account, what happens to Plus bought on the web",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dein Konto löschst, endet Plus sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si eliminas tu cuenta, Plus termina de inmediato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ton compte met immédiatement fin à Plus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se elimini il tuo account, Plus termina subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除すると、Plusはすぐに利用できなくなります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제하면 Plus 이용이 바로 종료돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięcie konta od razu kończy subskrypcję Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir sua conta encerra o Plus na hora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silersen Plus hemen sona erer."
+          }
+        }
+      }
+    },
     "Deleting your Zoonk account doesn't cancel App Store billing. Cancel the subscription first if you don't want it to renew." : {
       "comment" : "Warns that App Store billing continues independently of Zoonk account deletion",
       "localizations" : {
@@ -3732,65 +3791,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk hesabını silmen Google Play aboneliğini iptal etmez. Yenilenmesini istemiyorsan önce bir Android cihazda Google Play üzerinden aboneliğini iptal et."
-          }
-        }
-      }
-    },
-    "Deleting your account ends Plus right away." : {
-      "comment" : "Before deleting the account, what happens to Plus bought on the web",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wenn du dein Konto löschst, endet Plus sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si eliminas tu cuenta, Plus termina de inmediato."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer ton compte met immédiatement fin à Plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se elimini il tuo account, Plus termina subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントを削除すると、Plusはすぐに利用できなくなります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정을 삭제하면 Plus 이용이 바로 종료돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usunięcie konta od razu kończy subskrypcję Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Excluir sua conta encerra o Plus na hora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesabını silersen Plus hemen sona erer."
           }
         }
       }
@@ -4725,6 +4725,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Google Play"
+          }
+        }
+      }
+    },
+    "hello@zoonk.com" : {
+      "comment" : "An email address, not a phrase: keep it unless the style guide gives the language its own inbox",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "contacto@zoonk.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "contato@zoonk.com"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
           }
         }
       }
@@ -9036,65 +9101,6 @@
         }
       }
     },
-    "Use Google Play on an Android device to change or cancel this subscription." : {
-      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ändere oder kündige dieses Abo über Google Play auf einem Android-Gerät."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utilise Google Play sur un appareil Android pour modifier ou résilier cet abonnement."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa Google Play su un dispositivo Android per modificare o disdire questo abbonamento."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このサブスクリプションを変更または解約するには、Android端末のGoogle Playを使ってください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Android 기기의 Google Play에서 이 구독을 변경하거나 해지하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aby zmienić lub anulować tę subskrypcję, użyj Google Play na urządzeniu z systemem Android."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use o Google Play em um aparelho Android para alterar ou cancelar esta assinatura."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu aboneliği değiştirmek veya iptal etmek için bir Android cihazda Google Play’i kullan."
-          }
-        }
-      }
-    },
     "Use a different email" : {
       "comment" : "Button that returns to the email entry step",
       "localizations" : {
@@ -9213,6 +9219,65 @@
         }
       }
     },
+    "Use Google Play on an Android device to change or cancel this subscription." : {
+      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändere oder kündige dieses Abo über Google Play auf einem Android-Gerät."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilise Google Play sur un appareil Android pour modifier ou résilier cet abonnement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Google Play su un dispositivo Android per modificare o disdire questo abbonamento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このサブスクリプションを変更または解約するには、Android端末のGoogle Playを使ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Android 기기의 Google Play에서 이 구독을 변경하거나 해지하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby zmienić lub anulować tę subskrypcję, użyj Google Play na urządzeniu z systemem Android."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use o Google Play em um aparelho Android para alterar ou cancelar esta assinatura."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu aboneliği değiştirmek veya iptal etmek için bir Android cihazda Google Play’i kullan."
+          }
+        }
+      }
+    },
     "Username" : {
       "comment" : "Profile username field label",
       "localizations" : {
@@ -9268,6 +9333,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanıcı adı"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome utente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ユーザー名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자 이름"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nazwa użytkownika"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kullanıcı adı"
           }
         }
       }
@@ -10405,6 +10529,65 @@
         }
       }
     },
+    "you@example.com" : {
+      "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "du@example.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu@example.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "toi@example.com"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu@example.com"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "taro@example.com"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름@example.com"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ty@example.com"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voce@example.com"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sen@example.com"
+          }
+        }
+      }
+    },
     "Your App Store purchases are now available on this Zoonk account." : {
       "comment" : "Confirms restored purchases were synchronized with Zoonk",
       "localizations" : {
@@ -10460,124 +10643,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store’dan satın aldıkların artık bu Zoonk hesabında kullanılabilir."
-          }
-        }
-      }
-    },
-    "Your Zoonk account and personalized data were permanently deleted." : {
-      "comment" : "Confirms that account data was permanently deleted",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden endgültig gelöscht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron de forma permanente."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compte Zoonk et tes données personnalisées ont été définitivement supprimés."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo account Zoonk e i tuoi dati personalizzati sono stati eliminati definitivamente."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkアカウントと個人用データを完全に削除しました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk 계정과 개인 맞춤 데이터가 영구적으로 삭제됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje konto w Zoonku i spersonalizowane dane zostały trwale usunięte."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk hesabın ve sana özel verilerin kalıcı olarak silindi."
-          }
-        }
-      }
-    },
-    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
-      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se revocara la autorización de acceso. Elimina Zoonk de Iniciar sesión con Apple para terminar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation accordée à Zoonk. Retire Zoonk de « Se connecter avec Apple » pour terminer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I tuoi dati Zoonk sono stati eliminati, ma Apple non ha potuto confermare la revoca dell’autorizzazione. Rimuovi Zoonk da Sign in with Apple per completare l’operazione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkのデータは削除されましたが、Apple側で連携の解除を確認できませんでした。「Appleでサインイン」からZoonkを削除して、手続きを完了してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk 데이터는 삭제됐지만, Apple에서 로그인 권한이 해제됐는지 확인하지 못했어요. 완료하려면 ‘Apple로 로그인’에서 Zoonk를 삭제해 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje dane w Zoonku zostały usunięte, ale Apple nie potwierdziło cofnięcia uprawnień. Aby dokończyć, usuń Zoonk z funkcji Sign in with Apple."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk verilerin silindi, ancak Apple, Zoonk’a verdiğin iznin kaldırıldığını doğrulayamadı. İşlemi tamamlamak için Apple ile Giriş Yap bölümünden Zoonk’u kaldır."
           }
         }
       }
@@ -11125,61 +11190,120 @@
         }
       }
     },
-    "Zoonk Plus" : {
-      "comment" : "Title of the native Zoonk Plus subscription screen",
+    "Your Zoonk account and personalized data were permanently deleted." : {
+      "comment" : "Confirms that account data was permanently deleted",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden endgültig gelöscht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron de forma permanente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Ton compte Zoonk et tes données personnalisées ont été définitivement supprimés."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Il tuo account Zoonk e i tuoi dati personalizzati sono stati eliminati definitivamente."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Zoonkアカウントと個人用データを完全に削除しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Zoonk 계정과 개인 맞춤 데이터가 영구적으로 삭제됐어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Twoje konto w Zoonku i spersonalizowane dane zostały trwale usunięte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "Zoonk hesabın ve sana özel verilerin kalıcı olarak silindi."
+          }
+        }
+      }
+    },
+    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
+      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se revocara la autorización de acceso. Elimina Zoonk de Iniciar sesión con Apple para terminar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation accordée à Zoonk. Retire Zoonk de « Se connecter avec Apple » pour terminer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi dati Zoonk sono stati eliminati, ma Apple non ha potuto confermare la revoca dell’autorizzazione. Rimuovi Zoonk da Sign in with Apple per completare l’operazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkのデータは削除されましたが、Apple側で連携の解除を確認できませんでした。「Appleでサインイン」からZoonkを削除して、手続きを完了してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk 데이터는 삭제됐지만, Apple에서 로그인 권한이 해제됐는지 확인하지 못했어요. 완료하려면 ‘Apple로 로그인’에서 Zoonk를 삭제해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje dane w Zoonku zostały usunięte, ale Apple nie potwierdziło cofnięcia uprawnień. Aby dokończyć, usuń Zoonk z funkcji Sign in with Apple."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk verilerin silindi, ancak Apple, Zoonk’a verdiğin iznin kaldırıldığını doğrulayamadı. İşlemi tamamlamak için Apple ile Giriş Yap bölümünden Zoonk’u kaldır."
           }
         }
       }
@@ -11538,185 +11662,61 @@
         }
       }
     },
-    "hello@zoonk.com" : {
-      "comment" : "An email address, not a phrase: keep it unless the style guide gives the language its own inbox",
+    "Zoonk Plus" : {
+      "comment" : "Title of the native Zoonk Plus subscription screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "contacto@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "contato@zoonk.com"
+            "value" : "Zoonk Plus"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hello@zoonk.com"
-          }
-        }
-      }
-    },
-    "username" : {
-      "comment" : "Placeholder for the username field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Benutzername"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nombre de usuario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nom d’utilisateur"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome utente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ユーザー名"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "사용자 이름"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nazwa użytkownika"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome de usuário"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "kullanıcı adı"
-          }
-        }
-      }
-    },
-    "you@example.com" : {
-      "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "du@example.com"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@example.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "toi@example.com"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@example.com"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "taro@example.com"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이름@example.com"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ty@example.com"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "voce@example.com"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sen@example.com"
+            "value" : "Zoonk Plus"
           }
         }
       }
