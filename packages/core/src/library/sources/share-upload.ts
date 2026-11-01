@@ -31,9 +31,12 @@ async function mergeIntoPublicSource({
   });
 
   await prisma.$transaction([
-    // An ask answered with the upload meanwhile waits, so its answer is the one carried over.
+    // Learner writes, such as answering an ask with the upload, lock the learner first; so does
+    // this, so one answered meanwhile is carried over and neither waits on the other's links.
     prisma.$queryRaw`
-      SELECT id FROM learner_sources WHERE source_id = ${privateSourceId}::uuid FOR UPDATE
+      SELECT id FROM users
+      WHERE id IN (SELECT user_id FROM learner_sources WHERE source_id = ${privateSourceId}::uuid)
+      ORDER BY id FOR NO KEY UPDATE
     `,
     // A learner who already follows the shared copy keeps that link: it takes on their upload and
     // the ask it answered, so sending it again can't answer another ask.
