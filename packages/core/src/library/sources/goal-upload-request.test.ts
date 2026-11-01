@@ -13,10 +13,10 @@ import {
   recordGoalResearchRun,
 } from "./goal-upload-request";
 
-function privateUploadFixture(ownerId: string) {
+async function privateUploadFixture(ownerId: string, goalId: string | null = null) {
   const contentHash = `hash-${randomUUID()}`;
 
-  return sourceFixture({
+  const source = await sourceFixture({
     contentHash,
     identityKey: `private:${ownerId}:upload:${contentHash}`,
     kind: "upload",
@@ -24,6 +24,10 @@ function privateUploadFixture(ownerId: string) {
     url: null,
     visibility: "private",
   });
+
+  await learnerSourceFixture({ goalId, sourceId: source.id, userId: ownerId });
+
+  return source;
 }
 
 async function examGoalWaitingForNotice() {
@@ -114,35 +118,66 @@ describe(answerGoalUploadRequest, () => {
   it("links the learner's uploads to the goal and clears the ask at once", async () => {
     const { goal, user } = await examGoalWaitingForNotice();
 
-    const [upload, linkedElsewhere, shared] = await Promise.all([
+    const [upload, unlinked] = await Promise.all([
+      privateUploadFixture(user.id, goal.id),
       privateUploadFixture(user.id),
-      privateUploadFixture(user.id),
-      sourceFixture(),
     ]);
 
-    await learnerSourceFixture({ sourceId: linkedElsewhere.id, userId: user.id });
     mockSession(user.id);
 
     await expect(
-      answerGoalUploadRequest({
-        goalId: goal.id,
-        sourceIds: [upload.id, linkedElsewhere.id, shared.id],
-      }),
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [upload.id, unlinked.id] }),
     ).resolves.toStrictEqual({
       goalId: goal.id,
       researchRunId: null,
-      sourceIds: [upload.id, linkedElsewhere.id, shared.id],
+      sourceIds: [upload.id, unlinked.id],
       status: "ready",
     });
 
     const links = await prisma.learnerSource.findMany({
-      select: { goalId: true, origin: true, sourceId: true },
+      select: { goalId: true },
       where: { userId: user.id },
     });
 
-    expect(links).toHaveLength(3);
-    expect(links.every((link) => link.goalId === goal.id && link.origin === "upload")).toBe(true);
+    expect(links).toStrictEqual([{ goalId: goal.id }, { goalId: goal.id }]);
     await expect(readReason(goal.id)).resolves.toBeNull();
+  });
+
+  it("keeps the ask when a source is from the Library, not the learner's upload", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+    const shared = await sourceFixture();
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [shared.id] }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(readReason(goal.id)).resolves.toBe("noOfficialSource");
+    await expect(prisma.learnerSource.count({ where: { sourceId: shared.id } })).resolves.toBe(0);
+  });
+
+  it("takes each upload once, so research asking again needs a new upload", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+    const first = await privateUploadFixture(user.id, goal.id);
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id] }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "unverified" });
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id] }),
+    ).resolves.toStrictEqual({ status: "alreadyAnswered" });
+
+    await expect(readReason(goal.id)).resolves.toBe("unverified");
+
+    const second = await privateUploadFixture(user.id, goal.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, second.id] }),
+    ).resolves.toMatchObject({ sourceIds: [first.id, second.id], status: "ready" });
   });
 
   it("keeps the ask when an upload isn't the learner's", async () => {
@@ -157,7 +192,7 @@ describe(answerGoalUploadRequest, () => {
     await expect(readReason(goal.id)).resolves.toBe("noOfficialSource");
 
     await expect(
-      prisma.learnerSource.count({ where: { sourceId: othersUpload.id } }),
+      prisma.learnerSource.count({ where: { sourceId: othersUpload.id, userId: user.id } }),
     ).resolves.toBe(0);
   });
 

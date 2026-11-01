@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -16,10 +20,10 @@ function mockSessionWithRole({ role, userId }: { role: "admin" | "user"; userId:
   );
 }
 
-function privateSourceFixture(ownerId: string) {
+async function privateSourceFixture(ownerId: string) {
   const contentHash = `hash-${randomUUID()}`;
 
-  return sourceFixture({
+  const source = await sourceFixture({
     contentHash,
     identityKey: `private:${ownerId}:upload:${contentHash}`,
     kind: "upload",
@@ -27,6 +31,10 @@ function privateSourceFixture(ownerId: string) {
     url: null,
     visibility: "private",
   });
+
+  await learnerSourceFixture({ sourceId: source.id, userId: ownerId });
+
+  return source;
 }
 
 describe(getResearchAccess, () => {
@@ -34,34 +42,35 @@ describe(getResearchAccess, () => {
     mockSession(null);
   });
 
-  it("lets a learner research their own goal with their uploads and shared sources", async () => {
+  it("lets a learner research their own goal with their uploads", async () => {
     const user = await userFixture();
 
-    const [goal, upload, shared] = await Promise.all([
+    const [goal, upload, other] = await Promise.all([
       goalFixture({ kind: "exam", userId: user.id }),
       privateSourceFixture(user.id),
-      sourceFixture(),
+      privateSourceFixture(user.id),
     ]);
 
     mockSession(user.id);
 
     await expect(
-      getResearchAccess({ goalId: goal.id, sourceIds: [upload.id, shared.id, upload.id] }),
+      getResearchAccess({ goalId: goal.id, sourceIds: [upload.id, other.id, upload.id] }),
     ).resolves.toStrictEqual({
       goalId: goal.id,
       researchRunId: null,
-      sourceIds: [upload.id, shared.id],
+      sourceIds: [upload.id, other.id],
       status: "ready",
     });
   });
 
-  it("refuses another learner's goal or private upload", async () => {
+  it("refuses another learner's goal or upload, and Library sources nobody uploaded", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
 
-    const [ownGoal, otherGoal, otherUpload] = await Promise.all([
+    const [ownGoal, otherGoal, otherUpload, shared] = await Promise.all([
       goalFixture({ userId: user.id }),
       goalFixture({ userId: other.id }),
       privateSourceFixture(other.id),
+      sourceFixture(),
     ]);
 
     await expect(getResearchAccess({ goalId: ownGoal.id })).resolves.toStrictEqual({
@@ -76,6 +85,10 @@ describe(getResearchAccess, () => {
 
     await expect(
       getResearchAccess({ goalId: ownGoal.id, sourceIds: [otherUpload.id] }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(
+      getResearchAccess({ goalId: ownGoal.id, sourceIds: [shared.id] }),
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 });

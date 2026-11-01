@@ -214,7 +214,8 @@ export const createResearchRequestSchema = z
       .max(MAX_RESEARCH_UPLOADS)
       .optional()
       .meta({
-        description: "Uploads to read instead of searching, such as the notice research asked for",
+        description:
+          "The learner's own uploads to read instead of searching, such as the notice research asked for",
       }),
   })
   .meta({ id: "CreateResearchRequest" });

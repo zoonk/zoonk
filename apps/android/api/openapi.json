@@ -21079,7 +21079,7 @@
     },
     "/research": {
       "post": {
-        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them.",
+        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers one request, so when research asks again, the answer needs a new upload.",
         "operationId": "createResearch",
         "security": [
           {
@@ -21145,7 +21145,7 @@
             }
           },
           "409": {
-            "description": "The goal has no upload request to answer",
+            "description": "The goal has no upload request to answer, or every upload already answered one",
             "content": {
               "application/json": {
                 "schema": {
@@ -27996,7 +27996,7 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "sourceIds": {
-            "description": "Uploads to read instead of searching, such as the notice research asked for",
+            "description": "The learner's own uploads to read instead of searching, such as the notice research asked for",
             "maxItems": 5,
             "type": "array",
             "items": {

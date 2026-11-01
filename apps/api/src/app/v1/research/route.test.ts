@@ -128,14 +128,17 @@ describe("POST /v1/research", () => {
     ]);
   });
 
-  it("refuses uploads when there's no ask to answer", async () => {
-    vi.mocked(answerGoalUploadRequest).mockResolvedValue({ status: "noUploadRequest" });
+  it.each(["noUploadRequest", "alreadyAnswered"] as const)(
+    "refuses uploads that can't answer the ask (%s)",
+    async (status) => {
+      vi.mocked(answerGoalUploadRequest).mockResolvedValue({ status });
 
-    const response = await createResearch(
-      researchRequest({ goalId: GOAL_ID, sourceIds: [SOURCE_ID] }),
-    );
+      const response = await createResearch(
+        researchRequest({ goalId: GOAL_ID, sourceIds: [SOURCE_ID] }),
+      );
 
-    expect(response.status).toBe(409);
-    expect(start).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(409);
+      expect(start).not.toHaveBeenCalled();
+    },
+  );
 });

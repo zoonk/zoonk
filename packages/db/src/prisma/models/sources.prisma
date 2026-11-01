@@ -199,15 +199,17 @@ enum LearnerSourceOrigin {
 /// Public uploads are stored once and shared, so this row is how a learner keeps their own material
 /// and how uploads are counted per day.
 model LearnerSource {
-  id        String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId    String              @map("user_id") @db.Uuid
-  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sourceId  String              @map("source_id") @db.Uuid
-  source    Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  goalId    String?             @map("goal_id") @db.Uuid
-  goal      Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  origin    LearnerSourceOrigin
-  createdAt DateTime            @default(now()) @map("created_at")
+  id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId     String              @map("user_id") @db.Uuid
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId   String              @map("source_id") @db.Uuid
+  source     Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  goalId     String?             @map("goal_id") @db.Uuid
+  goal       Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  origin     LearnerSourceOrigin
+  /// When the upload answered a goal's upload request; each upload answers once.
+  answeredAt DateTime?           @map("answered_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
 
   @@unique([userId, sourceId], name: "learnerSource")
   @@index([userId, createdAt])

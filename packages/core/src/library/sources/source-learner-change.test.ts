@@ -38,9 +38,10 @@ async function setup() {
 
 describe("source writes", () => {
   it("marks an upload answer once and keeps retries, no-source checks and private-source refusals unchanged", async () => {
-    const { goal, plan } = await setup();
+    const { goal, plan, user } = await setup();
     const [source, other] = await Promise.all([sourceFixture(), userFixture()]);
     const privateSource = await sourceFixture({ ownerId: other.id, visibility: "private" });
+    await learnerSourceFixture({ sourceId: source.id, userId: user.id });
 
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [privateSource.id] }),
@@ -121,6 +122,10 @@ describe("source writes", () => {
     const { goal, user } = await setup();
     const sources = await Promise.all([sourceFixture(), sourceFixture()]);
 
+    await Promise.all(
+      sources.map((source) => learnerSourceFixture({ sourceId: source.id, userId: user.id })),
+    );
+
     const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.$queryRaw`SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE`,
@@ -140,7 +145,9 @@ describe("source writes", () => {
       await Promise.all([holder.done, writes]);
     }
 
-    await expect(prisma.learnerSource.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(
+      prisma.learnerSource.count({ where: { answeredAt: { not: null }, userId: user.id } }),
+    ).resolves.toBe(1);
   });
 
   it.each(["private", "shared"] as const)(

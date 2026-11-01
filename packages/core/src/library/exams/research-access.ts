@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
-import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 
 const MAX_RESEARCH_SOURCES = 5;
 
@@ -11,7 +10,8 @@ export type ResearchAccess =
   | { status: "notFound" }
   | { goalId: string; researchRunId: string | null; sourceIds: string[]; status: "ready" };
 
-async function findReadableSourceIds({
+/** Only the learner's own uploads, so a pick from the Library can't steer a shared blueprint. */
+async function findOwnUploadIds({
   sourceIds,
   userId,
 }: {
@@ -24,12 +24,11 @@ async function findReadableSourceIds({
     return null;
   }
 
-  const readable = await prisma.source.findMany({
-    select: { id: true },
-    where: { ...libraryRowsVisibleTo(userId), id: { in: ids } },
+  const uploads = await prisma.learnerSource.count({
+    where: { origin: "upload", sourceId: { in: ids }, userId },
   });
 
-  return readable.length === ids.length ? ids : null;
+  return uploads === ids.length ? ids : null;
 }
 
 export async function getResearchAccess({
@@ -54,7 +53,7 @@ export async function getResearchAccess({
       select: { id: true, researchRunId: true },
       where: { id: goalId, userId: session.user.id },
     }),
-    findReadableSourceIds({ sourceIds, userId: session.user.id }),
+    findOwnUploadIds({ sourceIds, userId: session.user.id }),
   ]);
 
   if (!goal || !readableIds) {

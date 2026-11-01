@@ -3,6 +3,7 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import {
   goalUploadRequestResponseSchema,
   researchResourceSchema,
@@ -92,6 +93,11 @@ test.describe("Research upload requests API", () => {
       examGoalWaitingForNotice(learner.userId),
       privateUploadFixture({ ownerId: learner.userId }),
       privateUploadFixture({ ownerId: other.userId }),
+    ]);
+
+    await Promise.all([
+      learnerSourceFixture({ goalId: goal.id, sourceId: upload.id, userId: learner.userId }),
+      learnerSourceFixture({ sourceId: othersUpload.id, userId: other.userId }),
     ]);
 
     const refused = await learner.api.post("/v1/research", {

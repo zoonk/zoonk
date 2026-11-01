@@ -80,7 +80,7 @@ export async function answerGoalUploadRequest({
 }: {
   goalId: string;
   sourceIds?: string[];
-}): Promise<ResearchAccess | { status: "noUploadRequest" }> {
+}): Promise<ResearchAccess | { status: "alreadyAnswered" } | { status: "noUploadRequest" }> {
   const [access, session] = await Promise.all([
     getResearchAccess({ goalId, sourceIds }),
     getSession(),
@@ -99,27 +99,33 @@ export async function answerGoalUploadRequest({
     });
 
     if (count === 0) {
-      return unchanged(false);
+      return unchanged("noUploadRequest" as const);
     }
 
-    await transaction.learnerSource.createMany({
-      data: access.sourceIds.map((sourceId) => ({ goalId, origin: "upload", sourceId, userId })),
-      skipDuplicates: true,
+    const fresh = await transaction.learnerSource.updateMany({
+      data: { answeredAt: new Date() },
+      where: { answeredAt: null, sourceId: { in: access.sourceIds }, userId },
     });
+
+    if (fresh.count === 0) {
+      return unchanged("alreadyAnswered" as const);
+    }
 
     await transaction.learnerSource.updateMany({
       data: { goalId },
       where: { goalId: null, sourceId: { in: access.sourceIds }, userId },
     });
 
-    return true;
+    return "answered" as const;
   });
 
-  if (answered) {
-    revalidateCacheTags([getGoalsCacheTag(userId)]);
+  if (answered !== "answered") {
+    return { status: answered };
   }
 
-  return answered ? access : { status: "noUploadRequest" };
+  revalidateCacheTags([getGoalsCacheTag(userId)]);
+
+  return access;
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */

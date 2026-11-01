@@ -143,7 +143,7 @@ export const researchSourcePaths = {
   "/research": {
     post: {
       description:
-        "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them.",
+        "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers one request, so when research asks again, the answer needs a new upload.",
       operationId: "createResearch",
       requestBody: {
         content: { "application/json": { schema: createResearchRequestSchema } },
@@ -157,7 +157,11 @@ export const researchSourcePaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
-        "409": { ...conflictResponse, description: "The goal has no upload request to answer" },
+        "409": {
+          ...conflictResponse,
+          description:
+            "The goal has no upload request to answer, or every upload already answered one",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Research the dated sources a goal depends on",

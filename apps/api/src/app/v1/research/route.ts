@@ -43,6 +43,10 @@ async function createResearch(request: NextRequest) {
     return errors.conflict("This goal has no upload request to answer");
   }
 
+  if (access.status === "alreadyAnswered") {
+    return errors.conflict("These uploads already answered an upload request; add a new one");
+  }
+
   const followed =
     access.sourceIds.length === 0 ? await findFollowableRun(access.researchRunId) : null;
 
