@@ -121,7 +121,7 @@ fun LanguageStepView(
         }
 
         StepKind.Vocabulary -> {
-            if (part.showsScreen) exercise.word?.let { VocabularyView(it, content.wordHints, languages.target) }
+            exercise.word?.let { VocabularyView(it, content.wordHints, languages.target, part) }
         }
 
         StepKind.MultipleChoice -> {
@@ -275,28 +275,34 @@ internal fun targetStyle(
     base: androidx.compose.ui.text.TextStyle,
 ) = remember(language, base) { base.copy(localeList = LocaleList(language), textDirection = TextDirection.Content) }
 
+/** On a spread the word faces what it means, as a bilingual reader faces its two languages. */
 @Composable
 private fun VocabularyView(
     word: ExerciseWord,
     hints: WordHints?,
     language: String,
+    part: StepPart,
 ) {
     val label = stringResource(R.string.player_language_vocabulary, word.word)
 
     ReadScene {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                word.word,
-                modifier = Modifier.semantics { contentDescription = label },
-                style = targetStyle(language, MaterialTheme.typography.displaySmall),
-            )
-            Romanization(word.romanization)
-            word.pronunciation?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    word.word,
+                    modifier = Modifier.semantics { contentDescription = label },
+                    style = targetStyle(language, MaterialTheme.typography.displaySmall),
+                )
+                Romanization(word.romanization)
+                word.pronunciation?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
-        Text(word.translation, style = MaterialTheme.typography.bodyLarge)
-        hints?.let { WordHintsView(it) }
+        if (part.showsTurn) {
+            Text(word.translation, style = MaterialTheme.typography.bodyLarge)
+            hints?.let { WordHintsView(it) }
+        }
     }
 }
 
