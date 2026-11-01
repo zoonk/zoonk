@@ -68,9 +68,15 @@ fun PageWithSupportingPane(
     }
 }
 
-/** Whether [PageWithSupportingPane] lays its supporting pane beside a page [width] wide, for what's decided around it, such as a top bar. */
+/**
+ * Whether [PageWithSupportingPane] lays its supporting pane beside a page [width] wide, for what's
+ * decided around it, such as a top bar; [panesTouch] as the page's own.
+ */
 @Composable
-fun supportingPaneBeside(width: Dp): Boolean = pageDirective(width).maxHorizontalPartitions > 1
+fun supportingPaneBeside(
+    width: Dp,
+    panesTouch: Boolean = false,
+): Boolean = pageDirective(width, panesTouch = panesTouch).maxHorizontalPartitions > 1
 
 /**
  * How a page [width] wide splits into panes, for every pane scaffold of a page (the supporting pane
@@ -139,7 +145,7 @@ fun pageDirective(
 
 /**
  * Where a page [width] wide spreads across an unfolded book's fold: the fold, where it crosses the
- * page and both pages have room for a phone's column, or null.
+ * page and both pages have room for a phone's column, measured as a task's frame measures it, or null.
  */
 @Composable
 fun spreadFold(
@@ -147,7 +153,7 @@ fun spreadFold(
     span: PageSpan?,
 ): PageFold? {
     // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
-    val pagesFit = supportingPaneBeside(width)
+    val pagesFit = supportingPaneBeside(width, panesTouch = true)
     return pageFold(width, span)?.takeIf { pagesFit }
 }
 

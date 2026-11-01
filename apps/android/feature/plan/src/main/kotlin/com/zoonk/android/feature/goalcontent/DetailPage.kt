@@ -69,7 +69,7 @@ internal fun DetailPage(
     val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || titleUnderBar } }
 
     BoxWithConstraints(modifier) {
-        val asideBeside = aside != null && supportingPaneBeside(maxWidth)
+        val asideBeside = aside != null && supportingPaneBeside(maxWidth, panesTouch = true)
         val wide = maxWidth >= WIDE_FROM
 
         PageScaffold(

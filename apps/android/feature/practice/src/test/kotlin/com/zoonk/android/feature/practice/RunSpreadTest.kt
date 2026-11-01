@@ -280,6 +280,19 @@ class RunSpreadTest {
         )
     }
 
+    /** The spread and the task's frame measure the pages alike, so slightly larger text still spreads rather than crossing the fold. */
+    @Test
+    @Config(qualifiers = "w707dp-h823dp", fontScale = 1.4f)
+    fun aNarrowerBookSpreadsAtSlightlyLargerTextToo() {
+        show()
+        unfold()
+
+        assertTrue(
+            "an option starts after the fold",
+            rule.onNodeWithText("Mars", substring = true).getUnclippedBoundsInRoot().left >= 353.dp,
+        )
+    }
+
     /** Text twice as large leaves a page too narrow for it, so the run keeps one column, on the page before the fold. */
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)

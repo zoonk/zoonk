@@ -114,7 +114,13 @@ internal fun MockResult(
 
         BoxWithConstraints {
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
-            val wide = if (hasAside) supportingPaneBeside(maxWidth) else maxWidth >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+            val wide =
+                if (hasAside) {
+                    supportingPaneBeside(maxWidth, panesTouch = true)
+                } else {
+                    maxWidth >=
+                        WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+                }
             LaunchedEffect(wide) { if (wide) reviewOpen = false }
 
             val steps =
