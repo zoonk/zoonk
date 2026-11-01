@@ -62,6 +62,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
@@ -166,12 +167,16 @@ fun GoalSetupScreen(
 
         BoxWithConstraints(Modifier.padding(padding).consumeWindowInsets(padding).onPageSpan { span = it }) {
             val fold = spreadFold(maxWidth, span)
+            val bookFold = pageFold(maxWidth, span)
             val planSoFar: @Composable () -> Unit = { view?.let { PlanSoFar(it.goal) } }
+            // An open book gives a test's question both pages, never the plan so far: where large text leaves them too
+            // narrow to spread, the question keeps one column before the fold.
+            val planBeside = fold == null && (testing == null || bookFold == null)
 
             // At an open book's fold the setup lays out both pages itself, so a test's question takes the plan so far's
             // page at once rather than as Material's panes animate. Its one pane is measured as spreadFold measures it,
             // so it spans both pages.
-            PageWithSupportingPane(supportingPane = planSoFar.takeIf { fold == null }, panesTouch = fold != null) { asideBeside ->
+            PageWithSupportingPane(supportingPane = planSoFar.takeIf { planBeside }, panesTouch = fold != null) { asideBeside ->
                 when (val shown = state) {
                     is LoadState.Loaded -> {
                         SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
