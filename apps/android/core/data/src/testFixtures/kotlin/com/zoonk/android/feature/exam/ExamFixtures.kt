@@ -19,7 +19,7 @@ const val BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
 const val PLAN_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a04"
 
 /** An exam a few weeks away with nothing taken yet; [extra]'s top-level fields replace or add to it. */
-fun exam(extra: String = ""): ExamView {
+fun exam(extra: String): ExamView {
     val base =
         ApiJson
             .parseToJsonElement(
@@ -38,7 +38,7 @@ fun exam(extra: String = ""): ExamView {
     return ApiJson.decodeFromJsonElement<ExamView>(JsonObject(base + fields))
 }
 
-fun mockOptions(extra: String = ""): MockOptions {
+fun mockOptions(extra: String): MockOptions {
     val base =
         ApiJson
             .parseToJsonElement(
@@ -54,35 +54,24 @@ fun mockOptions(extra: String = ""): MockOptions {
 }
 
 class FakeExamApi(
-    var exam: ExamView? = exam(),
+    private val exam: ExamView?,
 ) : ExamApi {
-    var reads = 0
-    val reports = mutableListOf<ExamResultReport>()
-    var reportFailure: ApiException? = null
-
     override suspend fun exam(
         session: AuthenticatedSession,
         goalId: UUID,
         timeZone: String,
-    ): ExamView? {
-        reads++
-        return exam
-    }
+    ): ExamView? = exam
 
     override suspend fun report(
         session: AuthenticatedSession,
         goalId: UUID,
         report: ExamResultReport,
         timeZone: String,
-    ): ExamResult {
-        reportFailure?.let { throw it }
-        reports += report
-        return ExamResult(report.maxScore, report.passed, Clock.System.now(), report.scale, report.score)
-    }
+    ): ExamResult = ExamResult(report.maxScore, report.passed, Clock.System.now(), report.scale, report.score)
 }
 
 class FakeMockApi(
-    var options: MockOptions? = mockOptions(),
+    private val options: MockOptions?,
 ) : MockApi {
     override suspend fun options(
         session: AuthenticatedSession,

@@ -24,7 +24,6 @@ class FakeStudyApi : StudyApi {
     val opened = mutableListOf<OpenStudyDayRequest>()
     val targets = mutableListOf<StudyBlockOpeningTarget>()
     val added = mutableListOf<UUID>()
-    val stopped = mutableListOf<UUID>()
     val written = mutableListOf<String>()
     var sessionReads = 0
     var summaryReads = 0
@@ -41,7 +40,6 @@ class FakeStudyApi : StudyApi {
     var generation = LessonGeneration(generationId = "run-1", status = LessonGeneration.Status.GENERATING)
     var session: StudySession = decodeFixture("study-session")
     var studySummary: StudySessionSummary = decodeFixture("study-session-summary")
-    var openedSession: JsonObject? = null
 
     override suspend fun openDay(
         session: AuthenticatedSession,
@@ -50,11 +48,8 @@ class FakeStudyApi : StudyApi {
     ): OpenedStudyDay {
         opened += body
         failures.removeFirstOrNull()?.let { throw it }
-        val day = openedSession
         return decodeFixture(
             "opened-study-day",
-            "session" to (day ?: fixture("study-session")),
-            *listOfNotNull(day?.let { "sessionId" to it.getValue("id") }).toTypedArray(),
             "target" to target,
             "targetStatus" to targetStatus,
             "opening" to dayOpening,
@@ -84,9 +79,7 @@ class FakeStudyApi : StudyApi {
         session: AuthenticatedSession,
         sessionId: UUID,
         timeZone: String,
-    ) {
-        stopped += sessionId
-    }
+    ) = Unit
 
     override suspend fun summary(
         session: AuthenticatedSession,

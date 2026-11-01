@@ -12,9 +12,8 @@ val CONNECTION: UUID = UUID.fromString("00000000-0000-4000-8000-000000000001")
 fun setup(
     seconds: Long = 300,
     endsAtLimit: LanguageConversationSetup.EndsAtLimit? = null,
-    connectionId: UUID = CONNECTION,
 ) = LanguageConversationSetup(
-    connectionId = connectionId,
+    connectionId = CONNECTION,
     deadlineAt = Instant.parse("2026-10-29T12:05:00Z"),
     endsAtLimit = endsAtLimit,
     seconds = seconds,
@@ -44,13 +43,7 @@ class FakeTransport(
     var silenced = false
     var closed = false
 
-    /** Holds [makeOffer] until completed. */
-    var offerGate: CompletableDeferred<Unit>? = null
-
-    override suspend fun makeOffer(): String {
-        offerGate?.await()
-        return "offer"
-    }
+    override suspend fun makeOffer(): String = "offer"
 
     override suspend fun accept(answer: String) {
         this.answer = answer

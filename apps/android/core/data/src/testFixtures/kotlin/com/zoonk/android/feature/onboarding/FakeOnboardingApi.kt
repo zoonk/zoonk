@@ -37,7 +37,6 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
-import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
@@ -53,35 +52,30 @@ const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
 fun understoodDraft(
     prompt: String = "pass the bar exam",
     understanding: String = goalsUnderstanding(),
-    activeGoalLimit: Int? = null,
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":$activeGoalLimit,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
+        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
     )
 
-fun failedDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
+fun failedDraft(): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"failed","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","understanding":null}""",
     )
 
-fun readingDraft(
-    prompt: String = "pass the bar exam",
-    generationId: String = "run-1",
-): OnboardingDraft =
+fun readingDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":"$generationId","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","understanding":null}""",
     )
 
 fun goalsUnderstanding(
     title: String = "Pass the bar exam",
-    kind: String = "exam",
     details: String = """{"onboardingId":"$DRAFT_ID"}""",
     examDates: String = "[]",
     targetDate: String? = null,
 ) = """
     {"status":"goals","schedule":{"dailyMinutes":15,"studyDays":null,"studyTime":null,"studyTimeNote":null},
      "goals":[{"cutoff":null,"examDates":$examDates,
-       "draft":{"kind":"$kind","language":"en","prompt":"pass the bar exam","title":"$title","details":$details${targetDate?.let {
+       "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","details":$details${targetDate?.let {
     ""","targetDate":"$it""""
 } ?: ""}}}]}
     """.trimIndent()
@@ -96,15 +90,11 @@ internal fun goalCreated(): GoalCreateResponse =
         """.trimIndent(),
     )
 
-const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
+private const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
 
-fun uploadAskOf(
-    reason: String = "noOfficialSource",
-    goalKind: String = "exam",
-    examDocument: String = "notice",
-): TodayUploadRequest =
+fun uploadAskOf(): TodayUploadRequest =
     ApiJson.decodeFromString(
-        """{"examDocument":"$examDocument","goalId":"$GOAL_ID","goalKind":"$goalKind","language":"pt","reason":"$reason"}""",
+        """{"examDocument":"notice","goalId":"$GOAL_ID","goalKind":"exam","language":"pt","reason":"noOfficialSource"}""",
     )
 
 const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
@@ -114,30 +104,20 @@ fun AppCache.noAllowance() = resource<AllowanceResponse>(Audience.SignedIn) { nu
 fun setupView(
     steps: List<String>,
     goalId: String = GOAL_ID,
-    goalIds: List<String> = listOf(goalId),
     kind: String = "learn",
     details: String = """{"answered":[]}""",
     targetDate: String? = null,
     targetLanguage: String? = null,
-    timeChoices: List<Int> = DAILY_TIMES,
-    split: (Int) -> String? = { null },
-    quickTestMinutes: Int = 2,
-    dateProblem: String? = null,
-    examDays: String? = null,
     examChoices: String = "[]",
     planReady: Boolean = true,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
-        {"dateProblem":${dateProblem ?: "null"},"examChoices":$examChoices,"examDays":${examDays ?: "null"},"examSubjects":[],"followUps":[],"generationId":null,"goalIds":${goalIds.joinToString(
-            ",",
-            "[",
-            "]",
-        ) { "\"$it\"" }},
-         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":$quickTestMinutes,"recommendedMinutes":30,"steps":[${steps.joinToString(
+        {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
+         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
-         "timeChoices":[${timeChoices.joinToString(",") { "{\"minutes\":$it,\"split\":${split(it) ?: "null"}}" }}],
+         "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
          "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
@@ -146,13 +126,10 @@ fun setupView(
         """.trimIndent(),
     )
 
-fun planLinkOf(
-    owner: String? = null,
-    dailyTimes: List<Int> = DAILY_TIMES,
-): PlanLink =
+private fun planLinkOf(): PlanLink =
     ApiJson.decodeFromString(
         """
-        {"dailyTimes":${dailyTimes.joinToString(",", "[", "]")},"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
+        {"dailyTimes":$DAILY_TIMES,"owner":null,
          "outline":{"goalKind":"exam","hours":40.5,"language":"en","skillCount":24,"targetLanguage":null,
           "subject":{"title":"Bar exam","description":"Pass the state bar on the first try."},
           "phases":[{"hours":20.0,"milestone":"Every subject once","name":"Building the base"},
@@ -170,11 +147,7 @@ class FakeOnboardingApi : OnboardingApi {
     val drafts = mutableListOf<String>()
     val created = mutableListOf<GoalCreateInput>()
     val fromPlans = mutableListOf<Pair<String, PlanLinkStartInput>>()
-    val revisions = mutableListOf<OnboardingDraftEdit>()
     val sessions = mutableListOf<AuthenticatedSession>()
-
-    /** Holds a goal's send until it completes. */
-    var understandGate: CompletableDeferred<Unit>? = null
 
     override suspend fun understand(
         session: AuthenticatedSession,
@@ -183,7 +156,6 @@ class FakeOnboardingApi : OnboardingApi {
     ): OnboardingDraft {
         sessions += session
         understandCalls += goal to language
-        understandGate?.await()
         refusal?.let { throw it }
         return understood(goal)
     }
@@ -212,10 +184,7 @@ class FakeOnboardingApi : OnboardingApi {
         session: AuthenticatedSession,
         id: String,
         edit: OnboardingDraftEdit,
-    ): OnboardingDraft {
-        revisions += edit
-        return draft
-    }
+    ): OnboardingDraft = draft
 
     override suspend fun createGoals(
         session: AuthenticatedSession,
@@ -226,12 +195,10 @@ class FakeOnboardingApi : OnboardingApi {
         return goalCreated()
     }
 
-    var planLink: PlanLink = planLinkOf()
-
     override suspend fun planLink(
         session: AuthenticatedSession?,
         planId: String,
-    ): PlanLink = planLink
+    ): PlanLink = planLinkOf()
 
     val courseStarts = mutableListOf<Pair<String, JsonObject>>()
 
@@ -268,7 +235,6 @@ class FakeOnboardingApi : OnboardingApi {
     var setup: (String) -> Onboarding = { throw ApiException(ApiError.NotFound) }
     val answers = mutableListOf<Pair<String, OnboardingAnswerInput>>()
     var reply: (String, OnboardingAnswerInput) -> Onboarding = { goalId, _ -> setup(goalId) }
-    val archived = mutableListOf<String>()
 
     override suspend fun onboarding(
         session: AuthenticatedSession,
@@ -304,9 +270,7 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun archive(
         session: AuthenticatedSession,
         goalId: String,
-    ) {
-        archived += goalId
-    }
+    ) = Unit
 
     var advice: (PlanTimeAdviceInput) -> PlanTimeAdvice = { throw ApiException(ApiError.Unavailable) }
 
@@ -347,31 +311,23 @@ class FakeOnboardingApi : OnboardingApi {
         file: PickedFile,
     ) = Unit
 
-    val attached = mutableListOf<CreateUploadRequest>()
-
     override suspend fun attach(
         session: AuthenticatedSession,
         request: CreateUploadRequest,
-    ): Source {
-        attached += request
-        return ApiJson.decodeFromString(
+    ): Source =
+        ApiJson.decodeFromString(
             """
             {"fetchedAt":"2026-10-29T12:00:00Z","id":"$UPLOAD_ID","kind":"upload","language":"pt","mimeType":"text/plain",
              "publisher":null,"reusePolicy":null,"title":"Edital","url":null,"validUntil":null,"visibility":"private"}
             """.trimIndent(),
         )
-    }
 
-    val dismissedAsks = mutableListOf<UUID>()
-    val researchAnswers = mutableListOf<Pair<UUID, List<UUID>>>()
     var researchFailure: ApiException? = null
 
     override suspend fun dismissUploadRequest(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) {
-        dismissedAsks += goalId
-    }
+    ) = Unit
 
     override suspend fun answerUploadRequest(
         session: AuthenticatedSession,
@@ -379,7 +335,6 @@ class FakeOnboardingApi : OnboardingApi {
         sourceIds: List<UUID>,
     ) {
         researchFailure?.let { throw it }
-        researchAnswers += goalId to sourceIds
     }
 
     override suspend fun askMaterial(
@@ -401,8 +356,6 @@ class FakeOnboardingApi : OnboardingApi {
     var writeFailure: ApiException? = null
     var placementReads = 0
     val placementAnswers = mutableListOf<PlacementAnswerInput>()
-    val finishedPlacements = mutableListOf<Boolean>()
-    val finishedMocks = mutableListOf<String>()
 
     /** Holds the placement's reads until it completes. */
     var placementGate: CompletableDeferred<Unit>? = null
@@ -433,25 +386,19 @@ class FakeOnboardingApi : OnboardingApi {
         fromScratch: Boolean,
     ) {
         writeFailure?.let { throw it }
-        finishedPlacements += fromScratch
     }
 
     override suspend fun finishMock(
         session: AuthenticatedSession,
         mockId: String,
-    ) {
-        finishedMocks += mockId
-    }
+    ) = Unit
 
     var levelTest: LanguageLevelTest = levelTestOf()
     var levelTestReads = 0
-    var preparation = LanguageLevelTestGeneration(generationId = "bank-run", status = LanguageLevelTestGeneration.Status.STARTED)
     var prepared = 0
     var levelTestAnswered: (LanguageLevelTestAnswerInput) -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
     val levelTestAnswers = mutableListOf<LanguageLevelTestAnswerInput>()
     var replyLost = false
-    var spoken: () -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
-    val spokenTakes = mutableListOf<VoiceRecording>()
     var finishedLevelTests = 0
 
     /** Holds the level test's reads until it completes, or fails them when it completes exceptionally. */
@@ -472,7 +419,7 @@ class FakeOnboardingApi : OnboardingApi {
     ): LanguageLevelTestGeneration {
         prepared++
         writeFailure?.let { throw it }
-        return preparation
+        return LanguageLevelTestGeneration(generationId = "bank-run", status = LanguageLevelTestGeneration.Status.STARTED)
     }
 
     override suspend fun answerLevelTest(
@@ -492,9 +439,8 @@ class FakeOnboardingApi : OnboardingApi {
         goalId: String,
         recording: VoiceRecording,
     ): LanguageLevelTestSpokenResult {
-        spokenTakes += recording
         writeFailure?.let { throw it }
-        levelTest = spoken()
+        levelTest = levelTestOf(answered = 1, next = DONE_NEXT)
         return LanguageLevelTestSpokenResult(LanguageLevelTestSpokenResultHeard(1.0, "Vorrei un caffè", emptyList()), levelTest)
     }
 
@@ -521,29 +467,25 @@ fun suggestionFor(
 fun suggestion(
     kind: PlanTimeToCoverSuggested.Kind,
     minutes: Long,
-    split: PlanTimeToCoverSuggestedSplit? = null,
-    everyTopic: Boolean = true,
 ) = PlanTimeToCoverSuggested(
     coveredShare = if (kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) 1.0 else 0.6,
-    everyTopic = everyTopic,
+    everyTopic = true,
     kind = kind,
     minutes = minutes,
-    split = split,
+    split = null,
 )
 
 fun coverOf(
     recommended: Long?,
-    targetDate: LocalDate = LocalDate(2030, 11, 8),
     ready: Boolean = true,
     focus: Long? = null,
-    split: PlanTimeToCoverSuggestedSplit? = null,
 ) = PlanTimeToCover(
     fittingDate = null,
     most = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = suggestionFor(recommended, focus)?.copy(split = split).takeIf { ready },
-    targetDate = targetDate,
+    suggested = suggestionFor(recommended, focus).takeIf { ready },
+    targetDate = LocalDate(2030, 11, 8),
     targetDateNamedMonth = false,
 )
 

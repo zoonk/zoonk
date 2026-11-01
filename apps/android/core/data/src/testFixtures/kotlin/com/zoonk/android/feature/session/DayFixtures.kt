@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.session
 
-import com.zoonk.api.models.DailyTimeLimit
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTime
 import com.zoonk.api.models.StudySession
@@ -25,8 +24,6 @@ fun step(
     screen: StudyBlock.Screen = StudyBlock.Screen.LESSON,
     saved: Boolean = true,
     lessonId: UUID? = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f%02d".format(position)),
-    planItemId: UUID? = null,
-    minutes: Long = 5,
 ): DayStep =
     DayStep(
         id = if (saved) blockId(position) else null,
@@ -40,13 +37,13 @@ fun step(
         areas = emptyList(),
         topics = emptyList(),
         oftenTested = false,
-        estimatedMinutes = minutes,
+        estimatedMinutes = 5,
         questions = 0,
         answered = 0,
         lessonId = lessonId,
         chapterId = null,
         areaId = null,
-        planItemId = planItemId,
+        planItemId = null,
         planItemKey = "plan:$position",
         canTestOut = false,
         checkpoint = null,
@@ -64,8 +61,6 @@ fun day(
     steps: List<DayStep> = listOf(step(0), step(1)),
     nextPosition: Long? = steps.firstOrNull { !it.isFinished }?.position,
     dailyGoal: Double = 20.0,
-    limitReached: Boolean = false,
-    emptyDay: EmptyDay? = null,
     saved: Boolean = true,
 ): DayView =
     DayView(
@@ -77,8 +72,8 @@ fun day(
         state = StudySession.State.UNDERWAY,
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),
-        dailyLimit = if (limitReached) DailyTimeLimit(limitMinutes = 30, reached = true, remainingMinutes = 0, usedMinutes = 30) else null,
-        emptyDay = emptyDay,
+        dailyLimit = null,
+        emptyDay = null,
         minutes = StudySessionMinutes(dailyGoal = dailyGoal, done = 0, planned = dailyGoal.toLong()),
         freshStart = null,
         examAccess = StudySessionExamAccess(includesMockExams = true, trialEnded = false),

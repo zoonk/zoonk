@@ -25,7 +25,6 @@ fun earlierQuestion(
 /** Two pages, newest first: questions 1 and 2, then 3 and 4. */
 class FakeEarlierQuestionsApi : EarlierQuestionsApi {
     var first = EarlierQuestions(nextCursor = UUID(0, 2), questions = listOf(earlierQuestion(1), earlierQuestion(2)))
-    var older = EarlierQuestions(nextCursor = null, questions = listOf(earlierQuestion(3), earlierQuestion(4)))
     val reads = mutableListOf<Pair<String, UUID?>>()
     var firstFailure: ApiException? = null
     var olderGate: CompletableDeferred<Unit>? = null
@@ -39,6 +38,6 @@ class FakeEarlierQuestionsApi : EarlierQuestionsApi {
         if (cursor == null) return firstFailure?.let { throw it } ?: first
         olderGate?.await()
         olderFailure?.let { throw it }
-        return older
+        return EarlierQuestions(nextCursor = null, questions = listOf(earlierQuestion(3), earlierQuestion(4)))
     }
 }
