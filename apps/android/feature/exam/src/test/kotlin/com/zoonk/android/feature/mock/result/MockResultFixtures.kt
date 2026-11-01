@@ -7,9 +7,8 @@ import com.zoonk.api.models.MockExam
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
-internal const val ESSAY_ONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b31"
+private const val ESSAY_ONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b31"
 internal const val ESSAY_TWO = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b32"
-internal const val GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
 
 /** Two areas, one right of three: Mathematics went 1 of 2, Languages 0 of 1. */
 internal fun result(
@@ -57,8 +56,8 @@ internal const val MISSED =
 internal fun pendingEssay(item: String = ESSAY_ONE) =
     """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow."}"""
 
-internal fun gradedEssay(item: String = ESSAY_ONE) =
-    """{"area":"Writing","context":null,"itemId":"$item","question":"Write about cities.","status":"graded","text":"Cities grow.",
+internal fun gradedEssay() =
+    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","text":"Cities grow.",
     "grade":{"criteria":[
       {"maxScore":200,"score":160,"comment":"Clear.","example":null,"id":"c1","name":"C1","quote":null},
       {"maxScore":200,"score":160,"comment":"On topic.","example":null,"id":"c2","name":"C2","quote":null},

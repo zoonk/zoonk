@@ -91,7 +91,6 @@ internal class FakeMockRunApi(
     var mock: MockExam = runningMock(),
 ) : MockRunApi {
     val saved = mutableListOf<MockDraft>()
-    val submitted = mutableListOf<Int>()
     var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
 
@@ -107,7 +106,6 @@ internal class FakeMockRunApi(
     var gradeGate: CompletableDeferred<Unit>? = null
     var grades = 0
     val offers = mutableListOf<MockPlanOfferInput.Offer>()
-    var offerResult = MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
     var offerFailure: ApiException? = null
     var afterOffer: (() -> Unit)? = null
 
@@ -134,7 +132,6 @@ internal class FakeMockRunApi(
     ) {
         stepGate?.await()
         stepFailure?.let { throw it }
-        submitted += section
     }
 
     override suspend fun endBreak(
@@ -192,7 +189,7 @@ internal class FakeMockRunApi(
         offerFailure?.let { throw it }
         offers += offer
         afterOffer?.invoke()
-        return offerResult
+        return MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
     }
 }
 

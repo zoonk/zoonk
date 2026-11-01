@@ -17,8 +17,15 @@ internal const val STARTED = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a05"
 
 internal fun started(status: AnytimeMock.Status = AnytimeMock.Status.STARTED) = AnytimeMock(UUID.fromString(STARTED), status)
 
-internal fun short(limit: AnytimeMock.Limit? = AnytimeMock.Limit.DAY) =
-    AnytimeMock(id = null, status = AnytimeMock.Status.SHORT, examQuestions = 90, limit = limit, minutes = 130, questions = 40)
+internal fun short() =
+    AnytimeMock(
+        id = null,
+        status = AnytimeMock.Status.SHORT,
+        examQuestions = 90,
+        limit = AnytimeMock.Limit.DAY,
+        minutes = 130,
+        questions = 40,
+    )
 
 internal val NEEDS_QUESTIONS = AnytimeMock(id = null, status = AnytimeMock.Status.NEEDS_QUESTIONS)
 
@@ -39,10 +46,9 @@ internal fun usageLimit() =
     )
 
 /** Each start answers [starts]'s next answer (the last one again once they run out), and the same for [writes]. */
-internal class FakeMockStartApi(
-    var starts: List<() -> AnytimeMock> = listOf { started() },
-    var writes: List<() -> MockQuestionsGeneration> = listOf { writing(MockQuestionsGeneration.Status.READY) },
-) : MockStartApi {
+internal class FakeMockStartApi : MockStartApi {
+    var starts: List<() -> AnytimeMock> = listOf { started() }
+    var writes: List<() -> MockQuestionsGeneration> = listOf { writing(MockQuestionsGeneration.Status.READY) }
     val started = mutableListOf<Pair<MockChoice, Boolean>>()
     val asked = mutableListOf<MockChoice>()
 
