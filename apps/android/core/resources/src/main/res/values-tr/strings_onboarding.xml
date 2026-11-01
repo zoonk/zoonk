@@ -360,7 +360,7 @@
   "onboarding_row_what_you_do": "b2e51af0cc014c3c4fd9e1f6e5cbaf0dfbc868b92c7d2f2d3a72cf21e6bfe7b8",
   "onboarding_row_when_you_study": "f7da8bd6c4da63f5343b7f1abd970498adcb5e332ad63a663ef13846eda99693",
   "onboarding_row_where": "03f6e1168858c84b2d2b7a707e4623584809ae332afd16e7d432e0fd069e9672",
-  "onboarding_row_where_note": "2c9ce63c4616c6edee94c89f37115ddc2a8302ff35bde4acb58d3cc176b0d1c5",
+  "onboarding_row_where_note": "adf835f314e0ba06f615c94ba9235eb12eee6d8e749dc2568cd7e447d341f6e4",
   "onboarding_row_year_to_be_confirmed": "25806c4fad3ae34b978c97a3ba8bf8b6185efba389b3f40106f47ac763c758b5",
   "onboarding_row_you_said": "7332bf572a5f556bfd0b3c083cd385f767ce599ed89eb6ccc5e8f9d6d307be6a",
   "onboarding_row_you_speak": "07665eb9d86d9dc7b585d50cf46354bb7befc77926a7485983aee01251d8d722",
@@ -508,7 +508,7 @@
     <string name="onboarding_row_you_speak">Konuştuğun diller</string>
     <string name="onboarding_row_course">Kurs</string>
     <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
-    <string name="onboarding_row_where_note">Yer: %1$s</string>
+    <string name="onboarding_row_where_note">Nerede: %1$s</string>
     <string name="onboarding_row_where">Yer</string>
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">İstediğin iş</string>

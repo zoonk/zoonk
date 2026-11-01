@@ -360,7 +360,7 @@
   "onboarding_row_what_you_do": "0f77d484af421aef8062e5ee45ecc1f2817573d8ed213f88ef4e98312be6c5cd",
   "onboarding_row_when_you_study": "4079f821b487e880fb3252e2c1a9258995fb1a0dd1e8043e7c608c6f5cf8f6d0",
   "onboarding_row_where": "b1968750a3faaa79243662a2941220eb0f8d4c104753ef55f45dd96586a8521c",
-  "onboarding_row_where_note": "afbee1145dac50d1ba84640449ed411de161780e86acbb0bb6e13ae99a50c413",
+  "onboarding_row_where_note": "fe55affa84903114be00bc861508b4f84587fc0225045bb2c3af504f87945ade",
   "onboarding_row_year_to_be_confirmed": "5e744953b9121c5714d898621d25dbfc9fae35dd2d8dc093ae497804e1477ace",
   "onboarding_row_you_said": "cc242544dafa3995316339d8f886b7d3566bfe36252961b5c9df1bb31a4cf5a2",
   "onboarding_row_you_speak": "922c3b4de9ab38e56c4ff5516b7dec134c638c9e9d4790d8034cd5235f9ff9ae",
@@ -509,7 +509,7 @@
     <string name="onboarding_row_you_speak">Tu parles</string>
     <string name="onboarding_row_course">Cours</string>
     <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
-    <string name="onboarding_row_where_note">Lieu : %1$s</string>
+    <string name="onboarding_row_where_note">Où : %1$s</string>
     <string name="onboarding_row_where">Lieu</string>
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">Le poste que tu vises</string>

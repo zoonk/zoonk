@@ -360,7 +360,7 @@
   "onboarding_row_what_you_do": "64fbba101ab0e02f8a42c5720656e7cbabeb32786c21d5e15c000268cbf908aa",
   "onboarding_row_when_you_study": "985420fc0e3b4dfcf29e974154fa568f62c3c6eaab68a99ab5f9169db7e5344c",
   "onboarding_row_where": "d072f599fcedf75f500c2f22c6cb90187cd6b4d7f6501ad3c51d9acb1da1eeb0",
-  "onboarding_row_where_note": "e3e2965a531ca10436666ec34ba25f9fd3b60047abb16dd849b1408c01bc7e5d",
+  "onboarding_row_where_note": "0495215f4ebb50934d30708c12e3f5827f2bffbe8d02739cbb7c3ffc7f7133f9",
   "onboarding_row_year_to_be_confirmed": "c94db733fe1ebbe8cf2a9da0044bf8c118cccdc93e3e2b19ec59139a4056c2a7",
   "onboarding_row_you_said": "8bf1788c4117dddd36d35bb224b877cd5856d24233c1406b52656583478f7837",
   "onboarding_row_you_speak": "df06939c929062ce5ce53b195ef761307139280f5728f43bd052068e19e01d14",
@@ -507,7 +507,7 @@
     <string name="onboarding_row_you_speak">話せる言語</string>
     <string name="onboarding_row_course">コース</string>
     <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
-    <string name="onboarding_row_where_note">受講先：%1$s</string>
+    <string name="onboarding_row_where_note">教育機関：%1$s</string>
     <string name="onboarding_row_where">場所</string>
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">希望する職種</string>

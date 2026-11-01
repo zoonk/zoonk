@@ -360,7 +360,7 @@
   "onboarding_row_what_you_do": "91abc514db46f3f1a22dee91bc15294d22dbe7e8882ded7e676043f77824e16f",
   "onboarding_row_when_you_study": "c19b478ea5d77b249f8e8938a365dfb2129b09bdbc7493a128a974eaab5a5970",
   "onboarding_row_where": "a11fc38cf1304992fabefde6bdb3b649f25d5f2c36d109d62ce3b89432823f14",
-  "onboarding_row_where_note": "da559f5a698b126ea0629b63446e789c79507cd4c604ef3677bdb4aa966a8c02",
+  "onboarding_row_where_note": "d12de3dfb3a422a8526a8f9ecab3682dc26af0c8ff93259ef6ffd321ba5006a6",
   "onboarding_row_year_to_be_confirmed": "632981d2662252a9a9716c3b63781ba1e5fdd6c3c08d2bae236d3ffed4002598",
   "onboarding_row_you_said": "d92fb6d32b1b6b475afddc144fc29235c6ba6211e127a168f970799fdb4d0759",
   "onboarding_row_you_speak": "652d39b3c9bc40b2ec30c852e7d2a12d9bd386087b42ed37f17568584afb0771",
@@ -507,7 +507,7 @@
     <string name="onboarding_row_you_speak">사용하는 언어</string>
     <string name="onboarding_row_course">학과</string>
     <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
-    <string name="onboarding_row_where_note">교육 기관: %1$s</string>
+    <string name="onboarding_row_where_note">기관: %1$s</string>
     <string name="onboarding_row_where">지원처</string>
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">원하는 직무</string>
