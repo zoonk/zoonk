@@ -58,6 +58,30 @@ Three levels of type in a block at most; weight and size lead, color only quiets
 
 Material's `shapes` and component defaults. Shape carries no meaning in the design system, so the theme doesn't override it. Spacing comes from component defaults and content padding; group with spacing and `HorizontalDivider` before adding a container.
 
+## Foldables
+
+[Book foldables](../../zoonk-design/references/foldables.md) holds the product rule and what goes on each side for each kind of screen, the same as on the open iPhone Duo. On Android:
+
+- **Navigation:** Material's default suite: a bar when folded or in tabletop, a rail when unfolded (medium and expanded windows), and the drawer only on large windows (1200dp and wider, with a medium height), where two panes still fit beside it.
+- **Pages:** `PageWithSupportingPane` lays out a page and its aside; the shell's Navigation 3 list and detail (`ListDetailSceneStrategy`, settings) and Statistics' `ListDetailPaneScaffold` take the same `pageDirective`. It gives two panes where each keeps at least 240dp, more as the font scale passes 1: where Material splits the window (expanded and wider), and where a vertical fold crosses the page, flat or half opened, so a Galaxy Z Fold's medium window splits too (Material's `calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth`). At a fold the panes meet at it through `excludedBounds`. A lone pane never gets the fold: Material would squeeze it into the side before it. Don't put another width gate in front of these; they decide.
+- **Spreads:** `atFoldOnly = true` splits only at a fold, for the lesson player's spread, which wider windows show as main's one column.
+- **Bars:** `DockedActionBar` puts its actions on the page after a fold that crosses it, and `TaskScaffold` starts its title on the page before it, so a one-column task keeps its bars off the fold. A control outside a pane reads `pageFold(width)` (where the fold starts and ends from the layout's start edge, or null) and keeps off the fold the same way.
+- **Inside a pane:** a pane is about a phone wide even on a wide window, so what's inside it chooses its layout by the pane's measured width, not the window's size class, as Statistics' page does beside its list.
+- **The hinge:** a `FoldingFeature` is `FLAT` or `HALF_OPENED`, `isSeparating` while half opened (always, on a dual screen), and `occlusionType` `FULL` where a hinge hides content. Zoonk keeps content off the fold in every state, so nothing moves when the device folds. The angle isn't in the API; never tie a feature to a posture.
+- **Outer display:** a compact window: the bar and one column, as on any phone.
+- **Continuity:** folding and unfolding recreate the activity. What the learner made lives in view models, `DraftHandle`s and saveable state, so their place, their text and the scroll position survive.
+
+### Testing on a foldable
+
+- **The emulator:** the `Pixel_Fold` AVD is a Pixel 10 Pro Fold: an inner display of 2076×2152 px at 390 dpi (852×883 dp, an expanded window, the fold at 426 dp) and an outer one of 1080×2364 px. Boot and share it by the [emulator rules](../../../../apps/android/AGENTS.md#emulators-and-builds).
+- **Poses:** `adb -s <serial> emu posture 3` opens it flat, `2` half opens it (a book in portrait, a tabletop once rotated) and `1` closes it to the outer display; `adb -s <serial> emu sensor set hinge-angle0 <degrees>` sets an angle. Rotate with `adb -s <serial> shell settings put system accelerometer_rotation 0`, then `user_rotation 1` (and `0` back).
+- **Staying awake:** folding locks the device unless apps continue on fold (`adb -s <serial> shell settings put system fold_lock_behavior_setting stay_awake_on_fold_key`); a test AVD without a screen lock also needs `adb -s <serial> shell locksettings set-disabled true`, or folding lands on the lock screen.
+- **Screenshots:** with two displays, name one: `adb -s <serial> exec-out screencap -p -d <display id> > screen.png`, the ids from `adb -s <serial> shell dumpsys SurfaceFlinger --display-id` (the inner display first, the outer one second).
+- **Pages:** open one as an App Link would: `adb -s <serial> shell am start -n com.zoonk.debug/com.zoonk.android.MainActivity -a android.intent.action.VIEW -d https://www.zoonk.com/plan`.
+- **A Galaxy Z Fold:** `adb -s <serial> shell wm size 1856x2160` and `wm density 420` give its 707×823 dp medium window, but the emulator then reports no fold, so it shows only the layout without one; `wm size reset` and `wm density reset` undo it. Cover its split in Robolectric at `w707dp-h823dp`.
+- **Robolectric:** `androidx.window:window-testing` publishes a fold to a test: `WindowLayoutInfoPublisherRule` as `@get:Rule(order = 0)` before the compose rule, then, after `setContent`, `overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(FoldingFeature(activity, state = …, orientation = FoldingFeature.Orientation.VERTICAL))))`. Its default orientation is horizontal, a tabletop. `PageWithSupportingPaneTest` and `TaskScaffoldTest` show the pattern at `w852dp-h883dp` and `w707dp-h823dp`.
+- **What to check:** the outer display; the inner display flat and half opened as a book; on its side flat and as a tabletop; the Galaxy Z Fold's width; large text; and that folding or unfolding mid-task keeps the learner's place.
+
 ## Components
 
 - **Actions:** the main action `Button`; a secondary action `FilledTonalButton` (muted fill, ink words); a quiet one `TextButton`. `OutlinedButton` writes its label in `onSurfaceVariant`, Zoonk's supporting-words gray, so it reads as disabled beside ink.

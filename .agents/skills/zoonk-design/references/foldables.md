@@ -1,0 +1,26 @@
+# Book foldables
+
+An unfolded book-style foldable (iPhone Duo, Galaxy Z Fold, Pixel Fold) is nearly square, but it reads like an open book or wallet with two sides. Zoonk uses it the same way on every platform: a page on each side of the fold, each about a phone wide, so the phone's views go in unchanged. Never one phone column stretched across the fold, and never a tablet layout. This is the product rule; each platform's mapping says how it's built: Apple's [iPhone Duo](../../apple-human-interface-guidelines/references/design-system.md#iphone-duo), Android's [foldables](../../android-material-guidelines/references/design-system.md#foldables).
+
+- **Folded, a phone.** The outer display is a phone's screen: one column, the phone's navigation.
+- **Open, two pages that don't move.** The panes meet at the fold whether the device lies flat or stands half folded like a book, so folding it moves nothing. Decide one or two panes by the space the screen has, never by the device.
+- **Nothing on the fold.** Text, buttons and fields stay off it, and so do the navigation's items. Scrolling content of a one-column screen may cross it; that screen's bottom action and its fields keep off it.
+- **Every feature in every pose.** Nothing hides behind a pose or the hinge's angle. Held on its side and half folded (tabletop), content sits on the upright half and controls on the flat one, which bottom bars already do.
+- **The learner's place survives.** Folding, unfolding and rotating keep answers, drafts, the selection, what's open and the scroll position.
+- **Too narrow, one column.** Where a side would be narrower than a phone's column, or the text is large, the screen stays one column.
+
+## What goes on each side
+
+| Screen kind                                                                                                                                          | Leading pane                                                                                          | Trailing pane                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Spread: lesson player, practice, the mock runner, a mock's chooser, a call's intro                                                                   | the screen: question or title, teaching, stimulus, worked example, what the mock or call is           | the learner's turn: options, fields, canvas, feedback, the mocks to pick, the call's goals, with the action bar at its bottom     |
+| Main and supporting: Today, Plan, Buddy, Exam, Search, the mistakes notebook, a plan's subject, chapter or unit                                      | the main content: the day or the goal box, Search's actions or a query's matches, the mistakes to fix | what supports it: missions, the week, numbers, settings, the goal's examples, the places to go or the catalog, the fixed mistakes |
+| List and detail: Statistics, settings                                                                                                                | the list                                                                                              | the selected item                                                                                                                 |
+| Landing: a course's or a chapter's page                                                                                                              | the course or chapter and its way in (a course's example plan, a chapter's lessons)                   | what it covers: who it's for, the outline, what you'll learn, the way in again                                                    |
+| Result: the lesson's end, a practice's or a mock's intro and result, an essay's grade, a milestone, the session's next stop and summary, the logbook | what was done: the result or the intro, the milestone's stage, the missions, the week                 | its numbers, what's next (a milestone's words, a mock's questions to review) and the way on                                       |
+
+- In the lesson player, Previous and the main action stay at the bottom of the trailing page on every screen. A screen with a picture, visual or canvas puts it on the trailing page; a text-only screen leaves the trailing page empty above Continue, so Continue never moves.
+- A side panel (the lesson's Ask, the buddy's day) is the trailing pane where the screen splits. Where the screen is one column, the panel is a sheet, shown only when it was opened there, so closing the device never covers the screen with one.
+- A pane is about a phone wide even on a wide window: what's inside it lays out as it does on a phone.
+- One-column screens (onboarding, a call's result) let their scrolling content cross the fold and keep their bottom action and text fields off it.
+- A grid lines up with the fold, flat or folded, so folding moves nothing: the same number of columns on each side, the fold as their gap.

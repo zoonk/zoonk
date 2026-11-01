@@ -31,6 +31,15 @@ Source indexes:
 - [Android themes](https://developer.android.com/design/ui/mobile/guides/styles/themes)
 - [Window size classes](https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes)
 
+## Foldables
+
+- [Learn about foldables](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables): states, postures (book and tabletop), display modes
+- [Make your app fold aware](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/make-your-app-fold-aware): `FoldingFeature` and keeping controls off a separating fold
+- [Foldables in the adaptive app quality guidelines](https://developer.android.com/docs/quality-guidelines/adaptive-app-quality/experiences/foldables)
+- [Build adaptive navigation](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-adaptive-navigation): the navigation suite's defaults, tabletop included
+- [Compose Material 3 adaptive releases](https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive)
+- Samsung: [large screens and foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/intro.html), [designing for foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/designing_for_foldable.html), [Flex mode](https://developer.samsung.com/galaxy-z/flex-mode.html) and [app continuity](https://developer.samsung.com/galaxy-z/app-continuity.html)
+
 ## Material Design 3
 
 - [Material Design 3](https://m3.material.io/)
