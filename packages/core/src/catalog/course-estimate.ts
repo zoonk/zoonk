@@ -27,19 +27,21 @@ function planFromScratch(input: BuildPlanInput) {
   return { built: buildPlan(plannedInput), plannedInput };
 }
 
-async function getCachedCourseEstimate({
+type EstimateKey = Pick<CoursePlanEstimateInput, "courseId" | "dailyMinutes" | "studyDays"> & {
+  targetDate: string | null;
+  today: string;
+};
+
+function planCourse({
   data,
   input,
   publishedContent,
-  today,
 }: {
   data: CourseEstimateData;
-  input: CoursePlanEstimateInput;
+  input: EstimateKey;
   publishedContent: CoursePlanEstimate["publishedContent"];
-  today: string;
-}): Promise<CoursePlanEstimate | null> {
-  "use cache";
-  cacheTag(getCourseCacheTag(input.courseId), getCourseCurriculumCacheTag(input.courseId));
+}): CoursePlanEstimate | null {
+  const { today } = input;
   const start = fromIsoDate(today);
   const targetDate = input.targetDate ? fromIsoDate(input.targetDate) : null;
 
@@ -84,7 +86,7 @@ async function getCachedCourseEstimate({
       fullCourse: false,
       ownLevel: "none",
       paceFactor: data.pace.factor,
-      targetDate: input.targetDate ?? null,
+      targetDate: input.targetDate,
       weekdayMinutes:
         settings.weekdayMinutes ?? Array.from({ length: 7 }, () => input.dailyMinutes),
     },
@@ -163,27 +165,35 @@ async function getCachedCourseEstimate({
   };
 }
 
-/** Public courses only. Never reads learner data, calls models, or writes. */
-export async function estimateCoursePlan(
-  given: CoursePlanEstimateInput,
-): Promise<CoursePlanEstimate | null> {
-  const parsed = coursePlanEstimateInputSchema.parse(given);
-
-  const input = {
-    ...parsed,
-    courseId: parsed.courseId.toLowerCase(),
-    studyDays: parsed.studyDays.toSorted((a, b) => a - b),
-  };
-
-  await io();
-  const today = toIsoDate(new Date());
-  assertTargetDates({ targets: [{ path: ["targetDate"], targetDate: input.targetDate }], today });
-  const data = await loadCourseEstimateData(input.courseId, today);
+/** Keyed by primitive inputs only: a repeated public request reads and plans nothing. */
+async function getCachedCourseEstimate(key: EstimateKey): Promise<CoursePlanEstimate | null> {
+  "use cache";
+  cacheTag(getCourseCacheTag(key.courseId), getCourseCurriculumCacheTag(key.courseId));
+  const data = await loadCourseEstimateData(key.courseId, key.today);
 
   if (!data) {
     return null;
   }
 
   const publishedContent = await loadCoursePublishedContent(data.chapters);
-  return getCachedCourseEstimate({ data, input, publishedContent, today });
+  return planCourse({ data, input: key, publishedContent });
+}
+
+/** Public courses only. Never reads learner data, calls models, or writes. */
+export async function estimateCoursePlan(
+  given: CoursePlanEstimateInput,
+): Promise<CoursePlanEstimate | null> {
+  const parsed = coursePlanEstimateInputSchema.parse(given);
+
+  await io();
+  const today = toIsoDate(new Date());
+  assertTargetDates({ targets: [{ path: ["targetDate"], targetDate: parsed.targetDate }], today });
+
+  return getCachedCourseEstimate({
+    courseId: parsed.courseId.toLowerCase(),
+    dailyMinutes: parsed.dailyMinutes,
+    studyDays: parsed.studyDays.toSorted((a, b) => a - b),
+    targetDate: parsed.targetDate ?? null,
+    today,
+  });
 }

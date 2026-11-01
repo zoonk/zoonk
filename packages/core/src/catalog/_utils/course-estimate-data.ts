@@ -1,6 +1,11 @@
 import "server-only";
 import { type Course, prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
+import {
+  getCourseCacheTag,
+  getCourseCurriculumCacheTag,
+  getExamBlueprintCacheTag,
+} from "../../cache/tags";
 import { NO_EXAM_PICKS } from "../../exams/choices/exam-choices";
 import { toListeningExam } from "../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../exams/listening/listening-skills";
@@ -68,8 +73,11 @@ async function loadEstimateSourceGraph({
   return pinPlanGraphToCourse({ chapters, course, graph: exam.graph });
 }
 
-/** Fresh outline inputs also key the result cache across apps. */
-export const loadCourseEstimateData = cache(async (courseId: string, today: string) => {
+/** Shared by every pace a visitor asks for, so a new pace only plans again. */
+export async function loadCourseEstimateData(courseId: string, today: string) {
+  "use cache";
+  cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
+
   const course = await prisma.course.findFirst({
     omit: { landingPage: true },
     where: { id: courseId, isPublished: true, visibility: "public" },
@@ -83,6 +91,10 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
     loadCourseOutline({ courseId, userId: null }),
     loadCourseExam(courseId),
   ]);
+
+  if (exam) {
+    cacheTag(getExamBlueprintCacheTag(exam.blueprint.id));
+  }
 
   const sourceGraph = await loadEstimateSourceGraph({ chapters, course, exam });
 
@@ -186,6 +198,6 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
     sourceGraph,
     title: course.title,
   };
-});
+}
 
 export type CourseEstimateData = NonNullable<Awaited<ReturnType<typeof loadCourseEstimateData>>>;
