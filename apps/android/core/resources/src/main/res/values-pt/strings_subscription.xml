@@ -82,6 +82,7 @@
   "subscription_questions_email": "3291247dd4d0e8eacfaa54c4f48458f0d56932d281094020c10bd74a3cd36310",
   "subscription_questions_title": "c5b5d9e55149773e296c18f25c52bc316c93906f24a20e43c44a61a247a34253",
   "subscription_questions_unsure": "f2bfd023f229176779b84c25283f87be04c75d9875d7af8b4a87ad8ed0a94ef6",
+  "subscription_renewal_failed": "5070e61e8df2c170c7cb4f53e49545d54594c65fd232318d3b3f1d943f14d8ea",
   "subscription_renews_on": "0c88feb024bd57964a6ae8cec7551b66f22b9a4762c7587bda09be1dce267692",
   "subscription_save": "830f6d2099ff6f045f3697854d09171c4189136540aebd1199d718549142932f",
   "subscription_see_plus": "958d1b574b42a2fec152c77e8daade81f8ff754c0441adf78a62b4789aa873cc",
@@ -89,6 +90,7 @@
   "subscription_start_free": "70edfca14ce72aa521aab384c4c3fa4b945dafd8b5b3625613f7ede26692ff52",
   "subscription_subscribe": "968a05dc4966c4f013b394e184c0c952a36ecc3f63eccdd466335adb8cb55a27",
   "subscription_unavailable": "f5f771bcb3ee2c0e3a3b70a953d7b1f75d978dac4fdf18668520468ca19a40ef",
+  "subscription_website": "a3d8fb38a594195289f7cd23f67e54b94c434db8cb8127ac73b52659b8d5e542",
   "subscription_yearly": "f84edd9ed2907fcf765fcab5705a75451bf43c6ded7b004de1b24b093e0000fe",
   "subscription_yearly_per_month": "6f59b66ce8f4ca5348c9ec327bffe935fa812b25a7262a0d696cce9b15f87861"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">Gerenciar no Google Play</string>
     <string name="subscription_contact_support">Entrar em contato com o suporte</string>
     <string name="subscription_cancel">Cancelar o Plus</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Não deu para cancelar o Plus. Tente de novo ou envie um e-mail para contato@zoonk.com.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Cancelar o Plus?</string>
     <string name="subscription_cancel_at_period_end">Você continua com o Plus até o fim do período já pago.</string>
+    <string name="subscription_website">Assinatura pelo site</string>
+    <string name="subscription_renewal_failed">O pagamento da sua última renovação falhou.</string>
     <string name="subscription_cancel_unpaid">O Plus acaba na hora, e a gente para de tentar cobrar sua renovação.</string>
     <string name="subscription_cancel_back">Voltar</string>
     <string name="subscription_keep_plus">Manter o Plus</string>

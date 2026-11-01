@@ -82,6 +82,7 @@
   "subscription_questions_email": "e16f70d47d3b9fc9407767a488d2e3c755a74f394ca7a9c375a43e8c8778a04e",
   "subscription_questions_title": "885e8f1fba6555280d0d460702b3e7b85d8c0961c694820be89065db6e39513a",
   "subscription_questions_unsure": "7ed150f55f5d62a8ac2a691aba4912edf431fc05cbc98c229fac0ae573373be3",
+  "subscription_renewal_failed": "82cbda2f52f5eefa887c36076a23ef96a43fb31028ccefc8b4b082d84cbc772c",
   "subscription_renews_on": "a27ca67eed27ca7271e5b253b1d2673161be5c8fbb9284ca7d7c8fc78155ecee",
   "subscription_save": "9bdf89aa0c6e000bade7736c4d671804af96580aa87e0c6d0978dffe036dcbd6",
   "subscription_see_plus": "f12215b93038e6c39c7bc9d27ec4b69a48ee06aaaf4a17b288fef94929de3831",
@@ -89,6 +90,7 @@
   "subscription_start_free": "9c8eddb8d20009a3f6fcf409cf45ac49149400c90fea5c2c65e0d234242091bb",
   "subscription_subscribe": "7cc8965d6c6ae991879d725ecee58ef25a3aae1e658f6d92b23c7dc6c668cac7",
   "subscription_unavailable": "529977c454a684698a40c90c2438a19094f07c41788d53f18f12235a2e3a7a5b",
+  "subscription_website": "92f29075acb9cb250916154c192af205b319e337942b46ae2e9f02e8784ea517",
   "subscription_yearly": "523bbf7f6ad76293fdf793e597819f81d75df6fb3496537b8100a74a2f7fa37d",
   "subscription_yearly_per_month": "2e484194db11b31ad587bf0cee813f6e01d0c1d2693c5d82b90a81828c726be6"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">In Google Play verwalten</string>
     <string name="subscription_contact_support">Support kontaktieren</string>
     <string name="subscription_cancel">Plus kündigen</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Wir konnten Plus nicht kündigen. Versuch es noch einmal oder schreib uns an hello@zoonk.com.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Plus kündigen?</string>
     <string name="subscription_cancel_at_period_end">Du behältst Plus bis zum Ende des bereits bezahlten Zeitraums.</string>
+    <string name="subscription_website">Website-Abo</string>
+    <string name="subscription_renewal_failed">Deine letzte Zahlung für die Verlängerung ist fehlgeschlagen.</string>
     <string name="subscription_cancel_unpaid">Plus endet sofort, und wir versuchen nicht mehr, die Zahlung für deine Verlängerung einzuziehen.</string>
     <string name="subscription_cancel_back">Zurück</string>
     <string name="subscription_keep_plus">Plus behalten</string>

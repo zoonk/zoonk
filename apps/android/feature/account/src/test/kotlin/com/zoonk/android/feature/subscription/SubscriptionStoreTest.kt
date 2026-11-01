@@ -10,6 +10,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSessionApi
 import com.zoonk.android.data.GUEST
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MemoryCredentials
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
@@ -17,19 +18,17 @@ import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.StoredSession
 import com.zoonk.android.data.account
 import com.zoonk.android.data.value
-import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StoreSubscriptionResponse
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -69,7 +68,7 @@ private fun subscribed(
         it.copy(account = it.account.copy(hasActiveSubscription = true, subscription = subscription))
     }
 
-private class FakePlayBilling : PlayBilling {
+internal class FakePlayBilling : PlayBilling {
     val bought = mutableListOf<Pair<BillingPeriod, String>>()
     var unlinked = listOf<String>()
     var offerReads = 0
@@ -97,7 +96,7 @@ private class FakePlayBilling : PlayBilling {
     override suspend fun unacknowledgedPurchases(): List<String> = unlinked
 }
 
-private class FakeSubscriptionApi : SubscriptionApi {
+internal class FakeSubscriptionApi : SubscriptionApi {
     val linked = mutableListOf<Pair<String, String>>()
     var failure: ApiException? = null
     var accountRead: suspend (AuthenticatedSession) -> MeResponse = { account(it.accountId) }
@@ -117,11 +116,15 @@ private class FakeSubscriptionApi : SubscriptionApi {
         return StoreSubscriptionResponse(subscribed(session.accountId), isActive = true)
     }
 
-    var cancellationRead: suspend () -> StripeSubscriptionCancellation = { throw UnsupportedOperationException() }
+    var websiteRead: suspend () -> StripeSubscriptionCancellation = { throw ApiException(ApiError.NotFound, status = 404) }
+    var websiteReads = 0
     val canceled = mutableListOf<String>()
     var cancelFailure: ApiException? = null
 
-    override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation = cancellationRead()
+    override suspend fun websiteSubscription(session: AuthenticatedSession): StripeSubscriptionCancellation {
+        websiteReads++
+        return websiteRead()
+    }
 
     override suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt {
         cancelFailure?.let { throw it }
@@ -138,15 +141,8 @@ private class FakeSubscriptionApi : SubscriptionApi {
     }
 }
 
-private fun cancellationStatus(ending: Boolean = false): StripeSubscriptionCancellation =
-    ApiJson.decodeFromString(
-        """{"cancellation":${if (ending) """{"endsAt":"2026-12-01T00:00:00Z"}""" else "null"},"unpaid":false,"canResumeRenewal":$ending}""",
-    )
-
-private val RECEIPT =
-    ApiJson.decodeFromString<StripeSubscriptionCancellationReceipt>(
-        """{"endsAt":"2026-10-31T12:00:00Z","receivedAt":"2026-10-31T12:00:00Z"}""",
-    )
+private val ENDS = Instant.parse("2026-12-01T00:00:00Z")
+private val RECEIPT = StripeSubscriptionCancellationReceipt(endsAt = ENDS)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -393,219 +389,128 @@ class SubscriptionStoreTest {
         }
 
     @Test
-    fun nothingLeftToCancelReadsThePlanAgainEvenWhileAnOlderReadIsOnItsWay() =
+    fun cancelingAnUnpaidWebsitePlanRefreshesToNoWebsitePlan() =
         runTest {
             val (_, store) = store(ana)
-            val olderRead = CompletableDeferred<MeResponse>()
-            api.accountRead = { olderRead.await() }
-            val shown = launch { store.account.shown.collect {} }
+            api.websiteRead = { StripeSubscriptionCancellation(null, State.UNPAID) }
+            val shown = launch { store.websiteSubscription.shown.collect {} }
             advanceUntilIdle()
 
-            api.cancellationRead = { throw ApiException(ApiError.NotFound, status = 404) }
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            val result = store.webPlusCancellation()
-            advanceUntilIdle()
-            olderRead.complete(subscribed(ANA, provider = "stripe"))
+            api.websiteRead = { throw ApiException(ApiError.NotFound, status = 404) }
+            store.cancelWebPlus()
             advanceUntilIdle()
 
-            assertEquals(ApiError.NotFound, (result as MutationResult.Failed).error)
-            assertEquals(
-                ENDS,
-                store.account.state.value.value
-                    ?.account
-                    ?.subscription
-                    ?.cancelAt,
-            )
+            assertEquals(LoadState.Empty, store.websiteSubscription.state.value)
+            assertEquals(2, api.websiteReads)
             shown.cancel()
         }
 
     @Test
-    fun anAlreadyScheduledCancellationRefreshesThePlan() =
+    fun aGuestsUnavailableCancellationDoesNotSignOut() =
         runTest {
-            val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
-            val shown = launch { store.account.shown.collect {} }
-            advanceUntilIdle()
+            val (sessions, store) = store(AuthenticatedSession(GUEST, "token-guest", "local-g"), isGuest = true)
+            api.cancelFailure = ApiException(ApiError.NotFound, status = 404)
+            api.keepAnswer = { throw ApiException(ApiError.NotFound, status = 404) }
 
-            api.cancellationRead = { cancellationStatus(ending = true) }
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            store.webPlusCancellation()
-            advanceUntilIdle()
-
-            assertEquals(
-                ENDS,
-                store.account.state.value.value
-                    ?.account
-                    ?.subscription
-                    ?.cancelAt,
-            )
-            shown.cancel()
+            assertEquals(404, (store.cancelWebPlus() as MutationResult.Failed).status)
+            assertEquals(404, (store.keepWebPlus() as MutationResult.Failed).status)
+            assertTrue(sessions.state.value is SessionState.SignedIn)
         }
 
     @Test
-    fun aSubscriptionThatChangedMeanwhileReadsThePlanAgain() =
+    fun aCancellationConflictRereadsTheWebsiteState() =
         runTest {
             val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
-            val shown = launch { store.account.shown.collect {} }
+            api.websiteRead = { StripeSubscriptionCancellation(ENDS, State.RENEWING) }
+            val shown = launch { store.websiteSubscription.shown.collect {} }
             advanceUntilIdle()
 
             api.cancelFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            api.websiteRead = { StripeSubscriptionCancellation(ENDS, State.ENDING) }
             val result = store.cancelWebPlus()
             advanceUntilIdle()
 
             assertEquals(409, (result as MutationResult.Failed).status)
             assertTrue(api.canceled.isEmpty())
             assertEquals(
-                ENDS,
-                store.account.state.value.value
-                    ?.account
-                    ?.subscription
-                    ?.cancelAt,
+                State.ENDING,
+                store.websiteSubscription.state.value.value
+                    ?.state,
             )
+            assertEquals(2, api.websiteReads)
             shown.cancel()
         }
 
     @Test
-    fun keepingPlusIsSentWithTheSessionsTokenAndShowsThePlanRenewing() =
+    fun keepingPlusRereadsTheWebsiteStateWithTheSessionsToken() =
         runTest {
             val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            api.cancellationRead = { cancellationStatus(ending = true) }
-            val shown =
-                launch {
-                    launch { store.account.shown.collect {} }
-                    store.webPlusStatus.shown.collect {}
-                }
+            api.websiteRead = { StripeSubscriptionCancellation(ENDS, State.ENDING) }
+            val shown = launch { store.websiteSubscription.shown.collect {} }
             advanceUntilIdle()
 
-            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
-            api.cancellationRead = { cancellationStatus() }
+            api.websiteRead = { StripeSubscriptionCancellation(ENDS, State.RENEWING) }
             val result = store.keepWebPlus()
             advanceUntilIdle()
 
             assertEquals(MutationResult.Done(Unit), result)
             assertEquals(listOf("token-a"), api.kept)
-            assertNull(
-                store.account.state.value.value
-                    ?.account
-                    ?.subscription
-                    ?.cancelAt,
-            )
             assertEquals(
-                null,
-                store.webPlusStatus.state.value.value
-                    ?.cancellation,
+                State.RENEWING,
+                store.websiteSubscription.state.value.value
+                    ?.state,
             )
+            assertEquals(2, api.websiteReads)
             shown.cancel()
         }
 
     @Test
-    fun keepingPlusThatCantBeKeptAnymoreReadsThePlanAgain() =
+    fun aKeepConflictRereadsTheWebsiteState() =
         runTest {
             val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            api.cancellationRead = { cancellationStatus(ending = true) }
-            val shown =
-                launch {
-                    launch { store.account.shown.collect {} }
-                    store.webPlusStatus.shown.collect {}
-                }
+            api.websiteRead = { StripeSubscriptionCancellation(ENDS, State.ENDING) }
+            val shown = launch { store.websiteSubscription.shown.collect {} }
             advanceUntilIdle()
 
             api.keepAnswer = { throw ApiException(ApiError.Unavailable, "CONFLICT", 409) }
-            api.accountRead = { subscribed(it.accountId, provider = "stripe") }
-            api.cancellationRead = { cancellationStatus() }
+            api.websiteRead = { StripeSubscriptionCancellation(null, State.UNPAID) }
             val result = store.keepWebPlus()
             advanceUntilIdle()
 
             assertEquals(409, (result as MutationResult.Failed).status)
-            assertTrue(api.kept.isEmpty())
-            assertNull(
-                store.account.state.value.value
-                    ?.account
-                    ?.subscription
-                    ?.cancelAt,
-            )
             assertEquals(
-                null,
-                store.webPlusStatus.state.value.value
-                    ?.cancellation,
+                State.UNPAID,
+                store.websiteSubscription.state.value.value
+                    ?.state,
             )
+            assertEquals(2, api.websiteReads)
             shown.cancel()
         }
 
     @Test
-    fun keptPlusShowsThePlanRenewingEvenWhenThePlanCantBeReadAgain() =
+    fun aGuestHasNoWebsitePlanAndKeepsItsSession() =
         runTest {
-            val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            val shown = launch { store.account.shown.collect {} }
-            advanceUntilIdle()
+            val (sessions, store) = store(AuthenticatedSession(GUEST, "token-guest", "local-g"), isGuest = true)
 
-            api.accountRead = { throw ApiException(ApiError.Network) }
-            val result = store.keepWebPlus()
-            advanceUntilIdle()
+            store.websiteSubscription.load()
+            store.websiteSubscription.load()
 
-            assertEquals(MutationResult.Done(Unit), result)
-            assertEquals(subscribed(ANA, provider = "stripe"), store.account.state.value.value)
-            shown.cancel()
+            assertEquals(LoadState.Empty, store.websiteSubscription.state.value)
+            assertTrue(sessions.state.value is SessionState.SignedIn)
+            assertEquals(1, api.websiteReads)
         }
 
     @Test
-    fun keepingPlusThatCantBeKeptAnymoreKeepsThePlanEndingWhenItCantBeReadAgain() =
+    fun anExpiredSessionIsSignedOut() =
         runTest {
-            val (_, store) = store(ana)
-            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-            val shown = launch { store.account.shown.collect {} }
+            val (sessions, store) = store(ana)
+            api.websiteRead = { throw ApiException(ApiError.Unauthorized, status = 401) }
+
+            store.websiteSubscription.load()
             advanceUntilIdle()
 
-            api.keepAnswer = { throw ApiException(ApiError.Unavailable, "CONFLICT", 409) }
-            api.accountRead = { throw ApiException(ApiError.Network) }
-            store.keepWebPlus()
-            advanceUntilIdle()
-
-            assertEquals(subscribed(ANA, provider = "stripe", cancelAt = ENDS), store.account.state.value.value)
-            shown.cancel()
+            assertTrue(sessions.state.value is SessionState.SignedOut)
         }
-
-    @Test
-    fun keptPlusShowsThePlanRenewingEvenWhenTheSamePlanWasReadMeanwhile() =
-        runTest {
-            val shown = keepPlusWhileThePlanIsRead(subscribed(ANA, provider = "stripe", cancelAt = ENDS))
-
-            assertEquals(subscribed(ANA, provider = "stripe"), shown)
-        }
-
-    @Test
-    fun aCancellationReadWhileKeepingPlusWinsOverTheKeepsLateAnswer() =
-        runTest {
-            val endingSooner = subscribed(ANA, provider = "stripe", cancelAt = ENDS_SOONER)
-
-            assertEquals(endingSooner, keepPlusWhileThePlanIsRead(endingSooner))
-        }
-
-    private suspend fun TestScope.keepPlusWhileThePlanIsRead(meanwhile: MeResponse): MeResponse? {
-        val (_, store) = store(ana)
-        api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
-        val shown = launch { store.account.shown.collect {} }
-        advanceUntilIdle()
-
-        val keepAnswer = CompletableDeferred<Unit>()
-        api.keepAnswer = { keepAnswer.await() }
-        val keep = async { store.keepWebPlus() }
-        advanceUntilIdle()
-        api.accountRead = { meanwhile }
-        store.account.refresh()
-        api.accountRead = { throw ApiException(ApiError.Network) }
-        keepAnswer.complete(Unit)
-        advanceUntilIdle()
-
-        assertEquals(MutationResult.Done(Unit), keep.await())
-        shown.cancel()
-        return store.account.state.value.value
-    }
 
     @Test
     fun anotherAccountStartsWithoutTheLastOnesPurchaseState() =
@@ -619,9 +524,4 @@ class SubscriptionStoreTest {
 
             assertEquals(PurchaseState.Idle, store.purchase.value)
         }
-
-    private companion object {
-        val ENDS = Instant.parse("2026-12-01T00:00:00Z")
-        val ENDS_SOONER = Instant.parse("2026-11-15T00:00:00Z")
-    }
 }

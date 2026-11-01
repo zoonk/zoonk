@@ -82,6 +82,7 @@
   "subscription_questions_email": "b23b57165698d30ece5c91044b314a4cff84c0c9b8a56501fcd31be63c50e3e7",
   "subscription_questions_title": "c8f40b140274e5f122d3caaa91950df9fd64ffb5f2a41329bf145685a4c4fcef",
   "subscription_questions_unsure": "d306bef1ed419f293449d8924cf09c2ed0f96e0bfc16cf8c8681cab10275d64d",
+  "subscription_renewal_failed": "e86b6ac5b48744f2d6d22b0ca28238dac6d3692885e855674e7278d54d06f24f",
   "subscription_renews_on": "bcd6d756519bd85af6055a5a0fdecc5ef80df6aa1462e21350a28bad93c3e5c6",
   "subscription_save": "f6268e9b488b2858e9cebe5f995fe96287814aa932bb6571c8540e6fcdaf6db5",
   "subscription_see_plus": "17fc611063b17d8a7ed683bf829451b89d8d62dc8bbf480995f881b109e8b706",
@@ -89,6 +90,7 @@
   "subscription_start_free": "6959777fcc6384725d80c2c8baa1164fc80358dfb3a8664747c5f40f55419105",
   "subscription_subscribe": "ef2e7ab2071a28ef90ad6a2da9fe7f10d39fb90ee347d49b242fbfc8747175e0",
   "subscription_unavailable": "e03f6252a367cd197a35017e070d097ec59ada25fac317cd571e02e3384b7748",
+  "subscription_website": "6eb71c5982a7404b8f5d8abf1f63478f616f86b498bdf48f63bf38fb481b76db",
   "subscription_yearly": "a01d217d21ebd632f5aa36631833f38c5bbf5a47d392456886ff6e2a7260f611",
   "subscription_yearly_per_month": "8e7d72dbc15fad4ab47a14bb866d79c89925881796874e0a7ebd3ad89735f417"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">Gérer sur Google Play</string>
     <string name="subscription_contact_support">Contacter l’assistance</string>
     <string name="subscription_cancel">Résilier Plus</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Nous n’avons pas pu résilier ton abonnement Plus. Réessaie ou écris à hello@zoonk.com.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Résilier Plus ?</string>
     <string name="subscription_cancel_at_period_end">Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée.</string>
+    <string name="subscription_website">Abonnement sur le site web</string>
+    <string name="subscription_renewal_failed">Le paiement de ton dernier renouvellement a échoué.</string>
     <string name="subscription_cancel_unpaid">Plus prend fin immédiatement et nous arrêtons les tentatives de paiement pour ton renouvellement.</string>
     <string name="subscription_cancel_back">Retour</string>
     <string name="subscription_keep_plus">Garder Plus</string>

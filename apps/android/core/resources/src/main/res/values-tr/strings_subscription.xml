@@ -82,6 +82,7 @@
   "subscription_questions_email": "f51980d5b0ebf6c12de29b401ac63ae255bfee93497265845c66dc22ba42ce91",
   "subscription_questions_title": "2ac5538e35ed480e438cfb0ade735f4beff58c38ef675e7da3b49c96d1bedb3c",
   "subscription_questions_unsure": "398e13714c928f43e5145a16f5692000f6a39d0617808a890b94e5d757c75a72",
+  "subscription_renewal_failed": "28a85690dec902f3cfff8f61b41dac297319317c08639d452e10e720e264ed42",
   "subscription_renews_on": "ffde2c34ea489a41307fdfd526ee50e0792bacf327ad3e3a4cdf29138694348d",
   "subscription_save": "b1f7d7d5259bcfc193c405ac873555f2d3069708b763f08b1200f913f17fc81d",
   "subscription_see_plus": "c5bd527a292e8507691f0e228894e251ac821a2075d27a64bee2c30284a937cc",
@@ -89,6 +90,7 @@
   "subscription_start_free": "22ba21e1b5d3170ff65712d72726f5ca17f40772b9281b67a207b0958e278d49",
   "subscription_subscribe": "4b1cdc763f772d12701a001aa49ed1ee291e7537362e2453113426fb94331a27",
   "subscription_unavailable": "b178f31398ccfa7b1f2ae05b33e2454635434c9583b32a489ba2aae8f0fb8217",
+  "subscription_website": "18d600daeeaa168dd4bece9d7c016a3d6dae88164c4b4f19cc2c1f6f8c31c2ac",
   "subscription_yearly": "7e420b12f56c492f02e92edfc79833f1d1ffdbc574302cb5a337b5d1545e71a1",
   "subscription_yearly_per_month": "46b896d9645e204a0b5d128dd20bd972bf59ad9a1ec9f47797400243c265bb07"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">Google Play’de yönet</string>
     <string name="subscription_contact_support">Destek ekibiyle iletişime geç</string>
     <string name="subscription_cancel">Plus’ı iptal et</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Plus’ı iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Plus iptal edilsin mi?</string>
     <string name="subscription_cancel_at_period_end">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin.</string>
+    <string name="subscription_website">Web sitesi aboneliği</string>
+    <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
     <string name="subscription_cancel_unpaid">Plus hemen sona erer ve yenileme ödemeni almayı tekrar denemeyiz.</string>
     <string name="subscription_cancel_back">Geri dön</string>
     <string name="subscription_keep_plus">Plus’a devam et</string>

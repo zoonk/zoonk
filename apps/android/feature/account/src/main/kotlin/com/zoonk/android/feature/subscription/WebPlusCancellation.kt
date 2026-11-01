@@ -11,7 +11,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,28 +21,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.R
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
-import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
 import kotlinx.coroutines.launch
 
 class WebPlusCancellationViewModel(
-    private val readStatus: suspend () -> MutationResult<StripeSubscriptionCancellation>,
     private val send: suspend () -> MutationResult<StripeSubscriptionCancellationReceipt>,
     private val keepPlus: suspend () -> MutationResult<Unit>,
 ) : ViewModel() {
-    var confirmation by mutableStateOf<StripeSubscriptionCancellation?>(null)
-        private set
-    var isOpening by mutableStateOf(false)
+    var confirmation by mutableStateOf<State?>(null)
         private set
     var isSending by mutableStateOf(false)
         private set
@@ -54,24 +47,10 @@ class WebPlusCancellationViewModel(
     var keepFailed by mutableStateOf(false)
         private set
 
-    fun open() {
-        if (isOpening || isSending || confirmation != null) return
-        isOpening = true
+    fun open(state: State) {
+        if (isSending || state == State.ENDING) return
+        confirmation = state
         failed = false
-        viewModelScope.launch {
-            when (val result = readStatus()) {
-                is MutationResult.Done -> {
-                    confirmation = result.value.takeIf { it.cancellation == null }
-                }
-
-                is MutationResult.Failed -> {
-                    failed = result.error != ApiError.NotFound
-                }
-
-                MutationResult.Obsolete -> {}
-            }
-            isOpening = false
-        }
     }
 
     fun cancel() {
@@ -109,28 +88,17 @@ class WebPlusCancellationViewModel(
 }
 
 @Composable
-internal fun WebPlusCancelButton(cancellation: WebPlusCancellationViewModel) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedButton(onClick = cancellation::open, enabled = !cancellation.isOpening) {
-            PendingLabel(cancellation.isOpening, stringResource(R.string.subscription_cancel))
-        }
-        if (cancellation.failed && cancellation.confirmation == null) Failure(stringResource(R.string.subscription_cancel_failed))
+internal fun WebPlusCancelButton(
+    state: State,
+    cancellation: WebPlusCancellationViewModel,
+) {
+    OutlinedButton(onClick = { cancellation.open(state) }) {
+        Text(stringResource(R.string.subscription_cancel))
     }
 }
 
 @Composable
-internal fun EndingWebPlus(
-    status: Resource<StripeSubscriptionCancellation>,
-    cancellation: WebPlusCancellationViewModel,
-) {
-    val state by status.collectShown()
-    val scope = rememberCoroutineScope()
-    val failed = state as? LoadState.Failed
-    if (failed != null && failed.error != ApiError.NotFound) {
-        LoadFailedMessage(onRetry = { scope.launch { status.refresh() } })
-        return
-    }
-    if (state.value?.cancellation == null) return
+internal fun KeepWebPlusButton(cancellation: WebPlusCancellationViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             stringResource(R.string.subscription_keep_plus_description),
@@ -145,8 +113,10 @@ internal fun EndingWebPlus(
 }
 
 @Composable
-internal fun webPlusDeletionNotice(subscription: MeSubscription?): String? =
-    if (subscription?.provider == STRIPE) stringResource(R.string.subscription_deletion_notice) else null
+internal fun webPlusDeletionNotice(subscription: Resource<StripeSubscriptionCancellation>): String? {
+    val state by subscription.collectShown()
+    return if (state.value != null) stringResource(R.string.subscription_deletion_notice) else null
+}
 
 @Composable
 internal fun WebPlusCancellationDialog(cancellation: WebPlusCancellationViewModel) {
@@ -158,7 +128,7 @@ internal fun WebPlusCancellationDialog(cancellation: WebPlusCancellationViewMode
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
                     stringResource(
-                        if (status.unpaid) R.string.subscription_cancel_unpaid else R.string.subscription_cancel_at_period_end,
+                        if (status == State.UNPAID) R.string.subscription_cancel_unpaid else R.string.subscription_cancel_at_period_end,
                     ),
                 )
                 if (cancellation.failed) Failure(stringResource(R.string.subscription_cancel_failed))

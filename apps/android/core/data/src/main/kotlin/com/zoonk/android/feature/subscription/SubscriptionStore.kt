@@ -3,6 +3,7 @@ package com.zoonk.android.feature.subscription
 import android.app.Activity
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
@@ -12,7 +13,6 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.perform
-import com.zoonk.android.data.value
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
@@ -45,7 +45,7 @@ interface SubscriptionApi {
         purchaseToken: String,
     ): StoreSubscriptionResponse
 
-    suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation
+    suspend fun websiteSubscription(session: AuthenticatedSession): StripeSubscriptionCancellation
 
     suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt
 
@@ -70,7 +70,7 @@ class LiveSubscriptionApi(
     ): StoreSubscriptionResponse =
         perform { api.clients(session).subscriptions.createGooglePlaySubscription(GooglePlaySubscriptionRequest(purchaseToken)) }
 
-    override suspend fun webPlusCancellation(session: AuthenticatedSession): StripeSubscriptionCancellation =
+    override suspend fun websiteSubscription(session: AuthenticatedSession): StripeSubscriptionCancellation =
         perform { api.clients(session).subscriptions.getStripeSubscriptionCancellation() }
 
     override suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt =
@@ -133,9 +133,15 @@ class SubscriptionStore(
 
     val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
-    val webPlusStatus: Resource<StripeSubscriptionCancellation> =
+    val websiteSubscription: Resource<StripeSubscriptionCancellation> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.UserSubscription)) { session ->
-            session?.let { api.webPlusCancellation(it) }
+            session?.let {
+                try {
+                    api.websiteSubscription(it)
+                } catch (error: ApiException) {
+                    if (error.error == ApiError.NotFound) null else throw error
+                }
+            }
         }
 
     val allowance: Resource<AllowanceResponse> =
@@ -174,43 +180,15 @@ class SubscriptionStore(
 
     private var reconciledFor: AuthenticatedSession? = null
 
-    suspend fun webPlusCancellation(): MutationResult<StripeSubscriptionCancellation> =
-        cache
-            .mutate { api.webPlusCancellation(it) }
-            .also {
-                if ((it is MutationResult.Failed && it.error == ApiError.NotFound) ||
-                    (it is MutationResult.Done && it.value.cancellation != null)
-                ) {
-                    readPlanAgain()
-                }
-            }
-
     suspend fun cancelWebPlus(): MutationResult<StripeSubscriptionCancellationReceipt> =
         cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it) }
-            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
+            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) cache.invalidate(SUBSCRIPTION_DOMAINS) }
 
-    /**
-     * Turns a stopped renewal back on. The answer carries no plan, so the plan shows renewing at once, unless
-     * a different one was read meanwhile, and is then read again. A 409 means only the renewal isn't stopped
-     * anymore, so the plan is read again.
-     */
-    suspend fun keepWebPlus(): MutationResult<Unit> {
-        val planToKeep = shownPlan()
-        return cache
+    suspend fun keepWebPlus(): MutationResult<Unit> =
+        cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.keepWebPlus(it) }
-            .also {
-                if (it is MutationResult.Done && shownPlan() == planToKeep) account.update(MeResponse::renewing)
-                if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain()
-            }
-    }
-
-    private fun shownPlan() =
-        account.state.value.value
-            ?.account
-            ?.subscription
-
-    private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)
+            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) cache.invalidate(SUBSCRIPTION_DOMAINS) }
 
     /**
      * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
@@ -302,9 +280,6 @@ class SubscriptionStore(
         val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession)
     }
 }
-
-private fun MeResponse.renewing() =
-    copy(account = account.copy(subscription = account.subscription?.copy(cancelAt = null, cancelAtPeriodEnd = false)))
 
 fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
 

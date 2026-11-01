@@ -82,6 +82,7 @@
   "subscription_questions_email": "ddb6e6fd737f6c26c687a3c12d25fd7262790a18142d594cbcfa7cbf94de187a",
   "subscription_questions_title": "e7837e5303d443b8d4534c1b558ebd03d61f3019716ad887654eeacc87b287ac",
   "subscription_questions_unsure": "54a2ed5f5d9b57d5ebe4ca51faecc3665bdc94241559fe9320de8a80c5f6d538",
+  "subscription_renewal_failed": "c593a4ce14dbf21d0c1ca98cf590ab92ef446cc98aa2fa220129b721c0a4c418",
   "subscription_renews_on": "b2dab5f3605ab9f524e70a52726ed99b0221234d2902ec4a26fb5e52ead1d102",
   "subscription_save": "1d211229417ed82fbfa0a64a756bd23da964f84548a8254dc0eb5c238993f96c",
   "subscription_see_plus": "717e9b010019ea016341f8d31f3b5aa85f460c7304c90e74bc293b4c90c32ace",
@@ -89,6 +90,7 @@
   "subscription_start_free": "e464253357d1b0d217140bcf872c6ac65785ce0df8292eb210270f13c972dcb3",
   "subscription_subscribe": "7a28b6c07f996c2259c167433907ac04f39fecc4a4944366cb15def15e47677a",
   "subscription_unavailable": "8c999a3ba8217eb9c0c8777fe459b081cdb0d52e081c079c770257ac0158bb45",
+  "subscription_website": "2562173c7ea474244c011b40af192bb7f8e5a0d01924eefe9286abef4cadd477",
   "subscription_yearly": "d3890f92a1536f9e7de590075a988ef1c9130acc594f1d7bd85cf1e58d9a33f2",
   "subscription_yearly_per_month": "ea75f3890722c31b3c6e922d55e17f8e59db256ca2142b68cfbae75b4874e5a3"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">Google Playで管理する</string>
     <string name="subscription_contact_support">サポートに問い合わせる</string>
     <string name="subscription_cancel">Plusの解約</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Plusを解約できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Plusを解約しますか？</string>
     <string name="subscription_cancel_at_period_end">お支払い済みの期間が終わるまで、引き続きPlusを利用できます。</string>
+    <string name="subscription_website">ウェブサイトでのサブスクリプション</string>
+    <string name="subscription_renewal_failed">前回の更新料金を決済できませんでした。</string>
     <string name="subscription_cancel_unpaid">Plusはすぐに終了し、更新料金の再請求も停止します。</string>
     <string name="subscription_cancel_back">戻る</string>
     <string name="subscription_keep_plus">Plusを続ける</string>

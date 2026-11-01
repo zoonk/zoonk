@@ -19,9 +19,13 @@
     <string name="subscription_manage_google">Manage in Google Play</string>
     <string name="subscription_contact_support">Contact support</string>
     <string name="subscription_cancel">Cancel Plus</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">We couldn\'t cancel Plus. Try again or email hello@zoonk.com.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Cancel Plus?</string>
     <string name="subscription_cancel_at_period_end">You keep Plus until the end of the period you already paid for.</string>
+    <string name="subscription_website">Website subscription</string>
+    <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
     <string name="subscription_cancel_unpaid">Plus ends right away, and we stop retrying your renewal payment.</string>
     <string name="subscription_cancel_back">Go back</string>
     <string name="subscription_keep_plus">Keep Plus</string>

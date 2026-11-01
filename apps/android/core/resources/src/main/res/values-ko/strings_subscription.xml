@@ -82,6 +82,7 @@
   "subscription_questions_email": "4b6f083933b576c750833ae2105bf1f954d17aeffaaae2a50f01cb8f7f10d74e",
   "subscription_questions_title": "7f8507377991fafd90814d6863b66252069ee3976e5d8d398374c6f966c7a90b",
   "subscription_questions_unsure": "0d528bd25547c80966eac6ae16a05125db1111a7266e8c897440f96f0d55596e",
+  "subscription_renewal_failed": "7ed61076b4e054785f412081cde72b75d6ccf38d843ba54eac1eddb3063064c5",
   "subscription_renews_on": "71c7539f70d699d6cf92bd88ea0528e5571a7872fb5bb2409d7ecc3a4b3fb1c4",
   "subscription_save": "7d35ea90aadf14fc82fabf44372cc069fbcfd12815063318a5d4bc38bda0c48f",
   "subscription_see_plus": "5d52c7f86b296ffaf4dbe1053f9bb73682944c1c3c9693a75b132c0b3640bcfa",
@@ -89,6 +90,7 @@
   "subscription_start_free": "e9c2f8a89e00eaee04e2c60f2f5d0847b92a4eb93fc671d3b6a6379cae04b494",
   "subscription_subscribe": "7d981773a0577e824dd75894dff92172935683f365a1f268b4d4eac56739c726",
   "subscription_unavailable": "a2745cab686169e6507892ce258349924920fbf9ba32a7074211b9f972ff9d4c",
+  "subscription_website": "6fa6af11300c7d620c6007563d17ca63798bda40266fc4b1aae0c6ea86dbc08b",
   "subscription_yearly": "08b6faca888c087cdd5fc6a438e0b06b28448d9d7b5fc756a62436d65b5e53a9",
   "subscription_yearly_per_month": "a2f3d4fc6c2b677c6af11e4bac9c5a081d99fab9df6cefd4604b02fc623b004c"
 }
@@ -113,9 +115,13 @@
     <string name="subscription_manage_google">Google Play에서 관리하기</string>
     <string name="subscription_contact_support">고객센터 문의</string>
     <string name="subscription_cancel">Plus 해지</string>
+    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
     <string name="subscription_cancel_failed">Plus를 해지하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>
+    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
     <string name="subscription_cancel_title">Plus를 해지할까요?</string>
     <string name="subscription_cancel_at_period_end">이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요.</string>
+    <string name="subscription_website">웹사이트 구독</string>
+    <string name="subscription_renewal_failed">최근 갱신 결제에 실패했어요.</string>
     <string name="subscription_cancel_unpaid">Plus 이용이 바로 종료되고, 갱신 결제를 더 이상 재시도하지 않아요.</string>
     <string name="subscription_cancel_back">돌아가기</string>
     <string name="subscription_keep_plus">Plus 유지하기</string>

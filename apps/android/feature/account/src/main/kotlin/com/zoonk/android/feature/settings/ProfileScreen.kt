@@ -126,7 +126,7 @@ private fun Profile(
     val user = signedIn.account.user
     val form = viewModel(key = "profile-form:$key") { ProfileFormViewModel(app.account, user, createSavedStateHandle()) }
     val profile = viewModel(key = "profile:$key") { ProfileViewModel(app.account, signedIn.session, user.email) }
-    val webPlusNotice = webPlusDeletionNotice(signedIn.account.account.subscription)
+    val webPlusNotice = webPlusDeletionNotice(app.subscriptions.websiteSubscription)
     val context = LocalContext.current
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->

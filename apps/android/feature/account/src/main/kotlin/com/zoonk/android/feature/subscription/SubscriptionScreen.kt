@@ -77,6 +77,7 @@ import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
+import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.ZoneId
@@ -140,11 +141,11 @@ private fun Account(
 ) {
     val account by app.subscriptions.account.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
+    val website by app.subscriptions.websiteSubscription.collectShown()
     val scope = rememberCoroutineScope()
     val cancellation =
         viewModel(key = "web-plus-cancellation:$sessionKey") {
             WebPlusCancellationViewModel(
-                app.subscriptions::webPlusCancellation,
                 app.subscriptions::cancelWebPlus,
                 app.subscriptions::keepWebPlus,
             )
@@ -154,15 +155,15 @@ private fun Account(
 
     when (val state = account) {
         is LoadState.Loaded -> {
-            val subscription = state.value.account.subscription
-            if (subscription != null) {
-                PageColumn {
-                    if (purchase == PurchaseState.AlreadyPlus) AlreadyPlusMessage(subscription.provider)
-                    CurrentPlan(subscription, navigator, cancellation, app.subscriptions.webPlusStatus)
-                }
-            } else {
-                Offer(app, navigator, PlanViewer.Free)
-            }
+            AccountPlans(
+                subscription = state.value.account.subscription,
+                alreadyPlus = purchase == PurchaseState.AlreadyPlus,
+                website = website,
+                navigator = navigator,
+                cancellation = cancellation,
+                onRetryWebsite = { scope.launch { app.subscriptions.websiteSubscription.refresh() } },
+                offer = { Offer(app, navigator, PlanViewer.Free) },
+            )
         }
 
         is LoadState.Failed -> {
@@ -173,6 +174,85 @@ private fun Account(
             CircularProgressIndicator()
         }
     }
+}
+
+@Composable
+internal fun AccountPlans(
+    subscription: MeSubscription?,
+    website: LoadState<StripeSubscriptionCancellation>,
+    navigator: AppNavigator,
+    cancellation: WebPlusCancellationViewModel,
+    onRetryWebsite: () -> Unit,
+    offer: @Composable () -> Unit,
+    alreadyPlus: Boolean = false,
+) {
+    val storePlan = subscription?.takeUnless { it.provider == STRIPE }
+    if (storePlan != null) {
+        PageColumn {
+            if (alreadyPlus) AlreadyPlusMessage(storePlan.provider)
+            CurrentPlan(storePlan, navigator)
+            when (website) {
+                is LoadState.Loaded -> {
+                    WebPlusPlan(website.value, cancellation, standalone = false)
+                }
+
+                is LoadState.Failed -> {
+                    LoadFailedMessage(onRetry = onRetryWebsite)
+                }
+
+                LoadState.Idle, LoadState.Loading -> {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+                }
+
+                LoadState.Empty -> {}
+            }
+        }
+        return
+    }
+    when (website) {
+        is LoadState.Loaded -> PageColumn {
+            if (alreadyPlus) AlreadyPlusMessage(STRIPE)
+            WebPlusPlan(website.value, cancellation)
+        }
+        is LoadState.Failed -> PageColumn { LoadFailedMessage(onRetry = onRetryWebsite) }
+        LoadState.Idle, LoadState.Loading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+        LoadState.Empty -> offer()
+    }
+}
+
+@Composable
+internal fun WebPlusPlan(
+    subscription: StripeSubscriptionCancellation,
+    cancellation: WebPlusCancellationViewModel,
+    standalone: Boolean = true,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
+                Modifier.semantics { heading() },
+                style = if (standalone) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleMedium,
+            )
+            if (standalone && subscription.state != State.UNPAID) {
+                val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
+                LabelChip(stringResource(label))
+            }
+        }
+        val dateLine =
+            if (subscription.state == State.UNPAID) {
+                stringResource(R.string.subscription_renewal_failed)
+            } else {
+                subscription.periodEnd?.let {
+                    stringResource(
+                        if (subscription.state == State.ENDING) R.string.subscription_ends_on else R.string.subscription_renews_on,
+                        planDate(it, currentLocale()),
+                    )
+                }
+            }
+        dateLine?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+    }
+    if (standalone && subscription.state != State.UNPAID) PlusBenefits()
+    if (subscription.state == State.ENDING) KeepWebPlusButton(cancellation) else WebPlusCancelButton(subscription.state, cancellation)
 }
 
 @Composable
@@ -187,8 +267,6 @@ private fun PageColumn(
 internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
-    cancellation: WebPlusCancellationViewModel,
-    endingStatus: Resource<StripeSubscriptionCancellation>,
 ) {
     val context = LocalContext.current
     val isEnding = subscription.cancelAt != null || subscription.cancelAtPeriodEnd == true
@@ -209,11 +287,6 @@ internal fun CurrentPlan(
     }
 
     PlusBenefits()
-
-    if (provider == STRIPE) {
-        if (isEnding) EndingWebPlus(endingStatus, cancellation) else WebPlusCancelButton(cancellation)
-        return
-    }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
@@ -271,7 +344,6 @@ private fun dateLine(subscription: MeSubscription): String? {
     return when {
         cancelAt != null -> stringResource(R.string.subscription_ends_on, planDate(cancelAt, locale))
         periodEnd == null -> null
-        subscription.provider == STRIPE -> stringResource(R.string.subscription_renews_on, planDate(periodEnd, locale))
         else -> stringResource(R.string.subscription_period_ends_on, planDate(periodEnd, locale))
     }
 }
