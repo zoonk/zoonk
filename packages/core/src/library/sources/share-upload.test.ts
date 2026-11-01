@@ -115,6 +115,38 @@ describe(shareSourceUpload, () => {
     expect(del).not.toHaveBeenCalled();
   });
 
+  it("keeps the file of an image that is the publisher's own, its only readable form", async () => {
+    const user = await userFixture();
+    const bytes = new TextEncoder().encode(`PNG ${randomUUID()}`);
+    const contentHash = hashDocument({ bytes, text: null });
+    const blobUrl = `https://store.private.blob.vercel-storage.com/sources/${user.id}/${randomUUID()}.png`;
+
+    const source = await sourceFixture({
+      blobUrl,
+      contentHash,
+      extractedText: null,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      language: "pt",
+      mimeType: "image/png",
+      ownerId: user.id,
+      url: null,
+      visibility: "private",
+    });
+
+    vi.mocked(fetch).mockImplementation(
+      async () => new PageResponse(bytes, { headers: { "content-type": "image/png" } }),
+    );
+
+    await expect(shareNotice(source.id)).resolves.toMatchObject({ merged: false });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ blobUrl, mimeType: "image/png", visibility: "public" });
+
+    expect(del).not.toHaveBeenCalled();
+  });
+
   it("merges into the copy another learner shared first and removes the duplicate file", async () => {
     const [first, second, both] = await Promise.all([userFixture(), userFixture(), userFixture()]);
     const text = noticeText();
