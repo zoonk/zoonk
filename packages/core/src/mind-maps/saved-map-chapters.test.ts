@@ -19,6 +19,7 @@ import { loadLearnerFacts } from "../learner/summary/_utils/load-learner-facts";
 import { courseGoalFixture, signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { getChapterMindMap } from "./get-chapter-mind-map";
+import { hasGoalMindMaps } from "./has-goal-mind-maps";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
 
@@ -184,6 +185,10 @@ describe("mind maps read from the saved plan", () => {
     expect(mindMapGoalIds.toSorted()).toStrictEqual(
       listed.flatMap((goal) => (goal.chapters.length > 0 ? [goal.goalId] : [])).toSorted(),
     );
+
+    await expect(
+      Promise.all(goals.map((goal) => hasGoalMindMaps({ goalId: goal.id }))),
+    ).resolves.toStrictEqual(listed.map((goal) => goal.chapters.length > 0));
   });
 
   it("keeps a chapter the plan files a lesson under only by the lesson's home", async () => {
