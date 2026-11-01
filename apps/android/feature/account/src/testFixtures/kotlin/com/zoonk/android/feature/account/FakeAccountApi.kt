@@ -10,11 +10,9 @@ import com.zoonk.api.models.MeResponse
 class FakeAccountApi : AccountApi {
     val codesSent = mutableListOf<String>()
     val signInBearers = mutableListOf<String?>()
-    var sendFailure: ApiException? = null
     var codeFailure: ApiException? = null
     var takenUsernames = setOf<String>()
     var saveFailure: ApiException? = null
-    var suggestion: String? = "ana_learner"
     val saved = mutableListOf<Pair<String, String>>()
     val deletionCodesSent = mutableListOf<String>()
     val deletions = mutableListOf<String?>()
@@ -22,7 +20,6 @@ class FakeAccountApi : AccountApi {
     var appleAuthorizationRevoked: Boolean? = null
 
     override suspend fun sendEmailCode(email: String) {
-        sendFailure?.let { throw it }
         codesSent += email
     }
 
@@ -46,7 +43,7 @@ class FakeAccountApi : AccountApi {
         return "token-b"
     }
 
-    override suspend fun usernameSuggestion(session: AuthenticatedSession): String? = suggestion
+    override suspend fun usernameSuggestion(session: AuthenticatedSession): String? = "ana_learner"
 
     override suspend fun isUsernameAvailable(username: String): Boolean = username !in takenUsernames
 
