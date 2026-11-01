@@ -53,9 +53,6 @@ internal class FakePronunciationApi(
     vararg grades: PronunciationAnswerGrade?,
 ) : PronunciationApi {
     private val grades = grades.toMutableList()
-    val answered = mutableListOf<String>()
-    val finished = mutableListOf<String>()
-    var finishFails = 0
     var reviewsFail = false
 
     override suspend fun reviews(
@@ -73,22 +70,12 @@ internal class FakePronunciationApi(
         roundId: String,
         recording: VoiceRecording,
         timeZone: String,
-    ): PronunciationAnswerGrade {
-        answered += reviewId
-        return grades.removeAt(0) ?: throw ApiException(ApiError.Unavailable, "NO_SPEECH", 422)
-    }
+    ): PronunciationAnswerGrade = grades.removeAt(0) ?: throw ApiException(ApiError.Unavailable, "NO_SPEECH", 422)
 
     override suspend fun finish(
         session: AuthenticatedSession,
         roundId: String,
         goalId: String,
         timeZone: String,
-    ): PronunciationRoundResult {
-        finished += roundId
-        if (finishFails > 0) {
-            finishFails--
-            throw ApiException(ApiError.Network)
-        }
-        return RESULT
-    }
+    ): PronunciationRoundResult = RESULT
 }

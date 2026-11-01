@@ -29,9 +29,9 @@ import java.util.UUID
 
 const val LESSON_ID = "00000000-0000-4000-8000-0000000000aa"
 const val RUN_ID = "00000000-0000-4000-8000-0000000000bb"
-const val NEXT_LESSON_ID = "00000000-0000-4000-8000-0000000000cc"
+private const val NEXT_LESSON_ID = "00000000-0000-4000-8000-0000000000cc"
 const val CHAPTER_ID = "00000000-0000-4000-8000-0000000000dd"
-const val DONE_LESSON_ID = "00000000-0000-4000-8000-0000000000ff"
+private const val DONE_LESSON_ID = "00000000-0000-4000-8000-0000000000ff"
 
 fun playable(steps: List<LessonStep>) =
     PlayableLesson(
@@ -169,7 +169,7 @@ class FakeLessonPlayerApi(
      * The example lines the server has saved, by screen; [linesToWrite] are the ones the lesson's
      * first move saves, its response lost when [linesResponseLost].
      */
-    var savedLines = mapOf<String, String>()
+    private var savedLines = mapOf<String, String>()
     var linesToWrite = mapOf<String, String>()
     var linesGate: CompletableDeferred<Unit>? = null
     var linesResponseLost = false
@@ -200,7 +200,7 @@ class FakeLessonPlayerApi(
     ): LessonFit? = null
 }
 
-fun chapterLessons(): List<ChapterLesson> =
+private fun chapterLessons(): List<ChapterLesson> =
     listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
         ApiJson.decodeFromString(
             ChapterLesson.serializer(),
