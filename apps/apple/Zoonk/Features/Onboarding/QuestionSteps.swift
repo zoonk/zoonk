@@ -930,6 +930,25 @@ private struct LevelQuestion: View {
   }
 }
 
+/// The levels a learner can say they have, as the level question and the plan so far name them.
+enum OwnLevel: String {
+  case none, basic, intermediate, advanced
+
+  var label: LocalizedStringResource {
+    switch self {
+    case .none:
+      LocalizedStringResource(
+        "Nothing, I'm just starting", table: "Onboarding", comment: "Level choice")
+    case .basic:
+      LocalizedStringResource("The basics", table: "Onboarding", comment: "Level choice")
+    case .intermediate:
+      LocalizedStringResource("I studied it before", table: "Onboarding", comment: "Level choice")
+    case .advanced:
+      LocalizedStringResource("I know it well", table: "Onboarding", comment: "Level choice")
+    }
+  }
+}
+
 enum LevelChoices {
   /// "Not sure": placement finds the level instead.
   private static let quickTest = "quickTest"
@@ -938,25 +957,25 @@ enum LevelChoices {
   static func all(testMinutes: Int?) -> [ChoiceRows<String>.Choice] {
     [
       .init(
-        value: "none",
-        label: Text("Nothing, I'm just starting", tableName: "Onboarding", comment: "Level choice"),
+        value: OwnLevel.none.rawValue,
+        label: Text(OwnLevel.none.label),
         detail: Text(
           "From scratch, with everyday examples", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
-        value: "basic",
-        label: Text("The basics", tableName: "Onboarding", comment: "Level choice"),
+        value: OwnLevel.basic.rawValue,
+        label: Text(OwnLevel.basic.label),
         detail: Text("I know a few things", tableName: "Onboarding", comment: "Level choice detail")
       ),
       .init(
-        value: "intermediate",
-        label: Text("I studied it before", tableName: "Onboarding", comment: "Level choice"),
+        value: OwnLevel.intermediate.rawValue,
+        label: Text(OwnLevel.intermediate.label),
         detail: Text(
           "We'll skip what you already know", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
-        value: "advanced",
-        label: Text("I know it well", tableName: "Onboarding", comment: "Level choice"),
+        value: OwnLevel.advanced.rawValue,
+        label: Text(OwnLevel.advanced.label),
         detail: Text(
           "Only what's new or hard", tableName: "Onboarding", comment: "Level choice detail")),
       .init(

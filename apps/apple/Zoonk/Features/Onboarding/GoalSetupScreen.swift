@@ -56,13 +56,6 @@ struct GoalSetupContent: View {
   }
 }
 
-extension View {
-  /// Main's onboarding column, 40rem.
-  func onboardingColumn() -> some View {
-    readableColumn(640)
-  }
-}
-
 /// On the background the steps' forms have, so going from one step to the next doesn't flash white.
 struct StepLoading: View {
   var body: some View {
@@ -170,6 +163,7 @@ private struct GoalSteps: View {
       onAnswer: answer,
       onPlacementDone: finishPlacement
     )
+    .environment(\.onboardingAside, .planSoFar(view.goal))
     .id(step)
     .navigationBarBackButtonHidden()
     // The step counter takes the title's place; without it the bar shows no title.

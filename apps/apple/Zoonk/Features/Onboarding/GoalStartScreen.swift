@@ -174,6 +174,7 @@ private struct GoalStartFlow: View {
           .barName(title)
         }
       }
+      .environment(\.onboardingAside, .howItWorks)
       // Today's box sent the words with the tap that opened this screen.
       .task {
         if onboarding.takeSentGoal() != nil, case .sending(let goal) = draft {

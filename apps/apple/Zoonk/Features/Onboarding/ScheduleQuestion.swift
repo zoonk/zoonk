@@ -11,6 +11,8 @@ struct ScheduleQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  /// The plan so far is beside the question, so the question doesn't repeat it.
+  @Environment(\.isPaneSplit) private var isBesidePlan
   @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
   @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
@@ -125,11 +127,16 @@ struct ScheduleQuestion: View {
 
   private func question(_ shown: Shown) -> some View {
     QuestionForm(isSaving: isSaving, failed: failed, failure: refusalWords) {
+      // The date and its days left inform the time to pick.
       StepHeader(
         title: Text(
           "How much time can you study each day?", tableName: "Onboarding",
           comment: "Onboarding question"),
-        description: nil)
+        description: isBesidePlan
+          ? nil
+          : Text(
+            PlanFact.chips(
+              of: view.goal, today: GoalDate.today(now: .now, timeZone: view.goal.timezone))))
 
       // The days decide the time, and what the time covers arrives last, so nothing above it moves.
       weekSection(shown)

@@ -87,6 +87,10 @@ struct UnderstoodFacts: Decodable {
   init(_ draft: Components.Schemas.GoalDraftOutput) throws {
     self = try JSONDecoder().decode(Self.self, from: JSONEncoder().encode(draft))
   }
+
+  init(_ goal: Components.Schemas.Goal) throws {
+    self = try JSONDecoder().decode(Self.self, from: JSONEncoder().encode(goal))
+  }
 }
 
 /// What the title already says gets no row of its own.
@@ -175,7 +179,7 @@ enum UnderstoodRows {
     title.localizedStandardContains(value)
   }
 
-  private static func languageRows(facts: UnderstoodFacts, locale: Locale) -> [UnderstoodRow] {
+  static func languageRows(facts: UnderstoodFacts, locale: Locale) -> [UnderstoodRow] {
     guard facts.kind == "language", let target = facts.targetLanguage else {
       return []
     }
@@ -203,7 +207,7 @@ enum UnderstoodRows {
     return rows
   }
 
-  private static func detailRows(
+  static func detailRows(
     facts: UnderstoodFacts,
     cutoff: Components.Schemas.TargetCutoff?
   ) -> [UnderstoodRow] {
