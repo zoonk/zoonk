@@ -34,8 +34,8 @@ val LocalTabRootBar = staticCompositionLocalOf<TabRootBar?> { null }
  * A tab's own page (Today, the Plan, the buddy): main's app bar as its top app bar, with the goal
  * switcher, the belt and level that lead to Statistics and the account menu, and search under it,
  * which scrolls away with the page on phones. Pages a tab opens have their own top app bar with
- * the way back instead. On an unfolded book foldable the goal and search end on the page before the
- * fold, as the page's first pane does.
+ * the way back instead. On an unfolded book foldable the goal ends on the page before the fold, as
+ * the page's first pane does (search keeps to it on its own).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,10 +47,8 @@ fun TabRootScaffold(
     val searchScroll = bar?.searchScroll?.invoke()
 
     BoxWithConstraints(modifier) {
-        val fold = pageFold(maxWidth)
-        // The title starts 16dp into the bar and ends as far before the fold; search keeps its own margin.
-        val title = fold?.let { Modifier.widthIn(max = it.start - 32.dp) } ?: Modifier
-        val search = fold?.let { Modifier.widthIn(max = it.start) } ?: Modifier
+        // The title starts 16dp into the bar and ends as far before the fold.
+        val title = pageFold(maxWidth)?.let { Modifier.widthIn(max = it.start - 32.dp) } ?: Modifier
 
         Scaffold(
             modifier = searchScroll?.let { Modifier.nestedScroll(it.nestedScrollConnection) } ?: Modifier,
@@ -58,7 +56,7 @@ fun TabRootScaffold(
                 if (bar != null) {
                     Column {
                         TopAppBar(title = { Box(title) { bar.title() } }, actions = bar.actions)
-                        bar.search(searchScroll?.let { with(it) { search.searchBarScrollBehavior() } } ?: search)
+                        bar.search(searchScroll?.let { with(it) { Modifier.searchBarScrollBehavior() } } ?: Modifier)
                     }
                 }
             },

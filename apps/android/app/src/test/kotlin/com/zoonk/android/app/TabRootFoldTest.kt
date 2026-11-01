@@ -3,7 +3,6 @@ package com.zoonk.android.app
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
@@ -36,15 +35,15 @@ class TabRootFoldTest {
     @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    /** An unfolded book foldable: the goal and search end on the page before the fold, as the page's first pane does. */
+    /** An unfolded book foldable: the goal ends on the page before the fold, as the page's first pane does. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")
-    fun theGoalAndSearchEndBeforeAnOpenBooksFold() {
+    fun theGoalEndsBeforeAnOpenBooksFold() {
         val bar =
             TabRootBar(
                 title = { Box(Modifier.fillMaxWidth().testTag("goal")) { Text("A goal with a long name") } },
                 actions = {},
-                search = { modifier -> Box(modifier.fillMaxWidth().height(56.dp).testTag("search")) },
+                search = {},
                 searchScroll = { null },
             )
         rule.setContent { CompositionLocalProvider(LocalTabRootBar provides bar) { TabRootScaffold {} } }
@@ -55,8 +54,6 @@ class TabRootFoldTest {
         rule.waitForIdle()
 
         val goal = rule.onNodeWithTag("goal").getUnclippedBoundsInRoot()
-        val search = rule.onNodeWithTag("search").getUnclippedBoundsInRoot()
         assertTrue("the goal ends before the fold: $goal", goal.right <= 426.dp)
-        assertTrue("search ends before the fold: $search", search.right <= 426.dp)
     }
 }
