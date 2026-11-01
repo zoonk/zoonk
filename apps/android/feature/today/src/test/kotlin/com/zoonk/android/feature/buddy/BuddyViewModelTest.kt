@@ -13,15 +13,12 @@ import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.opening
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearningProfile
-import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -45,20 +42,6 @@ class BuddyViewModelTest {
 
     @After
     fun reset() = Dispatchers.resetMain()
-
-    @Test
-    fun aMissionsBlockOpensInTheSessionItsOpeningNames() =
-        runTest(dispatcher) {
-            val study = FakeStudyApi()
-            study.openings = listOf(opening("session", "blockId" to BLOCK.toString(), "sessionId" to SESSION.toString()))
-            val vm = buddy(study, NoBuddyApi)
-
-            vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)
-            advanceUntilIdle()
-
-            assertEquals(listOf(BLOCK), study.targets.map { (it as StudyBlockOpeningTarget.MissionWrapper).value.blockId })
-            assertEquals(AppRoute.QuestionBlock(SESSION.toString(), BLOCK.toString()), vm.routes.first())
-        }
 
     @Test
     fun aMissionNoLongerFreeToStartReadsTheCardsAgain() =

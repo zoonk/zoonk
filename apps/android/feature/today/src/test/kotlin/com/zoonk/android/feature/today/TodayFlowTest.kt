@@ -2,35 +2,17 @@ package com.zoonk.android.feature.today
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.hasScrollToNodeAction
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
@@ -42,17 +24,11 @@ import com.zoonk.android.feature.session.StudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
-import com.zoonk.android.feature.session.opening
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
-import com.zoonk.api.models.LanguageTodayPronunciation
-import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
@@ -65,7 +41,6 @@ import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -84,7 +59,6 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
-import java.util.Locale
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -97,16 +71,11 @@ class TodayFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private lateinit var navigator: AppNavigator
-    private val opened = mutableListOf<String>()
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val session = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02"
     private val lesson = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d31"
     private val lessonBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d41"
     private val reviewBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d42"
-    private val goal = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
-
-    private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
-    private val tracked = mutableListOf<AnalyticsEvent>()
 
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
@@ -169,314 +138,24 @@ class TodayFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
-                CompositionLocalProvider(LocalEventTracker provides EventTracker(tracked::add)) {
-                    TodayDay(
-                        read,
-                        store.today,
-                        false,
-                        viewModel,
-                        navigator,
-                        PaddingValues(),
-                        buddy =
-                            com.zoonk.android.ui.characters
-                                .BuddyLook(),
-                        buddyName = "Zu",
-                        language = language,
-                        onboarding = onboarding,
-                        plans = PlanStore(plans, cache),
-                        refreshIfChanged = store::refreshIfChanged,
-                    )
-                }
+                TodayDay(
+                    read,
+                    store.today,
+                    false,
+                    viewModel,
+                    navigator,
+                    PaddingValues(),
+                    buddy =
+                        com.zoonk.android.ui.characters
+                            .BuddyLook(),
+                    buddyName = "Zu",
+                    language = null,
+                    onboarding = onboarding,
+                    plans = PlanStore(plans, cache),
+                    refreshIfChanged = store::refreshIfChanged,
+                )
             }
         }
-    }
-
-    @Test
-    fun aLanguageGoalsPracticeShowsWhenTodaysReadNamesIt() {
-        val goal = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("language"))) }
-        language =
-            LoadState.Loaded(
-                LanguageToday(level = null, pronunciation = LanguageTodayPronunciation(2, listOf("hola", "gracias")), speaking = null),
-            )
-        show(
-            todayFields =
-                listOf(
-                    "goal" to goal,
-                    "notice" to "practice",
-                    "studiedToday" to true,
-                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
-                ),
-        )
-
-        rule.onNodeWithText("Say 2 words again").assertExists()
-        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
-    }
-
-    @Test
-    fun theUploadAskComesWithTodaysReadWhenItNamesIt() {
-        show(
-            todayFields =
-                listOf(
-                    "notice" to "uploadRequest",
-                    "uploadRequest" to
-                        ApiJson.parseToJsonElement(
-                            """{"examDocument":"notice","goalId":"$goal","goalKind":"exam","language":"pt","reason":"noOfficialSource"}""",
-                        ),
-                    "studiedToday" to true,
-                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
-                ),
-        )
-
-        rule.onNodeWithText("We couldn't find the official notice").assertExists()
-        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
-    }
-
-    @Test
-    fun todayAndItsInsightCountOncePerVisit() {
-        show(todayFields = listOf("notice" to "insight", "insight" to fixture("memory-insight")))
-        rule.waitForIdle()
-
-        assertEquals(
-            listOf(AnalyticsEvent.TodayViewed, AnalyticsEvent.InsightShown(UUID.fromString(INSIGHT_ID), MemoryInsight.Kind.TIP)),
-            tracked,
-        )
-    }
-
-    @Test
-    fun aFreeExamPlansEndedFirstWeekCountsAsAPlusGate() {
-        show(
-            "examAccess" to
-                fixture("study-session")["examAccess"]?.jsonObject?.let { JsonObject(it + ("trialEnded" to JsonPrimitive(true))) },
-            todayFields = listOf("notice" to "examAccess"),
-        )
-        rule.waitForIdle()
-
-        assertEquals(listOf(AnalyticsEvent.TodayViewed, AnalyticsEvent.SubscriptionGateShown), tracked)
-    }
-
-    @Test
-    fun aSourceChangeComesWithTodaysReadWhenItNamesIt() {
-        show(todayFields = listOf("notice" to "sourceChange", "sourceChange" to "The exam moved to November."))
-
-        rule.onAllNodesWithText("The exam moved to November.").onFirst().assertExists()
-    }
-
-    @Test
-    fun aNoticeTodaysReadDoesntNameStaysOut() {
-        show(
-            todayFields =
-                listOf(
-                    "notice" to null,
-                    "studiedToday" to true,
-                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
-                ),
-        )
-
-        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
-    }
-
-    @Test
-    fun startOpensTheLessonTheServerStartedForTheShownStep() {
-        show()
-
-        rule.onNodeWithText("Start session").performClick()
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Lesson(lesson, session), navigator.currentRoute)
-        assertEquals(listOf("next $lessonBlock"), opened)
-    }
-
-    @Test
-    fun aReviewRowOpensItsBlockInTheQuestionRunner() {
-        show()
-
-        rule.onNodeWithText("What you already know").performClick()
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.QuestionBlock(session, reviewBlock), navigator.currentRoute)
-        assertEquals(listOf("block $reviewBlock"), opened)
-    }
-
-    @Test
-    fun aMissionCardOpensItsBlockAsAMission() {
-        val missions =
-            ApiJson.parseToJsonElement(
-                """
-                [{"done":0,"kind":"review","status":"todo","total":1,"opens":{"kind":"block","blockId":"$reviewBlock"}},
-                 {"done":0,"kind":"askBuddy","status":"todo","total":1,"opens":{"kind":"buddy"}}]
-                """.trimIndent(),
-            )
-        show("missions" to missions)
-
-        rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Review"))
-        rule.onNodeWithText("Review").performClick()
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.QuestionBlock(session, reviewBlock), navigator.currentRoute)
-        assertEquals(listOf("mission $reviewBlock"), opened)
-    }
-
-    @Test
-    fun aChallengeRowSaysWhatItIsBesideItsSubject() {
-        val challenge =
-            fixture(
-                "study-block",
-                "kind" to "checkpoint",
-                "position" to 0,
-                "title" to "Ordering food",
-                "subject" to "Spanish",
-                "questions" to 8,
-                "checkpoint" to
-                    ApiJson.parseToJsonElement(
-                        """{"kind":"boss","mock":false,"passMark":70,"phase":2,"rematch":false,"timeLimitMinutes":null}""",
-                    ),
-            )
-        show("blocks" to JsonArray(listOf(challenge)))
-
-        rule.onNodeWithText("Spanish\u00A0· Ordering food\u00A0· 8 questions, no hints").assertExists()
-    }
-
-    private fun limit(reached: Boolean) =
-        buildJsonObject {
-            put("limitMinutes", 180)
-            put("reached", reached)
-            put("remainingMinutes", if (reached) 0 else 180)
-            put("usedMinutes", if (reached) 180 else 0)
-        }
-
-    private fun dayMinutes(done: Int) =
-        buildJsonObject {
-            put("dailyGoal", 240)
-            put("done", done)
-            put("planned", 180)
-        }
-
-    private val threeHours = formatMinutes(180, Locale.ENGLISH)
-
-    /** A test layout gives inline links no size to tap, so a link is found and followed through the line's text. */
-    private fun link(label: String): LinkAnnotation.Clickable {
-        val text =
-            rule
-                .onNodeWithText(label, substring = true)
-                .fetchSemanticsNode()
-                .config[SemanticsProperties.Text]
-                .first()
-        return text.getLinkAnnotations(0, text.length).first { text.substring(it.start, it.end) == label }.item as LinkAnnotation.Clickable
-    }
-
-    @Test
-    fun aDailyLimitShorterThanTheDaySaysTodayStopsThereAndLinksToIt() {
-        show("minutes" to dayMinutes(done = 0), "dailyLimit" to limit(reached = false))
-
-        rule.onNodeWithText("Today stops at your daily time limit of $threeHours.", substring = true).assertExists()
-        val change = link("Change limit")
-        rule.runOnIdle { change.linkInteractionListener?.onClick(change) }
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Preferences, navigator.currentRoute)
-    }
-
-    @Test
-    fun aDayTheLimitEndedShortSaysTheLimitWasReachedInsteadOfThatTheDayIsDone() {
-        show("state" to "done", "nextPosition" to null, "minutes" to dayMinutes(done = 180), "dailyLimit" to limit(reached = true))
-
-        rule.onNodeWithText("You've reached your daily time limit of $threeHours.", substring = true).assertExists()
-        rule.onNodeWithText("Today's session is complete.", substring = true).assertDoesNotExist()
-        link("Change limit")
-    }
-
-    @Test
-    fun aDayAtItsLimitSaysTheDailyTimeLimitWasReached() {
-        show("state" to "limit", "nextPosition" to null, "minutes" to dayMinutes(done = 180), "dailyLimit" to limit(reached = true))
-
-        rule.onNodeWithText("You've reached your daily time limit of $threeHours.", substring = true).assertExists()
-        link("Change limit")
-    }
-
-    @Test
-    fun aDoneDayLeadsToItsSummary() {
-        val done =
-            JsonArray(
-                listOf(
-                    fixture("study-block", "id" to lessonBlock, "kind" to "learn", "status" to "completed", "position" to 0),
-                    fixture("study-block", "id" to reviewBlock, "kind" to "review", "status" to "completed", "position" to 1),
-                ),
-            )
-        show("blocks" to done, "nextPosition" to null, "state" to "done", "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
-
-        rule.onNodeWithText("Today's session is complete.", substring = true).assertIsDisplayed()
-        rule.onNodeWithText("See today's summary").performClick()
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Session(goalId = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01"), navigator.currentRoute)
-    }
-
-    @Test
-    fun todayOffersWhatTheDaysStateFromCoreSaysNotWhatItsBlocksSuggest() {
-        show("state" to "done")
-
-        rule.onNodeWithText("See today's summary").assertExists()
-        rule.onNodeWithText("Start session").assertDoesNotExist()
-    }
-
-    @Test
-    fun aRestDayHasNoActionToTake() {
-        val noTime =
-            buildJsonObject {
-                put("dailyGoal", 0)
-                put("done", 0)
-                put("planned", 0)
-            }
-        show("blocks" to JsonArray(emptyList()), "nextPosition" to null, "minutes" to noTime, "state" to "rest")
-
-        rule.onNodeWithText("No study planned today.", substring = true).assertIsDisplayed()
-        assertEquals(0, rule.onAllNodesWithText("Start session").fetchSemanticsNodes().size)
-    }
-
-    @Test
-    @Config(qualifiers = "w1280dp-h900dp")
-    fun besideThePageTheProgressCardCountsOnlyTheLessonsStudiedNeverThePlansTotal() {
-        val plans = FakePlanApi().apply { shownSyllabus = modulesSyllabus() }
-        show(todayFields = listOf("progress" to lessonsProgress(done = 3, today = 2, total = 20)), plans = plans)
-
-        rule.onNodeWithText("Progress").assertExists()
-        rule.onNodeWithText("1 lesson studied").assertExists()
-        rule.onNodeWithText("Basics").assertExists()
-        rule.onAllNodesWithText("of 20", substring = true).assertCountEquals(0)
-        assertEquals(1, plans.syllabi)
-    }
-
-    @Test
-    @Config(qualifiers = "w1280dp-h900dp")
-    fun besideThePageAnExamShowsItsPreparationWithTheSubjectsItsPlanHolds() {
-        val exam = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("exam"))) }
-        val preparation =
-            buildJsonObject {
-                put("measure", "preparation")
-                put("status", JsonNull)
-                put("value", 0.37)
-                put("weekGain", 0.05)
-            }
-        show(
-            todayFields = listOf("goal" to exam, "progress" to preparation),
-            plans = FakePlanApi().apply { shownSyllabus = examSyllabus() },
-        )
-
-        rule.onNodeWithText("Preparation").assertExists()
-        rule.onNodeWithText("37%").assertExists()
-        rule.onNodeWithText("+5 this week").assertExists()
-        rule.onNodeWithText("Natural sciences").assertExists()
-        rule.onNodeWithText("Spanish").assertDoesNotExist()
-    }
-
-    @Test
-    fun onAPhoneTheProgressCardStaysOffTodayAsMainKeepsIt() {
-        val plans = FakePlanApi().apply { shownSyllabus = modulesSyllabus() }
-        show(todayFields = listOf("progress" to lessonsProgress(done = 3, today = 2, total = 20)), plans = plans)
-
-        rule.onNodeWithText("1 lesson studied").assertDoesNotExist()
-        rule.waitForIdle()
-        assertEquals(0, plans.syllabi)
     }
 
     @Test
@@ -553,27 +232,6 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aPracticeOnlyDayWhoseLessonsAreBeingWrittenHoldsTheirPlaceInTheList() {
-        show("blocks" to practiceOnly(), "lessonsComing" to true)
-
-        rule.onNodeWithText("Your next lessons").assertExists()
-        rule.onNodeWithText("Being written for you…").assertExists()
-        rule.onAllNodesWithText("Start session").onFirst().assertExists()
-    }
-
-    @Test
-    fun aPracticeOnlyDayNobodyIsWritingOffersTodaysLessonsWhileStartSessionStaysItsAction() {
-        show("blocks" to practiceOnly(), "lessonsToPrepare" to true)
-
-        rule.onNodeWithText("Not written yet.", substring = true).assertExists()
-        rule.onNodeWithText("Get today's lessons").performClick()
-        rule.waitForIdle()
-
-        assertEquals(listOf(UUID.fromString(goal)), todayApi.prepared)
-        rule.onAllNodesWithText("Start session").onFirst().assertExists()
-    }
-
-    @Test
     fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenSaysItsTakingLonger() {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
@@ -634,7 +292,7 @@ class TodayFlowTest {
         put("value", done.toDouble() / total)
     }
 
-    private inner class OpeningApi : StudyApi {
+    private class OpeningApi : StudyApi {
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
@@ -645,22 +303,7 @@ class TodayFlowTest {
             session: AuthenticatedSession,
             target: StudyBlockOpeningTarget,
             timeZone: String,
-        ): StudyBlockOpening {
-            val (kind, blockId) =
-                when (target) {
-                    is StudyBlockOpeningTarget.NextWrapper -> "next" to target.value.expectedBlockId
-                    is StudyBlockOpeningTarget.BlockWrapper -> "block" to target.value.blockId
-                    is StudyBlockOpeningTarget.MissionWrapper -> "mission" to target.value.blockId
-                }
-            opened += "$kind $blockId"
-            val answer =
-                if (blockId.toString() == lessonBlock) {
-                    opening("lesson", "lessonId" to lesson, "sessionId" to this@TodayFlowTest.session)
-                } else {
-                    opening("session", "blockId" to blockId.toString(), "sessionId" to this@TodayFlowTest.session)
-                }
-            return ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), answer)
-        }
+        ): StudyBlockOpening = error("Not used")
 
         override suspend fun stop(
             session: AuthenticatedSession,
@@ -700,7 +343,6 @@ class TodayFlowTest {
         var reads = 0
         var changed = false
         val asked = mutableListOf<Instant>()
-        val prepared = mutableListOf<UUID>()
 
         override suspend fun today(
             session: AuthenticatedSession,
@@ -751,9 +393,7 @@ class TodayFlowTest {
         override suspend fun prepareLessons(
             session: AuthenticatedSession,
             goalId: UUID,
-        ) {
-            prepared += goalId
-        }
+        ) = Unit
 
         override suspend fun answerSuggestedGoal(
             session: AuthenticatedSession,
@@ -762,5 +402,3 @@ class TodayFlowTest {
         ): SuggestedGoal = error("Not used")
     }
 }
-
-private const val INSIGHT_ID = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"

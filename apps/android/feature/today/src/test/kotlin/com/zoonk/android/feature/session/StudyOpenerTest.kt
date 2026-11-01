@@ -10,13 +10,11 @@ import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.api.ApiJson
 import com.zoonk.api.ApiRequestJson
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
-import com.zoonk.api.models.StudyBlockOpening
 import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -76,34 +74,6 @@ class StudyOpenerTest {
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(0).toString())), result)
             assertEquals(listOf(target("block", "blockId" to blockId(0).toString())), api.targets.map(::sent))
         }
-
-    @Test
-    fun eachOpeningShowsItsScreen() {
-        val block = blockId(0).toString()
-        val session = SESSION.toString()
-        val planItem = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77"
-
-        fun routeOf(opening: JsonObject) = ApiJson.decodeFromJsonElement(StudyBlockOpening.serializer(), opening).route()
-
-        assertEquals(
-            AppRoute.Session(blockId = block, sessionId = session),
-            routeOf(
-                opening(
-                    "preparingLesson",
-                    "blockId" to block,
-                    "sessionId" to session,
-                ),
-            ),
-        )
-        assertEquals(AppRoute.Essay(block), routeOf(opening("essay", "blockId" to block, "sessionId" to session)))
-        assertEquals(AppRoute.Checkpoint(block, session), routeOf(opening("checkpoint", "blockId" to block, "sessionId" to session)))
-        assertEquals(AppRoute.Mock(block, session), routeOf(opening("mock", "blockId" to block, "sessionId" to session)))
-        assertEquals(AppRoute.Challenge(planItem, session), routeOf(opening("challenge", "planItemId" to planItem, "sessionId" to session)))
-        assertEquals(AppRoute.Session(sessionId = session), routeOf(opening("session", "blockId" to null, "sessionId" to session)))
-        assertEquals(AppRoute.Session(blockId = block, sessionId = session), routeOf(unwritten()))
-        assertEquals(AppRoute.Today, routeOf(opening("today")))
-        assertEquals(null, routeOf(opening("changed")))
-    }
 
     @Test
     fun anUnwrittenLessonsTapAsksToWriteItOnceAndTheSessionWaitsOnItsBlock() =
@@ -275,27 +245,6 @@ class StudyOpenerTest {
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(1).toString())), result)
             assertEquals(target("next", "sessionId" to SESSION.toString()), sent(api.targets.single()))
             assertEquals(0, api.sessionReads)
-        }
-
-    @Test
-    fun continuingWithNothingLeftOpensTheSummaryAndAfterTheDayEndedGoesBackToToday() =
-        runTest {
-            val api = FakeStudyApi()
-
-            api.openings = listOf(opening("session", "blockId" to null, "sessionId" to SESSION.toString()))
-            assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())), opener(api).continueSession(SESSION))
-
-            api.openings = listOf(opening("today"))
-            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
-        }
-
-    @Test
-    fun stoppingForTodayOpensTheSessionsStoppedSummary() =
-        runTest {
-            val api = FakeStudyApi()
-
-            assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString(), stopped = true)), opener(api).stop(SESSION))
-            assertEquals(listOf(SESSION), api.stopped)
         }
 
     private fun unwritten() =

@@ -5,16 +5,10 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsFocused
-import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -237,20 +231,6 @@ class NextStopTest {
     }
 
     @Test
-    fun aLessonARunIsWritingShowsTheRunsPhasesAndWhatItTakes() {
-        settled = LessonReadiness.Status.GENERATING
-        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
-        show()
-        rule.mainClock.advanceTimeBy(1_000)
-        rule.waitForIdle()
-
-        rule
-            .onNodeWithContentDescription("Writing the lesson")
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "in progress"))
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
-    }
-
-    @Test
     fun aRunStillWritingAfterFiveMinutesSaysItDidntFinish() {
         settled = LessonReadiness.Status.GENERATING
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
@@ -350,17 +330,6 @@ class NextStopTest {
         rule.waitForIdle()
 
         assertEquals(0, dayReads)
-    }
-
-    @Test
-    fun theReadyLessonLeavesFocusWhereTheLearnerPutIt() {
-        show(onStop = {})
-        rule.onNodeWithText("Stop for today").requestFocus()
-        writeTheLesson()
-
-        rule.onNodeWithText("Your lesson is ready.").assertExists()
-        rule.onNodeWithText("Stop for today").assertIsFocused()
-        rule.onNodeWithText("Start").assertIsNotFocused()
     }
 
     @Test

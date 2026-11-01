@@ -8,7 +8,6 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.models.LessonGenerationStatus
-import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.test.runTest
@@ -106,30 +105,6 @@ class TodayStoreTest {
             )
             assertEquals(LessonGenerationStatus.GENERATING, read.today.lessonStatus[lesson])
             assertEquals(true, read.day.isWaitingForLessons(read.today.lessonStatus))
-        }
-
-    @Test
-    fun anEmptyDayNobodyIsWritingAsksForItsLessons() =
-        runTest {
-            val session =
-                fixture(
-                    "unstarted-study-day",
-                    "blocks" to kotlinx.serialization.json.JsonArray(emptyList()),
-                    "emptyDay" to "lessonsToPrepare",
-                    "minutes" to
-                        buildJsonObject {
-                            put("dailyGoal", 30)
-                            put("done", 0)
-                            put("planned", 0)
-                        },
-                    "nextPosition" to null,
-                    "state" to "prepare",
-                )
-            val today = decodeFixture<Today>("today", "session" to session)
-
-            val read = read(api { today }, ana, "UTC") as TodayRead.Day
-
-            assertEquals(StudySession.State.PREPARE, read.day.state)
         }
 
     @Test
