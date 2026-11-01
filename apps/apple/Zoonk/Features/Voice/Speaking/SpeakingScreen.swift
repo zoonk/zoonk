@@ -112,7 +112,7 @@ private struct SpeakingPaperView: View {
         Text(paper.title)
           .font(.title2.weight(.semibold))
         Text(
-          "\(paper.tasks.count) tasks · \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
+          "\(paper.tasks.count) tasks\u{00A0}· \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
           tableName: "Voice",
           comment: "How many tasks the speaking paper has and how long it is"
         )
@@ -322,7 +322,7 @@ private struct SpeakingPaperView: View {
           table: "Voice", comment: "How long the exam gives to prepare"))
     }
 
-    return facts.joined(separator: " · ")
+    return facts.joinedFacts()
   }
 
   private func minutesText(min: Double, max: Double) -> String {

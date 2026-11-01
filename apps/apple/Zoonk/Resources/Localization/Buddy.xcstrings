@@ -5512,31 +5512,31 @@
         }
       }
     },
-    "Your study buddy · %@" : {
+    "Your study buddy · %@" : {
       "comment" : "What the buddy is, and its stage",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Lernkumpel · %@"
+            "value" : "Dein Lernkumpel · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero de estudio · %@"
+            "value" : "Tu compañero de estudio · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton Compagnon d’étude · %@"
+            "value" : "Ton compagnon d’étude · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno di studio · %@"
+            "value" : "Il tuo compagno di studio · %@"
           }
         },
         "ja" : {
@@ -5548,25 +5548,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 공부 짝꿍 · %@"
+            "value" : "내 공부 짝꿍 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój kumpel do nauki · %@"
+            "value" : "Twój kumpel do nauki · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro de estudos · %@"
+            "value" : "Seu parceiro de estudo · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders arkadaşın · %@"
+            "value" : "Ders arkadaşın · %@"
           }
         }
       }

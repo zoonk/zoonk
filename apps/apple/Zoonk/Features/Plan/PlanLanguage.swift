@@ -93,11 +93,11 @@ struct PlanAlphabetRow: View {
           Group {
             if alphabet.pending {
               Text(
-                "First in your next session · \(time)", tableName: "Plan",
+                "First in your next session\u{00A0}· \(time)", tableName: "Plan",
                 comment: "The alphabet lesson opens the next session")
             } else {
               Text(
-                "Practice anytime · \(time)", tableName: "Plan",
+                "Practice anytime\u{00A0}· \(time)", tableName: "Plan",
                 comment: "The alphabet lesson can be practiced anytime")
             }
           }

@@ -121,7 +121,7 @@ struct LessonVerdictView: View {
     let next = note.map { Text($0) }
 
     switch (streak, next) {
-    case (let streak?, let next?): return Text("\(streak) · \(next)")
+    case (let streak?, let next?): return Text("\(streak)\u{00A0}· \(next)")
     case (let streak?, nil): return streak
     case (nil, let next?): return next
     case (nil, nil): return Text(verbatim: "")
@@ -132,7 +132,7 @@ struct LessonVerdictView: View {
     if result.savedMistake {
       return willReturn
         ? LocalizedStringResource(
-          "Saved to your mistakes · back at the end of this lesson", table: "Player",
+          "Saved to your mistakes\u{00A0}· back at the end of this lesson", table: "Player",
           comment:
             "A missed question went to the mistakes notebook and comes back later in the lesson")
         : LocalizedStringResource(

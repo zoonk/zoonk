@@ -62,7 +62,7 @@ struct ConversationIntro<Footer: View>: View {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text(
-            "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide))) · Level \(intro.level)",
+            "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))\u{00A0}· Level \(intro.level)",
             tableName: "Voice", comment: "A call's length and level, over its title"
           )
           .font(.caption.monospaced())
@@ -186,7 +186,7 @@ struct CharacterRow: View {
               Text("Your partner", tableName: "Voice", comment: "Whom the AI plays in an exam task")
             }
           } else {
-            Text("\(character.role) · \(character.place)")
+            Text("\(character.role)\u{00A0}· \(character.place)")
           }
         }
         .font(.subheadline)

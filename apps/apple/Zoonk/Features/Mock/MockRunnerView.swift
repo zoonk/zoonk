@@ -219,13 +219,13 @@ private struct MockQuestionMeta: View {
   private var accessibilityPlace: Text {
     if question.format == .essay {
       return question.area.map {
-        Text("Written part · \($0)", tableName: "Mock", comment: "An essay's place")
+        Text("Written part\u{00A0}· \($0)", tableName: "Mock", comment: "An essay's place")
       } ?? Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
     }
 
     if let area = question.area {
       return Text(
-        "Question \(question.number) of \(view.questions) · \(area)", tableName: "Mock",
+        "Question \(question.number) of \(view.questions)\u{00A0}· \(area)", tableName: "Mock",
         comment: "A question's place in the mock, with its subject")
     }
 

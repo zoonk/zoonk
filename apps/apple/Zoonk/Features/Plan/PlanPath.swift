@@ -318,7 +318,7 @@ private struct PlanPhaseRow: View {
     switch (writing, challenge) {
     case (true, let date?):
       return Text(
-        "More lessons on the way · challenge \(date)", tableName: "Plan",
+        "More lessons on the way\u{00A0}· challenge \(date)", tableName: "Plan",
         comment: "The current phase's lessons are being written; its challenge's date")
     case (true, nil):
       return Text(
@@ -326,7 +326,7 @@ private struct PlanPhaseRow: View {
         comment: "The current phase's lessons are being written")
     case (false, let date?):
       return Text(
-        "Lessons done · challenge \(date)", tableName: "Plan",
+        "Lessons done\u{00A0}· challenge \(date)", tableName: "Plan",
         comment: "The current phase's lessons are done; its challenge's date")
     case (false, nil):
       return nil

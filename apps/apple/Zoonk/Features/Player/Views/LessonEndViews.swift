@@ -364,7 +364,7 @@ private struct LessonGuestEndingView: View {
                   Text(course.title)
                     .font(.headline)
                   Text(
-                    "\(course.chapterCount) chapters · about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
+                    "\(course.chapterCount) chapters\u{00A0}· about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
                     tableName: "Player", comment: "A course's size at the end of a guest's lesson"
                   )
                   .font(.subheadline)

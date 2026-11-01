@@ -196,7 +196,7 @@ private struct RoadmapCompact: View {
     let days = PlanDate.days(from: start, to: end) + 1
 
     return Text(
-      "\(Text(phase.title).fontWeight(.medium)) · day \(day) of \(days)", tableName: "Plan",
+      "\(Text(phase.title).fontWeight(.medium))\u{00A0}· day \(day) of \(days)", tableName: "Plan",
       comment: "Where the learner is: the phase's name, then its day of the phase's days")
   }
 }

@@ -103,7 +103,7 @@ private func verdictDetail<Pattern: ScorePatternGroup>(_ verdict: PatternVerdict
   switch verdict {
   case .best(let group):
     Text(
-      "\(wholePercent(group.performance.score)) · \(group.performance.totalAnswers) answers",
+      "\(wholePercent(group.performance.score))\u{00A0}· \(group.performance.totalAnswers) answers",
       tableName: "Progress",
       comment: "Under the best day or time: its share of right answers and its answers")
   case .even(let points) where points == 0:

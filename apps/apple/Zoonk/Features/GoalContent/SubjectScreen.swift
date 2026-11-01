@@ -157,7 +157,7 @@ private struct SubjectContent: View {
           .heroTitle()
 
         if !facts.isEmpty {
-          Text(verbatim: facts.joined(separator: " · "))
+          Text(verbatim: facts.joinedFacts())
             .font(.subheadline)
             .monospacedDigit()
             .foregroundStyle(.secondary)
@@ -347,7 +347,7 @@ private struct SubjectChapterRow: View {
     }
 
     return Text(
-      "\(chapter.lessonsTotal) lessons · \(chapter.lessonsDone) done", tableName: "Plan",
+      "\(chapter.lessonsTotal) lessons\u{00A0}· \(chapter.lessonsDone) done", tableName: "Plan",
       comment: "The chapter in progress: its lessons and how many are done")
   }
 

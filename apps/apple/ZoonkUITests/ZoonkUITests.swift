@@ -513,7 +513,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected Science to remove courses from other categories")
 
     XCTAssertTrue(
-      app.staticTexts["3 lessons · 18 min"].waitForExistence(timeout: 5),
+      app.staticTexts["3 lessons\u{A0}· 18 min"].waitForExistence(timeout: 5),
       "Expected a course to state its lessons and their time")
 
     let course = app.staticTexts["How Plants Grow"].firstMatch
@@ -556,7 +556,7 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["Where this chapter sits in the course"].waitForExistence(timeout: 5),
       "Expected the chapter page to place the chapter in its course")
-    XCTAssertTrue(app.staticTexts["Chapter 1 of 2 · Beginner"].exists)
+    XCTAssertTrue(app.staticTexts["Chapter 1 of 2\u{A0}· Beginner"].exists)
     XCTAssertTrue(app.buttons["Build my plan"].exists, "Expected the chapter's way in")
 
     app.swipeUp()
@@ -618,7 +618,7 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(chapter.exists, "Expected a matching chapter to name its course")
     chapter.tap()
     XCTAssertTrue(
-      app.staticTexts["Chapter 1 of 2 · Beginner"].waitForExistence(timeout: 10),
+      app.staticTexts["Chapter 1 of 2\u{A0}· Beginner"].waitForExistence(timeout: 10),
       "Expected a chapter search result to read its course and its place there")
   }
 
@@ -705,12 +705,12 @@ final class ZoonkUITests: XCTestCase {
 
     let calendar = app.descendants(matching: .any)["Activity by day"]
     XCTAssertTrue(calendar.waitForExistence(timeout: 5), "Expected the overview's calendar")
-    XCTAssertEqual(calendar.value as? String, "Aug 20 · 9 activities")
+    XCTAssertEqual(calendar.value as? String, "Aug 20\u{A0}· 9 activities")
 
     // The year scrolls from its newest edge, so tap a day near that edge, a few days earlier.
     calendar.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.4)).tap()
     XCTAssertNotEqual(
-      calendar.value as? String, "Aug 20 · 9 activities", "Expected a tap to pick another day")
+      calendar.value as? String, "Aug 20\u{A0}· 9 activities", "Expected a tap to pick another day")
   }
 
   @MainActor

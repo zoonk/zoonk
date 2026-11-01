@@ -186,7 +186,7 @@ struct CourseOutlineSections: View {
       comment:
         "After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now."
     )
-    return [chapterText, lessonText].joined(separator: " · ")
+    return [chapterText, lessonText].joinedFacts()
   }
 }
 
@@ -220,7 +220,7 @@ private struct CourseLevelOutline: View {
           }
 
           if !isExpanded.wrappedValue {
-            Text(band.chapters.prefix(Self.named).map(\.title).joined(separator: " · "))
+            Text(band.chapters.prefix(Self.named).map(\.title).joinedFacts())
               .font(.subheadline)
               .foregroundStyle(.secondary)
           }
@@ -251,7 +251,7 @@ private struct CourseLevelOutline: View {
       : String(
         localized: "weeks \(first)–\(last)", table: "Courses",
         comment: "The weeks a level takes in a plan")
-    return "\(count) · \(span)"
+    return "\(count)\u{00A0}· \(span)"
   }
 }
 
@@ -418,7 +418,7 @@ private struct CourseAreaOutline: View {
         nil
       }
 
-    return [weeks, detail].compactMap(\.self).joined(separator: " · ")
+    return [weeks, detail].compactMap(\.self).joinedFacts()
   }
 
   private func areaFit(name: String?, chapters: [CourseChapter]) -> String {
@@ -462,7 +462,7 @@ private struct CourseAreaOutline: View {
           comment: "How many of an exam area's chapters an example plan leaves out"))
     }
 
-    return parts.joined(separator: " · ")
+    return parts.joinedFacts()
   }
 
   private func throughText(_ area: CoursePlanEstimate.Area) -> String {
@@ -578,7 +578,7 @@ private struct OutlineChapterRow: View {
         }
 
         if !chapter.lessons.isEmpty {
-          Text(chapter.lessons.map(\.title).joined(separator: " · "))
+          Text(chapter.lessons.map(\.title).joinedFacts())
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }

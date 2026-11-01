@@ -380,5 +380,5 @@ func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
     localized: "\(bases.items.count) prerequisites", table: "Plan",
     comment: "How many prerequisites the plan has")
 
-  return minutes > 0 ? "\(count) · \(planDurationText(minutes: Double(minutes)))" : count
+  return minutes > 0 ? "\(count)\u{00A0}· \(planDurationText(minutes: Double(minutes)))" : count
 }

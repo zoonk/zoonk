@@ -53,7 +53,7 @@ struct ExamSpeakingSections: View {
         }
       } header: {
         Text(
-          "\(task.title) · Task \(task.number) of \(task.taskCount)", tableName: "Voice",
+          "\(task.title)\u{00A0}· Task \(task.number) of \(task.taskCount)", tableName: "Voice",
           comment: "An exam task's place in its speaking paper")
       } footer: {
         if feedback.heard, task.criteria.contains(where: \.sound) {

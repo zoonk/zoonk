@@ -109,7 +109,8 @@ struct TodayMoreSection: View {
             Button(action: catchUp) {
               Label {
                 Text(
-                  "Catch up today · +\(studyDuration(minutes: later.minutes))", tableName: "Today",
+                  "Catch up today\u{00A0}· +\(studyDuration(minutes: later.minutes))",
+                  tableName: "Today",
                   comment: "Adds the lessons earlier days left to today")
               } icon: {
                 if busy == .catchUp {
@@ -569,7 +570,7 @@ struct TodayWeekSection: View {
     let parts = [
       days.map(whole), time.map { "\(whole($0.studied)) / \(whole($0.planned))" },
     ].compactMap(\.self)
-    return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    return parts.isEmpty ? nil : parts.joinedFacts()
   }
 
   var body: some View {
@@ -629,7 +630,7 @@ private struct WeekChallengeRow: View {
         VStack(alignment: .leading, spacing: 2) {
           Text("Full review", tableName: "Today", comment: "A free plan's mock day")
           Text(
-            "\(day) · every topic, your weakest first", tableName: "Today",
+            "\(day)\u{00A0}· every topic, your weakest first", tableName: "Today",
             comment: "When a free plan's full review is and what it asks"
           )
           .font(.subheadline)
@@ -680,7 +681,7 @@ private struct WeekChallengeRow: View {
       parts.append(studyDuration(minutes: minutes))
     }
 
-    return parts.joined(separator: " · ")
+    return parts.joinedFacts()
   }
 }
 

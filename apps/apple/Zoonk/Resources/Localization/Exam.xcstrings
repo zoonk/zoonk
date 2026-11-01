@@ -1,31 +1,31 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %@" : {
+    "%@ · %@" : {
       "comment" : "An exam day's parts, then how many questions they have",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "ja" : {
@@ -37,25 +37,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@"
+            "value" : "%@ · %@"
           }
         }
       }
@@ -2160,7 +2160,7 @@
         }
       }
     },
-    "Exam · %lld days left" : {
+    "Exam · %lld days left" : {
       "comment" : "Days left to the exam",
       "localizations" : {
         "de" : {
@@ -2169,13 +2169,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prüfung · noch %lld Tag"
+                  "value" : "Prüfung · Noch %lld Tag"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prüfung · noch %lld Tage"
+                  "value" : "Prüfung · Noch %lld Tage"
                 }
               }
             }
@@ -2187,13 +2187,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Exam · %lld day left"
+                  "value" : "Exam · %lld day left"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Exam · %lld days left"
+                  "value" : "Exam · %lld days left"
                 }
               }
             }
@@ -2205,13 +2205,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Falta %lld día"
+                  "value" : "Examen · falta %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Faltan %lld días"
+                  "value" : "Examen · faltan %lld días"
                 }
               }
             }
@@ -2223,13 +2223,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Encore %lld jour"
+                  "value" : "Examen · %lld jour restant"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Encore %lld jours"
+                  "value" : "Examen · %lld jours restants"
                 }
               }
             }
@@ -2241,13 +2241,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esame · manca %lld giorno"
+                  "value" : "Esame · manca %lld giorno"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esame · mancano %lld giorni"
+                  "value" : "Esame · mancano %lld giorni"
                 }
               }
             }
@@ -2259,7 +2259,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "試験まであと%lld日"
+                  "value" : "試験・あと%lld日"
                 }
               }
             }
@@ -2271,7 +2271,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "시험 · %lld일 남음"
+                  "value" : "시험 · %lld일 남음"
                 }
               }
             }
@@ -2283,25 +2283,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostały %lld dni"
+                  "value" : "Egzamin · pozostały %lld dni"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostało %lld dni"
+                  "value" : "Egzamin · pozostało %lld dni"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostał %lld dzień"
+                  "value" : "Egzamin · pozostał %lld dzień"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostało %lld dnia"
+                  "value" : "Egzamin · pozostało %lld dnia"
                 }
               }
             }
@@ -2313,13 +2313,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prova · Falta %lld dia"
+                  "value" : "Prova · falta %lld dia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prova · Faltam %lld dias"
+                  "value" : "Prova · faltam %lld dias"
                 }
               }
             }
@@ -2331,7 +2331,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Sınav · %lld gün kaldı"
+                  "value" : "Sınav · %lld gün kaldı"
                 }
               }
             }
@@ -2339,7 +2339,7 @@
         }
       }
     },
-    "Exam · About %lld days left" : {
+    "Exam · About %lld days left" : {
       "comment" : "Estimated days left",
       "localizations" : {
         "de" : {
@@ -2348,13 +2348,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prüfung · noch etwa %lld Tag"
+                  "value" : "Prüfung · Noch etwa %lld Tag"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prüfung · noch etwa %lld Tage"
+                  "value" : "Prüfung · Noch etwa %lld Tage"
                 }
               }
             }
@@ -2366,13 +2366,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Exam · About %lld day left"
+                  "value" : "Exam · About %lld day left"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Exam · About %lld days left"
+                  "value" : "Exam · About %lld days left"
                 }
               }
             }
@@ -2384,13 +2384,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Falta aproximadamente %lld día"
+                  "value" : "Examen · falta aproximadamente %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Faltan aproximadamente %lld días"
+                  "value" : "Examen · faltan aproximadamente %lld días"
                 }
               }
             }
@@ -2402,13 +2402,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Encore environ %lld jour"
+                  "value" : "Examen · Environ %lld jour restant"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Examen · Encore environ %lld jours"
+                  "value" : "Examen · Environ %lld jours restants"
                 }
               }
             }
@@ -2420,13 +2420,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esame · manca circa %lld giorno"
+                  "value" : "Esame · manca circa %lld giorno"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esame · mancano circa %lld giorni"
+                  "value" : "Esame · mancano circa %lld giorni"
                 }
               }
             }
@@ -2438,7 +2438,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "試験まであと約%lld日"
+                  "value" : "試験・あと約%lld日"
                 }
               }
             }
@@ -2450,7 +2450,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "시험 · 약 %lld일 남음"
+                  "value" : "시험 · 약 %lld일 남음"
                 }
               }
             }
@@ -2459,16 +2459,28 @@
         "pl" : {
           "variations" : {
             "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Egzamin · pozostały mniej więcej %lld dni"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Egzamin · pozostało mniej więcej %lld dni"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostało około %lld dnia"
+                  "value" : "Egzamin · pozostał mniej więcej %lld dzień"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Egzamin · pozostało około %lld dni"
+                  "value" : "Egzamin · pozostało mniej więcej %lld dnia"
                 }
               }
             }
@@ -2480,13 +2492,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prova · Falta cerca de %lld dia"
+                  "value" : "Prova · falta cerca de %lld dia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prova · Faltam cerca de %lld dias"
+                  "value" : "Prova · faltam cerca de %lld dias"
                 }
               }
             }
@@ -2498,7 +2510,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Sınav · Yaklaşık %lld gün kaldı"
+                  "value" : "Sınav · Yaklaşık %lld gün kaldı"
                 }
               }
             }

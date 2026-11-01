@@ -92,7 +92,7 @@ struct BuddyDayView: View {
   }
 
   var subtitle: Text {
-    Text("\(status.stage.name) · \(status.growthLine)")
+    Text("\(status.stage.name)\u{00A0}· \(status.growthLine)")
   }
 
   @ViewBuilder

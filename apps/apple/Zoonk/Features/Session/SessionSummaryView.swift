@@ -294,7 +294,7 @@ private struct SummaryTiles: View {
       },
     ].compactMap(\.self)
 
-    return parts.isEmpty ? nil : Text(verbatim: parts.joined(separator: " · "))
+    return parts.isEmpty ? nil : Text(verbatim: parts.joinedFacts())
   }
 
   /// A language goal has no number here; an exam shows its preparation, any other goal its

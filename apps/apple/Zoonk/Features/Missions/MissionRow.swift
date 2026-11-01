@@ -141,7 +141,8 @@ extension StudyMission {
       return String(localized: "Due today", table: "Today", comment: "Pronunciation mission")
     case .call:
       return detail?.chapterTitle.map {
-        String(localized: "Quick call · \($0)", table: "Today", comment: "A call mission's unit")
+        String(
+          localized: "Quick call\u{00A0}· \($0)", table: "Today", comment: "A call mission's unit")
       } ?? String(localized: "A quick call", table: "Today", comment: "A call mission")
     case .askBuddy:
       return String(
@@ -241,7 +242,7 @@ struct MissionRow: View {
         .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
 
       if !mission.isDone, !detail.isEmpty {
-        Text(verbatim: detail.joined(separator: " · "))
+        Text(verbatim: detail.joinedFacts())
           .font(.footnote)
           .monospacedDigit()
           .foregroundStyle(.secondary)

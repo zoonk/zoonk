@@ -111,6 +111,6 @@ private struct EarlierQuestionRow: View {
       return course
     }
 
-    return Text("\(course) · \(lesson)")
+    return Text("\(course)\u{00A0}· \(lesson)")
   }
 }

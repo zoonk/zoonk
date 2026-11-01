@@ -487,7 +487,7 @@ private struct LanguageUnitContent: View {
 
     if let range {
       return Text(
-        "Unit \(position) · \(range)", tableName: "Plan",
+        "Unit \(position)\u{00A0}· \(range)", tableName: "Plan",
         comment: "A unit's number and its level range")
     }
 
@@ -591,7 +591,7 @@ struct PracticeCallSection: View {
     } footer: {
       if let character = conversation.character {
         Text(
-          "with \(character.name) · \(character.role)", tableName: "Plan",
+          "with \(character.name)\u{00A0}· \(character.role)", tableName: "Plan",
           comment: "Who the practice call is with: the character's name and role")
       }
     }

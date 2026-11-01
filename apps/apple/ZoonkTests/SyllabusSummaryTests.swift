@@ -9,7 +9,8 @@ final class SyllabusSummaryTests: XCTestCase {
       subjects: [subject("Shares and companies"), subject("Trading"), subject("Risk")])
 
     XCTAssertEqual(
-      syllabusSummary(syllabus, dailyMinutes: 15), "3 modules · Shares and companies · Trading")
+      syllabusSummary(syllabus, dailyMinutes: 15),
+      "3 modules\u{A0}· Shares and companies\u{A0}· Trading")
   }
 
   func testAnExamNoticeSaysWhatFitsWhenItsTopicsAreMapped() throws {
@@ -23,7 +24,7 @@ final class SyllabusSummaryTests: XCTestCase {
 
     XCTAssertEqual(
       syllabusSummary(syllabus, dailyMinutes: 30),
-      "2 subjects from the notice · 1 of 2 topics don't fit in 30 min a day")
+      "2 subjects from the notice\u{A0}· 1 of 2 topics don't fit in 30 min a day")
   }
 
   private func subject(_ name: String, topics: [String] = []) -> String {

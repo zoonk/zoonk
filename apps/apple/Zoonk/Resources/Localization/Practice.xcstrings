@@ -1,61 +1,61 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · Fixed" : {
+    "%@ · Fixed" : {
       "comment" : "A fixed mistake's cause line.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Korrigiert"
+            "value" : "%@ · Korrigiert"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Corregido"
+            "value" : "%@ · Corregido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Corrigée"
+            "value" : "%@ · Corrigée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Corretto"
+            "value" : "%@ · Corretto"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 克服済み"
+            "value" : "%@・克服済み"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 고침"
+            "value" : "%@ · 고친 문제"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Poprawione"
+            "value" : "%@ · Poprawione"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Corrigido"
+            "value" : "%@ · Corrigido"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Düzeltildi"
+            "value" : "%@ · Düzeltildi"
           }
         }
       }
@@ -8229,61 +8229,61 @@
         }
       }
     },
-    "New try · %@" : {
+    "New try · %@" : {
       "comment" : "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neuer Versuch · %@"
+            "value" : "Neuer Versuch · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuevo intento · %@"
+            "value" : "Nuevo intento · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouvelle tentative · %@"
+            "value" : "Nouvelle tentative · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuovo tentativo · %@"
+            "value" : "Nuovo tentativo · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "再挑戦 · %@"
+            "value" : "再挑戦・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "재도전 · %@"
+            "value" : "다시 도전 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kolejna próba · %@"
+            "value" : "Nowa próba · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nova tentativa · %@"
+            "value" : "Nova tentativa · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni deneme · %@"
+            "value" : "Yeni deneme · %@"
           }
         }
       }
@@ -9464,61 +9464,61 @@
         }
       }
     },
-    "Past exam question · %@" : {
+    "Past exam question · %@" : {
       "comment" : "Source of a real past exam question shown with it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage aus einer früheren Prüfung · %@"
+            "value" : "Frage aus einer früheren Prüfung · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregunta de un examen anterior · %@"
+            "value" : "Pregunta de un examen anterior · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Question d’un examen passé · %@"
+            "value" : "Question d’annales · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Domanda di un esame precedente · %@"
+            "value" : "Domanda di un esame precedente · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "過去問 · %@"
+            "value" : "過去問・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기출문제 · %@"
+            "value" : "기출문제 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pytanie z wcześniejszego egzaminu · %@"
+            "value" : "Pytanie z wcześniejszego egzaminu · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questão de prova anterior · %@"
+            "value" : "Questão de prova anterior · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çıkmış sınav sorusu · %@"
+            "value" : "Çıkmış sınav sorusu · %@"
           }
         }
       }
@@ -10172,61 +10172,61 @@
         }
       }
     },
-    "Practice this · %@" : {
+    "Practice this · %@" : {
       "comment" : "Starts a mistake pattern's drill, with how long it takes.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das üben · %@"
+            "value" : "Das üben · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar esto · %@"
+            "value" : "Practicar esto · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réviser cette erreur · %@"
+            "value" : "Entraîne-toi sur ce point · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercitati su questo · %@"
+            "value" : "Esercitati su questo · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "練習する · %@"
+            "value" : "練習する・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 패턴 연습하기 · %@"
+            "value" : "연습하기 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przećwicz to · %@"
+            "value" : "Przećwicz to · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar isso · %@"
+            "value" : "Praticar isso · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bunun üzerinde çalış · %@"
+            "value" : "Pratik yap · %@"
           }
         }
       }
@@ -11775,61 +11775,61 @@
         }
       }
     },
-    "Saved to your mistakes · it comes back tomorrow" : {
+    "Saved to your mistakes · it comes back tomorrow" : {
       "comment" : "After a wrong answer saved to the mistakes notebook.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Fehlerheft gespeichert · morgen kommt die Frage wieder"
+            "value" : "Im Fehlerheft gespeichert · die Frage kommt morgen noch einmal"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en tu cuaderno de errores · volverá mañana"
+            "value" : "Guardado en tu cuaderno de errores · volverá mañana"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouté à ton Carnet d’erreurs · à revoir demain"
+            "value" : "Ajouté à ton carnet d’erreurs · de retour demain"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvato nel tuo quaderno degli errori · torna domani"
+            "value" : "Salvato nel tuo quaderno degli errori · tornerà domani"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違いノートに保存しました · 明日また出題されます"
+            "value" : "間違いノートに保存しました・明日もう一度出題します"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오답 노트에 저장했어요 · 내일 다시 나와요"
+            "value" : "오답 노트에 저장했어요 · 내일 다시 나와요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisano w zeszycie błędów · wróci jutro"
+            "value" : "Zapisano w zeszycie błędów · wróci jutro"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvo no seu Caderno de erros · volta amanhã"
+            "value" : "Salvo no seu caderno de erros · volta amanhã"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yanlış defterine kaydedildi · yarın tekrar karşına çıkacak"
+            "value" : "Yanlış defterine kaydedildi · yarın tekrar karşına çıkacak"
           }
         }
       }

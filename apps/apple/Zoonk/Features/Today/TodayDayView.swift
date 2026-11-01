@@ -236,7 +236,7 @@ struct TodayDayView: View {
       }
     }
 
-    return Text(parts.joined(separator: " · "))
+    return Text(parts.joinedFacts())
   }
 
   private func open(_ block: StudyBlock, next: Bool) {

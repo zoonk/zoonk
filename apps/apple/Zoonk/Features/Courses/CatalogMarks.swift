@@ -128,7 +128,7 @@ func courseLengthText(lessonCount: Int, minutes: Int) -> String? {
   let lessons = String(
     localized: "\(lessonCount) lessons", table: "Courses",
     comment: "How many lessons a course has, before how long it takes")
-  return "\(lessons) · \(catalogDurationText(minutes: minutes))"
+  return "\(lessons)\u{00A0}· \(catalogDurationText(minutes: minutes))"
 }
 
 func firstSentence(_ text: String?) -> String? {

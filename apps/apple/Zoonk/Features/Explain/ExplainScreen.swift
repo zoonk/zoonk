@@ -76,7 +76,7 @@ private struct ExplanationView: View {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
-            "Quick explanation · \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+            "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
             tableName: "Explain",
             comment: "Eyebrow over a quick explanation's title: its kind and length"
           )

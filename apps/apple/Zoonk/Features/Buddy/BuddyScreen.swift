@@ -119,7 +119,7 @@ private struct BuddyContent: View {
     .navigationTitle(Text(name))
     .navigationSubtitle(
       Text(
-        "Your study buddy · \(status.stage.name)", tableName: "Buddy",
+        "Your study buddy\u{00A0}· \(status.stage.name)", tableName: "Buddy",
         comment: "What the buddy is, and its stage")
     )
     .taskOptions(

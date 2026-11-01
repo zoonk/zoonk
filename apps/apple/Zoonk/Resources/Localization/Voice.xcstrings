@@ -1,132 +1,132 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · Level %@" : {
+    "%@ · Level %@" : {
       "comment" : "A call's length and level, over its title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Level %2$@"
+            "value" : "%1$@ · Level %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · Level %2$@"
+            "value" : "%1$@ · Level %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Nivel %2$@"
+            "value" : "%1$@ · Nivel %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Niveau %2$@"
+            "value" : "%1$@ · Niveau %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Livello %2$@"
+            "value" : "%1$@ · Livello %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · レベル%2$@"
+            "value" : "%1$@・レベル%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 레벨 %2$@"
+            "value" : "%1$@ · 레벨 %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Poziom %2$@"
+            "value" : "%1$@ · Poziom %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Nível %2$@"
+            "value" : "%1$@ · Nível %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Seviye %2$@"
+            "value" : "%1$@ · Seviye %2$@"
           }
         }
       }
     },
-    "%@ · Task %lld of %lld" : {
+    "%@ · Task %lld of %lld" : {
       "comment" : "An exam task's place in its speaking paper",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Aufgabe %2$lld von %3$lld"
+            "value" : "%1$@ · Aufgabe %2$lld von %3$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · Task %2$lld of %3$lld"
+            "value" : "%1$@ · Task %2$lld of %3$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Tarea %2$lld de %3$lld"
+            "value" : "%1$@ · Tarea %2$lld de %3$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Tâche %2$lld sur %3$lld"
+            "value" : "%1$@ · Tâche %2$lld sur %3$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Compito %2$lld di %3$lld"
+            "value" : "%1$@ · Compito %2$lld di %3$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · タスク%2$lld / %3$lld"
+            "value" : "%1$@・タスク%2$lld／%3$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 과제 %2$lld / %3$lld"
+            "value" : "%1$@ · 과제 %2$lld/%3$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Zadanie %2$lld z %3$lld"
+            "value" : "%1$@ · Zadanie %2$lld z %3$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Tarefa %2$lld de %3$lld"
+            "value" : "%1$@ · Tarefa %2$lld de %3$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Bölüm %2$lld / %3$lld"
+            "value" : "%1$@ · Bölüm %2$lld / %3$lld"
           }
         }
       }
@@ -686,7 +686,7 @@
         }
       }
     },
-    "%lld tasks · %@ in the exam" : {
+    "%lld tasks · %@ in the exam" : {
       "comment" : "How many tasks the speaking paper has and how long it is",
       "localizations" : {
         "de" : {
@@ -695,13 +695,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Aufgabe · %@ in der Prüfung"
+                  "value" : "%lld Aufgabe · %@ in der Prüfung"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Aufgaben · %@ in der Prüfung"
+                  "value" : "%lld Aufgaben · %@ in der Prüfung"
                 }
               }
             }
@@ -713,13 +713,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld task · %@ in the exam"
+                  "value" : "%lld task · %@ in the exam"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tasks · %@ in the exam"
+                  "value" : "%lld tasks · %@ in the exam"
                 }
               }
             }
@@ -731,13 +731,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarea · %@ en el examen"
+                  "value" : "%lld tarea · %@ en el examen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tareas · %@ en el examen"
+                  "value" : "%lld tareas · %@ en el examen"
                 }
               }
             }
@@ -749,13 +749,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tâche · %@ à l’examen"
+                  "value" : "%lld tâche · %@ à l’examen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tâches · %@ à l’examen"
+                  "value" : "%lld tâches · %@ à l’examen"
                 }
               }
             }
@@ -767,13 +767,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld compito · %@ nell’esame"
+                  "value" : "%lld compito · %@ all’esame"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld compiti · %@ nell’esame"
+                  "value" : "%lld compiti · %@ all’esame"
                 }
               }
             }
@@ -785,7 +785,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lldタスク · 試験では%@"
+                  "value" : "%lldタスク・試験時間%@"
                 }
               }
             }
@@ -797,7 +797,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "과제 %lld개 · 시험 시간 %@"
+                  "value" : "과제 %lld개 · 시험 시간 %@"
                 }
               }
             }
@@ -809,19 +809,19 @@
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zadań · %@ na egzaminie"
+                  "value" : "%lld zadań · %@ na egzaminie"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zadanie · %@ na egzaminie"
+                  "value" : "%lld zadanie · %@ na egzaminie"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zadania · %@ na egzaminie"
+                  "value" : "%lld zadania · %@ na egzaminie"
                 }
               }
             }
@@ -833,13 +833,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarefa · %@ na prova"
+                  "value" : "%lld tarefa · %@ na prova"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarefas · %@ na prova"
+                  "value" : "%lld tarefas · %@ na prova"
                 }
               }
             }
@@ -851,7 +851,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld bölüm · sınavda %@"
+                  "value" : "%lld bölüm · sınavda %@"
                 }
               }
             }

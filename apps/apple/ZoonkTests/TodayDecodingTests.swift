@@ -43,7 +43,7 @@ final class TodayDecodingTests: XCTestCase {
 
     XCTAssertEqual(
       line,
-      "4\u{A0}of\u{A0}7\u{A0}days · 2\u{A0}hrs\u{A0}14\u{A0}min / 5\u{A0}hrs\u{A0}13\u{A0}min")
+      "4\u{A0}of\u{A0}7\u{A0}days\u{A0}· 2\u{A0}hrs\u{A0}14\u{A0}min / 5\u{A0}hrs\u{A0}13\u{A0}min")
   }
 
   func testAMissionToFinishAChapterSaysTheLessonsAfterItsNext() throws {

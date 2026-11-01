@@ -153,7 +153,7 @@ extension MockPoints.Test {
         : nil,
     ].compactMap { $0 }
 
-    return lines.isEmpty ? nil : lines.joined(separator: " · ")
+    return lines.isEmpty ? nil : lines.joinedFacts()
   }
 
   private func requirement(_ minimum: PointsMinimum) -> String {

@@ -62,7 +62,7 @@ private struct DecisionTreeCanvas: View {
           )
           .font(.caption.weight(.medium))
           .foregroundStyle(.secondary)
-          Text(possible.map(\.label).joined(separator: " · "))
+          Text(possible.map(\.label).joinedFacts())
             .font(.subheadline)
         }
         .accessibilityElement(children: .combine)

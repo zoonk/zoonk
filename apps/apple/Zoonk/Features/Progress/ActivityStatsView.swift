@@ -83,7 +83,7 @@ struct ActivityCalendar: View {
         CalendarDay(
           date: day.date,
           step: CalendarSteps.activity(day.activitiesCompleted, maximum: maximum),
-          label: "\(formatDay(day.date)) · \(activityCount(day.activitiesCompleted))",
+          label: "\(formatDay(day.date))\u{00A0}· \(activityCount(day.activitiesCompleted))",
           value: Double(day.activitiesCompleted))
       },
       chartTitle: String(

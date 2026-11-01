@@ -14724,61 +14724,61 @@
         }
       }
     },
-    "Quick explanation · %@" : {
+    "Quick explanation · %@" : {
       "comment" : "The kind of an example goal: a short explanation of one question, and its length",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurze Erklärung · %@"
+            "value" : "Kurze Erklärung · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explicación breve · %@"
+            "value" : "Explicación rápida · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explication rapide · %@"
+            "value" : "Explication rapide · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spiegazione rapida · %@"
+            "value" : "Spiegazione rapida · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "クイック解説 · %@"
+            "value" : "クイック解説・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "간단한 해설 · %@"
+            "value" : "짧은 설명 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Szybkie wyjaśnienie · %@"
+            "value" : "Szybkie wyjaśnienie · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explicação rápida · %@"
+            "value" : "Explicação rápida · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa açıklama · %@"
+            "value" : "Kısa açıklama · %@"
           }
         }
       }

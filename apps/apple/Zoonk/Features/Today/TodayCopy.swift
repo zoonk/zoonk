@@ -105,7 +105,7 @@ extension StudyBlock {
   var detail: String? {
     if hasCapsules && weakest {
       return String(
-        localized: "No reviews due today · \(questions) questions on your weakest topics",
+        localized: "No reviews due today\u{00A0}· \(questions) questions on your weakest topics",
         table: "Today", comment: "A review of the weakest topics when nothing was due")
     }
 
@@ -115,10 +115,10 @@ extension StudyBlock {
 
       return questions > reviewed
         ? String(
-          localized: "\(questions) questions · \(topics), plus what you already know",
+          localized: "\(questions) questions\u{00A0}· \(topics), plus what you already know",
           table: "Today", comment: "A review's questions and its topics")
         : String(
-          localized: "\(questions) questions · \(topics)", table: "Today",
+          localized: "\(questions) questions\u{00A0}· \(topics)", table: "Today",
           comment: "A review's questions and its topics")
     }
 
@@ -134,7 +134,7 @@ extension StudyBlock {
     if let checkpoint, !checkpoint.mock, questions == 0 {
       return challengePhase.map {
         String(
-          localized: "\($0) · a live call", table: "Today",
+          localized: "\($0)\u{00A0}· a live call", table: "Today",
           comment: "A language unit's challenge: its phase, and that it's a live call")
       }
         ?? String(
@@ -143,7 +143,7 @@ extension StudyBlock {
 
     if let phase = challengePhase {
       return String(
-        localized: "\(phase) · \(questions) questions, no hints", table: "Today",
+        localized: "\(phase)\u{00A0}· \(questions) questions, no hints", table: "Today",
         comment: "A phase challenge's phase and questions")
     }
 
@@ -165,7 +165,7 @@ extension StudyBlock {
 
     if practisesTopics {
       return String(
-        localized: "\(questions) questions · \(shortList(topics, named: 2))", table: "Today",
+        localized: "\(questions) questions\u{00A0}· \(shortList(topics, named: 2))", table: "Today",
         comment: "A review's questions and its topics")
     }
 
@@ -180,7 +180,7 @@ extension StudyBlock {
       switch (waitReason, phase) {
       case (.lessons, let phase?):
         return String(
-          localized: "\(phase) · after today's lessons", table: "Today",
+          localized: "\(phase)\u{00A0}· after today's lessons", table: "Today",
           comment: "A phase challenge waiting for the day's lessons")
       case (.lessons, nil):
         return String(
@@ -188,7 +188,7 @@ extension StudyBlock {
           comment: "A challenge waiting for the day's lessons")
       case (.challenge, let phase?):
         return String(
-          localized: "\(phase) · after the challenge before it", table: "Today",
+          localized: "\(phase)\u{00A0}· after the challenge before it", table: "Today",
           comment: "A phase challenge waiting for the one before it")
       case (.challenge, nil):
         return String(
@@ -205,13 +205,13 @@ extension StudyBlock {
       part =
         subject.map {
           String(
-            localized: "Catching up · \($0)", table: "Today",
+            localized: "Catching up\u{00A0}· \($0)", table: "Today",
             comment: "A lesson left from earlier days, and its subject")
         }
         ?? String(localized: "Catching up", table: "Today", comment: "A lesson from earlier days")
     } else if checkpoint != nil {
       let parts = [subject, detail].compactMap(\.self)
-      part = parts.isEmpty ? nil : parts.joined(separator: " · ")
+      part = parts.isEmpty ? nil : parts.joinedFacts()
     } else {
       part = subject
     }
@@ -222,7 +222,8 @@ extension StudyBlock {
 
     return part.map {
       String(
-        localized: "\($0) · often tested", table: "Today", comment: "A topic the exam asks a lot")
+        localized: "\($0)\u{00A0}· often tested", table: "Today",
+        comment: "A topic the exam asks a lot")
     } ?? String(localized: "Often tested", table: "Today", comment: "A topic the exam asks a lot")
   }
 }

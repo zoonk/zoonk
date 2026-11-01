@@ -5006,67 +5006,67 @@
         }
       }
     },
-    "Phase %lld · %@ done" : {
+    "Phase %lld · %@ done" : {
       "comment" : "A phase finished this week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Phase %1$lld · %2$@ abgeschlossen"
+            "value" : "Phase %1$lld · %2$@ abgeschlossen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Phase %1$lld · %2$@ done"
+            "value" : "Phase %1$lld · %2$@ done"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase %1$lld · %2$@ completada"
+            "value" : "Fase %1$lld · completaste %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Phase %1$lld · %2$@ terminé"
+            "value" : "Phase %1$lld · %2$@, c’est fait"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase %1$lld · %2$@ completata"
+            "value" : "Fase %1$lld · completata al %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フェーズ%1$lld・%2$@完了"
+            "value" : "フェーズ%1$lld・%2$@を完了"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld단계 · %2$@ 완료"
+            "value" : "%1$lld단계 · %2$@ 완료"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etap %1$lld · ukończono %2$@"
+            "value" : "Ukończony etap %1$lld · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase %1$lld · %2$@ concluída"
+            "value" : "Fase %1$lld · %2$@ concluída"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld. aşama · %2$@ tamamlandı"
+            "value" : "Aşama %1$lld · %2$@ tamamlandı"
           }
         }
       }
@@ -7528,61 +7528,61 @@
         }
       }
     },
-    "Weekly summary · %@" : {
+    "Weekly summary · %@" : {
       "comment" : "The recap's week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wochenrückblick · %@"
+            "value" : "Wochenrückblick · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resumen semanal · %@"
+            "value" : "Resumen semanal · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bilan de la semaine · %@"
+            "value" : "Bilan de la semaine · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riepilogo settimanale · %@"
+            "value" : "Riepilogo settimanale · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "週間まとめ · %@"
+            "value" : "週間まとめ・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "주간 요약 · %@"
+            "value" : "주간 요약 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podsumowanie tygodnia · %@"
+            "value" : "Podsumowanie tygodnia · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resumo semanal · %@"
+            "value" : "Resumo semanal · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haftalık özet · %@"
+            "value" : "Haftalık özet · %@"
           }
         }
       }

@@ -194,11 +194,11 @@ private struct CourseExamEyebrow: View {
     Group {
       if exam.estimated {
         Text(
-          "Exam around \(dates) · \(daysLeft)", tableName: "Courses",
+          "Exam around \(dates)\u{00A0}· \(daysLeft)", tableName: "Courses",
           comment: "An exam course's estimated next sitting: its days, then how long until it")
       } else {
         Text(
-          "Exam on \(dates) · \(daysLeft)", tableName: "Courses",
+          "Exam on \(dates)\u{00A0}· \(daysLeft)", tableName: "Courses",
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }

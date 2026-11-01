@@ -1,13 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "~%@ of study · %lld phases · %lld skills" : {
+    "~%@ of study · %lld phases · %lld skills" : {
       "comment" : "A shared plan's size: its study time, phases and skills",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ Lernzeit · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ Lernzeit · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -55,7 +55,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "~%1$@ of study · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ of study · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -103,7 +103,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ de estudio · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ de estudio · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -151,7 +151,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ d’étude · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ d’étude · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -199,7 +199,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ di studio · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ di studio · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -241,7 +241,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習時間：約%1$@ · %#@phases@ · %#@skills@"
+            "value" : "約%1$@の学習・%#@phases@・%#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -277,7 +277,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "약 %1$@ 학습 · %#@phases@ · %#@skills@"
+            "value" : "약 %1$@ 학습 · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -313,7 +313,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ nauki · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ nauki · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -373,7 +373,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ de estudo · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ de estudo · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {
@@ -421,7 +421,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ çalışma · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ çalışma · %#@phases@ · %#@skills@"
           },
           "substitutions" : {
             "phases" : {

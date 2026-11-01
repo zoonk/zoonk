@@ -31,6 +31,6 @@ final class TodayPracticeRowTests: XCTestCase {
 
   func testAPracticeBlockSaysWhatItPractises() throws {
     XCTAssertEqual(try practice().label(isCatchingUp: false), "Functions and 9 more")
-    XCTAssertEqual(try practice().detail, "10 questions · Functions, Percentages and 8 more")
+    XCTAssertEqual(try practice().detail, "10 questions\u{A0}· Functions, Percentages and 8 more")
   }
 }

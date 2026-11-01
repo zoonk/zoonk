@@ -28,7 +28,7 @@ struct PreferencesView: View {
             Label {
               Text(preferences.buddy.displayName)
               Text(
-                "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name) · \(preferences.buddy.glasses.worn)",
+                "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name)\u{00A0}· \(preferences.buddy.glasses.worn)",
                 tableName: "Settings",
                 comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
             } icon: {

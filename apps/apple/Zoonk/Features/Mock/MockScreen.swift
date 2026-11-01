@@ -159,8 +159,10 @@ struct MockStepStatus: View {
       switch run.queue.status {
       case .retrying:
         HStack {
-          Text("Not saved yet · retrying", tableName: "Mock", comment: "An answer waits to save")
-            .frame(maxWidth: .infinity, alignment: .leading)
+          Text(
+            "Not saved yet\u{00A0}· retrying", tableName: "Mock", comment: "An answer waits to save"
+          )
+          .frame(maxWidth: .infinity, alignment: .leading)
           Button {
             run.queue.retryNow()
           } label: {

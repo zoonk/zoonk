@@ -333,7 +333,7 @@ private struct MockScoreSections: View {
       : result.areas.map(\.name).formatted(.list(type: .and))
 
     return [score.label, view.examName, areas].compactMap { $0 }.filter { !$0.isEmpty }
-      .joined(separator: " · ")
+      .joinedFacts()
   }
 
   private var delta: (text: String, up: Bool)? {
@@ -633,7 +633,9 @@ private struct MockEssaySections: View {
       }
     } header: {
       if total > 1 {
-        Text("Written part · \(number) of \(total)", tableName: "Mock", comment: "Essay of essays")
+        Text(
+          "Written part\u{00A0}· \(number) of \(total)", tableName: "Mock",
+          comment: "Essay of essays")
       } else {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
       }
@@ -1068,7 +1070,8 @@ private struct MockReviewSection: View {
           VStack(alignment: .leading, spacing: 2) {
             Group {
               if let area = item.area {
-                Text("Question \(item.number) · \(area)", tableName: "Mock", comment: "Review")
+                Text(
+                  "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock", comment: "Review")
               } else {
                 Text("Question \(item.number)", tableName: "Mock", comment: "A question by number")
               }

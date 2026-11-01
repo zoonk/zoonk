@@ -429,7 +429,7 @@ private struct LogbookSteps: View {
       : recap.weekStart
 
     return String(
-      localized: "Weekly summary · \(text)", table: "Session", comment: "The recap's week")
+      localized: "Weekly summary\u{00A0}· \(text)", table: "Session", comment: "The recap's week")
   }
 
   private var weekEyebrow: String {
@@ -438,7 +438,7 @@ private struct LogbookSteps: View {
     }
 
     return String(
-      localized: "Phase \(finished.phase + 1) · \(finished.name) done", table: "Session",
+      localized: "Phase \(finished.phase + 1)\u{00A0}· \(finished.name) done", table: "Session",
       comment: "A phase finished this week")
   }
 

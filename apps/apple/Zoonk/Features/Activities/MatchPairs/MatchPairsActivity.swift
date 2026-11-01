@@ -84,7 +84,7 @@ private struct MatchPairsCanvas: View {
       comment: "How many cards in a matching activity are traps with no match")
 
     return Text(
-      "\(matched) · \(traps)", tableName: "Activities",
+      "\(matched)\u{00A0}· \(traps)", tableName: "Activities",
       comment: "Pairs matched, then how many cards have no match")
   }
 

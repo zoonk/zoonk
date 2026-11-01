@@ -256,7 +256,7 @@ private struct NotebookHeader: View {
         : String(
           localized: "\(fixed) fixed", table: "Practice",
           comment: "Notebook count of fixed mistakes."))
-    return parts.joined(separator: " · ")
+    return parts.joinedFacts()
   }
 }
 
@@ -401,7 +401,8 @@ private struct MistakeEntryView: View {
 
     return fixed
       ? String(
-        localized: "\(cause) · Fixed", table: "Practice", comment: "A fixed mistake's cause line.")
+        localized: "\(cause)\u{00A0}· Fixed", table: "Practice",
+        comment: "A fixed mistake's cause line.")
       : cause
   }
 }

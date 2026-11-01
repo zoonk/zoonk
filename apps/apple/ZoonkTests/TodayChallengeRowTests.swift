@@ -24,16 +24,16 @@ final class TodayChallengeRowTests: XCTestCase {
 
   func testAChallengeSaysItsPhaseQuestionsAndNoHints() throws {
     XCTAssertEqual(
-      try challenge().label(isCatchingUp: false), "Motion · 8 questions, no hints")
+      try challenge().label(isCatchingUp: false), "Motion\u{A0}· 8 questions, no hints")
     XCTAssertEqual(
       try challenge(subject: "Physics").label(isCatchingUp: false),
-      "Physics · Motion · 8 questions, no hints")
+      "Physics\u{A0}· Motion\u{A0}· 8 questions, no hints")
   }
 
   func testALanguageCallNeverReadsZeroQuestions() throws {
     XCTAssertEqual(
       try challenge(phase: "At the airport", questions: 0).label(isCatchingUp: false),
-      "At the airport · a live call")
+      "At the airport\u{A0}· a live call")
     XCTAssertEqual(
       try challenge(phase: nil, questions: 0).label(isCatchingUp: false), "A live call")
   }

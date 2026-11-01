@@ -810,7 +810,7 @@ private struct TodayEarlierWorkSection: View {
         }
       } label: {
         Text(
-          "Earlier unfinished work · \(items.count.formatted())", tableName: "Today",
+          "Earlier unfinished work\u{00A0}· \(items.count.formatted())", tableName: "Today",
           comment: "Lessons left from earlier days, with how many"
         )
         .font(.body.weight(.medium))

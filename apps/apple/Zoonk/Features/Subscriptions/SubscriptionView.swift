@@ -307,7 +307,7 @@ private struct SubscriptionMarketingContent: View {
         .font(.largeTitle.bold())
 
         Text(
-          "Every goal · every lesson",
+          "Every goal\u{00A0}· every lesson",
           tableName: "Account",
           comment: "What Zoonk Plus includes, in one line"
         )
@@ -437,7 +437,7 @@ struct PlusStatusView: View {
         PlusBenefits()
       } header: {
         Text(
-          "Every goal · every lesson", tableName: "Account",
+          "Every goal\u{00A0}· every lesson", tableName: "Account",
           comment: "What Zoonk Plus includes, in one line")
       }
 
@@ -872,7 +872,7 @@ private struct FreePlanCard: View {
               String(
                 localized: "\(lessons) lessons a month", table: "Account",
                 comment: "Free plan: lessons a month"),
-            ].joined(separator: " · ")
+            ].joinedFacts()
           )
           .font(.subheadline)
           .foregroundStyle(.secondary)

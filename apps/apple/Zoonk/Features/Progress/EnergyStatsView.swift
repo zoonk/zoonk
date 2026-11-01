@@ -93,11 +93,11 @@ private struct EnergyCalendar: View {
           step: CalendarSteps.energy(day.energy),
           label: day.energy.map {
             String(
-              localized: "\(date) · \(metricPercent($0)) Energy", table: "Progress",
+              localized: "\(date)\u{00A0}· \(metricPercent($0)) Energy", table: "Progress",
               comment: "An Energy calendar day: its date and its Energy")
           }
             ?? String(
-              localized: "\(date) · No Energy recorded", table: "Progress",
+              localized: "\(date)\u{00A0}· No Energy recorded", table: "Progress",
               comment: "An Energy calendar day without Energy"),
           value: day.energy)
       },

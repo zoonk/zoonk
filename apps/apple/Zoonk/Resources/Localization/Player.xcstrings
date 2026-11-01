@@ -125,13 +125,13 @@
         }
       }
     },
-    "%lld chapters · about %@ at your pace" : {
+    "%lld chapters · about %@ at your pace" : {
       "comment" : "A course's size at the end of a guest's lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · etwa %2$@ in deinem Tempo"
+            "value" : "%#@chapters@ · etwa %2$@ bei deinem Tempo"
           },
           "substitutions" : {
             "chapters" : {
@@ -153,7 +153,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%#@chapters@ · about %2$@ at your pace"
+            "value" : "%#@chapters@ · about %2$@ at your pace"
           },
           "substitutions" : {
             "chapters" : {
@@ -181,7 +181,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · aproximadamente %2$@ a tu ritmo"
+            "value" : "%#@chapters@ · aproximadamente %2$@ a tu ritmo"
           },
           "substitutions" : {
             "chapters" : {
@@ -209,7 +209,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · environ %2$@ à ton rythme"
+            "value" : "%#@chapters@ · environ %2$@ à ton rythme"
           },
           "substitutions" : {
             "chapters" : {
@@ -237,7 +237,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · circa %2$@ al tuo ritmo"
+            "value" : "%#@chapters@ · circa %2$@ al tuo ritmo"
           },
           "substitutions" : {
             "chapters" : {
@@ -265,7 +265,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · 今のペースで約%2$@"
+            "value" : "%#@chapters@・今のペースなら約%2$@"
           },
           "substitutions" : {
             "chapters" : {
@@ -287,7 +287,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · 내 페이스로 약 %2$@"
+            "value" : "%#@chapters@ · 내 페이스로 약 %2$@"
           },
           "substitutions" : {
             "chapters" : {
@@ -309,7 +309,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · około %2$@ w twoim tempie"
+            "value" : "%#@chapters@ · około %2$@ w twoim tempie"
           },
           "substitutions" : {
             "chapters" : {
@@ -323,6 +323,12 @@
                       "value" : "%arg rozdziały"
                     }
                   },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg rozdziałów"
+                    }
+                  },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -332,7 +338,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg rozdziałów"
+                      "value" : "%arg rozdziału"
                     }
                   }
                 }
@@ -343,7 +349,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · cerca de %2$@ no seu ritmo"
+            "value" : "%#@chapters@ · cerca de %2$@ no seu ritmo"
           },
           "substitutions" : {
             "chapters" : {
@@ -371,7 +377,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@chapters@ · kendi temponda yaklaşık %2$@"
+            "value" : "%#@chapters@ · kendi temponda yaklaşık %2$@"
           },
           "substitutions" : {
             "chapters" : {
@@ -1704,31 +1710,31 @@
         }
       }
     },
-    "Challenge · %@" : {
+    "Challenge · %@" : {
       "comment" : "Above a challenge's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herausforderung · %@"
+            "value" : "Herausforderung · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desafío · %@"
+            "value" : "Desafío · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Défi · %@"
+            "value" : "Défi · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sfida · %@"
+            "value" : "Sfida · %@"
           }
         },
         "ja" : {
@@ -1740,25 +1746,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "챌린지 · %@"
+            "value" : "챌린지 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wyzwanie · %@"
+            "value" : "Wyzwanie · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desafio · %@"
+            "value" : "Desafio · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meydan okuma · %@"
+            "value" : "Meydan okuma · %@"
           }
         }
       }
@@ -6430,67 +6436,67 @@
         }
       }
     },
-    "Quick check · %lld of %lld" : {
+    "Quick check · %lld of %lld" : {
       "comment" : "While \"I already know this\" asks the lesson's checks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurzcheck · %1$lld von %2$lld"
+            "value" : "Kurztest · %1$lld von %2$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Quick check · %1$lld of %2$lld"
+            "value" : "Quick check · %1$lld of %2$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobación rápida · %1$lld de %2$lld"
+            "value" : "Prueba rápida · %1$lld de %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérification rapide · %1$lld sur %2$lld"
+            "value" : "Test rapide · %1$lld sur %2$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verifica rapida · %1$lld di %2$lld"
+            "value" : "Verifica rapida · %1$lld di %2$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "クイックチェック · %1$lld/%2$lld"
+            "value" : "理解度チェック・%1$lld/%2$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "빠른 확인 · %1$lld/%2$lld"
+            "value" : "간단 확인 · %1$lld/%2$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Szybki test · %1$lld z %2$lld"
+            "value" : "Szybkie sprawdzenie · %1$lld z %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conferência rápida · %1$lld de %2$lld"
+            "value" : "Teste rápido · %1$lld de %2$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hızlı kontrol · %1$lld / %2$lld"
+            "value" : "Hızlı kontrol · %1$lld / %2$lld"
           }
         }
       }
@@ -7144,61 +7150,61 @@
         }
       }
     },
-    "Saved to your mistakes · back at the end of this lesson" : {
+    "Saved to your mistakes · back at the end of this lesson" : {
       "comment" : "A missed question went to the mistakes notebook and comes back later in the lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Fehlerheft gespeichert · kommt am Ende dieser Lektion noch einmal"
+            "value" : "Im Fehlerheft gespeichert · die Frage kommt am Ende dieser Lektion noch einmal"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en tu cuaderno de errores · volverá al final de esta lección"
+            "value" : "Guardado en tu cuaderno de errores · volverá al final de esta lección"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouté à ton Carnet d’erreurs · à revoir à la fin de cette leçon"
+            "value" : "Ajouté à ton carnet d’erreurs · de retour à la fin de cette leçon"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvato nel tuo quaderno degli errori · tornerà alla fine di questa lezione"
+            "value" : "Salvato nel tuo quaderno degli errori · tornerà alla fine di questa lezione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違いノートに保存しました · このレッスンの最後にもう一度出ます"
+            "value" : "間違いノートに保存しました・このレッスンの最後にもう一度出題します"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오답 노트에 저장했어요 · 이 레슨이 끝날 때 다시 나와요"
+            "value" : "오답 노트에 저장했어요 · 이 레슨이 끝날 때 다시 나와요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisano w zeszycie błędów · wróci pod koniec tej lekcji"
+            "value" : "Zapisano w zeszycie błędów · wróci na końcu tej lekcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvo no seu Caderno de erros · volta no fim desta aula"
+            "value" : "Salvo no seu caderno de erros · volta no fim desta aula"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yanlış defterine kaydedildi · bu dersin sonunda tekrar karşına çıkacak"
+            "value" : "Yanlış defterine kaydedildi · bu dersin sonunda tekrar karşına çıkacak"
           }
         }
       }
@@ -10389,61 +10395,61 @@
         }
       }
     },
-    "What if · %@" : {
+    "What if · %@" : {
       "comment" : "Above a what-if scenario's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was wäre, wenn · %@"
+            "value" : "Was wäre, wenn · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué pasaría si · %@"
+            "value" : "Qué pasaría si · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Et si · %@"
+            "value" : "Et si · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E se… · %@"
+            "value" : "E se · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "もしも · %@"
+            "value" : "もしも・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "만약에 · %@"
+            "value" : "만약에 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Co by było, gdyby · %@"
+            "value" : "Co by było, gdyby · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E se · %@"
+            "value" : "E se · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya şöyle olsaydı · %@"
+            "value" : "Ya şöyle olsaydı · %@"
           }
         }
       }

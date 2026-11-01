@@ -60,67 +60,67 @@
         }
       }
     },
-    "%@ · %@" : {
+    "%@ · %@" : {
       "comment" : "Pairs matched, then how many cards have no match",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@・%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         }
       }
@@ -1650,67 +1650,67 @@
         }
       }
     },
-    "%@: %lld of %lld · %@: %lld of %lld" : {
+    "%@: %lld of %lld · %@: %lld of %lld" : {
       "comment" : "The tally of each trait under a Punnett square",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld von %3$lld · %4$@: %5$lld von %6$lld"
+            "value" : "%1$@: %2$lld von %3$lld · %4$@: %5$lld von %6$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@: %2$lld of %3$lld · %4$@: %5$lld of %6$lld"
+            "value" : "%1$@: %2$lld of %3$lld · %4$@: %5$lld of %6$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld de %3$lld · %4$@: %5$lld de %6$lld"
+            "value" : "%1$@: %2$lld de %3$lld · %4$@: %5$lld de %6$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$lld sur %3$lld · %4$@ : %5$lld sur %6$lld"
+            "value" : "%1$@ : %2$lld sur %3$lld · %4$@ : %5$lld sur %6$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld su %3$lld · %4$@: %5$lld su %6$lld"
+            "value" : "%1$@: %2$lld su %3$lld · %4$@: %5$lld su %6$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@：%2$lld／%3$lld · %4$@：%5$lld／%6$lld"
+            "value" : "%1$@：%2$lld/%3$lld・%4$@：%5$lld/%6$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld/%3$lld · %4$@: %5$lld/%6$lld"
+            "value" : "%1$@: %2$lld/%3$lld · %4$@: %5$lld/%6$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld z %3$lld · %4$@: %5$lld z %6$lld"
+            "value" : "%1$@: %2$lld z %3$lld · %4$@: %5$lld z %6$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld de %3$lld · %4$@: %5$lld de %6$lld"
+            "value" : "%1$@: %2$lld de %3$lld · %4$@: %5$lld de %6$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld / %3$lld · %4$@: %5$lld / %6$lld"
+            "value" : "%1$@: %2$lld / %3$lld · %4$@: %5$lld / %6$lld"
           }
         }
       }

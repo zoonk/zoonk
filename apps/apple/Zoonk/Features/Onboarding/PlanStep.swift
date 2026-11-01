@@ -389,7 +389,7 @@ private struct PlanReveal: View {
           .font(.title2.bold())
           .accessibilityAddTraits(.isHeader)
 
-        Text(facts.joined(separator: " · "))
+        Text(facts.joinedFacts())
           .font(.subheadline)
           .monospacedDigit()
           .foregroundStyle(.secondary)
@@ -650,7 +650,7 @@ private struct RevealChapters: View {
 
 /// Main's `useSyllabusSummaryText`: the plan's subjects in one line.
 func syllabusSummary(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
-  let firstSubjects = syllabus.subjects.prefix(2).map(\.shortName).joined(separator: " · ")
+  let firstSubjects = syllabus.subjects.prefix(2).map(\.shortName).joinedFacts()
   let noticeSubjects = syllabus.subjects.filter { $0.source == "notice" }.count
   let coverage = syllabusCoverage(syllabus, dailyMinutes: dailyMinutes)
   let title: String
@@ -689,7 +689,7 @@ func syllabusSummary(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
     }
   }
 
-  return [title, detail].compactMap { $0?.isEmpty == false ? $0 : nil }.joined(separator: " · ")
+  return [title, detail].compactMap { $0?.isEmpty == false ? $0 : nil }.joinedFacts()
 }
 
 /// A subject's basics the learner starts past aren't left out: the plan counts them as known.
@@ -724,7 +724,7 @@ private func heaviestSubjects(_ syllabus: GoalSyllabus) -> String? {
     return nil
   }
 
-  let heaviest = counted.prefix(3).map { "\($0.0.shortName) \($0.1)" }.joined(separator: " · ")
+  let heaviest = counted.prefix(3).map { "\($0.0.shortName) \($0.1)" }.joinedFacts()
   return String(
     localized: "Most questions: \(heaviest)", table: "Onboarding",
     comment: "The exam's subjects with the most questions and how many each has")
@@ -803,7 +803,7 @@ private struct SyllabusTopicsSheet: View {
     }
     let parts = [questions, topics].compactMap(\.self)
 
-    return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    return parts.isEmpty ? nil : parts.joinedFacts()
   }
 }
 

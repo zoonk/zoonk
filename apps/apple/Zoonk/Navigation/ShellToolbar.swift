@@ -388,7 +388,7 @@ private func goalLine(_ goal: LearnerGoal) -> String {
         localized: "\(days) days left", table: "Navigation",
         comment: "Days until a goal's target date")
 
-    return "\(perDay) · \(left)"
+    return "\(perDay)\u{00A0}· \(left)"
   }
 }
 

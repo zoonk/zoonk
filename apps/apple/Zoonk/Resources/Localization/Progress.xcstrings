@@ -1,78 +1,78 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %@ Energy" : {
+    "%@ · %@ Energy" : {
       "comment" : "An Energy calendar day: its date and its Energy",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ Energie"
+            "value" : "%1$@ · %2$@ Energie"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · %2$@ Energy"
+            "value" : "%1$@ · %2$@ Energy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energía"
+            "value" : "%1$@ · %2$@ de Energía"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ d’Énergie"
+            "value" : "%1$@ · %2$@ d’Énergie"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ di Energia"
+            "value" : "%1$@ · %2$@ di Energia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · エネルギー%2$@"
+            "value" : "%1$@・%2$@エネルギー"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 에너지 %2$@"
+            "value" : "%1$@ · 에너지 %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ Energii"
+            "value" : "%1$@ · %2$@ Energii"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energia"
+            "value" : "%1$@ · %2$@ de Energia"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ Enerji"
+            "value" : "%1$@ · %2$@ Enerji"
           }
         }
       }
     },
-    "%@ · %lld answers" : {
+    "%@ · %lld answers" : {
       "comment" : "Under the best day or time: its share of right answers and its answers",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -100,7 +100,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -128,7 +128,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -156,7 +156,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -184,7 +184,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -212,7 +212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@・%#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -223,7 +223,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg問の回答"
+                      "value" : "%arg問に回答"
                     }
                   }
                 }
@@ -234,7 +234,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -245,7 +245,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "답변 %arg개"
+                      "value" : "응답 %arg개"
                     }
                   }
                 }
@@ -256,7 +256,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -284,7 +284,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -312,7 +312,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@answers@"
+            "value" : "%1$@ · %#@answers@"
           },
           "substitutions" : {
             "answers" : {
@@ -333,61 +333,61 @@
         }
       }
     },
-    "%@ · No Energy recorded" : {
+    "%@ · No Energy recorded" : {
       "comment" : "An Energy calendar day without Energy",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Keine Energie erfasst"
+            "value" : "%@ · Keine Energie erfasst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Sin Energía registrada"
+            "value" : "%@ · Sin Energía registrada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Aucune Énergie enregistrée"
+            "value" : "%@ · Aucune Énergie enregistrée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Nessun dato sull’Energia"
+            "value" : "%@ · Nessuna Energia registrata"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · エネルギーの記録なし"
+            "value" : "%@・エネルギーの記録なし"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 에너지 기록 없음"
+            "value" : "%@ · 에너지 기록 없음"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Brak danych o Energii"
+            "value" : "%@ · Brak zapisanej Energii"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Nenhuma Energia registrada"
+            "value" : "%@ · Sem Energia registrada"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Enerji kaydı yok"
+            "value" : "%@ · Enerji kaydı yok"
           }
         }
       }
@@ -6011,31 +6011,31 @@
         }
       }
     },
-    "Patterns · 90 days" : {
+    "Patterns · 90 days" : {
       "comment" : "Title of the patterns on the overview",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muster · 90 Tage"
+            "value" : "Muster · 90 Tage"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Patrones · 90 días"
+            "value" : "Patrones · 90 días"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendances · 90 jours"
+            "value" : "Tendances · 90 jours"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendenze · 90 giorni"
+            "value" : "Tendenze · 90 giorni"
           }
         },
         "ja" : {
@@ -6047,25 +6047,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 패턴 · 90일"
+            "value" : "학습 패턴 · 90일"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prawidłowości · 90 dni"
+            "value" : "Trendy · 90 dni"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padrões · 90 dias"
+            "value" : "Padrões · 90 dias"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eğilimler · 90 gün"
+            "value" : "Eğilimler · 90 gün"
           }
         }
       }
@@ -6660,31 +6660,31 @@
         }
       }
     },
-    "Score · 90 days" : {
+    "Score · 90 days" : {
       "comment" : "Title of the Score trend on the overview",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Score · 90 Tage"
+            "value" : "Score · 90 Tage"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntaje · 90 días"
+            "value" : "Puntaje · 90 días"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Score · 90 jours"
+            "value" : "Score · 90 jours"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Punteggio · 90 giorni"
+            "value" : "Punteggio · 90 giorni"
           }
         },
         "ja" : {
@@ -6696,25 +6696,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "점수 · 90일"
+            "value" : "점수 · 90일"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wynik · 90 dni"
+            "value" : "Wynik · 90 dni"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontuação · 90 dias"
+            "value" : "Pontuação · 90 dias"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puan · 90 gün"
+            "value" : "Puan · 90 gün"
           }
         }
       }

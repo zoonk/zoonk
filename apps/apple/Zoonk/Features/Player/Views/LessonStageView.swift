@@ -449,7 +449,7 @@ private struct LessonNotice: View {
     if let quickCheck = state.quickCheckProgress {
       Label {
         Text(
-          "Quick check · \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
+          "Quick check\u{00A0}· \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
           comment: "While \"I already know this\" asks the lesson's checks")
       } icon: {
         Image(systemName: "bolt")

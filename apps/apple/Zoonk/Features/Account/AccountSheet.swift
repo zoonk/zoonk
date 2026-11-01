@@ -329,7 +329,7 @@ private struct SettingsHubView: View {
           LabeledContent {
             Group {
               if let buddy = settings.preferences.value?.buddy {
-                Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
+                Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)")
               } else {
                 Text(appLanguageName)
               }

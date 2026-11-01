@@ -43,7 +43,7 @@ struct ExamMomentSection<Action: View>: View {
                 verbatim: [
                   date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()),
                   day.startTime.flatMap(examTimeOfDay),
-                ].compactMap(\.self).joined(separator: " · ")
+                ].compactMap(\.self).joinedFacts()
               )
               .font(.subheadline.monospacedDigit())
             }

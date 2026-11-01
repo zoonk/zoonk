@@ -272,7 +272,7 @@ private struct ChapterContent: View {
   private var eyebrow: Text {
     if let subject = chapter.chapter.subject {
       return Text(
-        "\(subject.name) · Chapter \(chapter.chapter.position)", tableName: "Plan",
+        "\(subject.name)\u{00A0}· Chapter \(chapter.chapter.position)", tableName: "Plan",
         comment: "A chapter's subject and its number there")
     }
 
@@ -295,7 +295,7 @@ private struct ChapterContent: View {
         comment: "The share of a chapter's lessons done"),
     ]
 
-    return Text(facts.joined(separator: " · "))
+    return Text(facts.joinedFacts())
   }
 
   private func practice() {

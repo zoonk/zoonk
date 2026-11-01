@@ -475,61 +475,61 @@
         }
       }
     },
-    "Essay · ENEM rubric" : {
+    "Essay · ENEM rubric" : {
       "comment" : "An ENEM essay task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aufsatz · ENEM-Bewertungskriterien"
+            "value" : "Aufsatz · ENEM-Bewertungskriterien"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redacción · Rúbrica de ENEM"
+            "value" : "Redacción · rúbrica ENEM"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rédaction · Grille d’évaluation de l’ENEM"
+            "value" : "Rédaction · grille d’évaluation ENEM"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tema · griglia di valutazione ENEM"
+            "value" : "Tema · griglia di valutazione ENEM"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "小論文・ENEM採点基準"
+            "value" : "小論文・ENEMの採点基準"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "에세이 · ENEM 평가 기준"
+            "value" : "에세이 · ENEM 채점 기준"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wypracowanie · kryteria oceniania ENEM"
+            "value" : "Wypracowanie · kryteria oceniania ENEM"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redação · critérios do Enem"
+            "value" : "Redação · critérios de correção Enem"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kompozisyon · ENEM puanlama ölçütleri"
+            "value" : "Kompozisyon · ENEM değerlendirme ölçütleri"
           }
         }
       }
@@ -711,61 +711,61 @@
         }
       }
     },
-    "Free response · AP scoring guidelines" : {
+    "Free response · AP scoring guidelines" : {
       "comment" : "An AP free response task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Freie Antwort · AP-Bewertungskriterien"
+            "value" : "Offene Aufgabe · AP-Bewertungsrichtlinien"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respuesta libre · Criterios de calificación de AP"
+            "value" : "Respuesta abierta · criterios de calificación de AP"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponse libre · Grille d’évaluation AP"
+            "value" : "Réponse libre · barème AP"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Risposta aperta · criteri di valutazione AP"
+            "value" : "Risposta aperta · criteri di valutazione AP"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "記述式問題・AP採点基準"
+            "value" : "記述式問題・APの採点基準"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "서술형 · AP 채점 기준"
+            "value" : "서술형 · AP 채점 기준"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zadanie otwarte · zasady oceniania AP"
+            "value" : "Zadanie otwarte · zasady oceniania AP"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resposta dissertativa · Critérios de correção do AP"
+            "value" : "Resposta discursiva · critérios de pontuação AP"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Açık uçlu cevap · AP puanlama kılavuzu"
+            "value" : "Açık uçlu soru · AP puanlama kılavuzu"
           }
         }
       }

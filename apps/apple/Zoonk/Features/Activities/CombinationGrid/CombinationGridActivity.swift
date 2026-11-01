@@ -232,7 +232,7 @@ private struct CombinationGridCanvas: View {
     let dominant = filled.filter(CombinationGrid.isDominant).count
 
     return Text(
-      "\(traits.dominant): \(dominant) of \(total) · \(traits.recessive): \(filled.count - dominant) of \(total)",
+      "\(traits.dominant): \(dominant) of \(total)\u{00A0}· \(traits.recessive): \(filled.count - dominant) of \(total)",
       tableName: "Activities", comment: "The tally of each trait under a Punnett square")
   }
 

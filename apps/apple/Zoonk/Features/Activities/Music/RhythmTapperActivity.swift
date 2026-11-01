@@ -468,7 +468,7 @@ private struct RhythmCalibrationView: View {
         "Listen to the clicks…", tableName: "ActivitiesMusic", comment: "The sound check counts in")
     case .tapping(let click):
       Text(
-        "Tap with each click · \(min(click, Rhythm.calibrationClicks)) of \(Rhythm.calibrationClicks)",
+        "Tap with each click\u{00A0}· \(min(click, Rhythm.calibrationClicks)) of \(Rhythm.calibrationClicks)",
         tableName: "ActivitiesMusic", comment: "The sound check: which click of how many")
     case .done(nil):
       Text(

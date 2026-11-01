@@ -423,7 +423,7 @@ private struct NetScoreLine: View {
             localized: "net \(tally.net)", table: "Practice",
             comment: "A net-scored block's score: right answers minus wrong ones."),
         ]
-        .joined(separator: " · ")
+        .joinedFacts()
       )
       .font(.footnote.monospacedDigit())
       .foregroundStyle(.secondary)
@@ -452,7 +452,7 @@ private struct MistakeMovedNote: View {
     } else if feedback.savedToNotebook {
       QuestionNote(systemImage: "square.and.pencil") {
         Text(
-          "Saved to your mistakes · it comes back tomorrow", tableName: "Practice",
+          "Saved to your mistakes\u{00A0}· it comes back tomorrow", tableName: "Practice",
           comment: "After a wrong answer saved to the mistakes notebook.")
       }
     }

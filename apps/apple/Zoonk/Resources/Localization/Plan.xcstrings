@@ -66,191 +66,191 @@
         }
       }
     },
-    "%@ · Building your plan" : {
+    "%@ · Building your plan" : {
       "comment" : "Eyebrow of the Plan while the goal's plan is being built",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Wir erstellen deinen Plan"
+            "value" : "%@ · Wir erstellen deinen Plan"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Preparando tu plan"
+            "value" : "%@ · Preparando tu plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Préparation de ton plan"
+            "value" : "%@ · Préparation de ton plan"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Stiamo creando il tuo piano"
+            "value" : "%@ · Stiamo configurando il tuo piano"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 学習計画を作成しています"
+            "value" : "%@・学習計画を作成しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 계획을 만들고 있어요"
+            "value" : "%@ · 계획을 만들고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Tworzymy twój plan"
+            "value" : "%@ · Przygotowujemy twój plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Criando seu plano"
+            "value" : "%@ · Criando seu plano"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Planını hazırlıyoruz"
+            "value" : "%@ · Planını hazırlıyoruz"
           }
         }
       }
     },
-    "%@ · Chapter %lld" : {
+    "%@ · Chapter %lld" : {
       "comment" : "A chapter's subject and its number there",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Kapitel %2$lld"
+            "value" : "%1$@ · Kapitel %2$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · Chapter %2$lld"
+            "value" : "%1$@ · Chapter %2$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Capítulo %2$lld"
+            "value" : "%1$@ · Capítulo %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Chapitre %2$lld"
+            "value" : "%1$@ · Chapitre %2$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Capitolo %2$lld"
+            "value" : "%1$@ · Capitolo %2$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 第%2$lld章"
+            "value" : "%1$@・第%2$lld章"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 챕터 %2$lld"
+            "value" : "%1$@ · 챕터 %2$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Rozdział %2$lld"
+            "value" : "%1$@ · Rozdział %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Capítulo %2$lld"
+            "value" : "%1$@ · Capítulo %2$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld. ünite"
+            "value" : "%1$@ · Ünite %2$lld"
           }
         }
       }
     },
-    "%@ · day %lld of %lld" : {
+    "%@ · day %lld of %lld" : {
       "comment" : "Where the learner is: the phase's name, then its day of the phase's days",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Tag %2$lld von %3$lld"
+            "value" : "%1$@ · Tag %2$lld von %3$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · day %2$lld of %3$lld"
+            "value" : "%1$@ · day %2$lld of %3$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · día %2$lld de %3$lld"
+            "value" : "%1$@ · día %2$lld de %3$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · jour %2$lld sur %3$lld"
+            "value" : "%1$@ · jour %2$lld sur %3$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · giorno %2$lld di %3$lld"
+            "value" : "%1$@ · giorno %2$lld di %3$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld日目（全%3$lld日）"
+            "value" : "%1$@・%2$lld日目（全%3$lld日）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld일째 / 총 %3$lld일"
+            "value" : "%1$@ · %2$lld일차 / 총 %3$lld일"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · dzień %2$lld z %3$lld"
+            "value" : "%1$@ · dzień %2$lld z %3$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · dia %2$lld de %3$lld"
+            "value" : "%1$@ · dia %2$lld de %3$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld / %3$lld gün"
+            "value" : "%1$@ · gün %2$lld / %3$lld"
           }
         }
       }
@@ -3628,13 +3628,13 @@
         }
       }
     },
-    "%lld lessons · %lld done" : {
+    "%lld lessons · %lld done" : {
       "comment" : "The chapter in progress: its lessons and how many are done",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lld abgeschlossen"
+            "value" : "%#@lessons@ · %2$lld abgeschlossen"
           },
           "substitutions" : {
             "lessons" : {
@@ -3662,7 +3662,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%#@lessons@ · %2$lld done"
+            "value" : "%#@lessons@ · %2$lld done"
           },
           "substitutions" : {
             "lessons" : {
@@ -3690,7 +3690,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · completaste %2$lld"
+            "value" : "%#@lessons@ · completaste %2$lld"
           },
           "substitutions" : {
             "lessons" : {
@@ -3718,7 +3718,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lld terminées"
+            "value" : "%#@lessons@ · %2$lld à ton actif"
           },
           "substitutions" : {
             "lessons" : {
@@ -3746,7 +3746,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lld già alle spalle"
+            "value" : "%#@lessons@ · %2$lld già alle spalle"
           },
           "substitutions" : {
             "lessons" : {
@@ -3774,7 +3774,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lldレッスン完了"
+            "value" : "%#@lessons@・%2$lldレッスン完了"
           },
           "substitutions" : {
             "lessons" : {
@@ -3796,7 +3796,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lld개 완료"
+            "value" : "%#@lessons@ · %2$lld개 완료"
           },
           "substitutions" : {
             "lessons" : {
@@ -3818,7 +3818,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · ukończono %2$lld"
+            "value" : "%#@lessons@ · ukończono %2$lld"
           },
           "substitutions" : {
             "lessons" : {
@@ -3852,7 +3852,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · concluídas: %2$lld"
+            "value" : "%#@lessons@ · você concluiu %2$lld"
           },
           "substitutions" : {
             "lessons" : {
@@ -3880,7 +3880,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$lld tamamlandı"
+            "value" : "%#@lessons@ · %2$lld ders tamamlandı"
           },
           "substitutions" : {
             "lessons" : {
@@ -16150,61 +16150,61 @@
         }
       }
     },
-    "First in your next session · %@" : {
+    "First in your next session · %@" : {
       "comment" : "The alphabet lesson opens the next session",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu Beginn deiner nächsten Lerneinheit · %@"
+            "value" : "Als Erstes in deiner nächsten Lerneinheit · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al inicio de tu próxima sesión · %@"
+            "value" : "Primera en tu próxima sesión · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En premier dans ta prochaine séance · %@"
+            "value" : "Pour commencer ta prochaine séance · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All’inizio della prossima sessione · %@"
+            "value" : "All’inizio della prossima sessione · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次の学習の最初に · %@"
+            "value" : "次の学習の最初に・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다음 학습에서 가장 먼저 · %@"
+            "value" : "다음 학습에서 가장 먼저 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na początek kolejnego dnia nauki · %@"
+            "value" : "Od tego zaczniesz następnym razem · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeira aula da sua próxima sessão · %@"
+            "value" : "Primeira na sua próxima sessão · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir sonraki çalışmanda ilk sırada · %@"
+            "value" : "Sonraki çalışmanda ilk sırada · %@"
           }
         }
       }
@@ -19343,61 +19343,61 @@
         }
       }
     },
-    "Lessons done · challenge %@" : {
+    "Lessons done · challenge %@" : {
       "comment" : "The current phase's lessons are done; its challenge's date",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen abgeschlossen · Herausforderung %@"
+            "value" : "Lektionen abgeschlossen · Herausforderung am %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecciones completadas · desafío %@"
+            "value" : "Lecciones completadas · desafío el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leçons terminées · défi %@"
+            "value" : "Leçons terminées · défi %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lezioni completate · sfida: %@"
+            "value" : "Lezioni completate · sfida il %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスン完了・チャレンジは%@"
+            "value" : "レッスン完了・チャレンジ：%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨 완료 · 챌린지 %@"
+            "value" : "레슨 완료 · 챌린지 %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekcje ukończone · wyzwanie %@"
+            "value" : "Lekcje ukończone · wyzwanie %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas concluídas · desafio %@"
+            "value" : "Aulas concluídas · desafio em %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dersler tamamlandı · meydan okuma: %@"
+            "value" : "Dersler tamamlandı · meydan okuma: %@"
           }
         }
       }
@@ -20942,61 +20942,61 @@
         }
       }
     },
-    "More lessons on the way · challenge %@" : {
+    "More lessons on the way · challenge %@" : {
       "comment" : "The current phase's lessons are being written; its challenge's date",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weitere Lektionen sind in Arbeit · Herausforderung %@"
+            "value" : "Wir erstellen weitere Lektionen · Herausforderung am %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más lecciones en camino · desafío: %@"
+            "value" : "Más lecciones en camino · desafío el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "D’autres leçons en préparation · défi le %@"
+            "value" : "D’autres leçons en préparation · défi %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Altre lezioni in arrivo · sfida: %@"
+            "value" : "Stiamo preparando altre lezioni · sfida il %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "追加のレッスンを作成しています・チャレンジは%@"
+            "value" : "追加のレッスンを作成しています・チャレンジ：%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨을 더 만들고 있어요 · 챌린지 %@"
+            "value" : "레슨을 더 만들고 있어요 · 챌린지 %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy kolejne lekcje · wyzwanie %@"
+            "value" : "Przygotowujemy kolejne lekcje · wyzwanie %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais aulas a caminho · desafio %@"
+            "value" : "Mais aulas a caminho · desafio em %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni dersler yolda · meydan okuma: %@"
+            "value" : "Yeni dersler hazırlıyoruz · meydan okuma: %@"
           }
         }
       }
@@ -23892,61 +23892,61 @@
         }
       }
     },
-    "Practice anytime · %@" : {
+    "Practice anytime · %@" : {
       "comment" : "The alphabet lesson can be practiced anytime",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jederzeit üben · %@"
+            "value" : "Jederzeit üben · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practica cuando quieras · %@"
+            "value" : "Practicar cuando quieras · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entraîne-toi quand tu veux · %@"
+            "value" : "Entraîne-toi quand tu veux · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercitati quando vuoi · %@"
+            "value" : "Esercitati quando vuoi · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "いつでも練習できます · %@"
+            "value" : "いつでも練習できます・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "언제든 연습 가능 · %@"
+            "value" : "언제든 연습 가능 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwicz, kiedy chcesz · %@"
+            "value" : "Ćwicz w dowolnej chwili · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pratique quando quiser · %@"
+            "value" : "Pratique quando quiser · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İstediğin zaman pratik yap · %@"
+            "value" : "İstediğin zaman pratik yap · %@"
           }
         }
       }
@@ -28620,67 +28620,67 @@
         }
       }
     },
-    "Unit %lld · %@" : {
+    "Unit %lld · %@" : {
       "comment" : "A unit's number and its level range",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einheit %1$lld · %2$@"
+            "value" : "Einheit %1$lld · %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Unit %1$lld · %2$@"
+            "value" : "Unit %1$lld · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unidad %1$lld · %2$@"
+            "value" : "Unidad %1$lld · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unité %1$lld · %2$@"
+            "value" : "Unité %1$lld · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unità %1$lld · %2$@"
+            "value" : "Unità %1$lld · %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ユニット%1$lld · %2$@"
+            "value" : "ユニット%1$lld・%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld단원 · %2$@"
+            "value" : "%1$lld단원 · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dział %1$lld · %2$@"
+            "value" : "Dział %1$lld · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unidade %1$lld · %2$@"
+            "value" : "Unidade %1$lld · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ünite %1$lld · %2$@"
+            "value" : "Ünite %1$lld · %2$@"
           }
         }
       }
@@ -30115,67 +30115,67 @@
         }
       }
     },
-    "with %@ · %@" : {
+    "with %@ · %@" : {
       "comment" : "Who the practice call is with: the character's name and role",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit %1$@ · %2$@"
+            "value" : "mit %1$@ · %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "with %1$@ · %2$@"
+            "value" : "with %1$@ · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "con %1$@ · %2$@"
+            "value" : "con %1$@ · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec %1$@ · %2$@"
+            "value" : "avec %1$@ · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "con %1$@ · %2$@"
+            "value" : "con %1$@ · %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@さん（%2$@）と"
+            "value" : "%1$@さんと・%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화 상대: %1$@ · %2$@"
+            "value" : "대화 상대: %1$@ · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozmowa: %1$@ · %2$@"
+            "value" : "Rozmowa: %1$@ · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "com %1$@ · %2$@"
+            "value" : "com %1$@ · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ile · %2$@"
+            "value" : "%1$@ ile · %2$@"
           }
         }
       }

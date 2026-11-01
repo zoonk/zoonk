@@ -168,7 +168,7 @@ private struct ExamHero: View {
           .font(.caption.monospaced())
           .foregroundStyle(.secondary)
         if !facts.isEmpty {
-          Text(facts.joined(separator: " · "))
+          Text(facts.joinedFacts())
             .font(.subheadline.monospacedDigit())
         }
       }
@@ -308,8 +308,9 @@ private struct ExamHero: View {
     }
 
     return exam.daysEstimated
-      ? Text("Exam · About \(days) days left", tableName: "Exam", comment: "Estimated days left")
-      : Text("Exam · \(days) days left", tableName: "Exam", comment: "Days left to the exam")
+      ? Text(
+        "Exam\u{00A0}· About \(days) days left", tableName: "Exam", comment: "Estimated days left")
+      : Text("Exam\u{00A0}· \(days) days left", tableName: "Exam", comment: "Days left to the exam")
   }
 
   private var facts: [String] {
@@ -326,7 +327,7 @@ private struct ExamHero: View {
       if dates.count == 1 { style = style.weekday(.abbreviated) }
       let text = date.formatted(withFarOffYear(style, for: date))
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
-      return time.map { "\(text) · \($0)" } ?? text
+      return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
 
     var facts = times.count > 1 ? days : (days.isEmpty ? [] : [days.formatted(.list(type: .and))])
@@ -734,7 +735,7 @@ private struct ExamProgressSection: View {
     let name = [
       MockLabels.title(number: latest.number),
       latest.shape?.kind == .area ? latest.shape?.area : nil,
-    ].compactMap { $0 }.joined(separator: " · ")
+    ].compactMap { $0 }.joinedFacts()
 
     let score =
       exam.scoring.method == .net
@@ -852,7 +853,7 @@ private struct ExamFormatSection: View {
 
     let count = Text("\(questions) questions", tableName: "Exam", comment: "A part's questions")
     return Text(
-      "\(names) · \(count)", tableName: "Exam",
+      "\(names)\u{00A0}· \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
   }
 }

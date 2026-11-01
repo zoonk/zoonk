@@ -176,7 +176,7 @@ struct PlanLinkScreen: View {
         Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
       } footer: {
         Text(
-          "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study · \(outline.phases.count) phases · \(outline.skillCount) skills",
+          "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
           tableName: "PlanLink", comment: "A shared plan's size: its study time, phases and skills")
       }
     }

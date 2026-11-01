@@ -4786,67 +4786,67 @@
         }
       }
     },
-    "Tap with each click · %lld of %lld" : {
+    "Tap with each click · %lld of %lld" : {
       "comment" : "The sound check: which click of how many",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe bei jedem Klick · %1$lld von %2$lld"
+            "value" : "Tippe bei jedem Klick · %1$lld von %2$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Tap with each click · %1$lld of %2$lld"
+            "value" : "Tap with each click · %1$lld of %2$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca con cada clic · %1$lld de %2$lld"
+            "value" : "Toca al oír cada clic · %1$lld de %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuie à chaque clic · %1$lld sur %2$lld"
+            "value" : "Appuie à chaque clic · %1$lld sur %2$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca a ogni clic · %1$lld di %2$lld"
+            "value" : "Tocca a ogni clic · %1$lld di %2$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "クリック音に合わせてタップ · %1$lld／%2$lld"
+            "value" : "クリック音に合わせてタップ・%1$lld/%2$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "소리가 날 때마다 탭하세요 · %1$lld/%2$lld"
+            "value" : "클릭 소리에 맞춰 누르세요 · %1$lld/%2$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stukaj przy każdym kliknięciu · %1$lld z %2$lld"
+            "value" : "Stuknij przy każdym kliknięciu · %1$lld z %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque a cada clique · %1$lld de %2$lld"
+            "value" : "Toque a cada clique · %1$lld de %2$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her tık sesinde dokun · %1$lld / %2$lld"
+            "value" : "Her tıkta dokun · %1$lld / %2$lld"
           }
         }
       }

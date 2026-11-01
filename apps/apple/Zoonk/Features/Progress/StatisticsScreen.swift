@@ -165,7 +165,8 @@ private struct OverviewTiles: View {
           value: Text(activity.learningDays, format: .number),
           systemImage: "chart.bar.fill", tone: .success,
           detail: Text(
-            verbatim: "\(lessonCount) · \(progressLearningTime(activity.totalLearningSeconds))")
+            verbatim:
+              "\(lessonCount)\u{00A0}· \(progressLearningTime(activity.totalLearningSeconds))")
         )
       }
 
@@ -242,7 +243,7 @@ private struct ScoreTrend: View {
   var body: some View {
     StatsBlock(
       title: Text(
-        "Score · 90 days", tableName: "Progress",
+        "Score\u{00A0}· 90 days", tableName: "Progress",
         comment: "Title of the Score trend on the overview"),
       trailing: number
     ) {
@@ -277,7 +278,7 @@ private struct PatternsOverview: View {
   var body: some View {
     StatsBlock(
       title: Text(
-        "Patterns · 90 days", tableName: "Progress",
+        "Patterns\u{00A0}· 90 days", tableName: "Progress",
         comment: "Title of the patterns on the overview"),
       trailing: seeAll
     ) {
@@ -358,7 +359,7 @@ private struct PatternsLinkRow: View {
     let names = [patterns?.bestDayName, patterns?.bestTimeName].compactMap(\.self)
     return names.isEmpty
       ? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-      : names.joined(separator: " · ")
+      : names.joinedFacts()
   }
 
   var body: some View {

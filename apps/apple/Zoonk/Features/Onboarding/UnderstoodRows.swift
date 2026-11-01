@@ -157,7 +157,7 @@ enum UnderstoodRows {
       id: "schedule",
       label: LocalizedStringResource(
         "When you study", table: "Onboarding", comment: "Row with when the learner studies"),
-      value: parts.joined(separator: " · "),
+      value: parts.joinedFacts(),
       field: .studyTime,
       editValue: schedule.studyTime ?? "")
   }
@@ -303,7 +303,7 @@ enum UnderstoodRows {
       cutoff.edition, cutoff.quota,
     ]
     .compactMap { text($0) }
-    .joined(separator: " · ")
+    .joinedFacts()
 
     return UnderstoodRow(
       id: "cutoff",

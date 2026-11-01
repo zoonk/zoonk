@@ -4208,31 +4208,31 @@
         }
       }
     },
-    "Every goal · every lesson" : {
+    "Every goal · every lesson" : {
       "comment" : "What Zoonk Plus includes, in one line",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jedes Ziel · jede Lektion"
+            "value" : "Jedes Ziel · jede Lektion"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos los objetivos · todas las lecciones"
+            "value" : "Todos los objetivos · todas las lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les objectifs · toutes les leçons"
+            "value" : "Tous les objectifs · toutes les leçons"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ogni obiettivo · ogni lezione"
+            "value" : "Ogni obiettivo · ogni lezione"
           }
         },
         "ja" : {
@@ -4244,25 +4244,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 목표 · 모든 레슨"
+            "value" : "모든 목표 · 모든 레슨"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Każdy cel · każda lekcja"
+            "value" : "Każdy cel · każda lekcja"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas as metas · todas as aulas"
+            "value" : "Todas as metas · todas as aulas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her hedef · her ders"
+            "value" : "Her hedef · her ders"
           }
         }
       }

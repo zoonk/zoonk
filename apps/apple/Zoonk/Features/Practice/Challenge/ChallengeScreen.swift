@@ -95,7 +95,7 @@ struct ChallengeScreen: View {
           Text(description(challenge)).foregroundStyle(.secondary)
 
           if !facts(challenge).isEmpty {
-            Text(facts(challenge).joined(separator: " · "))
+            Text(facts(challenge).joinedFacts())
               .font(.subheadline.monospacedDigit())
               .foregroundStyle(.secondary)
           }
@@ -334,7 +334,7 @@ struct ChallengeScreen: View {
 
     return challenge.rematch
       ? String(
-        localized: "New try · \(name)", table: "Practice",
+        localized: "New try\u{00A0}· \(name)", table: "Practice",
         comment: "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.")
       : name
   }
@@ -347,7 +347,7 @@ struct ChallengeScreen: View {
 
     return [dayLabel(date, today: challenge.today), challenge.startTime.flatMap(clockTime)]
       .compactMap(\.self)
-      .joined(separator: " · ")
+      .joinedFacts()
   }
 
   private func clockTime(_ text: String) -> String? {

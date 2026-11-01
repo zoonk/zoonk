@@ -61,7 +61,7 @@ struct MissionsSummary: View {
     }
 
     return Text(
-      "\(count) · ~\(studyDuration(minutes: minutes))", tableName: "Today",
+      "\(count)\u{00A0}· ~\(studyDuration(minutes: minutes))", tableName: "Today",
       comment: "Today's missions and the time they take, such as “2 missions · ~12 min”")
   }
 

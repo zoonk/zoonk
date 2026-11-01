@@ -1,13 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %lld questions, no hints" : {
+    "%@ · %lld questions, no hints" : {
       "comment" : "A phase challenge's phase and questions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, ohne Hinweise"
+            "value" : "%1$@ · %#@questions@, ohne Hinweise"
           },
           "substitutions" : {
             "questions" : {
@@ -35,7 +35,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · %#@questions@, no hints"
+            "value" : "%1$@ · %#@questions@, no hints"
           },
           "substitutions" : {
             "questions" : {
@@ -63,7 +63,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, sin pistas"
+            "value" : "%1$@ · %#@questions@, sin pistas"
           },
           "substitutions" : {
             "questions" : {
@@ -91,7 +91,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, sans indice"
+            "value" : "%1$@ · %#@questions@, sans indice"
           },
           "substitutions" : {
             "questions" : {
@@ -119,7 +119,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, senza suggerimenti"
+            "value" : "%1$@ · %#@questions@, senza suggerimenti"
           },
           "substitutions" : {
             "questions" : {
@@ -147,7 +147,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@、ヒントなし"
+            "value" : "%1$@・%#@questions@、ヒントなし"
           },
           "substitutions" : {
             "questions" : {
@@ -169,7 +169,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, 힌트 없음"
+            "value" : "%1$@ · %#@questions@, 힌트 없음"
           },
           "substitutions" : {
             "questions" : {
@@ -191,7 +191,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, bez podpowiedzi"
+            "value" : "%1$@ · %#@questions@, bez podpowiedzi"
           },
           "substitutions" : {
             "questions" : {
@@ -225,7 +225,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, sem dicas"
+            "value" : "%1$@ · %#@questions@, sem dicas"
           },
           "substitutions" : {
             "questions" : {
@@ -253,7 +253,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %#@questions@, ipucu yok"
+            "value" : "%1$@ · %#@questions@, ipucu yok"
           },
           "substitutions" : {
             "questions" : {
@@ -274,362 +274,362 @@
         }
       }
     },
-    "%@ · ~%@" : {
+    "%@ · ~%@" : {
       "comment" : "Today's missions and the time they take, such as “2 missions · ~12 min”",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 約%2$@"
+            "value" : "%1$@・約%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 약 %2$@"
+            "value" : "%1$@ · 약 %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · ~%2$@"
+            "value" : "%1$@ · ~%2$@"
           }
         }
       }
     },
-    "%@ · a live call" : {
+    "%@ · a live call" : {
       "comment" : "A language unit's challenge: its phase, and that it's a live call",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · ein Live-Gespräch"
+            "value" : "%@ · ein Live-Gespräch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · una llamada en vivo"
+            "value" : "%@ · una llamada en vivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · un appel en direct"
+            "value" : "%@ · un appel en direct"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · una conversazione dal vivo"
+            "value" : "%@ · una conversazione in tempo reale"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · リアルタイムの会話"
+            "value" : "%@・リアルタイムの会話"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 실시간 대화"
+            "value" : "%@ · 실시간 대화"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · rozmowa na żywo"
+            "value" : "%@ · rozmowa na żywo"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · uma conversa ao vivo"
+            "value" : "%@ · uma conversa ao vivo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · canlı sohbet"
+            "value" : "%@ · canlı sohbet"
           }
         }
       }
     },
-    "%@ · after the challenge before it" : {
+    "%@ · after the challenge before it" : {
       "comment" : "A phase challenge waiting for the one before it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · nach der vorherigen Herausforderung"
+            "value" : "%@ · nach der vorherigen Herausforderung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · después del desafío anterior"
+            "value" : "%@ · después del desafío anterior"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · après le défi précédent"
+            "value" : "%@ · après le défi précédent"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · dopo la sfida precedente"
+            "value" : "%@ · dopo la sfida precedente"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 前のチャレンジを終えた後"
+            "value" : "%@・前のチャレンジが終わったら"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 이전 챌린지 완료 후"
+            "value" : "%@ · 이전 챌린지 완료 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · po poprzednim wyzwaniu"
+            "value" : "%@ · po poprzednim wyzwaniu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · depois do desafio anterior"
+            "value" : "%@ · depois do desafio anterior"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · önceki meydan okumadan sonra"
+            "value" : "%@ · önceki meydan okumadan sonra"
           }
         }
       }
     },
-    "%@ · after today's lessons" : {
+    "%@ · after today's lessons" : {
       "comment" : "A phase challenge waiting for the day's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · nach den heutigen Lektionen"
+            "value" : "%@ · nach den heutigen Lektionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · después de las lecciones de hoy"
+            "value" : "%@ · después de las lecciones de hoy"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · après les leçons du jour"
+            "value" : "%@ · après les leçons du jour"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · dopo le lezioni di oggi"
+            "value" : "%@ · dopo le lezioni di oggi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 今日のレッスンを終えた後"
+            "value" : "%@・今日のレッスンが終わったら"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 오늘 레슨 완료 후"
+            "value" : "%@ · 오늘 레슨 완료 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · po dzisiejszych lekcjach"
+            "value" : "%@ · po dzisiejszych lekcjach"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · depois das aulas de hoje"
+            "value" : "%@ · depois das aulas de hoje"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · bugünkü derslerden sonra"
+            "value" : "%@ · bugünkü derslerden sonra"
           }
         }
       }
     },
-    "%@ · every topic, your weakest first" : {
+    "%@ · every topic, your weakest first" : {
       "comment" : "When a free plan's full review is and what it asks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · alle Themen, deine schwächsten zuerst"
+            "value" : "%@ · alle Themen, deine schwächsten zuerst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · todos los temas, primero los que más te cuestan"
+            "value" : "%@ · todos los temas, primero los que más te cuestan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · tous les sujets, en commençant par ceux que tu maîtrises le moins"
+            "value" : "%@ · tous les sujets, les moins maîtrisés d’abord"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · tutti gli argomenti, prima quelli che conosci meno"
+            "value" : "%@ · tutti gli argomenti, prima quelli che conosci meno"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 全トピックを苦手な順に"
+            "value" : "%@・全トピックを苦手な順に"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 모든 주제, 취약한 주제부터"
+            "value" : "%@ · 모든 주제, 가장 취약한 주제부터"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · wszystkie tematy, od najsłabiej opanowanych"
+            "value" : "%@ · wszystkie tematy, od najsłabiej opanowanych"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · todos os tópicos, começando pelos mais difíceis para você"
+            "value" : "%@ · todos os tópicos, os que você menos domina primeiro"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · tüm konular, en çok zorlandıkların önce"
+            "value" : "%@ · tüm konular, önce en çok zorlandıkların"
           }
         }
       }
     },
-    "%@ · often tested" : {
+    "%@ · often tested" : {
       "comment" : "A topic the exam asks a lot",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · oft geprüft"
+            "value" : "%@ · oft geprüft"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · frecuente en el examen"
+            "value" : "%@ · frecuente en el examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · souvent abordé à l’examen"
+            "value" : "%@ · revient souvent à l’examen"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · frequente all’esame"
+            "value" : "%@ · ricorre spesso all’esame"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · よく出る"
+            "value" : "%@・頻出"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 자주 출제"
+            "value" : "%@ · 자주 출제됨"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · często na egzaminie"
+            "value" : "%@ · często na egzaminie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · cai bastante na prova"
+            "value" : "%@ · cai muito na prova"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · sınavda sık sorulur"
+            "value" : "%@ · sık sorulur"
           }
         }
       }
@@ -3772,13 +3772,13 @@
         }
       }
     },
-    "%lld questions · %@" : {
+    "%lld questions · %@" : {
       "comment" : "A review's questions and its topics",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3806,7 +3806,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3834,7 +3834,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3862,7 +3862,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3890,7 +3890,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3918,7 +3918,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@・%2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3940,7 +3940,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3962,7 +3962,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -3996,7 +3996,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -4024,7 +4024,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@"
+            "value" : "%#@questions@ · %2$@"
           },
           "substitutions" : {
             "questions" : {
@@ -4045,13 +4045,13 @@
         }
       }
     },
-    "%lld questions · %@, plus what you already know" : {
+    "%lld questions · %@, plus what you already know" : {
       "comment" : "A review's questions and its topics",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, plus das, was du schon weißt"
+            "value" : "%#@questions@ · %2$@, plus das, was du schon weißt"
           },
           "substitutions" : {
             "questions" : {
@@ -4079,7 +4079,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%#@questions@ · %2$@, plus what you already know"
+            "value" : "%#@questions@ · %2$@, plus what you already know"
           },
           "substitutions" : {
             "questions" : {
@@ -4107,7 +4107,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, además de lo que ya sabes"
+            "value" : "%#@questions@ · %2$@, además de lo que ya sabes"
           },
           "substitutions" : {
             "questions" : {
@@ -4135,7 +4135,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, et ce que tu sais déjà"
+            "value" : "%#@questions@ · %2$@, plus ce que tu sais déjà"
           },
           "substitutions" : {
             "questions" : {
@@ -4163,7 +4163,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, oltre a quello che sai già"
+            "value" : "%#@questions@ · %2$@, più quello che sai già"
           },
           "substitutions" : {
             "questions" : {
@@ -4191,7 +4191,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@に加え、すでに知っている内容も"
+            "value" : "%#@questions@・%2$@とすでに知っている内容"
           },
           "substitutions" : {
             "questions" : {
@@ -4213,7 +4213,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, 이미 아는 내용도 포함"
+            "value" : "%#@questions@ · %2$@, 이미 아는 내용도 포함"
           },
           "substitutions" : {
             "questions" : {
@@ -4235,7 +4235,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, a także to, co już znasz"
+            "value" : "%#@questions@ · %2$@, plus to, co już znasz"
           },
           "substitutions" : {
             "questions" : {
@@ -4269,7 +4269,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@, além do que você já sabe"
+            "value" : "%#@questions@ · %2$@, além do que você já sabe"
           },
           "substitutions" : {
             "questions" : {
@@ -4297,7 +4297,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@questions@ · %2$@ ve zaten bildiklerin"
+            "value" : "%#@questions@ · %2$@ ve zaten bildiklerin"
           },
           "substitutions" : {
             "questions" : {
@@ -6756,61 +6756,61 @@
         }
       }
     },
-    "Catch up today · +%@" : {
+    "Catch up today · +%@" : {
       "comment" : "Adds the lessons earlier days left to today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute nachholen · +%@"
+            "value" : "Heute nachholen · +%@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponerte al día hoy · +%@"
+            "value" : "Ponerte al día hoy · +%@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rattraper aujourd’hui · +%@"
+            "value" : "Rattraper aujourd’hui · +%@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recupera oggi · +%@"
+            "value" : "Recupera oggi · +%@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日、遅れを取り戻す · +%@"
+            "value" : "前日までの残りを今日進める・+%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘 밀린 진도 따라잡기 · +%@"
+            "value" : "오늘 밀린 레슨 하기 · +%@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nadrób dziś · +%@"
+            "value" : "Nadrób dziś zaległości · +%@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar em dia hoje · +%@"
+            "value" : "Colocar em dia hoje · +%@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün eksikleri tamamla · +%@"
+            "value" : "Bugün eksikleri tamamla · +%@"
           }
         }
       }
@@ -6874,61 +6874,61 @@
         }
       }
     },
-    "Catching up · %@" : {
+    "Catching up · %@" : {
       "comment" : "A lesson left from earlier days, and its subject",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nachholen · %@"
+            "value" : "Zum Nachholen · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para ponerte al día · %@"
+            "value" : "Poniéndote al día · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À rattraper · %@"
+            "value" : "Rattrapage · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da recuperare · %@"
+            "value" : "Recupero · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "持ち越し · %@"
+            "value" : "前日までの残り・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "진도 따라잡기 · %@"
+            "value" : "밀린 레슨 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nadrabianie · %@"
+            "value" : "Nadrabianie zaległości · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocando em dia · %@"
+            "value" : "Colocando em dia · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eksikleri tamamlama · %@"
+            "value" : "Eksikleri tamamlama · %@"
           }
         }
       }
@@ -7883,61 +7883,61 @@
         }
       }
     },
-    "Earlier unfinished work · %@" : {
+    "Earlier unfinished work · %@" : {
       "comment" : "Lessons left from earlier days, with how many",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch offen von früher · %@"
+            "value" : "Noch offen aus den Vortagen · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pendientes de días anteriores · %@"
+            "value" : "Lecciones pendientes de días anteriores · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leçons précédentes à terminer · %@"
+            "value" : "Leçons précédentes à terminer · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lezioni rimaste dai giorni scorsi · %@"
+            "value" : "Lezioni precedenti da completare · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前の日までの残り · %@"
+            "value" : "前日までの残り・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이전에 못 끝낸 레슨 · %@"
+            "value" : "이전에 못 끝낸 레슨 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niedokończone lekcje z poprzednich dni · %@"
+            "value" : "Zaległości z poprzednich dni · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas pendentes de dias anteriores · %@"
+            "value" : "Aulas pendentes de dias anteriores · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Önceki günlerden kalanlar · %@"
+            "value" : "Önceki günlerden kalanlar · %@"
           }
         }
       }
@@ -10600,7 +10600,7 @@
         }
       }
     },
-    "No reviews due today · %lld questions on your weakest topics" : {
+    "No reviews due today · %lld questions on your weakest topics" : {
       "comment" : "A review of the weakest topics when nothing was due",
       "localizations" : {
         "de" : {
@@ -10609,13 +10609,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Heute keine Wiederholungen fällig · %lld Frage zu deinen schwächsten Themen"
+                  "value" : "Heute keine Wiederholungen fällig · %lld Frage zu deinen schwächsten Themen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Heute keine Wiederholungen fällig · %lld Fragen zu deinen schwächsten Themen"
+                  "value" : "Heute keine Wiederholungen fällig · %lld Fragen zu deinen schwächsten Themen"
                 }
               }
             }
@@ -10627,13 +10627,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "No reviews due today · %lld question on your weakest topics"
+                  "value" : "No reviews due today · %lld question on your weakest topics"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "No reviews due today · %lld questions on your weakest topics"
+                  "value" : "No reviews due today · %lld questions on your weakest topics"
                 }
               }
             }
@@ -10645,13 +10645,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hoy no hay repasos pendientes · %lld pregunta sobre los temas que más te cuestan"
+                  "value" : "Hoy no tienes repasos pendientes · %lld pregunta sobre los temas que más te cuestan"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hoy no hay repasos pendientes · %lld preguntas sobre los temas que más te cuestan"
+                  "value" : "Hoy no tienes repasos pendientes · %lld preguntas sobre los temas que más te cuestan"
                 }
               }
             }
@@ -10663,13 +10663,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Aucune révision prévue aujourd’hui · %lld question sur les sujets que tu maîtrises le moins"
+                  "value" : "Aucune révision prévue aujourd’hui · %lld question sur tes sujets les moins maîtrisés"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Aucune révision prévue aujourd’hui · %lld questions sur les sujets que tu maîtrises le moins"
+                  "value" : "Aucune révision prévue aujourd’hui · %lld questions sur tes sujets les moins maîtrisés"
                 }
               }
             }
@@ -10681,13 +10681,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nessun ripasso previsto oggi · %lld domanda sugli argomenti in cui hai più difficoltà"
+                  "value" : "Nessun ripasso previsto oggi · %lld domanda sugli argomenti che conosci meno"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nessun ripasso previsto oggi · %lld domande sugli argomenti in cui hai più difficoltà"
+                  "value" : "Nessun ripasso previsto oggi · %lld domande sugli argomenti che conosci meno"
                 }
               }
             }
@@ -10699,7 +10699,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "今日の復習予定はありません · 特に苦手なトピックから%lld問"
+                  "value" : "今日の復習予定なし・苦手なトピックから%lld問"
                 }
               }
             }
@@ -10711,7 +10711,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "오늘 예정된 복습 없음 · 가장 어려워하는 주제의 문제 %lld개"
+                  "value" : "오늘 예정된 복습 없음 · 가장 취약한 주제의 문제 %lld개"
                 }
               }
             }
@@ -10723,19 +10723,19 @@
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytań z najsłabiej opanowanych tematów"
+                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytań z najsłabiej opanowanych tematów"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytanie z najsłabiej opanowanych tematów"
+                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytanie z najsłabiej opanowanych tematów"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytania z najsłabiej opanowanych tematów"
+                  "value" : "Dziś nie ma zaplanowanych powtórek · %lld pytania z najsłabiej opanowanych tematów"
                 }
               }
             }
@@ -10747,13 +10747,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nenhuma revisão para hoje · %lld pergunta sobre os tópicos mais difíceis para você"
+                  "value" : "Nenhuma revisão prevista para hoje · %lld pergunta sobre os tópicos que você menos domina"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nenhuma revisão para hoje · %lld perguntas sobre os tópicos mais difíceis para você"
+                  "value" : "Nenhuma revisão prevista para hoje · %lld perguntas sobre os tópicos que você menos domina"
                 }
               }
             }
@@ -10765,7 +10765,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bugün tekrar etmen gereken konu yok · En zayıf olduğun konulardan %lld soru"
+                  "value" : "Bugün bekleyen tekrar yok · en çok zorlandığın konulardan %lld soru"
                 }
               }
             }
@@ -12551,61 +12551,61 @@
         }
       }
     },
-    "Quick call · %@" : {
+    "Quick call · %@" : {
       "comment" : "A call mission's unit",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurzes Gespräch · %@"
+            "value" : "Kurzes Gespräch · %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamada breve · %@"
+            "value" : "Llamada rápida · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appel rapide · %@"
+            "value" : "Appel rapide · %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversazione breve · %@"
+            "value" : "Conversazione veloce · %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "短い会話 · %@"
+            "value" : "短い会話・%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짧은 대화 · %@"
+            "value" : "짧은 대화 · %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótka rozmowa · %@"
+            "value" : "Krótka rozmowa · %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversa rápida · %@"
+            "value" : "Conversa rápida · %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa sohbet · %@"
+            "value" : "Kısa sohbet · %@"
           }
         }
       }

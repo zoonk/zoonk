@@ -115,7 +115,7 @@ struct PracticeQuestionView: View {
     if question.quoted, let citation = question.citation {
       QuestionNote(systemImage: "scroll") {
         Text(
-          "Past exam question · \(citation.text)", tableName: "Practice",
+          "Past exam question\u{00A0}· \(citation.text)", tableName: "Practice",
           comment: "Source of a real past exam question shown with it.")
       }
     }

@@ -32,7 +32,7 @@ final class MockPointsTests: XCTestCase {
     XCTAssertEqual(tests[0].requirement, "2 points short of the 8 it needs")
     XCTAssertEqual(tests[0].score, "6 of 20")
     XCTAssertEqual(
-      tests[1].requirement, "Reached the 50% it needs · Doesn't count toward the total")
+      tests[1].requirement, "Reached the 50% it needs\u{A0}· Doesn't count toward the total")
     XCTAssertEqual(tests[2].requirement, "Reached the 30 points it needs")
   }
 

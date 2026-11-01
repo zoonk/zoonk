@@ -5,6 +5,7 @@
 Zoonk helps anyone learn anything, especially first-time learners in small towns and under-resourced communities. Write simple, everyday, welcoming text without jargon: friendly and encouraging, never condescending, and never scolding learners for mistakes, breaks, or missed days.
 
 - Use “…” for ellipses. Avoid em dashes.
+- Keep the no-break space the English puts before “·”, so the dot never starts a line or sits alone on one. A language that writes its separator without spaces, such as Japanese “・”, needs none.
 
 ## Terms
 

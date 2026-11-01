@@ -215,7 +215,7 @@ private struct PlanFirstDay: View {
 
       if !folded.isEmpty {
         Text(
-          "+ \(folded.count) more lessons · \(studyDuration(minutes: Int(minutes(of: folded).rounded())))",
+          "+ \(folded.count) more lessons\u{00A0}· \(studyDuration(minutes: Int(minutes(of: folded).rounded())))",
           tableName: "Courses", comment: "The rest of an example plan's first day, folded"
         )
         .font(.footnote.monospacedDigit())
@@ -226,7 +226,7 @@ private struct PlanFirstDay: View {
         Text("Today", tableName: "Courses", comment: "Header of an example plan's first day")
       } detail: {
         Text(
-          "\(lessons.count) lessons · \(studyDuration(minutes: Int(minutes(of: lessons[...]).rounded())))",
+          "\(lessons.count) lessons\u{00A0}· \(studyDuration(minutes: Int(minutes(of: lessons[...]).rounded())))",
           tableName: "Courses",
           comment: "How many lessons an example plan's first day has, and how long")
       }

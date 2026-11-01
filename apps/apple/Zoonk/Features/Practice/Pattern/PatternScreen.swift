@@ -84,7 +84,7 @@ struct PatternScreen: View {
         } actions: {
           PracticeMainButton(
             title: LocalizedStringResource(
-              "Practice this · \(Duration.seconds(180).formatted(.units(allowed: [.minutes], width: .abbreviated)))",
+              "Practice this\u{00A0}· \(Duration.seconds(180).formatted(.units(allowed: [.minutes], width: .abbreviated)))",
               table: "Practice",
               comment: "Starts a mistake pattern's drill, with how long it takes.")
           ) {

@@ -11,10 +11,10 @@ extension EssayRubric {
     switch self {
     case .ap:
       String(
-        localized: "Free response · AP scoring guidelines", table: "Essay",
+        localized: "Free response\u{00A0}· AP scoring guidelines", table: "Essay",
         comment: "An AP free response task")
     case .enem:
-      String(localized: "Essay · ENEM rubric", table: "Essay", comment: "An ENEM essay task")
+      String(localized: "Essay\u{00A0}· ENEM rubric", table: "Essay", comment: "An ENEM essay task")
     case .custom, .oab:
       String(localized: "Writing practice", table: "Essay", comment: "A writing task")
     }

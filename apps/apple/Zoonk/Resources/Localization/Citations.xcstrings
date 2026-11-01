@@ -1,67 +1,67 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · Checked %@" : {
+    "%@ · Checked %@" : {
       "comment" : "A source's publisher and when it was last checked. Date like \"May 5, 2026\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Geprüft am %2$@"
+            "value" : "%1$@ · Geprüft am %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · Checked %2$@"
+            "value" : "%1$@ · Checked %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Verificada el %2$@"
+            "value" : "%1$@ · Verificada el %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Vérifiée le %2$@"
+            "value" : "%1$@ · Vérifiée le %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Verificata il %2$@"
+            "value" : "%1$@ · Verificata il %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · 最終確認：%2$@"
+            "value" : "%1$@・確認日：%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ 확인"
+            "value" : "%1$@ · 최종 확인: %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Sprawdzono: %2$@"
+            "value" : "%1$@ · Sprawdzono: %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Verificado em %2$@"
+            "value" : "%1$@ · Verificada em %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · Son kontrol: %2$@"
+            "value" : "%1$@ · %2$@ tarihinde kontrol edildi"
           }
         }
       }
@@ -314,61 +314,61 @@
         }
       }
     },
-    "Sources · Checked %@" : {
+    "Sources · Checked %@" : {
       "comment" : "Opens a source. \"Checked\" agrees with plural \"Sources\". Date like \"May 2026\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quellen · Geprüft im %@"
+            "value" : "Quellen · Geprüft im %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuentes · Verificadas en %@"
+            "value" : "Fuentes · Verificadas en %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sources · Vérifiées en %@"
+            "value" : "Sources · Vérifiées en %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fonti · Verificate a %@"
+            "value" : "Fonti · Verificate a %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出典 · 最終確認：%@"
+            "value" : "出典・確認日：%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "출처 · %@ 확인"
+            "value" : "출처 · 최종 확인: %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Źródła · Sprawdzono: %@"
+            "value" : "Źródła · Sprawdzone: %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fontes · Verificadas em %@"
+            "value" : "Fontes · Verificadas em %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kaynaklar · Son kontrol: %@"
+            "value" : "Kaynaklar · %@ tarihinde kontrol edildi"
           }
         }
       }

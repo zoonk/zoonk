@@ -1494,13 +1494,13 @@
         }
       }
     },
-    "%lld lessons · %@" : {
+    "%lld lessons · %@" : {
       "comment" : "How many lessons an example plan's first day has, and how long",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1528,7 +1528,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1556,7 +1556,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1584,7 +1584,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1612,7 +1612,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1640,7 +1640,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@・%2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1662,7 +1662,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1684,7 +1684,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1718,7 +1718,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -1746,7 +1746,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ · %2$@"
+            "value" : "%#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2435,13 +2435,13 @@
         }
       }
     },
-    "+ %lld more lessons · %@" : {
+    "+ %lld more lessons · %@" : {
       "comment" : "The rest of an example plan's first day, folded",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2469,7 +2469,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2497,7 +2497,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2525,7 +2525,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2553,7 +2553,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2581,7 +2581,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@・%2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2592,7 +2592,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "ほか%argレッスン"
+                      "value" : "%argレッスン"
                     }
                   }
                 }
@@ -2603,7 +2603,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2614,7 +2614,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "레슨 %arg개 더"
+                      "value" : "추가 레슨 %arg개"
                     }
                   }
                 }
@@ -2625,7 +2625,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2639,6 +2639,12 @@
                       "value" : "%arg kolejne lekcje"
                     }
                   },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg kolejnych lekcji"
+                    }
+                  },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -2648,7 +2654,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg kolejnych lekcji"
+                      "value" : "%arg kolejnej lekcji"
                     }
                   }
                 }
@@ -2659,7 +2665,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -2670,13 +2676,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg aula"
+                      "value" : "%arg aula a mais"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg aulas"
+                      "value" : "%arg aulas a mais"
                     }
                   }
                 }
@@ -2687,7 +2693,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %#@lessons@ · %2$@"
+            "value" : "+ %#@lessons@ · %2$@"
           },
           "substitutions" : {
             "lessons" : {
@@ -4599,67 +4605,67 @@
         }
       }
     },
-    "Chapter %@ of %@ · %@" : {
+    "Chapter %@ of %@ · %@" : {
       "comment" : "Where a chapter sits in its course, and its level",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kapitel %1$@ von %2$@ · %3$@"
+            "value" : "Kapitel %1$@ von %2$@ · %3$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Chapter %1$@ of %2$@ · %3$@"
+            "value" : "Chapter %1$@ of %2$@ · %3$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulo %1$@ de %2$@ · %3$@"
+            "value" : "Capítulo %1$@ de %2$@ · %3$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chapitre %1$@ sur %2$@ · %3$@"
+            "value" : "Chapitre %1$@ sur %2$@ · %3$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capitolo %1$@ di %2$@ · %3$@"
+            "value" : "Capitolo %1$@ di %2$@ · %3$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第%1$@章（全%2$@章） · %3$@"
+            "value" : "第%1$@章（全%2$@章）・%3$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "챕터 %1$@ / %2$@ · %3$@"
+            "value" : "챕터 %1$@/%2$@ · %3$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozdział %1$@ z %2$@ · %3$@"
+            "value" : "Rozdział %1$@ z %2$@ · %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulo %1$@ de %2$@ · %3$@"
+            "value" : "Capítulo %1$@ de %2$@ · %3$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ünite %1$@ / %2$@ · %3$@"
+            "value" : "Ünite %1$@ / %2$@ · %3$@"
           }
         }
       }
@@ -5791,102 +5797,102 @@
         }
       }
     },
-    "Exam around %@ · %@" : {
+    "Exam around %@ · %@" : {
       "comment" : "An exam course's estimated next sitting: its days, then how long until it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfung etwa am %1$@ · %2$@"
+            "value" : "Prüfung etwa am %1$@ · %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Exam around %1$@ · %2$@"
+            "value" : "Exam around %1$@ · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen aproximadamente el %1$@ · %2$@"
+            "value" : "Examen alrededor del %1$@ · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen vers le %1$@ · %2$@"
+            "value" : "Examen vers le %1$@ · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esame: %1$@ circa · %2$@"
+            "value" : "Esame intorno al %1$@ · %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "試験予定：%1$@ごろ・%2$@"
+            "value" : "試験日：%1$@ごろ・%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 %1$@쯤 · %2$@"
+            "value" : "시험일 %1$@쯤 · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egzamin około %1$@ · %2$@"
+            "value" : "Egzamin około %1$@ · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prova por volta de %1$@ · %2$@"
+            "value" : "Prova por volta de %1$@ · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tahmini sınav tarihi: %1$@ · %2$@"
+            "value" : "Tahmini sınav: %1$@ · %2$@"
           }
         }
       }
     },
-    "Exam on %@ · %@" : {
+    "Exam on %@ · %@" : {
       "comment" : "An exam course's next sitting: its days, then how long until it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfung am %1$@ · %2$@"
+            "value" : "Prüfung am %1$@ · %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Exam on %1$@ · %2$@"
+            "value" : "Exam on %1$@ · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen el %1$@ · %2$@"
+            "value" : "Examen el %1$@ · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen le %1$@ · %2$@"
+            "value" : "Examen le %1$@ · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esame: %1$@ · %2$@"
+            "value" : "Esame il %1$@ · %2$@"
           }
         },
         "ja" : {
@@ -5898,25 +5904,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 %1$@ · %2$@"
+            "value" : "시험일 %1$@ · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Egzamin %1$@ · %2$@"
+            "value" : "Egzamin %1$@ · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prova em %1$@ · %2$@"
+            "value" : "Prova em %1$@ · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınav tarihi: %1$@ · %2$@"
+            "value" : "Sınav: %1$@ · %2$@"
           }
         }
       }

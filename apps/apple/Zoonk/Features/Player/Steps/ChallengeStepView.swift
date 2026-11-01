@@ -48,10 +48,10 @@ struct ChallengeStepView: View {
       Label {
         content.variant == .whatIf
           ? Text(
-            "What if · \(named(content.setting))", tableName: "Player",
+            "What if\u{00A0}· \(named(content.setting))", tableName: "Player",
             comment: "Above a what-if scenario's title")
           : Text(
-            "Challenge · \(named(content.setting))", tableName: "Player",
+            "Challenge\u{00A0}· \(named(content.setting))", tableName: "Player",
             comment: "Above a challenge's title")
       } icon: {
         Image(systemName: "target")

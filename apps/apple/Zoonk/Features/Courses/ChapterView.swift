@@ -95,7 +95,9 @@ private struct ChapterLandingList: View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
         Label {
-          Text(areas?[chapter.id].map { "\(chapter.courseTitle) · \($0)" } ?? chapter.courseTitle)
+          Text(
+            areas?[chapter.id].map { "\(chapter.courseTitle)\u{00A0}· \($0)" }
+              ?? chapter.courseTitle)
         } icon: {
           SubjectGlyph(subject: course?.course.subject)
         }
@@ -230,7 +232,7 @@ private struct ChapterStrip: View {
         )
 
         Text(
-          "Chapter \(number.formatted()) of \(counted.count.formatted()) · \(group?.label ?? "")",
+          "Chapter \(number.formatted()) of \(counted.count.formatted())\u{00A0}· \(group?.label ?? "")",
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
         .font(.footnote.monospacedDigit())
@@ -337,6 +339,6 @@ private struct ChapterLessonsSection: View {
         comment: "Where a chapter sits in its course")
     }
 
-    return [position, lessonsText, minutes].compactMap(\.self).joined(separator: " · ")
+    return [position, lessonsText, minutes].compactMap(\.self).joinedFacts()
   }
 }

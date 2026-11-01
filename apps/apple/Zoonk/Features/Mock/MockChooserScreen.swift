@@ -402,7 +402,7 @@ private struct MockChooser: View {
       detail: optionDetail(option),
       trailing: String(
         localized:
-          "\(option.questions) q · ~\(MockLabels.duration(minutes: option.estimatedMinutes))",
+          "\(option.questions) q\u{00A0}· ~\(MockLabels.duration(minutes: option.estimatedMinutes))",
         table: "Mock",
         comment:
           "A mock's number of questions (q is short for questions) and about how long it takes"),
@@ -460,7 +460,7 @@ private struct MockChooser: View {
           "A mock with only the exam's objective questions, without its written part like the essay"
       ) : nil
 
-    return [covers, subjects, written, objective].compactMap { $0 }.joined(separator: " · ")
+    return [covers, subjects, written, objective].compactMap { $0 }.joinedFacts()
   }
 
   private func precision(_ option: PlacementMockOption) -> String {
@@ -549,7 +549,7 @@ struct MockSummaryRow: View {
             .foregroundStyle(.primary)
           Text(
             [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
-              .compactMap { $0 }.joined(separator: " · "))
+              .compactMap { $0 }.joinedFacts())
         } icon: {
           StatusMark(status: .done)
         }
