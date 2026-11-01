@@ -1,13 +1,19 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
@@ -42,12 +48,15 @@ class TaskScaffoldTest {
             cancel = "Keep writing",
         )
 
-    private fun show(exitConfirmation: TaskExitConfirmation?) {
+    private fun show(
+        exitConfirmation: TaskExitConfirmation?,
+        title: @Composable () -> Unit = { Text("Essay") },
+    ) {
         rule.setContent {
             CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
                 TaskScaffold(
                     onClose = { closed++ },
-                    title = { Text("Essay") },
+                    title = title,
                     exitConfirmation = exitConfirmation,
                     bottomBar = { Text("Hand in") },
                 ) { Text("Draft") }
@@ -84,7 +93,21 @@ class TaskScaffoldTest {
         rule.runOnIdle { assertEquals(1, closed) }
     }
 
-    /** Across an unfolded book foldable: the title starts the page before the fold, and the actions sit on the page after it. */
+    /** However long it is, the title stays over the page before the fold. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun keepsALongTitleBeforeAnOpenBooksFold() {
+        show(exitConfirmation = null, title = { Box(Modifier.fillMaxWidth().testTag("title")) })
+        rule.waitForIdle()
+        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
+        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
+        rule.waitForIdle()
+
+        val title = rule.onNodeWithTag("title").getUnclippedBoundsInRoot()
+        assertTrue("the title ends before the fold: $title", title.right <= 426.dp)
+    }
+
+    /** Across an unfolded book foldable: the title sits over the page before the fold, and the actions over the page after it. */
     @Test
     @Config(qualifiers = "w852dp-h883dp")
     fun keepsItsTitleAndActionsOffAnOpenBooksFold() {

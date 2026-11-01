@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -105,16 +106,20 @@ fun TaskScaffold(
         var span by remember { mutableStateOf<PageSpan?>(null) }
 
         BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-            // Across an unfolded book foldable a centered title would sit on the fold; it starts the page before it.
-            val acrossFold = pageFold(maxWidth, span) != null
+            val fold = pageFold(maxWidth, span)
 
             Scaffold(
                 topBar = {
                     val close: @Composable () -> Unit = { CloseButton(onClick = leave, label = closeLabel) }
-                    if (acrossFold) {
-                        TopAppBar(title = title, navigationIcon = close, actions = actions)
-                    } else {
+                    if (fold == null) {
                         CenterAlignedTopAppBar(title = title, navigationIcon = close, actions = actions)
+                    } else {
+                        // Across an unfolded book foldable each page gets its part of the bar, as main's title
+                        // sits over the task's column: leave and the title over the page before the fold.
+                        Row {
+                            CenterAlignedTopAppBar(title = title, navigationIcon = close, modifier = Modifier.width(fold.start))
+                            TopAppBar(title = {}, actions = actions, modifier = Modifier.weight(1f).padding(start = fold.end - fold.start))
+                        }
                     }
                 },
                 bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
