@@ -31,6 +31,19 @@ async function mergeIntoPublicSource({
   });
 
   await prisma.$transaction([
+    // A learner who already follows the shared copy keeps that link: it takes on their upload and
+    // the ask it answered, so sending it again can't answer another ask.
+    prisma.$executeRaw`
+      UPDATE learner_sources AS kept
+      SET origin = 'upload',
+        answered_at = COALESCE(kept.answered_at, moved.answered_at),
+        goal_id = COALESCE(kept.goal_id, moved.goal_id)
+      FROM learner_sources AS moved
+      WHERE moved.source_id = ${privateSourceId}::uuid
+        AND moved.origin = 'upload'
+        AND kept.source_id = ${publicSourceId}::uuid
+        AND kept.user_id = moved.user_id
+    `,
     prisma.learnerSource.deleteMany({
       where: {
         sourceId: privateSourceId,

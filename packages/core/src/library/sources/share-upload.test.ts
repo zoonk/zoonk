@@ -223,6 +223,29 @@ describe(shareSourceUpload, () => {
     expect(del).not.toHaveBeenCalled();
   });
 
+  it("keeps a learner's upload and the ask it answered when they already followed the shared copy", async () => {
+    const [first, learner] = await Promise.all([userFixture(), userFixture()]);
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+    await learnerSourceFixture({ origin: "research", sourceId: shared.id, userId: learner.id });
+
+    const upload = await privateUploadFixture({ text, userId: learner.id });
+    const answeredAt = new Date();
+    await prisma.learnerSource.updateMany({ data: { answeredAt }, where: { sourceId: upload.id } });
+
+    await expect(shareNotice(upload.id)).resolves.toMatchObject({ merged: true });
+
+    await expect(
+      prisma.learnerSource.findMany({
+        select: { answeredAt: true, origin: true, sourceId: true },
+        where: { userId: learner.id },
+      }),
+    ).resolves.toStrictEqual([{ answeredAt, origin: "upload", sourceId: shared.id }]);
+  });
+
   it("ignores sources that aren't private uploads", async () => {
     const source = await sourceFixture();
 
