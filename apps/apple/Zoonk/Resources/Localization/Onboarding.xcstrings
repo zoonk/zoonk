@@ -24229,7 +24229,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lieu : %@"
+            "value" : "Où : %@"
           }
         },
         "it" : {
@@ -24241,13 +24241,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "場所：%@"
+            "value" : "教育機関：%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "위치: %@"
+            "value" : "기관: %@"
           }
         },
         "pl" : {
@@ -24265,7 +24265,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yer: %@"
+            "value" : "Nerede: %@"
           }
         }
       }
