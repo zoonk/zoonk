@@ -162,143 +162,174 @@ private struct MockChooser: View {
   }
 
   var body: some View {
-    List {
+    PaneSplit {
+      List {
+        intro
+        plusSection
+        lastMockSection
+      }
+    } secondary: {
+      List {
+        choices
+      }
+      .safeAreaBar(edge: .bottom) { startBar }
+    } single: {
+      List {
+        intro
+        choices
+        plusSection
+        lastMockSection
+      }
+      .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
+    }
+  }
+
+  @ViewBuilder
+  private var intro: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(view.examName)
+          .font(.caption.monospaced())
+          .foregroundStyle(.tertiary)
+        detail
+          .foregroundStyle(.secondary)
+      }
+    }
+
+    if let running = view.running, !placement {
       Section {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(view.examName)
-            .font(.caption.monospaced())
-            .foregroundStyle(.tertiary)
-          detail
-            .foregroundStyle(.secondary)
+        Button {
+          onStarted(running.id)
+        } label: {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text("Continue your mock exam", tableName: "Mock", comment: "A running mock")
+              Text("It's where you left it", tableName: "Mock", comment: "Under a running mock")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            }
+          } icon: {
+            KindDot(kind: .mock)
+          }
+        }
+        .foregroundStyle(.primary)
+      }
+    }
+
+    statusSection
+  }
+
+  @ViewBuilder
+  private var choices: some View {
+    if placement, let lengths = view.placement {
+      Section {
+        ForEach(lengths.options) { option in
+          choiceRow(
+            id: option.length.rawValue, isPicked: option.length == pickedLength,
+            title: option.length == lengths.recommended
+              ? String(
+                localized:
+                  "About \(MockLabels.duration(minutes: option.estimatedMinutes)) (recommended)",
+                table: "Mock", comment: "The recommended placement length")
+              : String(
+                localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes))",
+                table: "Mock", comment: "A placement length"),
+            detail: precision(option),
+            trailing: String(
+              localized: "\(option.questions) q", table: "Mock",
+              comment: "A mock's number of questions; q is short for questions"),
+            spokenTrailing: String(
+              localized: "\(option.questions) questions", table: "Mock",
+              comment: "Spoken: a placement length's questions")
+          ) {
+            length = option.length
+          }
+        }
+      } header: {
+        Text("How long", tableName: "Mock", comment: "Placement mock lengths")
+      } footer: {
+        Text(
+          "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
+          tableName: "Mock", comment: "Under the placement lengths")
+      }
+    } else {
+      let examOptions = view.options.filter { $0.kind != .area }
+      let subjects = view.options.filter { $0.kind == .area }
+
+      Section {
+        ForEach(examOptions) { optionRow($0) }
+      } header: {
+        Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
+      } footer: {
+        if let pickedOption {
+          VStack(alignment: .leading, spacing: 4) {
+            MockSizeNote(
+              document: view.examDocument, minutes: pickedOption.minutes,
+              questions: pickedOption.questions, source: view.sizeSource)
+            ForEach(
+              pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
+              id: \.self
+            ) { Text($0) }
+          }
         }
       }
 
-      if let running = view.running, !placement {
+      if !subjects.isEmpty {
         Section {
-          Button {
-            onStarted(running.id)
-          } label: {
-            Label {
-              VStack(alignment: .leading, spacing: 2) {
-                Text("Continue your mock exam", tableName: "Mock", comment: "A running mock")
-                Text("It's where you left it", tableName: "Mock", comment: "Under a running mock")
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
-              }
-            } icon: {
-              KindDot(kind: .mock)
-            }
-          }
-          .foregroundStyle(.primary)
-        }
-      }
-
-      statusSection
-
-      if placement, let lengths = view.placement {
-        Section {
-          ForEach(lengths.options) { option in
-            choiceRow(
-              id: option.length.rawValue, isPicked: option.length == pickedLength,
-              title: option.length == lengths.recommended
-                ? String(
-                  localized:
-                    "About \(MockLabels.duration(minutes: option.estimatedMinutes)) (recommended)",
-                  table: "Mock", comment: "The recommended placement length")
-                : String(
-                  localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes))",
-                  table: "Mock", comment: "A placement length"),
-              detail: precision(option),
-              trailing: String(
-                localized: "\(option.questions) q", table: "Mock",
-                comment: "A mock's number of questions; q is short for questions"),
-              spokenTrailing: String(
-                localized: "\(option.questions) questions", table: "Mock",
-                comment: "Spoken: a placement length's questions")
-            ) {
-              length = option.length
-            }
-          }
+          ForEach(subjects) { optionRow($0) }
         } header: {
-          Text("How long", tableName: "Mock", comment: "Placement mock lengths")
-        } footer: {
-          Text(
-            "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
-            tableName: "Mock", comment: "Under the placement lengths")
+          Text("One subject", tableName: "Mock", comment: "Mocks of one subject")
         }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var plusSection: some View {
+    if !isOpen {
+      Section {
+        PlusNotice(
+          description: placement
+            ? Text(
+              "Mock exams come with Plus. Without it, the quick questions find your starting point.",
+              tableName: "Mock", comment: "Placement mock without Plus")
+            : Text(
+              "Mock exams come with Plus: whenever you want, and every week in your plan.",
+              tableName: "Mock", comment: "Mocks without Plus"),
+          showsSeePlus: false, isInset: true)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var lastMockSection: some View {
+    if let last = view.lastMock, !placement, let blockId = last.blockId {
+      Section {
+        MockSummaryRow(mock: last, blockId: blockId)
+      } header: {
+        Text("Your last mock exam", tableName: "Mock", comment: "The latest mock taken")
+      }
+    }
+  }
+
+  private var startBar: some View {
+    Group {
+      if isOpen {
+        Button {
+          Task { await start() }
+        } label: {
+          startLabel.frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .disabled(busy || (!placement && pickedOption == nil))
+        .keyboardShortcut(.defaultAction)
       } else {
-        let examOptions = view.options.filter { $0.kind != .area }
-        let subjects = view.options.filter { $0.kind == .area }
-
-        Section {
-          ForEach(examOptions) { optionRow($0) }
-        } header: {
-          Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
-        } footer: {
-          if let pickedOption {
-            VStack(alignment: .leading, spacing: 4) {
-              MockSizeNote(
-                document: view.examDocument, minutes: pickedOption.minutes,
-                questions: pickedOption.questions, source: view.sizeSource)
-              ForEach(
-                pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
-                id: \.self
-              ) { Text($0) }
-            }
-          }
-        }
-
-        if !subjects.isEmpty {
-          Section {
-            ForEach(subjects) { optionRow($0) }
-          } header: {
-            Text("One subject", tableName: "Mock", comment: "Mocks of one subject")
-          }
-        }
-      }
-
-      if !isOpen {
-        Section {
-          PlusNotice(
-            description: placement
-              ? Text(
-                "Mock exams come with Plus. Without it, the quick questions find your starting point.",
-                tableName: "Mock", comment: "Placement mock without Plus")
-              : Text(
-                "Mock exams come with Plus: whenever you want, and every week in your plan.",
-                tableName: "Mock", comment: "Mocks without Plus"),
-            showsSeePlus: false, isInset: true)
-        }
-      }
-
-      if let last = view.lastMock, !placement, let blockId = last.blockId {
-        Section {
-          MockSummaryRow(mock: last, blockId: blockId)
-        } header: {
-          Text("Your last mock exam", tableName: "Mock", comment: "The latest mock taken")
-        }
+        SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
       }
     }
-    .safeAreaBar(edge: .bottom) {
-      Group {
-        if isOpen {
-          Button {
-            Task { await start() }
-          } label: {
-            startLabel.frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .disabled(busy || (!placement && pickedOption == nil))
-          .keyboardShortcut(.defaultAction)
-        } else {
-          SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
-        }
-      }
-      .controlSize(.large)
-      .scenePadding(.horizontal)
-      .padding(.vertical, 10)
-      .keepsOffFold()
-    }
+    .controlSize(.large)
+    .scenePadding(.horizontal)
+    .padding(.vertical, 10)
   }
 
   private var detail: Text {
