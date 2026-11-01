@@ -164,7 +164,7 @@ private struct SourceComparisonCanvas: View {
       \.openURL,
       OpenURLAction { url in
         guard url.scheme == Self.passageScheme else {
-          return .systemAction
+          return LinkOpening.open(url)
         }
 
         toggle(url.lastPathComponent)

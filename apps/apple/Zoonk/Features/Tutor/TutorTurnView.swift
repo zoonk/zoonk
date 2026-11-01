@@ -204,7 +204,7 @@ struct TutorAnswerText: View {
   /// The buddy links the app's pages by their path on main (`/session?block=…`, `/mistakes`).
   private func open(_ url: URL) -> OpenURLAction.Result {
     guard url.scheme == nil else {
-      return .systemAction
+      return LinkOpening.open(url)
     }
 
     guard let page = URL(string: url.relativeString, relativeTo: Self.mainOrigin)?.absoluteURL
