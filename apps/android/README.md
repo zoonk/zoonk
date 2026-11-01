@@ -6,7 +6,7 @@ Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page
 
 1. Run `pnpm install` from the repository root.
 2. Open this directory in Android Studio. Choose a [compatible IDE](https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility) for the AGP version in the [version catalog](gradle/libs.versions.toml).
-3. Install `platform-tools`, `platforms;android-37.0`, `build-tools;36.0.0` and Android Emulator with the SDK Manager. Set `JAVA_HOME` to a JDK matching the [Gradle JVM configuration](gradle/gradle-daemon-jvm.properties).
+3. Install `platform-tools`, `platforms;android-37.2`, `build-tools;36.0.0` and Android Emulator with the SDK Manager. Set `JAVA_HOME` to a JDK matching the [Gradle JVM configuration](gradle/gradle-daemon-jvm.properties).
 4. Create phone and tablet AVDs in Device Manager. Use a Google Play image with TalkBack available for accessibility testing.
 
 The launcher detects the standard SDK location; set `ANDROID_HOME` for a custom installation. Use the committed Gradle wrapper rather than a separately installed Gradle.

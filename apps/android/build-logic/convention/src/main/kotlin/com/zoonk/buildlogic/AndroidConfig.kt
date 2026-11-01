@@ -21,7 +21,7 @@ internal fun Project.configureAndroid(android: CommonExtension) {
         }
 
     android.apply {
-        compileSdk = COMPILE_SDK
+        compileSdk { version = release(COMPILE_SDK) { minorApiLevel = COMPILE_SDK_MINOR } }
         defaultConfig.minSdk = MIN_SDK
         defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildFeatures.compose = true
@@ -94,6 +94,7 @@ private fun Project.runsTestsInShard(): Boolean {
 }
 
 private const val COMPILE_SDK = 37
+private const val COMPILE_SDK_MINOR = 2
 internal const val TARGET_SDK = 37
 private const val MIN_SDK = 26
 
