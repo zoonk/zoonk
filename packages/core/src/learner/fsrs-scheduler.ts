@@ -1,7 +1,14 @@
 import { type LearnerSkill } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { type Card, type Grade, Rating, S_MIN, State, createEmptyCard, fsrs } from "ts-fsrs";
+import { type Grade, Rating, S_MIN, State, dateChrono, defineScheduler } from "ts-fsrs";
+import {
+  schedulerDesiredRetentionMiddleware,
+  schedulerMaximumIntervalMiddleware,
+  schedulerMonotonicIntervalMiddleware,
+  schedulerStatsMiddleware,
+} from "ts-fsrs/middlewares";
+import { FSRS6Model, FSRS6_DEFAULT_WEIGHTS } from "ts-fsrs/models/fsrs-6";
 import { getLocalDaysBetween, getStartOfLocalDay } from "./_utils/local-time";
 import { type GradedAnswer, type ReviewRating, isUnaidedRecall, rateAnswer } from "./answer-rating";
 import { TARGET_RETENTION, getMasteryState } from "./mastery-state";
@@ -26,13 +33,25 @@ export const NEW_SKILL_MEMORY: SkillMemory = {
 const MAX_REVIEW_INTERVAL_DAYS = 365;
 const MIN_DIFFICULTY = 1;
 
-/** Sessions handle immediate retries; disable short-term steps and fuzz for deterministic schedules across days. */
-const scheduler = fsrs({
-  enable_fuzz: false,
-  enable_short_term: false,
-  maximum_interval: MAX_REVIEW_INTERVAL_DAYS,
-  request_retention: TARGET_RETENTION,
-});
+/** Sessions handle immediate retries; leave out short-term steps and fuzz for deterministic schedules across days. */
+const scheduler = defineScheduler({ chrono: dateChrono, model: FSRS6Model })
+  .use(
+    schedulerDesiredRetentionMiddleware,
+    schedulerStatsMiddleware,
+    schedulerMaximumIntervalMiddleware,
+    schedulerMonotonicIntervalMiddleware,
+  )
+  .create({
+    config: {
+      desiredRetention: TARGET_RETENTION,
+      enableShortTerm: false,
+      maximumInterval: MAX_REVIEW_INTERVAL_DAYS,
+      numRelearningSteps: 0,
+      weights: FSRS6_DEFAULT_WEIGHTS,
+    },
+  });
+
+type Card = ReturnType<typeof scheduler.newCard>;
 
 const GRADES: Readonly<Record<ReviewRating, Grade>> = {
   again: Rating.Again,
@@ -55,17 +74,20 @@ function toCard({
   today: Date;
   timeZone: string;
 }): Card {
+  const card = scheduler.newCard({ now: today });
+
   if (!hasMemoryState(memory) || !memory.lastReviewedAt) {
-    return createEmptyCard(today);
+    return card;
   }
 
   return {
-    ...createEmptyCard(today),
+    ...card,
     difficulty: memory.difficulty,
-    due: memory.due ?? today,
+    dueAt: memory.due ?? today,
     lapses: memory.lapses,
-    last_review: getDateInTimeZone({ date: memory.lastReviewedAt, timeZone }),
+    lastReviewAt: getDateInTimeZone({ date: memory.lastReviewedAt, timeZone }),
     reps: memory.reps,
+    scheduleStatus: "review",
     stability: memory.stability,
     state: State.Review,
   };
@@ -147,9 +169,15 @@ export function reviewSkillMemory({
 
   const today = getDateInTimeZone({ date: reviewedAt, timeZone });
   const rating = getRating({ answer, memory });
-  const { card } = scheduler.next(toCard({ memory, timeZone, today }), today, GRADES[rating]);
+
+  const { card } = scheduler.review({
+    card: toCard({ memory, timeZone, today }),
+    grade: GRADES[rating],
+    now: today,
+  });
+
   const recallDays = getRecallDays({ answer, memory, reviewedAt, timeZone });
-  const dueDay = getDueDay({ fsrsDue: card.due, learning, recallDays, today });
+  const dueDay = getDueDay({ fsrsDue: card.dueAt, learning, recallDays, today });
 
   const next = {
     difficulty: card.difficulty,
@@ -178,5 +206,5 @@ export function getSkillRetrievability({
 
   const elapsedDays = Math.max(0, (now.getTime() - memory.lastReviewedAt.getTime()) / MS_PER_DAY);
 
-  return scheduler.forgetting_curve(elapsedDays, memory.stability);
+  return scheduler.model.forgettingCurve(memory, elapsedDays);
 }

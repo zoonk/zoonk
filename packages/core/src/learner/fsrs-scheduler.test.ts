@@ -148,6 +148,23 @@ describe(reviewSkillMemory, () => {
 
     expect(fast.stability).toBe(normal.stability);
   });
+
+  it("checks a well-known skill again within a year, even after an easy answer", () => {
+    const known: SkillMemory = {
+      difficulty: 1,
+      due: new Date("2027-04-11T03:00:00Z"),
+      lapses: 0,
+      lastReviewedAt: new Date("2026-06-20T13:25:49Z"),
+      recallDays: 3,
+      reps: 5,
+      stability: 294.66721471,
+      state: "mastered",
+    };
+
+    const easy = review(known, "2026-07-21T17:54:43Z", { durationMs: 1000, isCorrect: true });
+
+    expect(easy.due).toStrictEqual(new Date("2027-07-21T03:00:00Z"));
+  });
 });
 
 describe(getSkillRetrievability, () => {
