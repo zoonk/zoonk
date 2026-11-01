@@ -127,32 +127,26 @@ class PageWithSupportingPaneTest {
         assertPageOnEachSide(fold = 353.5.dp)
     }
 
-    /** Large text leaves each page too narrow for a pane, so the page keeps one column, on the page before the fold. */
+    /** The fold sets each page's width, so large text keeps a page and its aside a page each: one column could be no wider. */
     @Test
     @Config(qualifiers = "w707dp-h823dp", fontScale = 1.3f)
-    fun largeTextKeepsOneColumnOnThePageBeforeTheFold() {
+    fun largeTextKeepsAPageOnEachSideOfTheFold() {
         show(width = 627.dp)
 
         fold(FoldingFeature.State.FLAT)
 
-        rule.onNodeWithText("Page with its aside below").assertIsDisplayed()
-        rule.onNodeWithText("Aside beside").assertDoesNotExist()
-        assertEquals(80f, bounds(PAGE).left.value, 0.5f)
-        assertEquals(353.5f, bounds(PAGE).right.value, 0.5f)
+        assertPageOnEachSide(fold = 353.5.dp)
     }
 
-    /** Right to left, the page before the fold is the right one. */
+    /** A lone column too large for both pages keeps to the page before the fold, which right to left is the right one. */
     @Test
     @Config(qualifiers = "w852dp-h883dp", fontScale = 2f)
-    fun rightToLeftLargeTextKeepsOneColumnOnTheRightPage() {
+    fun rightToLeftALoneColumnAtLargeTextKeepsToTheRightPage() {
         rule.setContent {
             ZoonkTheme {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                    PageWithSupportingPane(
-                        supportingPane = { Box(Modifier.fillMaxSize().testTag(ASIDE)) { Text("Aside beside") } },
-                        modifier = Modifier.fillMaxSize(),
-                    ) { beside ->
-                        Box(Modifier.fillMaxSize().testTag(PAGE)) { Text(if (beside) "Page" else "Page with its aside below") }
+                    PageWithSupportingPane(supportingPane = null, modifier = Modifier.fillMaxSize()) {
+                        Box(Modifier.fillMaxSize().testTag(PAGE)) { Text("Page") }
                     }
                 }
             }
@@ -160,7 +154,6 @@ class PageWithSupportingPaneTest {
 
         fold(FoldingFeature.State.FLAT)
 
-        rule.onNodeWithText("Page with its aside below").assertIsDisplayed()
         assertEquals(426f, bounds(PAGE).left.value, 0.5f)
         assertEquals(852f, bounds(PAGE).right.value, 0.5f)
     }

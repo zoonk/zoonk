@@ -61,7 +61,7 @@ import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
-import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
@@ -114,7 +114,8 @@ internal fun MockResult(
 
         BoxWithConstraints {
             // An open book reads what was done before the fold and what's next after it, the questions to review included.
-            val reviewAfterFold = MockResultPart.Score in has && spreadFold(maxWidth, span = null) != null
+            val reviewAfterFold =
+                MockResultPart.Score in has && pageFold(maxWidth) != null && supportingPaneBeside(maxWidth, panesTouch = true)
             val hasAside = resultAsideParts(has).isNotEmpty() || reviewAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =

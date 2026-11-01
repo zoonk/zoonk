@@ -83,10 +83,11 @@ fun supportingPaneBeside(
  * here, the shell's list and detail): two where each keeps a phone's column, [MINIMUM_PANE] growing
  * with the text. That's where Material splits the window (expanded and wider), and on a page an
  * unfolded book foldable's fold crosses ([pageFold]), where the panes meet at the fold, flat or
- * folded, so each is a page of the book and folding moves nothing. [atFoldOnly] keeps one column
- * where there's no fold, and [alone] everywhere. Where a fold crosses a page too narrow for two
- * panes, as with large text, its one pane keeps to the page before the fold if that page holds a
- * phone's column.
+ * folded, so each is a page of the book and folding moves nothing. There the fold sets each page's
+ * width, so large text keeps a page and its aside a page each: one column could be no wider than
+ * the page before the fold. [atFoldOnly] keeps one column where there's no fold, and [alone]
+ * everywhere. Where a fold crosses a page too narrow for two panes, its one pane keeps to the page
+ * before the fold if that page holds a phone's column.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -98,6 +99,60 @@ fun pageDirective(
     atFoldOnly: Boolean = false,
     alone: Boolean = false,
 ): PaneScaffoldDirective {
+    val room = pageRoom(width, span, panesTouch, halfWidth, atFoldOnly)
+    val fold = room.fold
+    val window = room.window
+    val panesFit = room.fits(withText = fold == null || alone)
+    val twoPanes = !alone && panesFit
+    val excluded =
+        when {
+            fold == null -> null
+
+            twoPanes -> fold.bounds
+
+            // Material lays a lone pane in the first room nothing excluded covers, counting from the left even right to left.
+            !panesFit && fold.start >= MINIMUM_PANE -> fold.bounds.throughWindowEnd()
+
+            else -> null
+        }
+
+    // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
+    // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
+    // under the page on tall windows.
+    return PaneScaffoldDirective(
+        maxHorizontalPartitions = if (twoPanes) window.maxHorizontalPartitions else 1,
+        horizontalPartitionSpacerSize = room.spacer,
+        maxVerticalPartitions = 1,
+        verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
+        defaultPanePreferredWidth = window.defaultPanePreferredWidth,
+        defaultPanePreferredHeight = window.defaultPanePreferredHeight,
+        excludedBounds = listOfNotNull(excluded),
+        shouldAutoFocusCurrentDestination = false,
+    )
+}
+
+/** What a page has room for: where a [fold] crosses it, Material's [window] directive and the [spacer] between panes. */
+private class PageRoom(
+    val fold: PageFold?,
+    val window: PaneScaffoldDirective,
+    val spacer: Dp,
+    private val narrowestPane: Dp,
+    private val splits: Boolean,
+    private val fontScale: Float,
+) {
+    /** Two panes fit, each a phone's column, one that grows [withText] when the text is large. */
+    fun fits(withText: Boolean): Boolean = splits && narrowestPane >= MINIMUM_PANE * (if (withText) fontScale.coerceAtLeast(1f) else 1f)
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun pageRoom(
+    width: Dp,
+    span: PageSpan?,
+    panesTouch: Boolean,
+    halfWidth: Boolean,
+    atFoldOnly: Boolean,
+): PageRoom {
     val info = currentWindowAdaptiveInfoV2()
     val fold = info.foldAcross(width, span)
     val window =
@@ -120,36 +175,9 @@ fun pageDirective(
                     (room / preferred)
             }
         }
-    val panesFit =
-        window.maxHorizontalPartitions > 1 &&
-            (fold != null || !atFoldOnly) &&
-            narrowestPane >= MINIMUM_PANE * LocalDensity.current.fontScale.coerceAtLeast(1f)
-    val twoPanes = !alone && panesFit
-    val excluded =
-        when {
-            fold == null -> null
+    val splits = window.maxHorizontalPartitions > 1 && (fold != null || !atFoldOnly)
 
-            twoPanes -> fold.bounds
-
-            // Material lays a lone pane in the first room nothing excluded covers, counting from the left even right to left.
-            !panesFit && fold.start >= MINIMUM_PANE -> fold.bounds.throughWindowEnd()
-
-            else -> null
-        }
-
-    // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
-    // and `copy()` turns that back on, so the directive is built whole. Its default also lays the aside
-    // under the page on tall windows.
-    return PaneScaffoldDirective(
-        maxHorizontalPartitions = if (twoPanes) window.maxHorizontalPartitions else 1,
-        horizontalPartitionSpacerSize = spacer,
-        maxVerticalPartitions = 1,
-        verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
-        defaultPanePreferredWidth = window.defaultPanePreferredWidth,
-        defaultPanePreferredHeight = window.defaultPanePreferredHeight,
-        excludedBounds = listOfNotNull(excluded),
-        shouldAutoFocusCurrentDestination = false,
-    )
+    return PageRoom(fold, window, spacer, narrowestPane, splits, LocalDensity.current.fontScale)
 }
 
 /** The fold and the window after it, from the start edge as the layout reads. */
@@ -167,7 +195,8 @@ private fun Rect.throughWindowEnd(): Rect =
 
 /**
  * Where a page [width] wide spreads across an unfolded book's fold: the fold, where it crosses the
- * page and both pages have room for a phone's column, measured as a task's frame measures it, or null.
+ * page and both pages have room for a phone's column at the text's size, measured as a task's lone
+ * frame measures it, or null.
  */
 @Composable
 fun spreadFold(
@@ -175,7 +204,7 @@ fun spreadFold(
     span: PageSpan?,
 ): PageFold? {
     // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
-    val pagesFit = supportingPaneBeside(width, panesTouch = true)
+    val pagesFit = pageRoom(width, span = null, panesTouch = true, halfWidth = false, atFoldOnly = false).fits(withText = true)
     return pageFold(width, span)?.takeIf { pagesFit }
 }
 
