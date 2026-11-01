@@ -4,6 +4,8 @@ import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { getRequestInstant } from "./request-instant";
 
+export const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "trialing"];
+
 /** Permission callers must supply a fresh clock and client. */
 export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId: string }) {
   return {
@@ -24,7 +26,7 @@ export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId:
         },
       ],
       referenceId: userId,
-      status: { in: ["active", "trialing"] },
+      status: { in: ACTIVE_SUBSCRIPTION_STATUSES },
     },
   };
 }

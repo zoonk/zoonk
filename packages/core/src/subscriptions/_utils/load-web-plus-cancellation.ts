@@ -3,6 +3,7 @@ import { stripeClient } from "@zoonk/auth/stripe-client";
 import { readSubscriptionMetadata } from "@zoonk/auth/stripe-subscription-metadata";
 import { prisma } from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import { ACTIVE_SUBSCRIPTION_STATUSES } from "../../learner/facts/subscription";
 import { getWebPlusCancellationTerms } from "../web-plus-cancellation-terms";
 import { UNPAID_STATUSES, getLatestInvoice, isUnpaid, toDate } from "./stop-web-plus";
 import type Stripe from "stripe";
@@ -126,11 +127,20 @@ function describeCancellation({
   };
 }
 
-function findUnpaidWebSubscription(userId: string) {
-  return prisma.subscription.findFirst({
-    orderBy: { id: "desc" },
-    where: { provider: "stripe", referenceId: userId, status: { in: UNPAID_STATUSES } },
-  });
+/**
+ * Looked up apart from which Plus the learner sees: a store purchase made alongside it doesn't stop
+ * the website's from billing. A renewing one comes before an unpaid one.
+ */
+async function findWebSubscription(userId: string) {
+  const findByStatus = (statuses: string[]) =>
+    prisma.subscription.findFirst({
+      orderBy: { id: "desc" },
+      where: { provider: "stripe", referenceId: userId, status: { in: statuses } },
+    });
+
+  return (
+    (await findByStatus(ACTIVE_SUBSCRIPTION_STATUSES)) ?? (await findByStatus(UNPAID_STATUSES))
+  );
 }
 
 export async function loadCancellation({
@@ -140,33 +150,29 @@ export async function loadCancellation({
   learner: Learner;
   now: Date;
 }): Promise<LoadedCancellation> {
-  const subscription =
-    (await findActiveSubscriptionForUser({ now, userId: learner.id })) ??
-    (await findUnpaidWebSubscription(learner.id));
+  const webSubscription = await findWebSubscription(learner.id);
 
-  if (!subscription) {
-    return { cancellation: { email: learner.email, status: "none" }, stripeSubscription: null };
+  const stripeSubscription = webSubscription?.stripeSubscriptionId
+    ? await readLiveStripeSubscription(webSubscription.stripeSubscriptionId)
+    : null;
+
+  if (stripeSubscription) {
+    return {
+      cancellation: describeCancellation({ learner, now, subscription: stripeSubscription }),
+      stripeSubscription,
+    };
   }
 
-  if (subscription.provider !== "stripe") {
+  const subscription = await findActiveSubscriptionForUser({ now, userId: learner.id });
+
+  if (subscription && subscription.provider !== "stripe") {
     return {
       cancellation: { provider: subscription.provider, status: "store" },
       stripeSubscription: null,
     };
   }
 
-  const stripeSubscription = subscription.stripeSubscriptionId
-    ? await readLiveStripeSubscription(subscription.stripeSubscriptionId)
-    : null;
-
-  if (!stripeSubscription) {
-    return { cancellation: { email: learner.email, status: "none" }, stripeSubscription: null };
-  }
-
-  return {
-    cancellation: describeCancellation({ learner, now, subscription: stripeSubscription }),
-    stripeSubscription,
-  };
+  return { cancellation: { email: learner.email, status: "none" }, stripeSubscription: null };
 }
 
 type LoadedCancellation = {
