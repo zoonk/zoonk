@@ -1,126 +1,183 @@
 import SwiftUI
 
 struct MistakesScreen: View {
-  @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(LearnerSummaryStore.self) private var summary
   @State private var showsFixed = false
-  @State private var isLoadingMore = false
-
-  private var resource: Resource<Components.Schemas.MistakeList> {
-    practice.mistakes(goalId: goalId, fixed: showsFixed)
-  }
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
+  private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
+    practice.mistakes(goalId: goalId, fixed: fixed)
+  }
+
   var body: some View {
-    let state = resource.state
-    let list = resource.value
+    let open = mistakes(fixed: false)
+    let fixed = mistakes(fixed: true)
     let pattern = goalId.map { practice.pattern(goalId: $0) }
 
-    List {
-      Section {
-        NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
+    // The list to fix keeps its rows, and what's open in them, as the fixed list comes and goes.
+    // Side by side, the two need no picker between them.
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
+      List {
+        listTitle(fixed: true, counts: fixed.value?.counts)
+        MistakeListSections(resource: fixed, goalId: goalId, fixed: true)
       }
-      .listRowBackground(Color.clear)
-      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
-      .listRowInsets(.vertical, 8)
+      .loads(fixed)
+    } content: { isBeside in
+      let showsFixedHere = showsFixed && !isBeside
+      let shown = showsFixedHere ? fixed : open
 
-      Section {
-        Picker(selection: $showsFixed) {
-          // Without a count until the list is read, rather than a 0 that isn't true.
-          Group {
-            if let counts = list?.counts {
-              Text(
-                "To fix \(counts.open)", tableName: "Practice",
-                comment: "Notebook list of open mistakes, with its count.")
-            } else {
-              Text("To fix", tableName: "Practice", comment: "Notebook list of open mistakes.")
-            }
-          }
-          .tag(false)
-
-          Group {
-            if let counts = list?.counts {
-              Text(
-                "Fixed \(counts.fixed)", tableName: "Practice",
-                comment: "Notebook list of fixed mistakes, with its count.")
-            } else {
-              Text("Fixed", tableName: "Practice", comment: "Notebook list of fixed mistakes.")
-            }
-          }
-          .tag(true)
-        } label: {
-          Text(
-            "Mistakes", tableName: "Practice",
-            comment: "VoiceOver name of the notebook's list picker.")
+      List {
+        if isBeside {
+          listTitle(fixed: false, counts: open.value?.counts)
         }
-        .pickerStyle(.segmented)
+
+        header(shown.value)
+
+        if !isBeside {
+          picker(counts: shown.value?.counts)
+        }
+
+        if !showsFixedHere {
+          patternSection(pattern)
+        }
+
+        MistakeListSections(resource: shown, goalId: goalId, fixed: showsFixedHere)
       }
-      .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
-
-      if !showsFixed, let noticed = pattern?.value {
-        Section {
-          PatternRow(pattern: noticed) { hooks.navigate(.pattern(patternId: noticed.id)) }
-        }
-      }
-
-      if let list {
-        let labels = PracticeTrueFalseLabels(list.trueFalseLabels.value1)
-
-        if list.data.isEmpty {
-          Section {
-            Text(emptyText).foregroundStyle(.secondary)
-          }
-        }
-
-        ForEach(groups(list.data), id: \.key) { group in
-          Section {
-            ForEach(Array(group.mistakes.enumerated()), id: \.element.id) { position, mistake in
-              MistakeEntryView(
-                mistake: mistake, labels: labels,
-                continuesSet: position > 0 && mistake.snapshot.set != nil
-                  && group.mistakes[position - 1].snapshot.set?.value1.id
-                    == mistake.snapshot.set?.value1.id
-              )
-            }
-          } header: {
-            SectionHeaderRow(title: Text(group.name)) {
-              Text(group.mistakes.count, format: .number).monospacedDigit()
-            }
-          }
-        }
-
-        if list.pagination.hasMore {
-          Section {
-            Button {
-              Task { await loadMore() }
-            } label: {
-              Text("Show more", tableName: "Practice", comment: "Loads the notebook's next page.")
-            }
-            .disabled(isLoadingMore)
-          }
-        }
-      } else if case .failed(let error) = state {
-        PracticeLoadFailureView(error: error) { Task { await resource.refresh() } }
-          .listRowBackground(Color.clear)
-      } else {
-        ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear)
-      }
+      .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
+      .loads(shown)
     }
     .listStyle(.insetGrouped)
-    .readableColumn(PracticeLayout.readableWidth, alignment: .leading)
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
-    .loads(resource)
     .modifier(LoadsPattern(pattern: pattern))
   }
 
+  private func header(_ list: Components.Schemas.MistakeList?) -> some View {
+    Section {
+      NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
+    }
+    .listRowBackground(Color.clear)
+    // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
+    .listRowInsets(.vertical, 8)
+  }
+
+  private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
+    Section {
+      Picker(selection: $showsFixed) {
+        listName(fixed: false, counts: counts).tag(false)
+        listName(fixed: true, counts: counts).tag(true)
+      } label: {
+        Text(
+          "Mistakes", tableName: "Practice",
+          comment: "VoiceOver name of the notebook's list picker.")
+      }
+      .pickerStyle(.segmented)
+    }
+    .listRowBackground(Color.clear)
+    .listRowInsets(EdgeInsets())
+  }
+
+  private func listTitle(fixed: Bool, counts: Components.Schemas.MistakeList.CountsPayload?)
+    -> some View
+  {
+    listName(fixed: fixed, counts: counts)
+      .font(.headline)
+      .listRowBackground(Color.clear)
+      .accessibilityAddTraits(.isHeader)
+  }
+
+  /// Without a count until the list is read, rather than a 0 that isn't true.
+  @ViewBuilder
+  private func listName(fixed: Bool, counts: Components.Schemas.MistakeList.CountsPayload?)
+    -> some View
+  {
+    switch (fixed, counts) {
+    case (false, let counts?):
+      Text(
+        "To fix \(counts.open)", tableName: "Practice",
+        comment: "Notebook list of open mistakes, with its count.")
+    case (false, nil):
+      Text("To fix", tableName: "Practice", comment: "Notebook list of open mistakes.")
+    case (true, let counts?):
+      Text(
+        "Fixed \(counts.fixed)", tableName: "Practice",
+        comment: "Notebook list of fixed mistakes, with its count.")
+    case (true, nil):
+      Text("Fixed", tableName: "Practice", comment: "Notebook list of fixed mistakes.")
+    }
+  }
+
+  @ViewBuilder
+  private func patternSection(_ pattern: Resource<NoticedPattern>?) -> some View {
+    if let noticed = pattern?.value {
+      Section {
+        PatternRow(pattern: noticed) { hooks.navigate(.pattern(patternId: noticed.id)) }
+      }
+    }
+  }
+}
+
+/// One of the notebook's lists, by skill, with its next page.
+private struct MistakeListSections: View {
+  @Environment(SessionStore.self) private var session
+  @Environment(PracticeStore.self) private var practice
+  @State private var isLoadingMore = false
+
+  let resource: Resource<Components.Schemas.MistakeList>
+  let goalId: String?
+  let fixed: Bool
+
+  var body: some View {
+    if let list = resource.value {
+      let labels = PracticeTrueFalseLabels(list.trueFalseLabels.value1)
+
+      if list.data.isEmpty {
+        Section {
+          Text(emptyText).foregroundStyle(.secondary)
+        }
+      }
+
+      ForEach(groups(list.data), id: \.key) { group in
+        Section {
+          ForEach(Array(group.mistakes.enumerated()), id: \.element.id) { position, mistake in
+            MistakeEntryView(
+              mistake: mistake, labels: labels,
+              continuesSet: position > 0 && mistake.snapshot.set != nil
+                && group.mistakes[position - 1].snapshot.set?.value1.id
+                  == mistake.snapshot.set?.value1.id
+            )
+          }
+        } header: {
+          SectionHeaderRow(title: Text(group.name)) {
+            Text(group.mistakes.count, format: .number).monospacedDigit()
+          }
+        }
+      }
+
+      if list.pagination.hasMore {
+        Section {
+          Button {
+            Task { await loadMore() }
+          } label: {
+            Text("Show more", tableName: "Practice", comment: "Loads the notebook's next page.")
+          }
+          .disabled(isLoadingMore)
+        }
+      }
+    } else if case .failed(let error) = resource.state {
+      PracticeLoadFailureView(error: error) { Task { await resource.refresh() } }
+        .listRowBackground(Color.clear)
+    } else {
+      ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear)
+    }
+  }
+
   private var emptyText: LocalizedStringResource {
-    showsFixed
+    fixed
       ? LocalizedStringResource(
         "Mistakes you fix in practice show up here.", table: "Practice",
         comment: "Empty fixed list of the notebook.")
@@ -172,7 +229,7 @@ struct MistakesScreen: View {
 
     guard
       let next = try? await practice.api.mistakes(
-        token: identity.bearerToken, goalId: goalId, fixed: showsFixed,
+        token: identity.bearerToken, goalId: goalId, fixed: fixed,
         cursor: cursor),
       resource.revision == revision
     else { return }
