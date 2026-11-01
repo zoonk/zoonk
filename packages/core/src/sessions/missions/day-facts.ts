@@ -8,6 +8,7 @@ import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { getGoalField } from "../../library/items/item-field";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { filterMistakesWithPracticeMaterial } from "../../mistakes/mistake-practice-eligibility";
+import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { loadDailyTimeLimitStatus } from "../_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
 import { type loadDayPlan } from "../_utils/day-plan";
@@ -175,6 +176,7 @@ export async function loadDayMissionFacts({
   localDate,
   now = new Date(),
   plannedMinutes,
+  readPreparation,
   selection,
   timeZone,
   userId,
@@ -187,6 +189,7 @@ export async function loadDayMissionFacts({
   localDate: Date;
   now?: Date;
   plannedMinutes: number;
+  readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
   selection?: SelectedDayPlan;
   timeZone: string;
   userId: string;
@@ -241,7 +244,7 @@ export async function loadDayMissionFacts({
     }),
     languageCandidates({ blocks, goal, items, now, tier, userId }),
     tier === "guest" ? null : countUsage({ client: prisma, kind: "tutorMessage", now, userId }),
-    weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, userId }),
+    weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, readPreparation, userId }),
     loadExamStructure(goal, { blueprint }),
   ]);
 

@@ -7,6 +7,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { markSkillsKnown } from "../learner/_utils/known-skills";
@@ -656,6 +657,7 @@ describe(getGoalPreparation, () => {
   });
 
   it("measures the whole goal, so the plan taking in a skill it had left out never lowers it", async () => {
+    freezeClock();
     const { goal, plan, skills, user } = await setup();
     const leftOut = await skillFixture({ name: "Left out for now" });
 

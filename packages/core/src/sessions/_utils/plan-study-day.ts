@@ -1,4 +1,5 @@
 import "server-only";
+import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { type MissionDocument } from "../missions/catalog";
 import { loadDayMissionFacts } from "../missions/day-facts";
 import { pickMissions } from "../missions/pick-missions";
@@ -18,7 +19,10 @@ export type PlannedStudyDay = {
 
 /** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
-  context: SessionDayContext & { selection: SelectedDayPlan },
+  context: SessionDayContext & {
+    readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+    selection: SelectedDayPlan;
+  },
 ): Promise<PlannedStudyDay> {
   const plan = await loadDayPlan(context);
   const input = await loadSessionBuildInput({ ...context, dayPlan: plan });

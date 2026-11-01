@@ -7,10 +7,9 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
-import { readActiveSubscription } from "../../learner/facts/subscription";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
@@ -18,7 +17,6 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
-import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
@@ -205,11 +203,10 @@ export async function getExamView({
     return { status: "notExam" };
   }
 
-  const [blueprint, now, plan, subscription] = await Promise.all([
+  const [blueprint, now, plan] = await Promise.all([
     goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
     getRequestInstant(),
     readSavedPlan(userId, goalId),
-    readActiveSubscription(userId),
   ]);
 
   const calendar = getExamCalendar({ blueprint, goal });
@@ -221,15 +218,7 @@ export async function getExamView({
   const scale = getExamScale({ blueprint, goal });
 
   const [inputs, allowance] = await Promise.all([
-    loadPreparationInputs({
-      blueprint,
-      goalId,
-      now,
-      readPlan: readGoalPlan,
-      savedPlan: plan,
-      subscription,
-      userId,
-    }),
+    readPreparationInputs(userId, goalId),
     getAllowance(),
   ]);
 

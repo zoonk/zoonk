@@ -15,6 +15,7 @@ export async function weakSpotCandidate({
   goalPlan,
   now,
   plannedMinutes,
+  readPreparation,
   userId,
 }: {
   blocks: readonly MissionFactBlock[];
@@ -22,6 +23,8 @@ export async function weakSpotCandidate({
   goalPlan: GoalPlan;
   now: Date;
   plannedMinutes: number;
+  /** A GET's request-wide preparation; without it, preparation is read fresh. */
+  readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
   userId: string;
 }): Promise<MissionPick | null> {
   const practice = blocks.find((block) => block.kind === "practice" && !block.payload.extra);
@@ -30,13 +33,15 @@ export async function weakSpotCandidate({
     return null;
   }
 
-  const inputs = await loadPreparationInputs({
-    goal,
-    goalId: goal.id,
-    now,
-    readPlan: async () => goalPlan,
-    userId,
-  });
+  const inputs = readPreparation
+    ? await readPreparation()
+    : await loadPreparationInputs({
+        goal,
+        goalId: goal.id,
+        now,
+        readPlan: async () => goalPlan,
+        userId,
+      });
 
   const areas = getAreaPreparations({
     ...inputs,

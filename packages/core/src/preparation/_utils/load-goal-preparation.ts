@@ -7,9 +7,8 @@ import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-chall
 import { loadGoalScoreEstimate } from "../../exams/estimates/load-goal-estimate";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type OwnedGoal } from "../../learner/_utils/owned-goal";
-import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
-import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
@@ -23,7 +22,6 @@ import { getAreaPreparations } from "../area-preparation";
 import { type GoalPreparationResult } from "../get-goal-preparation";
 import { getMinutesPerItem, getPlanStatus } from "../plan-status";
 import { measurePreparation } from "../section-preparation";
-import { loadPreparationInputs } from "./load-preparation-inputs";
 
 const WEEK_DAYS = 7;
 
@@ -95,27 +93,15 @@ export async function loadOwnedGoalPreparation({
   const weekStart = getStartOfLocalDay({ localDate: getStartOfWeek(today), timeZone });
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
-  const [savedPlan, subscription, blueprint] = await Promise.all([
-    readSavedPlan(userId, goalId),
-    readActiveSubscription(userId),
-    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
-  ]);
-
-  const [inputs, catchUp, access, phaseChallengesRequired] = await Promise.all([
-    loadPreparationInputs({
-      blueprint,
-      goal,
-      goalId,
-      now,
-      readPlan: readGoalPlan,
-      savedPlan,
-      subscription,
-      userId,
-    }),
-    selectedPlan?.catchUp === undefined ? loadCatchUpItems(goalId) : [],
-    loadExamPrepAccess({ goal, timeZone, today }),
-    arePhaseChallengesRequired({ goalKind: goal.kind, userId }),
-  ]);
+  const [inputs, savedPlan, blueprint, catchUp, access, phaseChallengesRequired] =
+    await Promise.all([
+      readPreparationInputs(userId, goalId),
+      readSavedPlan(userId, goalId),
+      goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+      selectedPlan?.catchUp === undefined ? loadCatchUpItems(goalId) : [],
+      loadExamPrepAccess({ goal, timeZone, today }),
+      arePhaseChallengesRequired({ goalKind: goal.kind, userId }),
+    ]);
 
   const schedule = getStatusSchedule({ savedPlan, selectedPlan });
 
