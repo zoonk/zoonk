@@ -235,7 +235,6 @@ export function serializeExerciseSteps({
         translationOptions: buildTranslationOptions({
           distractorLookup,
           kind: step.kind,
-          language: languages.targetLanguage,
           word: step.word,
         }),
         vocabularyOptions: serializedLessonWords,

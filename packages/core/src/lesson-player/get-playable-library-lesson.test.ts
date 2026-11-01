@@ -239,7 +239,7 @@ describe(getPlayableLibraryLesson, () => {
       translation && "exercise" in translation
         ? translation.exercise.translationOptions.map((option) => option.word).toSorted()
         : [],
-    ).toStrictEqual(["Bill", "Deposit", "Rent"]);
+    ).toStrictEqual(["bill", "deposit", "rent"]);
 
     expect(steps[2]).toMatchObject({
       exercise: {

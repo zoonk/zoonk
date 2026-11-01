@@ -1,4 +1,4 @@
-import { type DistractorShape, sanitizeDistractors } from "@zoonk/utils/distractors";
+import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import {
   segmentLearnerWords,
@@ -169,30 +169,16 @@ type BankSentence = { distractors: string[]; sentence: string };
 
 type BankStep = { content: unknown; kind: string; sentenceId: string | null };
 
-/** Distractors show in lowercase so capitalization cannot reveal extra tiles. */
-function toDistractorTiles({
-  distractors,
-  input,
-  language,
-  shape,
-}: {
-  distractors: string[];
-  input: string;
-  language: string;
-  shape: DistractorShape;
-}): string[] {
-  return sanitizeDistractors({ distractors, input, shape }).map((distractor) =>
-    distractor.toLocaleLowerCase(language),
-  );
-}
-
-function getReadingBankWords({ language, sentence }: { language: string; sentence: BankSentence }) {
+/**
+ * Distractor tiles keep the case they are written in: it is part of the spelling ("Hund", "Sie",
+ * "I"), and one that could start the sentence keeps the capital the real first word has.
+ */
+function getReadingBankWords(sentence: BankSentence) {
   return {
     correctWords: segmentWords(sentence.sentence),
-    distractors: toDistractorTiles({
+    distractors: sanitizeDistractors({
       distractors: sentence.distractors,
       input: sentence.sentence,
-      language,
       shape: "single-word",
     }),
   };
@@ -202,21 +188,13 @@ function getFillBlankWords(content: StepContentByKind["fillBlank"]): string[] {
   return [...content.answers, ...content.distractors];
 }
 
-type BankWordsInput = { sentences: ReadonlyMap<string, BankSentence>; targetLanguage: string };
+type BankWordsInput = { sentences: ReadonlyMap<string, BankSentence> };
 
-function getTargetBankWords({
-  sentences,
-  step,
-  targetLanguage,
-}: BankWordsInput & { step: BankStep }): string[] {
+function getTargetBankWords({ sentences, step }: BankWordsInput & { step: BankStep }): string[] {
   const sentence = step.sentenceId ? sentences.get(step.sentenceId) : undefined;
 
   if (step.kind === "reading" && sentence) {
-    const { correctWords, distractors } = getReadingBankWords({
-      language: targetLanguage,
-      sentence,
-    });
-
+    const { correctWords, distractors } = getReadingBankWords(sentence);
     return [...correctWords, ...distractors];
   }
 
@@ -232,10 +210,9 @@ function getTargetBankWords({
 export function listTargetBankWords({
   sentences,
   steps,
-  targetLanguage,
 }: BankWordsInput & { steps: readonly BankStep[] }): string[] {
   return steps
-    .flatMap((step) => getTargetBankWords({ sentences, step, targetLanguage }))
+    .flatMap((step) => getTargetBankWords({ sentences, step }))
     .map((word) => trimPunctuation(word))
     .filter(Boolean);
 }
@@ -253,7 +230,7 @@ function getWordBankConfig(
 ): WordBankConfig | null {
   if (step.kind === "reading" && step.sentence) {
     return {
-      ...getReadingBankWords({ language: languages.targetLanguage, sentence: step.sentence }),
+      ...getReadingBankWords(step.sentence),
       language: languages.targetLanguage,
       usesTargetLanguageMetadata: true,
     };
@@ -262,10 +239,9 @@ function getWordBankConfig(
   if (step.kind === "listening" && step.sentence) {
     return {
       correctWords: segmentLearnerWords(step.sentence.translation),
-      distractors: toDistractorTiles({
+      distractors: sanitizeDistractors({
         distractors: step.sentence.translationDistractors,
         input: step.sentence.translation,
-        language: languages.language,
         shape: "single-learner-word",
       }),
       language: languages.language,

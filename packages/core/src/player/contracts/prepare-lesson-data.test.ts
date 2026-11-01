@@ -245,26 +245,10 @@ describe(serializeExerciseSteps, () => {
     );
 
     expect(result[0]?.translationOptions).toStrictEqual([
-      translationOption({ id: "10", word: "Boa noite" }),
-      translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde" }),
-      translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "Bom dia" }),
-      translationOption({ id: "distractor:ate logo", word: "Até logo" }),
-    ]);
-  });
-
-  it("capitalizes under-cased generated translation answers", () => {
-    const result = serializeTranslation(
-      makeWord({
-        distractors: ["i'm busy", "i'm tired"],
-        translation: "Estoy bien",
-        word: "i'm fine",
-      }),
-    );
-
-    expect(result[0]?.translationOptions.map((option) => option.word)).toStrictEqual([
-      "I'm fine",
-      "I'm busy",
-      "I'm tired",
+      translationOption({ id: "10", word: "boa noite" }),
+      translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "boa tarde" }),
+      translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "bom dia" }),
+      translationOption({ id: "distractor:ate logo", word: "até logo" }),
     ]);
   });
 
@@ -330,8 +314,8 @@ describe(serializeExerciseSteps, () => {
       wordOption("Guten"),
       wordOption("Morgen,"),
       wordOption("Lara."),
-      wordOption("abend", { audioUrl: "/audio/abend.mp3" }),
-      wordOption("fenster"),
+      wordOption("Abend", { audioUrl: "/audio/abend.mp3" }),
+      wordOption("Fenster"),
     ]);
 
     expect(result[1]?.wordBankOptions).toStrictEqual([

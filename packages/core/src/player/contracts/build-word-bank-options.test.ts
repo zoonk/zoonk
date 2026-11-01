@@ -90,8 +90,8 @@ describe(buildWordBankOptions, () => {
       "Guten",
       "Morgen,",
       "Anna!",
-      "abend",
-      "fenster",
+      "Abend",
+      "Fenster",
     ]);
   });
 
@@ -169,7 +169,7 @@ describe(buildWordBankOptions, () => {
       "Boa",
       "tarde,",
       "Lara.",
-      "bom",
+      "Bom",
       "noite",
     ]);
 
@@ -235,32 +235,49 @@ describe(buildWordBankOptions, () => {
     ]);
   });
 
-  it("lowercases listening distractors before display", () => {
+  it("keeps a listening distractor's capital when its spelling or the sentence start needs it", () => {
     const options = buildWordBankOptions(
       makeStep(
         "listening",
         makeSentence({
-          sentence: "Como você está?",
-          translation: "Hi, how are you?",
-          translationDistractors: ["Farewell", "Thanks", "Goodbye", "Please"],
+          sentence: "Quanto custa o aluguel?",
+          translation: "How much is the rent?",
+          translationDistractors: ["When", "I", "are"],
         }),
       ),
+      [],
+      [],
+      new Map(),
+      { language: "en", targetLanguage: "pt" },
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual([
+      "How",
+      "much",
+      "is",
+      "the",
+      "rent?",
+      "When",
+      "I",
+      "are",
+    ]);
+  });
+
+  it.each([
+    { distractors: ["Sie", "Hund", "kommen"], sentence: "Kommst du aus Berlin?" },
+    { distractors: ["Du", "hast", "Katze"], sentence: "Ich habe einen Hund" },
+  ])("shows German distractors for $sentence as they are spelled", ({ distractors, sentence }) => {
+    const options = buildWordBankOptions(
+      makeStep("reading", makeSentence({ distractors, sentence })),
       [],
       [],
       new Map(),
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "Hi,",
-      "how",
-      "are",
-      "you?",
-      "farewell",
-      "thanks",
-      "goodbye",
-      "please",
-    ]);
+    expect(options.map((option) => option.word).slice(-distractors.length)).toStrictEqual(
+      distractors,
+    );
   });
 
   it("splits a Japanese translation into phrases a learner can arrange", () => {
@@ -288,14 +305,14 @@ describe(buildWordBankOptions, () => {
     ]);
   });
 
-  it("lowercases distractors with the rules of their language", () => {
+  it("shows Turkish distractors with their own dotted and dotless i", () => {
     const options = buildWordBankOptions(
       makeStep(
         "listening",
         makeSentence({
           sentence: "Good morning.",
           translation: "Günaydın.",
-          translationDistractors: ["Işık", "İyi"],
+          translationDistractors: ["ışık", "İyi"],
         }),
       ),
       [],
@@ -304,7 +321,7 @@ describe(buildWordBankOptions, () => {
       { language: "tr", targetLanguage: "en" },
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Günaydın.", "ışık", "iyi"]);
+    expect(options.map((option) => option.word)).toStrictEqual(["Günaydın.", "ışık", "İyi"]);
   });
 
   it("drops a distractor that is a sentence word in its language's casing", () => {
@@ -335,7 +352,7 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "salut"]);
+    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "Salut"]);
   });
 });
 
@@ -467,7 +484,6 @@ describe(listTargetBankWords, () => {
         },
         { content: {}, kind: "listening", sentenceId: "heard" },
       ],
-      targetLanguage: "es",
     });
 
     expect(words).toStrictEqual([
@@ -475,11 +491,22 @@ describe(listTargetBankWords, () => {
       "está",
       "el",
       "baño",
-      "agua",
+      "Agua",
       "l'eau",
       "le eau",
       "de l'eau",
     ]);
+  });
+
+  it("lists German bank words in the case their tiles show", () => {
+    const words = listTargetBankWords({
+      sentences: new Map([
+        ["read", { distractors: ["Sie", "Hund"], sentence: "Kommst du aus Berlin?" }],
+      ]),
+      steps: [{ content: {}, kind: "reading", sentenceId: "read" }],
+    });
+
+    expect(words).toStrictEqual(["Kommst", "du", "aus", "Berlin", "Sie", "Hund"]);
   });
 
   it.each([
@@ -501,7 +528,6 @@ describe(listTargetBankWords, () => {
       const words = listTargetBankWords({
         sentences: new Map([[read.id, read]]),
         steps: [{ ...step, sentenceId: read.id }],
-        targetLanguage: language,
       });
 
       const saved = words.map((word, index) =>

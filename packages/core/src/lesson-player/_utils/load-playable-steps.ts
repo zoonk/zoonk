@@ -96,7 +96,6 @@ async function loadExerciseResources({
       ]),
     ),
     steps: rows,
-    targetLanguage,
   });
 
   const targetWords = await loadTargetWords({

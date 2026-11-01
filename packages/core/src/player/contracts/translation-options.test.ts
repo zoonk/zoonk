@@ -24,7 +24,6 @@ describe(buildTranslationOptions, () => {
     const options = buildTranslationOptions({
       distractorLookup,
       kind: "translation",
-      language: "es",
       word: {
         audioUrl: "/audio/es.mp3",
         distractors: ["está"],
@@ -36,26 +35,33 @@ describe(buildTranslationOptions, () => {
     });
 
     expect(options).toStrictEqual([
-      { audioUrl: "/audio/es.mp3", id: "word-1", romanization: null, word: "Es" },
-      { audioUrl: "/audio/esta-accent.mp3", id: "esta-accent", romanization: null, word: "Está" },
+      { audioUrl: "/audio/es.mp3", id: "word-1", romanization: null, word: "es" },
+      { audioUrl: "/audio/esta-accent.mp3", id: "esta-accent", romanization: null, word: "está" },
     ]);
   });
 
-  it("capitalizes options with the rules of their language", () => {
+  it.each([
+    { distractors: ["trinken", "kochen"], language: "de", word: "essen" },
+    { distractors: ["die Kaution", "der Vertrag"], language: "de", word: "die Miete" },
+    { distractors: ["er", "es"], language: "de", word: "sie" },
+    { distractors: ["du", "ihr"], language: "de", word: "Sie" },
+    { distractors: ["the lease", "the mortgage"], language: "en", word: "the rent" },
+    { distractors: ["I've seen", "I've lost"], language: "en", word: "I've had" },
+    { distractors: ["inek", "ılık"], language: "tr", word: "ada" },
+  ])("shows $language option $word in the case it is spelled with", ({ distractors, word }) => {
     const options = buildTranslationOptions({
       distractorLookup: new Map(),
       kind: "translation",
-      language: "tr",
       word: {
         audioUrl: null,
-        distractors: ["inek"],
+        distractors,
         id: "word-1",
         romanization: null,
-        translation: "island",
-        word: "ada",
+        translation: "meaning",
+        word,
       },
     });
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Ada", "İnek"]);
+    expect(options.map((option) => option.word)).toStrictEqual([word, ...distractors]);
   });
 });

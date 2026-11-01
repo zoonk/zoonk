@@ -4,7 +4,6 @@ import { normalizePunctuation } from "@zoonk/utils/string";
 import { getTileRomanization } from "./_utils/tile-romanization";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
-const FIRST_LETTER_PATTERN = /\p{L}/u;
 const TERMINAL_PUNCTUATION_PATTERN = /[.!?…。！？؟]+$/u;
 
 /** romanization is null for Latin-script words. */
@@ -44,27 +43,6 @@ function toTranslationOption(word: TranslationSourceWord | DistractorWord): Tran
   };
 }
 
-function isCasedLetter({ language, letter }: { language: string; letter: string }): boolean {
-  return letter.toLocaleLowerCase(language) !== letter.toLocaleUpperCase(language);
-}
-
-/** Normalize visible option casing so formatting cannot identify the correct answer. */
-function capitalizeFirstCasedLetter({
-  language,
-  text,
-}: {
-  language: string;
-  text: string;
-}): string {
-  const firstLetter = FIRST_LETTER_PATTERN.exec(text)?.[0];
-
-  if (!firstLetter || !isCasedLetter({ language, letter: firstLetter })) {
-    return text;
-  }
-
-  return text.replace(FIRST_LETTER_PATTERN, (letter) => letter.toLocaleUpperCase(language));
-}
-
 function getTerminalPunctuation(text: string): string {
   const normalizedText = normalizePunctuation(text).trim();
 
@@ -75,30 +53,17 @@ function stripTerminalPunctuation(text: string): string {
   return normalizePunctuation(text).trim().replace(TERMINAL_PUNCTUATION_PATTERN, "").trimEnd();
 }
 
-function normalizeTranslationOptionWord(params: {
-  language: string;
-  optionWord: string;
-  terminalPunctuation: string;
-}): string {
-  const textWithoutPunctuation = stripTerminalPunctuation(params.optionWord);
-  const textWithPunctuation = `${textWithoutPunctuation}${params.terminalPunctuation}`;
-
-  return capitalizeFirstCasedLetter({ language: params.language, text: textWithPunctuation });
-}
-
-/** Keep original metadata/ids while normalizing labels so formatting cannot reveal the correct answer. */
-function normalizeTranslationOption(params: {
-  language: string;
+/**
+ * Every option ends like the prompt so punctuation can't reveal the answer. Letter case stays as
+ * written: it is part of the spelling ("essen" and "Essen", "sie" and "Sie").
+ */
+function matchTerminalPunctuation(params: {
   option: TranslationOption;
   terminalPunctuation: string;
 }): TranslationOption {
   return {
     ...params.option,
-    word: normalizeTranslationOptionWord({
-      language: params.language,
-      optionWord: params.option.word,
-      terminalPunctuation: params.terminalPunctuation,
-    }),
+    word: `${stripTerminalPunctuation(params.option.word)}${params.terminalPunctuation}`,
   };
 }
 
@@ -133,8 +98,6 @@ export function buildDistractorWordLookup(
 export function buildTranslationOptions(params: {
   distractorLookup: Map<string, DistractorWord>;
   kind: string;
-  /** The options' language: the one the lesson teaches. */
-  language: string;
   word: TranslationSourceWord | null;
 }): TranslationOption[] {
   if (params.kind !== "translation" || !params.word) {
@@ -152,7 +115,7 @@ export function buildTranslationOptions(params: {
   const terminalPunctuation = getTerminalPunctuation(params.word.translation);
 
   const options = [toTranslationOption(params.word), ...directDistractors].map((option) =>
-    normalizeTranslationOption({ language: params.language, option, terminalPunctuation }),
+    matchTerminalPunctuation({ option, terminalPunctuation }),
   );
 
   return shuffle(options);

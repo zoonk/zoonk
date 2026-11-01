@@ -135,11 +135,9 @@ export async function writeLanguageLessonContent({
     organizationId: organization.id,
     provenance: draft.provenance,
     targetLanguage: inputs.targetLanguage,
-    texts: listTargetBankWords({
-      sentences: stored.sentencesById,
-      steps,
-      targetLanguage: inputs.targetLanguage,
-    }).filter((word) => !lessonWordKeys.has(toKey(word))),
+    texts: listTargetBankWords({ sentences: stored.sentencesById, steps }).filter(
+      (word) => !lessonWordKeys.has(toKey(word)),
+    ),
   });
 
   await fillMissingAudio({
