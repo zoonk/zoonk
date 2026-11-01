@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { AutoRenewStatus, NotificationTypeV2, Status, Type } from "@apple/app-store-server-library";
 import { prisma } from "@zoonk/db";
+import { sendEmail } from "@zoonk/mailer";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { processAppleSubscriptionNotification } from "./process-apple-subscription-notification";
@@ -22,6 +23,8 @@ vi.mock("@zoonk/auth/stripe-client", () => ({
     subscriptions: { cancel: stripe.cancel, list: stripe.list, retrieve: stripe.retrieve },
   },
 }));
+
+vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn().mockResolvedValue({ error: null }) }));
 
 function encode(value: unknown) {
   return Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -327,12 +330,12 @@ describe("an App Store purchase beside other Plus", () => {
       { kind: "endWebPlusBesideStore" },
     ]);
 
-    const ended = await endWebPlusBesideStore(user.id);
-    await expect(endWebPlusBesideStore(user.id)).resolves.toStrictEqual([]);
+    await endWebPlusBesideStore(user.id);
+    await endWebPlusBesideStore(user.id);
 
-    expect(ended).toMatchObject([
-      { email: user.email, keptStore: "apple", locale: "pt", refund: { amount: 999 } },
-    ]);
+    expect(sendEmail).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ subject: "Você já tem o Zoonk Plus", to: user.email }),
+    );
 
     expect(stripe.refund).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ amount: 999, payment_intent: "pi_plus" }),

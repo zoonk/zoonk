@@ -17,10 +17,8 @@ import {
 import { type MemoryGate, gateMemoryCandidate } from "@zoonk/core/memory/remember-candidate";
 import { resolveMistakeCause } from "@zoonk/core/mistakes/resolve-cause";
 import {
-  type EndedWebPlus,
   askToCancelSecondStorePlus,
   endWebPlusBesideStore,
-  tellWebPlusEnded,
 } from "@zoonk/core/subscriptions/settle-store-plus";
 
 export type ProposedMemory = NonNullable<Awaited<ReturnType<typeof proposeSessionMemory>>>;
@@ -42,14 +40,9 @@ export async function checkFactSensitivityStep(input: { factId: string; statemen
   await checkFactSensitivity(input);
 }
 
-export async function endWebPlusBesideStoreStep(userId: string): Promise<EndedWebPlus[]> {
+export async function endWebPlusBesideStoreStep(userId: string) {
   "use step";
-  return endWebPlusBesideStore(userId);
-}
-
-export async function tellWebPlusEndedStep(notice: EndedWebPlus) {
-  "use step";
-  await tellWebPlusEnded(notice);
+  await endWebPlusBesideStore(userId);
 }
 
 export async function askToCancelSecondStorePlusStep(

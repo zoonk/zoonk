@@ -1,25 +1,14 @@
 import "server-only";
-import {
-  type EndedWebPlus,
-  sendPlusTwiceEmail,
-  sendWebPlusEndedEmail,
-} from "@zoonk/auth/duplicate-plus-emails";
+import { sendPlusTwiceEmail } from "@zoonk/auth/duplicate-plus-emails";
 import { endWebPlusBesideStorePlus } from "@zoonk/auth/settle-web-plus";
 import { prisma } from "@zoonk/db";
 
-export type { EndedWebPlus } from "@zoonk/auth/duplicate-plus-emails";
-
 /**
  * Settles what a store save owed (`endWebPlusBesideStore`, `askToCancelSecondStorePlus`). Workflow
- * bridges pass the store chain's owner. Ending and telling are separate, so a failed email is sent
- * again without ending anything twice.
+ * bridges pass the store chain's owner.
  */
-export function endWebPlusBesideStore(userId: string): Promise<EndedWebPlus[]> {
-  return endWebPlusBesideStorePlus(userId);
-}
-
-export function tellWebPlusEnded(notice: EndedWebPlus): Promise<void> {
-  return sendWebPlusEndedEmail(notice);
+export async function endWebPlusBesideStore(userId: string): Promise<void> {
+  await endWebPlusBesideStorePlus({ userId });
 }
 
 export async function askToCancelSecondStorePlus({

@@ -180,27 +180,8 @@ function addCheckoutRow(userId: string) {
   });
 }
 
-/** Stripe delivers the event that Checkout completed, as it may more than once. */
-function deliverCheckoutCompleted({
-  rowId,
-  subscriptionId,
-  userId,
-}: {
-  rowId: string;
-  subscriptionId: string;
-  userId: string;
-}) {
-  stripe.constructEvent.mockResolvedValue({
-    data: {
-      object: {
-        client_reference_id: userId,
-        metadata: { referenceId: userId, subscriptionId: rowId, userId },
-        mode: "subscription",
-        subscription: subscriptionId,
-      },
-    },
-    type: "checkout.session.completed",
-  });
+function deliverStripeEvent(event: { data: { object: unknown }; type: string }) {
+  stripe.constructEvent.mockResolvedValue(event);
 
   return guestAuth.handler(
     new Request("http://localhost:3000/api/auth/stripe/webhook", {
@@ -209,6 +190,32 @@ function deliverCheckoutCompleted({
       method: "POST",
     }),
   );
+}
+
+/** Stripe delivers the event that Checkout completed, as it may more than once. */
+function deliverCheckoutCompleted({
+  customer = CUSTOMER,
+  rowId,
+  subscriptionId,
+  userId,
+}: {
+  customer?: string;
+  rowId: string;
+  subscriptionId: string;
+  userId: string;
+}) {
+  return deliverStripeEvent({
+    data: {
+      object: {
+        client_reference_id: userId,
+        customer,
+        metadata: { referenceId: userId, subscriptionId: rowId, userId },
+        mode: "subscription",
+        subscription: subscriptionId,
+      },
+    },
+    type: "checkout.session.completed",
+  });
 }
 
 function sentSubjects() {
@@ -285,11 +292,71 @@ describe("one Plus per learner on the website", () => {
     const first = stripeFake.add("active");
     const second = stripeFake.add("active", "cus_other");
 
-    await expect(endWebPlusBesideStorePlus(userId)).resolves.toHaveLength(2);
+    await expect(endWebPlusBesideStorePlus({ userId })).resolves.toHaveLength(2);
 
     expect(stripe.cancel).toHaveBeenCalledTimes(2);
     expect(stripe.cancel).toHaveBeenCalledWith(first, expect.anything());
     expect(stripe.cancel).toHaveBeenCalledWith(second, expect.anything());
+  });
+
+  it("ends a completed checkout under a customer none of the learner's rows keeps", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const row = await addCheckoutRow(userId);
+    await addStorePlus({ userId });
+
+    // Two checkouts started at once; the row kept the other one's customer.
+    const subscriptionId = stripeFake.add("active", "cus_lost");
+    await deliverCheckoutCompleted({ customer: "cus_lost", rowId: row.id, subscriptionId, userId });
+
+    expect(stripe.cancel).toHaveBeenCalledExactlyOnceWith(subscriptionId, expect.anything());
+  });
+
+  it("still tells the learner about an ended subscription when ending another fails", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    await addStorePlus({ userId });
+    stripeFake.add("active");
+    stripeFake.add("active");
+
+    stripe.refund.mockRejectedValueOnce(new Error("Stripe is down"));
+
+    await expect(endWebPlusBesideStorePlus({ userId })).rejects.toThrow("Stripe is down");
+    expect(sentSubjects()).toStrictEqual([pt.plusAlreadyActiveSubject]);
+  });
+
+  it("saves a subscription Stripe ended, failing the webhook until it's saved", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const subscriptionId = stripeFake.add("canceled");
+
+    const row = await prisma.subscription.create({
+      data: {
+        plan: "plus",
+        referenceId: userId,
+        status: "active",
+        stripeSubscriptionId: subscriptionId,
+      },
+    });
+
+    const ended = await stripe.retrieve(subscriptionId);
+
+    const deleted = {
+      data: { object: { ...ended, metadata: { referenceId: userId } } },
+      type: "customer.subscription.deleted",
+    };
+
+    // A database outage can't be produced safely, so one save of ours fails here.
+    vi.spyOn(prisma.subscription, "updateMany").mockRejectedValueOnce(new Error("Database down"));
+
+    const failed = await deliverStripeEvent(deleted);
+    const retried = await deliverStripeEvent(deleted);
+
+    expect([failed.status, retried.status]).toStrictEqual([400, 200]);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled" });
   });
 
   it("stops charging an unpaid website renewal once store Plus starts, with nothing to refund", async () => {
@@ -298,13 +365,13 @@ describe("one Plus per learner on the website", () => {
     await addStorePlus({ provider: "google", userId });
     stripeFake.add("past_due");
 
-    await expect(endWebPlusBesideStorePlus(userId)).resolves.toMatchObject([
+    await expect(endWebPlusBesideStorePlus({ userId })).resolves.toMatchObject([
       { keptStore: "google", refund: null },
     ]);
 
     expect(stripe.refund).not.toHaveBeenCalled();
     expect(stripe.voidInvoice).toHaveBeenCalledOnce();
-    await expect(endWebPlusBesideStorePlus(userId)).resolves.toStrictEqual([]);
+    await expect(endWebPlusBesideStorePlus({ userId })).resolves.toStrictEqual([]);
   });
 
   it("leaves website Plus alone while the learner has no store Plus", async () => {
@@ -313,7 +380,7 @@ describe("one Plus per learner on the website", () => {
     await addStorePlus({ periodEnd: new Date(Date.now() - DAY_MS), userId });
     stripeFake.add("active");
 
-    await expect(endWebPlusBesideStorePlus(userId)).resolves.toStrictEqual([]);
+    await expect(endWebPlusBesideStorePlus({ userId })).resolves.toStrictEqual([]);
 
     expect(stripe.list).not.toHaveBeenCalled();
     expect(stripe.cancel).not.toHaveBeenCalled();

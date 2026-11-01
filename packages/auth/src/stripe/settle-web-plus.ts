@@ -3,7 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { ACTIVE_SUBSCRIPTION_STATUSES, getActiveSubscriptionQuery } from "../active-subscription";
 import { stripeClient } from "./client";
-import { type EndedWebPlus } from "./duplicate-plus-emails";
+import { type EndedWebPlus, sendWebPlusEndedEmail } from "./duplicate-plus-emails";
 import {
   getLatestInvoice,
   isUnpaid,
@@ -67,8 +67,8 @@ async function listBilledWebPlus(customerIds: string[]): Promise<string[]> {
 /**
  * The refund goes first, so a failure never leaves it canceled unrefunded, and it acts only on a
  * subscription Stripe still bills, so a retry finishes a failed run without repeating it. Once
- * Stripe has ended it, the learner is told even if our copy isn't saved: Stripe's webhook writes
- * the same fields.
+ * Stripe has ended it, the learner is told at once, even if our copy isn't saved: Stripe's
+ * deletion webhook saves it too, and a retry would no longer find it to tell.
  */
 async function endWebPlus({
   keptStore,
@@ -109,27 +109,43 @@ async function endWebPlus({
     logError("Saving website Plus ended beside store Plus failed", { error, subscriptionId });
   }
 
-  return {
+  const notice: EndedWebPlus = {
     ...readSubscriptionMetadata(subscription.metadata),
     email: learner.email,
     interval: subscription.items.data[0]?.price.recurring?.interval === "year" ? "year" : "month",
     keptStore,
     refund: invoice && paid > 0 ? { amount: paid, currency: invoice.currency } : null,
   };
+
+  const { error: emailError } = await safeAsync(() => sendWebPlusEndedEmail(notice));
+
+  if (emailError) {
+    logError("Plus email failed", { error: emailError, subscriptionId });
+  }
+
+  return notice;
 }
 
 /**
  * A store charges before we hear of its purchase, so it can't be refused: when the learner has
  * store Plus, every website subscription Stripe still bills ends now, its last payment refunded in
- * full. Every caller reaches the same end, however often or in whatever order it runs. Returns
- * what to tell the learner.
+ * full, and the learner is told. Every caller reaches the same end, however often or in whatever
+ * order it runs. A completed checkout names its own customer, which our rows may not keep.
  */
-export async function endWebPlusBesideStorePlus(userId: string): Promise<EndedWebPlus[]> {
-  const [keptStore, customerIds, learner] = await Promise.all([
+export async function endWebPlusBesideStorePlus({
+  customerId,
+  userId,
+}: {
+  customerId?: string;
+  userId: string;
+}): Promise<EndedWebPlus[]> {
+  const [keptStore, knownCustomers, learner] = await Promise.all([
     findStorePlus(userId),
     findStripeCustomers(userId),
     prisma.user.findUnique({ select: { email: true, id: true }, where: { id: userId } }),
   ]);
+
+  const customerIds = [...new Set([...knownCustomers, ...(customerId ? [customerId] : [])])];
 
   if (!keptStore || !learner || customerIds.length === 0) {
     return [];
@@ -137,9 +153,18 @@ export async function endWebPlusBesideStorePlus(userId: string): Promise<EndedWe
 
   const billed = await listBilledWebPlus(customerIds);
 
-  const ended = await Promise.all(
+  // Each one finishes before a failure is thrown, so ending one never cuts another short.
+  const results = await Promise.allSettled(
     billed.map((subscriptionId) => endWebPlus({ keptStore, learner, subscriptionId })),
   );
 
-  return ended.filter((notice) => notice !== null);
+  const failed = results.find((result) => result.status === "rejected");
+
+  if (failed) {
+    throw failed.reason;
+  }
+
+  return results.flatMap((result) =>
+    result.status === "fulfilled" && result.value ? [result.value] : [],
+  );
 }

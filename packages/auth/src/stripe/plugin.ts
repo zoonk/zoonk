@@ -1,13 +1,11 @@
 import { stripe } from "@better-auth/stripe";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
 import { z } from "zod";
 import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
-import { sendWebPlusEndedEmail } from "./duplicate-plus-emails";
 import { sendPlusPurchaseConfirmation } from "./purchase-confirmation";
 import { endWebPlusBesideStorePlus, findStorePlus } from "./settle-web-plus";
+import { saveSubscription } from "./stop-web-plus";
 import { reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
 
@@ -29,34 +27,44 @@ function reportChange(change: "canceled" | "started", subscription: ReportedSubs
   });
 }
 
+function getCustomerId(customer: string | { id: string } | null): string | undefined {
+  return typeof customer === "string" ? customer : customer?.id;
+}
+
 /**
- * Runs after Better Auth saved the checkout's subscription. Unlike its callbacks, a failure here
- * fails the webhook, so Stripe delivers it again until the learner holds one Plus.
+ * Runs after Better Auth's own handling of each event. Unlike its callbacks, a failure here fails
+ * the webhook, so Stripe delivers it again: until the learner holds one Plus, and until a
+ * subscription Stripe ended is saved, since Better Auth only logs a failed save and our copy would
+ * go on giving Plus.
  */
-async function settleCompletedCheckout(event: Stripe.Event) {
+async function onStripeEvent(event: Stripe.Event) {
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object;
+    const { referenceId } = subscription.metadata;
+
+    if (referenceId) {
+      await saveSubscription({ subscription, userId: referenceId });
+    }
+
+    return;
+  }
+
   if (event.type !== "checkout.session.completed" || event.data.object.mode !== "subscription") {
     return;
   }
 
   const checkout = event.data.object;
   const userId = checkout.client_reference_id ?? checkout.metadata?.referenceId;
-  const ended = userId ? await endWebPlusBesideStorePlus(userId) : [];
 
-  await Promise.all(
-    ended.map(async (notice) => {
-      const { error } = await safeAsync(() => sendWebPlusEndedEmail(notice));
-
-      if (error) {
-        logError("Plus email failed", { error });
-      }
-    }),
-  );
+  if (userId) {
+    await endWebPlusBesideStorePlus({ customerId: getCustomerId(checkout.customer), userId });
+  }
 }
 
 export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: false,
-    onEvent: settleCompletedCheckout,
+    onEvent: onStripeEvent,
     organization: { enabled: true },
     stripeClient,
     stripeWebhookSecret: webhookSecret,

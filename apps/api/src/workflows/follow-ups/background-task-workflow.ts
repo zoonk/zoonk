@@ -13,7 +13,6 @@ import {
   rememberMemoryCandidateStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
-  tellWebPlusEndedStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -76,11 +75,6 @@ async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> 
   await saveDailyInsightStep({ claim, userId, written });
 }
 
-async function endWebPlusBesideStore(userId: string): Promise<void> {
-  const ended = await endWebPlusBesideStoreStep(userId);
-  await Promise.all(ended.map((notice) => tellWebPlusEndedStep(notice)));
-}
-
 async function runTask(task: BackgroundTask): Promise<void> {
   const { userId } = task;
 
@@ -100,7 +94,7 @@ async function runTask(task: BackgroundTask): Promise<void> {
     case "voiceWord":
       return voiceWordStep(task.input);
     case "endWebPlusBesideStore":
-      return endWebPlusBesideStore(userId);
+      return endWebPlusBesideStoreStep(userId);
     case "askToCancelSecondStorePlus":
       return askToCancelSecondStorePlusStep({ ...task.input, userId });
     default:
