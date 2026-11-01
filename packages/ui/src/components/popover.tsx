@@ -16,14 +16,18 @@ function PopoverContent({
   className,
   align = "center",
   alignOffset = 0,
+  backdrop = true,
   side = "bottom",
   sideOffset = 4,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+    /** The backdrop takes the click that closes the popover; without it, the click also lands. */
+    backdrop?: boolean;
+  }) {
   return (
     <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Backdrop className="fixed inset-0" />
+      {backdrop ? <PopoverPrimitive.Backdrop className="fixed inset-0" /> : null}
       <PopoverPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

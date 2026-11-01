@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
-import { stripWrappingQuotes } from "@zoonk/utils/string";
+import { splitEdgePunctuation, stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
@@ -31,19 +31,26 @@ function PromptWord({
     return <span>{promptWord.word}</span>;
   }
 
+  const { after, before, word } = splitEdgePunctuation(promptWord.word);
+
   return (
     <Popover>
       <PopoverTrigger
         className={cn(
-          "focus-visible:border-ring focus-visible:ring-ring/50 decoration-foreground/30 hover:text-foreground rounded-sm border-0 bg-transparent p-0 font-[inherit] text-inherit underline decoration-dotted underline-offset-4 transition-colors outline-none focus-visible:ring-[3px]",
+          "group focus-visible:border-ring focus-visible:ring-ring/50 rounded-sm border-0 bg-transparent p-0 font-[inherit] text-inherit outline-none focus-visible:ring-[3px]",
           standalone ? "inline-flex min-h-11 min-w-11 items-center" : "inline",
         )}
       >
-        {promptWord.word}
+        {before}
+        <span className="decoration-foreground/30 group-hover:decoration-foreground/70 underline decoration-dotted underline-offset-4 transition-colors">
+          {word}
+        </span>
+        {after}
       </PopoverTrigger>
 
       <PopoverContent
-        className="w-fit max-w-none min-w-0 gap-0 rounded-xl px-3 py-2"
+        backdrop={false}
+        className="w-fit max-w-(--available-width) min-w-0 gap-0 rounded-xl px-3 py-2 shadow-md"
         sideOffset={8}
       >
         <PopoverHeader className="gap-0.5">
