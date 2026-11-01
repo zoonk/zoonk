@@ -43,6 +43,7 @@ internal data class PlanFact(
     val label: String,
     val value: String,
     val count: String? = null,
+    val note: String? = null,
     val chip: Boolean = false,
 )
 
@@ -71,7 +72,9 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
     val facts = goal.facts()
 
     return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.title, chip = true), date) +
-        (rows.languageRows(facts) + rows.detailRows(facts, cutoff = null)).map { PlanFact(it.label, it.value, chip = it.id in CHIP_ROWS) } +
+        (rows.languageRows(facts) + rows.detailRows(facts, cutoff = null)).map { row ->
+            PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
+        } +
         listOfNotNull(
             level?.let { PlanFact(stringResource(R.string.onboarding_level_label), it) },
             if (details.answered("schedule")) {
@@ -132,6 +135,9 @@ internal fun PlanSoFar(goal: Goal) {
                 )
                 Column(Modifier.weight(1 - LABEL_WEIGHT)) {
                     Text(fact.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
+                    fact.note?.let {
+                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                    }
                     fact.count?.let {
                         Text(
                             it,
