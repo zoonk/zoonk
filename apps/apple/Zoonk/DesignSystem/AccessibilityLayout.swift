@@ -142,9 +142,9 @@ private struct StackingLabel: View {
   }
 }
 
-/// A label alone, or after its icon: beside it when the label keeps its lines there, with the
-/// system's gap beside a text title (which a `LabeledContent` title would close), and above it
-/// otherwise, where the label takes the whole width.
+/// A label alone, or after its icon: beside it when the label fits there as it is, with the system's
+/// gap beside a text title (which a `LabeledContent` title would close), and above it otherwise,
+/// where the label takes the whole width.
 private struct StackingLabelLayout: Layout {
   private static let besideSpacing: CGFloat = 8
 
@@ -184,9 +184,13 @@ private struct StackingLabelLayout: Layout {
     let besideProposal = ProposedViewSize(
       width: proposal.width.map { max($0 - besideWidth, 0) }, height: nil)
     let besideSize = title.sizeThatFits(besideProposal)
-    let unwrappedHeight = title.sizeThatFits(ProposedViewSize(width: .infinity, height: nil)).height
+    let unwrapped = title.sizeThatFits(ProposedViewSize(width: .infinity, height: nil))
+    // Beside the icon, the label must neither wrap nor truncate. A label that takes any width it
+    // gets, like a `LabeledContent`, only has to keep its lines.
+    let keepsItsWidth =
+      unwrapped.width.isInfinite || unwrapped.width <= besideProposal.width ?? .infinity
 
-    if besideSize.height <= unwrappedHeight {
+    if besideSize.height <= unwrapped.height, keepsItsWidth {
       let iconBaseline = icon.dimensions(in: .unspecified)[VerticalAlignment.firstTextBaseline]
       let titleBaseline = title.dimensions(in: besideProposal)[VerticalAlignment.firstTextBaseline]
       let baseline = max(iconBaseline, titleBaseline)
