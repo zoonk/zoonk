@@ -25,15 +25,16 @@ function eventsOff(fields: Fields): Record<string, number> {
 }
 
 /**
- * A numeric answer keeps only the number, so a model opened with one starts at the check's inputs:
- * the state the expected point is worked out from, which puts that point on the drawn curve.
+ * A checked model opens at the check's inputs, where its expected point is worked out, so the point
+ * sits on the drawn curve. Before Check it opens at its own starting values even with an answer,
+ * since the check's inputs would read out the expected value.
  */
-export function startingModel({ answer, content }: Pick<FormulaModelProps, "answer" | "content">): {
+export function startingModel({ content, phase }: Pick<FormulaModelProps, "content" | "phase">): {
   events: ModelValues;
   sliders: ModelValues;
 } {
   const { check, fields } = content;
-  const inputs = answer?.kind === "numeric" && check.kind === "numeric" ? (check.inputs ?? []) : [];
+  const inputs = phase === "checked" && check.kind === "numeric" ? (check.inputs ?? []) : [];
   const given: ModelValues = Object.fromEntries(inputs.map((input) => [input.name, input.value]));
 
   return {

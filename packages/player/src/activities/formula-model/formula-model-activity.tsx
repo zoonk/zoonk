@@ -86,7 +86,7 @@ function FormulaModelBoard({
   const t = useExtracted();
   const format = useFormatNumber();
   const { check, fields } = content;
-  const [model, setModel] = useState(() => startingModel({ answer, content }));
+  const [model, setModel] = useState(() => startingModel({ content, phase }));
   const { events, sliders } = model;
   const isChecked = phase === "checked";
 
