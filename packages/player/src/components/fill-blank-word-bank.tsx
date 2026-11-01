@@ -1,9 +1,8 @@
 "use client";
 
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { useExtracted } from "next-intl";
 import { type BlankState } from "./_utils/fill-blank-state";
-import { WordBankOptionButton } from "./word-bank-option-content";
+import { WordBank } from "./word-bank";
 
 type WordTileData = { isUsed: boolean; key: string; option: WordBankOption };
 
@@ -63,20 +62,9 @@ export function FillBlankWordBank({
   onPlaceWord: (word: string) => void;
   options: WordBankOption[];
 }) {
-  const t = useExtracted();
   const tiles = options.map((option, index) => getWordTileData({ blanks, index, option, options }));
 
   return (
-    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
-      {tiles.map((tile) => (
-        <WordBankOptionButton
-          disabled={disabled}
-          isSelected={tile.isUsed}
-          key={tile.key}
-          onToggle={() => onPlaceWord(tile.option.word)}
-          option={tile.option}
-        />
-      ))}
-    </div>
+    <WordBank disabled={disabled} onPlace={(tile) => onPlaceWord(tile.option.word)} tiles={tiles} />
   );
 }

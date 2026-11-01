@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect } from "react";
-import { PlayerContentFrame } from "../components/step-layouts";
+import { FILL_FOR_WORD_BANK_CLASS, PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
@@ -137,7 +137,7 @@ function LessonScreenFrame({
 
   return (
     <div
-      className={cn("flex w-full flex-col", turn && TURN_CLASS[turn])}
+      className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS, turn && TURN_CLASS[turn])}
       data-slot="lesson-screen"
       data-turn={turn ?? undefined}
     >
@@ -169,7 +169,7 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
   };
 
   return (
-    <div className="flex w-full flex-col" data-slot="lesson-stage">
+    <div className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS)} data-slot="lesson-stage">
       <LessonNotice />
 
       <LessonScreenFrame key={`${step.id}-${state.position}`} turn={turn}>

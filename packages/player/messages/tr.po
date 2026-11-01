@@ -2956,12 +2956,6 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Cevabını oluşturmak için kelimeleri seç"
 
-#: src/components/arrange-words.tsx
-#: src/components/fill-blank-word-bank.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Kelime havuzu"
-
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3085,6 +3079,11 @@ msgstr "Pek öyle değil:"
 msgctxt "lqtP-R"
 msgid "Vocabulary"
 msgstr "Kelime bilgisi"
+
+#: src/components/word-bank.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Kelime havuzu"
 
 #: src/lesson/_components/lesson-citation.tsx
 msgctxt "ZpW6Fg"

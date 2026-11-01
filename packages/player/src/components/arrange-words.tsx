@@ -7,14 +7,13 @@ import {
   getAcceptedArrangeWordLengths,
 } from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
 import { InteractiveStepLayout } from "./step-layouts";
-import { WordBankOptionButton } from "./word-bank-option-content";
+import { WordBank } from "./word-bank";
 
 type WordBankTile = { index: number; isUsed: boolean; key: string; option: WordBankOption };
 type PlacedWordWithBankIndex = PlacedWord & { wordBankIndex: number | null };
@@ -67,35 +66,6 @@ function getWordBankTiles({
   words: WordBankOption[];
 }): WordBankTile[] {
   return words.map((option, index) => getWordBankTile({ index, option, placedWords, words }));
-}
-
-function WordBank({
-  disabled,
-  onPlace,
-  placedWords,
-  words,
-}: {
-  disabled: boolean;
-  onPlace: (tile: WordBankTile) => void;
-  placedWords: PlacedWordWithBankIndex[];
-  words: WordBankOption[];
-}) {
-  const t = useExtracted();
-  const tiles = getWordBankTiles({ placedWords, words });
-
-  return (
-    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
-      {tiles.map((tile) => (
-        <WordBankOptionButton
-          disabled={disabled}
-          isSelected={tile.isUsed}
-          key={tile.key}
-          onToggle={() => onPlace(tile)}
-          option={tile.option}
-        />
-      ))}
-    </div>
-  );
 }
 
 export function ArrangeWordsInteraction({
@@ -219,8 +189,7 @@ export function ArrangeWordsInteraction({
       <WordBank
         disabled={result !== undefined}
         onPlace={handlePlace}
-        placedWords={placedWords}
-        words={wordBankOptions}
+        tiles={getWordBankTiles({ placedWords, words: wordBankOptions })}
       />
     </InteractiveStepLayout>
   );

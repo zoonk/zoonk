@@ -2956,12 +2956,6 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "단어를 골라 답을 만드세요"
 
-#: src/components/arrange-words.tsx
-#: src/components/fill-blank-word-bank.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "단어 목록"
-
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3085,6 +3079,11 @@ msgstr "정답은 아니에요:"
 msgctxt "lqtP-R"
 msgid "Vocabulary"
 msgstr "어휘"
+
+#: src/components/word-bank.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "단어 목록"
 
 #: src/lesson/_components/lesson-citation.tsx
 msgctxt "ZpW6Fg"

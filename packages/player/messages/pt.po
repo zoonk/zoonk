@@ -2956,12 +2956,6 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Escolha palavras para montar sua resposta"
 
-#: src/components/arrange-words.tsx
-#: src/components/fill-blank-word-bank.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Banco de palavras"
-
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3085,6 +3079,11 @@ msgstr "Não é bem isso:"
 msgctxt "lqtP-R"
 msgid "Vocabulary"
 msgstr "Vocabulário"
+
+#: src/components/word-bank.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Banco de palavras"
 
 #: src/lesson/_components/lesson-citation.tsx
 msgctxt "ZpW6Fg"
