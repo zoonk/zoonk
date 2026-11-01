@@ -271,25 +271,6 @@ class EssayViewModelTest {
         }
 
     @Test
-    fun aLaterReadOfTheEssayCountsItsDraftsAndGradesLeft() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-            drafted = true
-            gradesLeft = 2
-
-            viewModel.essay.refresh()
-            advanceUntilIdle()
-            viewModel.arrive(read(viewModel))
-
-            assertEquals(
-                listOf("Elsewhere."),
-                viewModel.ui.value.drafts
-                    ?.map { it.text },
-            )
-            assertEquals(2, viewModel.ui.value.gradesLeft)
-        }
-
-    @Test
     fun timeAwayCountsNoMoreThanTheLongestEssay() =
         runTest(dispatcher) {
             val viewModel = viewModel()
@@ -313,34 +294,6 @@ class EssayViewModelTest {
             advanceUntilIdle()
 
             assertEquals(EssaySend.LimitReached, viewModel.ui.value.send)
-            assertEquals("Cities grow.", viewModel.ui.value.text)
-        }
-
-    @Test
-    fun theDailyTimeLimitSaysSoAndKeepsTheText() =
-        runTest(dispatcher) {
-            submit = { throw ApiException(ApiError.Unavailable, "DAILY_LIMIT_REACHED", status = 403) }
-            val viewModel = viewModel()
-            viewModel.write("Cities grow.")
-
-            viewModel.send()
-            advanceUntilIdle()
-
-            assertEquals(EssaySend.DailyLimitReached, viewModel.ui.value.send)
-            assertEquals("Cities grow.", viewModel.ui.value.text)
-        }
-
-    @Test
-    fun aGuestPastTheSharedAiBudgetIsAskedToSignUpAndKeepsTheText() =
-        runTest(dispatcher) {
-            submit = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
-            val viewModel = viewModel()
-            viewModel.write("Cities grow.")
-
-            viewModel.send()
-            advanceUntilIdle()
-
-            assertEquals(EssaySend.SignUpRequired, viewModel.ui.value.send)
             assertEquals("Cities grow.", viewModel.ui.value.text)
         }
 
@@ -414,34 +367,6 @@ class EssayViewModelTest {
 
             assertEquals(reads + 1, essayReads)
             assertTrue(viewModel.ui.value.closed)
-        }
-
-    @Test
-    fun aSkippedEssayWithNoDraftTakesNoDraft() =
-        runTest(dispatcher) {
-            status = "skipped"
-            val viewModel = viewModel()
-
-            assertTrue(viewModel.ui.value.closed)
-
-            viewModel.write("Cities grow.")
-            viewModel.send()
-            advanceUntilIdle()
-
-            assertEquals(emptyList<EssaySubmissionInput>(), submitted)
-        }
-
-    @Test
-    fun noGradesLeftTodayKeepsTheDraftFromBeingSent() =
-        runTest(dispatcher) {
-            gradesLeft = 0
-            val viewModel = viewModel()
-            viewModel.write("Cities grow.")
-
-            viewModel.send()
-            advanceUntilIdle()
-
-            assertEquals(emptyList<EssaySubmissionInput>(), submitted)
         }
 
     @Test

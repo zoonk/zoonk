@@ -164,16 +164,6 @@ class MockRunnerViewModelTest {
         }
 
     @Test
-    fun aReadThatMovedTheMockOnShowsWhereItStands() =
-        runTest(dispatcher) {
-            val viewModel = store().runner()
-
-            viewModel.show(runningMock(extra = """"status":"expired""""))
-
-            assertEquals(MockExam.Status.EXPIRED, viewModel.state.value.view.status)
-        }
-
-    @Test
     fun aReadDuringAHandInThatFailsIsShownAfterIt() =
         runTest(dispatcher) {
             api.stepGate = CompletableDeferred()

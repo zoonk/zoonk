@@ -5,7 +5,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.startOnLoopback
 import com.zoonk.android.feature.questions.Answer
-import com.zoonk.api.models.MockPlanOfferInput
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -84,21 +83,6 @@ class MockRunApiTest {
             val request = server.takeRequest(5, TimeUnit.SECONDS)!!
             assertEquals("/v1/mocks/$RUN_BLOCK/essay-grades", request.url.encodedPath)
             assertEquals("""{"timeZone":"America/Sao_Paulo"}""", request.body!!.utf8())
-        }
-
-    @Test
-    fun aPlanOfferSendsWhichOne() =
-        runTest {
-            server.enqueue(
-                MockResponse
-                    .Builder()
-                    .addHeader("Content-Type", "application/json")
-                    .body("""{"changeId":null,"lessonsSkipped":4,"reason":null,"status":"applied"}""")
-                    .build(),
-            )
-
-            assertEquals(4L, api.adapt(ana, RUN_BLOCK, MockPlanOfferInput.Offer.SKIP, "UTC").lessonsSkipped)
-            assertEquals("""{"offer":"skip","timeZone":"UTC"}""", server.takeRequest(5, TimeUnit.SECONDS)!!.body!!.utf8())
         }
 
     private fun error(

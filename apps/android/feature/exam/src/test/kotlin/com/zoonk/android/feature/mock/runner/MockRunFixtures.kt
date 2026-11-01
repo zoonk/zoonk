@@ -92,7 +92,6 @@ internal class FakeMockRunApi(
 ) : MockRunApi {
     val saved = mutableListOf<MockDraft>()
     val submitted = mutableListOf<Int>()
-    var afterSubmit: MockExam? = null
     var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
 
@@ -136,7 +135,6 @@ internal class FakeMockRunApi(
         stepGate?.await()
         stepFailure?.let { throw it }
         submitted += section
-        afterSubmit?.let { mock = it }
     }
 
     override suspend fun endBreak(

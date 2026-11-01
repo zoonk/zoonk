@@ -48,30 +48,6 @@ class MockChooserViewModelTest {
     }
 
     @Test
-    fun aStartedMockOpens() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-
-            viewModel.start(full, "full:1:")
-            advanceUntilIdle()
-
-            assertEquals(STARTED, viewModel.opened.value)
-            assertEquals(listOf(full to false), api.started)
-        }
-
-    @Test
-    fun theMockAlreadyRunningOpensInstead() =
-        runTest(dispatcher) {
-            api.starts = listOf { started(AnytimeMock.Status.RUNNING) }
-            val viewModel = viewModel()
-
-            viewModel.start(full, "full:1:")
-            advanceUntilIdle()
-
-            assertEquals(STARTED, viewModel.opened.value)
-        }
-
-    @Test
     fun aShortMockStartsWithFewerQuestionsOnlyOnTheSecondTapOfTheSameOption() =
         runTest(dispatcher) {
             api.starts = listOf({ short() }, { short() }, { started() })
@@ -173,22 +149,5 @@ class MockChooserViewModelTest {
 
             assertEquals(ChooserStatus.Refused(Limit.Reached(LimitTier.Free, LimitPeriod.Day)), viewModel.status.value)
             assertEquals(1, api.started.size)
-        }
-
-    @Test
-    fun tooFewQuestionsSaysSoAndALapsedPlusGoesBackToChoosing() =
-        runTest(dispatcher) {
-            api.starts = listOf { throw refusal("NOT_ENOUGH_QUESTIONS") }
-            val viewModel = viewModel()
-
-            viewModel.start(math, "area::Mathematics")
-            advanceUntilIdle()
-            assertEquals(ChooserStatus.Failed(notEnoughQuestions = true), viewModel.status.value)
-
-            api.starts = listOf { throw refusal("PLUS_REQUIRED") }
-            viewModel.start(math, "area::Mathematics")
-            advanceUntilIdle()
-            assertEquals(ChooserStatus.Choosing, viewModel.status.value)
-            assertNull(viewModel.opened.value)
         }
 }

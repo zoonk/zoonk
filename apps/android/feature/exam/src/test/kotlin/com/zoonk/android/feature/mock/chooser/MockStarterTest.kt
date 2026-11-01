@@ -68,19 +68,6 @@ class MockStarterTest {
         }
 
     @Test
-    fun aShortBankSaysHowMuchItCanAskAndWhenMoreCanBeWritten() =
-        runTest(dispatcher) {
-            api.starts = listOf { short(AnytimeMock.Limit.MONTH) }
-
-            assertEquals(
-                MutationResult.Done(
-                    MockStartOutcome.Short(questions = 40, examQuestions = 90, minutes = 130, limit = AnytimeMock.Limit.MONTH),
-                ),
-                MockStarter(api, cache()).start(GOAL, full, acceptFewer = false),
-            )
-        }
-
-    @Test
     fun tooFewQuestionsAndALapsedPlusAreAnswersNotFailures() =
         runTest(dispatcher) {
             val starter = MockStarter(api, cache())

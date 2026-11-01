@@ -54,8 +54,6 @@ internal const val MISSED =
     "format":"multipleChoice","itemId":"$ITEM_THREE","learnerAnswer":"run","number":3,"outcome":"wrong",
     "question":"Which word is a noun?","set":null}"""
 
-internal const val SKIP_OFFER = """{"focus":null,"skip":{"lessons":3,"topics":["Addition","Fractions"]}}"""
-
 internal fun pendingEssay(item: String = ESSAY_ONE) =
     """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow."}"""
 
