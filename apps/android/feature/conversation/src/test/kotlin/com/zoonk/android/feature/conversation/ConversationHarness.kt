@@ -165,6 +165,7 @@ internal class FakeConversationApi(
 
     /** Runs the next starts answer with, one each, before the call is written. */
     val writings = ArrayDeque<String>()
+
     override suspend fun conversation(
         session: AuthenticatedSession?,
         id: UUID,
