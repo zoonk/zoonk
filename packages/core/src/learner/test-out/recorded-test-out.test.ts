@@ -234,6 +234,18 @@ describe("a chapter test-out sent and read back", () => {
     });
   });
 
+  it("answers a retry with its receipt when a crash left the claim behind", async () => {
+    const { chapterId, goal, send, user } = await setup();
+    const requestId = randomUUID();
+    const first = await send({ requestId });
+
+    await prisma.testOutClaim.create({
+      data: { key: `${user.id}:${goal.id}:${chapterId}:${requestId}`, userId: user.id },
+    });
+
+    await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
+  });
+
   it("takes more submissions at once than the database pool has connections", async () => {
     const { send } = await setup();
     const moreThanThePool = 12;

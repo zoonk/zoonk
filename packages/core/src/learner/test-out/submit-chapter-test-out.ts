@@ -170,6 +170,17 @@ function toReadyResult({
   };
 }
 
+async function replayReceipt({
+  sent,
+  userId,
+}: {
+  sent: TestOutReceipt;
+  userId: string;
+}): Promise<SubmitChapterTestOutResult> {
+  const celebration = await celebrateProgress({ progress: null, userId });
+  return toReadyResult({ celebration, said: sent });
+}
+
 async function submitOwnedTestOut({
   chapterId,
   goal,
@@ -187,8 +198,7 @@ async function submitOwnedTestOut({
   const sent = await findTestOutReceipt({ chapterId, goalId, requestId: input.requestId, userId });
 
   if (sent) {
-    const celebration = await celebrateProgress({ progress: null, userId });
-    return toReadyResult({ celebration, said: sent });
+    return replayReceipt({ sent, userId });
   }
 
   const plan = await loadTestOutPlan(goalId);
@@ -280,6 +290,7 @@ async function submitOwnedTestOut({
   return toReadyResult({ celebration, said });
 }
 
+/** The claim's time is its owner's: releasing it never drops a claim taken over after a crash. */
 async function claimSubmission({ key, userId }: { key: string; userId: string }) {
   const now = new Date();
 
@@ -292,7 +303,7 @@ async function claimSubmission({ key, userId }: { key: string; userId: string })
     skipDuplicates: true,
   });
 
-  return count > 0;
+  return count > 0 ? now : null;
 }
 
 /**
@@ -303,8 +314,20 @@ async function submitOnce(
   submission: Parameters<typeof submitOwnedTestOut>[0] & { key: string },
 ): Promise<SubmitChapterTestOutResult> {
   const { key, ...owned } = submission;
+  const sent = await findTestOutReceipt({
+    chapterId: owned.chapterId,
+    goalId: owned.goal.id,
+    requestId: owned.input.requestId,
+    userId: owned.userId,
+  });
 
-  if (!(await claimSubmission({ key, userId: owned.userId }))) {
+  if (sent) {
+    return replayReceipt({ sent, userId: owned.userId });
+  }
+
+  const claimedAt = await claimSubmission({ key, userId: owned.userId });
+
+  if (!claimedAt) {
     await wait(CLAIM_POLL_MS);
     return submitOnce(submission);
   }
@@ -312,7 +335,7 @@ async function submitOnce(
   try {
     return await submitOwnedTestOut(owned);
   } finally {
-    await prisma.testOutClaim.deleteMany({ where: { key } });
+    await prisma.testOutClaim.deleteMany({ where: { createdAt: claimedAt, key } });
   }
 }
 
