@@ -35,15 +35,12 @@ fun plan(extra: String = ""): Plan {
     return ApiJson.decodeFromJsonElement<Plan>(JsonObject(base + fields))
 }
 
-internal fun progress(
-    value: Double = 0.42,
-    goalId: String = GOAL,
-): GoalProgress =
+internal fun progress(): GoalProgress =
     ApiJson.decodeFromString(
         """
-        {"goal":{"id":"$goalId","kind":"learn","targetDate":null,"title":"Learn Python"},"mistakes":{"open":0},
+        {"goal":{"id":"$GOAL","kind":"learn","targetDate":null,"title":"Learn Python"},"mistakes":{"open":0},
          "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"solid"},
-         "preparation":{"areas":[],"goalId":"$goalId","sections":[],"stage":"building","value":$value,"weekGain":0.03,
+         "preparation":{"areas":[],"goalId":"$GOAL","sections":[],"stage":"building","value":0.42,"weekGain":0.03,
           "skills":{"fading":2,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
           "components":{"coverage":{"heaviest":{"studiedSkills":2,"totalSkills":5,"value":0.4},"studiedSkills":6,"totalSkills":18,"value":0.33},
            "mastery":{"answered":20,"correct":15,"evidence":0.5,"supported":0.7,"value":0.75},
@@ -61,10 +58,10 @@ internal fun syllabus(): Syllabus =
         """.trimIndent(),
     )
 
-internal const val CHAPTER_DONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01"
+private const val CHAPTER_DONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01"
 internal const val CHAPTER_NEXT = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02"
 internal const val CHAPTER_LATER = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03"
-internal const val CHECKPOINT_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c01"
+private const val CHECKPOINT_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c01"
 internal const val FAR_SKILL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1e01"
 
 fun chapter(
@@ -91,10 +88,9 @@ fun phase(
     total: Int,
     chapters: List<String> = emptyList(),
     checkpoint: String? = null,
-    kind: String = "learn",
     mocks: String = """{"count":0}""",
 ) = """{"chapterCount":${chapters.size},"chapters":[${chapters.joinToString(",")}],"checkpoint":$checkpoint,"startDate":"$start",
-    "endDate":"$end","hours":10,"index":$index,"kind":"$kind","lessonsDone":$done,"lessonsTotal":$total,"mocks":$mocks,
+    "endDate":"$end","hours":10,"index":$index,"kind":"learn","lessonsDone":$done,"lessonsTotal":$total,"mocks":$mocks,
     "name":"$name","state":"$state"}"""
 
 /** A learn goal three weeks into four phases: the second one open, its next chapter half done, a day behind. */
@@ -159,7 +155,6 @@ internal fun learnPlan(): Plan =
 
 fun learnerSummary(
     kind: String = "learn",
-    status: String = "active",
     title: String = "Learn Python",
 ): LearnerSummary =
     ApiJson.decodeFromString(
@@ -167,7 +162,7 @@ fun learnerSummary(
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":"$GOAL",
          "analytics":{"disabled":false,"goal":null,"plan":"free","usageDataSharing":null,"shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
-         "day":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"$status",
+         "day":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"active",
           "targetDate":"2027-01-31","targetLanguage":null,"title":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
          "level":null,"missions":null,"nextChangeAt":1793186000000,
@@ -181,9 +176,7 @@ internal const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
 /** A saved change; [effect] and [extra] are raw JSON fields. */
 internal fun planChange(
     operations: String = "[]",
-    kind: String = "edited",
     status: String = "applied",
-    source: String = "learner",
     effect: String? = null,
     extra: String = "",
     createdAt: String = "2026-10-28T12:00:00Z",
@@ -192,7 +185,7 @@ internal fun planChange(
     ApiJson.decodeFromString(
         """
         {"canApply":true,"canUndo":true,"createdAt":"$createdAt","examDocument":"notice","id":"$id",
-         "kind":"$kind","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"$source","status":"$status"
+         "kind":"edited","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"learner","status":"$status"
          ${effect?.let { ""","effect":$it""" }.orEmpty()}${if (extra.isEmpty()) "" else ",$extra"}}
         """.trimIndent(),
     )
@@ -206,14 +199,11 @@ internal fun coveragePlan(
     timeCovers: Boolean = false,
     fullCourse: Boolean = false,
     areas: String = "[]",
-    extra: String = "",
-    fits: Boolean = false,
 ): Plan =
     plan(
         """
-        ${if (extra.isEmpty()) "" else "$extra,"}
         "areas":$areas,
-        "feasibility":{"coreFits":$coreFits,"coveredShare":${if (fits) 1 else 0.6},"deadline":"2027-01-31","deepensMostAsked":false,"fits":$fits,
+        "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
          "measure":"$kind","timeCovers":$timeCovers},
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
          "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}
@@ -224,9 +214,8 @@ internal fun area(
     name: String,
     focused: Boolean = false,
     partOf: String? = null,
-    skipped: Boolean = false,
 ) = """{"focusPart":null,"focused":$focused,"name":"$name","partOf":${partOf?.let { "\"$it\"" }},"pastBasics":false,
-    "reduced":false,"skillCount":4,"skipped":$skipped}"""
+    "reduced":false,"skillCount":4,"skipped":false}"""
 
 internal fun timeToCover(
     recommended: Long? = 45,

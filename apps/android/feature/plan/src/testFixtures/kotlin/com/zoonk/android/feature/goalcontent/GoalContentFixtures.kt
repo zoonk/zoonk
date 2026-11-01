@@ -155,10 +155,7 @@ internal fun lesson(
     position,
 )}","minutes":$minutes,"plusRequired":$plusRequired,"skillIds":[],"state":"$state","title":"$title","written":true}"""
 
-fun goalChapter(
-    testOut: Boolean = true,
-    mistakes: Int = 3,
-): GoalChapter =
+fun goalChapter(): GoalChapter =
     ApiJson.decodeFromString(
         """
         {"chapter":{"chapterId":"${chapterId(3)}","level":"beginner","position":3,"state":"current",
@@ -168,7 +165,7 @@ fun goalChapter(
          "lessons":[${lesson(1, "What a wave carries", "done")},${lesson(2, "Frequency and pitch", "done", minutes = 8)},
           ${lesson(3, "Echoes and resonance", "next")},${lesson(4, "The Doppler effect", "upcoming", plusRequired = true)},
           ${lesson(5, "Light as a wave", "upcoming", minutes = 0)}],
-         "mistakes":{"open":$mistakes},
+         "mistakes":{"open":3},
          "skills":[
           {"description":null,"fading":false,"name":"Describe a wave by its amplitude and wavelength","prerequisiteIds":[],"retrievability":0.9,"skillId":"50000000-0000-4000-8000-000000000001","state":"mastered"},
           {"description":null,"fading":true,"name":"Relate frequency to pitch","prerequisiteIds":[],"retrievability":0.4,"skillId":"50000000-0000-4000-8000-000000000002","state":"learning"},
@@ -176,20 +173,15 @@ fun goalChapter(
          "summaries":[{"ideas":["A wave carries **energy**, not matter.","Speed is $\\lambda f$."],"lessonId":"${lessonId(
             1,
         )}","title":"What a wave carries"}],
-         "testOut":{"available":$testOut,"plusRequired":false}}
+         "testOut":{"available":true,"plusRequired":false}}
         """.trimIndent(),
     )
 
-internal fun practiceBlock(
-    kind: String,
-    lessonId: String? = null,
-): AreaPractice =
+private fun practiceBlock(): AreaPractice =
     ApiJson.decodeFromString(
         """
         {"sessionId":"$SESSION","block":{"answered":0,"brainPower":0,"areas": [], "topics": [], "canTestOut":false,"capsules":[],"estimatedBrainPower":10,
-          "estimatedMinutes":5,"extra":true,"fullReview":false,"id":"$BLOCK","kind":"$kind","lessonId":${lessonId?.let {
-            "\"$it\""
-        } ?: "null"},
+          "estimatedMinutes":5,"extra":true,"fullReview":false,"id":"$BLOCK","kind":"practice","lessonId":null,
           "mistakesOnly":false,"netScored":false,"oftenTested":false,"position":3,"questions":8,"refresh":false,"reinforcement":false,
           "screen":"session","status":"pending","weakest":false}}
         """.trimIndent(),
@@ -197,7 +189,7 @@ internal fun practiceBlock(
 
 internal class FakeGoalContentApi : GoalContentApi {
     var chapters = 0
-    var practice: () -> AreaPractice = { practiceBlock("practice") }
+    var practice: () -> AreaPractice = { practiceBlock() }
     val practiced = mutableListOf<AreaPracticeInput>()
 
     override suspend fun chapter(

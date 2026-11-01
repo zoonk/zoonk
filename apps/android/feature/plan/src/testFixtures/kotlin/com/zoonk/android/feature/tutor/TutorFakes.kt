@@ -2,7 +2,6 @@ package com.zoonk.android.feature.tutor
 
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.api.models.StudyMissionMoment
 import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,7 +21,6 @@ internal class FakeTutorApi : TutorApi {
     var answers: (String) -> Flow<TutorAnswerEvent> = { flow { emit(TutorAnswerEvent.Finish) } }
     var question: (String) -> TutorTurn = { id -> turn(id, TutorTurn.Status.Completed, "") }
     val asked = mutableListOf<Ask>()
-    var missionMoment: StudyMissionMoment? = null
 
     /** Holds the next thread read until it completes. */
     var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
@@ -48,7 +46,7 @@ internal class FakeTutorApi : TutorApi {
     ): AskedQuestion {
         asked += Ask(question, requestId, scope)
         refusal?.let { throw it }
-        return AskedQuestion(turn("q${asked.size}", TutorTurn.Status.Pending, null, question, scope.about), missionMoment)
+        return AskedQuestion(turn("q${asked.size}", TutorTurn.Status.Pending, null, question, scope.about), null)
     }
 
     override fun answer(
