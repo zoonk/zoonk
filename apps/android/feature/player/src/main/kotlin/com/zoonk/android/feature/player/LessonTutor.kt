@@ -3,10 +3,13 @@ package com.zoonk.android.feature.player
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,7 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -33,19 +38,32 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.strugglePauseMs
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.tutor.TutorAvatar
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.feature.tutor.TutorScope
+import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.ui.components.OutlinedButton
 import kotlinx.coroutines.delay
 
-/** The buddy beside a lesson: who it is, and its ask button, whose conversation shows while `open`. */
+/**
+ * The buddy beside a lesson: who it is, the lesson's suggestions, and its ask button, whose conversation
+ * shows while `open`, with [offer] in its composer once.
+ */
 @Immutable
 class LessonTutor(
     val identity: TutorIdentity,
-    val askButton: @Composable (scope: TutorScope, worded: Boolean, open: Boolean, onOpenChange: (Boolean) -> Unit) -> Unit,
+    val suggestions: List<TutorSuggestion> = emptyList(),
+    val askButton: @Composable (
+        scope: TutorScope,
+        worded: Boolean,
+        open: Boolean,
+        offer: TutorSuggestion?,
+        onOfferTaken: () -> Unit,
+        onOpenChange: (Boolean) -> Unit,
+    ) -> Unit,
 )
 
 enum class BuddyOfferReason { Misses, Pause }
@@ -76,6 +94,43 @@ internal fun AskBuddyOffer(
         }
     }
 }
+
+/**
+ * Main's aside beside a teaching screen on wide screens, on the learner's page of a spread: two of the
+ * buddy's suggestions for the screen, ready to send, or anything else.
+ */
+@Composable
+internal fun ScreenHelp(
+    tutor: LessonTutor,
+    onAsk: (TutorSuggestion?) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painterResource(R.drawable.ic_contact_support),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                stringResource(R.string.tutor_ask_screen, tutor.identity.name),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            tutor.suggestions.take(SCREEN_SUGGESTIONS).forEach { suggestion ->
+                SuggestionChip(onClick = { onAsk(suggestion) }, label = { Text(suggestion.label) })
+            }
+            SuggestionChip(onClick = { onAsk(null) }, label = { Text(stringResource(R.string.player_ask_something_else)) })
+        }
+    }
+}
+
+private const val SCREEN_SUGGESTIONS = 2
+
+/** Text that teaches, which the buddy can explain another way: an explanation, or a hook's fact. */
+internal val LessonStep.teachesInText: Boolean
+    get() = content is StepContent.Explanation || content is StepContent.Fact
 
 /** Main's struggle pause: no press, scroll or key on an explanation for its pause while the app shows. */
 @Composable

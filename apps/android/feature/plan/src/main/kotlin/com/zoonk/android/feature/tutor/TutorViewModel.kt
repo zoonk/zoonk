@@ -2,6 +2,7 @@ package com.zoonk.android.feature.tutor
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -98,13 +99,21 @@ class TutorViewModel internal constructor(
         thread.state.value.value
             ?.turns
 
+    private var offered: TutorSuggestion? = null
+
     fun send() {
         val question = draft.text.toString().trim()
-        ask(question, suggestion = null)
+        ask(question, suggestion = offered?.takeIf { it.label == question }?.id)
     }
 
     /** A lesson's own suggestion goes by its id, so its shared answer is reused. */
     fun send(suggestion: TutorSuggestion) = ask(suggestion.label, suggestion.id)
+
+    /** A lesson's suggestion put in the composer, ready to send; sent as it is, it still goes by its id. */
+    fun offer(suggestion: TutorSuggestion) {
+        draft.setTextAndPlaceCursorAtEnd(suggestion.label)
+        offered = suggestion
+    }
 
     fun retryAnswer(id: String) {
         val turn = turns?.firstOrNull { it.id == id } ?: return

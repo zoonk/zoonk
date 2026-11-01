@@ -18,6 +18,7 @@
   "player_already_knew": "13b16b7ca1c0e932323b68af29575037d01907cbfdcbdd4568bc02bce9aef8a1",
   "player_answer_feedback": "ba76899e60461334de1626f9d8467f163d7948f725f08a44a11317e4d59a7b5e",
   "player_answer_options": "c4a43467dd7bf64a092970d9e9b1c13588b39bb5434d2a7d6e1750c1e6cc7530",
+  "player_ask_something_else": "81b9250d4c8cec4d7c1715d0e5324538b38da3d55aa6c7b18b3bdeff056188f0",
   "player_back": "2cd980caf4c032575f9bdaeae3c55e77e04951cee34db17aa52873ccd2ac1915",
   "player_back_to_chapter": "c9fade0c18023a45274b8a3393927db3cce5cd16773ce3a2ca45aa4fa88b4006",
   "player_back_to_unit": "637faaea21a78bc36c210895c2b75cb9ac23815faa9d45e2ebf33ea8466d27f9",
@@ -229,6 +230,8 @@
     <string name="player_offer_tricky">Bu soru biraz zor. %1$s farklı bir şekilde anlatabilir.</string>
     <string name="player_offer_taking_time">Biraz daha zamana mı ihtiyacın var? %1$s farklı bir şekilde anlatabilir.</string>
     <string name="player_offer_no_thanks">Hayır, teşekkürler</string>
+    <!-- Beside a teaching screen, after the buddy's suggestions: opens the buddy to ask in the learner's own words. -->
+    <string name="player_ask_something_else">Başka bir şey sor</string>
     <string name="player_unchecked_compare">Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s / %2$s temel nokta</item>

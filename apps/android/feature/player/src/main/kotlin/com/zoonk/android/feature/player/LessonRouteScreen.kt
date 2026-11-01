@@ -180,8 +180,8 @@ internal fun PlayingLesson(
     val identity = tutorIdentity(summary.value)
     val tutor =
         remember(identity, suggestions) {
-            LessonTutor(identity) { scope, worded, open, onOpenChange ->
-                TutorAskButton(scope, app, navigator, worded, open, onOpenChange, suggestions)
+            LessonTutor(identity, suggestions) { scope, worded, open, offer, onOfferTaken, onOpenChange ->
+                TutorAskButton(scope, app, navigator, worded, open, onOpenChange, suggestions, offer, onOfferTaken)
             }
         }
 

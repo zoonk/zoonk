@@ -258,7 +258,17 @@ internal fun TutorSheet(
     identity: TutorIdentity,
     onDismiss: () -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
+    offer: TutorSuggestion? = null,
+    onOfferTaken: () -> Unit = {},
 ) {
+    val vm = rememberTutor(scope, app)
+    // Taken once, so a sheet made again by a fold keeps what the learner made of it.
+    LaunchedEffect(offer) {
+        if (offer != null) {
+            vm.offer(offer)
+            onOfferTaken()
+        }
+    }
     val sheet = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutines = rememberCoroutineScope()
     val close: () -> Unit = { coroutines.launch { sheet.hide() }.invokeOnCompletion { onDismiss() } }
@@ -305,7 +315,7 @@ internal fun TutorSheet(
                 }
             }
             HorizontalDivider()
-            TutorPanel(rememberTutor(scope, app), rememberTutorAccess(app), identity, routes, Modifier.weight(1f), lessonSuggestions)
+            TutorPanel(vm, rememberTutorAccess(app), identity, routes, Modifier.weight(1f), lessonSuggestions)
         }
     }
 }

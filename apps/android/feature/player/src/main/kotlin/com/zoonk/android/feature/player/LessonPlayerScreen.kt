@@ -165,7 +165,8 @@ internal fun LessonColumn(
 
 /**
  * A [LessonColumn] as tall as the view at least: the part with the [FillsView] id stretches over
- * the height the other parts leave, never shorter than its own content.
+ * the height the other parts leave, never shorter than its own content. An empty part takes no gap,
+ * so a page whose screen draws nothing on it starts level with the page beside it.
  */
 @Composable
 private fun StepColumn(
@@ -177,7 +178,7 @@ private fun StepColumn(
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val filling = measurables.indexOfFirst { it.layoutId == FillsView }
         val others = measurables.mapIndexed { index, part -> if (index == filling) null else part.measure(loose) }
-        val gaps = spacing * (measurables.size - 1).coerceAtLeast(0)
+        val gaps = spacing * (others.count { it == null || it.height > 0 } - 1).coerceAtLeast(0)
         val left = (constraints.minHeight - gaps - others.sumOf { it?.height ?: 0 }).coerceAtLeast(0)
         val parts = others.mapIndexed { index, part -> part ?: measurables[index].measure(loose.copy(minHeight = left)) }
 
@@ -188,7 +189,7 @@ private fun StepColumn(
             var y = 0
             parts.forEach {
                 it.placeRelative(0, y)
-                y += it.height + spacing
+                if (it.height > 0) y += it.height + spacing
             }
         }
     }
@@ -273,6 +274,8 @@ fun LessonPlayer(
     val primaryFocus = remember { FocusRequester() }
     val canvasWork = rememberSaveableStateHolder()
     var asking by rememberSaveable { mutableStateOf(false) }
+    // A suggestion the help beside a teaching screen put in the buddy's composer, until the buddy takes it.
+    var offerId by rememberSaveable { mutableStateOf<String?>(null) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val stepId = screen?.step?.id
@@ -292,6 +295,16 @@ fun LessonPlayer(
                     },
                     onDismiss = closeOffer,
                 )
+            }
+        }
+    val help: (@Composable () -> Unit)? =
+        tutor?.let { buddy ->
+            {
+                ScreenHelp(buddy) { suggestion ->
+                    offerId = suggestion?.id
+                    asking = true
+                    closeOffer()
+                }
             }
         }
     val unsent = screen?.unsentAnswer == true
@@ -361,6 +374,8 @@ fun LessonPlayer(
                                     state.tutorScope(screen),
                                     state.showsMiss(screen) && screen.struggleOffer == null,
                                     asking,
+                                    tutor.suggestions.firstOrNull { it.id == offerId },
+                                    { offerId = null },
                                 ) { open ->
                                     asking = open
                                     if (open) closeOffer()
@@ -394,6 +409,7 @@ fun LessonPlayer(
                         buddy,
                         ceremony,
                         offer,
+                        help,
                         touches,
                         canvasWork,
                     )
@@ -520,6 +536,7 @@ private fun Content(
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
+    help: (@Composable () -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
 ) {
@@ -603,7 +620,10 @@ private fun Content(
                         Notice(state, screen, viewModel, part)
                         // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
                         key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language, part) }
-                        if (offer != null && screen.quickCheck == null) {
+                        // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause.
+                        if (help != null && fold != null && step.teachesInText) {
+                            help()
+                        } else if (offer != null && screen.quickCheck == null) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
                         Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)

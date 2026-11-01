@@ -64,9 +64,15 @@ class LessonSpreadScreenshots {
         step: LessonStep,
         open: Boolean = true,
         layoutDirection: LayoutDirection? = null,
+        withTutor: Boolean = false,
         then: () -> Unit = {},
     ) {
-        harness.play(listOf(step, summaryStep("end")), pictures = loadingPictures(), layoutDirection = layoutDirection)
+        harness.play(
+            listOf(step, summaryStep("end")),
+            pictures = loadingPictures(),
+            layoutDirection = layoutDirection,
+            withTutor = withTutor,
+        )
         if (open) {
             rule.waitForIdle()
             folds.overrideWindowLayoutInfo(
@@ -180,6 +186,35 @@ class LessonSpreadScreenshots {
     @Test
     @Config(qualifiers = BOOK)
     fun bookTextOnlyRightToLeft() = capture("book-text-only-rtl", explanationStep("idea"), layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookTextOnlyWithTheBuddy() = capture("book-text-only-buddy", explanationStep("idea"), withTutor = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookReadingWithPictureAndTheBuddy() = capture("book-reading-picture-buddy", picturedExplanation(), withTutor = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookTextOnlyWithTheBuddyDark() = capture("book-text-only-buddy-dark", explanationStep("idea"), withTutor = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookTextOnlyWithTheBuddyRightToLeft() =
+        capture("book-text-only-buddy-rtl", explanationStep("idea"), layoutDirection = LayoutDirection.Rtl, withTutor = true)
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 1.75f)
+    fun bookTextOnlyWithTheBuddyAtLargeFont() = capture("book-text-only-buddy-font175", explanationStep("idea"), withTutor = true)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneTextOnlyWithTheBuddy() = capture("phone-text-only-buddy", explanationStep("idea"), open = false, withTutor = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookWorkedExampleSteps() = capture("book-worked-example-steps", workedExampleStep("worked")) { tap("Show the next step") }
 
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)

@@ -111,6 +111,8 @@ fun TutorAskButton(
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
+    offer: TutorSuggestion? = null,
+    onOfferTaken: () -> Unit = {},
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val identity = tutorIdentity(summary.value)
@@ -133,7 +135,9 @@ fun TutorAskButton(
         }
     }
 
-    if (open) TutorSheet(scope, app, navigator, identity, onDismiss = { onOpenChange(false) }, lessonSuggestions = lessonSuggestions)
+    if (open) {
+        TutorSheet(scope, app, navigator, identity, onDismiss = { onOpenChange(false) }, lessonSuggestions, offer, onOfferTaken)
+    }
 }
 
 private val BUTTON_AVATAR_SIZE = 24.dp

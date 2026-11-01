@@ -18,6 +18,7 @@
   "player_already_knew": "6be34cb2030e9c01a7aaa37eb6f8f3e60c12ea0194476f0f4631e361007c6e50",
   "player_answer_feedback": "cb202d07eeb5214201c73d09d3b9a3d46f9aabcfe674487612df35d79508d024",
   "player_answer_options": "0c52d033ad6a93023678019468b1f30ec8e240ebd3d2e9daa60348b6efd733b4",
+  "player_ask_something_else": "47ef76d0d6cc3e57c8a3f0e3cdd66cb9bf9bd28c2ca273dd41ecaf064b42daf3",
   "player_back": "053cf74eb3f41d7260e590a8d750c0bac54e74da6b3b6239a89e9488a6c67b35",
   "player_back_to_chapter": "6b262dcf3a0d8ac1818bb6fe1c0cf3702faf3ad8fd2906eb1af04c04e6391c79",
   "player_back_to_unit": "6c0324d78a636ce18b9932fe50d6fb5b6828bc7675fa3015e600f4b90262d19b",
@@ -229,6 +230,8 @@
     <string name="player_offer_tricky">이 문제는 좀 까다로워요. %1$s(이)가 다른 방식으로 설명해 줄 수 있어요.</string>
     <string name="player_offer_taking_time">생각할 시간이 더 필요한가요? %1$s(이)가 다른 방식으로 설명해 줄 수 있어요.</string>
     <string name="player_offer_no_thanks">아니요, 괜찮아요</string>
+    <!-- Beside a teaching screen, after the buddy's suggestions: opens the buddy to ask in the learner's own words. -->
+    <string name="player_ask_something_else">다른 질문하기</string>
     <string name="player_unchecked_compare">문제마다 하루에 몇 번씩 답을 확인해요. 아래 답과 작성한 답을 비교해 보세요:</string>
     <plurals name="player_key_points">
         <item quantity="other">핵심 내용 %1$s/%2$s개</item>

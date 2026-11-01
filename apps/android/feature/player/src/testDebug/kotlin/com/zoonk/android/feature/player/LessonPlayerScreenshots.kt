@@ -272,7 +272,7 @@ class LessonPlayerScreenshots {
             )
         val lesson = playable(steps)
         var index by mutableIntStateOf(0)
-        val tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _ -> }
+        val tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _, _, _ -> }
         val exits =
             object : LessonPlayerExits {
                 override fun close() = Unit

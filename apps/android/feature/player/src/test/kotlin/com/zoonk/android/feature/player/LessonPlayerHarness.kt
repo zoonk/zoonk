@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.player
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,8 @@ import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.tutor.TutorIdentity
+import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -77,6 +81,7 @@ internal class LessonPlayerHarness(
         restoration: StateRestorationTester? = null,
         pictures: PrivatePictures? = null,
         layoutDirection: LayoutDirection? = null,
+        withTutor: Boolean = false,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -124,6 +129,14 @@ internal class LessonPlayerHarness(
                         viewModel,
                         exits,
                         rememberAppNavigator(),
+                        tutor =
+                            if (withTutor) {
+                                LessonTutor(TutorIdentity("Sam", look = null), LESSON_SUGGESTIONS) { _, _, _, _, _, onOpenChange ->
+                                    TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
+                                }
+                            } else {
+                                null
+                            },
                     )
                 }
             }
@@ -140,3 +153,6 @@ internal class LessonPlayerHarness(
 }
 
 private const val GOAL_ID = "00000000-0000-4000-8000-000000000011"
+
+private val LESSON_SUGGESTIONS =
+    listOf(TutorSuggestion("Explain it more simply", "simpler"), TutorSuggestion("I want to go deeper", "deeper"))

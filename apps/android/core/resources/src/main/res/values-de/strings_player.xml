@@ -18,6 +18,7 @@
   "player_already_knew": "9a4b9df1bea7a234d07c51f0b6441694f1bd10e9070adfb6d0aba07266ea04df",
   "player_answer_feedback": "01d8fe06002ec55304ca3833c1a5caf49e281df362c4751d9e2bd33cfefb04b9",
   "player_answer_options": "9b4a48b2b7c5acebc46d88fcc4faddaa2169a082db98abd1fb0e6325c4d6ef6e",
+  "player_ask_something_else": "9dbf3c265653656e8d2d3dc53ecda4b649c6c03464539a56cec631b2c5990e8c",
   "player_back": "0269238484808365c690fc814dd841f16d50bbeff49f02bc0fea5977baed6448",
   "player_back_to_chapter": "8e9b89f0ca64b060dd0b2aca24a5eb4d0b236835d555ed0acc9788c527d3b1ee",
   "player_back_to_unit": "7a1ebe70809412b22a085c4c06c5653286c439050c24b75074113a97ec20dc83",
@@ -229,6 +230,8 @@
     <string name="player_offer_tricky">Das ist knifflig. %1$s kann es dir anders erklären.</string>
     <string name="player_offer_taking_time">Brauchst du etwas mehr Zeit? %1$s kann es dir anders erklären.</string>
     <string name="player_offer_no_thanks">Nein danke</string>
+    <!-- Beside a teaching screen, after the buddy's suggestions: opens the buddy to ask in the learner's own words. -->
+    <string name="player_ask_something_else">Etwas anderes fragen</string>
     <string name="player_unchecked_compare">Jede Frage wird ein paar Mal am Tag geprüft. Vergleiche deine Antwort mit dieser:</string>
     <plurals name="player_key_points">
         <item quantity="one">%1$s von %2$s Kernpunkt</item>
