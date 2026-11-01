@@ -112,7 +112,7 @@ struct AccountSheet: View {
       await session.reconcileSynchronizedCredential()
     }
     .onChange(of: isSignedInForGood) { wasSignedIn, isSignedIn in
-      if !wasSignedIn, isSignedIn {
+      if wasSignedIn == false, isSignedIn == true {
         dismiss()
       }
     }
@@ -190,12 +190,13 @@ struct AccountSheet: View {
     }
   }
 
-  /// The saved sign-in being checked counts: only a sign-in made in the sheet closes it.
-  private var isSignedInForGood: Bool {
+  /// Nil while the saved sign-in is checked or can't be: only a sign-in made in the sheet closes
+  /// it.
+  private var isSignedInForGood: Bool? {
     switch session.state {
-    case .restoring: true
+    case .restoring, .unavailable: nil
     case .signedIn(let account): !isGuest && !account.needsProfileSetup
-    case .signedOut, .unavailable: false
+    case .signedOut: false
     }
   }
 
@@ -285,7 +286,8 @@ struct AccountSheet: View {
   ) {
     switch state {
     case .signedIn(let account)
-    where previous == .restoring || previous.account?.user.id == account.user.id:
+    where previous == .restoring || previous == .unavailable
+      || previous.account?.user.id == account.user.id:
       break
     case .signedIn:
       path.removeAll()
