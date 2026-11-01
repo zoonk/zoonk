@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -123,7 +124,12 @@ class TutorScreenshots {
         }
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
-        val vm = TutorViewModel(TutorScope.Plan("goal"), TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete })
+        val vm =
+            TutorViewModel(
+                TutorScope.Plan("goal"),
+                TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
+                SavedStateHandle(),
+            )
         val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {}, startCall = callStarter { CallStart.Failed })
 
         compose.setContent {

@@ -7,6 +7,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiError
@@ -71,6 +73,7 @@ data class TutorConversationState(
 class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
+    private val saved: SavedStateHandle,
 ) : ViewModel() {
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
     var scope: TutorScope by mutableStateOf(scope)
@@ -84,7 +87,12 @@ class TutorViewModel internal constructor(
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
 
-    val draft = TextFieldState()
+    /** The question being written, which comes back with the suggestion it started from after Android closes the app in the background. */
+    val draft = TextFieldState(saved.get<String>(DRAFT).orEmpty())
+
+    init {
+        viewModelScope.launch { snapshotFlow { draft.text.toString() }.collect { saved[DRAFT] = it } }
+    }
 
     private val mutableState = MutableStateFlow(TutorConversationState())
     val state: StateFlow<TutorConversationState> = mutableState.asStateFlow()
@@ -99,7 +107,7 @@ class TutorViewModel internal constructor(
         thread.state.value.value
             ?.turns
 
-    private var offered: TutorSuggestion? = null
+    private var offered: TutorSuggestion? = saved.get<String>(OFFERED_LABEL)?.let { TutorSuggestion(it, saved[OFFERED_ID]) }
 
     fun send() {
         val question = draft.text.toString().trim()
@@ -113,6 +121,8 @@ class TutorViewModel internal constructor(
     fun offer(suggestion: TutorSuggestion) {
         draft.setTextAndPlaceCursorAtEnd(suggestion.label)
         offered = suggestion
+        saved[OFFERED_LABEL] = suggestion.label
+        saved[OFFERED_ID] = suggestion.id
     }
 
     fun retryAnswer(id: String) {
@@ -447,6 +457,9 @@ internal fun pollDelay(
     return (base * (MIN_JITTER + random * JITTER_RANGE)).toLong()
 }
 
+private const val DRAFT = "draft"
+private const val OFFERED_LABEL = "offeredLabel"
+private const val OFFERED_ID = "offeredId"
 private const val MAX_POLLS = 8
 private const val MAX_POLLING_MILLIS = 60_000L
 private const val INITIAL_POLL_MILLIS = 1_000.0

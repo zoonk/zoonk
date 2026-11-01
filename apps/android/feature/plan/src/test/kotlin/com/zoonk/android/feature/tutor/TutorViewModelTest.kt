@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.tutor
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -61,10 +63,12 @@ class TutorViewModelTest {
     private suspend fun conversation(
         scope: TutorScope = this.scope,
         cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
+        saved: SavedStateHandle = SavedStateHandle(),
     ): TutorViewModel =
         TutorViewModel(
             scope,
             TutorStore(api, cache, session, { true }) { _, _, status -> decision(status) },
+            saved,
         ).also { it.thread.load() }
 
     private val TutorViewModel.turns get() =
@@ -109,6 +113,24 @@ class TutorViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf("simpler", null), api.asked.map { it.suggestion })
+        }
+
+    /** Android closing the app in the background keeps the question being written and the suggestion it started from. */
+    @Test
+    fun aQuestionBeingWrittenComesBackWithItsSuggestionAfterAndroidClosesTheApp() =
+        runTest(dispatcher) {
+            val saved = SavedStateHandle()
+            conversation(saved = saved).offer(TutorSuggestion("Explain it more simply", "simpler"))
+            // Compose applies a text field's edits as the app draws; this test has no frames.
+            Snapshot.sendApplyNotifications()
+            advanceUntilIdle()
+
+            val reopened = conversation(saved = saved)
+            assertEquals("Explain it more simply", reopened.draft.text.toString())
+            reopened.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
         }
 
     @Test

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
@@ -70,7 +71,7 @@ fun rememberTutor(
     val account = (session as? SessionState.SignedIn)?.session?.localId
     val summary by app.learnerSummary.summary.collectShown()
     val activeGoalId = summary.value?.activeGoalId?.toString()
-    val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor) }
+    val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor, createSavedStateHandle()) }
     SideEffect {
         vm.scope = scope
         vm.activeGoalId = activeGoalId
