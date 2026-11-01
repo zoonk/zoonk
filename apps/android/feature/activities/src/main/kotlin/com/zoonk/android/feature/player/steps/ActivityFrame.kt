@@ -190,6 +190,18 @@ internal fun ActivityView(
             content.baseMap,
         )
 
+    // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
+    // with the learner's turn.
+    val canvasOnScreen = part != StepPart.Whole && frame.check !is InteractionCheckValue
+    val canvas = @Composable {
+        renderer?.let {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ScreenCanvas { it.canvas(props) }
+                if (it.showsData(content.content)) ActivityDataNote(frame)
+            }
+        }
+    }
+
     // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
     if (part.showsTurn) LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.value?.let(onAnswerChange) }
 
@@ -200,17 +212,14 @@ internal fun ActivityView(
                 QuestionText(frame.prompt)
             }
             StepPicture(step, PictureFrame.Question)
+            if (canvasOnScreen) canvas()
         }
 
         if (part.showsTurn) {
-            if (checkFirst) check()
-            renderer?.let {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ScreenCanvas { it.canvas(props) }
-                    if (it.showsData(content.content)) ActivityDataNote(frame)
-                }
-            }
-            if (!checkFirst) check()
+            // The question keeps one place as the book folds, so a number half typed stays as typed.
+            if (!canvasOnScreen && !checkFirst) canvas()
+            check()
+            if (!canvasOnScreen && checkFirst) canvas()
 
             if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect)
         }

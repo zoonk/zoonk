@@ -2,13 +2,23 @@ package com.zoonk.android.feature.player
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
@@ -22,6 +32,7 @@ import coil3.ImageLoader
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.language.reading
 import com.zoonk.android.ui.components.PrivatePictures
 import kotlinx.coroutines.awaitCancellation
@@ -85,6 +96,29 @@ class LessonSpreadTest {
 
         unfold()
         assertAfterFold("the placed word", described(PLACED))
+    }
+
+    /** A chart the question asks about sits before the fold in a spread and in the one column otherwise: what the learner moved goes with it. */
+    @Test
+    @Config(qualifiers = BOOK)
+    fun aMovedSliderStaysAsTheBookFoldsAndOpens() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(ActivityFixtures.step("formulaModel"), summaryStep("end")), restoration = restoration)
+        unfold()
+        val rate = rule.onNode(hasContentDescription("Rate per year") and SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
+        rate.performScrollTo().requestFocus()
+        repeat(2) { rate.performKeyInput { pressKey(Key.DirectionRight) } }
+        val moved =
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.StateDescription,
+                rate.fetchSemanticsNode().config[SemanticsProperties.StateDescription],
+            )
+
+        restoration.emulateSavedInstanceStateRestore()
+        rate.assert(moved)
+
+        unfold()
+        rate.assert(moved)
     }
 
     private companion object {
