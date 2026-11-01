@@ -172,20 +172,21 @@ class CodeFlowTest {
         return sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(result))
     }
 
+    /** Folding or unfolding recreates the screen: a query's last result stays, even once the query changed since. */
     @Test
-    fun aQuerysErrorStaysWhenTheScreenIsRecreated() {
+    fun aQuerysResultStaysWhenTheScreenIsRecreatedAfterAnEdit() {
         val restoration = StateRestorationTester(rule)
-        harness.codeSandbox = { scope ->
-            ScriptedSandbox(scope) { sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Error("no such column: people")) }.sandbox
-        }
+        harness.codeSandbox = { scope -> ScriptedSandbox(scope, ::sqlRows).sandbox }
         harness.play(listOf(ActivityFixtures.step("sqlPlayground")), restoration = restoration)
 
-        field("Your query").performTextReplacement("SELECT people FROM countries;")
+        field("Your query").performTextReplacement("SELECT name, pop_millions FROM countries;")
         tap("Run")
-        shows("no such column: people")
+        shows("Your result: 3 rows")
+        field("Your query").performTextReplacement("SELECT name FROM countries;")
         restoration.emulateSavedInstanceStateRestore()
 
-        rule.onNodeWithText("no such column: people").assertExists()
+        rule.onNodeWithText("Your result: 3 rows").assertExists()
+        rule.onNodeWithText("You changed the query. Run it again to see the new result.").assertExists()
     }
 
     @Test

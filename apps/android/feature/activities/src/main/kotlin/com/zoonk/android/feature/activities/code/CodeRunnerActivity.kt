@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,14 +45,13 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.feature.activities.jsonSaver
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
 
 val codeRunnerRenderer =
@@ -85,12 +83,7 @@ private val CodeLanguage.defaultFileName
             CodeLanguage.Sql -> "query.sql"
         }
 
-/** A run as the sandbox gave it, whose printed text the sandbox caps, so it fits saved state. */
-private val RunSaver =
-    Saver<ProgramRun?, String>(
-        save = { run -> run?.let { sandboxJson.encodeToString(it) } },
-        restore = { sandboxJson.decodeFromString(it) },
-    )
+private val RunSaver = jsonSaver(sandboxJson, ProgramRun.serializer())
 
 @Composable
 private fun CodeRunnerActivity(props: ActivityProps) {
