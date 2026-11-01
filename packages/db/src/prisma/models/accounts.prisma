@@ -36,6 +36,7 @@ model User {
   ownedMediaAssets      MediaAsset[]
   ownedExamBlueprints   ExamBlueprint[]
   learnerSources        LearnerSource[]
+  uploadedFiles         UploadedFile[]
   goals                 Goal[]
   learnerSkills         LearnerSkill[]
   attempts              Attempt[]

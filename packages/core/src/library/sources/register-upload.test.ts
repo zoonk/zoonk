@@ -11,6 +11,7 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken } from "./create-upload-token";
 import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
+import { shareSourceUpload } from "./share-upload";
 
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
@@ -326,6 +327,68 @@ describe(registerSourceUpload, () => {
     ).resolves.toMatchObject({
       checkVisibility: false,
       source: { id: first.source.id },
+      status: "ready",
+    });
+  });
+
+  it("answers a retried file registration after its file matched a stored copy", async () => {
+    const user = await userFixture();
+    const text = uniqueText();
+
+    const shared = await sourceFixture({
+      contentHash: hashDocument({ bytes: new TextEncoder().encode(text), text }),
+    });
+
+    mockSession(user.id);
+    const { pathname } = uploadNotice({ text, userId: user.id });
+
+    await registerSourceUpload({ kind: "file", language: "pt", pathname });
+    vi.mocked(get).mockResolvedValue(null);
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: false,
+      source: { id: shared.id },
+      status: "ready",
+    });
+  });
+
+  it("answers a retried file registration after sharing merged it into another copy", async () => {
+    const user = await userFixture();
+    const text = uniqueText();
+    mockSession(user.id);
+    const { pathname } = uploadNotice({ text, userId: user.id });
+
+    const first = await registerSourceUpload({ kind: "file", language: "pt", pathname });
+
+    if (first.status !== "ready") {
+      throw new Error("The first registration should succeed.");
+    }
+
+    const shared = await sourceFixture({ contentHash: first.source.contentHash });
+
+    vi.mocked(fetch).mockResolvedValue(
+      new PageResponse(text, { headers: { "content-type": "text/markdown" } }),
+    );
+
+    await expect(
+      shareSourceUpload({
+        language: "pt",
+        publisher: null,
+        sourceId: first.source.id,
+        title: "Edital",
+        url: "https://www.example.com/edital.md",
+      }),
+    ).resolves.toStrictEqual({ merged: true, sourceId: shared.id });
+
+    vi.mocked(get).mockResolvedValue(null);
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: false,
+      source: { id: shared.id },
       status: "ready",
     });
   });

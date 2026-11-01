@@ -34,6 +34,7 @@ model Source {
   learnerSources LearnerSource[]
   changeNotices  SourceChangeNotice[]
   steps          Step[]
+  uploadedFiles  UploadedFile[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@index([contentHash])
@@ -216,6 +217,22 @@ model LearnerSource {
   @@index([sourceId])
   @@index([goalId])
   @@map("learner_sources")
+}
+
+/// A file a learner uploaded, by its path's upload id (what the upload allowance claimed). Its file
+/// is removed once its source matches a stored copy or merges into a shared one, so this follows the
+/// source it became, and registering the same path again answers with that source.
+model UploadedFile {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId  String   @map("source_id") @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([sourceId])
+  @@index([userId])
+  @@map("uploaded_files")
 }
 
 /// Stored once per change, not per learner: Today reads the notices of the learner's goal. `fields`

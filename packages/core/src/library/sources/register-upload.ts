@@ -30,16 +30,25 @@ export type SourceUploadResult =
   | RefusedUsage
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
-async function linkLearnerSource({
+async function linkUpload({
+  fileId,
   goalId,
   sourceId,
   userId,
 }: {
+  fileId: string | null;
   goalId: string | null;
   sourceId: string;
   userId: string;
 }) {
   await writeLearnerChange({ userId }, async (tx) => {
+    const files = fileId
+      ? await tx.uploadedFile.createMany({
+          data: { id: fileId, sourceId, userId },
+          skipDuplicates: true,
+        })
+      : { count: 0 };
+
     const { count } = await tx.learnerSource.createMany({
       data: { goalId, origin: "upload", sourceId, userId },
       skipDuplicates: true,
@@ -54,7 +63,7 @@ async function linkLearnerSource({
       where: { origin: { not: "upload" }, sourceId, userId },
     });
 
-    return uploaded.count === 0 ? unchanged(null) : null;
+    return uploaded.count + files.count === 0 ? unchanged(null) : null;
   });
 }
 
@@ -194,26 +203,23 @@ async function storeUpload({
   const sourceId = storedCopy?.id ?? uploadId;
   const refusal = await claimUpload(input.kind === "file" ? uploadId : sourceId);
 
-  if (refusal || storedCopy) {
-    await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
-  }
-
   if (refusal) {
+    await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
     return refusal;
   }
 
-  if (storedCopy) {
-    await linkLearnerSource({ goalId, sourceId: storedCopy.id, userId });
-    return { checkVisibility: false, source: storedCopy, status: "ready" };
-  }
+  const { created, source } = storedCopy
+    ? { created: false, source: storedCopy }
+    : await createPrivateSource({ content, id: sourceId, input, userId });
 
-  const { created, source } = await createPrivateSource({ content, id: sourceId, input, userId });
-  await linkLearnerSource({ goalId, sourceId: source.id, userId });
+  const fileId = input.kind === "file" ? uploadId : null;
+  await linkUpload({ fileId, goalId, sourceId: source.id, userId });
+  await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
 
   return { checkVisibility: created, source, status: "ready" };
 }
 
-/** Sharing a file may remove it, so a retried registration answers from the source it made. */
+/** A file is removed once its source matches a stored copy or is shared, so a retry answers from the source it became. */
 async function replayRegisteredFile({
   input,
   userId,
@@ -221,22 +227,22 @@ async function replayRegisteredFile({
   input: SourceUploadInput;
   userId: string;
 }): Promise<SourceUploadResult | null> {
-  const source =
+  const file =
     input.kind === "file"
-      ? await prisma.source.findFirst({
-          omit: { extractedText: true },
-          where: { ...libraryRowsVisibleTo(userId), id: getUploadClaimId(input.pathname) },
+      ? await prisma.uploadedFile.findFirst({
+          include: { source: { omit: { extractedText: true } } },
+          where: { id: getUploadClaimId(input.pathname), userId },
         })
       : null;
 
-  if (!source) {
+  if (!file) {
     return null;
   }
 
   const goalId = await getOwnGoalId({ goalId: input.goalId, userId });
-  await linkLearnerSource({ goalId, sourceId: source.id, userId });
+  await linkUpload({ fileId: null, goalId, sourceId: file.sourceId, userId });
 
-  return { checkVisibility: false, source, status: "ready" };
+  return { checkVisibility: false, source: file.source, status: "ready" };
 }
 
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {

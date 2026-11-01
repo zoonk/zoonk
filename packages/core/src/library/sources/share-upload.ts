@@ -43,6 +43,10 @@ async function mergeIntoPublicSource({
       data: { sourceId: publicSourceId },
       where: { sourceId: privateSourceId },
     }),
+    prisma.uploadedFile.updateMany({
+      data: { sourceId: publicSourceId },
+      where: { sourceId: privateSourceId },
+    }),
     prisma.source.delete({ where: { id: privateSourceId } }),
   ]);
 }
