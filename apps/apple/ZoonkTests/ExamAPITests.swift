@@ -10,7 +10,7 @@ final class ExamAPITests: XCTestCase {
   private let itemId = "01a12229-b961-72ae-a802-006ceef4fd0d"
 
   func testStartingAMockSendsItsShapesNullsWithTheBodysOwnLength() async throws {
-    let transport = RecordingTransport(answer: #"{"id": "x", "status": "needsQuestions"}"#)
+    let transport = RecordingTransport(answer: #"{"id": null, "status": "needsQuestions"}"#)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
 
     let outcome = try await api.startMock(
@@ -22,6 +22,22 @@ final class ExamAPITests: XCTestCase {
     XCTAssertEqual(sent.contentLength, sent.body.count, "A server would wait for missing bytes")
     let shape = try XCTUnwrap(sent.json["shape"] as? NSDictionary)
     XCTAssertEqual(shape, ["area": NSNull(), "day": NSNull(), "kind": "half"])
+  }
+
+  func testAShortBankSaysHowManyQuestionsTheMockCanAsk() async throws {
+    let transport = RecordingTransport(
+      answer: #"""
+        {"examQuestions": 45, "id": null, "limit": "day", "minutes": 63, "questions": 12,
+         "status": "short"}
+        """#)
+    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    let outcome = try await api.startMock(
+      token: "token", goalId: goalId,
+      choice: .practice(MockShape(area: "Matemática e suas Tecnologias", kind: .area)),
+      acceptFewer: false)
+
+    XCTAssertEqual(outcome, .short(examQuestions: 45, limit: .day, minutes: 63, questions: 12))
   }
 
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {

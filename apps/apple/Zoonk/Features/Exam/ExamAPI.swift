@@ -1,11 +1,7 @@
 import Foundation
 
 enum MockStartOutcome: Equatable, Sendable {
-  enum Limit: String, Decodable, Sendable {
-    case day
-    case month
-    case total
-  }
+  typealias Limit = Components.Schemas.AnytimeMock.LimitPayload
 
   case started(id: String)
   case needsQuestions
@@ -116,11 +112,11 @@ struct ExamAPI {
       MockStartRequest(choice: choice, acceptFewer: acceptFewer))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
-      let started: AnytimeMockResponse
+      let started: Components.Schemas.AnytimeMock
 
       switch try await client.startAnytimeMock(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response): started = try PracticeJSON.recode(try response.body.json)
-      case .created(let response): started = try PracticeJSON.recode(try response.body.json)
+      case .ok(let response): started = try response.body.json
+      case .created(let response): started = try response.body.json
       case .code402: return .plusRequired
       case .unprocessableContent(let response):
         let code = try? response.body.json.error.code
@@ -132,16 +128,15 @@ struct ExamAPI {
       }
 
       switch started.status {
-      case "started", "running":
-        return .started(id: started.id)
-      case "needsQuestions":
+      case .started, .running:
+        guard let id = started.id else { throw APIError.unavailable }
+        return .started(id: id)
+      case .needsQuestions:
         return .needsQuestions
-      case "short":
+      case .short:
         return .short(
           examQuestions: started.examQuestions ?? 0, limit: started.limit,
           minutes: started.minutes ?? 0, questions: started.questions ?? 0)
-      default:
-        throw APIError.unavailable
       }
     }
   }
@@ -422,15 +417,6 @@ private struct MockStartRequest: Encodable {
       try container.encode(shape.kind, forKey: .kind)
     }
   }
-}
-
-private struct AnytimeMockResponse: Decodable {
-  let examQuestions: Int?
-  let id: String
-  let limit: MockStartOutcome.Limit?
-  let minutes: Int?
-  let questions: Int?
-  let status: String
 }
 
 private struct MockAnswerRequest: Encodable {
