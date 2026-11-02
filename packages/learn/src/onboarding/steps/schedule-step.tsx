@@ -6,6 +6,7 @@ import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
+import { useEffect } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
@@ -164,6 +165,7 @@ export function ScheduleStep({
   getTimeAdvice,
   goal,
   onAnswer,
+  onPlanReadyChange,
   pending,
   planReadiness,
   recommendedMinutes,
@@ -174,6 +176,7 @@ export function ScheduleStep({
   exam?: boolean;
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
+  onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
   recommendedMinutes: number;
@@ -194,6 +197,10 @@ export function ScheduleStep({
   });
 
   const wait = getPlanWait({ gate: schedule.gate, opened: planReadiness, run });
+
+  useEffect(() => {
+    onPlanReadyChange(wait === null);
+  }, [onPlanReadyChange, wait]);
 
   if (wait === "notice") {
     return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;

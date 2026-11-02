@@ -4,7 +4,7 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
@@ -21,35 +21,6 @@ const POLL_MS = 3000;
 
 type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
 
-function usePlanWait({
-  isReady,
-  recordPlanWait,
-}: {
-  isReady: boolean;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
-}) {
-  const startedAt = useRef<number | null>(null);
-
-  const record = useEffectEvent((milliseconds: number) => {
-    void recordPlanWait(milliseconds);
-  });
-
-  useEffect(() => {
-    if (!isReady) {
-      startedAt.current ??= Date.now();
-      return;
-    }
-
-    if (startedAt.current === null) {
-      return;
-    }
-
-    const milliseconds = Date.now() - startedAt.current;
-    startedAt.current = null;
-    record(milliseconds);
-  }, [isReady]);
-}
-
 export function PlanReveal({
   actions,
   focusTestHref,
@@ -58,6 +29,7 @@ export function PlanReveal({
   initialPlan,
   isGuest,
   libraryCourse,
+  onPlanReadyChange,
   planActions,
   planLinkHref,
   run,
@@ -71,6 +43,7 @@ export function PlanReveal({
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   libraryCourse: LibraryCourseLink | null;
+  onPlanReadyChange: (isReady: boolean) => void;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
   run: GenerationRun | null;
@@ -114,15 +87,19 @@ export function PlanReveal({
     timeoutMs: Infinity,
   });
 
-  usePlanWait({
-    isReady: Boolean(plan?.ready) && !readingNotice,
-    recordPlanWait: actions.recordPlanWait,
-  });
+  const isReady = Boolean(plan?.ready) && !readingNotice;
+  const isLoading = !read && poll.status === "polling";
+
+  useEffect(() => {
+    if (!isLoading) {
+      onPlanReadyChange(isReady);
+    }
+  }, [isLoading, isReady, onPlanReadyChange]);
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 
   if (!plan?.ready) {
-    return !read && poll.status === "polling" ? (
+    return isLoading ? (
       <StepLoading />
     ) : (
       <PlanBuilding run={waitRun}>

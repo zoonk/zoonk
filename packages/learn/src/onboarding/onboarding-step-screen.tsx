@@ -5,6 +5,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { useRef } from "react";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
@@ -29,6 +30,23 @@ import {
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
+
+function usePlanWait(recordPlanWait: OnboardingActions["recordPlanWait"]) {
+  const startedAt = useRef<number | null>(null);
+
+  return (isReady: boolean) => {
+    if (!isReady) {
+      startedAt.current ??= Date.now();
+      return;
+    }
+
+    if (startedAt.current !== null) {
+      const milliseconds = Date.now() - startedAt.current;
+      startedAt.current = null;
+      void recordPlanWait(milliseconds);
+    }
+  };
+}
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
@@ -165,6 +183,7 @@ export function OnboardingStepScreen({
 }) {
   const subject = getSubject(view);
   const props = { onAnswer, pending };
+  const onPlanReadyChange = usePlanWait(actions.recordPlanWait);
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
@@ -181,6 +200,7 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          onPlanReadyChange={onPlanReadyChange}
           planReadiness={view.planReadiness}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
@@ -223,6 +243,7 @@ export function OnboardingStepScreen({
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
           isGuest={isGuest}
+          onPlanReadyChange={onPlanReadyChange}
           libraryCourse={
             view.libraryCourse
               ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
