@@ -1,6 +1,5 @@
 "use client";
 
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import {
   createContext,
   useCallback,
@@ -10,7 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "./player-shortcuts";
 import { useWordAudio } from "./use-word-audio";
 
 type PlayerAudioContextValue = {
@@ -92,8 +90,6 @@ export function PlayerAudioProvider({
     [pause, playingAudioUrl, startAudio],
   );
 
-  usePlayerAudioKeyboardShortcut({ audioUrl, onToggleAudio: toggleAudio });
-
   useEffect(() => {
     if (!audioUrl || !autoPlayAudio || hasHandledAudioPromptRef.current) {
       return;
@@ -127,24 +123,4 @@ export function useSharedPlayerAudio(audioUrl: string) {
 
 export function usePromptAudioUrl(): string | null {
   return useContext(PlayerAudioContext)?.audioUrl ?? null;
-}
-
-function usePlayerAudioKeyboardShortcut({
-  audioUrl,
-  onToggleAudio,
-}: {
-  audioUrl: string | null;
-  onToggleAudio: (audioUrl: string) => void;
-}) {
-  useKeyboardCallback(
-    PLAYER_AUDIO_KEYBOARD_SHORTCUT,
-    () => {
-      if (!audioUrl) {
-        return false;
-      }
-
-      onToggleAudio(audioUrl);
-    },
-    { mode: "none", screen: true },
-  );
 }
