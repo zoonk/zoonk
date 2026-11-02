@@ -1,6 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
+import { migrateDevelopmentDatabase } from "../worktree/databases.mts";
 import {
   getMailboxCaptureUrl,
   getPortlessEnvironment,
@@ -126,6 +128,8 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
     environment: stackEnvironment,
   });
 }
+
+await migrateDevelopmentDatabase(realpathSync(currentDirectory));
 
 const result =
   !productionMode && (directMode || process.env.PORTLESS === "0")

@@ -7,7 +7,13 @@ import {
   pruneDatabases,
   stopProcessesInRemovedDirectories,
 } from "./cleanup.mts";
-import { type WorktreeDatabase, markDatabase, prepareDatabases } from "./databases.mts";
+import {
+  type WorktreeDatabase,
+  markDatabase,
+  migrateDevelopmentDatabase,
+  prepareDatabases,
+  prisma,
+} from "./databases.mts";
 import {
   copyEnvironment,
   databaseEnvironment,
@@ -43,21 +49,6 @@ function installDependencies(): Promise<string> {
   });
 }
 
-function prisma({
-  args,
-  env = process.env,
-}: {
-  args: string[];
-  env?: NodeJS.ProcessEnv;
-}): Promise<string> {
-  return run({
-    args: [requireDatabase.resolve("prisma/build/index.js"), ...args],
-    command: process.execPath,
-    cwd: databaseDirectory,
-    env,
-  });
-}
-
 async function initializeTestDatabase({
   database,
   source,
@@ -85,14 +76,16 @@ async function setupIsolatedDatabases(source: URL): Promise<void> {
   ]);
 
   const freshTests = databases.filter((database) => database.mode !== "dev" && !database.ready);
-  log("Generating Prisma and preparing test databases…");
+  log("Generating Prisma, migrating the development copy and preparing test databases…");
 
   await together([
-    prisma({ args: ["generate"] }),
+    prisma({ args: ["generate"], worktree }),
+    migrateDevelopmentDatabase(worktree),
     ...freshTests.map((database) =>
       prisma({
         args: ["migrate", "deploy"],
         env: { ...process.env, ...databaseEnvironment({ name: database.name, source }) },
+        worktree,
       }),
     ),
   ]);
@@ -147,7 +140,7 @@ async function main(): Promise<void> {
     );
 
     await installDependencies();
-    await prisma({ args: ["generate"] });
+    await prisma({ args: ["generate"], worktree });
   }
 
   log(`Worktree ready in ${((performance.now() - started) / 1000).toFixed(2)}s.`);
