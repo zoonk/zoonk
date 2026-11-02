@@ -4,7 +4,7 @@ import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useEnterKey, useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -84,11 +84,8 @@ function FlagButton() {
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
-  const screenKey = { mode: "none", screen: true } as const;
 
-  // Caps Lock sends the capital.
-  useKeyboardCallback(FLAG_KEY, runner.toggleFlag, screenKey);
-  useKeyboardCallback(FLAG_KEY.toUpperCase(), runner.toggleFlag, screenKey);
+  useLetterKey(FLAG_KEY, runner.toggleFlag);
 
   return (
     <Button

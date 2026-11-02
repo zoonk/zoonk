@@ -167,9 +167,16 @@ export function useEnterClick<Target extends HTMLElement>({
   return ref;
 }
 
+/** A screen's letter key, pressed in either case because Caps Lock sends the capital. */
+export function useLetterKey(letter: string, callback: () => ShortcutResult) {
+  const options = { mode: "none", screen: true } as const;
+  useKeyboardCallback(letter, callback, options);
+  useKeyboardCallback(letter.toUpperCase(), callback, options);
+}
+
 /** P plays or pauses the screen's audio. Spread the result on its button: Enter there runs the screen's main action, and plays only when there's none. */
 export function useAudioKey(toggle: () => ShortcutResult) {
-  useKeyboardCallback(AUDIO_KEY, toggle, { mode: "none", screen: true });
+  useLetterKey(AUDIO_KEY, toggle);
   return AUDIO_BUTTON;
 }
 

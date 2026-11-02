@@ -387,9 +387,15 @@ describe("lesson by keyboard", () => {
         await press("p");
         await expect.poll(() => plays.mock.calls.length).toBe(3);
 
+        document.body.dispatchEvent(
+          new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key: "P" }),
+        );
+
+        await expect.poll(() => plays.mock.calls.length).toBe(4);
+
         await press("Enter");
         await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-        expect(plays).toHaveBeenCalledTimes(3);
+        expect(plays).toHaveBeenCalledTimes(4);
       });
     },
   );
