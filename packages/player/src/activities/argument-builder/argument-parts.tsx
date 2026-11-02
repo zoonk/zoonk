@@ -57,7 +57,7 @@ export function ArgumentCandidate({
       {...dragProps}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left outline-none focus-visible:ring-[3px]",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left outline-none select-none focus-visible:ring-[3px]",
         !disabled && "cursor-grab active:cursor-grabbing",
         isDragging && "relative z-20 shadow-lg",
       )}

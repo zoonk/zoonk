@@ -33,7 +33,7 @@ function EntryText({ text }: { text: string }) {
 }
 
 const entryClass =
-  "rounded-option ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
+  "rounded-option ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
 
 /** The host gets the pairs once all are matched, null before. */
 export function MatchPairsQuestion({

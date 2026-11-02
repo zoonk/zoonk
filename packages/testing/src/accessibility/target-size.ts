@@ -52,6 +52,7 @@ export type TargetSample = {
   pseudos: { height: string; width: string }[];
   role: string;
   slot: string | undefined;
+  userSelect: string;
   visibility: string;
 };
 
@@ -100,6 +101,7 @@ export function sampleTargets(selector: string): TargetSample[] {
         .map((pseudo) => ({ height: pseudo.height, width: pseudo.width })),
       role: element.getAttribute("role") ?? element.tagName.toLowerCase(),
       slot: element.dataset.slot,
+      userSelect: style.userSelect,
       visibility: style.visibility,
       width: rect.width,
     };
@@ -111,7 +113,7 @@ function toPixels(value: string): number {
 }
 
 /** Screen-reader-only controls and Base UI's slider input clip themselves to nothing. */
-function isHiddenTarget(sample: TargetSample): boolean {
+export function isHiddenTarget(sample: TargetSample): boolean {
   return (
     sample.inactive ||
     sample.visibility !== "visible" ||
@@ -126,7 +128,7 @@ function isHiddenTarget(sample: TargetSample): boolean {
  * WCAG 2.5.8 exempts a target in running text, whose height comes from its line. A button in text
  * computes to `inline-block`.
  */
-function isInText(sample: TargetSample): boolean {
+export function isInText(sample: TargetSample): boolean {
   const lineHeight =
     toPixels(sample.blockLineHeight) ||
     toPixels(sample.blockFontSize) * TARGET_LIMITS.normalLineHeight;
@@ -147,12 +149,11 @@ function getHitArea(sample: TargetSample) {
   };
 }
 
-function describeTarget(sample: TargetSample, size: { height: number; width: number }): string {
+export function describeTarget(sample: TargetSample): string {
   const name = sample.name.replaceAll(/\s+/gu, " ").slice(0, TARGET_LIMITS.nameLength);
   const slot = sample.slot ? ` data-slot="${sample.slot}"` : "";
-  const measured = `${Math.round(size.width)}×${Math.round(size.height)} px`;
 
-  return `<${sample.role}${slot}> "${name}" is ${measured}`;
+  return `<${sample.role}${slot}> "${name}"`;
 }
 
 export function findSmallTargets(samples: TargetSample[]): string[] {
@@ -164,6 +165,11 @@ export function findSmallTargets(samples: TargetSample[]): string[] {
     }
 
     const size = getHitArea(sample);
-    return size.height >= smallest && size.width >= smallest ? [] : [describeTarget(sample, size)];
+
+    if (size.height >= smallest && size.width >= smallest) {
+      return [];
+    }
+
+    return [`${describeTarget(sample)} is ${Math.round(size.width)}×${Math.round(size.height)} px`];
   });
 }
