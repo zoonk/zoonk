@@ -172,7 +172,7 @@
           context: LessonStepContext(
             lessonId: "gallery", studySessionId: nil, answer: answer, result: result,
             isLocked: result != nil, waitsForPicture: false,
-            select: { answer = $0 }, resolveSpoken: { _ in }),
+            select: { answer = $0 }, resolveSpoken: { _ in }, check: nil),
           part: part)
       }
     }

@@ -431,34 +431,13 @@ struct LessonActionBar: View {
       }
     }
 
-    let isReady = state.currentAnswer.map(isAnswerReady) ?? false
-
     return PrimaryAction(
       action: .check,
       title: step.kind == .hook
         ? LocalizedStringResource(
           "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
         : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer"),
-      isDisabled: !isReady || step.isRequiredPictureDrawing(openedAt: store.openedAt))
-  }
-
-  private func isAnswerReady(_ answer: LessonAnswer) -> Bool {
-    switch answer {
-    case .typedAnswer(let text), .spokenAnswer(let text):
-      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    case .fillBlank(let answers):
-      !answers.contains { $0.isEmpty }
-    case .reading(let words), .listening(let words):
-      !words.isEmpty
-    case .matchColumns(let pairs, _):
-      if case .language(let exercise, _) = step.content {
-        pairs.count == (exercise.content.pairs ?? []).count
-      } else {
-        false
-      }
-    default:
-      true
-    }
+      isDisabled: !step.canCheck(state.currentAnswer, openedAt: store.openedAt))
   }
 
   private static let continueTitle = LocalizedStringResource(
@@ -468,6 +447,29 @@ struct LessonActionBar: View {
 extension LessonStep {
   var showsOwnResult: Bool {
     kind == .challenge || kind == .matchColumns
+  }
+
+  func canCheck(_ answer: LessonAnswer?, openedAt: Date) -> Bool {
+    guard let answer, !isRequiredPictureDrawing(openedAt: openedAt) else {
+      return false
+    }
+
+    return switch answer {
+    case .typedAnswer(let text), .spokenAnswer(let text):
+      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    case .fillBlank(let answers):
+      !answers.contains { $0.isEmpty }
+    case .reading(let words), .listening(let words):
+      !words.isEmpty
+    case .matchColumns(let pairs, _):
+      if case .language(let exercise, _) = content {
+        pairs.count == (exercise.content.pairs ?? []).count
+      } else {
+        false
+      }
+    default:
+      true
+    }
   }
 
   fileprivate var hasWordBank: Bool {
