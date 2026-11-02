@@ -34,6 +34,7 @@ import com.zoonk.android.feature.audio.withoutFailure
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
+import com.zoonk.android.feature.player.steps.listeningInstead
 
 /**
  * A language screen's own recording (a letter, a word, a sentence to hear), which plays as its screen
@@ -59,6 +60,10 @@ class PromptAudio internal constructor(
         if (autoplayed.value == stepId) return
         autoplayed.value = stepId
         play(url)
+    }
+
+    internal fun forget(stepId: String) {
+        if (autoplayed.value == stepId) autoplayed.value = null
     }
 }
 
@@ -86,19 +91,31 @@ fun promptAudioUrl(language: StepContent.Language): String? {
 
 /**
  * The previous screen's sound stops, including when the lesson ends; this one's starts once, so
- * rotating or resizing doesn't play it again.
+ * rotating or resizing doesn't play it again. A spoken screen's listening exercise, shown when the
+ * learner can't talk, plays each time they switch to it and stops when they switch back, as on main.
  */
 @Composable
 fun PromptAudioEffect(
     step: LessonStep?,
+    cantTalk: Boolean,
     prompt: PromptAudio,
 ) {
-    LaunchedEffect(step?.id) {
+    val url = step?.let { shownPromptUrl(it, cantTalk) }
+    LaunchedEffect(step?.id, url) {
         prompt.cancel()
         val id = step?.id ?: return@LaunchedEffect
-        promptAudioUrl(step)?.let { prompt.autoplay(id, it) }
+        if (url == null) prompt.forget(id) else prompt.autoplay(id, url)
     }
 }
+
+private fun shownPromptUrl(
+    step: LessonStep,
+    cantTalk: Boolean,
+): String? =
+    when (val content = step.content) {
+        is StepContent.SpokenAnswer -> content.listeningInstead(cantTalk)?.let { promptAudioUrl(it) }
+        else -> promptAudioUrl(step)
+    }
 
 @Composable
 fun PromptAudioIconButton(

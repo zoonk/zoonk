@@ -294,7 +294,7 @@ fun LessonPlayer(
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
-    language.prompt?.let { PromptAudioEffect(shownStep, it) }
+    language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) { onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() } }
     val actions =
