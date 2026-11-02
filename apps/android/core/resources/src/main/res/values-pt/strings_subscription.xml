@@ -26,7 +26,7 @@
   "subscription_benefit_calls": "6651b762ff1f16ece0408f4639efd528c476e5265d23221b9d2b88e2177cc7a9",
   "subscription_benefit_exam": "ec300c508a52dc8d6b5d7067a41025c83d33e4f9383561be8e5c875b882fd9cc",
   "subscription_benefit_mocks": "2bf1356cf63dcb82fc80c66fca336c3ae12526c818d1c9ced485267053fd69a4",
-  "subscription_benefits_summary": "7c7e30389c11d3d6d4fd5b100bb06a3be520d8d6d53a2e4864ad79df0b7e665d",
+  "subscription_benefits_summary": "65a0a2eb4ddccb10eb34d7dae4c383403b2357119a9da29387e89a2ba50fdc00",
   "subscription_billed_monthly": "00c626a160472ce842070a7d4bee8a6c6cbc6912a4f18e2c981449dc44652c26",
   "subscription_billing_period": "5f25881eaba8c673834dd4c58a2dcd5a7c47f9f471a8a93feaa96e8bd309fa2b",
   "subscription_cancel": "62bd747b7124cfddb449ac6121838d2210d44ea460a3c3addb8586173b751afc",
@@ -162,7 +162,7 @@
     <string name="subscription_already_plus_apple">Você já tem o Plus pela App Store.</string>
     <string name="subscription_already_plus_google">Você já tem o Plus pelo Google Play.</string>
     <string name="subscription_already_plus_website">Você já tem o Plus pelo site do Zoonk.</string>
-    <string name="subscription_benefits_summary">Todos os objetivos · todas as aulas</string>
+    <string name="subscription_benefits_summary">Todos os objetivos · todas as aulas</string>
     <string name="subscription_benefit_exam">Seu plano completo de estudos, para cada dia até a prova</string>
     <string name="subscription_benefit_mocks">Simulados com tempo marcado, como na prova de verdade</string>
     <string name="subscription_benefit_buddy">Um parceiro de estudos com IA para quando você precisar de ajuda</string>
