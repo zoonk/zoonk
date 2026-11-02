@@ -161,7 +161,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     return PlanAnswer(answer, first, answer ?: last, status, restart)
 }
 
-private fun <T> jsonSaver(serializer: KSerializer<T>) =
+internal fun <T> jsonSaver(serializer: KSerializer<T>) =
     Saver<T, String>(
         save = { ApiJson.encodeToString(serializer, it) },
         restore = { ApiJson.decodeFromString(serializer, it) },

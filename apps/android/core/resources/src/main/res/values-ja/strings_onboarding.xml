@@ -21,6 +21,8 @@
   "onboarding_buddy_description": "4deab14de496423fd347c846018a3cf518bd91e3285a397e5069800dd954c9b1",
   "onboarding_buddy_title": "6a67fc4117c2e75adaf3fa3b52991a7ccc36fe5bb3a3353bde878eab6d324471",
   "onboarding_cancel": "f38bf700f1e5d2d5d337be42237ce4c6df18c7e024fd50763ef149479b3b2206",
+  "onboarding_change_date": "b071660b0d568f8a2693de8a969230b1cf06867c9ebf1e7092b700aa94af518b",
+  "onboarding_choose_date": "c9e912c3ece8fcbc2ba03c9310d3863755d544a975aca563da7cab5df5f4aa12",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
@@ -976,6 +978,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">週末の学習時間を変える</string>
     <string name="onboarding_schedule_time_label">1日の学習時間</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">日付を選ぶ</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">日付を変更する</string>
     <string name="onboarding_study_days">学習日数</string>
     <string name="onboarding_weekend_time_label">週末の学習時間</string>
     <string name="onboarding_answers_saved">回答は保存されています。</string>

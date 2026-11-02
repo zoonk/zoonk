@@ -21,6 +21,8 @@
   "onboarding_buddy_description": "3d462e210c95da8532598bf1f522f5142cf034177aa64972b75b090699eba9af",
   "onboarding_buddy_title": "98ea45f84338bf4b61932937c88df63e9e3361f2993d505678ecb80f0666cd51",
   "onboarding_cancel": "0ac34f0f2dc62fd8b1b3a47061f6c11e2b7bf0e70849df2f4d5e6420f02477a3",
+  "onboarding_change_date": "f6436978fb8d9af3cea9ece875b3a71a339dcaed452ed10dc2773dbed03319e6",
+  "onboarding_choose_date": "022d735d2bca516e9859a552d1792850c3b5cf3ba75a5596cdb355341878f47d",
   "onboarding_continue": "64393e0ccd7cc3b6790c81b16e4b579c3d79095cf83307672fb4368f9e42ccb8",
   "onboarding_course_build": "14763a5e1414c4f6f99e866e919fb8a2701b1aaa7a8a899fa4f4b7984a87edb4",
   "onboarding_course_chapter_description": "095b057c67d4e785891fa4086789b046be13ce6cd715a7ad614080380385d12b",
@@ -976,6 +978,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">주말 학습 시간 따로 정하기</string>
     <string name="onboarding_schedule_time_label">하루 학습 시간</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">날짜 선택하기</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">날짜 변경하기</string>
     <string name="onboarding_study_days">학습 일수</string>
     <string name="onboarding_weekend_time_label">주말 학습 시간</string>
     <string name="onboarding_answers_saved">답변은 저장되어 있어요.</string>

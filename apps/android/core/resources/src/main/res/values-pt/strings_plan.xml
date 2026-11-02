@@ -513,8 +513,8 @@
   "plan_time_none": "370d39b2cfadbbd52a95325560f614100e494c62bdc510c50b8f4ccd045cb1a3",
   "plan_time_none_month": "2f6b6258f49615b28d1e7218a2743b8a04ffa3d4d7f1fd209cf8410cb8d2e637",
   "plan_time_on_weekends": "c684609c14cd169d562b1996814282aab25deffc97408a75adda2ea7de480140",
-  "plan_time_past_date": "abdaeebfcc4dcbf1ba40b97d06cd2c2a6a059adfbc1cad52fc2e34fdc2d285c0",
-  "plan_time_past_date_month": "45e30e483295c1144002c5238bbbdd343484a0f0d6d11b81db43b8e6efa1d6fb",
+  "plan_time_past_date": "c203b67f5c67f8d0ab4bccf2c49b57e5a571fac7583bb47473a4384da6b5650b",
+  "plan_time_past_date_month": "916e6b1b4af8d77f1767614b56c69b249752631020554930b3de7de6dedc3288",
   "plan_time_share_exam": "5b6f6f5bcf123f2daa66a85728bb930559b559bcbfa33c93b2a03c28c3822910",
   "plan_time_share_exam_month": "0724e914d6fd8f6bc8e935ec7af6b07c15265c4680832d86802826ebf8ef26b1",
   "plan_time_share_goal": "8f2008cf7957749d9b5696184c6f20688d99cf1efebac2dd2bb3fbbcce8a8edc",
@@ -1523,9 +1523,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Dá para estudar todo o conteúdo da sua meta até %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">A data escolhida, %1$s, já passou. Você pode escolher outra na próxima tela.</string>
+    <string name="plan_time_past_date">A data da sua meta, %1$s, já passou.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">A data escolhida, %1$s, já passou. Você pode escolher outra na próxima tela.</string>
+    <string name="plan_time_past_date_month">A data da sua meta, %1$s, já passou.</string>
     <string name="plan_time_finish_unknown">A gente não consegue estimar uma data de conclusão para essa rotina. Tente aumentar o tempo ou os dias de estudo.</string>
     <string name="plan_time_finish_failed">A gente não conseguiu calcular quando você terminaria.</string>
     <string name="plan_time_no_days">Escolha pelo menos um dia de estudo.</string>
