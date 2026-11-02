@@ -128,6 +128,7 @@ export async function waitForQuiet(page: Page, traffic: Traffic): Promise<boolea
 
 export async function openPage({
   actions,
+  baseUrl,
   browser,
   scheme,
   storageState,
@@ -135,6 +136,7 @@ export async function openPage({
   viewport,
 }: {
   actions: Map<string, string>;
+  baseUrl?: string;
   browser: Browser;
   scheme: Scheme;
   storageState?: BrowserContextOptions["storageState"];
@@ -143,6 +145,7 @@ export async function openPage({
 }) {
   const context = await browser.newContext({
     ...VIEWPORTS[viewport],
+    baseURL: baseUrl,
     colorScheme: scheme,
     storageState,
   });
