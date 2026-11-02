@@ -60,6 +60,19 @@ final class LessonPromptAudioTests: XCTestCase {
     await clips.endAll()
   }
 
+  func testAPromptThatStopsShowingStopsPlaying() async {
+    let clips = Clips()
+    let prompt = LessonPromptAudio()
+
+    prompt.enter(prompt: Self.word, audio: clips.audio)
+    await waitUntil { clips.plays.count == 1 }
+    prompt.enter(prompt: nil, audio: clips.audio)
+
+    XCTAssertNil(prompt.playing)
+    XCTAssertEqual(clips.stops, 1)
+    await clips.endAll()
+  }
+
   func testTheLastScreensClipEndingLateLeavesTheNextPromptPlaying() async {
     let clips = Clips()
     let prompt = LessonPromptAudio()

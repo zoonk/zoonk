@@ -151,7 +151,7 @@ extension LanguageExercise {
 }
 
 extension LessonStep {
-  /// Main's `getPromptAudioUrl`: the listening a spoken screen offers instead never plays on its own.
+  /// Main's `getPromptAudioUrl`.
   var promptAudio: URL? {
     guard case .language(let exercise, _) = content else {
       return nil
@@ -169,12 +169,10 @@ final class LessonPromptAudio {
   private(set) var playing: URL?
   @ObservationIgnored private var task: Task<Void, Never>?
 
-  /// Another screen in view, whose sounds the lesson already stopped: its prompt plays once, on its
-  /// own.
+  /// The screen in view, or the prompt it shows, changed: the last prompt stops and this one plays
+  /// once, on its own.
   func enter(prompt: URL?, audio: LessonAudio) {
-    task?.cancel()
-    task = nil
-    playing = nil
+    stop(audio: audio)
 
     if let prompt {
       play(prompt, audio: audio, autoplay: true)

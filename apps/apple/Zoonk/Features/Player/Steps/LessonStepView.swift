@@ -362,6 +362,13 @@ enum SpokenAnswerMode: Equatable {
   }
 }
 
+extension LessonPlayerStore {
+  func spokenAnswerMode(canListen: Bool, canSpeak: Bool) -> SpokenAnswerMode {
+    SpokenAnswerMode(
+      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalkToday, micBlocked: isMicBlocked)
+  }
+}
+
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @FocusState private var isFocused: Bool
@@ -379,9 +386,7 @@ private struct SpokenAnswerStepView: View {
   }
 
   private var mode: SpokenAnswerMode {
-    SpokenAnswerMode(
-      canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-      micBlocked: store.isMicBlocked)
+    store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
   }
 
   var body: some View {
