@@ -1,3 +1,4 @@
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -13,7 +14,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  turbopack: { rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } } },
+  turbopack: { rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } } },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },
 };
