@@ -3,10 +3,12 @@ const MAX_NUMBER_KEY = 9;
 export const POPUP_SELECTOR =
   "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
 
-/** A radio isn't one: Enter on a picked answer submits it, as a radio does in a form. */
+export const SCREEN_ENTER_ATTRIBUTE = "data-screen-enter";
+
+/** A radio isn't one: Enter on a picked answer submits it, as a radio does in a form. Nor is a button with its own key, such as audio's P. */
 const PRESSABLE_SELECTOR = [
   "a[href]",
-  "button:not([role='radio'])",
+  `button:not([role='radio'], [${SCREEN_ENTER_ATTRIBUTE}])`,
   "summary",
   "[role='button']",
   "[role='checkbox']",

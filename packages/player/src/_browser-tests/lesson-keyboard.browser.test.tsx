@@ -1,6 +1,6 @@
 import { act } from "@testing-library/react";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import {
   expectCount,
@@ -16,9 +16,18 @@ import {
   buildAdapters,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type PlayableLanguageStep,
+  type PlayableLibraryStep,
+} from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { activityStep, languageStep, teachingStep } from "../preview/preview-steps";
+import {
+  activityStep,
+  languageStep,
+  spokenAnswerStep,
+  teachingStep,
+} from "../preview/preview-steps";
 
 const DESKTOP = { height: 900, width: 1280 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -72,7 +81,42 @@ async function pressEnterOn(target: Locator) {
   await press("Enter");
 }
 
+function listeningWithAudio(): PlayableLanguageStep {
+  const step = languageStep("listening");
+  const { sentence } = step.exercise;
+
+  if (!sentence) {
+    throw new Error("The listening step has no sentence");
+  }
+
+  return {
+    ...step,
+    exercise: {
+      ...step.exercise,
+      sentence: { ...sentence, audioUrl: "https://audio.zoonk.test/sentence.mp3" },
+    },
+  };
+}
+
+function countPlays() {
+  const plays = vi.fn();
+
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
+    this: HTMLMediaElement,
+  ) {
+    plays();
+    setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+    return Promise.resolve();
+  });
+
+  return plays;
+}
+
 describe("lesson by keyboard", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("a focused control keeps Enter, and a menu or a sheet holds the lesson's keys", async () => {
     await atViewport(DESKTOP, async () => {
       openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
@@ -303,6 +347,58 @@ describe("lesson by keyboard", () => {
       await expect.element(bankTile("orbit")).toHaveFocus();
     });
   });
+
+  it.each<[string, () => PlayableLibraryStep]>([
+    ["a listening step", listeningWithAudio],
+    [
+      "a spoken step answered by listening",
+      () => ({ ...spokenAnswerStep(), listening: listeningWithAudio().exercise }),
+    ],
+  ])(
+    "Enter on the play button of %s checks the answer, playing only while there's nothing to check, and P plays",
+    async (_, step) => {
+      await atViewport(DESKTOP, async () => {
+        const plays = countPlays();
+
+        renderLessonPlayer({
+          lesson: buildLesson([step(), teachingStep("summary")], {
+            language: "pt",
+            targetLanguage: "en",
+          }),
+        });
+
+        const play = page.getByRole("button", { name: "Play pronunciation" });
+
+        await pressEnterOn(play);
+        await expect.poll(() => plays.mock.calls.length).toBe(1);
+
+        for (const word of ["Quanto", "é", "o", "aluguel?"]) {
+          // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+          await bankTile(word).click();
+        }
+
+        await play.click();
+        await expect.poll(() => plays.mock.calls.length).toBe(2);
+        await expect.element(play).toHaveFocus();
+
+        await press("Enter");
+        await expect.element(verdict("Correct!")).toBeVisible();
+
+        await press("p");
+        await expect.poll(() => plays.mock.calls.length).toBe(3);
+
+        document.body.dispatchEvent(
+          new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key: "P" }),
+        );
+
+        await expect.poll(() => plays.mock.calls.length).toBe(4);
+
+        await press("Enter");
+        await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+        expect(plays).toHaveBeenCalledTimes(4);
+      });
+    },
+  );
 
   it("a held Enter presses a focused button once, so it neither empties the word bank nor skips the feedback", async () => {
     await atViewport(DESKTOP, async () => {

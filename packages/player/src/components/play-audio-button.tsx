@@ -2,12 +2,12 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { AUDIO_KEY, useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { useSharedPlayerAudio } from "../player-audio-context";
-import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
 
 function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; preload: boolean }) {
@@ -22,11 +22,7 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
   useEffect(() => () => setIsPlaying(false), []);
 
   if (sharedAudio) {
-    return {
-      handleClick: sharedAudio.toggle,
-      isPlaying: sharedAudio.isPlaying,
-      keyboardShortcut: PLAYER_AUDIO_KEYBOARD_SHORTCUT,
-    };
+    return { handleClick: sharedAudio.toggle, isPlaying: sharedAudio.isPlaying };
   }
 
   return {
@@ -44,7 +40,6 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
       });
     },
     isPlaying,
-    keyboardShortcut: undefined,
   };
 }
 
@@ -61,10 +56,8 @@ export function PlayAudioButton({
 }) {
   const t = useExtracted();
 
-  const { handleClick, isPlaying, keyboardShortcut } = usePlayAudioButtonState({
-    audioUrl,
-    preload,
-  });
+  const { handleClick, isPlaying } = usePlayAudioButtonState({ audioUrl, preload });
+  const audioKey = useAudioKey(handleClick);
 
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
@@ -72,7 +65,7 @@ export function PlayAudioButton({
   if (variant === "icon") {
     return (
       <Button
-        aria-keyshortcuts={keyboardShortcut}
+        {...audioKey}
         aria-label={label}
         className={cn("size-11", className)}
         onClick={handleClick}
@@ -87,7 +80,7 @@ export function PlayAudioButton({
 
   return (
     <Button
-      aria-keyshortcuts={keyboardShortcut}
+      {...audioKey}
       aria-label={label}
       className={cn("w-fit", className)}
       onClick={handleClick}
@@ -97,7 +90,7 @@ export function PlayAudioButton({
     >
       <Icon aria-hidden="true" />
       {isPlaying ? t("Pause") : t("Play")}
-      {keyboardShortcut && <ShortcutKbd>{keyboardShortcut.toUpperCase()}</ShortcutKbd>}
+      <ShortcutKbd>{AUDIO_KEY.toUpperCase()}</ShortcutKbd>
     </Button>
   );
 }

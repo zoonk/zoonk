@@ -4,6 +4,7 @@ import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/cont
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { MediaPending } from "@zoonk/ui/components/media-pending";
+import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, PlayIcon } from "lucide-react";
@@ -51,6 +52,19 @@ export function ListeningMessage({
     played ? t("Play the message again") : t("Play the message"),
   );
 
+  const play = () => {
+    setPlayed(true);
+
+    speech.speak({
+      rate: LISTENING_RATE,
+      segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
+    });
+  };
+
+  const toggle = status === "loading" || status === "playing" ? speech.cancel : play;
+
+  const audioKey = useAudioKey(() => (speech.isAvailable && !pending ? toggle() : false));
+
   if (!speech.isAvailable) {
     return <p lang={language}>{question.passage}</p>;
   }
@@ -66,23 +80,15 @@ export function ListeningMessage({
     );
   }
 
-  const play = () => {
-    setPlayed(true);
-
-    speech.speak({
-      rate: LISTENING_RATE,
-      segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
-    });
-  };
-
   return (
     <div className={cn(MESSAGE_CLASS, "flex flex-col justify-center gap-3 p-4")}>
       <div className="flex items-center gap-3">
         <Button
           aria-busy={status === "loading"}
-          onClick={status === "loading" || status === "playing" ? speech.cancel : play}
+          onClick={toggle}
           size="icon-lg"
           type="button"
+          {...audioKey}
         >
           <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
           <span className="sr-only">{label}</span>
