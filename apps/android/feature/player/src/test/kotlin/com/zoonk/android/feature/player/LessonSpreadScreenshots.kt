@@ -186,6 +186,10 @@ class LessonSpreadScreenshots {
     fun phoneVocabulary() = capture("phone-vocabulary", vocabulary("word", SOUND), open = false)
 
     @Test
+    @Config(qualifiers = PHONE)
+    fun phoneLetter() = capture("phone-letter", alphabet("letter", SOUND), open = false)
+
+    @Test
     @Config(qualifiers = BOOK, fontScale = 1.75f)
     fun bookTextOnlyAtLargeFont() = capture("book-text-only-font175", explanationStep("idea"))
 

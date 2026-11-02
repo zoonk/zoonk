@@ -6,14 +6,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,28 +36,30 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 
 /**
- * A language screen's own recording (a letter, a word, a sentence to hear). Once one has played,
- * the next screens' recordings play as they open, as on main; a recording that won't play is never
- * voiced in its place.
+ * A language screen's own recording (a letter, a word, a sentence to hear), which plays as its screen
+ * opens, as on main; a recording that won't play is never voiced in its place.
  */
 @Stable
 class PromptAudio internal constructor(
     private val audio: SpokenAudio,
-    private val autoplay: () -> Boolean,
-    private val autoplayed: () -> String?,
-    private val onAutoplayed: (String) -> Unit,
+    private val autoplayed: MutableState<String?>,
 ) {
     val state: SpeechState get() = audio.state
 
     fun toggle(url: String) = if (audio.isBusy) audio.cancel() else play(url)
 
-    internal fun play(url: String) = audio.speak(listOf(SpokenText(null, recording = url)))
+    private fun play(url: String) = audio.speak(listOf(SpokenText(null, recording = url)))
 
     internal fun cancel() = audio.cancel()
 
-    internal fun autoplays(stepId: String) = autoplay() && autoplayed() != stepId
-
-    internal fun markAutoplayed(stepId: String) = onAutoplayed(stepId)
+    internal fun autoplay(
+        stepId: String,
+        url: String,
+    ) {
+        if (autoplayed.value == stepId) return
+        autoplayed.value = stepId
+        play(url)
+    }
 }
 
 @Composable
@@ -64,11 +68,8 @@ fun rememberPromptAudio(
     language: String,
 ): PromptAudio {
     val audio = rememberSpokenAudio(speech, language)
-    var autoplay by rememberSaveable { mutableStateOf(false) }
-    var autoplayed by rememberSaveable { mutableStateOf<String?>(null) }
-    // Main turns autoplay on once a sound has actually started.
-    LaunchedEffect(audio.state) { if (audio.state == SpeechState.Playing) autoplay = true }
-    return PromptAudio(audio, autoplay = { autoplay }, autoplayed = { autoplayed }, onAutoplayed = { autoplayed = it })
+    val autoplayed = rememberSaveable { mutableStateOf<String?>(null) }
+    return PromptAudio(audio, autoplayed)
 }
 
 fun promptAudioUrl(step: LessonStep): String? = (step.content as? StepContent.Language)?.let { promptAudioUrl(it) }
@@ -84,8 +85,8 @@ fun promptAudioUrl(language: StepContent.Language): String? {
 }
 
 /**
- * The previous screen's sound stops, including when the lesson ends; this one's starts once a sound
- * has played before, and only once, so rotating or resizing doesn't play it again.
+ * The previous screen's sound stops, including when the lesson ends; this one's starts once, so
+ * rotating or resizing doesn't play it again.
  */
 @Composable
 fun PromptAudioEffect(
@@ -95,22 +96,34 @@ fun PromptAudioEffect(
     LaunchedEffect(step?.id) {
         prompt.cancel()
         val id = step?.id ?: return@LaunchedEffect
-        val url = promptAudioUrl(step) ?: return@LaunchedEffect
-        if (prompt.autoplays(id)) {
-            prompt.markAutoplayed(id)
-            prompt.play(url)
-        }
+        promptAudioUrl(step)?.let { prompt.autoplay(id, it) }
     }
 }
 
-/** The sound of a screen that's read, such as a word or a letter: in the action bar, or beside the card on a spread. */
 @Composable
 fun PromptAudioIconButton(
     url: String,
     prompt: PromptAudio,
 ) {
-    val label = speechActionLabel(prompt.state, stringResource(R.string.player_language_play_pronunciation))
+    val label = pronunciationLabel(prompt.state)
     FilledTonalIconButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
+        SpeechStatusIcon(prompt.state) { PlayIcon() }
+    }
+}
+
+/** A quieter copy of the action bar's button, at the word where learners look first; the bar's stays for the thumb. */
+@Composable
+internal fun PromptAudioInlineButton(
+    url: String,
+    prompt: PromptAudio,
+) {
+    val label = pronunciationLabel(prompt.state)
+    val color = if (prompt.state == SpeechState.Playing) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+    IconButton(
+        onClick = { prompt.toggle(url) },
+        modifier = Modifier.semantics { contentDescription = label },
+        colors = IconButtonDefaults.iconButtonColors(contentColor = color),
+    ) {
         SpeechStatusIcon(prompt.state) { PlayIcon() }
     }
 }
@@ -123,13 +136,16 @@ internal fun PromptAudioButton(
 ) {
     val state = prompt.state.withoutFailure()
     val playing = state == SpeechState.Playing
-    val label = speechActionLabel(state, stringResource(R.string.player_language_play_pronunciation))
+    val label = pronunciationLabel(state)
     FilledTonalButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
         SpeechStatusIcon(state) { PlayIcon() }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(stringResource(if (playing) R.string.player_language_stop else R.string.player_language_play))
     }
 }
+
+@Composable
+private fun pronunciationLabel(state: SpeechState) = speechActionLabel(state, stringResource(R.string.player_language_play_pronunciation))
 
 @Composable
 private fun PlayIcon() =

@@ -293,7 +293,8 @@ fun LessonPlayer(
                 state?.completion?.status == CompletionStatus.Saved
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
-    language.prompt?.let { PromptAudioEffect(screen?.step, it) }
+    val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
+    language.prompt?.let { PromptAudioEffect(shownStep, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) { onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() } }
     val actions =
@@ -441,7 +442,6 @@ fun LessonPlayer(
                                     actions,
                                     language.prompt,
                                     primaryFocus,
-                                    spread,
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
                                 ) {
                                     // A screen that already offers help keeps the ask quiet.
@@ -866,13 +866,12 @@ private fun ActionBar(
     actions: StepActions,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
-    spread: Boolean,
     onBack: () -> Unit,
     ask: @Composable () -> Unit,
 ) {
     val primary = screen.primary ?: return
-    // A screen that's read (a word, a letter) has its recording here, or with its card on a spread; listening plays it on the screen.
-    val promptUrl = screen.step?.takeIf { it.isReadStep && !spread }?.let { promptAudioUrl(it) }
+    // Listening plays its sentence from its own button on the screen.
+    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let { promptAudioUrl(it) }
 
     val back: (@Composable () -> Unit)? =
         if (screen.canGoBack) {
