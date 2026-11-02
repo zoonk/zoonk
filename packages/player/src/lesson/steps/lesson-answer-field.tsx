@@ -52,6 +52,10 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   );
 }
 
+function typesOnScreen(): boolean {
+  return !globalThis.matchMedia("(pointer: fine)").matches;
+}
+
 export function LessonAnswerField({
   autoFocusOnPointer = false,
   isLocked,
@@ -71,21 +75,26 @@ export function LessonAnswerField({
   const hintId = useId();
   const { actions, screen, state } = useLessonPlayer();
   const fieldRef = useRef<HTMLDivElement>(null);
+  const isChecking = state.phase === "checking";
   const isGraded = state.phase === "feedback";
 
   useEffect(() => {
-    if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
+    if (autoFocusOnPointer && !typesOnScreen()) {
       fieldRef.current
         ?.querySelector<HTMLElement>("input, textarea")
         ?.focus({ preventScroll: true });
     }
   }, [autoFocusOnPointer]);
 
+  // An on-screen keyboard would hide the check, so it closes as the check starts. A physical one
+  // stays in the field until the verdict, so a check that fails leaves the answer ready to edit.
   useEffect(() => {
-    if (isGraded && fieldRef.current?.contains(document.activeElement)) {
+    const isTyping = fieldRef.current?.contains(document.activeElement);
+
+    if (isTyping && (isGraded || (isChecking && typesOnScreen()))) {
       focusLessonAfterTurn();
     }
-  }, [isGraded]);
+  }, [isChecking, isGraded]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
@@ -95,6 +104,11 @@ export function LessonAnswerField({
     event.preventDefault();
 
     if (!screen.primary || screen.primary.disabled) {
+      // "Done" with nothing to check still puts the keyboard away.
+      if (typesOnScreen()) {
+        focusLessonAfterTurn();
+      }
+
       return;
     }
 
@@ -114,6 +128,7 @@ export function LessonAnswerField({
           aria-label={label}
           autoComplete="off"
           className="h-12 w-48 text-base tabular-nums sm:text-lg"
+          enterKeyHint="done"
           inputMode="decimal"
           maxLength={MAX_TYPED_ANSWER_LENGTH}
           onChange={(event) => onChange(event.target.value)}
@@ -126,6 +141,7 @@ export function LessonAnswerField({
           aria-describedby={hintId}
           aria-label={label}
           className="min-h-28 text-base sm:text-lg"
+          enterKeyHint="done"
           maxLength={MAX_TYPED_ANSWER_LENGTH}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
