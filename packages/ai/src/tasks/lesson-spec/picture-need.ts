@@ -3,6 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { type LessonSpec } from "./lesson-spec-rules";
 import instructions from "./picture-need.prompt.md";
 
@@ -19,24 +20,27 @@ export const pictureNeedClassifier = {
   question: {
     criteria: {
       false:
-        "The words already say everything the picture shows, or it repeats numbers or text, shows something everyone knows, repeats the picture before or gives the answer away.",
-      true: "A learner who only read the words would have to imagine what the picture shows, or the question is about the picture itself.",
+        "It shows what the words don't name, repeats numbers or text, repeats the picture before or gives the answer away, or, at intermediate and advanced, the words already say all it shows or it shows something everyone knows.",
+      true: "A learner who only read the words would have to imagine what the picture shows, the question is about the picture itself, or, at overview and beginner, it shows the screen's own example.",
     },
     instructions,
     type: "boolean",
   } as const,
   toInput: ({
     lesson,
+    level,
     picture,
     previousPicture,
     screen,
   }: {
     lesson: string;
+    level: CourseLevel;
     picture: string;
     previousPicture: string | null;
     screen: { brief: string; kind: string };
   }) => ({
     LESSON: lesson,
+    LEVEL: level,
     PICTURE: picture,
     PREVIOUS_PICTURE: previousPicture ?? "none",
     SCREEN: `${screen.kind}: ${screen.brief}`,
@@ -46,9 +50,11 @@ export const pictureNeedClassifier = {
 /** Native visuals (tables, charts, timelines) aren't pictures and stay as planned. */
 export async function keepTeachingPictures({
   analytics,
+  level,
   spec,
 }: {
   analytics?: AiGenerationContext;
+  level: CourseLevel;
   spec: LessonSpec;
 }): Promise<LessonSpec> {
   const verdicts = await Promise.all(
@@ -65,6 +71,7 @@ export async function keepTeachingPictures({
           fallbackModel,
           input: pictureNeedClassifier.toInput({
             lesson: spec.title,
+            level,
             picture,
             previousPicture: spec.screens[index - 1]?.visual ?? null,
             screen,

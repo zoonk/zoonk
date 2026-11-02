@@ -111,11 +111,23 @@ export const BASE_LESSONS = {
           visual: null,
         },
       ],
-      summary: [
-        "Start with the arch’s shape, then check the details around a church doorway.",
-        "Romanesque doorways have round arches, thick walls and small openings; Gothic doorways have pointed arches and thin columns.",
-        "Baroque doorways often have twisting columns, sweeping curves and rich decoration.",
-      ],
+      summary: {
+        nodes: [
+          {
+            idea: "Start with the arch’s shape, then check the details around a church doorway.",
+            label: "Arch shape first",
+          },
+          {
+            idea: "Romanesque doorways have round arches, thick walls and small openings; Gothic doorways have pointed arches and thin columns.",
+            label: "Romanesque or Gothic",
+          },
+          {
+            idea: "Baroque doorways often have twisting columns, sweeping curves and rich decoration.",
+            label: "Baroque doorways",
+          },
+        ],
+        shape: "list",
+      },
     },
     level: "beginner",
     spec: VISUAL_LESSON_SPECS["en-church-doorways-beginner"],
@@ -264,11 +276,23 @@ export const BASE_LESSONS = {
           visual: null,
         },
       ],
-      summary: [
-        "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.",
-        "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.",
-        "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.",
-      ],
+      summary: {
+        nodes: [
+          {
+            idea: "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.",
+            label: "Nuvem eletrônica",
+          },
+          {
+            idea: "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.",
+            label: "Atração do núcleo",
+          },
+          {
+            idea: "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.",
+            label: "Menor energia",
+          },
+        ],
+        shape: "list",
+      },
     },
     level: "overview",
     shortAnswers: true,
@@ -562,11 +586,23 @@ export const BASE_LESSONS = {
           question: "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?",
         },
       ],
-      summary: [
-        "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
-        "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-        "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
-      ],
+      summary: {
+        nodes: [
+          {
+            idea: "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+            label: "Trabalho ou capacidade fixa",
+          },
+          {
+            idea: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+            label: "Regra de três simples",
+          },
+          {
+            idea: "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
+            label: "Regra de três composta",
+          },
+        ],
+        shape: "list",
+      },
     },
     level: "intermediate",
     spec: LESSON_SPECS["pt-regra-de-tres-intermediate"],
@@ -705,10 +741,13 @@ export const BASE_LESSONS = {
           visual: null,
         },
       ],
-      summary: [
-        "A rise moves up the thermometer, even below zero.",
-        "Count up to zero first, then the degrees above it.",
-      ],
+      summary: {
+        nodes: [
+          { idea: "A rise moves up the thermometer, even below zero.", label: "Rising below zero" },
+          { idea: "Count up to zero first, then the degrees above it.", label: "Count up to zero" },
+        ],
+        shape: "list",
+      },
     },
     level: "beginner",
     shortAnswers: true,

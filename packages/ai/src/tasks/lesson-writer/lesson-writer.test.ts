@@ -24,6 +24,9 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "Write it for the exams.",
     "{{/exams}}",
     "Keep it short.",
+    "{{#novice}}",
+    "Show it before asking.",
+    "{{/novice}}",
     "{{#setup}}",
     "Write the setup.",
     "{{/setup}}",
@@ -87,24 +90,29 @@ describe(getLessonRewriteModel, () => {
   });
 });
 
+const EMPTY_MAP = { nodes: [], shape: "list" };
+
 describe(writeLessonDraft, () => {
   it("keeps only its own variants' rules, in place, and the date only for setup", async () => {
-    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ screens: [] }));
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ screens: [], summary: EMPTY_MAP }),
+    );
 
     const params = {
       activityTemplates: [],
       chapterTitle: "Temperature",
       courseTitle: "Weather",
       language: "en",
-      level: "beginner",
+      level: "intermediate",
       spec: spec([screen("hook"), screen("explanation"), screen("application")]),
     } satisfies Parameters<typeof writeLessonDraft>[0];
 
     const findError = spec([screen("hook"), screen("activity", "findError")]);
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, spotAi, material, sources, exam, setup, written] = await Promise.all([
+    const [regular, beginner, spotAi, material, sources, exam, setup, written] = await Promise.all([
       writeLessonDraft(params),
+      writeLessonDraft({ ...params, level: "beginner" }),
       writeLessonDraft({ ...params, spec: findError }),
       writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
       writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
@@ -114,6 +122,10 @@ describe(writeLessonDraft, () => {
     ]);
 
     expect(regular.systemPrompt).toBe("Write the lesson.\nKeep it short.\nCheck it.");
+
+    expect(beginner.systemPrompt).toBe(
+      "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
+    );
 
     expect(spotAi.systemPrompt).toBe(
       "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nCheck it.",
@@ -151,7 +163,9 @@ describe(writeLessonDraft, () => {
   });
 
   it("falls back from Gemini to Sol before Opus", async () => {
-    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ screens: [] }));
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ screens: [], summary: EMPTY_MAP }),
+    );
 
     const params = {
       activityTemplates: [],
@@ -189,7 +203,10 @@ describe(writeLessonDraft, () => {
           visual: null,
         },
       ],
-      summary: ["Two recessive alleles show their color."],
+      summary: {
+        nodes: [{ idea: "Two recessive alleles show their color.", label: "Recessive alleles" }],
+        shape: "list",
+      },
     };
 
     const model = new MockLanguageModelV4({

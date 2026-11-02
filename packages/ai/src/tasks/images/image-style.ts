@@ -4,7 +4,7 @@ import { type CourseCategory } from "@zoonk/utils/categories";
  * Bump it when new images would look different. Stored images are never redrawn on their own:
  * that's a person's call, and this version is how they find an older style's images.
  */
-export const IMAGE_STYLE_VERSION = 2;
+export const IMAGE_STYLE_VERSION = 3;
 
 /** Portrait, so it fills a phone's screen above the words. */
 export const IMAGE_SIZE = "1024x1280";

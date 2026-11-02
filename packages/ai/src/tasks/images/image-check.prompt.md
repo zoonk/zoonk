@@ -10,7 +10,7 @@ True when the focal object is there and clearly recognizable, and the image show
 
 ## onStyle
 
-True for a flat illustration with simple shapes, soft colors, a light plain background and one clear focal point, including a whole drawn with its labeled parts (an organ, a cycle, a map) and an artwork the scene names drawn in its own colors and technique. False for a photo or photorealism, glossy 3D, a dark or busy background, a poster or infographic with many parts, or several panels.
+True for a flat illustration with simple shapes, soft colors, a light plain background and one clear focal point, including a whole drawn with its labeled parts (an organ, a cycle, a map), a small scene of one place with the few things it lists, and an artwork the scene names drawn in its own colors and technique. False for a photo or photorealism, glossy 3D, a dark or busy background, a poster or infographic with many parts, or several panels.
 
 ## textCorrect
 

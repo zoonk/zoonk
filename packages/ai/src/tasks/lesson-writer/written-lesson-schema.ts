@@ -11,7 +11,15 @@ const MIN_WORKED_STEPS = 2;
 const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_ACCEPTED_ANSWERS = 5;
-const MAX_SUMMARY_IDEAS = 5;
+
+export const LESSON_MAP_SHAPES = [
+  "hub",
+  "sequence",
+  "nested",
+  "compare",
+  "equation",
+  "list",
+] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 
@@ -120,6 +128,12 @@ const checkScreenWithBasis = checkScreen.extend({ basis });
 const mathCheckScreenWithBasis = mathCheckScreen.extend({ basis });
 const typedAnswerScreenWithBasis = typedAnswerScreen.extend({ basis });
 
+/** The summary card: code checks its size and whether its shape fits (`normalizeLessonMap`). */
+const lessonMapSchema = z.object({
+  shape: z.enum(LESSON_MAP_SHAPES),
+  nodes: z.array(z.object({ label: z.string(), idea: z.string() })),
+});
+
 /* oxlint-enable eslint/sort-keys */
 
 /** One schema per written kind, so variants can ask for exactly the kind they rewrite. */
@@ -147,12 +161,14 @@ export const writtenScreenSchema = z.union([
 
 export const writtenLessonSchema = z.object({
   screens: z.array(writtenScreenSchema),
-  summary: z.array(z.string()).min(1).max(MAX_SUMMARY_IDEAS),
+  summary: lessonMapSchema,
 });
 
 export type WrittenScreen = z.infer<typeof writtenScreenSchema>;
 export type WrittenScreenKind = WrittenScreen["kind"];
 export type WrittenLesson = z.infer<typeof writtenLessonSchema>;
+export type LessonMap = WrittenLesson["summary"];
+export type LessonMapShape = LessonMap["shape"];
 
 const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly WrittenScreenKind[]>> = {
   activity: ["activity"],

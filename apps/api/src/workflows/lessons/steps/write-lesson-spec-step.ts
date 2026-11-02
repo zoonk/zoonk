@@ -76,7 +76,9 @@ async function planLesson({
   });
 
   const specs = await Promise.all(
-    data.lessons.map((spec) => keepTeachingPictures({ analytics: context, spec })),
+    data.lessons.map((spec) =>
+      keepTeachingPictures({ analytics: context, level: inputs.prompt.level, spec }),
+    ),
   );
 
   const saved = await saveLessonSpecs({

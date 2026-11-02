@@ -439,11 +439,23 @@ export const TEST_CASES: TestCase<
       ...regra,
       lesson: {
         ...(regra.lesson as WrittenLesson),
-        summary: [
-          "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
-          "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-          "Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.",
-        ],
+        summary: {
+          nodes: [
+            {
+              idea: "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
+              label: "Trabalho ou capacidade fixa",
+            },
+            {
+              idea: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              label: "Regra de três simples",
+            },
+            {
+              idea: "Na regra de três composta, todas as razões entram na mesma ordem, sem inverter nenhuma.",
+              label: "Regra de três composta",
+            },
+          ],
+          shape: "list",
+        },
       },
     },
   },
@@ -454,11 +466,23 @@ export const TEST_CASES: TestCase<
       ...regra,
       lesson: {
         ...(regra.lesson as WrittenLesson),
-        summary: [
-          "Duas grandezas são diretamente proporcionais sempre que aumentam ou diminuem juntas, e inversamente proporcionais sempre que uma aumenta enquanto a outra diminui.",
-          "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
-          "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
-        ],
+        summary: {
+          nodes: [
+            {
+              idea: "Duas grandezas são diretamente proporcionais sempre que aumentam ou diminuem juntas, e inversamente proporcionais sempre que uma aumenta enquanto a outra diminui.",
+              label: "Grandezas proporcionais",
+            },
+            {
+              idea: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+              label: "Regra de três simples",
+            },
+            {
+              idea: "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
+              label: "Regra de três composta",
+            },
+          ],
+          shape: "list",
+        },
       },
     },
   },

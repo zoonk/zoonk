@@ -68,6 +68,12 @@ export function repairWrittenLesson({
     screens: lesson.screens.map((screen) =>
       repairOptions({ language, screen: repairBasisQuote(repairScreenMarkdown(screen)) }),
     ),
-    summary: lesson.summary.map((idea) => repairMarkdown({ layout: "inline", text: idea })),
+    summary: {
+      ...lesson.summary,
+      nodes: lesson.summary.nodes.map((node) => ({
+        ...node,
+        idea: repairMarkdown({ layout: "inline", text: node.idea }),
+      })),
+    },
   };
 }

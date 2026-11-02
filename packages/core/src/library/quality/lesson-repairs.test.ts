@@ -1,6 +1,6 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
-import { writtenTemperatureLesson } from "./_test-utils/written-lessons";
+import { listMap, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { repairWrittenLesson } from "./lesson-repairs";
 
 function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
@@ -24,12 +24,14 @@ describe(repairWrittenLesson, () => {
   it("takes out marks learners would see, in every text and the summary, by how each shows", () => {
     const lesson = {
       screens: [check([{ isCorrect: true, text: "Sensor **A" }])],
-      summary: ["A medida **exata vem do sensor A."],
+      summary: listMap(["A medida **exata vem do sensor A."]),
     };
 
     const repaired = repairWrittenLesson({ language: "pt", lesson });
 
-    expect(repaired.summary).toStrictEqual(["A medida exata vem do sensor A."]);
+    expect(repaired.summary.nodes.map((node) => node.idea)).toStrictEqual([
+      "A medida exata vem do sensor A.",
+    ]);
 
     expect(repaired.screens[0]).toMatchObject({
       context: "| Sensor | mm |\n|---|---|\n| A | 49,8 |",
@@ -55,7 +57,7 @@ describe(repairWrittenLesson, () => {
 
     const repaired = repairWrittenLesson({
       language: "pt",
-      lesson: { screens: [explanation, question], summary: ["Ideia."] },
+      lesson: { screens: [explanation, question], summary: listMap(["Ideia."]) },
     });
 
     expect(repaired.screens[0]).toMatchObject({ text: "O sensor A erra menos que o sensor B." });
@@ -79,7 +81,7 @@ describe(repairWrittenLesson, () => {
 
     const repaired = repairWrittenLesson({
       language: "pt",
-      lesson: { screens: [twins, alone], summary: ["Ideia."] },
+      lesson: { screens: [twins, alone], summary: listMap(["Ideia."]) },
     });
 
     const texts = repaired.screens.map((screen) =>

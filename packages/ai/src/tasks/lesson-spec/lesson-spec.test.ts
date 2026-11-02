@@ -24,6 +24,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#shortAnswers}}",
     "Ask it in their own words.",
     "{{/shortAnswers}}",
+    "{{#novice}}",
+    "Show it to a newcomer.",
+    "{{/novice}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -259,22 +262,25 @@ describe(generateLessonSpec, () => {
       language: "en",
       lessonDescription: "Temperatures.",
       lessonTitle: "Temperatures",
-      level: "beginner",
+      level: "intermediate",
     } satisfies Parameters<typeof generateLessonSpec>[0];
 
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, exam, material, sources, setup, quickExam, written] = await Promise.all([
-      generateLessonSpec(params),
-      generateLessonSpec({ ...params, exams }),
-      generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
-      generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
-      generateLessonSpec({ ...params, setup: true }),
-      generateLessonSpec({ ...params, exams, quick: true }),
-      generateLessonSpec({ ...params, shortAnswers: true }),
-    ]);
+    const [regular, beginner, exam, material, sources, setup, quickExam, written] =
+      await Promise.all([
+        generateLessonSpec(params),
+        generateLessonSpec({ ...params, level: "beginner" }),
+        generateLessonSpec({ ...params, exams }),
+        generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
+        generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
+        generateLessonSpec({ ...params, setup: true }),
+        generateLessonSpec({ ...params, exams, quick: true }),
+        generateLessonSpec({ ...params, shortAnswers: true }),
+      ]);
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");
+    expect(beginner.systemPrompt).toBe("Plan the lesson.\nShow it to a newcomer.\nCheck the plan.");
     expect(exam.systemPrompt).toBe("Plan the lesson.\nPlan it for the exams.\nCheck the plan.");
 
     expect(material.systemPrompt).toBe(

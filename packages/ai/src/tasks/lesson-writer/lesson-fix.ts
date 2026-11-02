@@ -13,6 +13,7 @@ import {
   formatLessonProblems,
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
+import { normalizeLessonMap } from "./lesson-map";
 import {
   type WrittenLesson,
   type WrittenScreen,
@@ -73,7 +74,10 @@ function applyLessonFixes({
 
   return {
     changedScreens: [...replacements.keys()].toSorted((first, second) => first - second),
-    lesson: { screens, summary: fixes.summary ?? lesson.summary },
+    lesson: {
+      screens,
+      summary: fixes.summary ? normalizeLessonMap(fixes.summary) : lesson.summary,
+    },
   };
 }
 

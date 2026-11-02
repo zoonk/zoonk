@@ -96,10 +96,16 @@ const taxDeadlines: WrittenLesson = {
       visual: null,
     },
   ],
-  summary: [
-    "Your federal tax return for 2025 is due April 15, 2026.",
-    "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15.",
-  ],
+  summary: {
+    nodes: [
+      { idea: "Your federal tax return for 2025 is due April 15, 2026.", label: "Filing deadline" },
+      {
+        idea: "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15.",
+        label: "Form 4868 extension",
+      },
+    ],
+    shape: "list",
+  },
 };
 
 const estabilidade: WrittenLesson = {
@@ -198,10 +204,19 @@ const estabilidade: WrittenLesson = {
       visual: null,
     },
   ],
-  summary: [
-    "Quem entra por concurso fica estável depois de três anos no cargo, se for aprovado na avaliação do seu trabalho feita por uma comissão.",
-    "Por falta ou mau desempenho, o servidor estável pode perder o cargo por decisão judicial definitiva, por processo administrativo ou por avaliação periódica, sempre com direito a defesa.",
-  ],
+  summary: {
+    nodes: [
+      {
+        idea: "Quem entra por concurso fica estável depois de três anos no cargo, se for aprovado na avaliação do seu trabalho feita por uma comissão.",
+        label: "Estabilidade em três anos",
+      },
+      {
+        idea: "Por falta ou mau desempenho, o servidor estável pode perder o cargo por decisão judicial definitiva, por processo administrativo ou por avaliação periódica, sempre com direito a defesa.",
+        label: "Perda do cargo",
+      },
+    ],
+    shape: "list",
+  },
 };
 
 export const SOURCED_BASE_LESSONS = {

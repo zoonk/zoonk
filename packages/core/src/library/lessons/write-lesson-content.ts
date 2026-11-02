@@ -1,6 +1,7 @@
 import "server-only";
 import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { getLessonMapIdeas } from "@zoonk/ai/tasks/lesson-writer/map";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
@@ -195,7 +196,7 @@ export async function checkLessonContent({
     language: inputs.language,
     lessonId,
     screens,
-    summary: written.lesson.summary.map((idea) => idea.trim()),
+    summary: getLessonMapIdeas(written.lesson.summary),
     workflowRunId,
   });
 

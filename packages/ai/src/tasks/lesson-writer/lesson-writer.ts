@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { isNoviceLevel } from "../curriculum/_utils/course-levels";
 import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
 import {
   type LessonProblem,
@@ -13,6 +14,7 @@ import {
   formatLessonPlan,
   formatLessonProblems,
 } from "./format-lesson-plan";
+import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
@@ -69,6 +71,7 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       material: Boolean(params.material),
+      novice: isNoviceLevel(params.level),
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -123,7 +126,10 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
     task: "lesson-writer",
   });
 
-  const data: WrittenLesson = result.output;
+  const data: WrittenLesson = {
+    ...result.output,
+    summary: normalizeLessonMap(result.output.summary),
+  };
 
   return { data, provenance, systemPrompt: instructions, usage: result.usage, userPrompt };
 }

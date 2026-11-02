@@ -64,7 +64,7 @@ describe(laterReviewWorkflow, () => {
     ]);
 
     vi.mocked(checkLessonQuality).mockImplementation(async ({ lesson }) =>
-      review(lesson.summary.includes(wrong) ? "blocking" : "minor"),
+      review(JSON.stringify(lesson.summary).includes(wrong) ? "blocking" : "minor"),
     );
 
     await expect(

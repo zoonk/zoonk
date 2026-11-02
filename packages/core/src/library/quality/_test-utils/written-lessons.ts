@@ -1,5 +1,9 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import {
+  type LessonMap,
+  type WrittenLesson,
+  type WrittenScreen,
+} from "@zoonk/ai/tasks/lesson-writer/schema";
 
 export function temperatureSpec(): LessonSpec {
   return {
@@ -99,6 +103,14 @@ const numberLineActivity = {
   },
   prompt: "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
 };
+
+/** A summary card drawn as a list, each idea labeled by its first words. */
+export function listMap(ideas: readonly string[]): LessonMap {
+  return {
+    nodes: ideas.map((idea) => ({ idea, label: idea.split(" ").slice(0, 3).join(" ") })),
+    shape: "list",
+  };
+}
 
 export function writtenTemperatureLesson(): WrittenLesson {
   return {
@@ -243,10 +255,10 @@ export function writtenTemperatureLesson(): WrittenLesson {
         visual: null,
       },
     ],
-    summary: [
+    summary: listMap([
       "A rise moves up the thermometer, even below zero.",
       "Count up to zero first, then the degrees above it.",
-    ],
+    ]),
   };
 }
 

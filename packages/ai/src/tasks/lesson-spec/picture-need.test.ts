@@ -61,13 +61,14 @@ describe(keepTeachingPictures, () => {
       screen({ activityTemplate: "chartReader", brief: CHART }),
     ]);
 
-    const kept = await keepTeachingPictures({ spec: planned });
+    const kept = await keepTeachingPictures({ level: "beginner", spec: planned });
 
     expect(kept.screens.map((item) => item.visual)).toStrictEqual([null, HEART, null]);
     expect(kept.screens[2]?.activityTemplate).toBe("chartReader");
     expect(evaluateQuestions).toHaveBeenCalledTimes(2);
 
     expect(vi.mocked(evaluateQuestions).mock.calls[1]?.[0].input).toMatchObject({
+      LEVEL: "beginner",
       PICTURE: HEART,
       PREVIOUS_PICTURE: TRAY,
     });
@@ -76,7 +77,10 @@ describe(keepTeachingPictures, () => {
   it("keeps a picture whose check can't run", async () => {
     vi.mocked(evaluateQuestions).mockRejectedValueOnce(new Error("Gateway unavailable"));
 
-    const kept = await keepTeachingPictures({ spec: spec([screen({ visual: HEART })]) });
+    const kept = await keepTeachingPictures({
+      level: "beginner",
+      spec: spec([screen({ visual: HEART })]),
+    });
 
     expect(kept.screens[0]?.visual).toBe(HEART);
   });

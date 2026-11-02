@@ -1,5 +1,6 @@
 import "server-only";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { getLessonMapIdeas } from "@zoonk/ai/tasks/lesson-writer/map";
 import { prisma } from "@zoonk/db";
 import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
@@ -84,7 +85,7 @@ async function publishFixedVersion({
     lessonId: context.lessonId,
     replaces,
     screens: keepPictures({ previous, screens }),
-    summary: checked.version.lesson.summary.map((idea) => idea.trim()),
+    summary: getLessonMapIdeas(checked.version.lesson.summary),
   });
 
   return version === null ? { status: "replaced" } : { status: "republished", version };

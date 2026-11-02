@@ -64,7 +64,7 @@ function spec(screenCount: number): LessonSpec {
 
 const lesson: WrittenLesson = {
   screens: [explanation("One"), explanation("Two"), explanation("Three")],
-  summary: ["The idea."],
+  summary: { nodes: [{ idea: "The idea.", label: "Idea" }], shape: "list" },
 };
 
 function fix(params: { screenCount: number; shortAnswers?: boolean }) {
@@ -104,7 +104,7 @@ describe(fixLessonDraft, () => {
 
     expect(data.lesson).toStrictEqual({
       screens: [explanation("One"), explanation("Two, shorter"), explanation("Three")],
-      summary: ["The idea."],
+      summary: lesson.summary,
     });
   });
 
@@ -123,11 +123,14 @@ describe(fixLessonDraft, () => {
     });
   });
 
-  it("fills a planned screen the draft left out and takes a new summary", async () => {
+  it("fills a planned screen the draft left out and takes a new summary, repaired", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         screens: [{ content: explanation("Four"), screen: 4 }],
-        summary: ["A clearer idea."],
+        summary: {
+          nodes: [{ idea: " A clearer idea. ", label: "**Clearer** idea." }],
+          shape: "hub",
+        },
       }),
     );
 
@@ -135,7 +138,11 @@ describe(fixLessonDraft, () => {
 
     expect(data.changedScreens).toStrictEqual([3]);
     expect(data.lesson.screens.at(-1)).toStrictEqual(explanation("Four"));
-    expect(data.lesson.summary).toStrictEqual(["A clearer idea."]);
+
+    expect(data.lesson.summary).toStrictEqual({
+      nodes: [{ idea: "A clearer idea.", label: "Clearer idea" }],
+      shape: "list",
+    });
   });
 
   it("reads the typed answers' rules only for a lesson whose learners' exams ask written answers", async () => {

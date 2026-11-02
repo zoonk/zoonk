@@ -127,10 +127,25 @@
       }
     }
   ],
-  "summary": [
-    "Some immune cells act like watchguards, looking for signs of trouble rather than a germ’s exact identity.",
-    "A watchguard can notice an outer feature shared by different microbes.",
-    "Injured cells can also give off signs of damage, even when no germ is present.",
-    "A watchguard can warn nearby cells about possible trouble without proving that a germ entered."
-  ]
+  "summary": {
+    "shape": "hub",
+    "nodes": [
+      {
+        "label": "Immune watchguards",
+        "idea": "Some immune cells act like watchguards, looking for signs of trouble rather than a germ’s exact identity."
+      },
+      {
+        "label": "Shared outer features",
+        "idea": "A watchguard can notice an outer feature shared by different microbes."
+      },
+      {
+        "label": "Signs of damage",
+        "idea": "Injured cells can also give off signs of damage, even when no germ is present."
+      },
+      {
+        "label": "Warning nearby cells",
+        "idea": "A watchguard can warn nearby cells about possible trouble without proving that a germ entered."
+      }
+    ]
+  }
 }
