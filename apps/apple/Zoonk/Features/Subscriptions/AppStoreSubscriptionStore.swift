@@ -254,8 +254,8 @@ private struct AppStoreSubscriptionSynchronizationKey: Hashable, Sendable {
   let transactionVersion: AppStoreSubscriptionTransactionVersion
 }
 
-/// On the main actor with its callers, so an event joins the synchronization in flight in the same
-/// step that read its account, before anything else can finish or start one.
+/// On the main actor with its callers, so a purchase joins the synchronization in flight in the same
+/// step that read its owner.
 @MainActor
 private final class AppStoreSubscriptionSynchronizationCoordinator {
   private var inFlightSynchronizations = [
