@@ -90,6 +90,8 @@ struct AppTabView: View {
         .defaultVisibility(.hidden, for: .tabBar)
       }
     }
+    // No `defaultTabBarPlacement(.sidebar)`: on the open iPhone Duo a sidebar would take the room
+    // its two panes need.
     .tabViewStyle(.sidebarAdaptable)
     .tabViewSidebarBottomBar {
       Button {

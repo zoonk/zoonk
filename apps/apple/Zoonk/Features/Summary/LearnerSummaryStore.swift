@@ -14,6 +14,7 @@ final class LearnerSummaryStore {
     self.cache = cache
     summary = cache.resource(
       audience: .signedIn,
+      // Every `DataDomain`, so the frame follows every write.
       domains: [
         .allowance, .goals, .learnerModel, .learningProfile, .memory, .userProgress, .userSession,
         .userSubscription,
