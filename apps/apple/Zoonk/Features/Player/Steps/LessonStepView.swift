@@ -346,11 +346,8 @@ struct LessonAnswerField: View {
           "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
       label: label
     ) {
-      if let check {
-        check()
-      } else {
-        isFocused.wrappedValue = false
-      }
+      isFocused.wrappedValue = false
+      check?()
     }
     .lineLimit(isNumber ? 1...1 : 3...8)
     .keyboardType(isNumber ? .numbersAndPunctuation : .default)
