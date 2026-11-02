@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getDailySpendBudgetMicros, getEstimatedCostMicros, getUsageRule } from "../limits";
+import {
+  getDailySpendBudgetMicros,
+  getEstimatedCostMicros,
+  getLiveCallCostMicros,
+  getUsageRule,
+} from "../limits";
 import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
 import { type UsageCounts } from "./usage-counts";
 
@@ -210,14 +215,10 @@ describe("the plan's call time", () => {
     ]);
   });
 
-  it("keeps a month of Plus's calls within $6 even if every call is a minute long", () => {
+  it("keeps the talk in a month of Plus's call minutes within $6 even if every call is a minute long", () => {
     const monthSeconds = getUsageRule({ kind: "conversation", tier: "plus" }).monthSeconds ?? 0;
 
-    const oneMinuteCall = getEstimatedCostMicros({
-      generated: false,
-      kind: "conversation",
-      seconds: 70,
-    });
+    const oneMinuteCall = getLiveCallCostMicros(70);
 
     expect((monthSeconds / 60) * oneMinuteCall).toBeLessThanOrEqual(6_000_000);
     expect((monthSeconds / 60 + 1) * oneMinuteCall).toBeGreaterThan(6_000_000);

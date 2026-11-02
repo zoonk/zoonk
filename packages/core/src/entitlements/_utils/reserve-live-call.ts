@@ -11,6 +11,7 @@ import {
 } from "../../language/conversations/live-call-contract";
 import {
   LIVE_CALL_ATTEMPTS_PER_DAY,
+  LIVE_CALL_WRAP_UP_SECONDS,
   getCallMonthlyBudgetMicros,
   getLiveCallReservationMicros,
 } from "../limits";
@@ -30,7 +31,7 @@ export class LiveCallReservationRefusedError extends Error {
   }
 }
 
-/** A checkpoint keeps the window its first connection opened; other calls start over. */
+/** A checkpoint keeps the talk time its first connection opened; other calls start over. */
 async function requestedCallSeconds({
   conversation,
   now,
@@ -51,9 +52,12 @@ async function requestedCallSeconds({
     where: { conversationId: conversation.id },
   });
 
-  return first
-    ? Math.max(0, Math.floor((first.deadlineAt.getTime() - now.getTime()) / MS_PER_SECOND))
-    : length;
+  if (!first) {
+    return length;
+  }
+
+  const talkEndsAt = first.createdAt.getTime() + first.heldSeconds * MS_PER_SECOND;
+  return Math.max(0, Math.floor((talkEndsAt - now.getTime()) / MS_PER_SECOND));
 }
 
 async function clearOpenConnection({
@@ -236,23 +240,19 @@ async function holdCallTime({
     });
   }
 
-  const [connection] = await Promise.all([
-    transaction.liveCallConnection.create({
-      data: {
-        conversationId: conversation.id,
-        costMicros,
-        createdAt: now,
-        deadlineAt: new Date(now.getTime() + heldSeconds * MS_PER_SECOND),
-        heldSeconds,
-        id,
-        userId: viewer.userId,
-      },
-    }),
-    transaction.usageRecord.update({
-      data: { costMicros },
-      where: { userUsageTarget: { kind: "conversation", targetId: id, userId: viewer.userId } },
-    }),
-  ]);
+  const connection = await transaction.liveCallConnection.create({
+    data: {
+      conversationId: conversation.id,
+      costMicros,
+      createdAt: now,
+      deadlineAt: new Date(
+        now.getTime() + (heldSeconds + LIVE_CALL_WRAP_UP_SECONDS) * MS_PER_SECOND,
+      ),
+      heldSeconds,
+      id,
+      userId: viewer.userId,
+    },
+  });
 
   return { connection, endsAtLimit: decision.shortenedBy ?? null, status: "reserved" };
 }

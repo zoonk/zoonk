@@ -56,6 +56,20 @@ export function getCallExposureMicros({
   );
 }
 
+/** The learner pays for the part of the live time inside the talk window, never the wrap-up after it. */
+function getTalkSeconds({
+  connection,
+  liveUntil,
+  startedAt,
+}: {
+  connection: LiveCallConnection;
+  liveUntil: Date;
+  startedAt: Date;
+}): number {
+  const talkEndsAt = connection.createdAt.getTime() + connection.heldSeconds * MS_PER_SECOND;
+  return secondsBetween(startedAt, new Date(Math.min(liveUntil.getTime(), talkEndsAt)));
+}
+
 export function getEndingCharge({
   connection,
   liveUntil,
@@ -65,12 +79,13 @@ export function getEndingCharge({
   liveUntil?: Date;
   now: Date;
 }): { costMicros: number; learnerSeconds: number } {
-  if (connection.state === "reserved" || !connection.startedAt) {
+  const { startedAt } = connection;
+
+  if (connection.state === "reserved" || !startedAt) {
     return { costMicros: 0, learnerSeconds: 0 };
   }
 
-  const used = secondsBetween(connection.startedAt, liveUntil ?? now);
-  const clockMicros = getLiveCallCostMicros(billedSeconds(connection.startedAt, now));
+  const clockMicros = getLiveCallCostMicros(billedSeconds(startedAt, now));
 
   if (!connection.providerSessionId) {
     return { costMicros: Math.max(connection.costMicros, clockMicros), learnerSeconds: 0 };
@@ -78,6 +93,9 @@ export function getEndingCharge({
 
   return {
     costMicros: clockMicros,
-    learnerSeconds: connection.state === "live" ? Math.min(connection.heldSeconds, used) : 0,
+    learnerSeconds:
+      connection.state === "live"
+        ? getTalkSeconds({ connection, liveUntil: liveUntil ?? now, startedAt })
+        : 0,
   };
 }

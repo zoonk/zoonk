@@ -116,7 +116,7 @@ describe("Plus challenge call quota", () => {
     vi.setSystemTime(new Date(Date.now() + 150_000));
 
     await expect(connectTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: null, seconds: 30 },
+      setup: { endsAtLimit: null, talkSeconds: 30 },
       status: "ready",
     });
 
@@ -241,7 +241,7 @@ describe("Plus challenge call quota", () => {
     const { conversationId, user } = await reachedChallenge();
 
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { seconds: 180 },
+      setup: { talkSeconds: 180 },
       status: "ready",
     });
 

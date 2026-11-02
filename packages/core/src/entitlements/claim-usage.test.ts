@@ -6,7 +6,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "./claim-usage";
-import { getDailySpendBudgetMicros, getEstimatedCostMicros } from "./limits";
+import {
+  getDailySpendBudgetMicros,
+  getEstimatedCostMicros,
+  getLiveCallReservationMicros,
+} from "./limits";
 
 const NOW = new Date("2026-09-15T12:00:00Z");
 const EARLIER_THIS_MONTH = new Date("2026-09-03T09:00:00Z");
@@ -134,7 +138,7 @@ describe(claimUsage, () => {
     });
   });
 
-  it("holds a call's length from the day's call time, priced by the second", async () => {
+  it("holds a call's length from the day's call time, priced as the whole reservation", async () => {
     const user = await useLearner();
     const targetId = randomUUID();
 
@@ -146,7 +150,7 @@ describe(claimUsage, () => {
       prisma.usageRecord.findUniqueOrThrow({
         where: { userUsageTarget: { kind: "conversation", targetId, userId: user.id } },
       }),
-    ).resolves.toMatchObject({ costMicros: 110_000, seconds: 120 });
+    ).resolves.toMatchObject({ costMicros: getLiveCallReservationMicros(120), seconds: 120 });
   });
 
   it("gives Plus 20 minutes of calls a day: the last call runs what's left, then calls wait for tomorrow", async () => {

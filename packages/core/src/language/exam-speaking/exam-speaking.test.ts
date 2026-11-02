@@ -183,7 +183,8 @@ async function sitSpeakingPaper(goal: { id: string; userId: string }) {
 }
 
 async function connect(conversationId: string) {
-  await connectTestCall(conversationId);
+  const { setup } = await connectTestCall(conversationId);
+  return setup;
 }
 
 async function readView(conversationId: string) {
@@ -285,7 +286,14 @@ describe("exam speaking tasks", () => {
     ]);
 
     expect(view.examTask?.cues.map((cue) => cue.atSeconds)).toStrictEqual([240]);
-    await connect(conversationId);
+    const { script } = await connect(conversationId);
+
+    expect(script.cues.goodbye).toStrictEqual({
+      channel: "commentary",
+      text: expect.stringContaining("as the examiner"),
+    });
+
+    expect(script.cues.goodbyeDone).toStrictEqual(script.cues.goodbye);
 
     expect(createLiveCallSession).toHaveBeenCalledWith(
       expect.objectContaining({

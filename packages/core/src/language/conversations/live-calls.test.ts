@@ -12,7 +12,12 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getLiveCallCostMicros, getLiveCallReservationMicros } from "../../entitlements/limits";
+import {
+  LIVE_CALL_WRAP_UP_SECONDS,
+  getDailySpendBudgetMicros,
+  getLiveCallCostMicros,
+  getLiveCallReservationMicros,
+} from "../../entitlements/limits";
 import {
   anotherLiveConversation,
   liveCallFixture,
@@ -29,6 +34,8 @@ import { startLanguageConversation } from "./start-language-conversation";
 
 const SECOND_MS = 1000;
 const TWO_MINUTES = 120;
+const WRAP_UP = LIVE_CALL_WRAP_UP_SECONDS;
+const DAY_SECONDS = 24 * 60 * 60;
 const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
 
 function advance(seconds: number) {
@@ -115,17 +122,21 @@ describe("live calls", () => {
       }));
   });
 
-  it("[1] holds what's left of the day with no grace, and refuses less than a minute without a session", async () => {
+  it("[1] holds what's left of the day plus a wrap-up it never counts, and refuses less than a minute without a session", async () => {
     const { conversation, user } = await learner();
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
 
     const setup = await reserved(conversation.id);
     const row = await connection(setup.connectionId);
 
-    expect(setup).toMatchObject({ endsAtLimit: "day", seconds: 90 });
+    expect(setup).toMatchObject({ endsAtLimit: "day", seconds: 90 + WRAP_UP, talkSeconds: 90 });
     expect(row.heldSeconds).toBe(90);
-    expect(row.deadlineAt.getTime() - row.createdAt.getTime()).toBe(90 * SECOND_MS);
-    expect(row.costMicros).toBe(getLiveCallReservationMicros(90));
+    expect(row.deadlineAt.getTime() - row.createdAt.getTime()).toBe((90 + WRAP_UP) * SECOND_MS);
+    expect(row.costMicros).toBeGreaterThan(getLiveCallCostMicros(90 + WRAP_UP));
+
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ costMicros: row.costMicros, seconds: 90 });
 
     const short = await learner();
 
@@ -148,23 +159,33 @@ describe("live calls", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("[1] keeps a checkpoint's first window when it connects again", async () => {
+  it("[1] keeps a checkpoint's first talk time on every reconnect, each with its own wrap-up, until that time is over", async () => {
     const { conversation } = await learner({ kind: "checkpoint", plus: true });
     const first = await live(conversation.id);
 
     advance(50);
-    const second = await reserved(conversation.id);
+    const second = await live(conversation.id);
+    advance(40);
+    const third = await reserved(conversation.id);
 
-    expect(second.seconds).toBe(TWO_MINUTES - 50);
-    expect(second.deadlineAt).toBe(first.deadlineAt);
+    expect([second, third]).toMatchObject([
+      { seconds: TWO_MINUTES - 50 + WRAP_UP, talkSeconds: TWO_MINUTES - 50 },
+      { seconds: TWO_MINUTES - 90 + WRAP_UP, talkSeconds: TWO_MINUTES - 90 },
+    ]);
+
+    expect(third.deadlineAt).toBe(first.deadlineAt);
+
+    advance(30);
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "conversationEnded" });
   });
 
-  it("[1] hangs up at the deadline and never charges the learner past what it held, even when the hangup confirms late", async () => {
+  it("[1] hangs up at the deadline after the wrap-up and charges the learner only the talk time, even when the hangup confirms late", async () => {
     const { conversation, user } = await learner();
     const setup = await live(conversation.id);
     const { providerSessionId } = await connection(setup.connectionId);
 
-    advance(TWO_MINUTES);
+    advance(TWO_MINUTES + WRAP_UP);
 
     vi.mocked(hangUpLiveCallSession).mockImplementationOnce(async () => {
       advance(20);
@@ -178,7 +199,7 @@ describe("live calls", () => {
     expect(hangUpLiveCallSession).toHaveBeenCalledExactlyOnceWith(providerSessionId);
 
     await expect(connection(setup.connectionId)).resolves.toMatchObject({
-      costMicros: getLiveCallCostMicros(TWO_MINUTES + 20),
+      costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP + 20),
       endReason: "deadline",
       state: "ended",
     });
@@ -186,8 +207,111 @@ describe("live calls", () => {
     await expect(
       usage({ connectionId: setup.connectionId, userId: user.id }),
     ).resolves.toMatchObject({
-      costMicros: getLiveCallCostMicros(TWO_MINUTES + 20),
+      costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP + 20),
       seconds: TWO_MINUTES,
+    });
+  });
+
+  it("[1] charges a call that connected late only the part of its talk time it was live, when it ends in the wrap-up", async () => {
+    const { conversation, user } = await learner();
+    const setup = await reserved(conversation.id);
+
+    advance(10);
+    await expect(offer(setup, conversation.id)).resolves.toMatchObject({ status: "ready" });
+    advance(TWO_MINUTES);
+
+    await expect(
+      endLiveCall({ connectionId: setup.connectionId, reason: "learner" }),
+    ).resolves.toStrictEqual({ status: "ended" });
+
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({
+      costMicros: getLiveCallCostMicros(TWO_MINUTES),
+      seconds: TWO_MINUTES - 10,
+    });
+  });
+
+  it("[1] keeps only the talk time when a session that ended on its own was last active in the wrap-up", async () => {
+    const { conversation, user } = await learner();
+    const setup = await live(conversation.id);
+
+    advance(TWO_MINUTES + 10);
+    noObjectivesMet();
+
+    await expect(
+      checkLanguageConversationObjectives({
+        conversationId: conversation.id,
+        input: { turns: [{ speaker: "learner", text: "Bye!" }] },
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    advance(20);
+    vi.mocked(hangUpLiveCallSession).mockResolvedValueOnce("alreadyEnded");
+
+    await expect(
+      endLiveCall({ connectionId: setup.connectionId, reason: "deadline" }),
+    ).resolves.toStrictEqual({ status: "ended" });
+
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: TWO_MINUTES });
+  });
+
+  it("[1] refuses a call when its reservation, wrap-up included, passes the day's AI budget", async () => {
+    const { conversation, user } = await learner();
+    const budget = getDailySpendBudgetMicros("free");
+    const reservation = getLiveCallReservationMicros(TWO_MINUTES);
+
+    expect(reservation).toBeGreaterThan(getLiveCallCostMicros(TWO_MINUTES + WRAP_UP));
+
+    await usageRecordsFixture({
+      costMicros: budget - reservation + 1,
+      count: 1,
+      kind: "explanation",
+      userId: user.id,
+    });
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
+      limit: { limit: budget, period: "day", resource: "aiSpend", tier: "free" },
+      status: "limitReached",
+    });
+
+    await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await prisma.usageRecord.updateMany({
+      data: { costMicros: budget - reservation },
+      where: { kind: "explanation", userId: user.id },
+    });
+
+    await expect(reserve(conversation.id)).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("[1] admits a free month's two 2-minute calls run to their hard stop, then a shortened third", async () => {
+    const { conversation, user } = await learner();
+    const calls = [await live(conversation.id)];
+
+    advance(TWO_MINUTES + WRAP_UP);
+    await endLiveCall({ connectionId: calls[0]?.connectionId ?? "", reason: "deadline" });
+    advance(DAY_SECONDS);
+    calls.push(await live(conversation.id));
+    advance(TWO_MINUTES + WRAP_UP);
+    await endLiveCall({ connectionId: calls[1]?.connectionId ?? "", reason: "deadline" });
+    advance(DAY_SECONDS);
+
+    await expect(
+      prisma.usageRecord.findMany({
+        orderBy: { createdAt: "asc" },
+        where: { kind: "conversation", userId: user.id },
+      }),
+    ).resolves.toMatchObject([
+      { costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP), seconds: TWO_MINUTES },
+      { costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP), seconds: TWO_MINUTES },
+    ]);
+
+    await expect(reserve(conversation.id)).resolves.toMatchObject({
+      setup: { endsAtLimit: "month", talkSeconds: 60 },
+      status: "ready",
     });
   });
 
@@ -484,7 +608,7 @@ describe("live calls", () => {
     });
 
     await expect(reserve(conversation.id)).resolves.toMatchObject({
-      setup: { seconds: TWO_MINUTES },
+      setup: { talkSeconds: TWO_MINUTES },
       status: "ready",
     });
 

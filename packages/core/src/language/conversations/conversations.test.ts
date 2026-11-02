@@ -30,6 +30,7 @@ import {
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
+import { LIVE_CALL_WRAP_UP_SECONDS } from "../../entitlements/limits";
 import { writeTestCall } from "./_test-utils/write-test-call";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
@@ -240,7 +241,8 @@ describe("language conversations", () => {
         connectionId: expect.any(String),
         deadlineAt: expect.any(String),
         endsAtLimit: null,
-        seconds: PRACTICE_SECONDS,
+        seconds: PRACTICE_SECONDS + LIVE_CALL_WRAP_UP_SECONDS,
+        talkSeconds: PRACTICE_SECONDS,
         voice: "marin",
       },
       status: "ready",
@@ -319,7 +321,10 @@ describe("language conversations", () => {
 
     const second = await reserveTestCall(conversationId);
 
-    expect(second).toMatchObject({ setup: { endsAtLimit: null, seconds: 60 }, status: "ready" });
+    expect(second).toMatchObject({
+      setup: { endsAtLimit: null, talkSeconds: 60 },
+      status: "ready",
+    });
 
     const records = await prisma.usageRecord.findMany({
       orderBy: { createdAt: "asc" },
@@ -344,7 +349,7 @@ describe("language conversations", () => {
     });
 
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { seconds: PRACTICE_SECONDS },
+      setup: { talkSeconds: PRACTICE_SECONDS },
       status: "ready",
     });
 
@@ -366,7 +371,7 @@ describe("language conversations", () => {
     });
 
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: "day", seconds: 90 },
+      setup: { endsAtLimit: "day", talkSeconds: 90 },
       status: "ready",
     });
   });
@@ -887,7 +892,7 @@ describe("language conversations", () => {
     });
 
     expect(result).toMatchObject({
-      conversation: { kind: "checkpoint", minutes: 1, result: { passed: true, stars: 3 } },
+      conversation: { kind: "checkpoint", minutes: 2, result: { passed: true, stars: 3 } },
     });
 
     const [savedBlock, item, event] = await Promise.all([
