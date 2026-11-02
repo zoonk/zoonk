@@ -62,8 +62,8 @@ class PromptAudio internal constructor(
         play(url)
     }
 
-    internal fun forget(stepId: String) {
-        if (autoplayed.value == stepId) autoplayed.value = null
+    internal fun forget() {
+        autoplayed.value = null
     }
 }
 
@@ -90,8 +90,8 @@ fun promptAudioUrl(language: StepContent.Language): String? {
 }
 
 /**
- * The previous screen's sound stops, including when the lesson ends; this one's starts once, so
- * rotating or resizing doesn't play it again. A spoken screen's listening exercise, shown when the
+ * The previous screen's sound stops, including when the lesson ends; this one's starts once per
+ * visit, so going back plays it again while rotating or resizing doesn't. A spoken screen's listening exercise, shown when the
  * learner can't talk, plays each time they switch to it and stops when they switch back, as on main.
  */
 @Composable
@@ -104,7 +104,7 @@ fun PromptAudioEffect(
     LaunchedEffect(step?.id, url) {
         prompt.cancel()
         val id = step?.id ?: return@LaunchedEffect
-        if (url == null) prompt.forget(id) else prompt.autoplay(id, url)
+        if (url == null) prompt.forget() else prompt.autoplay(id, url)
     }
 }
 
