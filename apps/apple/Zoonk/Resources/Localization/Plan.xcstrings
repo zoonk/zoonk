@@ -427,7 +427,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %@ por dia, não dá para estudar toda a sua meta: o que vem por último na trilha fica de fora."
+            "value" : "Com %@ por dia, não dá para estudar todo o conteúdo do seu objetivo: o que vem por último na trilha fica de fora."
           }
         },
         "tr" : {
@@ -604,7 +604,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ por dia não é tempo suficiente para estudar sua meta."
+            "value" : "%@ por dia não é tempo suficiente para estudar o conteúdo do seu objetivo."
           }
         },
         "tr" : {
@@ -663,7 +663,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %@ por dia, você estuda toda a sua meta e se aprofunda mais no que é mais importante."
+            "value" : "Com %@ por dia, você estuda todo o conteúdo do seu objetivo e se aprofunda mais no que é mais importante."
           }
         },
         "tr" : {
@@ -1533,7 +1533,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meta pausada: %@"
+            "value" : "%@ está em pausa"
           }
         },
         "tr" : {
@@ -11855,7 +11855,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responda às perguntas e a gente planeja cada dia até você alcançar sua meta."
+            "value" : "Responda às perguntas e a gente planeja cada dia até você alcançar seu objetivo."
           }
         },
         "tr" : {
@@ -12150,7 +12150,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arquivar esta meta"
+            "value" : "Arquivar este objetivo"
           }
         },
         "tr" : {
@@ -12693,7 +12693,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a data escolhida: %1$@ da sua meta, contra %2$@ agora."
+            "value" : "Até a data escolhida: %1$@ do seu objetivo, contra %2$@ agora."
           }
         },
         "tr" : {
@@ -12752,7 +12752,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a data escolhida: %@ da sua meta, como agora."
+            "value" : "Até a data escolhida: %@ do seu objetivo, como agora."
           }
         },
         "tr" : {
@@ -15608,7 +15608,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toda a sua meta, no seu ritmo e sem data para terminar."
+            "value" : "Todas as partes do seu objetivo, no seu ritmo e sem data para terminar."
           }
         },
         "tr" : {
@@ -16552,7 +16552,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data da meta"
+            "value" : "Data do objetivo"
           }
         },
         "tr" : {
@@ -17614,7 +17614,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A meta sai da sua lista e o plano dela para. O que você aprendeu continua no seu progresso."
+            "value" : "O objetivo sai da sua lista e o plano dele para. O que você aprendeu continua no seu progresso."
           }
         },
         "tr" : {
@@ -21993,7 +21993,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem tempo para o desafio desta fase antes da data da sua meta"
+            "value" : "Sem tempo para o desafio desta fase antes da data do seu objetivo"
           }
         },
         "tr" : {
@@ -22524,7 +22524,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada será planejado até você retomar esta meta."
+            "value" : "Nada será planejado até você retomar este objetivo."
           }
         },
         "tr" : {
@@ -23114,7 +23114,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pausar esta meta"
+            "value" : "Pausar este objetivo"
           }
         },
         "tr" : {
@@ -24530,7 +24530,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lendo sua meta"
+            "value" : "Lendo seu objetivo"
           }
         },
         "tr" : {
@@ -25002,7 +25002,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retomar esta meta"
+            "value" : "Retomar este objetivo"
           }
         },
         "tr" : {
@@ -27429,7 +27429,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
+            "value" : "O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais objetivos."
           }
         },
         "tr" : {
