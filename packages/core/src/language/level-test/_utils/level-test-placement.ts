@@ -9,6 +9,7 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
+import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
 import { markSkillsKnown, testOutKnownPlanItems } from "../../../learner/_utils/known-skills";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { loadPlacement } from "../../../learner/placement/_utils/apply-placement";
@@ -100,6 +101,7 @@ export async function placeLevelTestResult({
     };
 
     await savePlacement(tx, { goal, placement });
+    await owePlanStartLessons({ db: tx, goalId, userId });
     return { placedNow: true, placement };
   });
 

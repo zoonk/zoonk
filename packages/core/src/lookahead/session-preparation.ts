@@ -138,7 +138,7 @@ async function decideGoalAccess({
   if (await isGuest(userId)) {
     return {
       goalId: goal.id,
-      lessonId: await findPlanFirstLessonId(goal.id),
+      lessonId: await findPlanFirstLessonId({ goalId: goal.id }),
       status: "guest",
       userId,
     };

@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { oweAskedLessons } from "../../follow-ups/owe-asked-lessons";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 
 export type WaitingGoalsReplan = { failedGoalIds: string[]; goalIds: string[] };
@@ -35,9 +36,13 @@ export async function listGoalsWaitingOnSkills({
   return [...new Set([...goalIds.filter((id) => waiting.has(id)), ...waiting])];
 }
 
-/** Background refreshes yield during setup; the learner's next answer re-plans. Throws if another plan write wins afterward. */
+/**
+ * Background refreshes yield during setup; the learner's next answer re-plans. Lessons a learner's
+ * ask waited on start being written as they come in. Throws if another plan write wins afterward.
+ */
 export async function replanWaitingGoal(goalId: string): Promise<void> {
   await refreshGoalPlan({
+    extraWrites: (tx) => oweAskedLessons({ db: tx, goalId }),
     goalId,
     keepsOpenUndo: true,
     onConflict: "throw",

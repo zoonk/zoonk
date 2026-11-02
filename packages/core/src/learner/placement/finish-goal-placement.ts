@@ -1,9 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type FollowUp } from "../../follow-ups/follow-up-contract";
-import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
-import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
+import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
@@ -47,11 +45,6 @@ async function declinePlacement(goal: Goal) {
   });
 }
 
-/** Day 1 opens the first lesson minutes from now, so it's written on its own right away. */
-function writeFirstLesson(lessonId: string | null): FollowUp[] {
-  return lessonId ? [{ input: { lessonId }, kind: "writeLesson" }] : [];
-}
-
 /** May stop before placement settles; starting from scratch also disables first-week placement questions. */
 export async function finishGoalPlacement({
   goalId,
@@ -69,12 +62,8 @@ export async function finishGoalPlacement({
   const plan = await loadPlacementPlan(goalId);
 
   if (input.fromScratch) {
-    const [firstLessonId] = await Promise.all([
-      findPlanFirstLessonId(goalId),
-      declinePlacement(owned.goal),
-    ]);
-
-    await oweGoalLessons({ also: writeFirstLesson(firstLessonId), goalId, userId: owned.userId });
+    await declinePlacement(owned.goal);
+    await owePlanStartLessons({ goalId, userId: owned.userId });
 
     return {
       completion: {
@@ -103,9 +92,7 @@ export async function finishGoalPlacement({
     await replanAfterPlacement({ goalId, now, pastBasicsAreas, timeZone });
   }
 
-  const firstLessonId = await findPlanFirstLessonId(goalId);
-
-  await oweGoalLessons({ also: writeFirstLesson(firstLessonId), goalId, userId: owned.userId });
+  await owePlanStartLessons({ goalId, userId: owned.userId });
 
   return {
     completion: {

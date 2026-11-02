@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { askForLessons } from "../lookahead/lessons-ask";
 import { type FollowUp } from "./follow-up-contract";
+import { getFirstLessonWrite } from "./owe-asked-lessons";
 import { oweFollowUps } from "./owe-follow-ups";
 
 /**
@@ -33,4 +34,22 @@ export async function oweGoalLessons({
     followUps: [{ input: { goalId, lessonsAskedAt }, kind: "prepareGoalLessons" }, ...also],
     userId,
   });
+}
+
+/** For a write that moved where the plan starts, such as a placement; pass its transaction when it has one. */
+export async function owePlanStartLessons({
+  db,
+  goalId,
+  userId,
+}: {
+  db?: TransactionClient;
+  goalId: string;
+  userId: string;
+}): Promise<void> {
+  if (!db) {
+    await prisma.$transaction((tx) => owePlanStartLessons({ db: tx, goalId, userId }));
+    return;
+  }
+
+  await oweGoalLessons({ also: await getFirstLessonWrite({ db, goalId }), db, goalId, userId });
 }
