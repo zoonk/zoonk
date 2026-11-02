@@ -582,9 +582,9 @@ msgstr "{dateKind, select, month {{date}까지 목표에 필요한 내용을 모
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {설정한 날짜({date})가 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.} other {설정한 날짜({date})가 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.}}"
+msgctxt "2IAd52"
+msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
+msgstr "{dateKind, select, month {정한 날짜({date})가 지났어요.} other {정한 날짜({date})가 지났어요.}}"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
@@ -9608,6 +9608,18 @@ msgstr "활용할 업무"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "예: 보고서, A/B 테스트"
+
+#. A link under the daily study time that opens the question about the goal's date, to change it.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "날짜 바꾸기"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "날짜 정하기"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
