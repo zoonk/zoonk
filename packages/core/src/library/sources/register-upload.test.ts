@@ -15,7 +15,7 @@ import { registerSourceUpload } from "./register-upload";
 import { shareSourceUpload } from "./share-upload";
 import { refreshWebSource } from "./web-sources";
 
-const PRIVATE_STORE = { storeId: "store_test", token: undefined };
+const PRIVATE_STORE = { storeId: "store_test" };
 
 const NOTICE_TEXT = "ENEM 2026: 180 questoes objetivas e uma redacao.";
 

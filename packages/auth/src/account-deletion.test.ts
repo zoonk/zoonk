@@ -220,11 +220,10 @@ function listed({ cursor, urls }: { cursor?: string; urls: string[] }) {
 }
 
 describe("deleting a learner's private files", () => {
-  const PRIVATE_STORE = { storeId: "store_private", token: undefined };
+  const PRIVATE_STORE = { storeId: "store_private" };
 
   beforeEach(() => {
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", PRIVATE_STORE.storeId);
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
   });
 
   afterEach(() => {

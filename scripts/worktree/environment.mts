@@ -1,11 +1,13 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { parseEnv } from "node:util";
 import { isLocalDevelopmentDatabase } from "../../packages/db/src/local-database.ts";
 import { CONNECT_TIMEOUT_SECONDS } from "./postgres.mts";
 
 const ENV_FILES = [".env", ".env.local", ".env.development.local", ".env.production.local"];
+/** The app's Vercel link, which the Blob SDK reads to fetch the project's OIDC token. */
+const VERCEL_LINK = join(".vercel", "project.json");
 const ID_LENGTH = 12;
 
 export function worktreeDatabaseName({
@@ -29,11 +31,11 @@ export function ownDevelopmentDatabaseUrl(worktree: string): string | null {
     : null;
 }
 
-function environmentPaths(root: string): string[] {
+function environmentPaths(root: string, files = ENV_FILES): string[] {
   return ["apps", "packages"].flatMap((group) =>
     readdirSync(join(root, group), { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
-      .flatMap((entry) => ENV_FILES.map((file) => join(group, entry.name, file))),
+      .flatMap((entry) => files.map((file) => join(group, entry.name, file))),
   );
 }
 
@@ -45,11 +47,12 @@ export function copyEnvironment({
   primary: string;
   worktree: string;
 }): void {
-  for (const relative of environmentPaths(worktree)) {
+  for (const relative of environmentPaths(worktree, [...ENV_FILES, VERCEL_LINK])) {
     const source = join(primary, relative);
     const destination = join(worktree, relative);
 
     if (existsSync(source) && !existsSync(destination)) {
+      mkdirSync(dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(source), { mode: 0o600 });
     }
   }

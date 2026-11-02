@@ -29,6 +29,12 @@ msgid "Enter a valid email address"
 msgstr "Geçerli bir e-posta adresi gir"
 
 #: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "Çok fazla deneme yapıldı. Bir dakika bekle, sonra tekrar dene."
+
+#: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "E-posta"
@@ -85,11 +91,6 @@ msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
 msgstr "Bu kodun süresi doldu. Yeni bir kod al."
-
-#: src/app/auth/otp/otp-form.tsx
-msgctxt "hUjCDW"
-msgid "Too many tries. Wait a minute, then try again."
-msgstr "Çok fazla deneme yapıldı. Bir dakika bekle, sonra tekrar dene."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"

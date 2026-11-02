@@ -29,6 +29,12 @@ msgid "Enter a valid email address"
 msgstr "有効なメールアドレスを入力してください"
 
 #: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "試行回数の上限に達しました。1分待ってからもう一度お試しください。"
+
+#: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "メールアドレス"
@@ -85,11 +91,6 @@ msgstr "問題が発生しました。少し待ってからもう一度お試し
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
 msgstr "このコードの有効期限が切れました。新しいコードを取得してください。"
-
-#: src/app/auth/otp/otp-form.tsx
-msgctxt "hUjCDW"
-msgid "Too many tries. Wait a minute, then try again."
-msgstr "試行回数の上限に達しました。1分待ってからもう一度お試しください。"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"

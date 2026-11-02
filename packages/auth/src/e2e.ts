@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
 import { oneTimeToken } from "better-auth/plugins";
-import { GUEST_SIGN_IN_RATE_LIMIT } from "./config";
+import { SHARED_IP_SIGN_IN_RATE_LIMIT } from "./config";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { sessionHintPlugin } from "./plugins/session-hint";
@@ -44,7 +44,9 @@ export const auth = betterAuth({
     // eslint-disable-next-line sort-keys -- Better Auth uses the first matching rule; the catch-all must stay last.
     customRules: {
       "/sign-in/anonymous": (request) =>
-        request.headers.get("x-e2e-auth-rate-limit") === "true" ? GUEST_SIGN_IN_RATE_LIMIT : false,
+        request.headers.get("x-e2e-auth-rate-limit") === "true"
+          ? SHARED_IP_SIGN_IN_RATE_LIMIT
+          : false,
       "/**": false,
     },
     enabled: true,

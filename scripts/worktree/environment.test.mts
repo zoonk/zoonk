@@ -1,14 +1,47 @@
-import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { ownDevelopmentDatabaseUrl, worktreeDatabaseName } from "./environment.mts";
+import {
+  copyEnvironment,
+  ownDevelopmentDatabaseUrl,
+  worktreeDatabaseName,
+} from "./environment.mts";
 
-const checkouts: string[] = [];
+function checkout(root: string, name: string): string {
+  const path = join(root, name);
+  mkdirSync(join(path, "apps", "main"), { recursive: true });
+  mkdirSync(join(path, "packages"), { recursive: true });
+  return path;
+}
 
-function checkout(): string {
+describe(copyEnvironment, () => {
+  it("gives a worktree the primary checkout's Vercel link and keeps the worktree's own files", () => {
+    const root = mkdtempSync(join(tmpdir(), "zoonk-environment-"));
+    const primary = checkout(root, "primary");
+    const worktree = checkout(root, "worktree");
+    const link = JSON.stringify({ orgId: "team_test", projectId: "prj_test" });
+
+    mkdirSync(join(primary, "apps/main/.vercel"));
+    writeFileSync(join(primary, "apps/main/.vercel/project.json"), link);
+    writeFileSync(join(primary, "apps/main/.env"), "BLOB_STORE_ID=store_primary\n");
+    writeFileSync(join(worktree, "apps/main/.env"), "BLOB_STORE_ID=store_worktree\n");
+
+    copyEnvironment({ primary, worktree });
+
+    expect(readFileSync(join(worktree, "apps/main/.vercel/project.json"), "utf8")).toBe(link);
+
+    expect(readFileSync(join(worktree, "apps/main/.env"), "utf8")).toBe(
+      "BLOB_STORE_ID=store_worktree\n",
+    );
+  });
+});
+
+const databaseCheckouts: string[] = [];
+
+function databaseCheckout(): string {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "zoonk-environment-")));
-  checkouts.push(root);
+  databaseCheckouts.push(root);
   mkdirSync(join(root, "packages/db"), { recursive: true });
   return root;
 }
@@ -19,14 +52,14 @@ function writeDatabaseUrl({ url, worktree }: { url: string; worktree: string }):
 }
 
 afterEach(() => {
-  for (const root of checkouts.splice(0)) {
+  for (const root of databaseCheckouts.splice(0)) {
     rmSync(root, { force: true, recursive: true });
   }
 });
 
 describe(ownDevelopmentDatabaseUrl, () => {
   it("returns the URL of the worktree's own development copy", () => {
-    const worktree = checkout();
+    const worktree = databaseCheckout();
     const name = worktreeDatabaseName({ mode: "dev", worktree });
     const url = `postgres://postgres:postgres@localhost:5432/${name}?connect_timeout=30`;
 
@@ -34,7 +67,7 @@ describe(ownDevelopmentDatabaseUrl, () => {
   });
 
   it("ignores the primary checkout's database, another worktree's copy and other servers", () => {
-    const worktree = checkout();
+    const worktree = databaseCheckout();
     const own = worktreeDatabaseName({ mode: "dev", worktree });
     const other = worktreeDatabaseName({ mode: "dev", worktree: "/elsewhere" });
 
@@ -51,6 +84,6 @@ describe(ownDevelopmentDatabaseUrl, () => {
   });
 
   it("ignores a checkout without a database environment", () => {
-    expect(ownDevelopmentDatabaseUrl(checkout())).toBeNull();
+    expect(ownDevelopmentDatabaseUrl(databaseCheckout())).toBeNull();
   });
 });
