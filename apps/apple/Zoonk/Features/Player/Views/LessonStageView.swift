@@ -3,6 +3,7 @@ import SwiftUI
 struct LessonStageView: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.lessonAudio) private var audio
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -201,7 +202,7 @@ struct LessonStageView: View {
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
       .onChange(of: step.id, initial: true) {
-        store.promptAudio.enter()
+        store.promptAudio.enter(prompt: step.promptAudio, audio: audio)
       }
       .task(id: step.id) {
         if step.hasExampleLineSlot {
@@ -319,6 +320,10 @@ struct LessonActionBar: View {
         .buttonBorderShape(.circle)
         .controlSize(.large)
         .keyboardShortcut(.leftArrow, modifiers: [])
+      }
+
+      if step.isRead {
+        LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
       primaryButton

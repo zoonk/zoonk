@@ -11,7 +11,7 @@ struct LanguageStepView: View {
     case (.vocabulary, _):
       VocabularyView(exercise: exercise, wordHints: wordHints, part: part)
     case (.alphabet, .screen):
-      AlphabetView(content: exercise.content)
+      AlphabetView(exercise: exercise)
     case (.multipleChoice, _):
       MultipleChoiceView(exercise: exercise, context: context, part: part)
     case (.translation, _):
@@ -47,19 +47,25 @@ private struct ScreenChip: View {
 }
 
 /// Main's prompt audio: a recording the screen is about (a word, a letter, a sentence to hear).
-/// It pauses when tapped again or on P, and once the learner has played one, the lesson's later
-/// prompts play on their own.
 struct LessonAudioButton: View {
+  enum Style {
+    /// Listening's, where hearing the sentence is the task.
+    case prominent
+    case bar
+    /// Right after the word or letter; the bar's button on the same screen takes P.
+    case inline
+  }
+
   @Environment(\.lessonAudio) private var audio
   @Environment(LessonPromptAudio.self) private var prompt: LessonPromptAudio?
 
-  let url: String?
+  let url: URL?
+  var style = Style.prominent
 
   var body: some View {
-    if let url = url.flatMap(URL.init(string:)) {
+    if let url {
       let isPlaying = prompt?.playing == url
-
-      Button {
+      let button = Button {
         if let prompt {
           prompt.toggle(url, audio: audio)
         } else {
@@ -78,55 +84,109 @@ struct LessonAudioButton: View {
             )
           }
         } icon: {
-          Image(systemName: isPlaying ? "pause.fill" : "speaker.wave.2.fill")
+          // Pause is narrower than the speaker, so keeping the speaker's room leaves the word and
+          // the bar where they are while it plays.
+          ZStack {
+            Image(systemName: icon).hidden()
+            Image(systemName: isPlaying ? "pause.fill" : icon)
+          }
         }
         .labelStyle(.iconOnly)
+        .modifier(Fit(style: style, isPlaying: isPlaying))
       }
-      .buttonStyle(.bordered)
-      .buttonBorderShape(.circle)
-      .controlSize(.large)
-      .keyboardShortcut("p", modifiers: [])
-      .task(id: url) {
-        prompt?.autoplay(url, audio: audio)
+
+      switch style {
+      case .prominent, .bar:
+        button
+          .buttonStyle(.bordered)
+          .buttonBorderShape(.circle)
+          .controlSize(.large)
+          .keyboardShortcut("p", modifiers: [])
+      case .inline:
+        button
+          .buttonStyle(.borderless)
+      }
+    }
+  }
+
+  private var icon: String {
+    style == .prominent ? "speaker.wave.2.fill" : "speaker.wave.2"
+  }
+
+  /// A button's hit region is its label's shape, so the sizes go on the label.
+  private struct Fit: ViewModifier {
+    let style: Style
+    let isPlaying: Bool
+
+    func body(content: Content) -> some View {
+      switch style {
+      case .prominent:
+        content
+      case .bar:
+        content.frame(minHeight: 32)
+      case .inline:
+        content
+          .imageScale(.large)
+          .foregroundStyle(isPlaying ? .primary : .secondary)
+          .frame(minWidth: 44, minHeight: 44)
+          .contentShape(.rect)
       }
     }
   }
 }
 
+extension LanguageExercise {
+  /// Main's `getPlayerStepAudioUrl`.
+  var promptAudio: URL? {
+    let url: String? =
+      switch kind {
+      case .vocabulary: word?.audioUrl
+      case .alphabet: content.audioUrl
+      case .listening: sentence?.audioUrl
+      default: nil
+      }
+
+    return url.flatMap(URL.init(string:))
+  }
+}
+
+extension LessonStep {
+  /// Main's `getPromptAudioUrl`: the listening a spoken screen offers instead never plays on its own.
+  var promptAudio: URL? {
+    guard case .language(let exercise, _) = content else {
+      return nil
+    }
+
+    return exercise.promptAudio
+  }
+}
+
 /// Per lesson, above the layout, so folding or unfolding the screen neither stops nor replays its
-/// prompt. Main's `autoPlayAudio`: on after the learner's first play.
+/// prompt.
 @MainActor
 @Observable
 final class LessonPromptAudio {
   private(set) var playing: URL?
   @ObservationIgnored private var task: Task<Void, Never>?
-  @ObservationIgnored private var autoplays = false
-  @ObservationIgnored private var visit = 0
-  @ObservationIgnored private var autoplayedVisit: Int?
 
-  /// Another screen in view, whose sounds the lesson already stopped: its prompt may play on its own.
-  func enter() {
+  /// Another screen in view, whose sounds the lesson already stopped: its prompt plays once, on its
+  /// own.
+  func enter(prompt: URL?, audio: LessonAudio) {
     task?.cancel()
     task = nil
     playing = nil
-    visit += 1
+
+    if let prompt {
+      play(prompt, audio: audio, autoplay: true)
+    }
   }
 
   func toggle(_ url: URL, audio: LessonAudio) {
     if playing == url {
       stop(audio: audio)
     } else {
-      autoplays = true
-      autoplayedVisit = visit
-      play(url, audio: audio)
+      play(url, audio: audio, autoplay: false)
     }
-  }
-
-  /// Once per visit to a screen, after the learner's first play.
-  func autoplay(_ url: URL, audio: LessonAudio) {
-    guard autoplays, autoplayedVisit != visit else { return }
-    autoplayedVisit = visit
-    play(url, audio: audio)
   }
 
   private func stop(audio: LessonAudio) {
@@ -137,11 +197,12 @@ final class LessonPromptAudio {
     audio.stop()
   }
 
-  private func play(_ url: URL, audio: LessonAudio) {
+  private func play(_ url: URL, audio: LessonAudio, autoplay: Bool) {
     task?.cancel()
     playing = url
     task = Task {
-      await audio.play(url)
+      guard !Task.isCancelled else { return }
+      await audio.play(url, autoplay: autoplay)
 
       if !Task.isCancelled {
         playing = nil
@@ -165,19 +226,18 @@ private struct VocabularyView: View {
         ScreenChip(
           text: Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
 
-        HStack(alignment: .center, spacing: 16) {
-          VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 4) {
+          AccessibilityStack(spacing: 8) {
             Text(word.word)
               .font(.largeTitle.weight(.semibold))
-            if let romanization = word.romanization {
-              Text(romanization).foregroundStyle(.secondary)
-            }
-            if let pronunciation = word.pronunciation {
-              Text(pronunciation).font(.callout).foregroundStyle(.secondary)
-            }
+            LessonAudioButton(url: exercise.promptAudio, style: .inline)
           }
-          Spacer(minLength: 0)
-          LessonAudioButton(url: word.audioUrl)
+          if let romanization = word.romanization {
+            Text(romanization).foregroundStyle(.secondary)
+          }
+          if let pronunciation = word.pronunciation {
+            Text(pronunciation).font(.callout).foregroundStyle(.secondary)
+          }
         }
 
         if !isPaneSplit {
@@ -229,7 +289,9 @@ struct LessonWordHints: View {
 }
 
 private struct AlphabetView: View {
-  let content: LanguageExercise.Content
+  let exercise: LanguageExercise
+
+  private var content: LanguageExercise.Content { exercise.content }
 
   var body: some View {
     ScreenChip(
@@ -241,16 +303,17 @@ private struct AlphabetView: View {
         .dynamicTypeSize(...DynamicTypeSize.accessibility5)
         .scaleEffect(1.6, anchor: .leading)
         .padding(.trailing, 24)
-      VStack(alignment: .leading, spacing: 4) {
-        if let readingAid = content.readingAid {
-          Text(readingAid).font(.title3.weight(.medium))
+      AccessibilityStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
+          if let readingAid = content.readingAid {
+            Text(readingAid).font(.title3.weight(.medium))
+          }
+          if let pronunciation = content.pronunciation {
+            Text(pronunciation).foregroundStyle(.secondary)
+          }
         }
-        if let pronunciation = content.pronunciation {
-          Text(pronunciation).foregroundStyle(.secondary)
-        }
+        LessonAudioButton(url: exercise.promptAudio, style: .inline)
       }
-      Spacer(minLength: 0)
-      LessonAudioButton(url: content.audioUrl)
     }
 
     if let forms = content.forms, !forms.isEmpty {
@@ -527,8 +590,8 @@ private struct ArrangeWordsView: View {
           "What do you hear?", tableName: "Player",
           comment: "Above a sentence to listen to and arrange"))
       HStack(spacing: 12) {
-        LessonAudioButton(url: sentence.audioUrl)
-        if sentence.audioUrl == nil {
+        LessonAudioButton(url: exercise.promptAudio)
+        if exercise.promptAudio == nil {
           LessonQuestionText(text: sentence.sentence)
         }
       }
