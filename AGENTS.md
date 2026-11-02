@@ -93,7 +93,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 
 ## Maintaining these instructions
 
-Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant guide or skill and load supporting references only as needed.
+An AGENTS.md holds general guidance for its scope: conventions, boundaries, commands, and rules every change there must follow. A decision about one specific piece of code, such as why a file, setting or workaround is the way it is, goes in a comment beside that code when it clears the [comments guide](.agents/guides/comments.md)'s bar, never in an AGENTS.md. Put task-specific procedures in the relevant guide or skill and load supporting references only as needed.
 
 Write them for any contributor, on any OS and agent harness: no one person's name, personal paths (where someone keeps their checkouts or repositories), computer, personal memory or soon-stale branch names. Call the person an agent works for "the user", and state a step that needs one OS or tool as a condition ("On macOS, …"). Personal preferences belong in your own user-level instructions, not here.
 
