@@ -96,7 +96,7 @@ export function LessonAnswerField({
     }
   }, [isChecking, isGraded]);
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleKeyDown(event: React.KeyboardEvent) {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
       return;
     }
@@ -132,6 +132,7 @@ export function LessonAnswerField({
           inputMode="decimal"
           maxLength={MAX_TYPED_ANSWER_LENGTH}
           onChange={(event) => onChange(event.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder={t("Your answer")}
           readOnly={isLocked}
           value={value}
