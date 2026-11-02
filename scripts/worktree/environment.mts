@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { parseEnv } from "node:util";
+import { isLocalDevelopmentDatabase } from "../../packages/db/src/local-database.ts";
 import { CONNECT_TIMEOUT_SECONDS } from "./postgres.mts";
 
 const ENV_FILES = [".env", ".env.local", ".env.development.local", ".env.production.local"];
@@ -18,6 +19,16 @@ export function worktreeDatabaseName({
 }): string {
   const identifier = createHash("sha256").update(worktree).digest("hex").slice(0, ID_LENGTH);
   return `zoonk_wt_${identifier}_${mode}`;
+}
+
+export function ownDevelopmentDatabaseUrl(worktree: string): string | null {
+  const path = join(worktree, "packages/db/.env");
+  const url = existsSync(path) && parseEnv(readFileSync(path, "utf8")).DATABASE_URL_UNPOOLED;
+  const name = worktreeDatabaseName({ mode: "dev", worktree });
+
+  return url && isLocalDevelopmentDatabase(url) && new URL(url).pathname === `/${name}`
+    ? url
+    : null;
 }
 
 function environmentPaths(root: string, files = ENV_FILES): string[] {

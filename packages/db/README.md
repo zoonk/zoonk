@@ -86,11 +86,11 @@ Seeded content stays as the seed wrote it. The seed gives its courses and Librar
 
 Run `pnpm worktree:setup` from a linked worktree's root. Codex, T3 Code, and Claude Code run this automatically when they create a worktree. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
 
-| Database             | Initial content                                     |
-| -------------------- | --------------------------------------------------- |
-| `zoonk_wt_<id>_dev`  | A consistent snapshot of the local `zoonk` database |
-| `zoonk_wt_<id>_test` | This worktree's migrations and regular seed data    |
-| `zoonk_wt_<id>_e2e`  | This worktree's migrations and regular seed data    |
+| Database             | Initial content                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `zoonk_wt_<id>_dev`  | A consistent snapshot of the local `zoonk` database, then this worktree's migrations |
+| `zoonk_wt_<id>_test` | This worktree's migrations and regular seed data                                     |
+| `zoonk_wt_<id>_e2e`  | This worktree's migrations and regular seed data                                     |
 
 The ID comes from the worktree's absolute path, so branches can be renamed without losing their database. Test databases contain seeded users, organizations, and progress; they do not copy development content. Setup runs the development copy alongside dependency installation and runs independent migrations and seeds in parallel. It prints its elapsed time when all three databases are ready.
 
@@ -98,7 +98,7 @@ Use Node.js 26 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH
 
 Setup writes development URLs into this worktree's app/package environment files, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. CI continues to use its configured URLs. Do not manually change the tracked `.env.test` or `.env.e2e` defaults. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
 
-Rerunning setup preserves ready databases and existing secrets. It repairs unfinished database initialization without replacing ready worktree data. If an expired database has been removed, rerun setup to recreate it. Setup prevents simultaneous attempts for the same worktree; if one is already running, let it finish before retrying. Different worktrees can initialize independently.
+The local `zoonk` can be behind the worktree's branch, so setup applies the branch's migrations to the development copy, and `pnpm dev` and `pnpm start` apply new ones before they start; they never migrate `zoonk` itself. Rerunning setup preserves ready databases and existing secrets. It repairs unfinished database initialization without replacing ready worktree data. If an expired database has been removed, rerun setup to recreate it. Setup prevents simultaneous attempts for the same worktree; if one is already running, let it finish before retrying. Different worktrees can initialize independently.
 
 Each setup also checks databases managed by this mechanism for the same source. A database can be deleted only after its activity counters remain unchanged for at least seven days. New sessions, transactions, writes, statistics resets, and server restarts extend retention. Because PostgreSQL does not expose a database-wide last-write timestamp, cleanup conservatively starts a new seven-day interval when it observes changed counters. It never forces disconnections, deletes the current worktree's databases, or deletes legacy/manual databases without its ownership metadata. Cleanup runs when setup runs, so expiration is opportunistic.
 
