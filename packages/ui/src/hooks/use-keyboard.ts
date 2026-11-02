@@ -1,6 +1,29 @@
-import { use, useEffectEvent, useLayoutEffect, useRef } from "react";
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  use,
+  useEffectEvent,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
-import { getNumberKeyIndex, isScreenShortcut } from "./_utils/screen-shortcut";
+import {
+  SCREEN_ENTER_ATTRIBUTE,
+  getNumberKeyIndex,
+  isScreenShortcut,
+} from "./_utils/screen-shortcut";
+
+export const AUDIO_KEY = "p";
+
+const AUDIO_BUTTON = {
+  [SCREEN_ENTER_ATTRIBUTE]: "",
+  "aria-keyshortcuts": AUDIO_KEY,
+  // A held Enter acts once, so it doesn't replay the audio after the screen's action.
+  onKeyDown: (event: ReactKeyboardEvent) => {
+    if (event.key === "Enter" && event.repeat) {
+      event.preventDefault();
+    }
+  },
+} as const;
 
 type KeyboardModifiers = {
   altKey?: boolean;
@@ -142,6 +165,19 @@ export function useEnterClick<Target extends HTMLElement>({
   );
 
   return ref;
+}
+
+/** A screen's letter key, pressed in either case because Caps Lock sends the capital. */
+export function useLetterKey(letter: string, callback: () => ShortcutResult) {
+  const options = { mode: "none", screen: true } as const;
+  useKeyboardCallback(letter, callback, options);
+  useKeyboardCallback(letter.toUpperCase(), callback, options);
+}
+
+/** P plays or pauses the screen's audio. Spread the result on its button: Enter there runs the screen's main action, and plays only when there's none. */
+export function useAudioKey(toggle: () => ShortcutResult) {
+  useLetterKey(AUDIO_KEY, toggle);
+  return AUDIO_BUTTON;
 }
 
 /** Only for a full-screen task whose leaving loses nothing. */

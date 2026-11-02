@@ -1,7 +1,6 @@
 "use client";
 
 import { useSpeechPlayer } from "@zoonk/learn/speech/provider";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import {
   createContext,
   useCallback,
@@ -11,7 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "./player-shortcuts";
 import { useAudioPreload } from "./use-audio-preload";
 
 export type PromptAudio = { isPlaying: boolean; toggle: () => void };
@@ -64,18 +62,6 @@ export function PlayerAudioProvider({
     start();
     return () => player?.stop(owner);
   }, [player, start]);
-
-  useKeyboardCallback(
-    PLAYER_AUDIO_KEYBOARD_SHORTCUT,
-    () => {
-      if (!audioUrl || !player) {
-        return false;
-      }
-
-      toggle();
-    },
-    { mode: "none", screen: true },
-  );
 
   const value = useMemo(
     () => (audioUrl && player ? { isPlaying, toggle } : null),

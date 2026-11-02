@@ -1,10 +1,38 @@
 import { mkdtemp, rm } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { worktreeDatabaseName } from "./environment.mts";
+import { ownDevelopmentDatabaseUrl, worktreeDatabaseName } from "./environment.mts";
 import { postgresEnvironment, query, run, sqlLiteral, together } from "./postgres.mts";
 
 export type WorktreeDatabase = { mode: "dev" | "test" | "e2e"; name: string; ready: boolean };
+
+export function prisma({
+  args,
+  env = process.env,
+  worktree,
+}: {
+  args: string[];
+  env?: NodeJS.ProcessEnv;
+  worktree: string;
+}): Promise<string> {
+  const directory = join(worktree, "packages/db");
+  const cli = createRequire(join(directory, "package.json")).resolve("prisma/build/index.js");
+  return run({ args: [cli, ...args], command: process.execPath, cwd: directory, env });
+}
+
+/** Does nothing unless the checkout uses this worktree's own copy, so the primary checkout's `zoonk` is never migrated. */
+export async function migrateDevelopmentDatabase(worktree: string): Promise<void> {
+  const url = ownDevelopmentDatabaseUrl(worktree);
+
+  if (url) {
+    await prisma({
+      args: ["migrate", "deploy"],
+      env: { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url },
+      worktree,
+    });
+  }
+}
 
 export function markDatabase({
   database,

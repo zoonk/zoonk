@@ -1,5 +1,6 @@
 "use server";
 
+import { httpStatus } from "@/lib/api-errors";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { createEmailSignInCode } from "@zoonk/auth/native-sessions";
@@ -10,7 +11,10 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getOtpHref } from "../_utils/auth-redirect";
 
-type VerificationOTPState = { status: "idle" | "invalidEmail" | "disposableEmail" | "error" };
+type VerificationOTPState = {
+  email?: string;
+  status: "idle" | "invalidEmail" | "disposableEmail" | "rateLimited" | "error";
+};
 
 const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
@@ -32,6 +36,10 @@ function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPSt
   }
 
   const statusCode = authError?.statusCode ?? SERVER_ERROR;
+
+  if (statusCode === httpStatus.tooManyRequests) {
+    return { status: "rateLimited" };
+  }
 
   return statusCode >= CLIENT_ERROR && statusCode < SERVER_ERROR ? { status: "error" } : null;
 }
@@ -66,7 +74,7 @@ export async function sendVerificationOTPAction(
     const expectedState = getExpectedVerificationOTPErrorState(error);
 
     if (expectedState) {
-      return expectedState;
+      return { ...expectedState, email };
     }
 
     throw error;

@@ -29,6 +29,12 @@ msgid "Enter a valid email address"
 msgstr "Inserisci un indirizzo email valido"
 
 #: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "Troppi tentativi. Aspetta un minuto, poi riprova."
+
+#: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Email"
@@ -85,11 +91,6 @@ msgstr "Qualcosa è andato storto. Riprova tra poco."
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
 msgstr "Questo codice è scaduto. Richiedine uno nuovo."
-
-#: src/app/auth/otp/otp-form.tsx
-msgctxt "hUjCDW"
-msgid "Too many tries. Wait a minute, then try again."
-msgstr "Troppi tentativi. Aspetta un minuto, poi riprova."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"

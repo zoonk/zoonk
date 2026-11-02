@@ -9,6 +9,7 @@ import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react"
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
+import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
@@ -190,17 +191,19 @@ function ListeningInstead({
   step: StepOf<"spokenAnswer"> & { listening: NonNullable<StepOf<"spokenAnswer">["listening"]> };
 }) {
   return (
-    <ExerciseStepView
-      {...props}
-      step={{
-        exercise: step.listening,
-        id: step.id,
-        kind: "listening",
-        position: step.position,
-        skillId: step.skillId,
-        wordHints: null,
-      }}
-    />
+    <PlayerAudioProvider audioUrl={step.listening.sentence?.audioUrl ?? null}>
+      <ExerciseStepView
+        {...props}
+        step={{
+          exercise: step.listening,
+          id: step.id,
+          kind: "listening",
+          position: step.position,
+          skillId: step.skillId,
+          wordHints: null,
+        }}
+      />
+    </PlayerAudioProvider>
   );
 }
 

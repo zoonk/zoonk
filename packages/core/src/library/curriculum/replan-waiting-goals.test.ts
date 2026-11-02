@@ -6,7 +6,10 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { askForLessons } from "../../lookahead/lessons-ask";
+import { OUTLINE_STALE_AFTER_MS } from "../../lookahead/outline-ahead";
 import { pickSpeculativeLessons } from "../../lookahead/speculative-lessons";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
 import { openStudyDay } from "../../sessions/open-study-day";
@@ -103,6 +106,39 @@ describe(replanGoalsWaitingOnSkills, () => {
 
     const planned = await Promise.all(waiting.map(({ plan }) => plannedLessons(plan.id)));
     expect(planned).toStrictEqual(waiting.map(() => lessonIds));
+  });
+
+  it("writes the lessons a learner asked for once the outline they waited on brings them in", async () => {
+    const skill = await skillFixture();
+
+    const [asked, stale, idle] = await Promise.all([
+      waitingGoal(skill),
+      waitingGoal(skill),
+      waitingGoal(skill),
+    ]);
+
+    const [askedAt] = await Promise.all([
+      askForLessons({ goalId: asked.goal.id }),
+      askForLessons({
+        goalId: stale.goal.id,
+        now: new Date(WAITING_START.getTime() - OUTLINE_STALE_AFTER_MS - 1),
+      }),
+    ]);
+
+    const [first] = await outlineSkill(skill);
+    await replanGoalsWaitingOnSkills({ skillIds: [skill.id] });
+
+    await expect(listOwed(asked.goal.userId)).resolves.toStrictEqual([
+      {
+        input: { goalId: asked.goal.id, lessonsAskedAt: askedAt },
+        key: asked.goal.id,
+        kind: "prepareGoalLessons",
+      },
+      { input: { lessonId: first }, key: first, kind: "writeLesson" },
+    ]);
+
+    await expect(listOwed(stale.goal.userId)).resolves.toStrictEqual([]);
+    await expect(listOwed(idle.goal.userId)).resolves.toStrictEqual([]);
   });
 
   it("leaves a learner still answering onboarding to re-plan with the answer", async () => {

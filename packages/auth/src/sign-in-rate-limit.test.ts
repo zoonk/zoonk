@@ -4,22 +4,27 @@ import { describe, expect, it } from "vitest";
 import { auth } from "./auth";
 import { BETTER_AUTH_BASE_PATH } from "./config";
 
-describe("Production guest rate limit", () => {
-  it("production keeps other auth limits and ignores the E2E guest bypass header", async () => {
+const SHARED_IP_PATHS = [
+  "/sign-in/anonymous",
+  "/email-otp/send-verification-otp",
+  "/sign-in/email-otp",
+];
+
+describe("Production sign-in rate limits", () => {
+  it("lets one IP start or sign in 60 times a minute and ignores the E2E bypass header", async () => {
     const ip = `198.19.${randomInt(256)}.${randomInt(1, 255)}`;
-    const guestPath = "/sign-in/anonymous";
-    const otherPaths = ["/sign-in/email-otp", "/email-otp/send-verification-otp"];
+    const defaultPath = "/sign-in/social";
+    const keys = [...SHARED_IP_PATHS, defaultPath].map((path) => `${ip}|${path}`);
     const guestIds = new Set<string>();
-    const keys = [guestPath, ...otherPaths].map((path) => `${ip}|${path}`);
 
     await prisma.rateLimit.createMany({
       data: [
-        { count: 59, key: `${ip}|${guestPath}`, lastRequest: BigInt(Date.now()) },
-        ...otherPaths.map((path) => ({
-          count: 3,
+        ...SHARED_IP_PATHS.map((path) => ({
+          count: 59,
           key: `${ip}|${path}`,
           lastRequest: BigInt(Date.now()),
         })),
+        { count: 3, key: `${ip}|${defaultPath}`, lastRequest: BigInt(Date.now()) },
       ],
     });
 
@@ -39,19 +44,21 @@ describe("Production guest rate limit", () => {
     }
 
     try {
-      const allowed = await post(guestPath);
+      const sixtieth = await Promise.all(SHARED_IP_PATHS.map((path) => post(path)));
+      const [guest] = sixtieth;
 
-      if (allowed.ok) {
-        const body = await allowed.json();
+      if (guest?.ok) {
+        const body = await guest.json();
         guestIds.add(body.user.id);
       }
 
-      expect(allowed.status).toBe(200);
-      const blocked = await post(guestPath);
-      expect(blocked.status).toBe(429);
+      expect(sixtieth.map((response) => response.status)).toStrictEqual([200, 400, 400]);
 
-      const otherResponses = await Promise.all(otherPaths.map((path) => post(path)));
-      expect(otherResponses.map((response) => response.status)).toStrictEqual([429, 429]);
+      const blocked = await Promise.all(
+        [...SHARED_IP_PATHS, defaultPath].map((path) => post(path)),
+      );
+
+      expect(blocked.map((response) => response.status)).toStrictEqual([429, 429, 429, 429]);
     } finally {
       await prisma.user.deleteMany({ where: { id: { in: [...guestIds] } } });
       await prisma.rateLimit.deleteMany({ where: { key: { in: keys } } });

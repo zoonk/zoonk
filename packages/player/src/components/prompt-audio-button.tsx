@@ -3,10 +3,10 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Kbd, ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
+import { AUDIO_KEY, useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type PromptAudio } from "../player-audio-context";
-import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 
 export function PromptAudioButton({
   audio,
@@ -18,10 +18,11 @@ export function PromptAudioButton({
   const t = useExtracted();
   const Icon = audio.isPlaying ? PauseIcon : Volume2Icon;
   const label = audio.isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
-  const shortcut = PLAYER_AUDIO_KEYBOARD_SHORTCUT.toUpperCase();
+  const shortcut = AUDIO_KEY.toUpperCase();
+  const audioKey = useAudioKey(audio.toggle);
 
   const shared = {
-    "aria-keyshortcuts": PLAYER_AUDIO_KEYBOARD_SHORTCUT,
+    ...audioKey,
     "aria-label": label,
     onClick: audio.toggle,
     type: "button",

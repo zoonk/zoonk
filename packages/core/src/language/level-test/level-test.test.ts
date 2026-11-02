@@ -11,6 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import {
@@ -1137,5 +1138,31 @@ describe("placing a level test's result on the planner's plan", () => {
 
     await finishLanguageLevelTest(goalId);
     await expect(readPlacement()).resolves.toStrictEqual(announced);
+  });
+
+  it("owes the lessons the placed plan opens with, even when its finish fails after placing", async () => {
+    const { goalId, userId } = await plannedLearnerFixture();
+
+    const announcing = vi
+      .spyOn(announcement, "announceTestedOutItems")
+      .mockRejectedValueOnce(new Error("Plan busy"));
+
+    try {
+      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
+    } finally {
+      announcing.mockRestore();
+    }
+
+    await finishLanguageLevelTest(goalId);
+
+    const { lessonId } = await prisma.planItem.findFirstOrThrow({
+      orderBy: { position: "asc" },
+      where: { kind: "lesson", plan: { goalId }, status: "todo" },
+    });
+
+    await expect(listOwed(userId)).resolves.toMatchObject([
+      { key: goalId, kind: "prepareGoalLessons" },
+      { input: { lessonId }, key: lessonId, kind: "writeLesson" },
+    ]);
   });
 });

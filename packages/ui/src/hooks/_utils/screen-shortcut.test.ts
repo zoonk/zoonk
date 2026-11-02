@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
+import { SCREEN_ENTER_ATTRIBUTE, getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
 
 function pressOn(target: EventTarget, init: KeyboardEventInit) {
   const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init });
@@ -51,7 +51,7 @@ describe(isScreenShortcut, () => {
     expect(isEnterShortcutOn("<textarea data-target></textarea>")).toBe(false);
   });
 
-  it("leaves Enter to a focused button or link, but not to a picked answer", () => {
+  it("leaves Enter to a focused button or link, but not to a picked answer or a button with its own key", () => {
     const button = mount('<button data-target type="button">Explain first</button>');
     expect(isScreenShortcut(pressOn(button, { key: "Enter" }))).toBe(false);
     expect(isScreenShortcut(pressOn(button, { key: "3" }))).toBe(true);
@@ -61,6 +61,12 @@ describe(isScreenShortcut, () => {
 
     const option = mount('<button data-target role="radio" aria-checked="true">B</button>');
     expect(isScreenShortcut(pressOn(option, { key: "Enter" }))).toBe(true);
+
+    const audio = mount(
+      `<button data-target ${SCREEN_ENTER_ATTRIBUTE} aria-keyshortcuts="p">Play</button>`,
+    );
+
+    expect(isScreenShortcut(pressOn(audio, { key: "Enter" }))).toBe(true);
   });
 
   it("leaves every key inside a dialog or a menu to it", () => {

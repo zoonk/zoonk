@@ -8822,61 +8822,61 @@
         }
       }
     },
-    "Too many attempts. Wait a moment, then try again." : {
+    "Too many tries. Wait a minute, then try again." : {
       "comment" : "Error shown when sign-in attempts are temporarily rate limited",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu viele Versuche. Warte einen Moment und versuch es dann noch einmal."
+            "value" : "Zu viele Versuche. Warte eine Minute und versuch es dann noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demasiados intentos. Espera un momento e inténtalo de nuevo."
+            "value" : "Demasiados intentos. Espera un minuto y vuelve a intentarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trop de tentatives. Attends un moment, puis réessaie."
+            "value" : "Trop de tentatives. Attends une minute, puis réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Troppi tentativi. Attendi un momento, poi riprova."
+            "value" : "Troppi tentativi. Aspetta un minuto, poi riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "試行回数が上限に達しました。少し待ってから、もう一度お試しください。"
+            "value" : "試行回数の上限に達しました。1分待ってからもう一度お試しください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시도 횟수가 너무 많아요. 잠시 기다린 후 다시 시도해 보세요."
+            "value" : "시도 횟수가 너무 많아요. 1분 후에 다시 시도해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zbyt wiele prób. Poczekaj chwilę i spróbuj ponownie."
+            "value" : "Zbyt wiele prób. Poczekaj minutę i spróbuj ponownie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muitas tentativas. Espere um pouco e tente de novo."
+            "value" : "Muitas tentativas. Espere um minuto e tente de novo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çok fazla deneme yapıldı. Biraz bekle, sonra tekrar dene."
+            "value" : "Çok fazla deneme yapıldı. Bir dakika bekle, sonra tekrar dene."
           }
         }
       }
