@@ -1,9 +1,8 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
-import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { previewUsageClaim } from "../../entitlements/_utils/reached-usage-limit";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
@@ -11,6 +10,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
+import { toSourceUrl } from "./fetch-document";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { deleteUploadedBlob } from "./upload-blob";
 
@@ -73,7 +73,6 @@ function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
   });
 }
 
-/** A document counts once per learner, under the upload id it first claimed. */
 async function hasUploaded({ hash, userId }: { hash: string; userId: string }): Promise<boolean> {
   const uploads = await prisma.learnerSource.count({
     where: { origin: "upload", source: { contentHash: hash }, userId },
@@ -159,21 +158,14 @@ async function claimUpload(targetId: string): Promise<UsageRefusal | null> {
   return decision.status === "allowed" ? null : decision;
 }
 
-/** A file was claimed when its upload was signed, and pasted text costs nothing to read. */
-async function findLinkRefusal(): Promise<UsageRefusal | null> {
-  const viewer = await getEntitlementViewer();
-
-  if (!viewer) {
-    return { status: "unauthorized" };
+function getSentUploadId({ input, userId }: { input: UploadRead; userId: string }) {
+  if (input.kind === "file") {
+    return getUploadClaimId(input.pathname);
   }
 
-  const decision = await previewUsageClaim({
-    kind: "upload",
-    tier: viewer.tier,
-    userId: viewer.userId,
-  });
+  const url = input.kind === "link" ? toSourceUrl(input.url) : null;
 
-  return decision.status === "allowed" ? null : decision;
+  return url ? getUploadClaimId(`${userId}:${url}`) : null;
 }
 
 async function removeUnusedBlob({
@@ -189,11 +181,14 @@ async function removeUnusedBlob({
 }
 
 async function storeUpload({
+  claimId,
   content,
   input,
   uploadId,
   userId,
 }: {
+  /** Null when the request claimed its upload before reading it. */
+  claimId: string | null;
   content: UploadContent;
   input: SourceUploadInput;
   uploadId: string;
@@ -205,7 +200,7 @@ async function storeUpload({
     hasUploaded({ hash: content.hash, userId }),
   ]);
 
-  const refusal = uploadedBefore ? null : await claimUpload(uploadId);
+  const refusal = claimId && !uploadedBefore ? await claimUpload(claimId) : null;
 
   if (refusal) {
     await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
@@ -263,14 +258,16 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
     return { status: "invalidPathname" };
   }
 
-  const fileId = input.kind === "file" ? getUploadClaimId(input.pathname) : null;
-  const sentFile = fileId ? await answerSentUpload({ input, uploadId: fileId, userId }) : null;
+  const sentId = getSentUploadId({ input, userId });
+  const sentBefore = sentId ? await answerSentUpload({ input, uploadId: sentId, userId }) : null;
 
-  if (sentFile) {
-    return sentFile;
+  if (sentBefore) {
+    return sentBefore;
   }
 
-  const refusal = input.kind === "link" ? await findLinkRefusal() : null;
+  // Each download of a link takes its own claim, so one claim never pays for two downloads. A file
+  // was claimed when its upload was signed, and pasted text costs nothing to read.
+  const refusal = input.kind === "link" && sentId ? await claimUpload(randomUUID()) : null;
 
   if (refusal) {
     return refusal;
@@ -282,8 +279,10 @@ export async function registerSourceUpload(input: SourceUploadInput): Promise<So
     return read;
   }
 
-  const uploadId = fileId ?? getUploadClaimId(`${userId}:${read.content.hash}`);
-  const sent = fileId ? null : await answerSentUpload({ input, uploadId, userId });
+  const uploadId = sentId ?? getUploadClaimId(`${userId}:${read.content.hash}`);
+  const sent = sentId ? null : await answerSentUpload({ input, uploadId, userId });
 
-  return sent ?? storeUpload({ content: read.content, input, uploadId, userId });
+  const claimId = input.kind === "link" ? null : uploadId;
+
+  return sent ?? storeUpload({ claimId, content: read.content, input, uploadId, userId });
 }

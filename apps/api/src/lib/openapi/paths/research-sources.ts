@@ -240,7 +240,7 @@ export const researchSourcePaths = {
   "/uploads": {
     post: {
       description:
-        "Counts as one of the plan's uploads unless it already counted: a file whose upload POST /uploads/tokens signed, or a document registered before, counts nothing more. A refusal is `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 asks a guest to create an account, 402 a free learner to upgrade or come back, 429 Plus to come back after it resets), or `SLOW_DOWN` (429) under fair use.",
+        "Counts as one of the plan's uploads unless it already counted: a file whose upload POST /uploads/tokens signed, a link already stored, or text registered before counts nothing more. Each try of a link not stored yet counts before its page is downloaded, even when the page can't be read. A refusal is `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 asks a guest to create an account, 402 a free learner to upgrade or come back, 429 Plus to come back after it resets), or `SLOW_DOWN` (429) under fair use.",
       operationId: "createUpload",
       requestBody: {
         content: { "application/json": { schema: createUploadRequestSchema } },

@@ -431,7 +431,7 @@ describe(registerSourceUpload, () => {
     ).resolves.toStrictEqual([{ origin: "upload" }]);
   });
 
-  it("charges one upload when the same link is registered twice at once", async () => {
+  it("charges each download when the same link is sent twice at once, and stores it once", async () => {
     const user = await userFixture();
     mockSession(user.id);
     const page = `<p>${uniqueText()}</p>`;
@@ -451,9 +451,33 @@ describe(registerSourceUpload, () => {
 
     await expect(
       prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
-    ).resolves.toBe(1);
+    ).resolves.toBe(2);
 
     await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(1);
+  });
+
+  it("answers a link it already stored without downloading or charging it again", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    serveLinkedPage();
+    const link = { kind: "link", language: "pt", url: "https://www.example.com/edital" } as const;
+
+    const first = await registerSourceUpload(link);
+    const again = await registerSourceUpload(link);
+
+    expect(first).toMatchObject({ status: "ready" });
+
+    expect(again).toMatchObject({
+      checkVisibility: false,
+      source: { id: first.status === "ready" ? first.source.id : "" },
+      status: "ready",
+    });
+
+    expect(fetch).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
+    ).resolves.toBe(1);
   });
 
   it("charges nothing more for pasted text sent again after sharing merged it into another copy", async () => {
@@ -629,6 +653,43 @@ describe(registerSourceUpload, () => {
     ).resolves.toMatchObject({ status: "slowDown" });
 
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("downloads only one of two links sent at once for the last upload left", async () => {
+    const user = await userFixture();
+    await usageRecordsFixture({ count: 2, kind: "upload", userId: user.id });
+    mockSession(user.id);
+    serveLinkedPage();
+
+    const results = await Promise.all(
+      ["https://www.example.com/edital", "https://www.example.com/aviso"].map((url) =>
+        registerSourceUpload({ kind: "link", language: "pt", url }),
+      ),
+    );
+
+    expect(results.map((result) => result.status).toSorted()).toStrictEqual([
+      "limitReached",
+      "ready",
+    ]);
+
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  it("counts each try of a link it couldn't read, since each download is claimed first", async () => {
+    const user = await userFixture();
+    await usageRecordsFixture({ count: 2, kind: "upload", userId: user.id });
+    mockSession(user.id);
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("Not found", { status: 404 }));
+    const link = { kind: "link", language: "pt", url: "https://www.example.com/edital" } as const;
+
+    await expect(registerSourceUpload(link)).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(registerSourceUpload(link)).resolves.toMatchObject({
+      limit: { resource: "upload" },
+      status: "limitReached",
+    });
+
+    expect(fetch).toHaveBeenCalledOnce();
   });
 
   it("counts a file once: signing its upload, registering it and pasting the same text", async () => {

@@ -50,13 +50,13 @@ async function signedIn() {
   return { pathname: (name: string) => `sources/${user.id}/${name}`, user };
 }
 
-async function expectNothingKept(userId: string) {
+async function expectNoSource({ uploads = 0, userId }: { uploads?: number; userId: string }) {
   const [sources, usage] = await Promise.all([
     prisma.source.count({ where: { ownerId: userId } }),
     prisma.usageRecord.count({ where: { kind: "upload", userId } }),
   ]);
 
-  expect({ sources, usage }).toStrictEqual({ sources: 0, usage: 0 });
+  expect({ sources, usage }).toStrictEqual({ sources: 0, usage: uploads });
 }
 
 describe("uploads that can't be read", () => {
@@ -75,7 +75,7 @@ describe("uploads that can't be read", () => {
       registerSourceUpload({ kind: "text", language: "pt", text: "  \n\t " }),
     ).resolves.toStrictEqual({ status: "unsupported" });
 
-    await expectNothingKept(user.id);
+    await expectNoSource({ userId: user.id });
   });
 
   it("says a file is missing when storage has no such file, or it's over the size limit", async () => {
@@ -99,7 +99,7 @@ describe("uploads that can't be read", () => {
       registerSourceUpload({ kind: "file", language: "pt", pathname: file }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
-    await expectNothingKept(user.id);
+    await expectNoSource({ userId: user.id });
   });
 
   it("refuses a file type it can't read and a damaged PDF", async () => {
@@ -123,10 +123,10 @@ describe("uploads that can't be read", () => {
       registerSourceUpload({ kind: "file", language: "pt", pathname: pdf }),
     ).resolves.toStrictEqual({ status: "unsupported" });
 
-    await expectNothingKept(user.id);
+    await expectNoSource({ userId: user.id });
   });
 
-  it("says a link is missing when the page can't be fetched", async () => {
+  it("says a link is missing when the page can't be fetched, and counts it as an upload", async () => {
     const { user } = await signedIn();
     servePage(new PageResponse("Gone", { status: 404 }));
 
@@ -134,10 +134,10 @@ describe("uploads that can't be read", () => {
       registerSourceUpload({ kind: "link", language: "pt", url: "https://example.com/gone" }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
-    await expectNothingKept(user.id);
+    await expectNoSource({ uploads: 1, userId: user.id });
   });
 
-  it("refuses a link to something other than a page, PDF or text, and a page without text", async () => {
+  it("refuses a link to something other than a page, PDF or text, and a page without text, counting each", async () => {
     const { user } = await signedIn();
 
     servePage(
@@ -154,6 +154,6 @@ describe("uploads that can't be read", () => {
       registerSourceUpload({ kind: "link", language: "pt", url: "https://example.com/empty" }),
     ).resolves.toStrictEqual({ status: "unsupported" });
 
-    await expectNothingKept(user.id);
+    await expectNoSource({ uploads: 2, userId: user.id });
   });
 });
