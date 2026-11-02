@@ -185,6 +185,26 @@ describe(chooseExamOption, () => {
     ]);
   });
 
+  it("owes the lessons of the subjects a choice brings in, even when the request fails after saving it", async () => {
+    const { goal, plan, user } = await setup();
+
+    vi.spyOn(prisma.planChange, "findUniqueOrThrow").mockRejectedValueOnce(
+      new Error("Connection lost"),
+    );
+
+    await expect(chooseExamOption({ goalId: goal.id, input: spanish })).rejects.toThrow(
+      "Connection lost",
+    );
+
+    await expect(loadChoices(plan.id)).resolves.toStrictEqual([
+      { group: FOREIGN, subjects: [SPANISH] },
+    ]);
+
+    await expect(
+      prisma.followUp.findMany({ select: { key: true, kind: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ key: goal.id, kind: "prepareGoalLessons" }]);
+  });
+
   it("changes nothing when the learner picks the option they already take", async () => {
     const { goal } = await setup();
 

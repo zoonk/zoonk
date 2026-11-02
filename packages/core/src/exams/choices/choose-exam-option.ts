@@ -63,8 +63,11 @@ async function applyChoices({
     return { change: null, status: "applied" };
   }
 
+  const { goal } = context;
+
   const result = await applyChangeNow({
     context,
+    extraWrites: (tx) => oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId }),
     followToday: true,
     operations: changed.map((choice) => ({ kind: "setExamChoice" as const, ...choice })),
     reason: EXAM_CHOICE_NOTE,
@@ -109,10 +112,6 @@ export async function chooseExamOption({
     }
 
     const result = await applyChoices({ choices: offered, context });
-
-    if (result.status === "applied" && result.change) {
-      await oweGoalLessons({ goalId: owned.goal.id, userId: owned.userId });
-    }
 
     if (result.status === "applied") {
       trackPlanEdited({ changeKind: "setExamChoice", goalId, userId: owned.userId });
