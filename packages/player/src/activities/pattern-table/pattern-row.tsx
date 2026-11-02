@@ -72,7 +72,7 @@ function OpenBlank({
       })}
       aria-pressed={isActive}
       className={cn(
-        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border-2 bg-transparent pl-2 text-left outline-none",
+        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border-2 bg-transparent pl-2 text-left outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
         isActive ? "border-viz-accent bg-background" : "border-transparent",
       )}
