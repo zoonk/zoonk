@@ -5,6 +5,7 @@ import {
   type LevelTestAnswerInput,
 } from "@zoonk/core/language/level-test/contract";
 import { safeAsync } from "@zoonk/utils/error";
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { StepLoading } from "../../onboarding/steps/step-parts";
@@ -83,13 +84,6 @@ function withReadAudio({ phase, view }: { phase: Phase; view: LanguageLevelTestV
   }
 
   return { kind: "test", test: { ...phase.test, next: view.next } };
-}
-
-function getLanguageName(goal: { language: string; targetLanguage: string }): string {
-  return (
-    new Intl.DisplayNames([goal.language], { type: "language" }).of(goal.targetLanguage) ??
-    goal.targetLanguage
-  );
 }
 
 export function LanguageLevelTestStep({
@@ -226,7 +220,10 @@ export function LanguageLevelTestStep({
     case "waiting":
       return (
         <LevelTestPreparing
-          language={getLanguageName(goal)}
+          language={getLanguageNameInSentence({
+            targetLanguage: goal.targetLanguage,
+            userLanguage: goal.language,
+          })}
           onSkip={finish}
           run={toBankRun({ poll: poll.status, recheck: poll.restart, retry: begin, wait: bank })}
           skipping={isPending}
