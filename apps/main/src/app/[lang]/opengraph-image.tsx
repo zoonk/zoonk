@@ -6,6 +6,7 @@ import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { ImageResponse } from "next/og";
 import { type ReactNode } from "react";
+import { getHomeHeadline } from "./(home)/_components/home-headline";
 
 const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
 
@@ -28,6 +29,10 @@ async function getLogoDataUrl(): Promise<string> {
 
 function renderLine(chunks: ReactNode) {
   return <div style={{ display: "flex", textWrap: "balance" }}>{chunks}</div>;
+}
+
+function renderMore(chunks: ReactNode) {
+  return <div style={{ color: "#a7adb7", display: "flex", textWrap: "balance" }}>{chunks}</div>;
 }
 
 export function generateStaticParams() {
@@ -57,15 +62,15 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
       }}
     >
       {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
-      <img alt="" src={logoSrc} style={{ height: 150, width: 150 }} />
+      <img alt="" src={logoSrc} style={{ height: 112, width: 112 }} />
 
       <div
         style={{
           alignItems: "center",
           display: "flex",
           flexDirection: "column",
-          gap: 18,
-          marginTop: 40,
+          gap: 22,
+          marginTop: 36,
           textAlign: "center",
         }}
       >
@@ -74,18 +79,13 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             alignItems: "center",
             display: "flex",
             flexDirection: "column",
-            fontSize: 64,
+            fontSize: 60,
             fontWeight: 400,
             letterSpacing: "-0.035em",
             lineHeight: 1.05,
           }}
         >
-          {t.rich({
-            description:
-              "The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”",
-            message: "<line>Stop deciding what to study.</line> <line>Just study.</line>",
-            values: { line: renderLine },
-          })}
+          {await getHomeHeadline({ line: renderLine, locale, more: renderMore })}
         </div>
 
         <div
@@ -100,9 +100,9 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         >
           {t({
             description:
-              "The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”",
+              "The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”",
             message:
-              "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time.",
+              "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know.",
           })}
         </div>
       </div>

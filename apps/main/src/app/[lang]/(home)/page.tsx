@@ -15,16 +15,16 @@ import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
+import { CareerSection } from "./_components/career-section";
+import { EveryPlan } from "./_components/every-plan";
+import { ExamSection } from "./_components/exam-section";
 import { FinalCall } from "./_components/final-call";
-import { ForgetSection } from "./_components/forget-section";
 import { HomeFaq } from "./_components/home-faq";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
 import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
-import { MissedDaySection } from "./_components/missed-day-section";
-import { ReadySection } from "./_components/ready-section";
-import { StartSection } from "./_components/start-section";
-import { StuckSection } from "./_components/stuck-section";
+import { LanguageSection } from "./_components/language-section";
+import { TopicSection } from "./_components/topic-section";
 
 export const ensureStatic = "navigation";
 
@@ -34,23 +34,23 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     alternates: getLocalizedAlternates({ href: "/", language }),
-    description: t(
-      "Tell Zoonk your goal and the date. It breaks everything into a daily plan that fits your time and starts from what you already know. Start free, no account needed.",
-    ),
+    description: t({
+      description:
+        "The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”",
+      message:
+        "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know. Start free, no account needed.",
+    }),
     title: {
       absolute: t({
         description:
-          "The landing's title. In Brazilian Portuguese: “Zoonk: Pare de decidir o que estudar. Só estude.”",
-        message: "Zoonk: Stop deciding what to study. Just study.",
+          "The landing's title. In Brazilian Portuguese: “Zoonk: um plano para cada dia até o seu objetivo”.",
+        message: "Zoonk: A plan for each day, all the way to your goal",
       }),
     },
   };
 }
 
-/**
- * Every example variant is in the HTML and CSS shows the picked one, so the page has no script of its
- * own. Anyone with a session opens Today instead (`proxy.ts`).
- */
+/** Anyone with a session opens Today instead (`proxy.ts`). */
 export default async function HomePage() {
   const t = await getExtracted();
   const language = await lang();
@@ -65,13 +65,13 @@ export default async function HomePage() {
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <HomeHeader />
 
-      <main className="flex-1">
+      <main className="flex-1 [&:lang(ja)]:[word-break:auto-phrase]">
         <HomeHero startPath={startPath} />
-        <StartSection />
-        <MissedDaySection />
-        <ForgetSection />
-        <StuckSection />
-        <ReadySection />
+        <ExamSection />
+        <LanguageSection />
+        <CareerSection />
+        <TopicSection />
+        <EveryPlan />
         <HomeFaq />
         <FinalCall startPath={startPath} />
       </main>
