@@ -3,7 +3,9 @@
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
+import { usePromptAudio } from "../player-audio-context";
 import { PlayerReadScene, PlayerReadSceneStack } from "./player-read-scene";
+import { PromptAudioButton } from "./prompt-audio-button";
 
 type AlphabetContent = ReturnType<typeof getAlphabetContent>;
 type AlphabetForm = AlphabetContent["forms"][number];
@@ -56,6 +58,7 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
 
 export function AlphabetStep({ step }: { step: SerializedStep }) {
   const t = useExtracted();
+  const audio = usePromptAudio();
   const content = getAlphabetContent(step);
 
   return (
@@ -66,7 +69,10 @@ export function AlphabetStep({ step }: { step: SerializedStep }) {
         role="region"
       >
         <PlayerReadSceneStack className="gap-3">
-          <AlphabetSymbol>{content.symbol}</AlphabetSymbol>
+          <div className="flex items-center gap-2">
+            <AlphabetSymbol>{content.symbol}</AlphabetSymbol>
+            {audio && <PromptAudioButton audio={audio} variant="inline" />}
+          </div>
           <AlphabetReading pronunciation={content.pronunciation} readingAid={content.readingAid} />
         </PlayerReadSceneStack>
 

@@ -7,6 +7,7 @@ import {
   buildAdapters,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
+import { wavClip } from "../_test-utils/speech-clips";
 import { type PlayableLanguageStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, teachingStep } from "../preview/preview-steps";
@@ -54,6 +55,23 @@ function withWordAudio(step: PlayableLanguageStep): PlayableLanguageStep {
       wordBankOptions: step.exercise.wordBankOptions.map(voiced),
     },
   };
+}
+
+function pronunciationButtons(state: "Pause" | "Play") {
+  return page.getByRole("button", { name: `${state} pronunciation` });
+}
+
+function recordPlays(): string[] {
+  const played: string[] = [];
+
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
+    this: HTMLMediaElement,
+  ) {
+    played.push(this.src);
+    return Promise.resolve();
+  });
+
+  return played;
 }
 
 function letter({
@@ -150,14 +168,7 @@ describe("language lesson screens", () => {
   });
 
   it("says each word in the bank as it goes into the answer", async () => {
-    const played: string[] = [];
-
-    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
-      this: HTMLMediaElement,
-    ) {
-      played.push(this.src);
-      return Promise.resolve();
-    });
+    const played = recordPlays();
 
     renderLessonPlayer({
       lesson: buildLesson(
@@ -241,14 +252,12 @@ describe("language lesson screens", () => {
 
     await expect.element(firstCard.getByText("a", { exact: true })).toBeVisible();
     await expect.element(firstCard.getByText("Como o a de casa.")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Play pronunciation" })).toBeVisible();
+    await expectCount(firstCard.getByRole("button", { name: "Play pronunciation" }), 1);
+    await expectCount(pronunciationButtons("Play"), 2);
     await next.click();
 
     await expect.element(page.getByRole("region", { name: "Alphabet: か" })).toBeVisible();
-
-    await expect
-      .element(page.getByRole("button", { name: "Play pronunciation" }))
-      .not.toBeInTheDocument();
+    await expect.element(pronunciationButtons("Play")).not.toBeInTheDocument();
 
     await next.click();
 
@@ -261,6 +270,51 @@ describe("language lesson screens", () => {
 
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
+
+  it("says a letter as it shows, with the same state on its own control and the bar's", async () => {
+    const sound = URL.createObjectURL(wavClip(1));
+    const played = recordPlays();
+
+    renderLessonPlayer({
+      lesson: buildLesson([letter({ audioUrl: sound, reading: "a", symbol: "あ" })], {
+        language: "pt",
+        targetLanguage: "ja",
+      }),
+    });
+
+    const card = page.getByRole("region", { name: "Alphabet: あ" });
+
+    await expectCount(pronunciationButtons("Pause"), 2);
+    expect(new Set(played)).toStrictEqual(new Set([sound]));
+
+    await card.getByRole("button", { name: "Pause pronunciation" }).click();
+    await expectCount(pronunciationButtons("Play"), 2);
+    const playedBeforeTap = played.length;
+
+    await card.getByRole("button", { name: "Play pronunciation" }).click();
+    await expectCount(pronunciationButtons("Pause"), 2);
+    expect(played).toHaveLength(playedBeforeTap + 1);
+  });
+
+  it("leaves both controls at rest when the browser blocks the sound, until the learner taps one", async () => {
+    const play = vi
+      .spyOn(HTMLMediaElement.prototype, "play")
+      .mockRejectedValue(new DOMException("No gesture yet", "NotAllowedError"));
+
+    renderLessonPlayer({
+      lesson: buildLesson(
+        [letter({ audioUrl: URL.createObjectURL(wavClip(1)), reading: "a", symbol: "あ" })],
+        { language: "pt", targetLanguage: "ja" },
+      ),
+    });
+
+    await expect.poll(() => play.mock.calls.length).toBeGreaterThan(0);
+    await expectCount(pronunciationButtons("Play"), 2);
+
+    play.mockResolvedValue();
+    await pronunciationButtons("Play").last().click();
+    await expectCount(pronunciationButtons("Pause"), 2);
   });
 
   it("marks a language question's right answer and a wrong pick, like every question", async () => {

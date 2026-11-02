@@ -136,7 +136,6 @@ export function useSpokenAudio(language: string) {
       runRef.current += 1;
       const run = runRef.current;
 
-      player.unlock();
       player.stop(ownerRef.current);
       setState(LOADING);
 
