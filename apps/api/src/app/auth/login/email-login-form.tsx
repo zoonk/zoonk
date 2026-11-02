@@ -27,6 +27,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
     error: t("There was an error signing you in. Please try again or contact hello@zoonk.com"),
     idle: "",
     invalidEmail: t("Enter a valid email address"),
+    rateLimited: t("Too many tries. Wait a minute, then try again."),
   }[state.status];
 
   return (
@@ -38,6 +39,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
         <LoginEmailInput
           aria-describedby={hasError ? emailErrorId : undefined}
           aria-invalid={hasError}
+          defaultValue={state.email}
           placeholder={t({
             description:
               "An example address shown in the empty email field. Keep it as written, like the app's other example addresses.",

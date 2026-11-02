@@ -29,6 +29,12 @@ msgid "Enter a valid email address"
 msgstr "올바른 이메일 주소를 입력하세요"
 
 #: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "시도 횟수가 너무 많아요. 1분 후에 다시 시도해 보세요."
+
+#: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "이메일"
@@ -85,11 +91,6 @@ msgstr "문제가 생겼어요. 잠시 후 다시 시도해 보세요."
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
 msgstr "이 코드는 만료됐어요. 새 코드를 요청해 주세요."
-
-#: src/app/auth/otp/otp-form.tsx
-msgctxt "hUjCDW"
-msgid "Too many tries. Wait a minute, then try again."
-msgstr "시도 횟수가 너무 많아요. 1분 후에 다시 시도해 보세요."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"

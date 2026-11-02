@@ -6,8 +6,12 @@ export const SESSION_EXPIRES_IN_DAYS = 30;
 export const COOKIE_CACHE_MINUTES = 60;
 export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !== "false";
 
-/** A class of 40 can start together with retry headroom; BotID still guards guest creation. */
-export const GUEST_SIGN_IN_RATE_LIMIT = { max: 60, window: 60 };
+/**
+ * Per IP, so a class of 40 behind one network can start as guests or sign in with email codes
+ * together, with retry headroom. BotID or the apps' attestation still checks each request, and a
+ * code allows 3 tries.
+ */
+export const SHARED_IP_SIGN_IN_RATE_LIMIT = { max: 60, window: 60 };
 
 export const AUTH_ADVANCED_OPTIONS = {
   database: { generateId: "uuid", joins: true },

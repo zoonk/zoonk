@@ -66,7 +66,7 @@ describe(sendVerificationOTPAction, () => {
     await requestCode(email);
     await requestCode(email);
 
-    await expect(requestCode(email)).resolves.toStrictEqual({ status: "error" });
+    await expect(requestCode(email)).resolves.toStrictEqual({ email, status: "rateLimited" });
     expect(sendVerificationOTP).toHaveBeenCalledTimes(3);
     expect(redirect).toHaveBeenCalledTimes(3);
   });
@@ -74,7 +74,11 @@ describe(sendVerificationOTPAction, () => {
   it("asks for a valid address when Better Auth rejects one", async () => {
     vi.mocked(headers).mockResolvedValue(browserHeaders() as Awaited<ReturnType<typeof headers>>);
 
-    await expect(requestCode("not-an-email")).resolves.toStrictEqual({ status: "invalidEmail" });
+    await expect(requestCode("not-an-email")).resolves.toStrictEqual({
+      email: "not-an-email",
+      status: "invalidEmail",
+    });
+
     expect(sendVerificationOTP).not.toHaveBeenCalled();
   });
 });

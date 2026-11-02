@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
-import { GUEST_SIGN_IN_RATE_LIMIT } from "./config";
+import { SHARED_IP_SIGN_IN_RATE_LIMIT } from "./config";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import {
   baseAuthConfig,
@@ -14,7 +14,11 @@ export const auth = betterAuth({
   databaseHooks: signInDatabaseHooks,
   plugins: [...baseAuthPlugins, ...fullPlugins],
   rateLimit: {
-    customRules: { "/sign-in/anonymous": GUEST_SIGN_IN_RATE_LIMIT },
+    customRules: {
+      "/email-otp/send-verification-otp": SHARED_IP_SIGN_IN_RATE_LIMIT,
+      "/sign-in/anonymous": SHARED_IP_SIGN_IN_RATE_LIMIT,
+      "/sign-in/email-otp": SHARED_IP_SIGN_IN_RATE_LIMIT,
+    },
     enabled: true,
     storage: "database",
   },
