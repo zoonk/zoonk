@@ -39,16 +39,6 @@ export function getContentReuse({
   return forExam || targetLanguage ? "bounded" : "library";
 }
 
-export function getScopeReuse(
-  scope: Pick<CurriculumScope, "exams" | "ownerId" | "targetLanguage">,
-): CallReuse {
-  return getContentReuse({
-    forExam: Boolean(scope.exams?.length),
-    ownerId: scope.ownerId,
-    targetLanguage: scope.targetLanguage,
-  });
-}
-
 export type CurriculumAnalytics = SearchTermsParams["analytics"];
 
 export type GoalSkillRef = {

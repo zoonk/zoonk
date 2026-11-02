@@ -25,7 +25,7 @@ export async function recordNoticeFormatsStep({
 
   const documents = await loadSourceDocuments(sourceIds);
 
-  const serviceTier = chooseServiceTier({ reuse: "bounded", wait: "learner" });
+  const serviceTier = chooseServiceTier({ wait: "learner" });
 
   // Not retried: the reading beside it reads the formats too, and retries would only hold
   // research's end.

@@ -16,12 +16,7 @@ import {
   linkGoalSkillPrerequisites,
   saveGoalSkills,
 } from "@zoonk/core/library/curriculum/save-goal-skills";
-import {
-  type CurriculumScope,
-  getContentReuse,
-  getScopeModel,
-  getScopeReuse,
-} from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
 import {
   toLanguageGoal,
   toScopedGraphPrompt,
@@ -103,25 +98,6 @@ export async function decideGoalScopeStep({
   return { ...shared, exams: inputs.exams, generalGoal };
 }
 
-function getGraphTier({
-  goalKind,
-  scope,
-}: {
-  goalKind: GoalCurriculumInputs["graphPrompt"]["goalKind"];
-  scope: CurriculumScope;
-}) {
-  const reuse =
-    goalKind === "exam"
-      ? getContentReuse({
-          forExam: true,
-          ownerId: scope.ownerId,
-          targetLanguage: scope.targetLanguage,
-        })
-      : getScopeReuse(scope);
-
-  return chooseServiceTier({ reuse, wait: "learner" });
-}
-
 async function generateGraph({
   analytics,
   prompt,
@@ -133,11 +109,7 @@ async function generateGraph({
 }) {
   const model = getScopeModel(scope);
 
-  const params = {
-    ...prompt,
-    analytics,
-    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
-  };
+  const params = { ...prompt, analytics, serviceTier: chooseServiceTier({ wait: "learner" }) };
 
   if (!model) {
     return generateSkillGraph(params);
@@ -209,7 +181,7 @@ export async function checkGraphCoverageStep({
     goalKind: prompt.goalKind,
     language: prompt.language,
     references,
-    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
+    serviceTier: chooseServiceTier({ wait: "learner" }),
     skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
       area,
       description,

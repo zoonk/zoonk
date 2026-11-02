@@ -476,7 +476,7 @@ describe(goalContentWorkflow, () => {
         }),
       );
 
-      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
       const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
       const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
@@ -485,8 +485,8 @@ describe(goalContentWorkflow, () => {
 
       expect(
         placementCalls.every(
-          (call) =>
-            call.serviceTier === undefined &&
+          (call, index) =>
+            call.serviceTier === (index === 0 ? "priority" : undefined) &&
             call.skills.length <= 2 &&
             call.quickCount === 2 &&
             call.typedCount === 0,
@@ -1660,7 +1660,7 @@ describe(goalContentWorkflow, () => {
         goalKind: "exam",
       });
 
-      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
       expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
