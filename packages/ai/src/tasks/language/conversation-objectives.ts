@@ -16,8 +16,8 @@ import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * GPT-Live reaches us through AI Gateway with client delegation only, so the voice model can't call
- * a tool to mark objectives and a text model reads the transcript. Luna got 18 of 19 on its eval
- * without ticking a goal early (27 Sep 2026).
+ * a tool to mark objectives and a text model reads the transcript. Luna got 22 of 23 on its eval
+ * without ticking a goal early or hearing a goodbye that wasn't said (2 Nov 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;

@@ -86,11 +86,7 @@ describe(buildLiveConversationInstructions, () => {
   });
 
   it("runs a TOEFL mock with Listen and Repeat, then the interview, the same at every level", () => {
-    const toeflMock = {
-      ...apartmentCall,
-      exam: "toefl",
-      kind: "speakingMock",
-    } as const;
+    const toeflMock = { ...apartmentCall, exam: "toefl", kind: "speakingMock" } as const;
 
     const instructions = buildLiveConversationInstructions({ ...toeflMock, level: "A2" });
 
