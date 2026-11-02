@@ -1,5 +1,6 @@
 "use client";
 
+import { useSpeechPlayer } from "@zoonk/learn/speech/provider";
 import {
   createContext,
   useCallback,
@@ -9,118 +10,67 @@ import {
   useRef,
   useState,
 } from "react";
-import { useWordAudio } from "./use-word-audio";
+import { useAudioPreload } from "./use-audio-preload";
 
-type PlayerAudioContextValue = {
-  audioUrl: string | null;
-  isPlaying: boolean;
-  toggleAudio: (audioUrl: string) => void;
-};
+export type PromptAudio = { isPlaying: boolean; toggle: () => void };
 
-const PlayerAudioContext = createContext<PlayerAudioContextValue | null>(null);
+const PlayerAudioContext = createContext<PromptAudio | null>(null);
 
+/**
+ * Plays the screen's prompt (a word, a letter, a listening sentence) once each time the screen
+ * shows, through the app's one speech element, so a browser that blocked it leaves the play buttons
+ * at rest until the learner taps one.
+ */
 export function PlayerAudioProvider({
   audioUrl,
-  autoPlayAudio,
   children,
-  onAutoPlayAudioEnabled,
 }: {
   audioUrl: string | null;
-  autoPlayAudio: boolean;
   children: React.ReactNode;
-  onAutoPlayAudioEnabled: () => void;
 }) {
-  const hasHandledAudioPromptRef = useRef(false);
-  const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null);
+  const player = useSpeechPlayer();
+  const ownerRef = useRef({});
+  const [isPlaying, setIsPlaying] = useState(false);
+  const sourceFor = useAudioPreload([audioUrl]);
 
-  const { pause, play } = useWordAudio({
-    onEnded: () => setPlayingAudioUrl(null),
-    preloadUrls: audioUrl ? [audioUrl] : undefined,
-  });
-
-  const isPlaying = Boolean(audioUrl && playingAudioUrl === audioUrl);
-
-  // A screen kept hidden stops its sound (useWordAudio releases it); shown again, it starts as on
-  // arrival, prompt included.
-  useEffect(
-    () => () => {
-      hasHandledAudioPromptRef.current = false;
-      setPlayingAudioUrl(null);
-    },
-    [],
-  );
-
-  const startAudio = useCallback(
-    async ({
-      shouldEnableAutoplay,
-      targetAudioUrl,
-    }: {
-      shouldEnableAutoplay: boolean;
-      targetAudioUrl: string;
-    }) => {
-      hasHandledAudioPromptRef.current = true;
-
-      const playbackStatus = await play(targetAudioUrl);
-
-      if (playbackStatus === "failed") {
-        setPlayingAudioUrl(null);
-        return;
-      }
-
-      setPlayingAudioUrl(targetAudioUrl);
-
-      if (shouldEnableAutoplay) {
-        onAutoPlayAudioEnabled();
-      }
-    },
-    [onAutoPlayAudioEnabled, play],
-  );
-
-  const toggleAudio = useCallback(
-    (targetAudioUrl: string) => {
-      if (playingAudioUrl === targetAudioUrl) {
-        pause();
-        hasHandledAudioPromptRef.current = true;
-        setPlayingAudioUrl(null);
-        return;
-      }
-
-      void startAudio({ shouldEnableAutoplay: true, targetAudioUrl });
-    },
-    [pause, playingAudioUrl, startAudio],
-  );
-
-  useEffect(() => {
-    if (!audioUrl || !autoPlayAudio || hasHandledAudioPromptRef.current) {
+  const start = useCallback(() => {
+    if (!player || !audioUrl) {
       return;
     }
 
-    void startAudio({ shouldEnableAutoplay: false, targetAudioUrl: audioUrl });
+    void player
+      .play({
+        onStart: () => setIsPlaying(true),
+        owner: ownerRef.current,
+        rate: 1,
+        url: sourceFor(audioUrl),
+      })
+      .then(() => setIsPlaying(false));
+  }, [audioUrl, player, sourceFor]);
 
-    return () => {
-      hasHandledAudioPromptRef.current = false;
-    };
-  }, [audioUrl, autoPlayAudio, startAudio]);
+  const toggle = useCallback(() => {
+    if (isPlaying) {
+      player?.stop(ownerRef.current);
+      return;
+    }
+
+    start();
+  }, [isPlaying, player, start]);
+
+  useEffect(() => {
+    const owner = ownerRef.current;
+    start();
+    return () => player?.stop(owner);
+  }, [player, start]);
 
   const value = useMemo(
-    () => ({ audioUrl, isPlaying, toggleAudio }),
-    [audioUrl, isPlaying, toggleAudio],
+    () => (audioUrl && player ? { isPlaying, toggle } : null),
+    [audioUrl, isPlaying, player, toggle],
   );
 
   return <PlayerAudioContext value={value}>{children}</PlayerAudioContext>;
 }
 
-/** Use local playback for option sounds; this hook shares controls only for the active prompt. */
-export function useSharedPlayerAudio(audioUrl: string) {
-  const context = useContext(PlayerAudioContext);
-
-  if (context?.audioUrl !== audioUrl) {
-    return null;
-  }
-
-  return { isPlaying: context.isPlaying, toggle: () => context.toggleAudio(audioUrl) };
-}
-
-export function usePromptAudioUrl(): string | null {
-  return useContext(PlayerAudioContext)?.audioUrl ?? null;
+export function usePromptAudio(): PromptAudio | null {
+  return useContext(PlayerAudioContext);
 }

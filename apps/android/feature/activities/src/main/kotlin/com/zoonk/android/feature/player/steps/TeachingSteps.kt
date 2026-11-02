@@ -501,11 +501,10 @@ internal fun SpokenAnswerView(
         micBlocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listening?.takeIf { actions.cantTalk }
+    val listening = content.listeningInstead(actions.cantTalk)
 
     if (listening != null) {
-        val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
-        LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions, part)
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)
         if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
         return
     }
@@ -562,6 +561,9 @@ internal fun SpokenAnswerView(
         }
     }
 }
+
+internal fun StepContent.SpokenAnswer.listeningInstead(cantTalk: Boolean): StepContent.Language? =
+    listening?.takeIf { cantTalk }?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {

@@ -355,7 +355,7 @@ describe("lesson by keyboard", () => {
       () => ({ ...spokenAnswerStep(), listening: listeningWithAudio().exercise }),
     ],
   ])(
-    "Enter on the play button of %s checks the answer, playing only while there's nothing to check, and P plays",
+    "%s plays as it shows; Enter on its play button checks the answer, playing only while there's nothing to check, and P plays",
     async (_, step) => {
       await atViewport(DESKTOP, async () => {
         const plays = countPlays();
@@ -369,8 +369,12 @@ describe("lesson by keyboard", () => {
 
         const play = page.getByRole("button", { name: "Play pronunciation" });
 
+        await expect.poll(() => plays.mock.calls.length).toBeGreaterThan(0);
+        await expect.element(play).toBeVisible();
+        const shown = plays.mock.calls.length;
+
         await pressEnterOn(play);
-        await expect.poll(() => plays.mock.calls.length).toBe(1);
+        await expect.poll(() => plays.mock.calls.length).toBe(shown + 1);
 
         for (const word of ["Quanto", "é", "o", "aluguel?"]) {
           // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
@@ -378,24 +382,24 @@ describe("lesson by keyboard", () => {
         }
 
         await play.click();
-        await expect.poll(() => plays.mock.calls.length).toBe(2);
+        await expect.poll(() => plays.mock.calls.length).toBe(shown + 2);
         await expect.element(play).toHaveFocus();
 
         await press("Enter");
         await expect.element(verdict("Correct!")).toBeVisible();
 
         await press("p");
-        await expect.poll(() => plays.mock.calls.length).toBe(3);
+        await expect.poll(() => plays.mock.calls.length).toBe(shown + 3);
 
         document.body.dispatchEvent(
           new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key: "P" }),
         );
 
-        await expect.poll(() => plays.mock.calls.length).toBe(4);
+        await expect.poll(() => plays.mock.calls.length).toBe(shown + 4);
 
         await press("Enter");
         await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-        expect(plays).toHaveBeenCalledTimes(4);
+        expect(plays).toHaveBeenCalledTimes(shown + 4);
       });
     },
   );

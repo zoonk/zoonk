@@ -12,8 +12,8 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { PlayAudioButton } from "../components/play-audio-button";
-import { usePromptAudioUrl } from "../player-audio-context";
+import { PromptAudioButton } from "../components/prompt-audio-button";
+import { usePromptAudio } from "../player-audio-context";
 import { TutorAskButton } from "../questions/tutor-dock";
 import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
@@ -40,13 +40,13 @@ function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
 
 function PromptAudio() {
   const { screen } = useLessonPlayer();
-  const audioUrl = usePromptAudioUrl();
+  const audio = usePromptAudio();
 
-  if (!audioUrl || !screen.step || !isReadStep(screen.step)) {
+  if (!audio || !screen.step || !isReadStep(screen.step)) {
     return null;
   }
 
-  return <PlayAudioButton audioUrl={audioUrl} variant="icon" />;
+  return <PromptAudioButton audio={audio} variant="icon" />;
 }
 
 export function LessonActionBar() {
