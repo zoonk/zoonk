@@ -18,6 +18,8 @@ internal fun startErrorReporting(context: Context) {
 }
 
 internal fun SentryOptions.configureReporting(apiBaseUrl: String) {
+    // Reports name no learner: PII, screenshots, view hierarchy, session replay and profiling keep Sentry's
+    // off defaults and no user is set, so only the SDK's random installation id links reports.
     tracesSampleRate = 0.1
     // The SDK sends trace headers to a URL that contains a target or matches it whole as a regex,
     // so this one is a regex for the API's URLs only.
