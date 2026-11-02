@@ -17,10 +17,10 @@
   "search_group_catalog": "a795b755f943f4b4399baa93eb7ba0727f4aa58971ec2439ef8a80d00afb8526",
   "search_group_explanations": "6c57db3cb10baa5ea19cbce303209cc818af34acd936d66250df9ed19b285ce6",
   "search_group_go_to": "7ec2ea35207706583a2c3dc8b061dc4afd0c17d8c1dd4c29e26226b42f0797e3",
-  "search_group_goals": "df76b65255d76c116fb8521c79ac4cba946df8a10e95fff1f6c15f3d94d9956f",
+  "search_group_goals": "30035db8774215752235b758b125c0a81bd02b918f5b978a44169825359324ff",
   "search_group_help": "53da4bbfe6c2a03e7a7fcdfa350cc130752c66e9eceeb620e6d148ed7c714800",
   "search_group_mocks": "2be7d1e823f49e6c20944941b3eb97bd42a8fd0f06b6940c67785db0900c00c1",
-  "search_group_new_goal": "e017395a70949060aa5b73083a3e22ead636923d072befeb9f3079bb9329af7b",
+  "search_group_new_goal": "0b4a04d8f73872f3dd11662fcb8612b9966ea1078feadcdb59a0f41c16d74808",
   "search_group_plan": "94249099bf3892263593959db75e9e48294ab7d54caa15a9e1ecf7fc57c2c003",
   "search_help": "2a9ba984686868bdc3a59e90f17fd71f7849c4de01dcaaf390be49ce5b86bb2c",
   "search_home": "d51e8b0c89c29d7b87b7ddc888a84a3ed5aa8023f689805bc0f8aa7ce8121e40",
@@ -39,10 +39,10 @@
   "search_profile": "438514bc4cc5d81ebb068ce62b2457847ed01a5c01a9c62ab4ceccd41c271f01",
   "search_send_feedback_keywords": "8ac1661b5e3919ca3f963759c87487b753a0db4703f23afc43ef3d69b22f2e7a",
   "search_settings": "61a41d8630a5b299c8b8892816bb6f692839d3d91aa171d1504ddaadf643a8ea",
-  "search_start_goal": "d5cc8fe144414c30006de0f204b8bc46e920d714f505bc3bcee80c13e3a3c83b",
-  "search_start_goal_named": "e39ef7350727b8ecfb8b69ee7395610cd6c68497b2d85f499a6468ead928a04a",
-  "search_start_new_goal": "e169026cfb65cffd25cb401e4ce62227302bb4032bc0c1c1f77ce455e8394990",
-  "search_start_new_goal_named": "c4d1bd64f3e0911c6c61522bdbde01e57a32329038d1a8f79475d6bcc43d7d38",
+  "search_start_goal": "a3d457e7b8b02bb25e71a83fbeac33ed73f17a538cbac23bca6f80aa9a0bef54",
+  "search_start_goal_named": "0355ee7d3770d5daa369ebb4f09e008f8ab4f6db6e9cdbb2e664dc1582ba31ae",
+  "search_start_new_goal": "b88b97445ad114da827b4d647fdf533105b6d7776fe4966d728900c188a8420c",
+  "search_start_new_goal_named": "00491f86e8eaf98de8f0cd73c194494572acb9a9740704c305a967b8af856540",
   "search_subscription": "752e3b15187c3882ae8fc4d4d74fa9bb51ba5b0aa22611e7dca6f82733d74658",
   "search_switch_goal": "aa790988879aaa4c85e16a056bcc0b17ca0a13d0d723c9de148148df950188ad",
   "search_take_mock": "72167a438b806f43dda8882fe742684225dc0fe1c4de1602a6c5aa5f9d5ee0fc",
@@ -57,7 +57,7 @@
     <string name="search_continue_failed">Não foi possível abrir seu próximo passo. Tente de novo.</string>
     <string name="search_group_actions">Ações</string>
     <string name="search_group_go_to">Ir para</string>
-    <string name="search_group_goals">Suas metas</string>
+    <string name="search_group_goals">Seus objetivos</string>
     <string name="search_group_explanations">Explicações rápidas</string>
     <string name="search_group_plan">Seu plano</string>
     <string name="search_group_mocks">Simulados</string>
@@ -65,21 +65,21 @@
     <string name="search_group_account">Minha conta</string>
     <string name="search_group_help">Ajuda</string>
     <string name="search_group_ask">Perguntar</string>
-    <string name="search_group_new_goal">Nova meta</string>
+    <string name="search_group_new_goal">Novo objetivo</string>
     <string name="search_continue">Continuar a sessão de hoje</string>
     <string name="search_take_mock">Fazer um simulado</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Dia inteiro, meio dia ou uma matéria</string>
     <string name="search_practice_mistakes">Praticar o que você errou</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>
-    <string name="search_start_new_goal">Começar uma nova meta</string>
+    <string name="search_start_new_goal">Começar um novo objetivo</string>
     <string name="search_buddy_keyword">Parceiro</string>
     <string name="search_mistakes_notebook">Caderno de erros</string>
     <string name="search_logbook">Diário de bordo</string>
     <string name="search_switch_goal">Mudar para %1$s</string>
     <string name="search_mock_exam">Simulado %1$s</string>
     <string name="search_home">Página inicial</string>
-    <string name="search_start_goal">Começar uma meta</string>
+    <string name="search_start_goal">Começar um objetivo</string>
     <string name="search_pricing">Preços</string>
     <string name="search_log_in">Entrar</string>
     <string name="search_log_out">Sair</string>
@@ -96,6 +96,6 @@
     <string name="search_language">Idioma</string>
     <string name="search_ask_question">Pergunte para %1$s: “%2$s”</string>
     <string name="search_ask_detail">Abre o chat</string>
-    <string name="search_start_new_goal_named">Começar uma nova meta: “%1$s”</string>
-    <string name="search_start_goal_named">Começar uma meta: “%1$s”</string>
+    <string name="search_start_new_goal_named">Começar um novo objetivo: “%1$s”</string>
+    <string name="search_start_goal_named">Começar um objetivo: “%1$s”</string>
 </resources>

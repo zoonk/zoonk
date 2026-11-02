@@ -19,7 +19,7 @@
   "exam_checklist_sleep": "5a4aea966a94252a092b5354dc67a95e6aa74a9541d84711407a1b8bdfffad73",
   "exam_checklist_title": "033edd48ca282e082ea22c69e019e647bae067b921229aedb2fc4908a21d9be5",
   "exam_current": "d313beca6200964e429b82961554f9e309cd014ce5a64f526a019890a7c2546f",
-  "exam_cutoff_goal": "ce231053291dedda5075c6088cf288f1d53c1d482a0cdff75636c4ca8727e4c2",
+  "exam_cutoff_goal": "4ba8cf45a7f1061b0f50f4ffd7d06af4de942495a915b8d78380071e9ff74664",
   "exam_cutoff_score": "db570bcd5a9b141909fc0c0e8d47dec462d5a36570d69029c9969fa9c8d01f17",
   "exam_cutoff_source": "be731d71d803070d565fa0767858e95174f2d30386fc3095032977ed0dd0597f",
   "exam_cutoff_title": "6489d90920b95f2647197e9ede012d9336f247075d7eb0cbf413dfdc92098b4b",
@@ -304,7 +304,7 @@
     <!-- %1$s describes the cut-off (course, place, edition), %2$s is the website it comes from, such as sisu.mec.gov.br. -->
     <string name="exam_cutoff_source">%1$s, segundo %2$s</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
-    <string name="exam_cutoff_goal">Sua meta: %1$s</string>
+    <string name="exam_cutoff_goal">Seu objetivo: %1$s</string>
     <string name="exam_not_found_title">Não encontramos esta página</string>
     <string name="exam_not_found_description">O link pode ser antigo ou ter sido digitado errado.</string>
     <string name="exam_go_to_today">Ir para Hoje</string>
