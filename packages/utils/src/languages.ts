@@ -232,6 +232,24 @@ export function getLanguageName(params: { targetLanguage: string; userLanguage?:
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
+/**
+ * Inside a sentence these write language names lowercase ("falar inglês"), as Node's `Intl` gives
+ * them; Safari's capitalizes some ("Inglês"), so a server render and the browser's would disagree.
+ */
+const LOWERCASE_NAME_LANGUAGES: ReadonlySet<string> = new Set(["es", "fr", "it", "pl", "pt"]);
+
+export function getLanguageNameInSentence(params: {
+  targetLanguage: string;
+  userLanguage: string;
+}): string {
+  const displayNames = new Intl.DisplayNames([params.userLanguage], { type: "language" });
+  const name = displayNames.of(params.targetLanguage) ?? params.targetLanguage;
+
+  return LOWERCASE_NAME_LANGUAGES.has(getBaseLanguage(params.userLanguage))
+    ? name.charAt(0).toLowerCase() + name.slice(1)
+    : name;
+}
+
 /** `Intl` reads every code this matches; a made-up or underscored one ("pt_BR") would throw. */
 export const LANGUAGE_CODE_PATTERN = /^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\d{3}))?$/u;
 
