@@ -18,6 +18,13 @@ enum AccountSubscriptionSynchronizationResult: Equatable, Sendable {
   }
 }
 
+/// Who a purchase or restore is for: the account the server must match, and the sign-in whose screen
+/// shows the result. A replaced credential for the same account is a different owner.
+struct AppStoreSubscriptionOwner: Equatable, Sendable {
+  let accountID: String
+  let session: AuthenticatedSession
+}
+
 enum AppStoreSubscriptionAlert: Equatable {
   case accountMismatch
   case authenticationRequired
@@ -48,9 +55,10 @@ final class AppStoreSubscriptionStore {
     AppStoreSubscriptionStore(client: StoreKitSubscriptionClient())
   }
 
+  /// True only when Plus reached the owner that is still signed in.
   func handlePurchase(
     _ outcome: AppStoreSubscriptionPurchaseOutcome,
-    synchronizationScope: String?,
+    owner: @MainActor @Sendable () -> AppStoreSubscriptionOwner?,
     synchronize:
       @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
@@ -65,10 +73,16 @@ final class AppStoreSubscriptionStore {
       alert = .verificationFailed
       return false
     case .purchased(let transaction):
+      let purchaser = owner()
       let result = await synchronizationCoordinator.process(
         transaction: transaction,
-        synchronizationScope: synchronizationScope,
+        synchronizationScope: purchaser?.accountID,
         synchronize: synchronize)
+
+      guard owner() == purchaser else {
+        return false
+      }
+
       alert = getAlert(for: result)
       return result == .synchronizedActive
     }
@@ -104,7 +118,7 @@ final class AppStoreSubscriptionStore {
   }
 
   func restorePurchases(
-    synchronizationScope: String?,
+    owner: @MainActor @Sendable () -> AppStoreSubscriptionOwner?,
     synchronize:
       @escaping @MainActor @Sendable (String, String?) async
       -> AccountSubscriptionSynchronizationResult
@@ -117,14 +131,21 @@ final class AppStoreSubscriptionStore {
     alert = nil
     defer { isRestoring = false }
 
+    let restorer = owner()
+    let restoreAlert: AppStoreSubscriptionAlert
+
     do {
       try await client.restorePurchases()
       let results = await synchronizeCurrentEntitlements(
-        synchronizationScope: synchronizationScope,
+        synchronizationScope: restorer?.accountID,
         using: synchronize)
-      alert = getRestoreAlert(for: results)
+      restoreAlert = getRestoreAlert(for: results)
     } catch {
-      alert = .restoreFailed
+      restoreAlert = .restoreFailed
+    }
+
+    if owner() == restorer {
+      alert = restoreAlert
     }
   }
 
@@ -233,7 +254,10 @@ private struct AppStoreSubscriptionSynchronizationKey: Hashable, Sendable {
   let transactionVersion: AppStoreSubscriptionTransactionVersion
 }
 
-private actor AppStoreSubscriptionSynchronizationCoordinator {
+/// On the main actor with its callers, so an event joins the synchronization in flight in the same
+/// step that read its account, before anything else can finish or start one.
+@MainActor
+private final class AppStoreSubscriptionSynchronizationCoordinator {
   private var inFlightSynchronizations = [
     AppStoreSubscriptionSynchronizationKey: Task<AccountSubscriptionSynchronizationResult, Never>
   ]()
