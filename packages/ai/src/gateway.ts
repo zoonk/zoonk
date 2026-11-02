@@ -14,6 +14,10 @@ export const zoonkGateway = createGateway({
   headers: { "http-referer": "https://www.zoonk.com", "x-title": "Zoonk" },
 });
 
+/**
+ * `wrapProvider` takes no speech or transcription middleware, so those calls pass
+ * `NO_PROMPT_TRAINING` themselves.
+ */
 export const zoonkDefaultProvider = wrapProvider({
   imageModelMiddleware: noPromptTrainingImageMiddleware,
   languageModelMiddleware: [noPromptTrainingMiddleware, promptCacheMiddleware],

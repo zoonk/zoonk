@@ -11,6 +11,7 @@ import { readGatewayMetadata } from "../../provenance/gateway-metadata";
 import { type TaskRunDetails, startTaskRun } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 
+/** Fish Audio's transcription is left out: only providers that train on prompts serve it. */
 export const TRANSCRIPTION_MODELS = [
   "openai/gpt-transcribe",
   "google/gemini-3.5-transcribe",

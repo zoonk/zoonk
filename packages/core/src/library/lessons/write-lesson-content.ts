@@ -51,6 +51,10 @@ export type LessonDraftState = {
 
 export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; status: "needsFix" };
 
+/**
+ * A private lesson serves one learner, so it gets no model review: a second fix pass on what the
+ * code checks flag stands in for it.
+ */
 const PRIVATE_FIX_PASSES = 2;
 
 /** Internal workflow bridge: the caller must hold the lesson's content claim and dispatch returned background checks. */
