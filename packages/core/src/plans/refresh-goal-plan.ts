@@ -1,5 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
+import { type TransactionClient } from "@zoonk/db";
 import { isGoalSetupLeft } from "../view-models/onboarding/onboarding-steps";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { wasLastDayStudied } from "./_utils/carried-lessons";
@@ -52,12 +53,14 @@ async function saveOrLetGo(lostSave: LostSave, write: () => Promise<unknown>): P
 
 async function settleLeftWork({
   context,
+  extraWrites,
   left,
   lostSave,
   pace,
   revalidation,
 }: {
   context: PlanContext;
+  extraWrites?: PlanWrites;
   left: PlanContext["items"];
   lostSave: LostSave;
   pace: "sampled" | "saved";
@@ -71,6 +74,7 @@ async function settleLeftWork({
       change: getSettledPlanChange({ computed, context, left }),
       computed,
       context,
+      extraWrites,
       phaseDates: { mode: "forced", pace },
       revalidation,
     }),
@@ -148,7 +152,11 @@ export async function planGoalForPick(goalId: string): Promise<PlannedRefresh> {
   return refreshPlanned({ goalId, lostSave: "letGo", whenSetup: "compute" });
 }
 
+type PlanWrites = (tx: TransactionClient) => Promise<unknown>;
+
 type RefreshInput = {
+  /** Runs inside the transaction that saves a changed plan, once its items are written; never when the plan stays as it was. */
+  extraWrites?: PlanWrites;
   goalId: string;
   mode?: "automatic" | "forced";
   whenSetup?: "compute" | "save" | "skip";
@@ -162,6 +170,7 @@ type RefreshInput = {
 };
 
 async function refreshPlanned({
+  extraWrites,
   goalId,
   keepsOpenUndo = false,
   lostSave,
@@ -196,7 +205,7 @@ async function refreshPlanned({
   const left = settleMissedDays ? await loadLeftWork(context) : [];
 
   if (left.length > 0) {
-    return settleLeftWork({ context, left, lostSave, pace, revalidation });
+    return settleLeftWork({ context, extraWrites, left, lostSave, pace, revalidation });
   }
 
   if (settleOnly && isPlanLaidOut(context)) {
@@ -213,11 +222,20 @@ async function refreshPlanned({
     return { plan: null, status: "unchanged" };
   }
 
-  return saveRefreshedPlan({ context, keepsOpenUndo, lostSave, pace, refreshed, revalidation });
+  return saveRefreshedPlan({
+    context,
+    extraWrites,
+    keepsOpenUndo,
+    lostSave,
+    pace,
+    refreshed,
+    revalidation,
+  });
 }
 
 async function saveRefreshedPlan({
   context,
+  extraWrites,
   keepsOpenUndo,
   refreshed,
   lostSave,
@@ -225,6 +243,7 @@ async function saveRefreshedPlan({
   revalidation,
 }: {
   context: PlanContext;
+  extraWrites?: PlanWrites;
   keepsOpenUndo: boolean;
   refreshed: NonNullable<Awaited<ReturnType<typeof computeRefreshedPlan>>>;
   lostSave: LostSave;
@@ -290,6 +309,7 @@ async function saveRefreshedPlan({
           change,
           computed,
           context,
+          extraWrites,
           keepsOpenUndo,
           phaseDates: { mode, pace },
           revalidation,
