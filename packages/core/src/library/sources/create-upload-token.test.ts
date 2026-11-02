@@ -27,7 +27,6 @@ describe(createSourceUploadToken, () => {
   beforeEach(() => {
     mockSession(null);
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
     vi.mocked(issueSignedToken).mockResolvedValue(SIGNED_TOKEN);
   });
 
@@ -59,7 +58,6 @@ describe(createSourceUploadToken, () => {
       operations: ["put"],
       pathname,
       storeId: "store_private",
-      token: undefined,
       validUntil: expect.any(Number),
     });
 

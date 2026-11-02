@@ -119,7 +119,7 @@ describe("native account deletion through the production email-code API", () => 
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("VERCEL_ENV", "production");
     vi.stubEnv("E2E_TESTING", "false");
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "test-private-store-token");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
 
     vi.mocked(checkBotId).mockResolvedValue({
       bypassed: false,
