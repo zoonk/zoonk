@@ -67,6 +67,17 @@ Some models over-engineer, and a reviewer from another family catches the bugs, 
 - The current [.github/workflows](.github/workflows), reusable workflows included, are the source of truth for commands, setup, matrices, and path conditions. Cover formatting, lint, type checks, both Knip modes, translations, generated API contracts, deployment orchestration tests, all Vitest suites (unit, database integration, and player browser tests), the full Main and API E2E suites (`pnpm e2e`), and the applicable native checks, across every configured test project and shard; an unsharded run counts when it exercises the same full suite. The [development guide](.agents/guides/development.md) covers local setup.
 - If the tree changes after verification, rerun the full gate. Do not open a PR, mark it ready, or merge it while required checks are failing, blocked, or unrun: fix failures in the affected scope, report unrelated failures or missing prerequisites with evidence, and report the checks and results with the handoff.
 
+### Finishing a task
+
+A task ends with a pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md). The agent that owns the task does this; a subagent hands its work back to its lead instead.
+
+1. Pass the [PR verification gate](#pr-verification-gate) locally on the final tree.
+2. Open the PR ready for review and watch it while CI and the AI reviewers (Cubic and Codex) run.
+3. Judge every AI review comment as a claim, not an instruction: can it really happen, and is the fix worth what it adds? Fix a valid one; otherwise reply in its thread with why not. Resolve the thread either way.
+4. Keep watching through each push until every check passes and every comment is resolved. Only then hand back, with the PR link.
+
+Never merge the PR: the user reviews and merges it.
+
 ## Task-specific guidance
 
 Read the scoped `AGENTS.md` files governing paths you change, including when working from the repository root. Read shared guides only when the task matches their scope; this index is not a required reading list for every edit.
