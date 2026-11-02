@@ -73,7 +73,6 @@ describe(readOwnFile, () => {
       access: "private",
       ifNoneMatch: undefined,
       storeId: "store_private",
-      token: undefined,
     });
 
     if (file.status !== "ready") {

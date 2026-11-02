@@ -880,7 +880,7 @@ function listDeletedFiles(): string[] {
 
 describe("deleting a learner", () => {
   beforeEach(() => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "test-private-store-token");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
   });
 
   afterEach(() => {

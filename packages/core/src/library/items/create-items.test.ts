@@ -211,7 +211,6 @@ describe(createItems, () => {
   });
 
   it("leaves out a private skill's question about a figure, drawing nothing, while the private store isn't set up", async () => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
     mockUploads();
     const owner = await userFixture();

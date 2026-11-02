@@ -10,7 +10,7 @@ import { hashDocument } from "./parse-document";
 import { shareSourceUpload } from "./share-upload";
 import { refreshWebSource } from "./web-sources";
 
-const PRIVATE_STORE = { storeId: "store_test", token: undefined };
+const PRIVATE_STORE = { storeId: "store_test" };
 
 const NOTICE_URL = "https://www.cebraspe.org.br/concursos/tj_ce_26/edital.md";
 

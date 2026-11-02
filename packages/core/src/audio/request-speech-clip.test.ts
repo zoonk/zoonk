@@ -152,7 +152,7 @@ describe(requestSpeechClip, () => {
   });
 
   it("keeps a learner's own words in a private clip of theirs alone", async () => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "private-store-token");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
     const learner = await signIn();
     const text = uniqueSentence();
     voiceSucceeds();
@@ -164,8 +164,7 @@ describe(requestSpeechClip, () => {
     expect(put).toHaveBeenCalledExactlyOnceWith(`audio/${learner.id}/it.mp3`, expect.any(Buffer), {
       access: "private",
       addRandomSuffix: true,
-      storeId: undefined,
-      token: "private-store-token",
+      storeId: "store_private",
     });
 
     await expect(
@@ -188,15 +187,13 @@ describe(requestSpeechClip, () => {
     expect(put).toHaveBeenLastCalledWith(`audio/${other.id}/it.mp3`, expect.any(Buffer), {
       access: "private",
       addRandomSuffix: true,
-      storeId: undefined,
-      token: "private-store-token",
+      storeId: "store_private",
     });
 
     vi.unstubAllEnvs();
   });
 
   it("never stores a learner's own words in the public store when the private one is missing", async () => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
     const learner = await signIn();
     const text = uniqueSentence();

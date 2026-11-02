@@ -12,7 +12,7 @@ export function canStorePicture(ownerId: string | null): boolean {
     missingStoreLogged = true;
 
     logError(
-      "Private course pictures are off: the private Blob store isn't configured. Set PRIVATE_BLOB_READ_WRITE_TOKEN (local development) or PRIVATE_BLOB_STORE_ID (Vercel). Their screens show the picture's description instead.",
+      "Private course pictures are off: the private Blob store isn't configured. Set PRIVATE_BLOB_STORE_ID. Their screens show the picture's description instead.",
     );
   }
 

@@ -288,7 +288,7 @@ describe(createStepImage, () => {
   });
 
   it("keeps a private lesson's picture private and language courses free of text", async () => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "private-store-token");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
     const owner = await userFixture();
 
     const [privateLesson, languageLesson] = await Promise.all([
@@ -345,7 +345,6 @@ describe(createStepImage, () => {
   });
 
   it("draws no picture for a private lesson while the private store isn't set up", async () => {
-    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
     const owner = await userFixture();
     const lesson = await libraryLessonFixture({ ownerId: owner.id, visibility: "private" });
