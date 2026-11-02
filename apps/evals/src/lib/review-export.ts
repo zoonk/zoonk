@@ -6,18 +6,10 @@ const UNKNOWN_LANGUAGE = "other";
 
 export type ReviewExportEntry = { language: string; output: string; testCaseId: string };
 
-/**
- * Normalizes language codes so equivalent values such as `pt_BR` and `pt-br`
- * appear as one choice in the export dialog.
- */
 function normalizeLanguage(language: string): string {
   return language.trim().replaceAll("_", "-").toLowerCase();
 }
 
-/**
- * Uses the task's explicit output language when available and falls back to the
- * established language prefix used by older eval test case ids.
- */
 function getOutputLanguage(testCase: TestCase): string {
   const language = testCase.userInput.language;
 
@@ -32,10 +24,6 @@ function getOutputLanguage(testCase: TestCase): string {
     : UNKNOWN_LANGUAGE;
 }
 
-/**
- * Selects the weakest generated run for one test case so a manual reviewer sees
- * the output most likely to reveal a model quality problem.
- */
 function findLowestScoringResult({
   results,
   testCaseId,
@@ -59,10 +47,6 @@ function findLowestScoringResult({
   );
 }
 
-/**
- * Uses the lowest scored run when evaluation exists, then falls back to the
- * first generated run so outputs remain reviewable before scoring.
- */
 function getReviewOutput({
   outputs,
   results,
@@ -81,7 +65,6 @@ function getReviewOutput({
   return outputs.find((output) => getBaseTestCaseId(output.testCase.id) === testCaseId) ?? null;
 }
 
-/** Creates the single optional document row for one generated test case. */
 function createReviewEntry({
   outputs,
   results,
@@ -104,11 +87,6 @@ function createReviewEntry({
     : [];
 }
 
-/**
- * Collapses generated runs into one output per test case without carrying prompt
- * or input data into the manual-review document. Scores improve the selection,
- * but they are not required to make generated content exportable.
- */
 export function createReviewExportEntries({
   outputs,
   results,

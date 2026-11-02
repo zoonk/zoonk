@@ -1,0 +1,59 @@
+import { accessErrorCodes } from "@/lib/access-error-codes";
+import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { readBody } from "@/lib/request-input";
+import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
+import { getLearningProfile } from "@zoonk/core/profile/get";
+import {
+  type LearningProfileUpdateResult,
+  updateLearningProfile,
+} from "@zoonk/core/profile/update";
+import { type NextRequest } from "next/server";
+import { createLearningProfileResponse } from "./_utils/learning-profile-response";
+
+async function getProfile() {
+  const profile = await getLearningProfile();
+
+  if (!profile) {
+    return errors.unauthorized();
+  }
+
+  return createLearningProfileResponse(profile);
+}
+
+function getUpdateErrorResponse(
+  result: Exclude<LearningProfileUpdateResult, { status: "updated" }>,
+) {
+  if (result.status === "unauthorized") {
+    return errors.unauthorized();
+  }
+
+  if (result.status === "goalNotFound") {
+    return createErrorResponse({
+      code: accessErrorCodes.goalNotFound,
+      message: "Goal not found",
+      status: httpStatus.notFound,
+    });
+  }
+
+  return createErrorResponse({
+    code: accessErrorCodes.glassesNotEarned,
+    message: "These glasses haven't been earned yet",
+    status: httpStatus.unprocessableEntity,
+  });
+}
+
+async function updateProfile(request: NextRequest) {
+  const parsed = await readBody(request, learningProfileUpdateSchema);
+
+  const result = await updateLearningProfile(parsed);
+
+  if (result.status !== "updated") {
+    return getUpdateErrorResponse(result);
+  }
+
+  return createLearningProfileResponse(result.profile);
+}
+
+export const GET = withApiErrorBoundary(getProfile);
+export const PATCH = withApiErrorBoundary(updateProfile);

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "3504efa72e143bbd4d61ed2845cd64f8a9a62ddb99c0dfba9c33bfffc0535dcc",
+  "richtext_math_fraction": "459b2719b7badba17341dc9fb115c3ce2bc22c72f82bf9b5c5f20cf3e96d902f",
+  "richtext_math_power": "1f66141a67ebba636ae2a7b2e16e45dea0984b0a9f87f72e2f23998d8026b95d",
+  "richtext_math_root": "36110eda9598e54c2014c32f7cc2c2921c37c2a6f3de2a52562a28a8a086daa2",
+  "richtext_math_squared": "e124e2d94168b55518e87311e33cdc9c6d12e303771ac9fd0827eb2db20e8cbd",
+  "richtext_math_subscript": "fab5a4e7da25bc14d64e0ec92492c41984c068015d7b9b9f8956f4ce40f7a812"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">au carré</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">au cube</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">à la puissance %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">indice %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s sur %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">racine carrée de %1$s</string>
+</resources>

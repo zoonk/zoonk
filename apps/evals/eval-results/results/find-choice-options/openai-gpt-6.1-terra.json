@@ -1,0 +1,46 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "options": 5 },
+        "id": "pt-enem-1",
+        "userInput": { "board": "Inep", "exam": "Enem", "today": "2026-10-07" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "options": 4 },
+        "id": "pt-oab-1a-fase-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "options": 5 },
+        "id": "pt-fuvest-1a-fase-1",
+        "userInput": { "board": "Fuvest", "exam": "Fuvest, 1ª fase", "today": "2026-10-07" }
+      }
+    }
+  ],
+  "taskId": "find-choice-options"
+}

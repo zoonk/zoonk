@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "explain_coming": "9631575ea86f08b2f75a6a08b1574186114e0bb99e03eb0f78492072aa32f5ac",
+  "explain_deeper": "3585ebd12945a6e7de261319fd502182837c16aa4daef68f40d4088046675e06",
+  "explain_deeper_course": "64fe546479a09fe7d6349be14a344b972ef628f693b758dcce7c9e70fc384121",
+  "explain_deeper_goal": "e1276792feb8635befc78a3cade44276b186e75e806d5e01796d3aeb0a8b9560",
+  "explain_deeper_subject": "60066eec9a565918baf64bf6808a3c22f08c8a111bb241a77811a25cc66fd1b0",
+  "explain_go_further": "dee1c99965e85a5616ad57079aa47e1f6f6c692a7bf46cd30fcd4f456ee6eff1",
+  "explain_load_failed": "7d7c179f97a2bdda4b50dfb7a59a661647dc7ed32adc3fed8476c921b0b76763",
+  "explain_no_plan": "a799fc07c309aa79e209141e55e922bce99f66bb2d08c18604ac0ba467636361",
+  "explain_now_you_know": "ba059a6a1f98065b3506eebc4db7913ca842b01e04613e9964838fa6fcec58a8",
+  "explain_one_question": "c5befd0b52481d4f9ffb584d0b71fd8d499811aace649856cc21017e192fa8f5",
+  "explain_phase_find": "09bae43c36eae32e8788e93784947a6e62769f750213fdc76bfa711ec964db37",
+  "explain_phase_find_line": "f6b386f9e01e78a7d971c94a6d6da5593b90b1f92e79763f7fb8f576127c45df",
+  "explain_phase_read": "5e9d84d907ebb37e87057752ff26fc39f8dbd98f0839b99f69d0fc281b38fef1",
+  "explain_phase_read_line": "e73202bc5f1c1a3685dd75536ef5cc166d0bab1246c8c626787757bfd284fb14",
+  "explain_phase_write": "10e0c7397aede751ed748ff9075094e425eeaa6a6b0be35a72f816df7ceff67e",
+  "explain_phase_write_line": "5f576e45803e4e4cf49d7381b4e2d3cae60879fd0ba37ff2a1b2994fea163798",
+  "explain_phase_write_review": "58a831531fd9533bbeaf2250ff874268f0801e124da902204011ec233b7292a7",
+  "explain_quick": "f3e4f51bcf92832dc5ef46a7e4fc3a92bd787ebe608c85498823b00daea1560b",
+  "explain_recap": "50a7e17ab749e1b790987c25b543004c52cccd2e2ce8a5b5722b1eca5d44bfba",
+  "explain_see": "96d94c62df46a8643b4017d6441443c350ec0778cfe623a6007ca2b9b6715dd3",
+  "explain_slow": "7b7ea9ffaa4ed3a7485f6f8973c4c706cc5deb27d2dca201eed6bd8989d779ef",
+  "explain_still_writing": "05d6a762e4791066955a7a24ac8292ecdbe02dd4ae64e97b484994a54cef4189",
+  "explain_try_again": "646782e59513d39c378a6f30ebdb0e8ad06e8b20ff4771369d29d80a980a44e5",
+  "explain_writing": "f3b47f925db509ccb3011fc2a87ccf89235f371637316d9f9de6f2cc00b42c42"
+}
+-->
+<resources>
+    <string name="explain_writing">설명을 만들고 있어요</string>
+    <string name="explain_phase_read">질문을 읽고 있어요</string>
+    <string name="explain_phase_read_line">질문을 읽고 있어요…</string>
+    <string name="explain_phase_find">전에 같은 질문이 있었는지 확인하고 있어요</string>
+    <string name="explain_phase_find_line">질문에 맞는 설명을 찾고 있어요…</string>
+    <string name="explain_phase_write">짧은 설명 화면을 5개 정도 만들고 있어요</string>
+    <string name="explain_phase_write_line">%1$d번째 화면을 만들고 있어요…</string>
+    <string name="explain_phase_write_review">내용이 사실과 맞는지 확인하고 있어요…</string>
+    <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
+    <string name="explain_quick">간단한 설명 · %1$s</string>
+    <string name="explain_no_plan">계획을 세우지 않아도 돼요.</string>
+    <string name="explain_coming">배울 내용</string>
+    <string name="explain_one_question">마지막에 간단한 문제 1개</string>
+    <string name="explain_deeper">더 깊이 배우고 싶어요</string>
+    <!-- %1$s is a course's title. -->
+    <string name="explain_deeper_course">%1$s 학습 계획 세우기</string>
+    <string name="explain_deeper_subject">과목 전체 학습 계획 세우기</string>
+    <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
+    <string name="explain_deeper_goal">%1$s에 대해 깊이 이해하고 싶어요</string>
+    <string name="explain_slow">평소보다 시간이 더 걸리고 있어요.</string>
+    <string name="explain_still_writing">아직 설명을 만들고 있어요. 준비되는 대로 여기에 표시돼요.</string>
+    <string name="explain_try_again">다시 시도</string>
+    <string name="explain_see">설명 보기</string>
+    <string name="explain_load_failed">이 설명을 불러오지 못했어요</string>
+    <string name="explain_now_you_know">이제 알게 됐어요</string>
+    <plurals name="explain_recap">
+        <item quantity="other">%1$s문장으로 요약</item>
+    </plurals>
+    <string name="explain_go_further">더 알아볼까요?</string>
+</resources>

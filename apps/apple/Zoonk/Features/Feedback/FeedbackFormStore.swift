@@ -15,11 +15,27 @@ final class FeedbackFormStore {
   var message = ""
   private(set) var state = FeedbackFormState.idle
 
+  /// The account's email, empty for a visitor or a guest, who types one to be answered at.
+  let defaultEmail: String
   private let api: any FeedbackAPIClient
+  private let context: FeedbackContext?
+  private let token: String?
 
-  init(api: any FeedbackAPIClient, defaultEmail: String? = nil) {
+  init(
+    api: any FeedbackAPIClient,
+    context: FeedbackContext? = nil,
+    defaultEmail: String? = nil,
+    token: String? = nil
+  ) {
     self.api = api
-    email = defaultEmail?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    self.context = context
+    self.token = token
+    self.defaultEmail = defaultEmail?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    email = self.defaultEmail
+  }
+
+  var attachesScreen: Bool {
+    context?.contentID != nil
   }
 
   var canSubmit: Bool {
@@ -46,8 +62,10 @@ final class FeedbackFormStore {
     do {
       try await api.submit(
         FeedbackSubmission(
+          context: context,
           email: normalizedEmail,
-          message: normalizedMessage))
+          message: normalizedMessage),
+        token: token)
       state = .sent
     } catch is CancellationError {
       state = .idle

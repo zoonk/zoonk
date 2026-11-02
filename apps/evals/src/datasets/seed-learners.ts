@@ -1,0 +1,227 @@
+import { type MemoryFactText } from "@zoonk/ai/tasks/memory/facts";
+import { localizeObject } from "@zoonk/db/seed/localize";
+import { listSeedPersonas } from "@zoonk/db/seed/personas";
+import { isJsonObject } from "@zoonk/utils/json";
+
+/**
+ * Evals read the seed learners on one fixed Monday, so their dates (Ana's exam, Marcos's move)
+ * and "next week" never drift between runs.
+ */
+export const SEED_LEARNERS_TODAY = "2026-09-28";
+
+type SeedLearner = ReturnType<typeof listSeedPersonas>[number];
+type SeedGoal = SeedLearner["goal"];
+type SeedCourse = SeedGoal["course"];
+type SeedLesson = SeedCourse["chapters"][number]["lessons"][number];
+type SeedStep = NonNullable<SeedLesson["steps"]>[number];
+type SeedAttempt = SeedLearner["attempts"][number];
+type SeedLanguage = SeedLearner["language"];
+
+type EvalLearnerScreen = { text: string; title: string };
+
+type EvalLearnerLesson = { key: string; screens: EvalLearnerScreen[]; title: string };
+
+type EvalLearnerMistake = {
+  correctAnswer: string;
+  key: string;
+  learnerAnswer: string;
+  misconception: string;
+  question: string;
+  recentAccuracy: string;
+};
+
+type EvalLearnerGoal = {
+  areas: string[];
+  dailyMinutes: number;
+  kind: SeedGoal["kind"];
+  prompt: string;
+  targetDate: string | null;
+  title: string;
+};
+
+type EvalLearner = {
+  facts: MemoryFactText[];
+  goal: EvalLearnerGoal;
+  key: string;
+  language: SeedLanguage;
+  lessons: EvalLearnerLesson[];
+  mistakes: EvalLearnerMistake[];
+};
+
+function readText(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value : null;
+}
+
+function getAreas({ goal, language }: { goal: SeedGoal; language: SeedLanguage }): string[] {
+  const chapterAreas = goal.course.chapters.flatMap((chapter) =>
+    chapter.area ? [chapter.area.in(language)] : [],
+  );
+
+  const areas = chapterAreas.length > 0 ? chapterAreas : goal.plan.phases.map(({ name }) => name);
+
+  return [...new Set(areas)];
+}
+
+function toGoal({ goal, language }: { goal: SeedGoal; language: SeedLanguage }): EvalLearnerGoal {
+  return {
+    areas: getAreas({ goal, language }),
+    dailyMinutes: goal.dailyMinutes,
+    kind: goal.kind,
+    prompt: goal.prompt,
+    targetDate: goal.targetDate?.toISOString().slice(0, SEED_LEARNERS_TODAY.length) ?? null,
+    title: goal.title,
+  };
+}
+
+function toScreen({ language, step }: { language: SeedLanguage; step: SeedStep }) {
+  const content = localizeObject(step.content, language);
+  const text = readText(content.text);
+  const title = readText(content.title);
+
+  return step.kind === "explanation" && text && title ? [{ text, title }] : [];
+}
+
+function toLesson({
+  language,
+  lesson,
+}: {
+  language: SeedLanguage;
+  lesson: SeedLesson;
+}): EvalLearnerLesson[] {
+  const screens = (lesson.steps ?? []).flatMap((step) => toScreen({ language, step }));
+
+  if (screens.length === 0) {
+    return [];
+  }
+
+  return [{ key: lesson.key, screens, title: lesson.title.in(language) }];
+}
+
+function getLessons({ goal, language }: { goal: SeedGoal; language: SeedLanguage }) {
+  const { course } = goal;
+
+  if (!course.languages.includes(language)) {
+    return [];
+  }
+
+  const lessons = [
+    ...course.chapters.flatMap((chapter) => chapter.lessons),
+    ...(course.explanations ?? []),
+  ];
+
+  return lessons.flatMap((lesson) => toLesson({ language, lesson }));
+}
+
+function getRecentAccuracy({ attempts, skill }: { attempts: SeedAttempt[]; skill: string }) {
+  const onSkill = attempts.filter((attempt) => attempt.skill === skill);
+  const correct = onSkill.filter((attempt) => attempt.isCorrect).length;
+
+  return `${correct} of ${onSkill.length} right`;
+}
+
+function toMistake({
+  attempt,
+  attempts,
+}: {
+  attempt: SeedAttempt;
+  attempts: SeedAttempt[];
+}): EvalLearnerMistake[] {
+  const snapshot = attempt.mistake?.snapshot;
+  const question = isJsonObject(snapshot) ? readText(snapshot.question) : null;
+
+  if (!attempt.mistake || !isJsonObject(snapshot) || !question) {
+    return [];
+  }
+
+  return [
+    {
+      correctAnswer: readText(snapshot.correctAnswer) ?? "",
+      key: attempt.key,
+      learnerAnswer: readText(snapshot.answer) ?? "",
+      misconception: readText(snapshot.misconception) ?? "",
+      question,
+      recentAccuracy: getRecentAccuracy({ attempts, skill: attempt.skill }),
+    },
+  ];
+}
+
+function toEvalLearner(learner: SeedLearner): EvalLearner {
+  const { goal, language } = learner;
+
+  return {
+    facts: learner.memory.map(({ category, statement }) => ({ category, statement })),
+    goal: toGoal({ goal, language }),
+    key: learner.key,
+    language,
+    lessons: getLessons({ goal, language }),
+    mistakes: learner.attempts.flatMap((attempt) =>
+      toMistake({ attempt, attempts: learner.attempts }),
+    ),
+  };
+}
+
+const SEED_LEARNERS: readonly EvalLearner[] = listSeedPersonas({
+  now: new Date(`${SEED_LEARNERS_TODAY}T12:00:00Z`),
+}).map((learner) => toEvalLearner(learner));
+
+/** Throws when a seed learner is missing; update the dependent eval cases when the seed changes. */
+export function getSeedLearner(key: string): EvalLearner {
+  const learner = SEED_LEARNERS.find((candidate) => candidate.key === key);
+
+  if (!learner) {
+    throw new Error(`No seed learner "${key}": update the eval cases that use it`);
+  }
+
+  return learner;
+}
+
+export function getSeedScreen({
+  learner,
+  lessonKey,
+  title,
+}: {
+  learner: EvalLearner;
+  lessonKey: string;
+  title: string;
+}): EvalLearnerScreen {
+  const lesson = learner.lessons.find(({ key }) => key === lessonKey);
+  const screen = lesson?.screens.find((candidate) => candidate.title === title);
+
+  if (!screen) {
+    throw new Error(`Seed learner "${learner.key}" has no screen "${title}" in "${lessonKey}"`);
+  }
+
+  return screen;
+}
+
+export function getSeedFact({
+  includes,
+  learner,
+}: {
+  includes: string;
+  learner: EvalLearner;
+}): MemoryFactText {
+  const fact = learner.facts.find(({ statement }) => statement.includes(includes));
+
+  if (!fact) {
+    throw new Error(`Seed learner "${learner.key}" has no memory fact with "${includes}"`);
+  }
+
+  return fact;
+}
+
+export function getSeedMistake({
+  key,
+  learner,
+}: {
+  key: string;
+  learner: EvalLearner;
+}): EvalLearnerMistake {
+  const mistake = learner.mistakes.find((candidate) => candidate.key === key);
+
+  if (!mistake) {
+    throw new Error(`Seed learner "${learner.key}" has no mistake "${key}"`);
+  }
+
+  return mistake;
+}

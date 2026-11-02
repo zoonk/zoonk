@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "limit_calls_free_day": "93784018692485124e5c27fcf46c74557ae7c265cd8f91071accd25813227264",
+  "limit_calls_free_month": "5f571f357d07ef2e36ed71fd1d58585bfe57de6d82a376408a2afbcacbc39caa",
+  "limit_calls_guest": "e3e8b2b65bbdbcc3b56b5a73704bc4c9f91ca957e1b35eef558e6ae0c95df5eb",
+  "limit_calls_plus_day": "31ccfc630a1d2c67dc7c6b277e11055e468f5dad4172f15d5dabeea98d946031",
+  "limit_calls_plus_month": "ad4d226dd0c32335f41d17e2824e4ad8618648340f27472993eb2f4d9fa1d96a",
+  "limit_create_account": "265d60bd193345c318a8be0d6b5e447aad4a2a95bf0d6ac03aaacfb937cc6952",
+  "limit_help_free_day": "66c9d1f7431e579aaaca52b49ff0739d754ae13911bd9b20f53025536812a435",
+  "limit_help_free_month": "c39aa79668bb65a5c0384993337ee319893b5f7698095678a473d24fc7e47da3",
+  "limit_help_guest_day": "9679f2fd151f4a8aa7f576b8864214afe6940ecede1e54dcc13ea37319213827",
+  "limit_help_guest_total": "8adcd15569c300e53526017257c69643cf8857224c44065a6a4ac0008c05419d",
+  "limit_help_plus": "ba49f084a7c54f1b6ff2164f73fbbad41dd2b24e6406c4c432d7e9e2540c8dfd",
+  "limit_lessons_free_day": "1a3579dd22960a0c9240f33050fc45a0189a9279b3591d9c6c5cbb9c6ac17caf",
+  "limit_lessons_free_month": "ded60c2ce9fc77f98f393a700cf022d8ef65ecad47ea46e68d417a2f3e027a10",
+  "limit_lessons_guest": "0ba6c5a424c2fd5c81aec04b56172a20c6d47bc328040981ea3105bd64e30ede",
+  "limit_lessons_plus": "6a159dce74c963741baeb7b30b063abdb872e9c65ada1d7d28de228237bc294d",
+  "limit_mind_maps_free_day": "d20166b5cde9d47e525aa43f2d8f84cf144875269ba9ae333872cab20a4100a7",
+  "limit_mind_maps_free_month": "b5c7e3a1ed98b07f26c9029aeb1c0e0ffd63ec374c5379b75b33688497a0ade9",
+  "limit_mind_maps_guest": "78f34c235ddba891b645b05f65265e3b284179d609e7b3b488da7a9bbb22b8ee",
+  "limit_mind_maps_plus": "2ad492a42e9d188ae73d2c102c006d6f01b1bb081914c6ecfbde012be89d90c4",
+  "limit_outlines_free_day": "754889c1dc506ffc852a4e2f0d33ee4b285f6df9ba9d3854979f4b7bfbbc2373",
+  "limit_outlines_free_month": "57c55240cd5efe0e019155e070844bf09f9434a81268cd64d67073581952790d",
+  "limit_outlines_guest": "1bb4e2a44667df248211b64eeff5ee0a8e46b9387a7b1e323475d4b4fb710c7a",
+  "limit_outlines_plus": "b226df723fa32661341a5d33ee3a70372eae2b22775176f0a6d8acef7741962d",
+  "limit_see_plus": "afb65ab993a45241fede8b4b58b2edbc789178f1a8ed3c1e76ec6ddda78b6b7b",
+  "limit_sign_up_required": "594ed1ef644a5ddfca1ebb07507c6b639246e0e18376e32f0bc55981c74ebd68",
+  "limit_slow_down": "16ad2ca642249e0f8fa8200e6a7a1699e065412dd32dbc4a2a71ddfcae4d64f4"
+}
+-->
+<resources>
+    <string name="limit_create_account">Utwórz bezpłatne konto</string>
+    <string name="limit_see_plus">Poznaj Plus</string>
+    <string name="limit_slow_down">Zrób krótką przerwę i spróbuj ponownie.</string>
+    <string name="limit_sign_up_required">Załóż bezpłatne konto, by kontynuować.</string>
+    <string name="limit_help_guest_total">To już cała bezpłatna pomoc dostępna bez konta. Załóż bezpłatne konto, by korzystać z niej dalej.</string>
+    <string name="limit_help_guest_day">To już cała bezpłatna pomoc na dziś. Załóż bezpłatne konto, by korzystać z niej dalej.</string>
+    <string name="limit_help_plus">To już cała pomoc na dziś. Jutro znów będzie dostępna.</string>
+    <string name="limit_help_free_month">Limit pomocy na ten miesiąc został wykorzystany. Pomoc będzie znów dostępna w przyszłym miesiącu. Przejdź na Plus, by korzystać z niej dalej już teraz.</string>
+    <string name="limit_help_free_day">To już cała pomoc na dziś. Jutro znów będzie dostępna. Przejdź na Plus, by korzystać z niej dalej już teraz.</string>
+    <string name="limit_lessons_guest">To już wszystkie lekcje, które możesz wypróbować bez konta. Załóż bezpłatne konto, by uczyć się dalej.</string>
+    <string name="limit_lessons_plus">To już wszystkie nowe lekcje na dziś. Kolejne będą dostępne jutro.</string>
+    <string name="limit_lessons_free_month">To już wszystkie nowe lekcje na ten miesiąc. Kolejne będą dostępne w przyszłym miesiącu. Przejdź na Plus, by uczyć się dalej już teraz.</string>
+    <string name="limit_lessons_free_day">To już wszystkie nowe lekcje na dziś. Kolejne będą dostępne jutro. Przejdź na Plus, by uczyć się dalej już teraz.</string>
+    <string name="limit_mind_maps_guest">Utworzono już mapę myśli dostępną na próbę bez konta. Załóż bezpłatne konto, by tworzyć kolejne.</string>
+    <string name="limit_mind_maps_plus">To już wszystkie nowe mapy myśli na dziś. Jutro możesz tworzyć kolejne.</string>
+    <string name="limit_mind_maps_free_month">To już wszystkie nowe mapy myśli na ten miesiąc. Kolejne możesz tworzyć w przyszłym miesiącu. Przejdź na Plus, by tworzyć je dalej już teraz.</string>
+    <string name="limit_mind_maps_free_day">To już wszystkie nowe mapy myśli na dziś. Jutro możesz tworzyć kolejne. Przejdź na Plus, by tworzyć więcej już teraz.</string>
+    <string name="limit_outlines_guest">Wyświetlono już temat dostępny do podglądu bez konta. Załóż bezpłatne konto, by zobaczyć więcej.</string>
+    <string name="limit_outlines_plus">To już wszystkie tematy, które możesz dziś podejrzeć. Kolejne możesz zobaczyć jutro.</string>
+    <string name="limit_outlines_free_month">To już wszystkie tematy, które możesz podejrzeć w tym miesiącu. Kolejne możesz zobaczyć w przyszłym miesiącu. Przejdź na Plus, by zobaczyć więcej już teraz.</string>
+    <string name="limit_outlines_free_day">To już wszystkie tematy, które możesz dziś podejrzeć. Kolejne możesz zobaczyć jutro. Przejdź na Plus, by zobaczyć więcej już teraz.</string>
+    <string name="limit_calls_guest">Rozmowy do ćwiczenia mówienia są dostępne na bezpłatnym koncie. Załóż je, by ćwiczyć na głos.</string>
+    <string name="limit_calls_plus_month">Rozmowy będą znów dostępne w przyszłym miesiącu.</string>
+    <string name="limit_calls_plus_day">Rozmowy będą znów dostępne jutro.</string>
+    <string name="limit_calls_free_month">Rozmowy będą znów dostępne w przyszłym miesiącu. Przejdź na Plus, by zwiększyć limit rozmów.</string>
+    <string name="limit_calls_free_day">Rozmowy będą znów dostępne jutro. Przejdź na Plus, by zwiększyć limit rozmów.</string>
+</resources>

@@ -6,10 +6,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidatePath } from "next/cache";
 
-/**
- * Admins need a reversible way to remove internal or test accounts from
- * analytics without changing whether the user can sign in or keep learning.
- */
 export async function updateUserAnalyticsDisabledAction(formData: FormData) {
   await assertAdmin();
 
@@ -31,10 +27,6 @@ export async function updateUserAnalyticsDisabledAction(formData: FormData) {
   revalidateUserAnalyticsPaths({ userId });
 }
 
-/**
- * The form sends an explicit string value so the action can reject malformed
- * submissions instead of treating any unexpected value as enabled or disabled.
- */
 function parseAnalyticsDisabled(value: string | null) {
   if (value === "true") {
     return true;
@@ -47,10 +39,6 @@ function parseAnalyticsDisabled(value: string | null) {
   throw new Error("Invalid analytics setting");
 }
 
-/**
- * Updating the flag changes the user detail page, subscriptions, and aggregate
- * analytics, so every admin surface that excludes internal users must refresh.
- */
 function revalidateUserAnalyticsPaths({ userId }: { userId: string }) {
   revalidatePath(`/users/${userId}`);
   revalidatePath("/");

@@ -1,0 +1,27 @@
+import { errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { readPathParams } from "@/lib/request-input";
+import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
+import { NextResponse } from "next/server";
+
+async function getLessonChallengeTeam(
+  _request: Request,
+  context: RouteContext<"/v1/library/lessons/[lessonId]/challenge-team">,
+) {
+  const path = await readPathParams(context, lessonPathParamsSchema);
+
+  const outcome = await getChallengeTeam({ lessonId: path.lessonId });
+
+  if (outcome.status === "unauthorized") {
+    return errors.unauthorized();
+  }
+
+  if (outcome.status === "notFound") {
+    return errors.notFound();
+  }
+
+  return NextResponse.json(outcome.team, { headers: { "Cache-Control": "no-store" } });
+}
+
+export const GET = withApiErrorBoundary(getLessonChallengeTeam);

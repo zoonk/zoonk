@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
+    <string name="language_unit_eyebrow">Unit %1$s · %2$s</string>
+    <plurals name="language_unit_lessons">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
+    <!-- How much of the unit is done, the unit being the subject: "33% done". -->
+    <string name="language_unit_done_share">%1$s done</string>
+    <string name="language_unit_start">Start</string>
+    <string name="language_unit_continue">Continue</string>
+    <string name="language_unit_objectives">By the end of this unit</string>
+    <string name="language_unit_progress">Progress</string>
+    <string name="language_unit_practice">Practice</string>
+    <string name="language_unit_mistakes">Your mistakes</string>
+    <!-- Heading over material to look things up in, such as grammar tips and words, rather than lessons to do. -->
+    <string name="language_unit_reference">For reference</string>
+    <string name="language_unit_grammar_tips">Grammar tips</string>
+    <string name="language_unit_words">Words in this unit</string>
+    <!-- A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more". -->
+    <string name="language_unit_words_more">%1$s and %2$s more</string>
+    <string name="language_unit_summary">Unit summary</string>
+    <!-- TalkBack's name for the pane beside the unit's lessons. -->
+    <string name="language_unit_about">About this unit</string>
+    <string name="language_skill_reading">Reading</string>
+    <string name="language_skill_listening">Listening</string>
+    <string name="language_skill_speaking">Speaking</string>
+    <string name="language_skill_words">Words</string>
+    <string name="language_skill_writing">Writing</string>
+    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
+    <string name="language_level_by_skill">Level by skill</string>
+    <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
+    <string name="language_level_goal_by">Goal %1$s by %2$s</string>
+    <!-- The level the learner aims for: "Goal B2". -->
+    <string name="language_level_goal">Goal %1$s</string>
+    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
+    <string name="language_skill_level">%1$s, %2$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
+    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
+    <string name="language_level_up">up since the level test</string>
+    <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
+    <string name="language_level_down">down since the level test</string>
+    <string name="language_levels_move">Levels move as you practice. They get more accurate every week.</string>
+    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
+    <string name="language_level_rose">%1$s went up to %2$s since the level test.</string>
+    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
+    <plurals name="language_levels_rose">
+        <item quantity="one">%1$s went up since the level test.</item>
+        <item quantity="other">%1$s went up since the level test.</item>
+    </plurals>
+    <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
+    <string name="language_can_already">I can already…</string>
+    <!-- Read by TalkBack after the next thing the learner will be able to do, which they can't do yet. -->
+    <string name="language_can_do_not_yet">Not yet</string>
+    <!-- What TalkBack says for a level and the level the learner aims for, shown as "B1 → B2": "B1, goal B2". -->
+    <string name="language_level_toward_goal">%1$s, goal %2$s</string>
+    <string name="language_pattern_noticed">We noticed a pattern</string>
+    <string name="language_pattern_typos">Just typos</string>
+    <string name="language_pattern_typos_description">Your recent mistakes were slips, not a rule to learn.</string>
+    <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
+    <plurals name="language_say_again">
+        <item quantity="one">Say %d word again</item>
+        <item quantity="other">Say %d words again</item>
+    </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">First in your next session · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">Practice anytime · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">I can already read it</string>
+    <string name="language_alphabet_skip_failed">That didn\'t save. Try again.</string>
+    <!-- Button that opens the words to say aloud again; "them" is those words. -->
+    <string name="language_say_them">Say them</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Open</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">We noticed a pattern: %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Practice it</string>
+    <string name="language_level">Level</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, goal %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">See your plan</string>
+</resources>

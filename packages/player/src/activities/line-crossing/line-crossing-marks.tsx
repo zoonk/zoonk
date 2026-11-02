@@ -1,0 +1,228 @@
+"use client";
+
+import { cn } from "@zoonk/ui/lib/utils";
+import { type LinearScale } from "@zoonk/utils/plot-scale";
+import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
+import { usePlotScales } from "../_components/activity-plot";
+import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
+import { type LabelBox, type LabelSize } from "./line-crossing-labels";
+import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-crossing-model";
+
+const DOT_RADIUS = 6;
+const ARROW_OFFSET = 10;
+const ARROW_STROKE = 2;
+const ARROW_HEAD = 7;
+const Y_LABEL_RISE = 12;
+const X_LABEL_DROP = 20;
+
+export function LineMark({
+  className,
+  domain,
+  isDashed,
+  line,
+}: {
+  className: string;
+  domain: ChartDomain;
+  isDashed?: boolean;
+  line: Line;
+}) {
+  const { x, y } = usePlotScales();
+  const { from, to } = visibleSegment(line, domain);
+
+  return (
+    <path
+      aria-hidden="true"
+      className={cn("fill-none", className)}
+      d={`M${x.toPixel(from.x)} ${y.toPixel(from.y)} L${x.toPixel(to.x)} ${y.toPixel(to.y)}`}
+      strokeDasharray={isDashed ? "5 5" : undefined}
+      strokeLinecap="round"
+      strokeWidth={isDashed ? 2 : 3}
+    />
+  );
+}
+
+export function LineLabel({
+  box,
+  className,
+  label,
+  onMeasure,
+}: {
+  box: LabelBox | null;
+  className: string;
+  label: string;
+  onMeasure: (size: LabelSize) => void;
+}) {
+  const ref = useRef<SVGTextElement>(null);
+  const measured = useEffectEvent(onMeasure);
+
+  useLayoutEffect(() => {
+    const node = ref.current;
+
+    if (node) {
+      measured({
+        height: Number(getComputedStyle(node).fontSize.replace("px", "")),
+        width: node.getBBox().width,
+      });
+    }
+  }, []);
+
+  return (
+    <text
+      aria-hidden="true"
+      className={cn("fill-current text-xs font-semibold", DRAWING_LABEL_HALO, className)}
+      dominantBaseline="central"
+      ref={ref}
+      visibility={box ? undefined : "hidden"}
+      x={box?.left ?? 0}
+      y={box ? (box.top + box.bottom) / 2 : 0}
+    >
+      {label}
+    </text>
+  );
+}
+
+export function CrossingGuide({ isBefore, point }: { isBefore: boolean; point: Point }) {
+  const { x, y } = usePlotScales();
+  const [px, py] = [x.toPixel(point.x), y.toPixel(point.y)];
+
+  return (
+    <path
+      aria-hidden="true"
+      className={cn("fill-none", isBefore ? "stroke-muted-foreground/50" : "stroke-foreground/60")}
+      d={`M${x.range[0]} ${py} H${px} V${y.range[0]}`}
+      strokeDasharray="3 3"
+      strokeWidth={1.5}
+    />
+  );
+}
+
+export function CrossingDot({ isBefore, point }: { isBefore: boolean; point: Point }) {
+  const { x, y } = usePlotScales();
+
+  return (
+    <circle
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none",
+        isBefore ? "fill-background stroke-muted-foreground" : "fill-foreground stroke-background",
+      )}
+      cx={x.toPixel(point.x)}
+      cy={y.toPixel(point.y)}
+      r={DOT_RADIUS}
+      strokeWidth={2}
+    />
+  );
+}
+
+export const CROSSING_RADIUS = DOT_RADIUS + 1;
+
+type ArrowEnds = { after: Point; before: Point; x: LinearScale; y: LinearScale };
+
+function changeArrows({ after, before, x, y }: ArrowEnds): { from: Point; to: Point }[] {
+  const [left, bottom] = [x.range[0], y.range[0]];
+
+  const arrows = [
+    {
+      from: { x: left + ARROW_OFFSET, y: y.toPixel(before.y) },
+      to: { x: left + ARROW_OFFSET, y: y.toPixel(after.y) },
+    },
+    {
+      from: { x: x.toPixel(before.x), y: bottom - ARROW_OFFSET },
+      to: { x: x.toPixel(after.x), y: bottom - ARROW_OFFSET },
+    },
+  ];
+
+  return arrows.filter(({ from, to }) => Math.hypot(to.x - from.x, to.y - from.y) > DOT_RADIUS);
+}
+
+export function changeArrowBoxes(ends: ArrowEnds): LabelBox[] {
+  const reach = (ARROW_HEAD * ARROW_STROKE) / 2;
+
+  return changeArrows(ends).map(({ from, to }) => ({
+    bottom: Math.max(from.y, to.y) + reach,
+    left: Math.min(from.x, to.x) - reach,
+    right: Math.max(from.x, to.x) + reach,
+    top: Math.min(from.y, to.y) - reach,
+  }));
+}
+
+export function ChangeArrows({ after, before }: { after: Point; before: Point }) {
+  const { x, y } = usePlotScales();
+  const markerId = useId();
+
+  return (
+    <g aria-hidden="true" className="text-foreground">
+      <defs>
+        <marker
+          id={markerId}
+          markerHeight={ARROW_HEAD}
+          markerWidth={ARROW_HEAD}
+          orient="auto-start-reverse"
+          refX={7}
+          refY={5}
+          viewBox="0 0 10 10"
+        >
+          <path
+            className="fill-none stroke-current"
+            d="M1 1 L9 5 L1 9"
+            strokeLinecap="round"
+            strokeWidth={2}
+          />
+        </marker>
+      </defs>
+      {changeArrows({ after, before, x, y }).map(({ from, to }) => (
+        <path
+          className="fill-none stroke-current"
+          d={`M${from.x} ${from.y} L${to.x} ${to.y}`}
+          key={from.x === to.x ? "y" : "x"}
+          markerEnd={`url(#${markerId})`}
+          strokeWidth={ARROW_STROKE}
+        />
+      ))}
+    </g>
+  );
+}
+
+export function Axes({ xLabel, yLabel }: { xLabel: string; yLabel: string }) {
+  const { x, y } = usePlotScales();
+  const [left, right] = x.range;
+  const [bottom, top] = y.range;
+
+  return (
+    <g aria-hidden="true">
+      <path
+        className="stroke-foreground/40 fill-none"
+        d={`M${left} ${top} V${bottom} H${right}`}
+        strokeWidth={1.5}
+      />
+      <text className="fill-muted-foreground text-xs" x={left} y={top - Y_LABEL_RISE}>
+        {yLabel}
+      </text>
+      <text
+        className="fill-muted-foreground text-xs"
+        textAnchor="end"
+        x={right}
+        y={bottom + X_LABEL_DROP}
+      >
+        {xLabel}
+      </text>
+    </g>
+  );
+}
+
+export function ClipArea({ id }: { id: string }) {
+  const { x, y } = usePlotScales();
+
+  return (
+    <defs>
+      <clipPath id={id}>
+        <rect
+          height={y.range[0] - y.range[1]}
+          width={x.range[1] - x.range[0]}
+          x={x.range[0]}
+          y={y.range[1]}
+        />
+      </clipPath>
+    </defs>
+  );
+}

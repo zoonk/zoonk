@@ -10,11 +10,12 @@ function readEnvironment(path: string): Record<string, string> {
   );
 }
 
-/**
- * Keeps Prisma, Vitest, Playwright, and E2E builds on the same database, even when the shell has a development URL.
- * This package entrypoint is for test tooling and is intentionally absent from production app bundles.
- * @public
- */
+function withRunApi(environment: Record<string, string>): Record<string, string> {
+  const apiUrl = process.env.E2E_API_URL;
+  return apiUrl ? { ...environment, NEXT_PUBLIC_API_URL: apiUrl } : environment;
+}
+
+/** Overrides a development URL in the shell, so Prisma, Vitest, Playwright and E2E share one. */
 export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string> {
   const directory = resolve(import.meta.dirname, "..");
   const defaults = readEnvironment(resolve(directory, `.env.${mode}`));
@@ -29,14 +30,50 @@ export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string>
       process.env.DATABASE_URL ||
       defaults.DATABASE_URL_UNPOOLED;
 
-    return {
+    return withRunApi({
       ...Object.fromEntries(
         Object.entries(defaults).map(([key, value]) => [key, process.env[key] ?? value]),
       ),
       ...(pooled && { DATABASE_URL: pooled }),
       ...(unpooled && { DATABASE_URL_UNPOOLED: unpooled }),
-    };
+    });
   }
 
-  return { ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) };
+  return withRunApi({ ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) });
+}
+
+export const TEST_RUN_DATABASE_MARKER = "_run_";
+
+/** Postgres cuts longer names short. */
+const MAX_DATABASE_NAME_LENGTH = 63;
+
+function toRunDatabaseUrl(url: string): string {
+  const run = new URL(url);
+  const name = `${decodeURIComponent(run.pathname.slice(1))}${TEST_RUN_DATABASE_MARKER}${process.pid}`;
+
+  if (name.length > MAX_DATABASE_NAME_LENGTH) {
+    throw new Error(`The test run's database name ${name} is longer than Postgres allows.`);
+  }
+
+  run.pathname = `/${encodeURIComponent(name)}`;
+  return run.toString();
+}
+
+/**
+ * The copy is named after the process, which runs both this config and the `test-database.ts`
+ * global setup that creates it.
+ */
+export function getTestRunEnvironment(): Record<string, string> {
+  const environment = getTestEnvironment("test");
+  const { DATABASE_URL: pooled, DATABASE_URL_UNPOOLED: unpooled } = environment;
+
+  if (!pooled || !unpooled) {
+    throw new Error("The test environment has no DATABASE_URL and DATABASE_URL_UNPOOLED.");
+  }
+
+  return {
+    ...environment,
+    DATABASE_URL: toRunDatabaseUrl(pooled),
+    DATABASE_URL_UNPOOLED: toRunDatabaseUrl(unpooled),
+  };
 }

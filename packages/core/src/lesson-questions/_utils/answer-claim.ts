@@ -1,14 +1,15 @@
 import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
+import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
+import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
+import { getTutorModel } from "./tutor-model";
 
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
-
-export type ClaimLessonQuestionAnswerInput = { questionId: string; requestedModel: string };
 
 function getStaleGenerationBoundary(now: Date): Date {
   return new Date(now.getTime() - STALE_GENERATION_MILLISECONDS);
@@ -38,29 +39,36 @@ function toPriorTurns(
     );
 }
 
+function sameStepWhere(question: { libraryStepId: string | null }) {
+  return { libraryStepId: question.libraryStepId };
+}
+
+/** Exclude earlier checked-answer turns while giving hints; restore them only after the question is checked again. */
 async function getPriorTurns({
-  createdAt,
-  questionId,
-  stepId,
-  threadId,
+  question,
   transaction,
 }: {
-  createdAt: Date;
-  questionId: string;
-  stepId: string | null;
-  threadId: string;
+  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
   transaction: TransactionClient;
 }) {
+  const { createdAt } = question;
+
+  const aboutAnswer = await findAboutCheckedAnswer({
+    client: transaction,
+    questionIds: [question.id],
+  });
+
   const questions = await transaction.lessonQuestion.findMany({
     omit: lessonQuestionResourceOmit,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_PRIOR_TURNS,
     where: {
-      OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: questionId } }],
+      OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: question.id } }],
       answer: { not: null },
       status: "completed",
-      stepId,
-      threadId,
+      ...sameStepWhere(question),
+      ...(aboutAnswer.has(question.id) ? {} : { NOT: aboutCheckedAnswerWhere }),
+      threadId: question.threadId,
     },
   });
 
@@ -71,7 +79,7 @@ async function hasBlockingQuestion({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; stepId: string | null; threadId: string };
+  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
   transaction: TransactionClient;
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([
@@ -83,7 +91,7 @@ async function hasBlockingQuestion({
           { createdAt: question.createdAt, id: { lt: question.id } },
         ],
         status: { not: "completed" },
-        stepId: question.stepId,
+        ...sameStepWhere(question),
         threadId: question.threadId,
       },
     }),
@@ -92,7 +100,7 @@ async function hasBlockingQuestion({
       where: {
         id: { not: question.id },
         status: "running",
-        stepId: question.stepId,
+        ...sameStepWhere(question),
         threadId: question.threadId,
       },
     }),
@@ -101,13 +109,68 @@ async function hasBlockingQuestion({
   return Boolean(earlierUnfinishedQuestion || otherRunningQuestion);
 }
 
+function getClaimWhere({
+  now,
+  question,
+  userId,
+}: {
+  now: Date;
+  question: { generationRevision: number; id: string };
+  userId: string;
+}) {
+  return {
+    OR: [
+      { status: { in: ["pending" as const, "failed" as const] } },
+      { status: "running" as const, updatedAt: { lt: getStaleGenerationBoundary(now) } },
+    ],
+    generationRevision: question.generationRevision,
+    id: question.id,
+    thread: { userId },
+  };
+}
+
+async function completeWithSharedAnswer({
+  question,
+  shared,
+  transaction,
+  where,
+}: {
+  question: { id: string };
+  shared: TutorSharedAnswer;
+  transaction: TransactionClient;
+  where: ReturnType<typeof getClaimWhere>;
+}) {
+  const completed = await transaction.lessonQuestion.updateMany({
+    data: {
+      answer: shared.answer,
+      finishReason: null,
+      generatedAt: shared.generatedAt,
+      generationRevision: { increment: 1 },
+      model: shared.model,
+      promptVersion: shared.promptVersion,
+      provider: null,
+      requestedModel: null,
+      runId: shared.runId,
+      sharedAnswerId: shared.id,
+      status: "completed",
+    },
+    where,
+  });
+
+  if (completed.count === 0) {
+    return { status: "conflict" as const };
+  }
+
+  return { answer: shared.answer, questionId: question.id, status: "shared" as const };
+}
+
 export async function claimAnswerInTransaction({
   input,
   now,
   transaction,
   userId,
 }: {
-  input: ClaimLessonQuestionAnswerInput;
+  input: { questionId: string };
   now: Date;
   transaction: TransactionClient;
   userId: string;
@@ -135,51 +198,51 @@ export async function claimAnswerInTransaction({
     return { status: "conflict" as const };
   }
 
-  const staleBefore = getStaleGenerationBoundary(now);
+  const priorTurns = await getPriorTurns({ question, transaction });
+
+  const sharedKey = getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+  const claimWhere = getClaimWhere({ now, question, userId });
+
+  const shared = sharedKey
+    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepSuggestion: sharedKey } })
+    : null;
+
+  if (shared) {
+    return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
+  }
+
+  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
+  const shareAnswer = sharedKey !== null;
 
   const claimed = await transaction.lessonQuestion.updateMany({
     data: {
       answer: null,
       finishReason: null,
+      generatedAt: null,
       generationRevision: { increment: 1 },
-      inputTokens: null,
       model: null,
-      outputTokens: null,
+      promptVersion: null,
       provider: null,
-      requestedModel: input.requestedModel,
+      requestedModel: getTutorModel({ contextSnapshot, shareAnswer }),
+      runId: null,
       status: "running",
-      totalTokens: null,
     },
-    where: {
-      OR: [
-        { status: { in: ["pending", "failed"] } },
-        { status: "running", updatedAt: { lt: staleBefore } },
-      ],
-      generationRevision: question.generationRevision,
-      id: question.id,
-      thread: { userId },
-    },
+    where: claimWhere,
   });
 
   if (claimed.count === 0) {
     return { status: "conflict" as const };
   }
 
-  const priorTurns = await getPriorTurns({
-    createdAt: question.createdAt,
-    questionId: question.id,
-    stepId: question.stepId,
-    threadId: question.threadId,
-    transaction,
-  });
-
   return {
     claim: {
-      contextSnapshot: parseLessonQuestionContextSnapshot(question.contextSnapshot),
+      contextSnapshot,
+      goalId: question.goalId,
       priorTurns,
       question: question.question,
       questionId: question.id,
       revision: question.generationRevision + 1,
+      shareAnswer,
     },
     status: "ready" as const,
   };

@@ -1,0 +1,1742 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The goal-versus-solution distinction is accurate throughout. Each scored question has exactly one defensible answer, and its feedback matches the option. The deliberately flawed AI answer correctly locates the originating mistake in step 2, with later steps building on it.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The explanation uses short, concrete sentences and clearly contrasts an experience change with a design choice. However, “progress bar” is an unexplained interface term used before any description, triggering the cap of 8 for one unexplained term.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require classification of new statements, and the activity requires identifying the originating reasoning error. Distractors represent plausible solutions mistaken for goals, including the required payment-button redesign. Feedback explains the distinctions without identifying options by position. Both basis quotations identify the earlier sentence that decides the answer.",
+          "score": 10,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result follows the five planned screens in order and ends with one sentence per summary idea. It uses US English, stays within app-design situations, and provides the required banking application. The findError activity uses an AI author, places the mistake in step 2, and makes subsequent steps depend on that mistake. The application introduces a new problem rather than repeating the earlier payment question.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4987,
+          "outputTokens": 1005,
+          "reasoningTokens": 492
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "“Progress bar” is used in the opening question and explanation without explaining what it is. For beginners, briefly describe it as an indicator showing how much of checkout is finished.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The hook reveal could briefly explain why adding a progress bar is a solution: it chooses something to build rather than naming what should improve for people. The current reveal answers correctly but postpones that useful distinction.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The findError activity is an AI assistant's answer (`author: \"ai\"`) whose one mistake is in step 2 as the brief says: a solution (\"show the fee on the home screen\") taken as the goal; the steps after it build on it, and the last step is never the wrong one\n      - Every situation happens in a product team and its app (food delivery, banking), never at a bakery or a market; people and towns come from CAST\n      - No reason or reveal points at an option by its place (\"the second one\", \"option B\"): each names the option by what it says\n      - The checks and the application each ask something new\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-ux-goals-spot-ai-1",
+        "userInput": {
+          "chapterTitle": "UX goals and outcomes",
+          "courseTitle": "UX Design",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Write a UX goal that names the change without naming a solution",
+            "description": "State what should change in people's experience before choosing a design, and catch a goal that hides a solution.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "A team writes the goal 'Add a progress bar to checkout'. Ask the learner to guess, without scoring, whether that is a goal or a solution. Answer: a solution.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "findError",
+                "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
+                "kind": "activity",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Write a goal that names the change in people's experience, not the design that might cause it.",
+                "example": "'Fewer people give up when the fee appears' instead of 'Add a fee banner'.",
+                "hard": false,
+                "name": "Write a UX goal without a solution",
+                "topic": "UX goals",
+                "useCase": "Agreeing with a product team on what a redesign must change before designing it."
+              },
+              {
+                "description": "Tell a real UX goal from a proposed solution written as if it were a goal.",
+                "example": "'Redesign the button' is a solution; 'people finish payment on the first try' is a goal.",
+                "hard": false,
+                "name": "Tell a UX goal from a proposed solution",
+                "topic": "UX goals",
+                "useCase": "Reviewing a brief or an AI assistant's summary before a design sprint."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Writing UX goals"
+          },
+          "activityTemplates": [
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step. Check kinds this template supports: interaction.",
+              "id": "findError",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"author\":{\"type\":\"string\",\"const\":\"ai\"},\"correction\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"errorStepId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"problem\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"steps\":{\"minItems\":3,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"result\":{\"type\":\"number\"},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160}},\"required\":[\"id\",\"text\"],\"additionalProperties\":false}},\"why\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"correction\",\"errorStepId\",\"problem\",\"steps\",\"why\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"findError\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The anatomy and circulation statements are correct at the requested introductory level. The chamber check has one correct answer and includes the right-ventricle trap and thicker-left-wall explanation. The application specifies a hole between the ventricles and higher left-side pressure, making left-to-right flow and mixing on the pulmonary side correct. The approximate daily heartbeat count is reasonable.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is concise Brazilian Portuguese, and the septum receives a helpful wall comparison. However, the explanation introduces several technical terms simultaneously, and the later pressure-based application skips the explanation of pressure and its relationship to flow. These multiple terminology and explanation weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The chamber question combines pumping function with destination rather than merely repeating one sentence. Its distractors and feedback distinguish chambers and sides, and the application asks learners to predict a consequence. The diagram also tests spatial identification and explicitly addresses left-right confusion. However, its alt text omits numbered locations, preventing nonvisual learners from performing that check.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result follows the five planned screens in order, opens with an ungraded guess, uses Brazilian Portuguese, and supplies a concrete clinical setting in Natal. The requested diagram is front-facing and wordless, with Portuguese labels and English anatomical targets. The principal fit slip is the summary sentence that combines septum function with viewing orientation instead of giving each idea its own sentence.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5670,
+          "outputTokens": 1138,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The labeling activity is not answerable from its alt text alone: it describes upper and lower spaces and a central wall, but never identifies which numbered marker occupies each position. A learner who cannot see the diagram cannot reliably match the five names.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The explanation introduces chambers, atria, ventricles and the septum together, exceeding the beginner rubric's limit on new terminology. Pressure is subsequently used without explaining it as a push or teaching why blood moves from higher to lower pressure. The second summary sentence combines two separate ideas: septum separation and front-view orientation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Give the activity alt text numbered spatial descriptions without anatomical answer names. Use a brief everyday comparison for pressure before the application, and split septum function and viewing orientation into separate summary sentences.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - Atria receive and ventricles pump; the right side sends blood to the lungs and the left side to the whole body; the septum keeps the two sides apart\n      - The labeled diagram's `picture` is the heart seen from the front with no words in it; its parts are the four chambers and the septum, each named in Portuguese with the part it marks in English, and its feedback explains the left-right mix-up of a heart seen from the front\n      - The check about which chamber pumps to the body uses the right-ventricle trap and explains the thicker wall of the left ventricle\n      - The application about a hole in the septum follows from what the lesson taught\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-camaras-do-coracao-beginner-1",
+        "userInput": {
+          "chapterTitle": "Sistema circulatório",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Localizar as quatro câmaras do coração e dizer para onde cada lado bombeia o sangue",
+            "description": "Conheça átrios e ventrículos, o septo que separa os dois lados e o caminho do sangue para os pulmões e para o corpo.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "O coração bate cerca de 100 mil vezes por dia sem misturar o sangue que vai para os pulmões com o que vai para o corpo. Peça um palpite, sem avaliar, de como ele consegue isso.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
+              },
+              {
+                "activityTemplate": "labeledDiagram",
+                "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Nomear e localizar átrios, ventrículos e septo num desenho do coração visto de frente.",
+                "example": "No desenho de frente, o ventrículo esquerdo fica embaixo, à direita de quem olha.",
+                "hard": false,
+                "name": "Localizar as câmaras do coração",
+                "topic": "Anatomia do coração",
+                "useCase": "Ler desenhos e exames do coração na escola e em provas."
+              },
+              {
+                "description": "Dizer para onde cada lado do coração bombeia o sangue: o direito para os pulmões, o esquerdo para o corpo.",
+                "example": "O ventrículo direito manda sangue para os pulmões pela artéria pulmonar.",
+                "hard": true,
+                "name": "Seguir o caminho do sangue no coração",
+                "topic": "Circulação",
+                "useCase": "Entender por que um defeito num lado do coração afeta os pulmões ou o corpo."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "As quatro câmaras do coração"
+          },
+          "activityTemplates": [
+            {
+              "description": "Put names on the numbered parts of one picture, like the chambers of the heart or the parts of a flower: code draws the whole once (`picture`: what it shows, with no words in it, and its alt text) with a number on each part, 1 for the first in `parts`, and the learner matches each number with its name. The parts are pieces of one whole, never separate things. Fills: the picture, the parts in order (each with its name in the lesson's language and, in English, the part its number marks), distractor names and feedback for each likely mix-up. Check kinds this template supports: interaction.",
+              "id": "labeledDiagram",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"distractors\":{\"maxItems\":3,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"mixUps\":{\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"feedback\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"labels\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}}},\"required\":[\"feedback\",\"labels\"],\"additionalProperties\":false}},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"part\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}},\"required\":[\"label\",\"part\"],\"additionalProperties\":false}},\"picture\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false}},\"required\":[\"distractors\",\"mixUps\",\"parts\",\"picture\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"labeledDiagram\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The notes and intervals are correct: C–E–G is major, C–Eb–G is minor, and G–B–D becomes minor by changing B to Bb. The byEar target correctly specifies A minor, which produces A–C–E together, without naming the chord in the question. Each check has one defensible correct answer.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Several technical terms arrive on the same explanation screen, contrary to the explicit limit. “Half steps” appears before its definition, while “fifth” and “major third” receive numerical definitions without everyday comparisons. These multiple terminology and sequencing issues trigger the cap of 7, although the concrete note-change example remains understandable.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The activity tests listening rather than revealing the chord. The next check asks learners to spot the top-note error, and the application transfers the rule to G–B–D with less help. Distractors represent plausible mistakes, reasons explain them, and both basis quotations identify the earlier statements that decide the answers. No later screen judges the learner’s previous selection.",
+          "score": 10,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The output uses US English, opens directly with the planned musical contrast, follows the five planned screens, and ends with one-sentence summary items. Maya’s keyboard provides a concrete application with the required B-to-Bb fix. The terminology-heavy explanation is one beginner-level fit slip, warranting the cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses an em dash: \"Chords behind _Happy Birthday_ can sound bright, while chords in a sad film theme can sound dark—even when they share the same starting note. Changing just one note can make the difference.\". Write it without one.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5186,
+          "outputTokens": 916,
+          "reasoningTokens": 312
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation overloads one beginner screen with root, fifth, major third, half step, and flat notation. It uses “half steps” before defining them, and the interval definitions lack the required everyday comparisons. The musical content is correct, but this presentation falls short of the one-new-term-per-screen expectation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Within the existing explanation screen, foreground the concrete action: keep C and G, and move E to the neighboring lower key, Eb. Define the keyboard distance before using it, and make the interval labels secondary. An audible major-to-minor comparison before the ear check would also help beginners connect that movement with the sound.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The keyboard activity is by ear (`byEar`): it plays an A minor chord (A, C, E) together without naming it, and the learner names what they heard (major or minor) with minor correct; the question never says which chord it is\n      - The explanation's notes are right (C, E, G is major; C, Eb, G is minor), and the check's right answer is E dropping to Eb, with the top-note trap\n      - The application's fix is B to Bb\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-major-minor-by-ear-1",
+        "userInput": {
+          "chapterTitle": "Chords",
+          "courseTitle": "Music basics",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Hear whether a chord is major or minor",
+            "description": "Hear the one note that turns a bright major chord into a darker minor one.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Happy birthday sounds bright and a sad film theme sounds dark, often with the same root note. Open with that contrast: one note makes the difference.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A major chord is a root, a major third (4 half steps up) and a fifth: C, E, G. Lower the middle note one half step and you get a minor chord: C, Eb, G. Major sounds bright; minor sounds darker.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "keyboardFretboard",
+                "brief": "By ear: the app plays an A minor chord (A, C, E) together, without naming it. The learner picks whether it was major or minor, then sees it on the keys. Tempting wrong answer: major, from not hearing the lowered third.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which note changes when C major becomes C minor. Correct: E drops to Eb. Tempting wrong answer: G drops to Gb, the top note.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Maya plays G, B, D on her keyboard for a sad song and it sounds too bright. Ask which single key she should change (B to Bb) and why.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A major chord's middle note is 4 half steps above the root; lowering it one half step makes the chord minor and darker.",
+                "example": "C, E, G is C major; C, Eb, G is C minor.",
+                "hard": false,
+                "name": "Tell major and minor chords apart",
+                "topic": "Chords",
+                "useCase": "Choosing chords that fit the mood of a song you play."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Major or minor?"
+          },
+          "activityTemplates": [
+            {
+              "description": "Press notes on a piano keyboard or guitar fretboard and see where they sit on both, like turning C major into C minor. Code draws the keys and frets, computes a chord's notes from its root and quality, and plays the sound. Notes are letters with \"#\" or \"b\" (C, Eb, F#). With `byEar` the target is played, not named, until the learner answers: ear training, like a perfect fifth (two notes, played one after the other) or a minor chord (played together); the learner finds it on the keys (interaction) or names what they heard (choice, with the names as options). Fills: the notes or chord to find (`target`), optionally the notes or chord already pressed at the start (`start`, for \"change one note\" tasks), which instruments to show, whether it's by ear and, for a choice check, the question about what the learner hears or sees. Check kinds this template supports: interaction, choice.",
+              "id": "keyboardFretboard",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"byEar\":{\"type\":\"boolean\"},\"instruments\":{\"minItems\":1,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"guitar\",\"piano\"]}},\"start\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"chord\"},\"quality\":{\"type\":\"string\",\"enum\":[\"augmented\",\"diminished\",\"dominant7\",\"major\",\"major7\",\"minor\",\"minor7\"]},\"root\":{\"type\":\"string\",\"pattern\":\"^[A-G](?:#|b)?[0-8]?$\"}},\"required\":[\"kind\",\"quality\",\"root\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"notes\"},\"notes\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"pattern\":\"^[A-G](?:#|b)?[0-8]?$\"}}},\"required\":[\"kind\",\"notes\"],\"additionalProperties\":false}]},\"target\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"chord\"},\"quality\":{\"type\":\"string\",\"enum\":[\"augmented\",\"diminished\",\"dominant7\",\"major\",\"major7\",\"minor\",\"minor7\"]},\"root\":{\"type\":\"string\",\"pattern\":\"^[A-G](?:#|b)?[0-8]?$\"}},\"required\":[\"kind\",\"quality\",\"root\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"notes\"},\"notes\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"pattern\":\"^[A-G](?:#|b)?[0-8]?$\"}}},\"required\":[\"kind\",\"notes\"],\"additionalProperties\":false}]}},\"required\":[\"instruments\",\"target\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"keyboardFretboard\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The economic predictions and activity calculations are correct. The original lines cross at quantity 5 and price 6; shifting supply left by 2 produces quantity 4 and price 7. Demand increasing raises both price and quantity, while cheaper wheat shifts bread supply right and lowers its price with demand unchanged. The historical egg prices are presented as real and align with the requested approximate figures; activity data are explicitly labeled as an example. Each check has one defensible correct answer.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is Brazilian Portuguese and mostly accessible, but the explanation packs several new technical concepts into one screen. Supply, demand, curves, and equilibrium are introduced without everyday comparisons, and the text states rather than explains why the curves slope differently and why their crossing determines the traded price and quantity. These multiple compressed or skipped explanatory steps trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The drag activity tests the correct curve and direction, with useful feedback for moving demand or moving supply the wrong way. The diet and bakery questions require prediction and distinguish buyer-side changes from producer-side changes; their option reasons are substantive. However, the diet question's basis sentence only explains shift direction, not the price-and-quantity consequences needed to decide the complete answer. The bakery's null basis is reasonable because no earlier single sentence explains the production-cost mechanism.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson follows the five planned screens in order and then supplies a summary with one sentence per idea. It opens directly with the specified historical egg-price case, uses Brazilian Portuguese, and offers an appropriate intermediate-level graph interaction without unnecessary formulas. The application names a bakery in Recife and connects cheaper wheat to bread supply and price. The demand check includes the planned supply trap, and there is no filler or irrelevant history.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5291,
+          "outputTokens": 1070,
+          "reasoningTokens": 411
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introduces supply, demand, curves, and equilibrium together, without the required everyday comparisons. It also states the curve slopes and equilibrium changes without fully explaining their mechanism. The diet check's basis quote supports the rightward shift but does not explain why both equilibrium price and quantity rise.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the hook reveal more informative by connecting fewer hens directly to fewer eggs offered. In the activity feedback, explicitly compare the example's original crossing (5 thousand dozen at R$6) with the new crossing (4 thousand dozen at R$7), reinforcing what the learner observes.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for intermediate learners\n      - The lines-and-crossing activity has a supply and a demand line with example numbers marked as an example, and its `shift` moves supply to the left (the bird flu), so the crossing rises to a higher price and a smaller quantity; the feedback covers moving demand instead and moving the wrong way\n      - The 2022 egg prices are presented as real (about US$ 1.80 to over US$ 4 a dozen) and the activity's own numbers as an example\n      - The check moves demand to the right (price and quantity both rise) with the supply trap, and the application moves the bread's supply right (price falls)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-demanda-ovos-deslocamento-1",
+        "userInput": {
+          "chapterTitle": "Oferta e demanda",
+          "courseTitle": "Economia",
+          "language": "pt",
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Prever o que acontece com o preço e a quantidade quando a demanda ou a oferta muda",
+            "description": "Arraste a curva certa e veja o novo preço de equilíbrio aparecer no gráfico.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Em 2022, a gripe aviária matou milhões de galinhas nos EUA e a dúzia de ovos passou de cerca de US$ 1,80 para mais de US$ 4. Peça um palpite: o que mudou, a oferta ou a demanda?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O preço de equilíbrio fica onde a curva de oferta cruza a de demanda. Menos galinhas é menos oferta: a curva de oferta vai para a esquerda, e o cruzamento sobe para um preço maior com menos ovos vendidos.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "lineCrossing",
+                "brief": "O aprendiz arrasta a curva certa para mostrar a gripe aviária (oferta para a esquerda) e vê o novo preço de equilíbrio. Use números de exemplo marcados como exemplo. Erro tentador: mover a demanda para a direita, porque o preço subiu.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o que acontece com o preço e a quantidade de ovos se uma dieta da moda fizer muita gente comer mais ovos. Certa: demanda para a direita, preço e quantidade sobem. Tentadora: a oferta aumenta.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma padaria em Recife vê o preço do trigo cair depois de uma safra recorde. Pergunte o que acontece com a oferta de pão e o seu preço, e por quê.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Uma mudança na oferta ou na demanda desloca uma das curvas, e o novo cruzamento dá o novo preço e a nova quantidade.",
+                "example": "Menos galinhas deslocam a oferta de ovos para a esquerda: preço sobe, quantidade cai.",
+                "hard": true,
+                "name": "Prever o novo equilíbrio após um deslocamento",
+                "topic": "Oferta e demanda",
+                "useCase": "Entender por que o preço de um alimento dispara ou cai no mercado."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Quando a curva se desloca"
+          },
+          "activityTemplates": [
+            {
+              "description": "Two straight lines on one chart and where they cross; the learner drags one line to explain a change and watches the crossing move. Supply and demand (a real price change, like the 2022 egg price spike), cost and revenue (break-even), a budget line, two motions meeting or two equations. Lines are y = intercept + slope × x, each with an id and a label. `shift` is what really happened: which line moves, which way (\"left\", \"right\", \"up\" or \"down\") and how far. The interaction check expects that line moved that way; the computed number is the new crossing's `output` \"y\" (default) or \"x\". Fills: the axis labels, both lines, what changed, the shift and feedback for moving the wrong line or the wrong way. Check kinds this template supports: interaction, choice, numeric. When it shows data, set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "lineCrossing",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"change\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"feedback\":{\"type\":\"object\",\"properties\":{\"wrongDirection\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"wrongLine\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"wrongDirection\",\"wrongLine\"],\"additionalProperties\":false},\"lines\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"intercept\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"slope\":{\"type\":\"number\"}},\"required\":[\"id\",\"intercept\",\"label\",\"slope\"],\"additionalProperties\":false}},\"shift\":{\"type\":\"object\",\"properties\":{\"amount\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"direction\":{\"type\":\"string\",\"enum\":[\"left\",\"right\",\"up\",\"down\"]},\"line\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"amount\",\"direction\",\"line\"],\"additionalProperties\":false},\"xLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"yLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"change\",\"feedback\",\"lines\",\"shift\",\"xLabel\",\"yLabel\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"lineCrossing\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The cross correctly produces two Pp and two pp cells, giving a 1 in 2 chance of white flowers. The simulation correctly models 100 independent seeds with probability 0.5 and an exactly-50 hit; its probability is approximately 7.96%, making 8% the uniquely closest option. The application correctly treats 47 white-flowered plants as consistent with the prediction. Simulation data is labeled as an example.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Most sentences are short and readable, but the explanation introduces several technical terms on one screen, contrary to the explicit one-new-term limit. Gene is unexplained, and the definitions of allele, dominance, and Punnett square lack everyday comparisons. The equal likelihood of the Pp parent's two contributions is also left implicit. These combined terminology and explanation gaps trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The grid requires filling all four cells before the share question under the app's stated rule. Both named traps are present, and the simulation and application test meaningful probability misconceptions with sound feedback. However, the application's null basis misses an earlier deciding sentence: 'You may expect most batches to land exactly on the prediction, but chance spreads the counts around 50.'",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens with the planned Mendel surprise, and follows the five planned screens in order before the summary. Both activities implement the specified tasks, and the Boise garden provides a concrete, realistic application that keeps 47 out of 100 consistent with a 1 in 2 chance. Each summary entry states its idea in one sentence.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7529,
+          "outputTokens": 886,
+          "reasoningTokens": 284
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introduces several technical terms together—gene, allele, dominant, and Punnett square—without the required everyday comparisons. The application has a null basis even though the earlier simulation feedback explicitly explains that chance spreads counts around 50.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the inheritance steps more concrete: the Pp parent passes P or p with equal chance, while the pp parent always passes p. Connect those two possibilities to the four grid cells before stating the predicted share.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The combination grid crosses alleles P and p (rows) with p and p (columns), names the traits (purple dominant, white recessive), and its check gives 1 in 2 white, with the 1-in-4 trap\n      - The random simulation is in chance mode: batches of 100 seeds, each white with chance 1/2, a hit of exactly 50 white, and a guess about how often that happens whose closest option (about 8%) is right, with feedback that batches spread around 50 instead of hitting it\n      - The grid has 4 cells, so the learner fills it before answering whatever its check (the app's rule), and the question about the share comes after the fill\n      - The application keeps 47 of 100 consistent with a 1 in 2 chance\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-pea-crosses-chance-1",
+        "userInput": {
+          "chapterTitle": "Heredity",
+          "courseTitle": "Biology",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Predict the share of offspring with a trait from one cross",
+            "description": "Fill a Punnett square, then see 100 seeds land close to what it predicts.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Mendel crossed purple and white pea plants and counted thousands of seeds: the white flowers came back in neat proportions. Open with that surprise.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Each parent passes one of its two alleles. P (purple) is dominant over p (white): Pp is purple, only pp is white. A Pp × pp cross gives Pp or pp, each half the time.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "combinationGrid",
+                "brief": "The learner fills the Punnett square for a purple Pp plant crossed with a white pp plant, then answers what share of the seeds grow white flowers (1 in 2). Tempting wrong answer: 1 in 4, from remembering the Pp × Pp cross.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "randomSimulation",
+                "brief": "Chance mode: plant batches of 100 seeds from the same Pp × pp cross, each white with chance 1/2. The learner guesses how often a batch has exactly 50 white flowers, then runs many batches: they land near 50, rarely on it (about 8% of the time). Tempting wrong answer: most of the time.",
+                "kind": "activity",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A gardener gets 47 white flowers out of 100 seeds from a Pp × pp cross. Ask whether the 1 in 2 prediction was wrong. Correct: no, chance spreads results around 50.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A Punnett square pairs each parent's alleles to show every possible offspring, and the share of squares gives each trait's chance.",
+                "example": "Pp × pp gives two Pp and two pp squares: 1 in 2 white.",
+                "hard": false,
+                "name": "Use a Punnett square to predict a trait",
+                "topic": "Mendelian genetics",
+                "useCase": "Predicting what a garden cross or a pet breeding will produce."
+              },
+              {
+                "description": "A chance tells you what to expect over many tries, not exactly what one batch will show.",
+                "example": "With chance 1/2, 100 seeds give about 50 white flowers, often 45 to 55.",
+                "hard": false,
+                "name": "Expect chance results to spread",
+                "topic": "Probability",
+                "useCase": "Not overreacting when a real batch misses the prediction a little."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "From Punnett squares to real seeds"
+          },
+          "activityTemplates": [
+            {
+              "description": "A grid where every cell combines its row and its column, filled by code: two parents' alleles (`rule` \"alleles\", a Punnett square like Mendel's peas, one gene and one letter, the uppercase allele dominant, with what each genotype shows in `traits`) or two numbers added or multiplied (`rule` \"sum\" or \"product\", like the 36 outcomes of two dice or a times table). On a grid of 9 cells or fewer the learner fills every cell before answering, whatever the check (an interaction check grades the fill itself); a larger grid is shown filled, to read. The computed number is the share of cells (0 to 1) matching `output`: \"recessive\" (default), \"dominant\" or a genotype like \"Pp\" for alleles, a cell value like \"7\" for numbers. Fills: the title, the rows and columns with their labels and values, the traits for alleles and the check question. Check kinds this template supports: interaction, choice, numeric.",
+              "id": "combinationGrid",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"columns\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"pattern\":\"^[A-Za-z]$\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"rows\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"pattern\":\"^[A-Za-z]$\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"rule\":{\"type\":\"string\",\"const\":\"alleles\"},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"traits\":{\"type\":\"object\",\"properties\":{\"dominant\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"recessive\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"dominant\",\"recessive\"],\"additionalProperties\":false}},\"required\":[\"columns\",\"rows\",\"rule\",\"title\",\"traits\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"columns\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"number\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"rows\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"number\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"rule\":{\"type\":\"string\",\"const\":\"sum\"}},\"required\":[\"columns\",\"rows\",\"title\",\"rule\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"columns\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"number\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"rows\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"values\":{\"minItems\":1,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"number\"}}},\"required\":[\"label\",\"values\"],\"additionalProperties\":false},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"rule\":{\"type\":\"string\",\"const\":\"product\"}},\"required\":[\"columns\",\"rows\",\"title\",\"rule\"],\"additionalProperties\":false}]},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"combinationGrid\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            },
+            {
+              "description": "Run something random hundreds of times and watch the results settle. Mode \"chance\": guess how often a hit happens (binomial trials, a sum of dice or a shared birthday), then run it and compare; code computes the exact chance, each guess option carries the chance it stands for in `value` and the closest one is correct (choice checks only). Mode \"sampling\": many polls or samples of each size from a population (a proportion or a mean with its unit), so the spread of results shrinks as samples grow; by default the computed answer is how much the error shrinks from the smallest to the largest sample (standard error ratio), and with `output` \"standardError\" and a `sampleSize` input it is that size's standard error. Fills: the model or population, what a trial and a hit are or what a sample size counts, the number of runs and the check question. Check kinds this template supports: choice, numeric. When it shows data, set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "randomSimulation",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"hitLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"mode\":{\"type\":\"string\",\"const\":\"chance\"},\"model\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"hit\":{\"type\":\"object\",\"properties\":{\"comparison\":{\"type\":\"string\",\"enum\":[\"atLeast\",\"atMost\",\"exactly\"]},\"value\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":9007199254740991}},\"required\":[\"comparison\",\"value\"],\"additionalProperties\":false},\"kind\":{\"type\":\"string\",\"const\":\"binomial\"},\"probability\":{\"type\":\"number\",\"exclusiveMinimum\":0,\"exclusiveMaximum\":1},\"trials\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000}},\"required\":[\"hit\",\"kind\",\"probability\",\"trials\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10},\"hit\":{\"type\":\"object\",\"properties\":{\"comparison\":{\"type\":\"string\",\"enum\":[\"atLeast\",\"atMost\",\"exactly\"]},\"value\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":9007199254740991}},\"required\":[\"comparison\",\"value\"],\"additionalProperties\":false},\"kind\":{\"type\":\"string\",\"const\":\"diceSum\"},\"sides\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":20}},\"required\":[\"count\",\"hit\",\"kind\",\"sides\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"days\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":366},\"kind\":{\"type\":\"string\",\"const\":\"sharedBirthday\"},\"people\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":366}},\"required\":[\"days\",\"kind\",\"people\"],\"additionalProperties\":false}]},\"runs\":{\"type\":\"integer\",\"minimum\":10,\"maximum\":10000},\"trialLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"hitLabel\",\"mode\",\"model\",\"runs\",\"trialLabel\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"mode\":{\"type\":\"string\",\"const\":\"sampling\"},\"population\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"proportion\"},\"proportion\":{\"type\":\"number\",\"exclusiveMinimum\":0,\"exclusiveMaximum\":1}},\"required\":[\"kind\",\"proportion\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"mean\"},\"mean\":{\"type\":\"number\"},\"sd\":{\"type\":\"number\",\"exclusiveMinimum\":0}},\"required\":[\"kind\",\"mean\",\"sd\"],\"additionalProperties\":false}]},\"populationLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"runs\":{\"type\":\"integer\",\"minimum\":10,\"maximum\":1000},\"sampleSizes\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"integer\",\"minimum\":2,\"maximum\":100000}},\"sizeLabel\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"mode\",\"population\",\"populationLabel\",\"runs\",\"sampleSizes\"],\"additionalProperties\":false}]},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"randomSimulation\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The biological claims and calculations are correct and consistent with the slides: glycolysis occurs in the cytoplasm, spends 2 ATP, produces 4 ATP and 2 NADH, and yields a net 2 ATP per glucose. Each check has one defensible correct answer, and the reasons match their options. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The ATP currency and loan comparisons support the beginner level, and subtraction is explained before the formula. However, multiple new terms appear on each explanation screen. CMC is not expanded, mitochondria lacks a beginner explanation, and the NADH/electron/respiratory-chain cluster relies on compressed definitions rather than everyday comparisons. These repeated terminology issues trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The math check requires the correct subtraction and addresses the tempting answer of 4, with useful reasons for all generated mistakes. Both question bases identify decisive earlier sentences. The hook appropriately uses a shared reveal without option reasons. However, the location question merely asks learners to recall “cytoplasm”; its laboratory context adds no reasoning requirement. This triggers the cap of 8 for one recall-only check.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the idea, follows the five planned screens in order, and ends with a concise summary. All images are null. It stays focused on the teacher’s material and introduces the formula after the spending-and-production intuition. The named biology-laboratory situation provides a concrete application setting, though a school-test answer-analysis scenario would connect more directly to this learner’s immediate purpose.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses \"ATP\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4173,
+          "outputTokens": 810,
+          "reasoningTokens": 174
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanations introduce several technical terms together rather than one at a time. CMC is referenced without expanding the mnemonic, and NADH, electrons and the respiratory chain receive compressed definitions without everyday comparisons. The location check is recall-only: the laboratory setting does not change the task of repeating the previously stated location.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expand CMC as “Cito-Matriz-Cristas” and make the terminology easier to follow within the planned screens, for example by comparing NADH to a carrier making a delivery. Reframe the location check around spotting an error in a classmate’s answer, retaining the mitochondria trap and explanatory feedback.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner studying for a school test from their teacher's slides (MATERIAL)\n      - Teaches what the slides say, with their terms, numbers and memory aids: 2 ATP spent in the investment phase (the \"empréstimo\" comparison), 4 ATP and 2 NADH produced, a net of 2 ATP per glucose, glycolysis in the cytoplasm\n      - Nothing contradicts the slides, and nothing beyond them is presented as needed for the test\n      - The checks use the slides' exam traps (answering 4 instead of 2; placing glycolysis in the mitochondria), with a reason on every option\n      - No pictures (every image is null): the slides have their own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-glicolise-from-slides-1",
+        "userInput": {
+          "chapterTitle": "Glicólise",
+          "courseTitle": "Prova de biologia: respiração celular",
+          "language": "pt",
+          "level": "beginner",
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "spec": {
+            "canDo": "Calcular o saldo de ATP da glicólise",
+            "description": "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: a glicólise produz 4 ATP. Quanto sobra por glicose?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A glicólise gasta 2 ATP, produz 4 e termina com saldo de 2 ATP por glicose.",
+                "example": "4 produzidos − 2 gastos = 2 ATP",
+                "hard": false,
+                "name": "Calcular o saldo energético da glicólise",
+                "topic": "Glicólise",
+                "useCase": "Questões de prova que pedem o saldo de ATP de cada etapa"
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Saldo de ATP da glicólise"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The classifications are correctly presented as routes within a simplified key, with a caution that other trees can look similar. The activity follows Needles → Bundles → Pine, and both checks have exactly one correct answer under that key. Their reasons match their options.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is short and accessible, and the key's broadest-first order is stated before the activity. However, 'needle bundles' is not explained when introduced; beginners need to know that the needles share a base rather than merely appearing close together. This triggers the cap of 8 for one unexplained term.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The activity requires following the branching key rather than stopping at needles. The next check includes the planned lobes-first misconception, and the application requires selecting a tree together with its identifying reason. Feedback explains the branch distinctions, and both basis quotations identify the earlier sentences that determine the answers.",
+          "score": 9,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English and follows the planned sequence, including the final summary. The activity requests the correct paired-needle picture, and its alt describes the identifying features without naming pine. Screens without planned visuals have no images. The Seattle park application provides a concrete setting and stays on the same key. The hook fits the brief, though its reveal could connect more directly to the first leaf distinction.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "4 of 6 parts passed. Screen 2: Uses an em dash: \"A **key** is a guide that asks one question at a time, starting with the broadest feature. First, look for needles or broad leaves. In this simple key, needle bundles lead to pine; single needles on a twig lead to spruce or fir. Broad leaves with rounded lobes—sections that stick out—lead to oak; pointed lobes lead to maple. Other trees can look similar, so check more features to be sure.\". Write it without one. Screen 5: Uses an em dash: \"Broad leaves with rounded lobes—sections that stick out—lead to oak; pointed lobes lead to maple.\". Write it without one.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5468,
+          "outputTokens": 1002,
+          "reasoningTokens": 473
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introduces 'needle bundles' without explaining that the needles grow together from a shared base. That distinction is essential to using the key, but it becomes concrete only in the activity's image description.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the hook's reveal more informative by naming the first useful contrast: thin needles versus wide, flat leaves. This would connect the opening guess directly to the key.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The key's order is explained (broadest feature first) before the learner walks it\n      - The decision tree's case is the leaf the plan describes (long needles in bundles of two) and walking its answers reaches pine; the questions follow the explanation's key\n      - The activity asks for a picture of the case in its `image`, whose `alt` describes what the learner must look at (needles, bundles) without naming the tree\n      - Screens without a planned Visual have no image\n      - The check uses the planned trap (asking about lobes first), and the application stays on the same key\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tree-key-beginner-1",
+        "userInput": {
+          "chapterTitle": "Trees and plants",
+          "courseTitle": "Nature around you",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Name a common tree from one of its leaves with a simple key",
+            "description": "Tell needles from broad leaves, then use a key one question at a time to name pines, spruces, oaks and maples.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In a park, two trees look alike from far away, but one keeps its leaves all winter. Ask the learner to guess, without scoring, which part of a tree gives it away fastest.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
+              },
+              {
+                "activityTemplate": "decisionTree",
+                "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": "A pine twig with long needles growing in bundles of two, close up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Use a branching key one question at a time, from the broadest feature to the finest, to name a common tree from a leaf.",
+                "example": "Needles in bundles of two lead to a pine; single needles lead to a spruce.",
+                "hard": false,
+                "name": "Name a tree with a leaf key",
+                "topic": "Identifying trees",
+                "useCase": "Naming trees on a walk or in a park from one leaf."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Name a tree from one leaf"
+          },
+          "activityTemplates": [
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome. Check kinds this template supports: interaction.",
+              "id": "decisionTree",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"case\":{\"type\":\"object\",\"properties\":{\"answers\":{\"minItems\":1,\"maxItems\":15,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"branch\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"nodeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"branch\",\"nodeId\"],\"additionalProperties\":false}},\"description\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"outcomeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"answers\",\"description\",\"outcomeId\"],\"additionalProperties\":false},\"nodes\":{\"minItems\":3,\"maxItems\":15,\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"branches\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"next\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"label\",\"next\"],\"additionalProperties\":false}},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"question\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"branches\",\"id\",\"kind\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"outcome\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"id\",\"kind\",\"label\"],\"additionalProperties\":false}]}},\"rootId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"case\",\"nodes\",\"rootId\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"decisionTree\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanations accurately present the three parts at the requested introductory level. Each check has one defensible correct answer, and the feedback correctly distinguishes the parts and their functions.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Short, accessible Brazilian Portuguese introduces one main concept per explanation. The condominium gate, recipe notebook, and gel comparisons explain the technical terms concretely without unnecessary detail.",
+          "score": 10,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The cytoplasm-loss check tests a consequence, and Iara's application asks learners to repair a diagram. Distractors include both required misconceptions and have explanatory feedback. However, the membrane check is recall-only, triggering the cap of 8. The application's missing basis also prevents targeted reference to the earlier sentence that decides its answer.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson suits a beginner hobby learner, uses Brazilian Portuguese, and requires only picking answers. It follows the planned sequence and preserves Iara's Porto Velho diagram scenario. Application options specify what to add, where, and why, including the second-membrane trap. The summary gives one sentence per core idea.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4403,
+          "outputTokens": 757,
+          "reasoningTokens": 300
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The application has a null basis even though screen 5 explicitly states that cytoplasm fills the space between the membrane and genetic material; that sentence should be its basis. The first check essentially asks learners to recall which part controls entry, without requiring a meaningful inference from its context.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for\n      - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions\n      - No screen is a `typedAnswer`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)\n      - The application keeps Iara's diagram from the brief, and its options say what she adds, where and why (the cytoplasm, filling the space between the membrane and the genetic material), with the second-membrane trap and a reason on every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-partes-da-celula-hobby-1",
+        "userInput": {
+          "chapterTitle": "A célula",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Reconhecer a membrana, o citoplasma e o material genético de uma célula",
+            "description": "Mostra as três partes que toda célula tem e o papel de cada uma, para entender o que há dentro dela.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Peça um palpite, sem valer ponto: por dentro do contorno, uma célula é vazia? Opções: vazia, cheia de ar, cheia de um gel; a resposta é o gel.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Uma célula com a membrana em destaque no contorno."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Toda célula tem membrana, que controla o que entra e sai, citoplasma, que preenche o interior e onde acontece boa parte do seu trabalho, e material genético, que guarda as instruções.",
+                "example": "Num esquema de célula, o citoplasma preenche o espaço entre a membrana e o material genético.",
+                "hard": false,
+                "name": "Reconhecer as partes básicas de uma célula",
+                "topic": "Partes da célula",
+                "useCase": "Entender esquemas de células em livros, museus e documentários de ciência."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Membrana, citoplasma e material genético"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The range examples, count rule with its stated restriction, and countdown answer are correct. The starter stops at 4, the solution changes only the loop line, and expected output exactly matches Python's output, including the final newline. Each scored question has one defensible correct answer.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The range explanation is short and concrete, but multiple beginner-level steps are omitted: what a loop does, what `n` represents, and why `print(n)` repeats. These omissions trigger the cap of 7 for several unexplained terms or skipped steps. The countdown's `-1` is helpfully explained.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require prediction and code repair rather than recall. Both prediction questions include the stop-inclusive trap, with accurate reasons for every option. Runner feedback explains both specified wrong outputs. The hook reveal answers the guess, and both basis quotes identify the earlier rule that decides the answer.",
+          "score": 10,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, opens directly with the missing-number puzzle, follows the planned sequence, and ends with one sentence per summary idea. The launch countdown applies the same exclusion rule in a recognizable situation. However, assuming loop-syntax knowledge is a level-fit slip for the explicitly stated audience, limiting this category to 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5252,
+          "outputTokens": 853,
+          "reasoningTokens": 306
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The lesson assumes familiarity with loop syntax despite targeting learners who have never used loops. It never explains that `for n` takes each number in turn or that `print(n)` runs once for each number. This leaves beginners to infer how the ranges become printed output.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the count rule concrete with `5 - 1 = 4`, linked to the four highlighted numbers. A brief everyday comparison—such as taking numbered pages one at a time—would also make the loop explanation more accessible.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners who have written a line of Python but no loops yet\n      - range(start, stop) is explained as stopping before stop, with the count being stop minus start, before the learner is asked to use it\n      - The code runner's starter loop really stops one number early, the solution changes only the loop line, and the expected output is exactly what the solution prints (1 to 5, one per line)\n      - The runner's mistakes give feedback on what each likely wrong output means (0 to 4, or stopping at 4)\n      - Checks use the classic trap of counting the stop value, and the countdown application keeps the same rule\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-python-range-beginner-1",
+        "userInput": {
+          "chapterTitle": "Loops",
+          "courseTitle": "Python programming",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Make a Python loop run exactly the numbers you want",
+            "description": "Read range(start, stop) as counting up to but not including stop, and fix loops that stop one number early.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "A loop meant to print the numbers 1 to 5 prints only 1 to 4. Ask the learner to guess, without scoring, why the last number goes missing.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask what for n in range(2, 6): print(n) prints. Tempting wrong answer: 2, 3, 4, 5, 6. Right: 2, 3, 4, 5, because the stop isn't included.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "codeRunner",
+                "brief": "The learner fixes a Python loop that should print the numbers 1 to 5, one per line, but uses range(1, 5). Only the loop line is editable. Likely mistakes: range(0, 5), which prints 0 to 4, and range(1, 5) left as it is.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A countdown uses for n in range(10, 0, -1). Ask what the last number printed is. Tempting wrong answer: 0. Right: 1, because the stop is still left out when counting down.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Choose start and stop values for range() so a loop covers exactly the numbers needed, remembering the stop is left out.",
+                "example": "for n in range(1, 6): print(n) prints 1, 2, 3, 4 and 5.",
+                "hard": false,
+                "name": "Choose range() bounds for a loop",
+                "topic": "Loops",
+                "useCase": "Looping over pages, days or items without skipping the last one."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Count with range() in Python"
+          },
+          "activityTemplates": [
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake. Check kinds this template supports: interaction.",
+              "id": "codeRunner",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"editableLines\":{\"minItems\":1,\"maxItems\":10,\"type\":\"array\",\"items\":{\"type\":\"integer\",\"exclusiveMinimum\":0,\"maximum\":9007199254740991}},\"expectedOutput\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":500},\"fileName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"language\":{\"type\":\"string\",\"enum\":[\"javascript\",\"python\"]},\"mistakes\":{\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"feedback\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"output\":{\"type\":\"string\",\"maxLength\":500}},\"required\":[\"feedback\",\"output\"],\"additionalProperties\":false}},\"solution\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":2000},\"starterCode\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":2000}},\"required\":[\"editableLines\",\"expectedOutput\",\"language\",\"mistakes\",\"solution\",\"starterCode\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"codeRunner\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All supplied calculations are correct: 3 days, 5 hours, 6 hours, 4 hours, and 5 hours for the bakery. The inverse-as-direct distractor produces 16 hours as intended; the bakery distractor correctly corresponds to 11 hours and 15 minutes. Fixed conditions and equal working rates are stated, and each supplied check has one defensible correct answer.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The prose is short and concrete, and the direct/inverse distinction is grounded in familiar changes to workload and staffing. However, 'grandezas' and 'razão' lack plain-language explanations before use, and two new relationship labels appear on screen 3. These terminology issues trigger the cap of 7 for several clarity shortcomings.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require prediction or calculation, feedback explains the misconceptions, and the classic inverse-as-direct trap is explicitly tested. The first check is genuinely attempted before the explanation, and later explanations do not judge the learner's selection. However, the simple inverse worked example is not followed by similar inverse practice, leaving that particular skill without its required immediate transfer check.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the problem, follows the planned screen sequence, and supplies a concrete bakery deadline application. The summary gives one sentence per idea. Nevertheless, the explicit requirements for a direct worked example and similar practice after each simple-proportion example are not both met; these are multiple instructional-sequence omissions, limiting this category to 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6703,
+          "outputTokens": 983,
+          "reasoningTokens": 308
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required worked-example/practice pairing is incomplete. There is no worked simple direct-proportion example, and the worked inverse example about workers is followed by a direct-proportion printer question rather than a similar inverse check. The compound example correctly demonstrates both effects, but does not replace the missing direct example and matched simple-inverse practice.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Terminology is not fully scaffolded: 'grandezas' is not explained in everyday words, and 'razão' is used procedurally without first explaining it as a division comparing quantities. Screen 3 also introduces both 'inversa' and 'direta', despite the explicit limit of one new technical term per screen.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the compound example more transparent by showing the intermediate result: the larger order takes 10 hours with the original printers, then the additional printers reduce that to 6 hours. This would make the two adjustments easier to interpret rather than merely execute.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for intermediate learners who partly know the idea (question first)\n      - The first check after the hook is something learners can try before the explanation, and the next explanation builds on it\n      - Telling direct from inverse proportion comes before setting up the rule of three, with an everyday comparison (more workers, fewer days)\n      - Worked examples of a direct and an inverse case, each followed by a similar check; numbers must be right\n      - Checks name the classic trap of treating an inverse proportion as direct\n      - Everyday Brazilian contexts (obra, receita, combustível, reais), not textbook abstractions\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "kind": "workedExample",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "kind": "explanation",
+                "skills": [2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "kind": "workedExample",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "kind": "check",
+                "skills": [0, 2],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "kind": "application",
+                "skills": [0, 1, 2],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Regra de três simples e composta"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The supplied calculations, answers, and visual requests are mathematically correct. The checks have unique correct answers at the supplied values, including 15%, −20%, and the salary recovery of approximately 11.1%. The stock activity is labeled as example data. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Most text is short and concrete, and both worked examples show the arithmetic clearly. However, 'percentage points' is introduced without explaining how it differs from percent change, and 'ratio' appears unexplained in feedback. These multiple unexplained terms trigger the cap of 7. The missing dollar-based division explanation before the formula also weakens the beginner progression.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The salary and game checks require calculation with less help than the worked examples, and both include dividing by the new value. The estimate activity supports committing to a guess before its computed reveal. However, its follow-up merely repeats the explicitly supplied 5-percentage-point comparison. Several wrong-answer reasons, especially the new-value and multiply-by-10 reasons, explain the error without explaining its appeal. These multiple feedback weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, opens directly with the planned sneaker surprise, follows the planned sequence, and provides a realistic restaurant-pay application in Raleigh. The summary uses one sentence per idea, and exampleLineIdea is confined to the relevant comparison explanation. The meaningful slip is presenting the formula before explicitly demonstrating division of the dollar change by the starting dollar value, triggering the one-slip cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "10 of 11 parts passed. Screen 9: check.unit: Too big: expected string to have <=16 characters",
+          "score": 9.181818181818182,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7980,
+          "outputTokens": 1430,
+          "reasoningTokens": 749
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required concrete explanation of division comes too late. Before displaying the formula, screen 3 gives a general recipe and a cents-per-dollar analogy, but never explicitly explains $5 ÷ $20 as the change divided by the starting price. That numerical connection first appears in the following worked example.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The activity's follow-up asks for the same 5-percentage-point difference already stated in its comparison, rather than testing recovery-percent understanding. 'Percentage points' and 'ratio' are used without beginner-friendly explanations. Several misconception reasons identify the incorrect operation and prescribe the correct one without explaining why the incorrect choice is tempting.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace the activity's follow-up with a fresh recovery calculation. In the application feedback, explicitly show the $300 cut, $270 raise, $30 shortfall, and $300 ÷ $2,700 × 100 calculation so learners can reconstruct every part of the answer.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for a beginner\n      - The hook uses the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) as a guess, with no introduction\n      - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece\n      - Worked examples show every step with correct arithmetic, and the check after each one is a similar problem with less help\n      - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong\n      - The estimate-then-reveal activity makes the learner commit to a guess before the math, tied to the screen's idea\n      - The application is a realistic case (rent, salary, a sale) in a place the learner recognizes\n      - `exampleLineIdea` is set on the explanation that compares a change with the starting value, saying what in a learner's life it could connect to (a price they pay going up or down); a second one only on an explanation whose idea would need a different moment of their life, and none on the others\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Calculate how much a price changed in percent",
+            "description": "Learn to work out how much a price or salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Pose a quick guess that doesn't count: a $100 sneaker drops 50% in a sale, then its price rises 50%. Is it back to $100? Options: yes, more than $100, less than $100. Don't reveal the answer yet; say we'll find out.",
+                "kind": "hook",
+                "skills": [],
+                "visual": "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50)."
+              },
+              {
+                "activityTemplate": "guessReveal",
+                "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
+                "kind": "activity",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Find how much a value went up or down compared to where it started, as a percent.",
+                "example": "A ticket going from $20 to $25 is a (25 − 20) ÷ 20 × 100 = 25% increase.",
+                "hard": true,
+                "name": "Calculate a percent change",
+                "topic": "Percent change",
+                "useCase": "Checking how much your rent, salary or grocery prices really went up or down."
+              },
+              {
+                "description": "A drop and the rise needed to undo it are different percents, because the rise is measured from the smaller, lower value.",
+                "example": "After $100 drops 50% to $50, it needs a 100% rise to get back to $100.",
+                "hard": false,
+                "name": "Explain why drops and recoveries differ",
+                "topic": "Reversing a percent change",
+                "useCase": "Understanding why a stock or pay cut takes a bigger percent rise to recover."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Percent change"
+          },
+          "activityTemplates": [
+            {
+              "description": "Guess on a scale first (linear or log), then see the real value next to the guess, so the gap is memorable, like how many seconds are in a year or how much the usual world map shrinks Africa. The real value is computed by code (`truth.kind` \"computed\": an expression and the workings that reach it) or cited data (`truth.kind` \"cited\": the value, with its source in `data`). Fills: the question, the scale and its range, the real value, an optional concrete comparison and the takeaway. Check kinds this template supports: numeric. When it shows data, set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "guessReveal",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"comparison\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"scale\":{\"type\":\"string\",\"enum\":[\"linear\",\"log\"]},\"takeaway\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"truth\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"kind\":{\"type\":\"string\",\"const\":\"computed\"},\"workings\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"expression\",\"label\"],\"additionalProperties\":false}}},\"required\":[\"expression\",\"kind\",\"workings\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"const\":\"cited\"},\"value\":{\"type\":\"number\"}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false}]},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"max\",\"min\",\"scale\",\"takeaway\",\"truth\",\"unit\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"guessReveal\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The statements about attraction, confinement energy, and a spatially spread lowest-energy arrangement are sound at overview level. Each check has one defensible answer, and the foam analogy explicitly avoids implying an actual spring. However, the required explanation that a classical circling charge radiates and spirals inward is absent, leaving the physical rejection of the orbit model incomplete.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The language is short, accessible Brazilian Portuguese. The cloud is introduced in plain words, and squeezing foam gives confinement an everyday comparison. However, the transition from an orbit to a cloud skips explaining why the orbit picture fails. This is a skipped explanatory step, triggering the cap of 8.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The error-spotting check tests a genuine misconception, all scored options have reasons, and the hook appropriately uses a shared reveal without option reasons. However, the first scored check is essentially recall of the preceding sentence, and the planetary-motion feedback does not explain the physical failure of that misconception. These multiple weaknesses trigger the cap of 7. The application also lacks a basis despite screen 5 providing the deciding explanation.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, contains no formulas or mathematical notation, opens directly with the central puzzle, and follows the planned progression. The cellphone application supplies a concrete everyday setting for atomic stability. The summary gives one sentence per idea, and the confinement analogy is appropriate for a curious adult overview.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4744,
+          "outputTokens": 971,
+          "reasoningTokens": 327
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson never explains the required physical failure of the planetary picture: a circling electric charge would radiate energy and spiral toward the nucleus. Crossing out an orbit and calling the electron a cloud does not supply that explanation; the feedback also rejects planetary motion without explaining this decisive reason.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The first scored check largely repeats the preceding explanation rather than requiring a new prediction or inference. The application has a null basis even though screen 5 directly supplies its answer. Feedback on the application's orbit option says it omits confinement cost, but does not explain why the proposed orbit would fail.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the first check ask what happens to the energy needed when the same cloud is squeezed further. Describe the cloud explicitly as a map of where the electron is more or less likely to be found, and make the application require choosing or constructing an explanation with less verbatim support.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a curious adult (overview)\n      - No formulas, equations or notation anywhere; the idea is told as a story with everyday comparisons (a cloud, a blurred fan)\n      - Physically correct: the old orbit picture is wrong because a circling charge would radiate and spiral in; the electron is described by a cloud of where it's likely to be, and confinement costs energy\n      - Checks are light and fun but still make the learner use the idea, with reasons for every option\n      - The application ties the idea to something real (atoms and matter being stable, the learner's own body existing)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "spec": {
+            "canDo": "Explicar por que o elétron não cai no núcleo",
+            "description": "Mostra por que a atração pelo núcleo não concentra o elétron ali e como isso permite que os átomos permaneçam estáveis.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O elétron é atraído pelo núcleo, mas concentrá-lo demais exige energia; por isso, seu arranjo mais estável ocupa uma região ao redor do núcleo.",
+                "example": "Mesmo no estado de menor energia de um átomo, o elétron não fica espremido num ponto no núcleo.",
+                "hard": false,
+                "name": "Explicar por que o elétron não cai no núcleo",
+                "topic": "Estabilidade do átomo",
+                "useCase": "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Por que o elétron não cai no núcleo"
+          },
+          "activityTemplates": []
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-writer"
+}

@@ -1,0 +1,154 @@
+import { randomUUID } from "node:crypto";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { cacheTag } from "next/cache";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mockGuestSession, mockSession, mockSessionFailure } from "../../_test-utils/mock-session";
+import { getCourseCurriculumCacheTag, getLibraryChapterCacheTag } from "../../cache/tags";
+import { getSession } from "../../users/get-session";
+import { getLibraryCourse } from "./get-library-course";
+
+describe(getLibraryCourse, () => {
+  beforeEach(() => {
+    mockSession(null);
+  });
+
+  it("reads a public outline without a session, as catalog prerendering does", async () => {
+    const { chapters, course, lessons } = await catalogCourseFixture();
+
+    mockSessionFailure(new Error("Prerendering has no active request."));
+
+    await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+      levels: [{ chapters: [{ id: chapters[0]!.id, lessons: [{ id: lessons[0]![0]!.id }] }] }],
+    });
+
+    expect(getSession).not.toHaveBeenCalled();
+  });
+
+  it("returns the outline in level bands, chapters and lessons in order", async () => {
+    const course = await courseFixture();
+
+    const [overview, advanced, beginnerFirst, beginnerSecond, lesson] = await Promise.all([
+      libraryChapterFixture({ level: "overview", title: "Overview" }),
+      libraryChapterFixture({ level: "advanced", title: "Advanced" }),
+      libraryChapterFixture({ title: "Beginner 1" }),
+      libraryChapterFixture({ title: "Beginner 2" }),
+      libraryLessonFixture({ title: "First lesson" }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: advanced.id,
+        courseId: course.id,
+        level: "advanced",
+        position: 0,
+      }),
+      courseChapterFixture({ chapterId: beginnerSecond.id, courseId: course.id, position: 1 }),
+      courseChapterFixture({ chapterId: beginnerFirst.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({
+        chapterId: overview.id,
+        courseId: course.id,
+        level: "overview",
+        position: 0,
+      }),
+      chapterLessonFixture({ chapterId: beginnerFirst.id, lessonId: lesson.id, position: 0 }),
+    ]);
+
+    const result = await getLibraryCourse({ courseId: course.id });
+
+    expect(
+      result?.levels.map((band) => ({
+        chapters: band.chapters.map((chapter) => chapter.title),
+        level: band.level,
+      })),
+    ).toStrictEqual([
+      { chapters: ["Overview"], level: "overview" },
+      { chapters: ["Beginner 1", "Beginner 2"], level: "beginner" },
+      { chapters: ["Advanced"], level: "advanced" },
+    ]);
+
+    expect(result?.levels[1]?.chapters[0]?.lessons).toMatchObject([
+      { id: lesson.id, position: 0, title: "First lesson" },
+    ]);
+
+    const tags = vi.mocked(cacheTag).mock.calls.flat();
+    expect(tags).toContain(getCourseCurriculumCacheTag(course.id));
+    expect(tags).not.toContain(getLibraryChapterCacheTag(beginnerFirst.id));
+  });
+
+  it("shows private chapters and lessons only to their owner", async () => {
+    const owner = await userFixture();
+
+    const [course, sharedChapter, privateChapter, privateLesson] = await Promise.all([
+      courseFixture({ userId: owner.id, visibility: "private" }),
+      libraryChapterFixture(),
+      libraryChapterFixture({ ownerId: owner.id, visibility: "private" }),
+      libraryLessonFixture({ ownerId: owner.id, visibility: "private" }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: sharedChapter.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 1 }),
+      chapterLessonFixture({ chapterId: privateChapter.id, lessonId: privateLesson.id }),
+    ]);
+
+    await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+
+    mockSession(owner.id);
+
+    const result = await getLibraryCourse({ courseId: course.id });
+
+    expect(result?.levels[0]?.chapters.map((chapter) => chapter.id)).toStrictEqual([
+      sharedChapter.id,
+      privateChapter.id,
+    ]);
+
+    expect(result?.levels[0]?.chapters[1]?.lessons.map((item) => item.id)).toStrictEqual([
+      privateLesson.id,
+    ]);
+  });
+
+  it("returns null for unknown or malformed ids", async () => {
+    await expect(getLibraryCourse({ courseId: randomUUID() })).resolves.toBeNull();
+    await expect(getLibraryCourse({ courseId: "course" })).resolves.toBeNull();
+  });
+
+  it.each([false, true])(
+    "keeps a private course owner-only after its owner reads it (published: %s)",
+    async (isPublished) => {
+      const [owner, other] = await Promise.all([userFixture(), userFixture()]);
+      const course = await courseFixture({ isPublished, userId: owner.id, visibility: "private" });
+
+      mockSession(owner.id);
+
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+        id: course.id,
+      });
+
+      mockSession(other.id);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+      await expect(getLibraryCourse({ courseId: randomUUID() })).resolves.toBeNull();
+
+      mockGuestSession(other.id);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+
+      mockSession(null);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+
+      mockSession(owner.id);
+
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+        id: course.id,
+      });
+    },
+  );
+});

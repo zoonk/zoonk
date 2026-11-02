@@ -1,14 +1,9 @@
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { type Organization, type PrismaClient } from "../../generated/prisma/client";
+import { type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-export type SeedOrganizations = { ai: Organization; testOrg: Organization };
-
-export async function seedOrganizations(
-  prisma: PrismaClient,
-  users: SeedUsers,
-): Promise<SeedOrganizations> {
-  const [ai, testOrg] = await Promise.all([
+export async function seedOrganizations(prisma: PrismaClient, users: SeedUsers): Promise<void> {
+  await Promise.all([
     prisma.organization.upsert({
       create: {
         members: {
@@ -35,6 +30,4 @@ export async function seedOrganizations(
       where: { slug: "test-org" },
     }),
   ]);
-
-  return { ai, testOrg };
 }

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "stats_activities": "95fcc6a3b9a6a09ed873b85f524310dd2c3fcec05bd7f2ec7f61e4b919d453dd",
+  "stats_activity": "bce46967ca950615feaf6d668e8eb3dc0d398c968a40fbe94b5831793dd5c76b",
+  "stats_afternoon": "7175a6fe0c1480b81a2e48c03a10603699679cb318d353fc5eee906cc72342dc",
+  "stats_all_goals": "df57247f88400be2cb655d31ce06f47ee046377bc96951364d5d85404cc60cb2",
+  "stats_answer_count": "09e722c8d547c29d34ed83dfae5bc45b52e04b62e26a44d5eb762bd2df843125",
+  "stats_answers": "4b35b66dc9a89f79be3c1da5a4f6dc6a5b3894c3d2978c76dd338537aeb0f398",
+  "stats_any_day": "193e2fd7fec703de2de0cd3f8d3304dcb99f1316529c4fe9b01c87adeaf04c58",
+  "stats_any_day_studied": "0f297c0ac85094f1f38f9d8217f9424cd6a09295b14ed9bf2ba32b5e124bc93e",
+  "stats_any_time": "dadcc8d1aab84362f496b8083d75e8c57ba2f5a0783d2a11fb9f47ca310bea44",
+  "stats_average": "cde911ef1b8f4064ae4c2a5790306df723e83207749e15f3dbdd36233ceb1dcb",
+  "stats_back_from_today": "57e5d27d881f675dbc086ec771088fd915cde718377d5e8b4233d8e374756991",
+  "stats_belt_at": "0849d9074e81d40cd1549a361de4cfa6ab72e4a300349b85a9e7c0d794e14ef5",
+  "stats_belt_current": "6ea9c24370d561fe6672990ee6962d211ab0fff2e1f128ec2ea19c4545ae6bf1",
+  "stats_belt_earned": "d9f0b7f03c8db5a7ddd09191bb632b3af5f1fd081ef0b1cbfb8120e974f8d075",
+  "stats_belt_progression": "75f4384031e1ffcd3743892e782b28a8ce3ca85ab9116d68dedea4c91dd15c20",
+  "stats_best_day": "f79eaed07fc3bb59c4d47f5a94ed8aa32c7b8bad1984326713fe982a4c04ba7c",
+  "stats_best_time": "0c081b4588643196ae572582798030434576fc062aaa462a8e3d075108fd8a0a",
+  "stats_brain_power": "e1f21cb84f12c273aac4d0bda9f660eaac43cb5a6dd110081292343d15ceb77f",
+  "stats_brain_power_amount": "54ddb7714c945739493857d85dc79556f1c939d1beea4d212a634a265fadb015",
+  "stats_calendar_activity_summary": "3cc249aa9bf25e7d1901c825ca0d6e17442e5a1d7caf87b3d9be54eedbf0a587",
+  "stats_calendar_energy_summary": "a10a5f13ed6c693f4fc2d8038059c424a15ecbf9b353b73f38acbb816b6f72dc",
+  "stats_correct_of_total": "23067ed48934033cea20271bd63bc778c9bed5172a5d89a7756122dbdc93bf7a",
+  "stats_day_activities": "c8a367969b269b1abce382809787fea34271757431929c56d5ab19d8ae666ee4",
+  "stats_day_energy": "99d6969adedd2237882039b466289a8e7bfb50b7f4a2f478fe65a9059c89ed4c",
+  "stats_day_no_energy": "ee7f9b21985fbc7d6861c00f78e8464c4cd5475c2b2a86a4864d15c1976756e9",
+  "stats_day_no_study": "0596fe1b85242d6ce178969bb48ef1b7da265d470ba86c4cb79a072de9301b14",
+  "stats_days": "06f338ba8c1ba2d2243dea1f6f17323267172cc4ed67dc9d3d320dbff318a01a",
+  "stats_days_even": "f03e1f3c2a116e8658eb81f4aa4e75a0a6416702835390335c6046bdc36619e7",
+  "stats_empty_title": "9f563f136b917ac8a4445115e9f43796134c2a25cfd534fe579e9352f4ebd1b2",
+  "stats_energy": "c6e3bd516586d1d1d4aa0dab6b3cb4eb798e3bd7b636d33dd59dcd3807c08ca5",
+  "stats_energy_average": "c89a926d7629464c44184be70a5ae6f9591459d0d3f712796bf86ea600a2f8dd",
+  "stats_energy_line": "05a2e81be83d3935f13c12691cff6e1b6c8d03392f2cc096e78eb645c6d805eb",
+  "stats_evening": "3673cc394ffc60e6d19ee53990973d095a6acee28d1ea69eb38cdf20d8360c43",
+  "stats_every_belt": "3dab0c06d72eb08253063ad48a6d92709bcfcc1af342197e8107754c4b6bde08",
+  "stats_finished": "95f2505290ab8c14f76a5cc8ec377711ca875f99202949174e73b573e8fb6578",
+  "stats_full_energy": "0ee94e04f347a545bb8d1edc8079e1b62ff88a9b0b95ec13196fc1175bb871f7",
+  "stats_full_energy_days": "708d8358c3fa982dc6346b9e0e57c71666bd8a3007278e1def6dc7336bc49fe1",
+  "stats_go_to_today": "8a5eccb48d7b3776f21ff61f02dea2e52848e5bb98179c0bd01f4f1f0004cc99",
+  "stats_high": "5c2d93c624e6fdaeab652bcb0faef963c2770e8e1759b141ea2455c557f31513",
+  "stats_last_90": "2d294f3f39841bd3f2360829e020823838fc3ba309144f1f222ee2eeca68fea9",
+  "stats_less": "55fd827ebfb57ed7290d23bd345b6c2b6e81273b4e4dd6ad7ec3472b71c362f4",
+  "stats_lessons": "d07b00f9e5a30775471b31d9eaf13043d7745d76ccdf06da55fd9987542085cc",
+  "stats_lessons_time": "461f1e274faf958cb7354ea0914c7bc2c2de0fd3b03c58eed79d6a4c383e1bf4",
+  "stats_level": "a5cbaf9af8e5ea128c18aeb14876cf2f738b0114f37e6cfdaffc8dd3f26422ce",
+  "stats_level_line": "f6a224867a2a6ba6b06496dd22629fded680119bf21c72229659b53f247a1847",
+  "stats_level_of": "90bb06c5af3530dd3bdd3df51826d5160b3d91f97bfd629e98b24cbc4ba101fc",
+  "stats_low": "672ee3636db2c03cb00ef159d84f46afe222162abf67adb42105d155c776c2d2",
+  "stats_max_level": "4c553698bd6dcd12e8d29d10b9b060ade5e83fffc586d2c3bca4d4a9629d96d6",
+  "stats_min_answers": "bd9747d0a3b78c08a8a2f7cb307ac86c58ac0f82a7d717a84517ab4c3e6b453a",
+  "stats_more": "241bfda52fdff827ae059f9debd733e96d1de3554a9f919fe42fe49abe94cec2",
+  "stats_morning": "30d8bd9e6f759a42b328ac38b7537fa742fdcbfb6557181cafe79412d02200fe",
+  "stats_never_goes_down": "93a77af7b8f459f803e962030fb7ce4304ce8720ca86f3609cea42596e7db5e3",
+  "stats_next_belt": "a6b02a54370ee26b56fc671c570e7d6288cd120b1c0958b641385bad776dcadc",
+  "stats_next_level": "110ca6bfda481ba7562f790aa7539bac93a62d479e92df7f67e20855f4f9f172",
+  "stats_night": "9110a2fbd00ff7e77ce6159f02c96c0d6b1759ee2c964babd4ee8f5c32a64e3e",
+  "stats_no_answers": "8db8020f939941722ccfb42b3d262eb5fb3eafdd399bc50b40b9afe91e38411b",
+  "stats_not_enough": "3402d943f33896b1b900e6d964dd92a92596c2a66cae05886c2291bcb2f15e26",
+  "stats_not_yet": "c806bee8c96418cc585eeaadba6f2722c4f02d25b92f45b90a38a97adb2311f0",
+  "stats_of_all_answers": "063b451f605382c841b1b1348b528eab70edf9508a880b00b87582ae7e94bcf3",
+  "stats_open": "5bf7730acf12eb1eb66e49667f1bc9b3fb0de7d13ebfe973318558f3edf31915",
+  "stats_overview": "f27afc28473f6042c82fe3ab032bb7bcdcaeac8bfb96b9090da8ef0b80aa221c",
+  "stats_part_failed": "a8f3ccc7646186fa41386b7aae753f32161eea3b67bee75be6e5587058f94ed2",
+  "stats_past_year": "97d58686f2b9b25987315cbd1378a370ab1c38e487d062a60862b3d670cb0405",
+  "stats_patterns": "80aff82d785203b325a0ccb5281eb8dc9960d8635112c4388ebb1db89a530f31",
+  "stats_patterns_90": "8aa9700fd386fc9428f8ff9ab420b176a75e158aa13faa8f52cb41e159c0a73d",
+  "stats_patterns_intro": "73a09be348f7748f02f864c3fb8909cccdc210ca9cb21b1b6ddc69d15c8ab3ab",
+  "stats_period": "8f1d99dd3c03d28e384f9b685ed822d0e7c19e5a3f2a86d4d97cc552ce80be20",
+  "stats_range": "9d0539cbbb7d292086905c96019d37ebbc25303ba1aefebd36609a23b18db5c9",
+  "stats_right": "4eae1397a3b2e275c7cacd43263a5db6cbb7c8cfe36183658490c561cbca2636",
+  "stats_right_answers": "de67cb244226aefdfedb66f58e14e6ca1759b9ea2660349a935ef356bdaed071",
+  "stats_right_count": "41b7044bec354ae848bc77ba31de0b8ee394137d1d2cb72f43b22d8154838dc8",
+  "stats_right_last_90": "f6c453f9edcde242aab212c17fc77e8a4ee4ac5dff85e5ff0548517839c03c7f",
+  "stats_score": "f8b6fee8bd3d8e0a57a5569ae35ec1f2e1a96c3039ebf7bcad7f91677a6fec2a",
+  "stats_score_90": "3bfc42323ecf59fdec92de9447ddac783673855f5d586aaf66198bb5980c7c09",
+  "stats_score_across": "b2954070728588285b8ec9ec3715bc01a01cc03b5de459aa1d7e7e1b5b79a775",
+  "stats_score_after_answers": "1779da6aee22f0b05cf0a19e4d570fcd2771424b1b24743e5e8f4594c483a0cc",
+  "stats_score_answers": "834025e665641ac2dd09930874d3725e32303e08404e61de19aac8442e952e01",
+  "stats_score_line": "4492f2b5ac88ed6f40e9c8c878137aec16cb679393299e884c52bfe4e8b83e75",
+  "stats_score_trend": "4ffb7ff39ff7f105f02b865167f5cd85a75f77c583d5ea52bd6fa3e4d9ba2d10",
+  "stats_score_week": "30dac9a378a43fd4e9ce5c6620df54e7b1c7bf0131350c4d44454ca3997dfff2",
+  "stats_see_all": "1c017d611f25825aa359c1b085afccac0c4e003278ded9d56180b41221081cd7",
+  "stats_since_start": "524ae20d7152287cff8fcde748e9ebedca98bbde7b99b946955b40c34aa17860",
+  "stats_study_days": "60372d5da0d3892efd35dc26683a09a0d555d73e046a2a5dc29221fbff6cdfa3",
+  "stats_studying_total": "3e59e80e52b48f8d7af5c0c2c9dfcc2f0e6703506e36a54478cf69ca0d0e0335",
+  "stats_throughout_day": "90d862652a6b5d9c7bfe7bee59a294116f373c57aee387572bde3ae876e8f0ed",
+  "stats_throughout_week": "fa1a074bd895c4c627c8695d6992bd007f658d7371564a68e57cce8d818f31cf",
+  "stats_time": "de92879c9ef233feb6bd54ceb9b59a4b7f80f056cccce43d213ec1f5fc866410",
+  "stats_times_even": "e92956d96454e3bb6a8c947f3fe87a58356835954eb107967a7dfc23b2a9416a",
+  "stats_to_belt": "bf28ed06ff25d9eb699f13ceb9dc8fff5f64ed93cb3b879a4953d2c4b631edcc",
+  "stats_to_go": "36584b7bc861788df9078f84ea84874ab7f9427a3f7450c4b9778d6f484344c6",
+  "stats_to_level": "3bf753fa40da01033657b428d79df87ee6fcc355c8b7705d5e8b6a20d622255e",
+  "stats_today": "2581e7769e9ed086fd6af9a47be99c1b32f11d8cc4e9a561672e969d60efb54c",
+  "stats_week_spread": "80522091c8014efb8fcff6d6b390553bbb879f5b3999125f5d25f1bbe97cfa51",
+  "stats_within_points": "163591877bbd08a7892462d6a717466ae41fe52e1b013c2c0705643d1fd36999"
+}
+-->
+<resources>
+    <string name="stats_all_goals">Tüm hedefler</string>
+    <string name="stats_open">İstatistikleri aç</string>
+    <string name="stats_overview">Genel bakış</string>
+    <string name="stats_level">Seviye</string>
+    <string name="stats_energy">Enerji</string>
+    <string name="stats_activity">Etkinlik</string>
+    <string name="stats_score">Puan</string>
+    <string name="stats_patterns">Eğilimler</string>
+    <string name="stats_empty_title">İlerlemeni takip etmek için öğrenmeye başla</string>
+    <string name="stats_go_to_today">Bugün sayfasına git</string>
+    <string name="stats_not_yet">Henüz değil</string>
+    <string name="stats_part_failed">Bu kısmı yükleyemedik.</string>
+    <string name="stats_energy_average">Ortalama %1$s</string>
+    <string name="stats_study_days">Çalıştığın günler</string>
+    <plurals name="stats_lessons_time">
+        <item quantity="one">%1$s ders · %2$s</item>
+        <item quantity="other">%1$s ders · %2$s</item>
+    </plurals>
+    <string name="stats_right_count">%1$s/%2$s doğru</string>
+    <string name="stats_right_last_90">Son 90 gündeki doğru cevaplar</string>
+    <string name="stats_score_90">Puan · 90 gün</string>
+    <string name="stats_score_after_answers">İlk cevaplarını verdikten sonra puanın görünür.</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
+    <string name="stats_patterns_90">En iyi olduğun zamanlar · 90 gün</string>
+    <string name="stats_see_all">Tümünü gör</string>
+    <string name="stats_best_day">En iyi gün</string>
+    <string name="stats_best_time">En verimli saat</string>
+    <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
+    <string name="stats_week_spread">Haftalık puan aralığı</string>
+    <string name="stats_range">%1$s–%2$s</string>
+    <string name="stats_brain_power">Beyin Gücü</string>
+    <string name="stats_brain_power_amount">%1$s Beyin Gücü</string>
+    <string name="stats_never_goes_down">Asla azalmaz</string>
+    <string name="stats_next_level">Sonraki seviye</string>
+    <string name="stats_max_level">En yüksek seviyeye ulaştın</string>
+    <string name="stats_to_level">%1$s. seviyeye kalan</string>
+    <string name="stats_to_belt">%1$s için</string>
+    <string name="stats_belt_progression">Kuşaklarda ilerleme</string>
+    <string name="stats_level_of">Seviye %1$s/%2$s</string>
+    <string name="stats_to_go">%1$s kaldı</string>
+    <string name="stats_next_belt">Sıradaki kuşak</string>
+    <string name="stats_belt_at">%1$s için %2$s Beyin Gücü</string>
+    <!-- Shown instead of the next belt once the learner has earned every belt. -->
+    <string name="stats_every_belt">Tüm kuşaklar kazanıldı</string>
+    <string name="stats_belt_earned">Kazanıldı</string>
+    <string name="stats_belt_current">Mevcut</string>
+    <string name="stats_level_line">Her dersle %1$s Beyin Gücü kazanırsın ve Beyin Gücün asla azalmaz.</string>
+    <string name="stats_today">Bugün</string>
+    <string name="stats_average">Ortalama</string>
+    <string name="stats_since_start">Başladığından beri</string>
+    <string name="stats_full_energy">%100’de</string>
+    <string name="stats_full_energy_days">Enerjinin tam olduğu günler</string>
+    <string name="stats_energy_line">Tamamladığın her ders Enerjini artırır. Ara verdiğin günlerde biraz azalır, kuşağın ve ilerlemen korunur.</string>
+    <string name="stats_low">Düşük</string>
+    <string name="stats_high">Yüksek</string>
+    <string name="stats_any_day_studied">Çalıştığın her gün</string>
+    <string name="stats_lessons">Dersler</string>
+    <string name="stats_finished">Tamamlandı</string>
+    <string name="stats_time">Süre</string>
+    <string name="stats_studying_total">Toplam çalışma süresi</string>
+    <string name="stats_past_year">Son 12 ay</string>
+    <string name="stats_less">Az</string>
+    <string name="stats_more">Çok</string>
+    <plurals name="stats_calendar_activity_summary">
+        <item quantity="one">Son 12 ayda %1$s gün etkinlik yaptın; en yoğun gününde %2$s vardı</item>
+        <item quantity="other">Son 12 ayda %1$s gün etkinlik yaptın; en yoğun gününde %2$s vardı</item>
+    </plurals>
+    <plurals name="stats_activities">
+        <item quantity="one">%1$s etkinlik</item>
+        <item quantity="other">%1$s etkinlik</item>
+    </plurals>
+    <string name="stats_day_no_study">%1$s · Çalışma yok</string>
+    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
+    <plurals name="stats_day_activities">
+        <item quantity="one">%1$s · %2$s etkinlik</item>
+        <item quantity="other">%1$s · %2$s etkinlik</item>
+    </plurals>
+    <string name="stats_day_no_energy">%1$s · Enerji kaydı yok</string>
+    <string name="stats_day_energy">%1$s · %2$s Enerji</string>
+    <string name="stats_calendar_energy_summary">Son 12 aydaki Enerji: bugün %1$s, başladığından beri ortalama %2$s</string>
+    <string name="stats_right_answers">Doğru cevaplar</string>
+    <string name="stats_right">Doğru</string>
+    <string name="stats_of_all_answers">Tüm cevapların içinde</string>
+    <string name="stats_correct_of_total">%1$s / %2$s</string>
+    <string name="stats_period">Dönem</string>
+    <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
+    <string name="stats_back_from_today">Bugünden geriye doğru</string>
+    <plurals name="stats_days">
+        <item quantity="one">%1$s gün</item>
+        <item quantity="other">%1$s gün</item>
+    </plurals>
+    <string name="stats_score_line">Her cevap aynı ağırlıkta sayılır, bu yüzden daha zor dersler puanını bir süreliğine düşürebilir.</string>
+    <string name="stats_score_trend">Haftalık puan eğilimi: %1$s. %2$s</string>
+    <plurals name="stats_score_across">
+        <item quantity="one">%1$s (%2$s cevap)</item>
+        <item quantity="other">%1$s (%2$s cevap)</item>
+    </plurals>
+    <plurals name="stats_score_week">
+        <item quantity="one">%1$s: %2$s (%3$s cevap)</item>
+        <item quantity="other">%1$s: %2$s (%3$s cevap)</item>
+    </plurals>
+    <string name="stats_patterns_intro">Son 90 günde en iyi cevap verdiğin zamanlar.</string>
+    <string name="stats_answers">Cevaplar</string>
+    <string name="stats_last_90">Son 90 günde</string>
+    <string name="stats_not_enough">Henüz yeterli cevap yok</string>
+    <plurals name="stats_within_points">
+        <item quantity="one">En fazla %1$d puan fark</item>
+        <item quantity="other">En fazla %1$d puan fark</item>
+    </plurals>
+    <plurals name="stats_score_answers">
+        <item quantity="one">%1$s · %2$s cevap</item>
+        <item quantity="other">%1$s · %2$s cevap</item>
+    </plurals>
+    <plurals name="stats_answer_count">
+        <item quantity="one">%1$s cevap</item>
+        <item quantity="other">%1$s cevap</item>
+    </plurals>
+    <string name="stats_no_answers">Cevap yok</string>
+    <string name="stats_throughout_week">Hafta boyunca</string>
+    <string name="stats_throughout_day">Gün boyunca</string>
+    <string name="stats_any_day">Her gün</string>
+    <string name="stats_any_time">Her zaman</string>
+    <!-- Answers given from midnight to 6 AM. -->
+    <string name="stats_night">Gece</string>
+    <string name="stats_morning">Sabah</string>
+    <string name="stats_afternoon">Öğleden sonra</string>
+    <!-- Answers given from 6 PM to midnight. -->
+    <string name="stats_evening">Akşam</string>
+    <plurals name="stats_days_even">
+        <item quantity="one">Günler arasında en fazla %1$d puan fark var, bu yüzden her gün uygun.</item>
+        <item quantity="other">Günler arasında en fazla %1$d puan fark var, bu yüzden her gün uygun.</item>
+    </plurals>
+    <plurals name="stats_times_even">
+        <item quantity="one">Günün farklı saatleri arasında en fazla %1$d puan fark var, bu yüzden her saat uygun.</item>
+        <item quantity="other">Günün farklı saatleri arasında en fazla %1$d puan fark var, bu yüzden her saat uygun.</item>
+    </plurals>
+    <plurals name="stats_min_answers">
+        <item quantity="one">Bir günün veya saat diliminin hesaba katılması için %1$d cevap gerekir; şans eseri doğru verilen tek bir cevap yeterli olmaz.</item>
+        <item quantity="other">Bir günün veya saat diliminin hesaba katılması için %1$d cevap gerekir; şans eseri doğru verilen tek bir cevap yeterli olmaz.</item>
+    </plurals>
+</resources>

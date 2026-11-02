@@ -1,0 +1,486 @@
+{
+  "modelId": "microsoft/mai-image-2.6-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every part of the structure is present: the title cloud in the center, the central idea at the top, four numbered branches each with its sentence, bullets and sketch, the comparison table and the summary at the bottom. Lines join each branch to the center and nothing overlaps or is cut off. The weaknesses are small: branch 4 has an extra sketch and two unrequested labels were added.",
+          "score": 8,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This reads as a clean, friendly hand-drawn study sheet. It has neat marker lettering, one soft color per branch and colored-pencil-style sketches on a plain white background. Some sketches are rendered with fairly heavy shading.",
+          "score": 8,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "Most text reads easily with good contrast. Against that, branch 3 contains the misspelling 'producem', the sketches carry words and numbers ('INVERSOR', 'MEDIDOR', '0000'), and the central-idea text is small.",
+          "score": 6,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure (27 texts).",
+          "score": 10,
+          "weight": 100
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3695,
+          "outputTokens": 1027,
+          "reasoningTokens": 276
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Branch 3's first bullet is misspelled: 'Painéis producem corrente contínua' instead of 'Painéis produzem corrente contínua'. Two sketches also carry words, which the brief forbids: the inverter is labelled 'INVERSOR' and the meter reads 'MEDIDOR' and '0000'.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The map adds labels that are not in the structure: 'Ideia central' and 'Resumo:'. Branch 4 has two sketches (a mounting frame and a meter) instead of one small sketch. The branch 1 'solar cell' is drawn as a small panel with a '+' sign, so it looks almost the same as the branch 2 panel. The central-idea text is small compared with the rest of the lettering.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove all lettering from the sketches and fix the spelling to 'produzem'. Draw branch 1 as a single cell so it is clearly different from the panel. Enlarge the central-idea text slightly. Keep branch 4 to one sketch.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+        "id": "pt-solar-energy-1",
+        "userInput": {
+          "caseId": "pt-solar-energy",
+          "language": "pt",
+          "structure": {
+            "branches": [
+              {
+                "drawing": "a solar cell",
+                "explanation": "A luz solar movimenta cargas elétricas e gera corrente contínua.",
+                "points": ["A luz põe cargas em movimento", "Corrente elétrica acende uma lâmpada"],
+                "title": "Células fotovoltaicas"
+              },
+              {
+                "drawing": "a solar panel",
+                "explanation": "Reúne células para gerarem eletricidade juntas, sob proteção.",
+                "points": ["Reúne células como ladrilhos", "Protege contra chuva e sujeira"],
+                "title": "Painel fotovoltaico"
+              },
+              {
+                "drawing": "an inverter box",
+                "explanation": "Adapta a corrente contínua em alternada para a edificação.",
+                "points": [
+                  "Painéis produzem corrente contínua",
+                  "Instalação predial usa corrente alternada"
+                ],
+                "title": "Inversor"
+              },
+              {
+                "drawing": "an electric meter",
+                "explanation": "Sustentam, conduzem, protegem e medem a energia do sistema.",
+                "points": ["Estrutura fixa painéis no telhado", "Medidor registra a eletricidade"],
+                "title": "Componentes do sistema"
+              }
+            ],
+            "centralIdea": "A luz do sol vira eletricidade por células, painéis, inversor e componentes.",
+            "comparison": {
+              "columns": [
+                {
+                  "name": "Painel fotovoltaico",
+                  "points": ["Recebe luz do sol", "Fornece eletricidade"]
+                },
+                {
+                  "name": "Aquecedor solar",
+                  "points": ["Recebe calor do sol", "Entrega água quente"]
+                }
+              ],
+              "title": "Uso da energia solar"
+            },
+            "summary": "Células no painel transformam luz em corrente contínua, que o inversor adapta para a edificação.",
+            "title": "Da luz à eletricidade"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every part is present and placed well. The title cloud sits in the center with the central idea at the top. Each of the five numbered branches has its own color, sentence, bullets and sketch, and lines join them to the center. The comparison table and the summary line are included. Nothing overlaps or is cut off. Only small issues remain, such as the extra 'Ideia central' heading.",
+          "score": 8,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This is a friendly hand-drawn study sheet with marker lettering, one soft color per branch and colored-pencil sketches on a clean white background. It is neat and on-style.",
+          "score": 9,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "Most text is readable with good contrast. However, two words are misspelled ('qualidade' for 'quantidade', 'abret' for 'abre'), the box sketch carries the words 'x' and 'f(x)', and the central-idea text is small.",
+          "score": 6,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure (31 texts).",
+          "score": 10,
+          "weight": 100
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3825,
+          "outputTokens": 1077,
+          "reasoningTokens": 403
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two text errors change or break the meaning. Branch 3 reads 'mesma qualidade por unidade' instead of 'mesma quantidade por unidade'. Branch 5 reads 'a positivo abret para cima' instead of 'abre'. The branch 2 sketch also carries the words 'x' and 'f(x)' on its arrows, although sketches must carry no words.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The map adds unrequested text: the label 'Ideia central' and the prefix 'Resumo:'. The central-idea text is noticeably smaller than the rest. The ramp looks more like a seesaw or bench than a ramp.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the central-idea and bullet text slightly larger so it reads more easily. Remove the words from the box sketch and let the arrows alone show input and output. Draw a clearer inclined ramp for branch 3.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+        "id": "pt-functions-1",
+        "userInput": {
+          "caseId": "pt-functions",
+          "language": "pt",
+          "structure": {
+            "branches": [
+              {
+                "drawing": "a vending machine",
+                "explanation": "A entrada é o que você informa; a saída é a resposta.",
+                "points": ["Tamanho do lanche leva ao preço", "Cada entrada, uma única saída"],
+                "title": "Entrada e saída"
+              },
+              {
+                "drawing": "a box with an arrow in and an arrow out",
+                "explanation": "f(x) indica a saída quando a entrada é x.",
+                "points": ["f(4) é a saída para entrada 4", "Coloque a entrada no lugar de x"],
+                "title": "Notação f(x)"
+              },
+              {
+                "drawing": "a ramp",
+                "explanation": "A saída cresce sempre a mesma quantidade por unidade.",
+                "points": [
+                  "Taxa: mudança na saída ÷ mudança na entrada",
+                  "Reta mais íngreme sobe mais"
+                ],
+                "title": "Taxa constante"
+              },
+              {
+                "drawing": "a membership card",
+                "explanation": "O preço quando a entrada é zero, antes de qualquer uso.",
+                "points": ["Assinatura R$ 12,00; uso R$ 3,00", "O valor inicial muda o preço"],
+                "title": "Valor inicial"
+              },
+              {
+                "drawing": "an arc of water from a fountain",
+                "explanation": "Uma altura que sobe e desce muda de forma curva.",
+                "points": ["x² na regra: função quadrática", "a positivo abre para cima"],
+                "title": "Parábola"
+              }
+            ],
+            "centralIdea": "Uma função dá uma única saída para cada entrada, e o padrão de variação revela sua forma.",
+            "comparison": {
+              "columns": [
+                {
+                  "name": "Função linear",
+                  "points": ["Mesma mudança a cada unidade", "Gráfico é uma reta"]
+                },
+                {
+                  "name": "Função quadrática",
+                  "points": ["Mudança não é sempre igual", "Gráfico é uma parábola"]
+                }
+              ],
+              "title": "Variação constante ou quadrática"
+            },
+            "summary": "Funções ligam entradas a saídas únicas; o ritmo de variação, constante ou quadrático, mostra o padrão.",
+            "title": "Funções e relações entre variáveis"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every part is placed correctly: the title in a central cloud, the central idea at the top, four numbered branches each with its sentence, bullets and sketch, then the table and the summary at the bottom. Connector lines are clear and nothing overlaps or is cut off. The one table bullet carries a wording error.",
+          "score": 8,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This is a friendly hand-drawn study sheet on clean white, with one soft color per branch and simple colored sketches. The extra lightbulb and header are minor additions.",
+          "score": 9,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "Contrast is high and most text reads well. The central-idea and bullet text are on the small side, and the misspelled 'Mostira' line weakens accuracy. The sketches carry no words.",
+          "score": 7,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure (30 texts).",
+          "score": 10,
+          "weight": 100
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3780,
+          "outputTokens": 948,
+          "reasoningTokens": 332
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "In the comparison table, the last bullet of 'Teste de usabilidade' reads 'Mostira que avança ou trava'. It should read 'Mostra onde avança ou trava': 'Mostra' is misspelled and 'onde' is replaced by 'que', which changes the meaning.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several labels and a sketch were added that the structure did not ask for: the 'Ideia central' header, the 'Resumo:' prefix and a lightbulb next to the summary. The central-idea text and the bullet text are fairly small compared with the rest of the sheet.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Correct the table bullet to 'Mostra onde avança ou trava'. Enlarge the central-idea and bullet text slightly, and drop the unrequested 'Resumo:' prefix and the extra header.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+        "id": "pt-user-research-1",
+        "userInput": {
+          "caseId": "pt-user-research",
+          "language": "pt",
+          "structure": {
+            "branches": [
+              {
+                "drawing": "a magnifying glass",
+                "explanation": "Orienta o que descobrir, sem escolher a causa antes de ouvir.",
+                "points": [
+                  "Retire reações ainda não confirmadas",
+                  "Indique ação e momento a investigar"
+                ],
+                "title": "Pergunta de pesquisa"
+              },
+              {
+                "drawing": "a blank name badge",
+                "explanation": "Convide quem viveu a tarefa, mesmo sem concluí-la.",
+                "points": ["Critério é o que a pessoa viveu", "Inclua tentativas interrompidas"],
+                "title": "Participantes"
+              },
+              {
+                "drawing": "a trail of footprints",
+                "explanation": "Um caminho curto de perguntas abertas, sem suposições.",
+                "points": ["Comece por um episódio real", "Evite presumir dificuldade ou etapa"],
+                "title": "Roteiro de entrevista"
+              },
+              {
+                "drawing": "a locked filing cabinet",
+                "explanation": "Anote ações e falas com permissão e sem dados desnecessários.",
+                "points": ["Use código no lugar do nome", "Combine acesso e data de exclusão"],
+                "title": "Registro responsável"
+              }
+            ],
+            "centralIdea": "Investigue uma dúvida sem presumir a causa, com método, participantes e registros adequados.",
+            "comparison": {
+              "columns": [
+                {
+                  "name": "Observação",
+                  "points": ["Mostra o que a pessoa faz", "Vê a ação na rotina"]
+                },
+                {
+                  "name": "Entrevista",
+                  "points": ["Ouve a versão da pessoa", "Não substitui ver a ação"]
+                },
+                {
+                  "name": "Teste de usabilidade",
+                  "points": ["Verifica se conclui a tarefa", "Mostra onde avança ou trava"]
+                }
+              ],
+              "title": "Três métodos de pesquisa"
+            },
+            "summary": "Pergunte com foco em ação e momento, escolha método e participantes certos, e registre com responsabilidade.",
+            "title": "Planejamento de pesquisa com usuários"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every element is present and correctly placed. The title sits in the central cloud with the central idea at the top. Six branches are numbered, each in its own color, with its sentence, bullets and a matching sketch. The comparison table and summary sit at the bottom. Connector lines join each branch to the center, and nothing overlaps or is cut off. The bottom area feels slightly crowded.",
+          "score": 9,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The sheet reads as a friendly hand-drawn study sheet on a clean white background. It uses marker-style lettering, one soft color per branch and colored-pencil sketches, with no clutter, frame or texture.",
+          "score": 9,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "All text matches the structure letter by letter and has good contrast. The sketches carry no words or numbers; the ruler shows only ticks. Bullet text is small and the layout is dense, so reading at full size takes slight effort.",
+          "score": 8,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure (35 texts).",
+          "score": 10,
+          "weight": 100
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3865,
+          "outputTokens": 923,
+          "reasoningTokens": 356
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The image adds unrequested 'Central idea' and 'Summary:' labels. The layout is dense, especially in the lower half, where the comparison table and summary bar sit tightly beneath branches 5 and 6. Bullet text is fairly small compared with the headings.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Enlarge the bullet lettering a little, which needs more spacing between the bottom branches and the comparison table. Drop the extra 'Summary:' prefix so the text matches the structure exactly.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+        "id": "en-cell-structure-1",
+        "userInput": {
+          "caseId": "en-cell-structure",
+          "language": "en",
+          "structure": {
+            "branches": [
+              {
+                "drawing": "a round cell",
+                "explanation": "The smallest unit that can carry out life's work.",
+                "points": ["A pond organism is one cell", "You are made of many cells"],
+                "title": "Cell as unit"
+              },
+              {
+                "drawing": "a rod-shaped bacterium",
+                "explanation": "Cells differ in how they organize their DNA.",
+                "points": [
+                  "Bacteria: DNA sits in cytoplasm",
+                  "Animal cells: DNA sits in a nucleus"
+                ],
+                "title": "Prokaryotic vs eukaryotic"
+              },
+              {
+                "drawing": "a small conveyor belt",
+                "explanation": "Parts that build proteins and prepare them for delivery.",
+                "points": ["The nucleus keeps the recipe", "Ribosomes build; Golgi packages"],
+                "title": "Protein builders"
+              },
+              {
+                "drawing": "a recycling bin",
+                "explanation": "Parts that clean up worn-out material and shape the cell.",
+                "points": [
+                  "Lysosomes break down worn-out parts",
+                  "Cytoskeleton fibers act as tracks"
+                ],
+                "title": "Recycling and support"
+              },
+              {
+                "drawing": "a green leaf",
+                "explanation": "Features that set plant cells apart from other cells.",
+                "points": [
+                  "A cell wall frames the membrane",
+                  "Chloroplasts capture sunlight for sugar"
+                ],
+                "title": "Plant cell structures"
+              },
+              {
+                "drawing": "a ruler",
+                "explanation": "Estimating real cell size from a microscope photo.",
+                "points": [
+                  "Magnification changes photo size, not cell",
+                  "Count bar lengths, then multiply"
+                ],
+                "title": "Reading cell scale"
+              }
+            ],
+            "centralIdea": "Cell structures do jobs that build, maintain and power living things.",
+            "comparison": {
+              "columns": [
+                {
+                  "name": "Bacterial cell",
+                  "points": ["Prokaryotic cell", "DNA sits in cytoplasm"]
+                },
+                { "name": "Animal cell", "points": ["Eukaryotic cell", "DNA sits in a nucleus"] }
+              ],
+              "title": "Bacterial and animal cells"
+            },
+            "summary": "Cell structures build, maintain and identify cells; a scale bar shows their true size.",
+            "title": "Cell structure and work"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "mind-map-image"
+}

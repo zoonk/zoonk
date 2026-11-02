@@ -8,7 +8,6 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
-import { trackSignInMethodChosen } from "@/lib/track-events";
 import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { sendVerificationOTPAction } from "./actions";
@@ -16,13 +15,7 @@ import { sendVerificationOTPAction } from "./actions";
 const emailErrorId = "login-email-error";
 const initialEmailLoginState = { status: "idle" as const };
 
-/**
- * Owns the interactive email form because invalid-email feedback comes from
- * the Server Action result after Better Auth validates the submitted value.
- * Keeping this as a focused client component lets the login page itself stay a
- * Server Component while still showing recoverable form errors.
- */
-export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
+export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
   const t = useExtracted();
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
   const hasError = state.status !== "idle";
@@ -37,7 +30,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
   }[state.status];
 
   return (
-    <LoginForm action={formAction} onSubmit={() => trackSignInMethodChosen({ method: "otp" })}>
+    <LoginForm action={formAction}>
       <input name="redirectTo" type="hidden" value={redirectTo ?? ""} />
 
       <LoginField>
@@ -45,7 +38,11 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
         <LoginEmailInput
           aria-describedby={hasError ? emailErrorId : undefined}
           aria-invalid={hasError}
-          placeholder={t("me@gmail.com")}
+          placeholder={t({
+            description:
+              "An example address shown in the empty email field. Keep it as written, like the app's other example addresses.",
+            message: "me@gmail.com",
+          })}
         />
       </LoginField>
 

@@ -4,10 +4,6 @@ import { serializeEnergy } from "@/lib/progress-serializers";
 import { getCurrentUserEnergy } from "@zoonk/core/progress/get-energy-data";
 import { NextResponse } from "next/server";
 
-/**
- * Returns the current learner's Energy value, bounded timeline, and lifetime
- * insights while preserving a valid null state for a new learner.
- */
 async function getCurrentUserEnergyRoute() {
   const resource = await getCurrentUserEnergy();
 

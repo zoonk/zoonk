@@ -1,20 +1,25 @@
 import { put } from "@vercel/blob";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 
 export async function uploadImage({
-  fileName,
-  image,
   access = "public",
   addRandomSuffix = true,
+  fileName,
+  image,
 }: {
+  access?: "private" | "public";
+  addRandomSuffix?: boolean;
   fileName: string;
   image: Buffer;
-  access?: "public";
-  addRandomSuffix?: boolean;
 }): Promise<SafeReturn<string>> {
   const { data: blob, error } = await safeAsync(() =>
-    put(fileName, image, { access, addRandomSuffix }),
+    put(fileName, image, {
+      access,
+      addRandomSuffix,
+      ...(access === "private" ? getPrivateBlobStore() : {}),
+    }),
   );
 
   if (error) {

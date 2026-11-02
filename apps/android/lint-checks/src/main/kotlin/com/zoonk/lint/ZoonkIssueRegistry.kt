@@ -8,6 +8,6 @@ import com.android.tools.lint.detector.api.Issue
 class ZoonkIssueRegistry : IssueRegistry() {
     override val api: Int = CURRENT_API
     override val minApi: Int = CURRENT_API
-    override val issues: List<Issue> = listOf(HardcodedComposeTextDetector.ISSUE)
+    override val issues: List<Issue> = listOf(HardcodedComposeTextDetector.ISSUE, MaterialOutlinedButtonDetector.ISSUE)
     override val vendor: Vendor = Vendor(vendorName = "Zoonk", identifier = "com.zoonk.lint")
 }

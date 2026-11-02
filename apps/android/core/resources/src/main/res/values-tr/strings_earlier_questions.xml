@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "earlier_questions_description": "5ccf8d71c79bf429014d6845dcac77e2e49774f4857e5781506a9a8b4a96506a",
+  "earlier_questions_empty": "7ed4fba0a195091a8815de6f6c8fd0501da53a8775e0e14ae9e20f55144faf53",
+  "earlier_questions_from": "a9efb263309e93f9c2e427d97c2c56b6ebd088c3fd568653448c1511e4626ff1",
+  "earlier_questions_from_course": "f0082552ea46418a403239a05f597cff307457cb30704cd07cb4bd48f37165b2",
+  "earlier_questions_from_course_lesson": "bdf00fb73fa50ded58e7308c333683625c9d06f53b4a7e367541ef69d29109e5",
+  "earlier_questions_from_lesson": "1502b77b1809967cb466191c985ea24f77c74c672ec6978ecf828658abd54012",
+  "earlier_questions_no_answer": "4adfa3a1819e10d86b82f11a8624013ba23725556bb183bc11a51abacafd71ec",
+  "earlier_questions_older": "e65fdec2ffacbb65115565b5f4310a5c9e5a8b9239263c0bdef0e61990dd71fc",
+  "earlier_questions_older_failed": "3b1cb5644f4590584382c02eaca1302d0e701931bca1c297ca1dda47219528e5",
+  "earlier_questions_title": "bb593640a06b24d7d0e9ce4ee3dfc7e1733403344c743cf98772a17011cddf2b"
+}
+-->
+<resources>
+    <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
+    <string name="earlier_questions_title">Önceki sorular</string>
+    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
+    <string name="earlier_questions_description">Kurslarını yeniden hazırlamadan önce sorduğun sorular. Dersler değişti, bu yüzden sorularını yeniden okuyabilmen için burada saklıyoruz.</string>
+    <string name="earlier_questions_empty">Daha önce sorduğun bir soru yok.</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
+    <string name="earlier_questions_from_course_lesson">%1$s kursunun önceki sürümünden · %2$s</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it. -->
+    <string name="earlier_questions_from_course">%1$s kursunun önceki sürümünden</string>
+    <!-- Above a question about a lesson that no longer exists, when the course's title wasn't saved. %1$s is the lesson's title. -->
+    <string name="earlier_questions_from_lesson">Bu kursun önceki sürümünden · %1$s</string>
+    <!-- Above a question about a lesson that no longer exists, when neither title was saved. -->
+    <string name="earlier_questions_from">Bu kursun önceki sürümünden</string>
+    <string name="earlier_questions_no_answer">Cevap kaydedilmedi.</string>
+    <!-- Loads the next page of the learner's earlier questions. -->
+    <string name="earlier_questions_older">Daha eski soruları göster</string>
+    <string name="earlier_questions_older_failed">Daha eski sorular yüklenemedi. Tekrar dene.</string>
+</resources>

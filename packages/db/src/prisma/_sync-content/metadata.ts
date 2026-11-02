@@ -1,27 +1,45 @@
 import { type Client, type QueryResultRow } from "pg";
 
-const CONTENT_TABLES = [
+/** In the order the copy inserts them. */
+export const CONTENT_TABLES = [
+  "course_families",
   "courses",
   "course_categories",
-  "chapters",
-  "lessons",
+  "media_assets",
+  "skills",
+  "skill_prerequisites",
+  "items",
+  "library_chapters",
+  "course_chapters",
+  "chapter_skills",
+  "conversation_scenarios",
+  "library_lessons",
+  "chapter_lessons",
+  "lesson_skills",
   "words",
   "word_pronunciations",
   "sentences",
-  "chapter_words",
-  "chapter_sentences",
-  "steps",
+  "lesson_words",
+  "lesson_sentences",
+  "library_steps",
+  "step_variants",
+  "answer_explanations",
 ] as const;
 
 export type ContentTable = (typeof CONTENT_TABLES)[number];
 
-export type ContentIds = {
-  chapterIds: string[];
-  courseIds: string[];
-  lessonIds: string[];
-  sentenceIds: string[];
-  wordIds: string[];
-};
+/** Private rows belong to one learner's goal: they never leave the source or get replaced here. */
+export const PUBLIC_ROWS = "visibility = 'public' AND owner_id IS NULL";
+
+/**
+ * The seed's ids are UUID version 8, which generated content never has. Seeded content belongs
+ * to the local database, so the sync never reads, removes or overwrites it.
+ */
+export const SEEDED_ROWS = "uuid_extract_version(id) = 8";
+
+export const NOT_SEEDED = `NOT (${SEEDED_ROWS})`;
+
+export const CATALOG_ROWS = `${PUBLIC_ROWS} AND ${NOT_SEEDED}`;
 
 type TableColumn = QueryResultRow & {
   column_name: string;
@@ -99,57 +117,4 @@ export async function getOrganizationId({
   }
 
   return organization.id;
-}
-
-async function getIds({
-  client,
-  params,
-  query,
-}: {
-  client: Client;
-  params: unknown[];
-  query: string;
-}): Promise<string[]> {
-  const result = await client.query<{ id: string }>(query, params);
-  return result.rows.map((row) => row.id);
-}
-
-export async function getContentIds({
-  organizationId,
-  source,
-}: {
-  organizationId: string;
-  source: Client;
-}): Promise<ContentIds> {
-  const courseIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM courses WHERE organization_id = $1 AND user_id IS NULL ORDER BY id",
-  });
-
-  const chapterIds = await getIds({
-    client: source,
-    params: [courseIds],
-    query: "SELECT id FROM chapters WHERE course_id = ANY($1::uuid[]) ORDER BY id",
-  });
-
-  const wordIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM words WHERE organization_id = $1 ORDER BY id",
-  });
-
-  const sentenceIds = await getIds({
-    client: source,
-    params: [organizationId],
-    query: "SELECT id FROM sentences WHERE organization_id = $1 ORDER BY id",
-  });
-
-  const lessonIds = await getIds({
-    client: source,
-    params: [chapterIds],
-    query: "SELECT id FROM lessons WHERE chapter_id = ANY($1::uuid[]) ORDER BY id",
-  });
-
-  return { chapterIds, courseIds, lessonIds, sentenceIds, wordIds };
 }

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "checkpoint_after_lessons": "4239c233aff99f4c116d0b6bc12fb4b5b22c966753bf2f52256091846810145a",
+  "checkpoint_answer": "3d8b8d34a71c65b54e010f99783bd0ba1b1d78e20822ebb2cb2168e95950927c",
+  "checkpoint_answers": "ed7f3ee38c908d483b902cdf843cfc8a13da0af426a96e7ba1cd652fc1d33178",
+  "checkpoint_badge": "1907984b518670661c811da847edba6f1b66eda62b54c6377bcba57c2b786b86",
+  "checkpoint_beat": "c161e106bdd62fb1136c51789ba8a78e65107eb80adb02756207004566a64f2a",
+  "checkpoint_broken": "816170ff930c9bc1df70346708b7948fbebb79a57d1ccbecd4691d9e45b83973",
+  "checkpoint_broken_all": "786c4df7405ea76f83d4e6871c8f81543be5e9cc3490ae9d746c0541770d3e6c",
+  "checkpoint_confirm": "c6005a14c49ce1c1ba6524a6907c2443b4b8693b5384eaa62bce6ce44fc008a1",
+  "checkpoint_every_answered": "c04e7407a03368d2c56bab9d15b5118139b425faff13be6e7c1ef3c933a3e8d7",
+  "checkpoint_final": "d1947843e96559e1c3da8e7a0bb03f2a72be28b4f6d01573289ca68646b60a9b",
+  "checkpoint_finishing": "2b742328441edcc3b309603163ab988ef68cb173a331a1f005afcfe3e76edb51",
+  "checkpoint_held": "d3b3f0581f9949a706cf3f86486813496a00173909ee4aa2432320e11fdd6309",
+  "checkpoint_lost_line": "12eec6ae0d39b9eb0af9adaf4edcc84b74f6bcc2874734a063b0e00742f0da93",
+  "checkpoint_new_try_next": "000f590c6b0d298aca39609e7c7e72af39639c0e7840ae096a73a92724251bdc",
+  "checkpoint_new_try_tomorrow": "8484dc9c0590a2c5fd0d21a47252234376c3136e8c69c55a131e17f7d192f603",
+  "checkpoint_next": "277ede2a3b771a7a421ea9e9d22c3c2291fbc546688a76819450cedb2233c31c",
+  "checkpoint_next_phase": "968c27a02e720566380aec0413ad7463c3c28577fa3b96d84a6feeafe40a5766",
+  "checkpoint_next_phase_open": "6b39c0da99f21634f9e2f7d80e1ed0e383217b1197e0410eca6898169025ad57",
+  "checkpoint_no_hints_boss": "5924c5edd6acc23de9fcae6e673bcd6209cb36d3689bc1361e84531ff7ea151c",
+  "checkpoint_no_hints_weekly": "ba7614785903fdd8df09dbb1aa8eaf5817767ee247ac55d43066c47203407dc6",
+  "checkpoint_no_questions_left": "7f074939f43f3de183148b872b24c970cacea615463b5203959bf384e5dca9f1",
+  "checkpoint_not_this_time": "9e26290ce4c5bc91d1de7f6059cee8f75c35385320aa231e4a77bf597cc49c61",
+  "checkpoint_nothing_lost": "c71c3a79f3d70e3cf992eff1a24c945047d2ddadb0299d7e100554b0019fea23",
+  "checkpoint_passed_later": "eb56eb10f055df52a8f5d0e52bb0a115275bef0a859a5c2d09db790db866b071",
+  "checkpoint_phase": "93d0b670326bf88305aea63ea68f585bd0f0e1e61696b8c07cfb0ec968a74445",
+  "checkpoint_phase_complete": "99a53b26ab0597698e3cdf75ec1092c04d291c773e46c6f3d5126fdec62b4ed5",
+  "checkpoint_phase_complete_plain": "df8a78f0b3a16d708124c655cadd427c0b576c0ed3b3e1db45a32b791ab3b52b",
+  "checkpoint_phase_done": "ea04feb98771aa4bf0360b5946cca6b4e53d9cc26d8e08b4bdfe38da6d8686e0",
+  "checkpoint_phase_name": "5a74c0669783dcd9d7a818aa752d8887b0ead683ecc09c127f5198f1e468db0f",
+  "checkpoint_phase_plain": "b2f5330aee2c98a80db0e81efe943c5a270ae931bae88098525b30c20d55344e",
+  "checkpoint_prize": "66cf98a83dc2c857156df385cc834f1ecfaf5326eefe2f191e4a73c27cfb497a",
+  "checkpoint_prize_phase": "a535ab56fb648e413675e729474a7140955e00dcd86ebfd43218b3369d227c45",
+  "checkpoint_questions_left": "b84101a243f765133b9852becd21ec7ea31b69310e34d4f65d0955392f2d50e8",
+  "checkpoint_removed_detail": "96f3f1b1d7dbfe966e11864bfa86cf487d9dea29cc97e45055d6f2ab5fe3d003",
+  "checkpoint_removed_title": "78e2766bf05b2c8da4d8a0a36902f2cdd07b9b483ac3ab7095d36a52e2b24fe6",
+  "checkpoint_retry_after_lessons": "1833b1b211bcc243d84c0cc2ea66d5f38a26ab7bb3be5b0a15408b65e3205b52",
+  "checkpoint_retry_tomorrow": "55c0d899d080a996ff38b630fdb0c439a1f5200a45619d4ca079207a1cde8445",
+  "checkpoint_review": "07a127ae176d1ec834234e2ac606305c97cc9591c7f5b12af9fdd228d46f318e",
+  "checkpoint_rewards": "0910641bf0b0a82bb34827febf4a498fbb58347c3bb7b6611609de3cf297c773",
+  "checkpoint_right_to_win": "181a1c27692c2c1fad31489117194dc6f3bc46a559c97a28bf2bfc6705a550a3",
+  "checkpoint_right_to_win_of": "4009ed7168f447e983be1880198e3e80a9e9fb864f3fe88cfc06e4e6e3a0bd25",
+  "checkpoint_see_result": "a5f3f2793443678dfc254c213b75dc8fe623a697b3c79fd43d94d7ef061e25c2",
+  "checkpoint_shield": "07ca348dbf9f64d358f408fbd2f65d67194b8da4e76ed8445ef30432eca5dc02",
+  "checkpoint_shield_value": "d97ef526d06b445c7384fc00dd4c864259f7cffa21b94682b8815d9323401b21",
+  "checkpoint_to_go": "fb8a6d0eb4e9b0a4f851b075cb45cf0ea06afb806e786e8485e80825dea1f315",
+  "checkpoint_trickster": "95f660f18cc19cc33c523513b868baa3d808212808e595d65bb858d9ee3429a8",
+  "checkpoint_weekly": "ea1fd0fbd4a4b81910b4c7175caaa4022dc3ec62b5b4b5bd8b867c8fea9332e1",
+  "checkpoint_weekly_done": "56e98ed19883a41f4344ed18623812564091a09516058aa04aad03abb52e47cd",
+  "checkpoint_whats_next": "0c2c034f32b4c170c1cb6a6e08a4b85e6140f653722cda7f154caa93220437e4",
+  "checkpoint_why_later": "47c5f5495d3059a0cd6c59f79d2d7ae1e837fe887f954112c459cf5b593129ef",
+  "checkpoint_winning": "24f43baf39f2a8223b8a0df02b56392a20cba28e1a7fed01a9e60cd006ac1714",
+  "checkpoint_won_line": "7e5a7bcae21503e2d334a229124d8478903932020f4652cd02abe578a91bb00e"
+}
+-->
+<resources>
+    <string name="checkpoint_trickster">Der Trickser</string>
+    <string name="checkpoint_weekly">Wöchentliche Herausforderung</string>
+    <string name="checkpoint_final">Letzte Herausforderung</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase">Herausforderung von Phase %1$s</string>
+    <string name="checkpoint_phase_plain">Phasen-Herausforderung</string>
+    <string name="checkpoint_confirm">Bestätigen</string>
+    <string name="checkpoint_next">Weiter</string>
+    <string name="checkpoint_see_result">Ergebnis ansehen</string>
+    <string name="checkpoint_why_later">Am Ende erfährst du, warum.</string>
+    <string name="checkpoint_won_line">Sein Schild ist zerbrochen. Du hast gewonnen!</string>
+    <string name="checkpoint_lost_line">Sein Schild hat diesmal gehalten.</string>
+    <string name="checkpoint_retry_tomorrow">Morgen gibt es einen neuen Versuch. Nichts geht verloren.</string>
+    <plurals name="checkpoint_retry_after_lessons">
+        <item quantity="one">Morgen kannst du es nach %d kurzer Lektion noch einmal versuchen. Nichts geht verloren.</item>
+        <item quantity="other">Morgen kannst du es nach %d kurzen Lektionen noch einmal versuchen. Nichts geht verloren.</item>
+    </plurals>
+    <string name="checkpoint_every_answered">Alle Fragen sind beantwortet.</string>
+    <string name="checkpoint_shield">Der Schild des Tricksers</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d von %2$d zerbrochen</item>
+        <item quantity="other">%1$d von %2$d zerbrochen</item>
+    </plurals>
+    <plurals name="checkpoint_to_go">
+        <item quantity="one">Noch %d</item>
+        <item quantity="other">Noch %d</item>
+    </plurals>
+    <!-- The shield wasn't broken: the boss won. -->
+    <string name="checkpoint_held">Gehalten</string>
+    <!-- The whole shield is broken: the learner won. -->
+    <string name="checkpoint_broken_all">Zerbrochen</string>
+    <plurals name="checkpoint_broken">
+        <item quantity="one">%d zerbrochen</item>
+        <item quantity="other">%d zerbrochen</item>
+    </plurals>
+    <string name="checkpoint_no_questions_left">Keine Fragen mehr übrig</string>
+    <plurals name="checkpoint_questions_left">
+        <item quantity="one">Noch %d Frage</item>
+        <item quantity="other">Noch %d Fragen</item>
+    </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
+    <plurals name="checkpoint_right_to_win">
+        <item quantity="one">%d richtige Antwort für den Sieg</item>
+        <item quantity="other">%d richtige Antworten für den Sieg</item>
+    </plurals>
+    <string name="checkpoint_no_hints_boss">Keine Hinweise. Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum, und welche Fallen er gestellt hat.</string>
+    <string name="checkpoint_no_hints_weekly">Keine Hinweise. Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum.</string>
+    <string name="checkpoint_winning">Gewinnen</string>
+    <string name="checkpoint_finishing">Abschließen</string>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="checkpoint_prize">+%1$s</string>
+    <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
+    <string name="checkpoint_prize_phase">+%1$s · Phase %2$s abgeschlossen</string>
+    <string name="checkpoint_removed_title">Die Fragen wurden entfernt</string>
+    <string name="checkpoint_removed_detail">Du hattest noch keine Frage beantwortet, deshalb wird diese Herausforderung nicht gewertet. Nichts ist verloren.</string>
+    <string name="checkpoint_weekly_done">Wöchentliche Herausforderung abgeschlossen</string>
+    <string name="checkpoint_beat">Du hast den Trickser besiegt!</string>
+    <string name="checkpoint_not_this_time">Diesmal nicht</string>
+    <!-- %1$d right answers were needed out of %2$d questions. -->
+    <plurals name="checkpoint_right_to_win_of">
+        <item quantity="one">%1$d von %2$d richtig für den Sieg</item>
+        <item quantity="other">%1$d von %2$d richtig für den Sieg</item>
+    </plurals>
+    <string name="checkpoint_rewards">Belohnungen</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase_complete">Phase %1$s abgeschlossen</string>
+    <string name="checkpoint_phase_complete_plain">Phase abgeschlossen</string>
+    <string name="checkpoint_badge">Fallenjäger-Abzeichen</string>
+    <string name="checkpoint_next_phase">Nächste Phase</string>
+    <!-- A phase without a name, by its number. -->
+    <string name="checkpoint_phase_name">Phase %1$d</string>
+    <string name="checkpoint_whats_next">Wie geht es weiter</string>
+    <string name="checkpoint_passed_later">Bei einem späteren Versuch bestanden</string>
+    <string name="checkpoint_phase_done">Diese Phase ist abgeschlossen.</string>
+    <string name="checkpoint_new_try_tomorrow">Neuer Versuch morgen</string>
+    <string name="checkpoint_new_try_next">Neuer Versuch in deiner nächsten Lerneinheit</string>
+    <string name="checkpoint_nothing_lost">Nichts ist verloren.</string>
+    <plurals name="checkpoint_after_lessons">
+        <item quantity="one">Nach %d kurzer Lektion zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
+        <item quantity="other">Nach %d kurzen Lektionen zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
+    </plurals>
+    <!-- %1$s is the next phase's name. -->
+    <string name="checkpoint_next_phase_open">Die nächste Phase, %1$s, ist bereits freigeschaltet.</string>
+    <string name="checkpoint_answers">Die Antworten</string>
+    <string name="checkpoint_review">Antworten ansehen</string>
+    <!-- %1$s is the right answer. -->
+    <string name="checkpoint_answer">Antwort: %1$s</string>
+</resources>

@@ -12,7 +12,6 @@ class HardcodedComposeTextDetectorTest : LintDetectorTest() {
 
     override fun lint(): TestLintTask = super.lint().allowMissingSdk()
 
-    // Lint's JVM harness needs API signatures, not an Android runtime or Compose rendering.
     private val composable =
         kotlin(
             """

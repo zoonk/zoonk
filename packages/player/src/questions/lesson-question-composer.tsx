@@ -1,6 +1,8 @@
 "use client";
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
+import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
   InputGroupAddon,
@@ -8,11 +10,18 @@ import {
   InputGroupTextarea,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type KeyboardEvent } from "react";
+import { type KeyboardEvent, type Ref, useEffect, useId, useRef } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
-import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
+import {
+  QuestionErrorAction,
+  QuestionLimitNotice,
+  RequestErrorMessage,
+  getQuestionLimit,
+} from "./lesson-question-errors";
 import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
@@ -50,14 +59,65 @@ function SubmitIcon({
   return <ArrowUpIcon aria-hidden="true" />;
 }
 
-const CREATE_NAVIGATION_ERROR_KINDS = new Set([
-  "authentication",
-  "limit",
-  "subscription",
-  "unavailable",
-]);
+const CREATE_NAVIGATION_ERROR_KINDS = new Set(["authentication", "subscription", "unavailable"]);
 
-const LESSON_QUESTION_COMPOSER_ID = "lesson-question-composer";
+type ComposerVariant = "compact" | "page";
+
+const FOCUS_CLASS =
+  "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
+
+const FRAME_CLASS: Record<ComposerVariant, string> = {
+  compact: cn(
+    "bg-card ring-input rounded-option! items-end border-0 ring-1 ring-inset",
+    FOCUS_CLASS,
+  ),
+  page: cn(
+    TUTOR_COMPOSER_FRAME_CLASS,
+    "items-end rounded-[0.875rem]! border-transparent",
+    FOCUS_CLASS,
+  ),
+};
+
+const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
+  compact: "bg-card ring-input rounded-option ring-1 ring-inset",
+  page: TUTOR_COMPOSER_FRAME_CLASS,
+};
+
+const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
+
+const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
+  compact: cn("max-h-32 min-h-11 py-3 pl-3 text-base md:text-sm", ONE_LINE_PLACEHOLDER_CLASS),
+  page: cn(
+    "max-h-40 min-h-12 py-3 pl-3.5 text-[0.9375rem] md:text-[0.9375rem]",
+    ONE_LINE_PLACEHOLDER_CLASS,
+  ),
+};
+
+const SEND_ADDON_CLASS: Record<ComposerVariant, string> = { compact: "py-1.75", page: "pb-2.25" };
+
+function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
+  const t = useExtracted();
+
+  switch (contextKind) {
+    case "chapter":
+      return t("Ask about this chapter…");
+    case "mock":
+      return t("Ask about this mock exam…");
+    case "plan":
+      return t("Ask about your plan…");
+    case "subject":
+      return t("Ask about this subject…");
+    case "item":
+      return t("Ask about this question…");
+    case "answer":
+      return t("Ask about your answer…");
+    case "lesson":
+    case "step":
+      return t("Ask about the lesson content…");
+    default:
+      return contextKind satisfies never;
+  }
+}
 
 function getComposerAvailability({
   isResolvingPreviousQuestion,
@@ -77,18 +137,62 @@ function getComposerAvailability({
     Boolean(state.requestError && CREATE_NAVIGATION_ERROR_KINDS.has(state.requestError.kind));
 
   const isReady = state.loadStatus === "ready";
-  const hasGenerationLimit = state.answerError?.reason.kind === "limit";
   const hasQuestionToSend = Boolean(state.draft.trim()) || isResolvingPreviousQuestion;
 
   return {
-    canSend:
-      isReady && !isBusy && !createNavigationError && !hasGenerationLimit && hasQuestionToSend,
+    canSend: isReady && !isBusy && !createNavigationError && hasQuestionToSend,
     createNavigationError,
   };
 }
 
-export function QuestionComposer({ controller }: { controller: LessonQuestionController }) {
+function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: ComposerVariant }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (document.activeElement === document.body) {
+      ref.current?.focus({ preventScroll: true });
+    }
+  }, []);
+
+  return (
+    <div
+      className={cn(
+        LIMIT_FRAME_CLASS[variant],
+        "focus-visible:outline-ring flex min-h-11 items-center py-2 pr-2 pl-3.5 outline-none focus-visible:outline-2 focus-visible:outline-solid",
+      )}
+      data-slot="question-composer-limit"
+      ref={ref}
+      role="alert"
+      tabIndex={-1}
+    >
+      <QuestionLimitNotice
+        className="flex-1 flex-row items-center justify-between gap-3 [&>p]:min-w-0"
+        limit={limit}
+      />
+    </div>
+  );
+}
+
+export function QuestionComposer({
+  avatar,
+  className,
+  controller,
+  inputRef,
+  label,
+  placeholder: hostPlaceholder,
+  variant = "compact",
+}: {
+  avatar?: React.ReactNode;
+  className?: string;
+  controller: LessonQuestionController;
+  inputRef?: Ref<HTMLTextAreaElement>;
+  label?: string;
+  placeholder?: string;
+  variant?: ComposerVariant;
+}) {
   const t = useExtracted();
+  const inputId = useId();
+  const mounted = useIsMounted();
   const { state } = controller;
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
 
@@ -97,7 +201,10 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
     state,
   });
 
+  const limit = getQuestionLimit(state);
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
+  const contextPlaceholder = useComposerPlaceholder(state.context.kind);
+  const placeholder = hostPlaceholder ?? contextPlaceholder;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -108,24 +215,45 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
     void controller.send();
   };
 
+  if (limit) {
+    return (
+      <div className={className}>
+        <ComposerLimit limit={limit} variant={variant} />
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-background border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
-      <label className="sr-only" htmlFor={LESSON_QUESTION_COMPOSER_ID}>
-        {t("Ask a question")}
+    <div className={className}>
+      <label className="sr-only" htmlFor={inputId}>
+        {label ?? t("Ask a question")}
       </label>
-      <InputGroup>
+      <InputGroup className={FRAME_CLASS[variant]}>
+        {avatar && (
+          <InputGroupAddon align="inline-start" className="pr-0 pb-2.75 pl-2.5">
+            <span
+              aria-hidden="true"
+              className="flex size-5.5 items-center justify-center *:size-5.5!"
+            >
+              {avatar}
+            </span>
+          </InputGroupAddon>
+        )}
         <InputGroupTextarea
-          className="max-h-40 min-h-20"
-          id={LESSON_QUESTION_COMPOSER_ID}
+          className={cn(TEXTAREA_CLASS[variant], avatar && "pl-2")}
+          id={inputId}
           maxLength={MAX_LESSON_QUESTION_LENGTH}
           onChange={(event) => controller.changeDraft(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t("Ask about the lesson content…")}
+          placeholder={placeholder}
+          readOnly={!mounted}
+          ref={inputRef}
           value={state.draft}
         />
-        <InputGroupAddon align="block-end" className="justify-end pt-0">
+        <InputGroupAddon align="inline-end" className={SEND_ADDON_CLASS[variant]}>
           <InputGroupButton
             aria-label={submitLabel}
+            className="size-7.5 rounded-lg"
             disabled={!canSend || createNavigationError}
             onClick={() => void controller.send()}
             size="icon-sm"
@@ -140,7 +268,7 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
       </InputGroup>
 
       {state.error === "create" && (
-        <p className="text-destructive mt-2 text-sm" role="alert">
+        <p className="text-destructive-text mt-2 text-sm" role="alert">
           <ComposerError
             isResolvingPreviousQuestion={isResolvingPreviousQuestion}
             requestError={state.requestError}
@@ -156,6 +284,12 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
             onRetry={() => void controller.send()}
           />
         </div>
+      )}
+
+      {variant === "page" && (
+        <p className="text-faint mt-2 hidden px-1 font-mono text-[0.6875rem] leading-4 pointer-fine:block">
+          {t("⏎ send · ⇧⏎ new line")}
+        </p>
       )}
     </div>
   );

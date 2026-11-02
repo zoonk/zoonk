@@ -1,0 +1,223 @@
+{
+  "generatedAt": "2026-09-28T10:10:32.276Z",
+  "modelId": "openai/gpt-transcribe",
+  "outputs": [
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 793.8897089999999,
+      "output": "{\n  \"transcript\": \"How much is the rent?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"How\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"much\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"the\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"rent?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-rent-correct-1",
+      "userPrompt": "Clip of \"How much is the rent?\" (expected \"How much is the rent?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 792.261792,
+      "output": "{\n  \"transcript\": \"How much is the hint?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"How\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"much\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"the\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"hint\",\n      \"status\": \"different\",\n      \"text\": \"rent?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-rent-hent-1",
+      "userPrompt": "Clip of \"How much is the hent?\" (expected \"How much is the rent?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 791.1286249999999,
+      "output": "{\n  \"transcript\": \"I live here since 2020.\",\n  \"words\": [\n    {\n      \"heard\": \"i\",\n      \"status\": \"different\",\n      \"text\": \"I've\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"live\",\n      \"status\": \"different\",\n      \"text\": \"lived\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"here\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"since\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"2020.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-lived-live-1",
+      "userPrompt": "Clip of \"I live here since 2020.\" (expected \"I've lived here since 2020.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 792.6833750000001,
+      "output": "{\n  \"transcript\": \"Is the apartment still available?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"the\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"apartment\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"still\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"available?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-available-correct-1",
+      "userPrompt": "Clip of \"Is the apartment still available?\" (expected \"Is the apartment still available?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 711.8748330000001,
+      "output": "{\n  \"transcript\": \"Can I see apartment on Saturday?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Can\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"I\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"see\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"missed\",\n      \"text\": \"the\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"apartment\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"on\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Saturday?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-missing-the-1",
+      "userPrompt": "Clip of \"Can I see apartment on Saturday?\" (expected \"Can I see the apartment on Saturday?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 639.2705830000002,
+      "output": "{\n  \"transcript\": \"The sheep is very big.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"The\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"sheep\",\n      \"status\": \"different\",\n      \"text\": \"ship\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"very\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"big\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-ship-sheep-1",
+      "userPrompt": "Clip of \"The sheep is very big\" (expected \"The ship is very big\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 602.469,
+      "output": "{\n  \"transcript\": \"I think it's cheap.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"I\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"think\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"it's\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"cheap\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-think-sink-1",
+      "userPrompt": "Clip of \"I sink it's cheap\" (expected \"I think it's cheap\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1854.802417,
+      "output": "{\n  \"transcript\": \"O apartamento ainda está disponível?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"O\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"apartamento\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"ainda\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"está\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"disponível?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-disponivel-correct-1",
+      "userPrompt": "Clip of \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 600.4017080000001,
+      "output": "{\n  \"transcript\": \"O apartamento ainda está disponível?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"O\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"apartamento\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"ainda\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"está\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"disponível?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-estar-1",
+      "userPrompt": "Clip of \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1467.3720000000003,
+      "output": "{\n  \"transcript\": \"Eu quero mais café.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Eu\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"quero\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"mais\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"café\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-mais-mas-1",
+      "userPrompt": "Clip of \"Eu quero mas café\" (expected \"Eu quero mais café\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 830.2596249999999,
+      "output": "{\n  \"transcript\": \"¿Cuánto cuesta el alquiler?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"¿Cuánto\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"cuesta\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"el\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"alquiler?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-alquiler-correct-1",
+      "userPrompt": "Clip of \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 561.1582909999997,
+      "output": "{\n  \"transcript\": \"Tengo un pero.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Tengo\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"un\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"pero\",\n      \"status\": \"different\",\n      \"text\": \"perro\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-perro-pero-1",
+      "userPrompt": "Clip of \"Tengo un pero\" (expected \"Tengo un perro\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 841.4776670000001,
+      "output": "{\n  \"transcript\": \"Quiero ver piso mañana.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Quiero\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"ver\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"missed\",\n      \"text\": \"el\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"piso\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"mañana\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-missing-el-1",
+      "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 704.8201250000002,
+      "output": "{\n  \"transcript\": \"Can we order dessert?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"Can\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"we\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"order\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"dessert?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-dessert-desert-1",
+      "userPrompt": "Clip of \"Can we order desert?\" (expected \"Can we order dessert?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 530.5225,
+      "output": "{\n  \"transcript\": \"The bed is very comfortable.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"The\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"bed\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"very\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"comfortable.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-comfortable-stress-1",
+      "userPrompt": "Clip of \"The bed is very come-for-table.\" (expected \"The bed is very comfortable.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 991.2801249999998,
+      "output": "{\n  \"transcript\": \"I want to live now.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"I\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"want\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"to\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"live\",\n      \"status\": \"different\",\n      \"text\": \"leave\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"now.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-leave-live-1",
+      "userPrompt": "Clip of \"I want to live now.\" (expected \"I want to leave now.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 701.5329579999998,
+      "output": "{\n  \"transcript\": \"I need to bookie a room.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"I\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"need\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"to\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"bookie\",\n      \"status\": \"different\",\n      \"text\": \"book\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"a\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"room.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-book-booky-1",
+      "userPrompt": "Clip of \"I need to booky a room.\" (expected \"I need to book a room.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 698.2087079999997,
+      "output": "{\n  \"transcript\": \"O médico chegou cedo.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"O\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"médico\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"chegou\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"cedo.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-medico-correct-1",
+      "userPrompt": "Clip of \"O médico chegou cedo.\" (expected \"O médico chegou cedo.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 563.2122920000002,
+      "output": "{\n  \"transcript\": \"O médico chegou cedo.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"O\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"médico\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"chegou\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"cedo.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-medico-stress-1",
+      "userPrompt": "Clip of \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1782.8618749999996,
+      "output": "{\n  \"transcript\": \"¿Dónde está el teléfono?\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"¿Dónde\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"está\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"el\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"teléfono?\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-telefono-stress-1",
+      "userPrompt": "Clip of \"¿Dónde está el telefóno?\" (expected \"¿Dónde está el teléfono?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 997.9842499999995,
+      "output": "{\n  \"transcript\": \"The desert is hot.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"The\",\n      \"issue\": null\n    },\n    {\n      \"heard\": \"desert\",\n      \"status\": \"different\",\n      \"text\": \"dessert\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"is\",\n      \"issue\": null\n    },\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"hot.\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-dessert-desert-fits-1",
+      "userPrompt": "Clip of \"The desert is hot.\" (expected \"The dessert is hot.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1403.8266669999994,
+      "output": "{\n  \"transcript\": \"Sink.\",\n  \"words\": [\n    {\n      \"heard\": \"sink\",\n      \"status\": \"different\",\n      \"text\": \"think\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-think-alone-1",
+      "userPrompt": "Clip of \"sink\" (expected \"think\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1403.605042000001,
+      "output": "{\n  \"transcript\": \"Hent.\",\n  \"words\": [\n    {\n      \"heard\": \"hent\",\n      \"status\": \"different\",\n      \"text\": \"rent\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-rent-alone-1",
+      "userPrompt": "Clip of \"hent\" (expected \"rent\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 584.9865000000009,
+      "output": "{\n  \"transcript\": \"Teléfono.\",\n  \"words\": [\n    {\n      \"heard\": null,\n      \"status\": \"correct\",\n      \"text\": \"teléfono\",\n      \"issue\": null\n    }\n  ]\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-telefono-alone-1",
+      "userPrompt": "Clip of \"telefóno\" (expected \"teléfono\")"
+    }
+  ],
+  "taskId": "assess-pronunciation"
+}

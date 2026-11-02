@@ -1,10 +1,12 @@
 export const lessonQuestionReviewInclude = {
   thread: {
     select: {
-      lesson: {
+      libraryLesson: {
         select: {
-          chapter: { select: { course: { select: { title: true } }, title: true } },
-          kind: true,
+          homeChapter: {
+            select: { homeCourse: { select: { id: true, title: true } }, title: true },
+          },
+          id: true,
           title: true,
         },
       },

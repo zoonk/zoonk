@@ -1,3 +1,5 @@
+import { getFormattingLocale } from "./locale";
+
 export const DEFAULT_PROGRESS_LOOKBACK_DAYS = 90;
 
 const APP_LAUNCH_YEAR = 2025;
@@ -66,10 +68,6 @@ function getYearDateRanges(now: Date, offset: number): DateRanges {
   };
 }
 
-/**
- * Keeps the all-time range anchored to the same request timestamp used by the
- * other calendar range calculations.
- */
 function getAllDateRanges(now: Date): DateRanges {
   return {
     current: {
@@ -102,11 +100,6 @@ function clampPreviousEnd(ranges: DateRanges, now: Date): DateRanges {
   };
 }
 
-/**
- * Uses one timestamp for both full and period-to-date ranges so a request at a
- * UTC calendar boundary cannot calculate its current and previous ranges from
- * different months or years.
- */
 function getFullPeriodDateRanges({
   now,
   offset,
@@ -124,8 +117,8 @@ function getFullPeriodDateRanges({
 }
 
 /**
- * Keeps cumulative metric comparisons fair while a calendar period is still
- * in progress by limiting the previous range to the same elapsed duration.
+ * While a period is in progress, the previous range covers the same elapsed duration, so cumulative
+ * comparisons stay fair.
  */
 export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
   const now = new Date();
@@ -149,7 +142,7 @@ export function formatPeriodLabel(
   }
 
   if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(getFormattingLocale(locale), {
       month: "long",
       timeZone: "UTC",
       year: "numeric",

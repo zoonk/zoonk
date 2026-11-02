@@ -1,10 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getBeltLevel } from "./get-belt-level";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
@@ -42,6 +40,7 @@ describe("authenticated users", () => {
       color: "orange",
       isMaxLevel: false,
       level: 8,
+      nextBelt: { brainPowerToGo: 2500, color: "green", startBrainPower: 17_500 },
       progressInLevel: 500,
       totalBrainPower: 15_000,
     });

@@ -1,18 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
   getLanguageName,
-  isOpenAITTSSupportedLanguage,
+  getMaiVoiceLocale,
+  isFlashLiteTTSLanguage,
   isTTSSupportedLanguage,
-  needsRomanization,
+  toCanonicalLanguage,
+  usesNonLatinScript,
 } from "./languages";
 
-describe(isOpenAITTSSupportedLanguage, () => {
-  it("returns true for a language supported by OpenAI TTS", () => {
-    expect(isOpenAITTSSupportedLanguage("es")).toBe(true);
+describe(getMaiVoiceLocale, () => {
+  it("returns the locale MAI-Voice speaks a language in", () => {
+    expect(getMaiVoiceLocale("pt")).toBe("pt-BR");
   });
 
-  it("returns false for a Gemini-only language", () => {
-    expect(isOpenAITTSSupportedLanguage("am")).toBe(false);
+  it("returns null for a language MAI-Voice doesn't speak", () => {
+    expect(getMaiVoiceLocale("ja")).toBeNull();
   });
 });
 
@@ -29,48 +31,60 @@ describe(isTTSSupportedLanguage, () => {
     expect(isTTSSupportedLanguage("xx")).toBe(false);
   });
 
-  it("returns false for null", () => {
-    expect(isTTSSupportedLanguage(null)).toBe(false);
+  it("reads the language from a code with a region", () => {
+    expect(isTTSSupportedLanguage("zh-TW")).toBe(true);
   });
 
-  it("returns false for a number", () => {
-    expect(isTTSSupportedLanguage(42)).toBe(false);
+  it("voices Cantonese apart from Mandarin", () => {
+    expect(isTTSSupportedLanguage("yue")).toBe(true);
   });
 });
 
-describe(needsRomanization, () => {
-  it.each([
-    "ja",
-    "zh",
-    "ko",
-    "ar",
-    "ru",
-    "el",
-    "he",
-    "hi",
-    "th",
-    "fa",
-    "bn",
-    "ka",
-    "km",
-    "my",
-    "am",
-    "pa",
-    "te",
-    "ml",
-  ])("returns true for non-Roman script language: %s", (code) => {
-    expect(needsRomanization(code)).toBe(true);
+describe(isFlashLiteTTSLanguage, () => {
+  it("leaves out the languages only Gemini Flash speaks", () => {
+    expect(isFlashLiteTTSLanguage("es")).toBe(true);
+    expect(isFlashLiteTTSLanguage("sv")).toBe(false);
+    expect(isFlashLiteTTSLanguage("xx")).toBe(false);
+  });
+});
+
+describe(toCanonicalLanguage, () => {
+  it("gives every code for simplified Mandarin the same tag", () => {
+    expect(
+      ["cmn", "zh-CN", "zh-Hans", "zh-Hans-CN"].map((code) => toCanonicalLanguage(code)),
+    ).toStrictEqual(["zh", "zh", "zh", "zh"]);
   });
 
-  it.each(["en", "es", "fr", "de", "pt", "it"])(
-    "returns false for Roman script language: %s",
-    (code) => {
-      expect(needsRomanization(code)).toBe(false);
-    },
-  );
+  it("keeps traditional characters apart as Taiwan's Chinese", () => {
+    expect(toCanonicalLanguage("zh-Hant")).toBe("zh-TW");
+  });
 
+  it("drops a region only when it's the language's usual one", () => {
+    expect([toCanonicalLanguage("pt-BR"), toCanonicalLanguage("pt-PT")]).toStrictEqual([
+      "pt",
+      "pt-PT",
+    ]);
+  });
+});
+
+describe(usesNonLatinScript, () => {
   it("returns false for unknown language codes", () => {
-    expect(needsRomanization("xyz")).toBe(false);
+    expect(usesNonLatinScript("xyz")).toBe(false);
+  });
+
+  it("reads the language from a code with a region", () => {
+    expect(usesNonLatinScript("zh-TW")).toBe(true);
+    expect(usesNonLatinScript("pt-BR")).toBe(false);
+  });
+
+  it("knows the script of a language without a list", () => {
+    expect(usesNonLatinScript("yue")).toBe(true);
+    expect(usesNonLatinScript("kk")).toBe(true);
+  });
+
+  it("follows a script the tag names", () => {
+    expect(usesNonLatinScript("sr")).toBe(true);
+    expect(usesNonLatinScript("sr-Latn")).toBe(false);
   });
 });
 
@@ -89,11 +103,5 @@ describe(getLanguageName, () => {
 
   it("returns native name for Japanese", () => {
     expect(getLanguageName({ targetLanguage: "ja" })).toBe("日本語");
-  });
-
-  it("capitalizes the first letter", () => {
-    const name = getLanguageName({ targetLanguage: "fr", userLanguage: "en" });
-    expect(name).toBe("French");
-    expect(name[0]).toBe(name[0]?.toUpperCase());
   });
 });

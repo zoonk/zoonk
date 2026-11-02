@@ -2,24 +2,15 @@ import {
   type FillBlankStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
-  type SelectImageStepContent,
-  type SortOrderStepContent,
-} from "@zoonk/core/steps/contract/content";
-import { MAX_MATCH_COLUMNS_MISTAKES } from "./_utils/match-columns-limits";
+} from "../../library/steps/contract/language-exercises";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {
-  answerCounts?: { correct: number; incorrect: number };
   correctAnswer: string | null;
   isCorrect: boolean;
   feedback: string | null;
 };
 
-/**
- * Fill-blank feedback should show the full sentence learners were trying to
- * build, not only the isolated blank values. Replaying the template with the
- * canonical answers gives the player one readable correction string.
- */
 function getFillBlankCorrectAnswer(content: FillBlankStepContent): string {
   return content.template
     .split("[BLANK]")
@@ -66,18 +57,11 @@ export function checkSingleMatchPair(
   );
 }
 
-/**
- * Duplicate match-column labels are valid, so answer checking needs to compare full pair
- * multiplicity. JSON array keys avoid delimiter collisions between labels like ["a|b", "c"].
- */
+/** Duplicate label pairs are valid; JSON keys preserve multiplicity without delimiter collisions. */
 function getSortedMatchPairKeys(pairs: { left: string; right: string }[]): string[] {
   return pairs.map((pair) => JSON.stringify([pair.left, pair.right])).toSorted();
 }
 
-/**
- * The player submits label pairs, not visual ids. Sorting the serialized pairs gives us a small
- * multiset comparison so duplicate pairs must appear the same number of times in both lists.
- */
 function hasSameMatchPairCounts({
   correctPairs,
   userPairs,
@@ -99,48 +83,11 @@ export function checkMatchColumnsAnswer(
   userPairs: { left: string; right: string }[],
   mistakes: number,
 ): AnswerResult {
-  const allPairsCorrect = hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
+  /** Every pair is solved before submission, so mistakes must still invalidate an otherwise complete board. */
+  const isCorrect =
+    mistakes === 0 && hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 
-  if (
-    !allPairsCorrect ||
-    !Number.isSafeInteger(mistakes) ||
-    mistakes < 0 ||
-    mistakes > MAX_MATCH_COLUMNS_MISTAKES
-  ) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
-  }
-
-  /** The player requires every pair to be solved and records wrong attempts separately. */
-  return {
-    answerCounts: { correct: content.pairs.length, incorrect: mistakes },
-    correctAnswer: null,
-    feedback: null,
-    isCorrect: mistakes === 0,
-  };
-}
-
-export function checkSortOrderAnswer(
-  content: SortOrderStepContent,
-  userOrder: string[],
-): AnswerResult {
-  const correctAnswer = content.items.join(" → ");
-  const isSameLength = content.items.length === userOrder.length;
-  const isCorrect = isSameLength && content.items.every((item, index) => item === userOrder[index]);
-  return { correctAnswer, feedback: content.feedback, isCorrect };
-}
-
-export function checkSelectImageAnswer(
-  content: SelectImageStepContent,
-  selectedOptionId: string,
-): AnswerResult {
-  const correctAnswer = content.options.find((option) => option.isCorrect)?.prompt ?? null;
-  const option = content.options.find((item) => item.id === selectedOptionId);
-
-  if (!option) {
-    return { correctAnswer, feedback: null, isCorrect: false };
-  }
-
-  return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
+  return { correctAnswer: null, feedback: null, isCorrect };
 }
 
 export function checkTranslationAnswer(

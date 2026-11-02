@@ -2,9 +2,10 @@ type ResponseHeader = { key: string; value: string };
 
 type RouteHeaders = { headers: ResponseHeader[]; source: string };
 
+/** Spoken answers and calls require same-origin microphone access. */
 const PUBLIC_APP_PERMISSIONS_POLICY = [
   "camera=()",
-  "microphone=()",
+  "microphone=(self)",
   "geolocation=()",
   "payment=()",
   "usb=()",
@@ -29,13 +30,7 @@ const PUBLIC_APP_SECURITY_HEADERS = [
   },
 ] satisfies RouteHeaders[];
 
-/**
- * Keeps the baseline security headers for our public apps in one place so the
- * policy stays consistent across `main` and `api`. The list is intentionally
- * limited to low-risk headers while CSP is handled separately.
- *
- * @public
- */
+/** @public */
 export async function getPublicAppSecurityHeaders() {
   return PUBLIC_APP_SECURITY_HEADERS;
 }

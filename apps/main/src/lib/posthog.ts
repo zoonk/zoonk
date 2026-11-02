@@ -1,11 +1,6 @@
-import { getPostHogConfig } from "@zoonk/utils/posthog";
-import posthog from "posthog-js";
+import { getStartedPostHog, loadPostHog } from "@zoonk/core/analytics/posthog-browser";
 
-/**
- * Links browser events to the authenticated Zoonk user and keeps durable person
- * properties current for analytics filters and user lookup.
- */
-export function identifyPostHogUser({
+export async function identifyPostHogUser({
   analyticsDisabled,
   plan,
   userId,
@@ -16,24 +11,16 @@ export function identifyPostHogUser({
   userId: string | null;
   username: string | null;
 }) {
-  if (!getPostHogConfig()) {
-    return;
-  }
-
   if (!userId) {
     return;
   }
 
-  posthog.identify(userId, { analyticsDisabled, plan, userId, username });
+  const posthog = await loadPostHog();
+  posthog?.identify(userId, { analyticsDisabled, plan, userId, username });
 }
 
-/**
- * Unlinks future browser events from the previous signed-in user after logout.
- */
-export function resetPostHogUser() {
-  if (!getPostHogConfig()) {
-    return;
-  }
-
-  posthog.reset();
+/** Callers wait for it before leaving the page, because PostHog loads after the page does. */
+export async function resetPostHogUser() {
+  const posthog = await getStartedPostHog();
+  posthog?.reset();
 }

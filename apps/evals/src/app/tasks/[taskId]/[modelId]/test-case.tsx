@@ -188,10 +188,6 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
   );
 }
 
-/**
- * Output-only rows let prompt work inspect generated artifacts before spending
- * tokens on eval scoring, while keeping the later scored view unchanged.
- */
 export function OutputTestCase({ output, index }: { output: TestCaseOutput; index: number }) {
   const testCaseTitle = output.testCase.id || `Test Case ${index + 1}`;
 

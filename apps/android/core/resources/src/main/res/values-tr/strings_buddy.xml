@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_picker_label": "e2920230029c2ff72f5e9d06a936581284ac51886c51409dcdbfba8ad3a76039",
+  "buddy_picker_name": "b3057e6d4b2bdb1cf6b1463d227bd4f41d30cf870b2d022ba09fbe9f57c9eafd",
+  "buddy_tagline_beep": "b490d21d6da1c5537396d0b2647452faccd908aa41b75d4f8bfc498d35625a4a",
+  "buddy_tagline_noodle": "6af8f573d04de85220433434c345ac0471eb1478a022438dc3cfce7cc033107e",
+  "buddy_tagline_otto": "55761b28ee5c2de8f869fb5d8a37eb3b47ad19a405d5c7b627cbffce30aaa360",
+  "buddy_tagline_zu": "026d18d97416daa5ad3db36dea01dfa96bf131f5692a019ac1f74f3269335b33"
+}
+-->
+<resources>
+    <!-- Screen reader name of the group of buddies to pick from. -->
+    <string name="buddy_picker_label">Arkadaş</string>
+    <!-- Label of the field for a custom buddy name. -->
+    <string name="buddy_picker_name">Ad</string>
+    <!-- Under the buddy Zu, an alien, in the buddy picker. -->
+    <string name="buddy_tagline_zu">Meraklı uzaylı</string>
+    <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
+    <string name="buddy_tagline_noodle">Ayaklı beyin</string>
+    <!-- Under the buddy Beep, a robot, in the buddy picker. -->
+    <string name="buddy_tagline_beep">Titiz robot</string>
+    <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
+    <string name="buddy_tagline_otto">Çokbilmiş ahtapot</string>
+</resources>

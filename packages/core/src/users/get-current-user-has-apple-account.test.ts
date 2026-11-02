@@ -1,10 +1,8 @@
 import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getCurrentUserHasAppleAccount } from "./get-current-user-has-apple-account";
-
-vi.mock("./get-session", () => ({ getSession: vi.fn() }));
 
 describe(getCurrentUserHasAppleAccount, () => {
   beforeEach(() => {

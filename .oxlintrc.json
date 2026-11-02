@@ -32,6 +32,25 @@
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 30 }],
     "eslint/no-inline-comments": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next-intl",
+            "importNames": ["useLocale"],
+            "allowTypeImports": true,
+            "message": "Use useAppLocale from @zoonk/learn/locale for routing and content. next-intl's locale is for formatting."
+          },
+          {
+            "name": "next-intl/server",
+            "importNames": ["getLocale"],
+            "allowTypeImports": true,
+            "message": "Use getAppLocale from @/i18n/locale for routing and content. next-intl's locale is for formatting."
+          }
+        ]
+      }
+    ],
     "eslint/no-magic-numbers": [
       "error",
       {
@@ -87,11 +106,11 @@
     "react/jsx-handler-names": "off",
     "react/jsx-no-literals": [
       "error",
-      { "allowedStrings": ["%", ".", "@", "Enter", "Esc", "R", "zoonk.com", "|", "−"] }
+      { "allowedStrings": ["%", ".", "@", "Enter", "Esc", "R", "zoonk.com", "|", "−", "⏎"] }
     ],
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
-    // no need with react compiler
+    // The React Compiler memoizes context values.
     "jsx-no-constructed-context-values": "off",
     "react/no-multi-comp": "off",
     "react/only-export-components": "off",
@@ -142,7 +161,6 @@
     "vitest/require-top-level-describe": "off",
     "vitest/valid-title": "off",
 
-    // custom rules
     "zoonk/no-dynamic-translation-key": "error",
     "zoonk/no-get-extracted-in-promise": "error",
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
@@ -153,6 +171,10 @@
   },
   "overrides": [
     {
+      "files": ["apps/*/src/i18n/locale.ts", "packages/learn/src/_utils/locale.ts"],
+      "rules": { "eslint/no-restricted-imports": "off" }
+    },
+    {
       "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
       "rules": {
         "eslint/max-lines": "off",
@@ -162,6 +184,7 @@
       }
     },
     { "files": ["apps/admin/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
+    { "files": ["apps/playground/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
     {
       "files": ["**/i18n/request.ts"],
       "rules": {
@@ -234,6 +257,10 @@
       }
     },
     {
+      "files": ["packages/ui/src/components/**/*-acts.ts"],
+      "rules": { "eslint/max-lines": "off", "eslint/no-magic-numbers": "off" }
+    },
+    {
       "files": ["**/*skeleton*", "**/*-skeleton*"],
       "rules": { "react/no-array-index-key": "off" }
     },
@@ -286,6 +313,12 @@
     {
       "files": ["**/setup-tests.ts", "**/browser-setup.ts"],
       "rules": { "jest/require-top-level-describe": "off" }
+    },
+    {
+      "files": ["**/*.browser.test.tsx"],
+      "rules": {
+        "vitest/expect-expect": ["error", { "assertFunctionNames": ["expect", "expect*"] }]
+      }
     }
   ],
   "ignorePatterns": [

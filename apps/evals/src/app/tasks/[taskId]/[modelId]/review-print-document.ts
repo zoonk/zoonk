@@ -67,7 +67,6 @@ const PRINT_STYLES = `
 
 type PrintTagName = "h1" | "header" | "main" | "p" | "pre" | "section";
 
-/** Converts code-shaped object keys into labels that read naturally on paper. */
 function formatLabel(label: string): string {
   const words = label
     .replaceAll(/(?<lower>[a-z0-9])(?<upper>[A-Z])/gu, "$<lower> $<upper>")
@@ -77,7 +76,6 @@ function formatLabel(label: string): string {
   return words ? `${words.charAt(0).toUpperCase()}${words.slice(1)}` : "Value";
 }
 
-/** Preserves scalar content while replacing JavaScript-only null semantics. */
 function formatPrimitive(value: unknown): string {
   if (typeof value === "string") {
     return value;
@@ -94,12 +92,10 @@ function formatPrimitive(value: unknown): string {
   return "None";
 }
 
-/** Narrows parsed JSON objects before their fields are formatted as plain text. */
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** Places a generated title before its body while preserving every other field's output order. */
 function getReadableEntries(value: Record<string, unknown>): [string, unknown][] {
   return Object.entries(value).toSorted(([firstKey], [secondKey]) => {
     if (firstKey === "title") {
@@ -110,7 +106,6 @@ function getReadableEntries(value: Record<string, unknown>): [string, unknown][]
   });
 }
 
-/** Parses structured model output once so the print view can omit JSON syntax. */
 function parseOutput(output: string): unknown {
   try {
     return JSON.parse(output) as unknown;
@@ -119,22 +114,18 @@ function parseOutput(output: string): unknown {
   }
 }
 
-/** Indents continuation lines so numbered array items remain easy to scan. */
 function indentText(text: string): string {
   return text.replaceAll("\n", "\n   ");
 }
 
-/** Formats one named value as a label followed by its readable content. */
 function formatReadableField({ label, value }: { label: string; value: unknown }): string {
   return `${formatLabel(label).toUpperCase()}\n${formatReadableValue(value)}`;
 }
 
-/** Gives one array item a visible reading order without reproducing JSON punctuation. */
 function formatReadableArrayItem({ index, value }: { index: number; value: unknown }): string {
   return `${index + 1}. ${indentText(formatReadableValue(value))}`;
 }
 
-/** Recursively converts structured output into simple labels, paragraphs, and numbered text. */
 function formatReadableValue(value: unknown): string {
   if (Array.isArray(value)) {
     return value
@@ -151,7 +142,6 @@ function formatReadableValue(value: unknown): string {
   return formatPrimitive(value);
 }
 
-/** Creates text nodes through the DOM so generated content is never interpreted as HTML. */
 function createTextElement({
   className,
   printDocument,
@@ -173,7 +163,6 @@ function createTextElement({
   return element;
 }
 
-/** Starts one test case with concise context followed only by its generated output. */
 function createReviewOutput({
   entry,
   index,
@@ -222,7 +211,6 @@ function createReviewOutput({
   return output;
 }
 
-/** Populates an isolated same-origin window with the selected anonymous review content. */
 function populatePrintDocument({
   entries,
   printDocument,
@@ -249,7 +237,6 @@ function populatePrintDocument({
   printDocument.body.replaceChildren(content);
 }
 
-/** Opens the native print dialog, where the reviewer can print or save the output as a PDF. */
 export function printReviewOutputs({
   entries,
   taskName,

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">squared</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">cubed</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">to the power of %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">sub %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s over %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">square root of %1$s</string>
+</resources>

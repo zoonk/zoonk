@@ -8,10 +8,6 @@ import {
   LearnerMilestoneUsersTableSkeleton,
 } from "./learner-milestone-users-table";
 
-/**
- * The user list is the slowest part of the drill-down page, so it streams after
- * the page title and threshold controls are already available.
- */
 export function LearnerMilestoneUsers({
   emptyMessage,
   kind,
@@ -37,10 +33,7 @@ export function LearnerMilestoneUsers({
   );
 }
 
-/**
- * The normalized milestone and pagination values remain stable across both
- * phases of runtime prefetching, unlike the raw search-parameter object.
- */
+/** Normalized values stay stable across both runtime-prefetch passes, unlike the raw search params. */
 async function CachedLearnerMilestoneUsers({
   emptyMessage,
   kind,
@@ -78,10 +71,6 @@ async function CachedLearnerMilestoneUsers({
   );
 }
 
-/**
- * The drill-down fallback keeps the count and table footprint stable while the
- * grouped user query runs.
- */
 export function LearnerMilestoneUsersSkeleton() {
   return (
     <div className="flex flex-col gap-4">

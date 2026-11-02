@@ -1,44 +1,21 @@
+import { TASK_COLUMN_CLASS } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * Centers player content inside one shared width contract.
- *
- * The player used to repeat `max-w-*` and padding classes across static
- * screens, feedback screens, and the mobile bottom bar. This frame is the
- * single source of truth for every centered screen that should align with the
- * primary action button.
- */
 export function PlayerContentFrame({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("mx-auto w-full max-w-2xl px-4", className)}
-      data-slot="player-content-frame"
-      {...props}
-    />
+    <div className={cn(TASK_COLUMN_CLASS, className)} data-slot="player-content-frame" {...props} />
   );
 }
 
-export function NavigableStepLayout({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center",
-        className,
-      )}
-      data-slot="navigable-step-layout"
-      {...props}
-    />
-  );
-}
+export const COLUMN_GHOST_ACTION_CLASS = "-ml-2.75 w-fit";
 
-/**
- * Wraps every centered interactive screen in the shared player frame so answer
- * content and primary actions always use the same width.
- */
+/** Below `lg` the word bank waits above the action bar, so it holds still under the thumb while the answer grows. */
+export const FILL_FOR_WORD_BANK_CLASS = "max-lg:has-data-[slot=word-bank]:flex-1";
+
 export function InteractiveStepLayout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <PlayerContentFrame
-      className={cn("my-auto flex flex-col gap-4 py-4 sm:gap-6 sm:py-6", className)}
+      className={cn("flex flex-col gap-6 pt-4 pb-6", FILL_FOR_WORD_BANK_CLASS, className)}
       data-slot="interactive-step-layout"
       {...props}
     />

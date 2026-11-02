@@ -31,6 +31,15 @@ Source indexes:
 - [Android themes](https://developer.android.com/design/ui/mobile/guides/styles/themes)
 - [Window size classes](https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes)
 
+## Foldables
+
+- [Learn about foldables](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables): states, postures (book and tabletop), display modes
+- [Make your app fold aware](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/make-your-app-fold-aware): `FoldingFeature` and keeping controls off a separating fold
+- [Foldables in the adaptive app quality guidelines](https://developer.android.com/docs/quality-guidelines/adaptive-app-quality/experiences/foldables)
+- [Build adaptive navigation](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-adaptive-navigation): the navigation suite's defaults, tabletop included
+- [Compose Material 3 adaptive releases](https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive)
+- Samsung: [large screens and foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/intro.html), [designing for foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/designing_for_foldable.html), [Flex mode](https://developer.samsung.com/galaxy-z/flex-mode.html) and [app continuity](https://developer.samsung.com/galaxy-z/app-continuity.html)
+
 ## Material Design 3
 
 - [Material Design 3](https://m3.material.io/)
@@ -61,6 +70,7 @@ Source indexes:
 - [Motion](https://m3.material.io/styles/motion/overview)
 - [Shape](https://m3.material.io/styles/shape/overview-principles)
 - [Typography](https://m3.material.io/styles/typography/overview)
+- [Type scale tokens](https://m3.material.io/styles/typography/type-scale-tokens)
 - [Icons](https://m3.material.io/styles/icons/overview)
 
 ## Material Components
@@ -108,6 +118,11 @@ For component-specific accessibility, behavior, and specs, use the matching Mate
 ## Implementation Docs
 
 - [Material Design 3 in Compose](https://developer.android.com/develop/ui/compose/designsystems/material3)
+- [Adaptive layouts in Compose](https://developer.android.com/develop/ui/compose/layouts/adaptive)
+- [Adaptive navigation (`NavigationSuiteScaffold`)](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-adaptive-navigation)
+- [List-detail layout](https://developer.android.com/develop/ui/compose/layouts/adaptive/list-detail)
+- [Supporting pane layout](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-a-supporting-pane-layout)
+- [Dynamic color](https://developer.android.com/develop/ui/views/theming/dynamic-colors)
 - [Design systems in Compose](https://developer.android.com/develop/ui/compose/designsystems)
 - [Adopt Compose for teams](https://developer.android.com/develop/ui/compose/adopt)
 - [Material Design for Android Views](https://developer.android.com/develop/ui/views/theming/look-and-feel)

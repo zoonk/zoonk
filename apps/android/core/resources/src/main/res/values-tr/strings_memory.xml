@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "memory_category_background": "8a123edbbe6b67ae7a174025c02264dd81a094629d038e3085bf10035ac3c068",
+  "memory_category_context": "7027f979325257c192a382a74d97029461a3a46f4c112d2f9d50f728aad642df",
+  "memory_category_goals": "9cd430984b50bb97cca7df8f2fb4d15c7ad3da772ea8b1eebdd23cecaa0828f3",
+  "memory_category_learning": "c0beb6a26b23d7f90de2d1bad2b8c11dddccc0d7ce0a2640bdc92519046878ae",
+  "memory_category_preferences": "9a365ea3260905653ab07e10fb35c448ea45d5653592007f591f0ae3c13ff0da",
+  "memory_category_routine": "89788766f0b653219e760a6c7690ee24d6889f265247ffee2fe2923937fece07",
+  "memory_change_undone": "e310299dd284a2076211030789f782dae5f4c28a9443acf285c67d9eb4d2eb73",
+  "memory_delete": "434b648cb3413eac5cff88a21b6125036dee019709460522faeced62b6a77fcb",
+  "memory_description": "5c54bcb4e44fa6fa14eaee3175c1ce5356a8b084afb9d3b8afb5b3b5ccf4ea3c",
+  "memory_download": "471f609a150cc26c9ce56594ede64c714b6559d22bb89963bcfe18c3e0fd153a",
+  "memory_download_description": "6c636928bcf44d4d8f4ad8595d693be8f9ca24949143f9ef15070230ce213b02",
+  "memory_edit": "00f6d34375b460830b933347f46973138ebd1bf127f938fd4d2369f5c3c04d9b",
+  "memory_edit_description": "99f8d0f5b381923929085b67f52c206c3126f2b10315ea4139cde52d7de5de1e",
+  "memory_edit_label": "3d7b3aa1f40ed4771baab6c6df1a7bb06625a111e93a62554a290fa7a2369f1f",
+  "memory_edit_title": "a92417dc02f6d25f2ad5778364c68cb3bd71046099f4e040f963ae8bffac1c39",
+  "memory_empty_off": "eb1c948c3eaf8af5a3ded9804a350b9f3a4fe4d6b9ae09522e372dafae03b905",
+  "memory_empty_on": "2f03d5a06f50a91a536c929a17b536523bc6b362b0e75a1b2a98441a1f1f1862",
+  "memory_fact_options": "2e606799b894e94beefa8176ad6717d44b0af8345fcc3735ef5033b044dfc760",
+  "memory_fact_source": "94b8dc4cce9ab293bbc2cfb8c0af6400a2c661f566403f9d4a71a4e9347d1a7c",
+  "memory_save_failed": "2527ad064bc705744237c50baee045ec4be37b8b9bf3ab1f627d38846f194f1a",
+  "memory_sensitive_note": "ce743725986539614eca057a3e58215d568cda207959866a168c60c095cd56cd",
+  "memory_source_chat": "6cd391c29c64ddd8264d288ab4e6a1e7dcb2013169aaecfcb7afbbf60d106460",
+  "memory_source_noticed": "0baff256ae9981bf0671e473d83fe8760e067ee5cb7ecfa1768bafab25bfd361",
+  "memory_source_onboarding": "0304cfaa217c1bbe3dc93b7c7c0fb5c5da3ba9c3f3338167555c88785e05825b",
+  "memory_source_session": "68a3ab697fea13dfe7271fa3e3df7f42d851420c53ef5049673002da4757ea8c",
+  "memory_source_you": "520611d4519b5b52245446c95949a9b1896934680ba8789efcb2ec68ab39dbd5",
+  "memory_undo": "6c430167e278500ad1e34ddea5e36f187c076f8a3f2d83f94c244c0f8cc90e10",
+  "memory_undo_failed": "786ed8e2b17010583f24ab3849902bbbcda3b7ae7d7279af805013de1dce0bff",
+  "memory_updated": "ac602a4e7c0f66fb45d940ed4290840dbbd81cfb3c2045d524b879e7b6c8fdff",
+  "memory_updated_more": "3914d990c58e02e19a95c59ab322cfdf5662c343e86a6bde605dad9d2b10fdd3",
+  "memory_use": "297c66e29db9f2d54b3fc26538ee0bdc4ee18b6df1a56806e7d6ef1baa921137",
+  "memory_use_off": "f8e2eac56b5ecc9d33df19af5577ff9db6f4d37f7f9834ec757aff7cf9cbca98",
+  "memory_use_on": "fda53db809487efa2f40b3209ae81ead0a1cdfff67972f1b5582faae5080df9f"
+}
+-->
+<resources>
+    <string name="memory_description">Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları.</string>
+    <string name="memory_use">Belleği kullan</string>
+    <string name="memory_use_on">Sana özel örnekler ve haftana uygun planlar</string>
+    <string name="memory_use_off">Bellek kapalı. Seninle ilgili yeni bir şey öğrenmiyoruz ve bu bilgileri kullanmıyoruz.</string>
+    <string name="memory_empty_on">Henüz bir şey yok. Çalışıp sohbet ettikçe Zoonk’un sana daha iyi öğretmesini sağlayan kısa notlar burada görünür.</string>
+    <string name="memory_empty_off">Burada bir şey yok. Bellek kapalıyken Zoonk seninle ilgili not tutmaz.</string>
+    <string name="memory_save_failed">Kaydedilemedi. Tekrar dene.</string>
+    <string name="memory_category_goals">Hedefler</string>
+    <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
+    <string name="memory_category_background">Kişisel bilgiler</string>
+    <string name="memory_category_routine">Günlük düzen</string>
+    <string name="memory_category_preferences">Tercihler</string>
+    <string name="memory_category_learning">Öğrenme</string>
+    <string name="memory_category_context">Bağlam</string>
+    <string name="memory_source_noticed">Etkinliklerinden fark ettik</string>
+    <string name="memory_source_you">Bize anlattın</string>
+    <string name="memory_source_chat">Bir sohbetten</string>
+    <string name="memory_source_onboarding">Başlangıç adımlarından</string>
+    <string name="memory_source_session">Bir çalışmadan</string>
+    <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
+    <string name="memory_fact_source">%1$s · %2$s</string>
+    <!-- %1$s is the fact, like "Studies after work". -->
+    <string name="memory_fact_options">“%1$s” için seçenekler</string>
+    <string name="memory_edit">Düzenle</string>
+    <string name="memory_delete">Sil</string>
+    <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
+    <string name="memory_edit_title">Belleği düzenle</string>
+    <string name="memory_edit_description">Seni doğru yansıtacak şekilde yaz.</string>
+    <string name="memory_edit_label">Zoonk’un hatırladıkları</string>
+    <string name="memory_download">Belleğimi indir</string>
+    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
+    <string name="memory_download_description">Belleğindeki tüm bilgiler tek bir dosyada</string>
+    <string name="memory_sensitive_note">Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz.</string>
+    <string name="memory_updated">Bellek güncellendi:</string>
+    <plurals name="memory_updated_more">
+        <item quantity="one">ve %d tane daha</item>
+        <item quantity="other">ve %d tane daha</item>
+    </plurals>
+    <string name="memory_undo">Geri al</string>
+    <string name="memory_change_undone">Değişiklik geri alındı</string>
+    <string name="memory_undo_failed">Geri alınamadı. Bu bilgi sonradan değişti.</string>
+</resources>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_cause_fixed": "a1b39b277543b6e2dcda60a49d5a8ba4d9ea0c0c02287714b08d9cb37e882bc3",
+  "mistakes_cause_gap": "d91eeef968647d8074db34779c21140391e6c94072a09cc0060b88d0fff73a56",
+  "mistakes_cause_guess": "eb6399b9a613fe483179a22d9b139e5c69d7d5835b4e2c4184fc4e9a6afacda2",
+  "mistakes_cause_misread": "4a0f68018c1cc0cf6a67d1a91f9cd5af0e3bc4aee8ec53c0f1f0de2a593dc66f",
+  "mistakes_cause_time": "8ca20548261679cd6d3e7984032e7b32b74e56eede19f3fa3b4fc7797799bd06",
+  "mistakes_cause_trap": "8cf48e3f14efa9fefc79f6f4d354328d69f94d157a48e99cdeb0554dd76b30ec",
+  "mistakes_cause_unsorted": "87992a9905af04233c2bed705efee85a9a41cd548fdeaa1607a069d4765be6ae",
+  "mistakes_come_back_tomorrow": "80866ff245ff52cb0dce81fb31fa3d757f7ff88e61386a465dc7297f08a7f396",
+  "mistakes_empty_fixed": "20f6c98b73e1510b421eb239ff180a9e8f2c54b1d330aa0103d86bee21193036",
+  "mistakes_empty_open": "026ce2a4487d84fbc62b76838f8e751970396b1d37e42b62db0c6fd8e75d3735",
+  "mistakes_fixed_count": "099ff7252beb3ec27143a35a7f6b2f4f2175fa42a34b3ba9ca3cfb3dc6ae2e02",
+  "mistakes_more_failed": "4680a772d17072c6c1cac5818e2393cc78633761d121636a8cbdd82077c6d139",
+  "mistakes_not_found_description": "f04f7f8ee52ba95e9108326bc45a2a1a42f1f49216d2c8ef829345ac547cdb41",
+  "mistakes_notebook_title": "f215fd53d5e81479a0547ab8b9de672c096cf9a5450a86e82419fa903c73d549",
+  "mistakes_nothing_description": "fcafb30c2fb9e5d443a74ea1677cb33400043ace47052078bd0654638f22b31a",
+  "mistakes_nothing_title": "027921feb5f37ffd5afa64d62710fce6a44bc4d85acd7acd6351c9b25f9318db",
+  "mistakes_open_lesson": "be76a779afa7e01fc16d37f3f2d472a9ff5d5ce03b2e9b086a98df1f04f8afb2",
+  "mistakes_other_questions": "d67369990b54a9180396e270b0ef4cacc6f4ae010e42468d9dcaa5c253f0c3d5",
+  "mistakes_practice": "e980141c5058597c0d5f7990dc6b0c85de2b038ccfc41c7a95fce707cc11ab4a",
+  "mistakes_practice_comes_back": "57754298d3382238cdfe0b7f817bde98540e41595b97755932a076e8b37b8e82",
+  "mistakes_practice_end": "b70100d7a78983d06f2da01a42d58fafe8fa78891db2f6deaf1cde8c10bf4130",
+  "mistakes_practice_fixed": "51b9bd33e05b33539c8410ecdd45cc5029d6e3fd3fa8e6e7217039904a3223b5",
+  "mistakes_practice_skill": "dc83246435f3d1f1c1c0cdeb47c841708b77a02c2f909279779e2d836430211a",
+  "mistakes_practice_title": "7edc98e6a1adcbc053fbde105dd356df5c21839db2def8015edf0f102e8cf02b",
+  "mistakes_practice_tomorrow": "5689f6fcb408e2306d3985277548b275f5c865538a6e43aeb9483d16d32ebbe6",
+  "mistakes_ready": "7bec09a6bc457fe1eb7c366f2568451e41ad52b458f446a5bffe999b496f0b15",
+  "mistakes_show_more": "fc63f46d3e98564355dc30ec1c2fa22a93bbbc7989d81534a03d07236e5b4f8e",
+  "mistakes_tab_fixed": "8f87c4e75da4f27442a89a6d4e4d6d1a49cc716e5fed1bb49b082c4b9b0f47bb",
+  "mistakes_tab_open": "cbcbcc631797813a9d0114ce1dc0f44142a393914977e63ff2521c0bf36f03e5",
+  "mistakes_tomorrow": "840b4269277588aac701a59b4da065626583fd34904d3e7441262e7a8d79d2d0"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">間違えたところの練習</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">練習を終える。ここまでの回答は結果に反映されます。</string>
+    <string name="mistakes_practice_comes_back">残りの問題は、記憶に定着しやすいよう日をあけて出題されます。</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="other">%d件の間違いを克服しました</item>
+    </plurals>
+    <string name="mistakes_not_found_description">克服済みか、削除された可能性があります。</string>
+    <string name="mistakes_nothing_title">まだ練習する問題はありません</string>
+    <string name="mistakes_nothing_description">間違えた問題は、翌日から練習できるようになります。</string>
+    <string name="mistakes_notebook_title">間違いノート</string>
+    <plurals name="mistakes_ready">
+        <item quantity="other">%d件を練習できます</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="other">明日%d件を練習できます</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="other">%d件克服済み</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">間違えた問題は、翌日から練習できるようになります。</string>
+    <string name="mistakes_practice">間違えたところの練習</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">未克服</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">克服済み</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">その他の問題</string>
+    <string name="mistakes_empty_open">今は未克服の問題はありません。レッスンや復習で間違えた問題がここに表示されます。</string>
+    <string name="mistakes_empty_fixed">練習で克服した問題がここに表示されます。</string>
+    <string name="mistakes_show_more">もっと見る</string>
+    <string name="mistakes_more_failed">読み込めませんでした。もう一度試してください。</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">まだ知らない内容</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">問題の読み違い</string>
+    <string name="mistakes_cause_trap">ひっかけに引っかかりました</string>
+    <string name="mistakes_cause_time">時間が足りませんでした</string>
+    <string name="mistakes_cause_guess">予想で答えました</string>
+    <string name="mistakes_cause_unsorted">未分類</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · 克服済み</string>
+    <string name="mistakes_practice_tomorrow">明日から練習できます</string>
+    <string name="mistakes_practice_skill">このスキルを練習する</string>
+    <string name="mistakes_open_lesson">レッスンを開く</string>
+</resources>

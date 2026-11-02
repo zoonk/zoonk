@@ -1,14 +1,7 @@
 import Foundation
 import OpenAPIRuntime
 
-enum ProgressAPIError: Error, Equatable {
-  case invalidResponse
-  case network
-  case unauthorized
-}
-
 protocol ProgressAPIClient {
-  func getOverview(token: String) async throws -> ProgressOverview
   func getActivity(token: String) async throws -> ActivityProgress
   func getEnergy(token: String) async throws -> EnergyProgress?
   func getLevel(token: String) async throws -> LevelProgress?
@@ -23,229 +16,83 @@ struct ProgressAPI {
     self.clients = clients
   }
 
-  func getOverview(token: String) async throws -> ProgressOverview {
-    try await perform(token: token) { client in
-      let output = try await client.getCurrentUserProgress(.init())
-
-      switch output {
-      case .ok(let response):
-        return try makeProgressOverview(try response.body.json)
-      case .unauthorized:
-        throw ProgressAPIError.unauthorized
-      case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
-      }
-    }
-  }
-
   func getActivity(token: String) async throws -> ActivityProgress {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserActivity(.init())
 
       switch output {
       case .ok(let response):
         return try makeActivityProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getEnergy(token: String) async throws -> EnergyProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserEnergy(.init())
 
       switch output {
       case .ok(let response):
         return try makeEnergyProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getLevel(token: String) async throws -> LevelProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserLevel(.init())
 
       switch output {
       case .ok(let response):
         return try makeLevelProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getScore(token: String) async throws -> ScoreProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserScore(.init())
 
       switch output {
       case .ok(let response):
         return try makeScoreProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getScorePatterns(token: String) async throws -> ScorePatterns? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserScorePatterns(.init())
 
       switch output {
       case .ok(let response):
         return try makeScorePatterns(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
-  }
-
-  /// Keeps generated transport and decoding details behind the progress feature's stable recovery states.
-  private func perform<Output: Sendable>(
-    token: String,
-    operation: @Sendable (Client) async throws -> Output
-  ) async throws -> Output {
-    do {
-      return try await operation(clients.makeClient(token: token))
-    } catch {
-      if isRequestCancellation(error) {
-        throw CancellationError()
-      }
-
-      if let error = error as? ProgressAPIError {
-        throw error
-      }
-
-      if isNetworkError(error) {
-        throw ProgressAPIError.network
-      }
-
-      throw ProgressAPIError.invalidResponse
-    }
-  }
-
-  private func isRequestCancellation(_ error: Error) -> Bool {
-    if error is CancellationError {
-      return true
-    }
-
-    if let urlError = error as? URLError {
-      return urlError.code == .cancelled
-    }
-
-    if let clientError = error as? ClientError {
-      return isRequestCancellation(clientError.underlyingError)
-    }
-
-    return false
-  }
-
-  private func isNetworkError(_ error: Error) -> Bool {
-    if error is URLError {
-      return true
-    }
-
-    if let clientError = error as? ClientError {
-      return isNetworkError(clientError.underlyingError)
-    }
-
-    return false
   }
 }
 
 extension ProgressAPI: ProgressAPIClient {}
-
-private func makeProgressOverview(
-  _ response: Components.Schemas.CurrentUserProgressResponse
-) throws -> ProgressOverview {
-  ProgressOverview(
-    activity: makeOverviewActivitySummary(response.activity),
-    energy: response.energy?.currentEnergy,
-    level: try response.level.map(makeOverviewLevelProgress),
-    score: response.score.map(makeOverviewScorePerformance),
-    strongestDaypart: try makeOverviewStrongestDaypart(response.scorePatterns),
-    strongestWeekday: try makeOverviewStrongestWeekday(response.scorePatterns))
-}
-
-private func makeOverviewActivitySummary(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ActivityPayload
-) -> ActivitySummary {
-  ActivitySummary(
-    learningDays: payload.learningDays,
-    totalLearningSeconds: payload.totalLearningSeconds,
-    totalLessonCompletions: payload.totalLessonCompletions)
-}
-
-private func makeOverviewLevelProgress(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.LevelPayload
-) throws -> LevelProgress {
-  LevelProgress(
-    belt: try makeDomainValue(payload.belt),
-    bpPerLevel: payload.bpPerLevel,
-    bpToNextLevel: payload.bpToNextLevel,
-    isMaxLevel: payload.isMaxLevel,
-    level: payload.level,
-    progressInLevel: payload.progressInLevel,
-    totalBrainPower: payload.totalBrainPower)
-}
-
-private func makeOverviewScorePerformance(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePayload
-) -> ScorePerformance {
-  makeScorePerformance(
-    .init(
-      correctAnswers: payload.correctAnswers,
-      incorrectAnswers: payload.incorrectAnswers,
-      score: payload.score,
-      totalAnswers: payload.totalAnswers))
-}
-
-private func makeOverviewStrongestDaypart(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePatternsPayload?
-) throws -> DaypartScorePattern? {
-  guard let strongestTime = payload?.strongestTime else {
-    return nil
-  }
-
-  return DaypartScorePattern(
-    daypart: try makeDomainValue(strongestTime.period),
-    performance: makeScorePerformance(
-      .init(
-        correctAnswers: strongestTime.correctAnswers,
-        incorrectAnswers: strongestTime.incorrectAnswers,
-        score: strongestTime.score,
-        totalAnswers: strongestTime.totalAnswers)))
-}
-
-private func makeOverviewStrongestWeekday(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePatternsPayload?
-) throws -> WeekdayScorePattern? {
-  guard let strongestWeekday = payload?.strongestWeekday else {
-    return nil
-  }
-
-  return WeekdayScorePattern(
-    performance: makeScorePerformance(
-      .init(
-        correctAnswers: strongestWeekday.correctAnswers,
-        incorrectAnswers: strongestWeekday.incorrectAnswers,
-        score: strongestWeekday.score,
-        totalAnswers: strongestWeekday.totalAnswers)),
-    weekday: try makeDomainValue(strongestWeekday.dayOfWeek))
-}
 
 private func makeActivityProgress(
   _ response: Components.Schemas.CurrentUserActivityResponse
@@ -262,8 +109,8 @@ private func makeActivityProgressDay(
   _ payload: Components.Schemas.CurrentUserActivityResponse.ActivityPayload.DaysPayloadPayload
 ) throws -> ActivityProgressDay {
   ActivityProgressDay(
-    date: try makeProgressDate(payload.date),
-    lessonCompletions: payload.lessonCompletions)
+    activitiesCompleted: payload.activitiesCompleted,
+    date: try makeProgressDate(payload.date))
 }
 
 private func makeEnergyProgress(
@@ -310,6 +157,12 @@ private func makeDetailedLevelProgress(
     bpToNextLevel: payload.bpToNextLevel,
     isMaxLevel: payload.isMaxLevel,
     level: payload.level,
+    nextBelt: try payload.nextBelt.map { next in
+      NextBelt(
+        belt: try makeDomainValue(next.belt),
+        brainPowerToGo: next.brainPowerToGo,
+        startBrainPower: next.startBrainPower)
+    },
     progressInLevel: payload.progressInLevel,
     totalBrainPower: payload.totalBrainPower)
 }
@@ -353,11 +206,31 @@ private func makeScorePatterns(
     return nil
   }
 
+  let strongestDaypart = try patterns.strongestTime.map(makeStrongestDaypartScorePattern)
+  let strongestWeekday = try patterns.strongestWeekday.map(makeStrongestWeekdayScorePattern)
+
   return ScorePatterns(
     dayparts: try patterns.times.map(makeDaypartScorePattern),
-    strongestDaypart: try patterns.strongestTime.map(makeStrongestDaypartScorePattern),
-    strongestWeekday: try patterns.strongestWeekday.map(makeStrongestWeekdayScorePattern),
-    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern))
+    dayVerdict: makePatternVerdict(patterns.dayVerdict, strongest: strongestWeekday),
+    minimumAnswers: patterns.minimumAnswers,
+    strongestDaypart: strongestDaypart,
+    strongestWeekday: strongestWeekday,
+    timeVerdict: makePatternVerdict(patterns.timeVerdict, strongest: strongestDaypart),
+    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern),
+    weekSpread: patterns.weekSpread.map { ScoreSpread(high: $0.high, low: $0.low) })
+}
+
+private func makePatternVerdict<Pattern>(
+  _ verdict: Components.Schemas.ScorePatternVerdict, strongest: Pattern?
+) -> PatternVerdict<Pattern> {
+  switch (verdict.kind, strongest, verdict.points) {
+  case (.best, let strongest?, _):
+    .best(strongest)
+  case (.even, _, let points?):
+    .even(points: points)
+  default:
+    .notEnough
+  }
 }
 
 private typealias GeneratedScorePatterns =
@@ -432,7 +305,7 @@ private func makeScorePerformance(_ values: ScorePerformanceValues) -> ScorePerf
 
 private func makeProgressDate(_ rawValue: String) throws -> ProgressDate {
   guard let date = ProgressDate(rawValue) else {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   return date
@@ -446,7 +319,7 @@ where
   Destination.RawValue == String
 {
   guard let destination = Destination(rawValue: source.rawValue) else {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   return destination

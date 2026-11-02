@@ -1,0 +1,158 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The landlord call directly practices asking about rent, checking included utilities, and arranging a viewing. Emma, Chicago, the short property name, dollar rent, and afternoon appointment are plausible US details.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening is short, introduces Emma, and invites the learner to speak without supplying objective answers. All hints are complete, usable sentences with A2-appropriate structures and relevant rental vocabulary.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural sequence and are achievable in a short call. Each is checkable from the learner’s speech, has a verb-led label of two to five words, and includes a clear description.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies a friendly personality, explicit A2 guidance, the rent, included utilities, and concrete viewing availability. Saturday being unavailable provides one simple twist, and the brief specifies a polite ending after booking.",
+          "score": 10,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Fields use the required languages, with natural Brazilian Portuguese descriptions and an English brief. However, “flat” in one hint does not match the requested US variant; “apartment” is the appropriate choice. There are no emojis or em dashes.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2170,
+          "outputTokens": 694,
+          "reasoningTokens": 223
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The hint “Can I see the flat on Saturday?” uses British housing vocabulary. For the requested US English, use “apartment” instead.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is a plausible, safe landlord call in Mexico City. Sofía, Condesa, pesos, renta, and departamento fit the setting, and the price and viewing time are plausible. However, it omits the deposit and narrows the question about what is included to maintenance alone. The outside-unit cap does not apply.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Sofía, and invites the learner to speak without revealing objective answers. Its formal le supports usted. All three hints are short, complete, usable A2 sentences that cover the stated objectives. The above-level cap does not apply.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives in a natural order. Each label starts with a verb and contains two to five words, and the descriptions clearly specify what to ask. The final objective could better capture arranging a viewing by requiring agreement on a day and time; currently, simply requesting one satisfies it.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief provides personality, an A2 instruction, rent, maintenance inclusion, a simple scheduling twist, and a closing instruction. It supplies the facts needed for the stated objectives, so the missing-objective-facts cap does not apply. However, deposit and utility details are missing despite being foreseeable questions within this rental unit, and the brief does not explicitly preserve usted.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, objective descriptions, and brief are in English; the place, opening, labels, and hints are in appropriate Spanish. There are no emojis or em dashes. However, the role “proprietaria” is not English, triggering the explicit maximum score of 5 for a field in the wrong language.",
+          "score": 5,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2286,
+          "outputTokens": 929,
+          "reasoningTokens": 242
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The role field is not in US English: “proprietaria” should be “landlord.” It also does not correctly spell Spanish “propietaria.” This triggers the wrong-language category cap.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The rental content is incomplete: there is no deposit amount or information about included utilities/services. Maintenance is covered, but the brief cannot reliably support other basic questions within this unit. The expected Mexican vocabulary “depósito” and “servicios” is absent.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly instruct Sofía to use usted and identify herself as the dueña. Make the final objective ask the learner to agree on a viewing day and time, rather than merely request a viewing, so the scheduling twist leads to a checkable arrangement.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord (\"dueño\" or \"dueña\") about a \"departamento\", with pesos, Mexican vocabulary (\"renta\", \"depósito\", \"servicios\", \"departamento\", not \"piso\") and \"usted\". Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-es-a2-renting-1",
+        "userInput": {
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting an apartment in Mexico City"
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-scenario"
+}

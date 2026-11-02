@@ -1,109 +1,121 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonQuestionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { trackGenerationRateLimited } from "@/lib/server-track-events";
+import { readPathParams } from "@/lib/request-input";
+import { toClientChunks } from "@/lib/tutor-client-chunks";
 import {
-  LESSON_QUESTION_MODEL,
-  type LessonQuestionAnswerCompletion,
-  resolveLessonQuestionAnswerModel,
-  streamLessonQuestionAnswer,
-} from "@zoonk/ai/tasks/lessons/question";
+  type ConfirmationWords,
+  confirmToolsOnly,
+  loadConfirmationWords,
+} from "@/lib/tutor-confirmation";
+import { claimLessonQuestionAnswer } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import {
-  claimLessonQuestionAnswer,
-  completeLessonQuestionAnswer,
-  failLessonQuestionAnswer,
-} from "@zoonk/core/lesson-questions/answer-lifecycle";
-import { logError } from "@zoonk/utils/logger";
-import { consumeStream, createUIMessageStreamResponse, toUIMessageStream } from "ai";
+  LESSON_QUESTION_MEMORY_PART,
+  LESSON_QUESTION_SAVED_ANSWER_PART,
+} from "@zoonk/core/lesson-questions/contract";
+import {
+  type TutorAnswerRun,
+  finishTutorAnswer,
+  rememberTutorAnswer,
+  startTutorAnswer,
+} from "@zoonk/core/lesson-questions/tutor-answer";
+import {
+  type UIMessageChunk,
+  consumeStream,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  toUIMessageStream,
+} from "ai";
 import { after } from "next/server";
 
-const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
+const SHARED_ANSWER_ID = "answer";
+const CONFIRMATION_ID = "confirmation";
 
-/** Rejects the response body when the claimed revision did not accept the generated answer. */
-async function persistLessonQuestionAnswer({
-  completion,
-  questionId,
-  revision,
-}: {
-  completion: LessonQuestionAnswerCompletion;
-  questionId: string;
-  revision: number;
-}) {
-  const result = await completeLessonQuestionAnswer({ ...completion, questionId, revision });
+const RESPONSE_HEADERS = {
+  "Cache-Control": "no-store, no-transform",
+  "X-Content-Type-Options": "nosniff",
+};
 
-  if (result.status !== "updated") {
-    throw new Error(`Lesson question answer was not persisted: ${result.status}`);
-  }
-}
-
-async function getLessonQuestionAnswerCompletion({
-  generation,
-}: {
-  generation: ReturnType<typeof streamLessonQuestionAnswer>;
-}): Promise<LessonQuestionAnswerCompletion> {
-  const finalStep = await generation.finalStep;
-
-  if (finalStep.finishReason === "error" || !finalStep.text.trim()) {
-    throw new Error(EMPTY_ANSWER_MESSAGE);
-  }
-
-  const routedModel = resolveLessonQuestionAnswerModel({
-    modelId: finalStep.response.modelId,
-    provider: finalStep.model.provider,
+function streamSharedAnswer(answer: string) {
+  return createUIMessageStream({
+    execute: ({ writer }) => {
+      writer.write({ id: SHARED_ANSWER_ID, type: "text-start" });
+      writer.write({ delta: answer, id: SHARED_ANSWER_ID, type: "text-delta" });
+      writer.write({ id: SHARED_ANSWER_ID, type: "text-end" });
+    },
   });
-
-  return {
-    answer: finalStep.text,
-    finishReason: finalStep.finishReason,
-    inputTokens: finalStep.usage.inputTokens,
-    model: routedModel.model,
-    outputTokens: finalStep.usage.outputTokens,
-    provider: routedModel.provider,
-    totalTokens: finalStep.usage.totalTokens,
-  };
 }
 
-async function finishLessonQuestionAnswer({
-  generation,
-  questionId,
-  revision,
+function enqueueConfirmation({
+  confirmation,
+  controller,
 }: {
-  generation: ReturnType<typeof streamLessonQuestionAnswer>;
-  questionId: string;
-  revision: number;
+  confirmation: string;
+  controller: TransformStreamDefaultController<UIMessageChunk>;
 }) {
-  try {
-    const completion = await getLessonQuestionAnswerCompletion({ generation });
-    await persistLessonQuestionAnswer({ completion, questionId, revision });
-  } catch (error) {
-    logError("[Lesson Question Answer Error]", { questionId, revision });
-    await failLessonQuestionAnswer({ questionId, revision });
-    throw error;
-  }
+  controller.enqueue({ id: CONFIRMATION_ID, type: "text-start" });
+  controller.enqueue({ delta: confirmation, id: CONFIRMATION_ID, type: "text-delta" });
+  controller.enqueue({ id: CONFIRMATION_ID, type: "text-end" });
 }
 
 /**
- * Claims one durable turn before opening the response stream. The revision in
- * the claim prevents a late callback from overwriting a later explicit retry.
+ * `finish` is held back until the answer is saved, so it tells the client the answer is done, and
+ * a failed save errors the stream before it. The saved answer then replaces what streamed: only its
+ * checked links link the app.
  */
+function streamGeneratedAnswer({
+  run,
+  words,
+}: {
+  run: TutorAnswerRun;
+  words: ConfirmationWords | null;
+}) {
+  const heldBack: UIMessageChunk[] = [];
+  const chunks = toUIMessageStream({ sendReasoning: false, stream: run.answer.generation.stream });
+
+  return chunks.pipeThrough(toClientChunks(run)).pipeThrough(
+    new TransformStream<UIMessageChunk, UIMessageChunk>({
+      async flush(controller) {
+        const { confirmation, saved } = await finishTutorAnswer({
+          confirmation: words && confirmToolsOnly({ run, words }),
+          run,
+        });
+
+        if (confirmation) {
+          enqueueConfirmation({ confirmation, controller });
+        }
+
+        controller.enqueue({ data: { answer: saved }, type: LESSON_QUESTION_SAVED_ANSWER_PART });
+
+        heldBack.forEach((chunk) => controller.enqueue(chunk));
+
+        const memoryChanges = await rememberTutorAnswer(run.target);
+
+        if (memoryChanges.length > 0) {
+          controller.enqueue({ data: memoryChanges, type: LESSON_QUESTION_MEMORY_PART });
+        }
+      },
+      transform(chunk, controller) {
+        if (chunk.type === "finish") {
+          heldBack.push(chunk);
+          return;
+        }
+
+        controller.enqueue(chunk);
+      },
+    }),
+  );
+}
+
+/** The revision in the claim keeps a late callback from overwriting a later explicit retry. */
 async function createLessonQuestionAnswer(
   _request: Request,
   context: RouteContext<"/v1/questions/[questionId]/answers">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: lessonQuestionPathParamsSchema,
-  });
+  const path = await readPathParams(context, lessonQuestionPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await claimLessonQuestionAnswer({
-    questionId: path.data.questionId,
-    requestedModel: LESSON_QUESTION_MODEL,
-  });
+  const result = await claimLessonQuestionAnswer({ questionId: path.questionId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -113,40 +125,31 @@ async function createLessonQuestionAnswer(
     return errors.notFound();
   }
 
-  if (result.status === "subscriptionRequired") {
-    return errors.paymentRequired();
-  }
-
   if (result.status === "conflict") {
     return errors.conflict("Question cannot be answered in the current thread state");
   }
 
-  if (result.status === "limitReached") {
-    await trackGenerationRateLimited({
-      actor: result.actor,
-      limit: result.limit,
-      target: { questionId: path.data.questionId },
-    });
-
-    return errors.generationLimitReached(result.limit);
+  if (result.status === "usageRefused") {
+    return usageDecisionError(result.decision);
   }
 
-  const { contextSnapshot, priorTurns, question, questionId, revision } = result.claim;
+  if (result.status === "shared") {
+    return createUIMessageStreamResponse({
+      headers: RESPONSE_HEADERS,
+      stream: streamSharedAnswer(result.answer),
+    });
+  }
 
-  const generation = streamLessonQuestionAnswer({ contextSnapshot, priorTurns, question });
+  const run = startTutorAnswer(result.claim);
 
-  const uiMessageStream = toUIMessageStream({
-    onEnd: async () => {
-      await finishLessonQuestionAnswer({ generation, questionId, revision });
-    },
-    sendReasoning: false,
-    stream: generation.stream,
-  });
+  const words = run.confirmationLanguage
+    ? await loadConfirmationWords(run.confirmationLanguage)
+    : null;
 
   return createUIMessageStreamResponse({
     consumeSseStream: ({ stream }) => after(consumeStream({ stream })),
-    headers: { "Cache-Control": "no-store, no-transform", "X-Content-Type-Options": "nosniff" },
-    stream: uiMessageStream,
+    headers: RESPONSE_HEADERS,
+    stream: streamGeneratedAnswer({ run, words }),
   });
 }
 

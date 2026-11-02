@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "planlink_about": "8af3961fbba7d76cbe209b45073add1e77296be335c24786fed729d69bf6cbbd",
+  "planlink_eyebrow": "a5f89fc8acc078d57b5fbdfbbebc0010e38aa0c2ed6e4b2c73b3de945fb47eb8",
+  "planlink_facts": "4be239daad8bccaf9d48fc01521e6609a2573c72c3bd1dc69cdab3161202c5b4",
+  "planlink_failed": "b8ffa7ffe3d73abe7048080f7487f84da85403d1e7576768ecdb3136ae115a78",
+  "planlink_make_it_yours": "b7450799b0ed867a6bbaf6f26bbecb3f10051ef4239fd0c071bbb25f04e0432a",
+  "planlink_minutes_label": "21f8cb65e0f2beb1cb7ca55a05e26ddfc56d29f6c9cb1c784f1aa4bd29353790",
+  "planlink_not_found": "1101e55f1b52566b0dacd34a18df8012473c5dd6fb0d769220e99ecf7b9d5fa9",
+  "planlink_not_found_description": "21394e4e54e46718b9b3f5c978e7ac551ac5ae84b4a9a9466f6a44fb8bf49e60",
+  "planlink_phases": "cb2aa462f60d89030b6d9bbcbf48280c30b9b69ed228202a7dedf653119db2b0",
+  "planlink_refused": "7b6d46eb35d18ca674af5a20a5a868ec119c25a9235df4099524dcf6ca541495",
+  "planlink_skills": "e67d7e9f9afa15807ef01d3e22d4d766a514e58738b15c3330c1abe19cec2c65",
+  "planlink_start": "8c9902dcc4c949d35a7e73305ef5c1cdf529e706e86dc5de3a0074a10cba612b",
+  "planlink_study_plan": "748b255081d5732b6b9d666253809c58715c6136fe3f4b2e19c16acdc1bb9a75"
+}
+-->
+<resources>
+    <!-- Above a shared plan's subject. -->
+    <string name="planlink_eyebrow">共有された学習計画</string>
+    <!-- A shared plan without a subject, and the title over its phases. -->
+    <string name="planlink_study_plan">学習計画</string>
+    <string name="planlink_minutes_label">1日にどのくらい学習しますか？</string>
+    <!-- Starts the learner's own plan from a shared one. -->
+    <string name="planlink_start">この計画をもとに始める</string>
+    <string name="planlink_make_it_yours">同じ科目で、自分のペースに合った学習計画を作成します。いくつかの問題に答えると、すでに知っている内容はスキップされます。</string>
+    <string name="planlink_refused">今は別の目標を始められません。まず、取り組み中の目標を1つ終えるか、一時停止してください。</string>
+    <string name="planlink_failed">うまくいきませんでした。少し待ってから、もう一度お試しください。</string>
+    <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
+    <string name="planlink_facts">学習時間：約%1$s · %2$s · %3$s</string>
+    <plurals name="planlink_phases">
+        <item quantity="other">%dフェーズ</item>
+    </plurals>
+    <plurals name="planlink_skills">
+        <item quantity="other">%dスキル</item>
+    </plurals>
+    <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
+    <string name="planlink_about">約%1$s</string>
+    <string name="planlink_not_found">この学習計画は利用できません</string>
+    <string name="planlink_not_found_description">リンクが古くなったか、作成者が共有を停止した可能性があります。</string>
+</resources>

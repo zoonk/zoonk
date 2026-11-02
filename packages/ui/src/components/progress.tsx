@@ -2,28 +2,19 @@
 
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 
-function Progress({ className, children, value, ...props }: ProgressPrimitive.Root.Props) {
-  return (
-    <ProgressPrimitive.Root
-      className={cn("flex flex-wrap gap-3", className)}
-      data-slot="progress"
-      value={value}
-      {...props}
-    >
-      {children}
-      <ProgressTrack>
-        <ProgressIndicator />
-      </ProgressTrack>
-    </ProgressPrimitive.Root>
-  );
-}
+/**
+ * Base UI formats `aria-valuetext` with the runtime's locale, so the server ("0%") and a German
+ * browser ("0 %") disagree and hydration fails. Every bar takes the app's locale instead.
+ */
+type ProgressRootProps = ProgressPrimitive.Root.Props & { locale: string };
 
 function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       className={cn(
-        "bg-muted relative flex h-3 w-full items-center overflow-x-hidden rounded-4xl",
+        "bg-muted relative flex h-3 w-full items-center overflow-x-hidden rounded-lg",
         className,
       )}
       data-slot="progress-track"
@@ -35,18 +26,8 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
 function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
-      className={cn("bg-primary h-full transition-all", className)}
+      className={cn("bg-success h-full transition-[width]", className)}
       data-slot="progress-indicator"
-      {...props}
-    />
-  );
-}
-
-function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
-  return (
-    <ProgressPrimitive.Label
-      className={cn("text-sm font-medium", className)}
-      data-slot="progress-label"
       {...props}
     />
   );
@@ -62,56 +43,15 @@ function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
   );
 }
 
-function ProgressDots({
-  current,
-  total,
-  className,
-}: {
-  current: number;
-  total: number;
-  className?: string;
-}) {
-  return (
-    <div
-      aria-label={`Step ${current + 1} of ${total}`}
-      aria-valuemax={total}
-      aria-valuemin={1}
-      aria-valuenow={current + 1}
-      className={cn("flex gap-1.5", className)}
-      role="progressbar"
-    >
-      {Array.from({ length: total }).map((_, index) => (
-        <div
-          aria-hidden="true"
-          className={cn(
-            "size-2 rounded-full transition-colors",
-            index <= current
-              ? "bg-foreground"
-              : "bg-muted-foreground/30 dark:bg-muted-foreground/20",
-          )}
-          key={index}
-        />
-      ))}
-    </div>
-  );
-}
-
-function ProgressRoot({ className, ...props }: ProgressPrimitive.Root.Props) {
+function ProgressRoot({ className, locale, ...props }: ProgressRootProps) {
   return (
     <ProgressPrimitive.Root
       className={cn("flex flex-wrap gap-3", className)}
       data-slot="progress-root"
+      locale={getFormattingLocale(locale)}
       {...props}
     />
   );
 }
 
-export {
-  Progress,
-  ProgressDots,
-  ProgressIndicator,
-  ProgressLabel,
-  ProgressRoot,
-  ProgressTrack,
-  ProgressValue,
-};
+export { ProgressIndicator, ProgressRoot, ProgressTrack, ProgressValue, type ProgressRootProps };

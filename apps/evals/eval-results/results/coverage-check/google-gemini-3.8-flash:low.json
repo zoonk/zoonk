@@ -1,0 +1,475 @@
+{
+  "modelId": "google/gemini-3.8-flash:low",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
+            "Análise combinatória: princípio fundamental da contagem",
+            "Probabilidade de eventos simples"
+          ]
+        },
+        "id": "pt-enem-matematica-planted-gaps-1",
+        "userInput": {
+          "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [
+            {
+              "text": "Números: operações com inteiros, frações e decimais\nPorcentagem e juros simples e compostos\nRazão, proporção e regra de três\nLeitura e interpretação de gráficos e tabelas\nMedidas de tendência central: média, mediana e moda\nFunções do primeiro e do segundo grau\nGeometria plana: áreas e perímetros\nGeometria espacial: volumes de prismas, cilindros, cones e esferas\nAnálise combinatória: princípio fundamental da contagem\nProbabilidade de eventos simples\nTrigonometria no triângulo retângulo\nInscrições e taxa de inscrição: consulte o edital",
+              "title": "Matemática e suas Tecnologias: conteúdos"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Operar com inteiros, frações e decimais.",
+              "key": "operacoes",
+              "name": "Operar com inteiros, frações e decimais"
+            },
+            {
+              "description": "Calcular porcentagens.",
+              "key": "porcentagem",
+              "name": "Calcular porcentagens"
+            },
+            {
+              "description": "Calcular juros simples e compostos.",
+              "key": "juros",
+              "name": "Calcular juros simples e compostos"
+            },
+            {
+              "description": "Resolver problemas de razão e proporção.",
+              "key": "proporcao",
+              "name": "Resolver problemas de razão e proporção"
+            },
+            {
+              "description": "Interpretar gráficos e tabelas.",
+              "key": "graficos",
+              "name": "Interpretar gráficos e tabelas"
+            },
+            {
+              "description": "Calcular média, mediana e moda.",
+              "key": "media",
+              "name": "Calcular média, mediana e moda"
+            },
+            {
+              "description": "Usar funções do primeiro e do segundo grau.",
+              "key": "funcoes",
+              "name": "Usar funções do primeiro e do segundo grau"
+            },
+            {
+              "description": "Calcular áreas e perímetros de figuras planas.",
+              "key": "areas",
+              "name": "Calcular áreas e perímetros de figuras planas"
+            },
+            {
+              "description": "Usar seno, cosseno e tangente no triângulo retângulo.",
+              "key": "trigonometria",
+              "name": "Usar seno, cosseno e tangente no triângulo retângulo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Week 7: Sampling distributions and the central limit theorem",
+            "Week 10: Chi-square tests for categorical data"
+          ]
+        },
+        "id": "en-intro-stats-syllabus-1",
+        "userInput": {
+          "goal": "Learn introductory statistics at a university level",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Week 1: Types of data and sampling methods\nWeek 2: Graphs for categorical and numerical data\nWeek 3: Measures of center and spread\nWeek 4: The normal distribution and z-scores\nWeek 5: Correlation and simple linear regression\nWeek 6: Probability rules\nWeek 7: Sampling distributions and the central limit theorem\nWeek 8: Confidence intervals for a mean and a proportion\nWeek 9: Hypothesis tests and p-values\nWeek 10: Chi-square tests for categorical data\nGrading: homework 30%, midterm 30%, final exam 40%\nOffice hours: Tuesdays from 2 to 4 pm",
+              "title": "STAT 101: Introduction to Statistics"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Classify data and choose a sampling method.",
+              "key": "data-types",
+              "name": "Classify data and choose a sampling method"
+            },
+            {
+              "description": "Choose and read charts for a data set.",
+              "key": "charts",
+              "name": "Choose and read charts for a data set"
+            },
+            {
+              "description": "Summarize data with center and spread.",
+              "key": "center-spread",
+              "name": "Summarize data with center and spread"
+            },
+            {
+              "description": "Use the normal distribution and z-scores.",
+              "key": "normal",
+              "name": "Use the normal distribution and z-scores"
+            },
+            {
+              "description": "Fit and read a simple linear regression.",
+              "key": "regression",
+              "name": "Fit and read a simple linear regression"
+            },
+            {
+              "description": "Apply basic probability rules.",
+              "key": "probability",
+              "name": "Apply basic probability rules"
+            },
+            {
+              "description": "Build a confidence interval.",
+              "key": "confidence-intervals",
+              "name": "Build a confidence interval"
+            },
+            {
+              "description": "Run a hypothesis test and read a p-value.",
+              "key": "hypothesis-tests",
+              "name": "Run a hypothesis test and read a p-value"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Angular momentum and spin",
+            "Time-independent perturbation theory",
+            "Identical particles and the Pauli exclusion principle",
+            "Scattering theory"
+          ]
+        },
+        "id": "en-quantum-mechanics-two-syllabi-1",
+        "userInput": {
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Wave functions and the Born rule\nThe time-independent Schrödinger equation\nInfinite square well and harmonic oscillator\nOperators, observables and commutators\nThe uncertainty principle\nAngular momentum and spin\nThe hydrogen atom",
+              "title": "PHYS 341: Quantum Mechanics I"
+            },
+            {
+              "text": "Time-independent perturbation theory\nIdentical particles and the Pauli exclusion principle\nEntanglement and Bell's inequalities\nScattering theory",
+              "title": "PHYS 342: Quantum Mechanics II"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Interpret a wave function with the Born rule.",
+              "key": "wave-function",
+              "name": "Interpret a wave function with the Born rule"
+            },
+            {
+              "description": "Solve the time-independent Schrödinger equation.",
+              "key": "schrodinger",
+              "name": "Solve the time-independent Schrödinger equation"
+            },
+            {
+              "description": "Solve the infinite square well.",
+              "key": "square-well",
+              "name": "Solve the infinite square well"
+            },
+            {
+              "description": "Solve the quantum harmonic oscillator.",
+              "key": "oscillator",
+              "name": "Solve the quantum harmonic oscillator"
+            },
+            {
+              "description": "Use operators, observables and commutators.",
+              "key": "operators",
+              "name": "Use operators, observables and commutators"
+            },
+            {
+              "description": "Apply the uncertainty principle.",
+              "key": "uncertainty",
+              "name": "Apply the uncertainty principle"
+            },
+            {
+              "description": "Describe the hydrogen atom's energy levels.",
+              "key": "hydrogen",
+              "name": "Describe the hydrogen atom's energy levels"
+            },
+            {
+              "description": "Explain entanglement and Bell's inequalities.",
+              "key": "entanglement",
+              "name": "Explain entanglement and Bell's inequalities"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "gaps": [] },
+        "id": "es-python-no-gaps-1",
+        "userInput": {
+          "goal": "Aprender a programar en Python",
+          "goalKind": "learn",
+          "language": "es",
+          "references": [
+            {
+              "text": "Tema 1: Variables y tipos de datos\nTema 2: Condicionales\nTema 3: Bucles for y while\nTema 4: Funciones\nTema 5: Listas y diccionarios\nTema 6: Lectura y escritura de ficheros\nTema 7: Gestión de errores y excepciones\nTema 8: Módulos y paquetes\nEvaluación: examen final 60%, prácticas 40%",
+              "title": "Curso de Python: temario"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Guardar datos en variables de distintos tipos.",
+              "key": "variables",
+              "name": "Guardar datos en variables de distintos tipos"
+            },
+            {
+              "description": "Tomar decisiones con if, elif y else.",
+              "key": "condicionales",
+              "name": "Tomar decisiones con if, elif y else"
+            },
+            {
+              "description": "Repetir tareas con bucles for y while.",
+              "key": "bucles",
+              "name": "Repetir tareas con bucles for y while"
+            },
+            {
+              "description": "Escribir y llamar a funciones.",
+              "key": "funciones",
+              "name": "Escribir y llamar a funciones"
+            },
+            {
+              "description": "Organizar datos en listas y diccionarios.",
+              "key": "colecciones",
+              "name": "Organizar datos en listas y diccionarios"
+            },
+            {
+              "description": "Leer y escribir ficheros de texto.",
+              "key": "ficheros",
+              "name": "Leer y escribir ficheros de texto"
+            },
+            {
+              "description": "Capturar y gestionar excepciones.",
+              "key": "errores",
+              "name": "Capturar y gestionar excepciones"
+            },
+            {
+              "description": "Importar módulos e instalar paquetes.",
+              "key": "modulos",
+              "name": "Importar módulos e instalar paquetes"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
+          "gapWeights": [{ "max": 4, "min": 2 }],
+          "gaps": ["Expression of ideas"]
+        },
+        "id": "en-sat-blueprint-weights-1",
+        "userInput": {
+          "goal": "Pass the SAT in March",
+          "goalKind": "exam",
+          "language": "en",
+          "references": [
+            {
+              "text": "EXAM: SAT\nSUBJECTS:\n- Reading and Writing (weight 50%): Craft and structure; Information and ideas; Standard English conventions; Expression of ideas\n- Math (weight 50%): Algebra; Advanced math; Problem-solving and data analysis; Geometry and trigonometry\nTOPIC_FREQUENCY:\n- Math / Algebra: high\n- Math / Advanced math: high\n- Math / Problem-solving and data analysis: medium\n- Math / Geometry and trigonometry: low\n- Reading and Writing / Standard English conventions: high\n- Reading and Writing / Information and ideas: medium\n- Reading and Writing / Craft and structure: medium\n- Reading and Writing / Expression of ideas: medium",
+              "title": "SAT"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Solve linear equations, inequalities and systems.",
+              "key": "linear-equations",
+              "name": "Solve linear equations, inequalities and systems",
+              "examWeight": 1
+            },
+            {
+              "description": "Solve quadratic, exponential and other nonlinear equations.",
+              "key": "nonlinear",
+              "name": "Solve quadratic, exponential and other nonlinear equations",
+              "examWeight": 5
+            },
+            {
+              "description": "Interpret ratios, percentages, probability and data displays.",
+              "key": "data-analysis",
+              "name": "Interpret ratios, percentages, probability and data displays",
+              "examWeight": 3
+            },
+            {
+              "description": "Find areas, volumes, circle measures and right-triangle ratios.",
+              "key": "geometry",
+              "name": "Find areas, volumes, circle measures and right-triangle ratios",
+              "examWeight": 2
+            },
+            {
+              "description": "Apply standard English grammar, usage and punctuation.",
+              "key": "conventions",
+              "name": "Apply standard English grammar, usage and punctuation",
+              "examWeight": 5
+            },
+            {
+              "description": "Find central ideas, inferences and supporting evidence.",
+              "key": "central-ideas",
+              "name": "Find central ideas, inferences and supporting evidence",
+              "examWeight": 3
+            },
+            {
+              "description": "Determine a word's meaning and a text's structure and purpose.",
+              "key": "words-in-context",
+              "name": "Determine a word's meaning and a text's structure and purpose",
+              "examWeight": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: 5 Sistemas eleitorais.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: 5 Sistemas eleitorais.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: 5 Sistemas eleitorais.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": ["5 Sistemas eleitorais"],
+          "placements": [
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": ["Scoring: cada item errado anula um item certo"],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": ["3 Domínio da ortografia"]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["1 Regimes políticos"]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["2 Sistemas e formas de governo"]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "coverage-check"
+}

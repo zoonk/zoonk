@@ -1,0 +1,310 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The card fits DELE A2 photo description: formal usted instructions, an appropriate two-to-three-minute speaking period, and six accessible guiding questions covering people, location, actions, relationships, feelings, and preceding or subsequent events. The everyday cooking topic is safe and suitable.",
+          "score": 10,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The single photo scene specifies people, clothing, actions, setting, sunlight, and a positive mood. It provides concrete details to describe and room to speculate about relationships and events. Text, signs, logos, and screens are explicitly excluded.",
+          "score": 10,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English private brief and fully written Spanish opening establish the examiner's role clearly. The examiner gives the instruction and then listens without intervening, correcting, praising, or grading, exactly as this task requires. The hints provide reusable language support rather than topical answers.",
+          "score": 10,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The learner-facing summary, character role, and photo alt are in Brazilian Portuguese. Instructions, prompts, place, opening line, and hints are in appropriate Spanish; the private brief and photo scene are in English. The summary addresses the learner directly without translating the guiding questions. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2068,
+          "outputTokens": 699,
+          "reasoningTokens": 274
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "DELE A2 Task 2 for a Brazilian candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in Brazilian Portuguese, and about six guiding questions in simple Spain Spanish (who the people are, the place, what they're doing, how they feel, what happened before). The examiner gives the instruction and listens.",
+        "id": "pt-es-dele-a2-photo-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": null,
+          "task": {
+            "brief": "The candidate describes a photo, guided by about six questions: who the people are, the place, what they're doing, their relationship, how they feel, and what happened before or comes next. The examiner gives the instruction, then listens without intervening.",
+            "minutes": 3,
+            "name": "Tarea 2: Descripción de una fotografía",
+            "role": "examiner",
+            "stimulus": "photos"
+          },
+          "title": "DELE A2"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The card matches DELE B2 Task 1: an everyday problem, six proposals, formal usted instructions, evaluation of at least four proposals for 3 to 4 minutes, and a subsequent 2 to 3 minute conversation. The cultural-centre topic is safe and suitable for B2.",
+          "score": 10,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The six realistic proposals offer distinct approaches with advantages and disadvantages to discuss, providing sufficient material for the monologue and follow-up conversation. No photos, text passage or table are included, as required.",
+          "score": 10,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English private brief explicitly requires uninterrupted listening during the monologue and prohibits correction, praise and grading. Spanish questions follow the required sequence: best proposal, the candidate's country and personal opinion. Each has a relevant backup, and the opening and closing fit the examiner role and allotted time.",
+          "score": 10,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner as você in Brazilian Portuguese, and the role is also valid Portuguese. Instructions, proposals, location, opening and functional hints are in appropriate Spanish, while the private brief is in English with spoken lines in Spanish. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2239,
+          "outputTokens": 528,
+          "reasoningTokens": 107
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.",
+        "id": "pt-es-dele-b2-proposals-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "B2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": null,
+          "task": {
+            "brief": "The sheet describes a problem and five to seven proposals to solve it. The candidate weighs the pros and cons of at least four for 3 to 4 minutes without being interrupted, then talks with the examiner for 2 to 3 minutes: which proposal is best, the situation in their country, their opinions.",
+            "minutes": 7,
+            "name": "Tarea 1: Valorar propuestas y conversar sobre ellas",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE B2"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The everyday topic, five concise prompts, collaborative discussion and subsequent decision closely fit B2 First Part 3. The two-minute discussion and one-minute decision stages are appropriate. However, the expected explicit discussion question is only conveyed indirectly in the instructions. No format cap applies.",
+          "score": 8,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The five options are realistic, accessible at B2 and sufficiently distinct to support comparison, disagreement and a final choice. They allow discussion of benefits, accessibility and different young people's preferences without prescribing answers. No material-support cap applies.",
+          "score": 10,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The brief clearly establishes a fellow candidate, supplies substantive views and a possible disagreement, invites the learner's opinion, limits turn length and aims for roughly equal participation before a decision. Its opening fits the role. A small coherence weakness is that the suggested final recommendation favours public transport after an earlier reservation, without explicitly linking that change to the conversation. This is not a contradiction of the card or role, so the cap does not apply.",
+          "score": 8,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary directly addresses the learner in Spanish, and the role is in Spanish. Instructions, prompts, place, opening and hints are in English, with appropriate British usage such as “sports centre”. The private brief is in English. There are no photos requiring alt text, no emojis and no em dashes. No language cap applies.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2176,
+          "outputTokens": 841,
+          "reasoningTokens": 292
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The card conveys the discussion question indirectly through instructions rather than presenting an explicit question alongside the five prompts. The partner's suggested final choice of public transport also reverses its earlier reservation without a scripted explanation, which could make the conversation less coherent.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a central question such as “How important are these things in making a local area more enjoyable for young people?” Make the transport recommendation conditional on the discussion, or provide a short phrase acknowledging a change of mind.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "B2 First Part 3 for a Spanish-speaking candidate, with the AI as the other candidate: a discussion question with five written prompts in British English, and a partner brief with its own views, sometimes disagreeing, inviting the candidate's opinion and, after about two minutes, working toward a decision. Summary, role (\"otra candidata\" or \"otro candidato\") and photo alts, if any, in Spanish.",
+        "id": "es-en-cambridge-b2-collaborative-1",
+        "userInput": {
+          "exam": "cambridge",
+          "learnerLanguage": "es",
+          "level": "B2",
+          "paper": "Speaking",
+          "previous": null,
+          "task": {
+            "brief": "A discussion question with five written prompts around it (such as \"Is it easy to eat healthily these days?\"): two minutes of discussion, then a minute to decide on a second question. The two candidates may discuss the prompts in any order and needn't cover all of them; they aren't marked on reaching a decision.",
+            "minutes": 4,
+            "name": "Part 3: Collaborative task",
+            "role": "partner",
+            "stimulus": "topic"
+          },
+          "title": "B2 First"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The card provides two photographs, one appropriate B2 comparison question, and instructions to compare and answer in about a minute. Learning practical skills is an everyday, safe topic with useful contrasts between collaborative cooking and individual pottery. No line refers to the question's position on the card, and no alternative-format cap applies.",
+          "score": 10,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "Both English scene descriptions depict concrete everyday moments with people, settings, activities and visible moods. They explicitly exclude readable text and provide enough similarities and differences for comparison and speculation about enjoyment. The material supports the task without requiring specialist knowledge.",
+          "score": 10,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The examiner opens appropriately, allows an uninterrupted long turn, avoids correction and evaluation, and has exactly one short follow-up question written out. However, the spoken opening does not tell the candidate that they have about a minute, leaving part of the standard instruction only in the written card and private brief. The script neither contradicts the card nor adopts the wrong role, so the cap does not apply.",
+          "score": 8,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The fields use the required languages: Brazilian Portuguese for the summary, role and alts, and English for the task, scenes and script. There are no emojis or em dashes. However, the summary closely translates the prompt about what people might enjoy when learning these skills, contrary to the explicit requirement that summaries not translate prompts. No field is in the wrong language, so the wrong-language cap does not apply.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2149,
+          "outputTokens": 970,
+          "reasoningTokens": 443
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The Portuguese summary translates the substantive photo question rather than only orienting the learner to the task. The examiner's opening also omits the standard spoken notice that the candidate has about a minute, although this timing appears in the card instructions and private brief.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "B2 First Part 2 for a Brazilian candidate: two photo scenes in English of people doing the same kind of thing in different ways, with alts in Brazilian Portuguese; the one question printed over the photos in British English as the only prompt; instructions to compare the photos and answer the question in about a minute. No line refers to where things are on the card (\"the question above them\" is a flaw: the app lays the card out). The examiner's brief gives the standard instruction, listens for a minute, then asks one short follow-up question. Found on a real run that wrote \"answer the question above them\".",
+        "id": "pt-en-cambridge-b2-long-turn-photos-1",
+        "userInput": {
+          "exam": "cambridge",
+          "learnerLanguage": "pt",
+          "level": "B2",
+          "paper": "Speaking",
+          "previous": null,
+          "task": {
+            "brief": "The candidate compares two photographs and answers the question printed above them, speaking for a minute without interruption; then the examiner asks a short question about the photos.",
+            "minutes": 2,
+            "name": "Part 2: Long turn",
+            "role": "examiner",
+            "stimulus": "photos"
+          },
+          "title": "B2 First"
+        }
+      }
+    }
+  ],
+  "taskId": "exam-speaking-card"
+}

@@ -32,7 +32,7 @@ async function connectionUri(pooled: boolean): Promise<string> {
   requiredEnv("NEON_API_KEY");
 
   const args = [
-    fileURLToPath(import.meta.resolve("neonctl/cli.js")),
+    fileURLToPath(import.meta.resolve("neon/cli")),
     "connection-string",
     branchId,
     "--project-id",
@@ -47,7 +47,7 @@ async function connectionUri(pooled: boolean): Promise<string> {
   const uri = await new Promise<string>((resolve, reject) => {
     execFile(process.execPath, args, { timeout: 60_000 }, (error, stdout) => {
       if (error) {
-        // CLI output may contain credentials. Do not include it in the error.
+        // CLI output may contain credentials, so it stays out of the error.
         reject(
           new Error(
             "Neon CLI failed; set NEON_DATABASE/NEON_ROLE if the branch has multiple choices",

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "ea56f5a1ac5ed5d6ef8443929d6448c3feff427d8c08b7f3615b79d063988eaa",
+  "pattern_correct_version": "3cb8a9a25ec643dbdb51ba358f061678c15bc10ef0caee45a2c30fc09bc8a8e2",
+  "pattern_done": "d67941c95f9ceb789a47d2094f2d907a639df7b6d42535ffaa8da44329e0bde4",
+  "pattern_got_it": "06000b2669ed99fc79e4a4b297932c6cb35c9efe64d482e126fddf1b1cefe03a",
+  "pattern_just_typos": "7540ccaadca76233360568518e9ff141acd153d60e7ae80215b8e8ed88afd4bc",
+  "pattern_keep_going": "cf01442fe2d162d0db933b93ec498f2e17dc55eb5593375968a60ea022810e7f",
+  "pattern_noticed": "6836cd2e87a83e4d9dbdc74911854c6f7dfda44617544cdb0d060e45e6f52d27",
+  "pattern_practice": "d86d67aa9630b4811da1e2c421fd3aa7f70da559c12fe404f39f885a9490980c",
+  "pattern_quoted": "46c7393873e52a4e3e83df568fe68a2fac545946a7bbed55798d8532c3693619",
+  "pattern_rule": "c8e732a8ddde5903a26c8ec200bcf38834775b34dad5645987921370c9db0413",
+  "pattern_see_how_you_did": "065965317f0960cf861d1165906dd6633d6f9f4fd9af2c1c2bd85c24265ed9d7",
+  "pattern_see_rule": "10b785e4b29debc04d837efc2e0ee6289b245ab56a06b3e53f68f465f9fb9386",
+  "pattern_seen": "442524fcdb7c379e6e1223c29fe8649e593734f2fd571d089f317d3f517e9c76",
+  "pattern_seen_times": "ca0c390ae73e8dfeb53e010d28f6beb573a836663f1671a100230911eec21b07",
+  "pattern_title": "9b0c45a7bda72f7d0be9346eb4e8eb6e720dae4b5a9a258a8da4afe7a73d1247",
+  "pattern_typos_detail": "cbe6ca2b639449e5d410f7c021381899d0c56796693c1f3cfa113af60ead4b1a",
+  "pattern_where_you_slipped": "e50258c9a4000c8e3ce402154174b71e265eb20bae2b6ab901f32f77847680cb",
+  "pattern_you_said": "4d2e142ea5e8e02daf1939d4571c8179025cf96b44e65b13f264d846f3056fc8"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">실수 패턴</string>
+    <string name="pattern_noticed">실수 패턴을 발견했어요</string>
+    <string name="pattern_seen">최근 답변에서 나타났어요.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="other">최근 답변에서 %d번 나타났어요.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">이 규칙 연습하기 · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">같은 실수가 나온 다른 문장</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">“%1$s”</string>
+    <string name="pattern_rule">규칙</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">이렇게 말했어요</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">바르게 고친 문장</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">실수한 부분</string>
+    <string name="pattern_see_rule">규칙 보기</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">결과 보기</string>
+    <string name="pattern_got_it">이 규칙을 잘 익혔어요.</string>
+    <string name="pattern_keep_going">규칙을 아는 게 첫걸음이에요. 써 볼수록 더 쉬워져요.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">완료</string>
+    <string name="pattern_just_typos">단순한 오타</string>
+    <string name="pattern_typos_detail">최근 실수는 규칙을 몰라서가 아니라 입력 중에 생긴 오타예요. 따로 연습할 필요는 없어요.</string>
+</resources>

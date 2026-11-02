@@ -2,7 +2,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ComponentProps } from "react";
 
-/** Provides the full-height surface that anchors every mailbox region. */
 export function Mailbox({ className, ...props }: ComponentProps<"main">) {
   return (
     <main
@@ -15,7 +14,6 @@ export function Mailbox({ className, ...props }: ComponentProps<"main">) {
   );
 }
 
-/** Keeps mailbox identity and global actions in one compact top bar. */
 export function MailboxHeader({ className, ...props }: ComponentProps<"header">) {
   return (
     <header
@@ -28,12 +26,10 @@ export function MailboxHeader({ className, ...props }: ComponentProps<"header">)
   );
 }
 
-/** Groups the title with live delivery status without coupling their content. */
 export function MailboxIdentity({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("flex items-center gap-3.5", className)} {...props} />;
 }
 
-/** Gives this development tool a single, immediately recognizable heading. */
 export function MailboxTitle({ children, className, ...props }: ComponentProps<"h1">) {
   return (
     <h1 className={cn("text-lg font-semibold tracking-tight", className)} {...props}>
@@ -42,7 +38,6 @@ export function MailboxTitle({ children, className, ...props }: ComponentProps<"
   );
 }
 
-/** Displays compact operational metadata in a developer-friendly monospace face. */
 export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
@@ -55,12 +50,10 @@ export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   );
 }
 
-/** Keeps global mailbox controls aligned separately from the inbox identity. */
 export function MailboxActions({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("flex items-center gap-2.5 sm:gap-4", className)} {...props} />;
 }
 
-/** Reuses the shared outline action so this app follows the same interaction states as every app. */
 export function MailboxButton({
   className,
   variant = "outline",
@@ -76,7 +69,6 @@ export function MailboxButton({
   );
 }
 
-/** Creates the two-region inbox and message layout used by the local tool. */
 export function MailboxBody({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
@@ -86,7 +78,6 @@ export function MailboxBody({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-/** Marks the message list as navigation for assistive technology and small screens. */
 export function MailboxInbox({ className, ...props }: ComponentProps<"nav">) {
   return (
     <nav
@@ -99,17 +90,14 @@ export function MailboxInbox({ className, ...props }: ComponentProps<"nav">) {
   );
 }
 
-/** Resets list chrome so spacing and dividers carry the inbox hierarchy. */
 export function MailboxList({ className, ...props }: ComponentProps<"ol">) {
   return <ol className={cn("m-0 list-none p-0", className)} {...props} />;
 }
 
-/** Makes each captured message one semantic list item. */
 export function MailboxListItem({ className, ...props }: ComponentProps<"li">) {
   return <li className={cn("border-border border-b", className)} {...props} />;
 }
 
-/** Turns an entire message summary into one keyboard-accessible selection target. */
 export function MailboxMessageButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
@@ -123,12 +111,10 @@ export function MailboxMessageButton({ className, ...props }: ComponentProps<"bu
   );
 }
 
-/** Holds the selected email's headers and safely isolated body preview. */
 export function MailboxPreview({ className, ...props }: ComponentProps<"article">) {
   return <article className={cn("bg-background min-w-0 overflow-y-auto", className)} {...props} />;
 }
 
-/** Gives empty inbox states enough visual weight to explain the next action. */
 export function MailboxEmpty({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("text-muted-foreground", className)} {...props} />;
 }

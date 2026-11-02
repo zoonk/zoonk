@@ -2,19 +2,23 @@
 
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
-import { sendVerificationOTP } from "@zoonk/core/users/otp/send";
+import { createEmailSignInCode } from "@zoonk/auth/native-sessions";
+import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getOtpHref } from "../_utils/auth-redirect";
 
 type VerificationOTPState = { status: "idle" | "invalidEmail" | "disposableEmail" | "error" };
 
+const CLIENT_ERROR = 400;
+const SERVER_ERROR = 500;
+
 /**
- * Keeps Better Auth's stricter server-side email validation from becoming a
- * Server Components crash. Browser validation catches common invalid emails,
- * but direct POSTs and embedded browsers can still submit values Better Auth
- * rejects, so the login form needs a normal recoverable state for that case.
+ * Better Auth's server-side email validation is stricter than the browser's, so an email it rejects
+ * becomes a form error instead of a Server Components crash, as does a request it refuses (BotID, its
+ * rate limit).
  */
 function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPState | null {
   const authError = getAuthError(error);
@@ -27,15 +31,23 @@ function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPSt
     return { status: "invalidEmail" };
   }
 
-  return null;
+  const statusCode = authError?.statusCode ?? SERVER_ERROR;
+
+  return statusCode >= CLIENT_ERROR && statusCode < SERVER_ERROR ? { status: "error" } : null;
 }
 
-/**
- * Starts the email OTP login flow while returning form state for validation
- * errors users can fix immediately. Successful submissions still redirect to
- * the OTP page, while unexpected auth failures keep throwing so production
- * monitoring catches real service problems.
- */
+/** A Server Action has no request URL; Better Auth resolves its host from the headers. */
+async function sendSignInCode(email: string) {
+  const requestHeaders = await headers();
+  const protocol = isLocalhostSupported() ? "http" : "https";
+
+  await createEmailSignInCode({
+    email,
+    headers: requestHeaders,
+    requestURL: `${protocol}://${requestHeaders.get("host")}`,
+  });
+}
+
 export async function sendVerificationOTPAction(
   _previousState: VerificationOTPState,
   formData: FormData,
@@ -47,9 +59,8 @@ export async function sendVerificationOTPAction(
     return { status: "invalidEmail" };
   }
 
-  const { data, error } = await safeAsync(async () =>
-    sendVerificationOTP({ email, headers: await headers() }),
-  );
+  // Through Better Auth's handler, as the apps' route is, so its BotID check and rate limit apply.
+  const { error } = await safeAsync(() => sendSignInCode(email));
 
   if (error) {
     const expectedState = getExpectedVerificationOTPErrorState(error);
@@ -61,15 +72,5 @@ export async function sendVerificationOTPAction(
     throw error;
   }
 
-  if (!data.success) {
-    return { status: "error" };
-  }
-
-  const params = new URLSearchParams({ email });
-
-  if (redirectTo) {
-    params.set("redirectTo", redirectTo);
-  }
-
-  redirect(`/auth/otp?${params.toString()}`);
+  redirect(getOtpHref({ email, redirectTo }));
 }

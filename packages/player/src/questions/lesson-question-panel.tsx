@@ -1,97 +1,141 @@
 "use client";
 
+import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@zoonk/ui/components/sheet";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePlayerViewer } from "../player-context";
+import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
-import { LessonQuestionCopyAction } from "./lesson-question-copy-action";
 import {
   type LessonQuestionNavigation,
   LessonQuestionNavigationContext,
 } from "./lesson-question-navigation";
-import { type LessonQuestionPanelMetadata } from "./lesson-question-panel-types";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
+function LessonQuestionPanelDescription({
+  context,
+}: {
+  context: LessonQuestionController["state"]["context"];
+}) {
+  const t = useExtracted();
+
+  switch (context.kind) {
+    case "answer":
+      return t("Ask about your answer");
+    case "step":
+      return t("Ask about this screen");
+    case "chapter":
+      return t("Ask questions about this chapter");
+    case "lesson":
+      return t("Ask questions about this lesson");
+    case "mock":
+      return t("Ask questions about this mock exam");
+    case "plan":
+      return t("Ask questions about your plan");
+    case "subject":
+      return t("Ask questions about this subject");
+    case "item":
+      return t("Ask about this question");
+    default:
+      return context satisfies never;
+  }
+}
+
 function LessonQuestionPanelHeader({
   controller,
-  metadata,
+  identity,
 }: {
   controller: LessonQuestionController;
-  metadata: LessonQuestionPanelMetadata;
+  identity: TutorIdentity;
 }) {
   const t = useExtracted();
 
   return (
-    <SheetHeader className="gap-0 border-b px-3 py-3 sm:px-4">
-      <div className="flex items-center justify-between gap-2">
-        <SheetTitle>{t("Ask questions")}</SheetTitle>
-        <SheetClose
+    <DrawerHeader className="border-border gap-0 border-b px-4 pt-2.5 pb-3">
+      <div className="flex items-center gap-2.5">
+        <span
+          aria-hidden="true"
+          className="flex size-7 shrink-0 items-center justify-center *:size-7!"
+        >
+          {identity.avatar}
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <DrawerTitle className="truncate text-sm font-semibold">{identity.name}</DrawerTitle>
+          <DrawerDescription className="text-xs">
+            <LessonQuestionPanelDescription context={controller.state.context} />
+          </DrawerDescription>
+        </div>
+        <DrawerClose
           render={
             <Button
               aria-label={t("Close questions")}
-              className="-mr-1"
+              className="-mr-1.5"
               size="icon-sm"
               variant="ghost"
             />
           }
         >
           <XIcon aria-hidden="true" />
-        </SheetClose>
+        </DrawerClose>
       </div>
-      <div className="mt-0.5 -ml-2.5 self-stretch pr-2.5">
-        <LessonQuestionCopyAction controller={controller} metadata={metadata} />
-      </div>
-      <SheetDescription className="text-xs">
-        {controller.state.context.kind === "lesson"
-          ? t("Ask questions about this lesson")
-          : t("Part {current} of {total}", {
-              current: String(controller.state.context.stepIndex + 1),
-              total: String(metadata.lessonSteps.length),
-            })}
-      </SheetDescription>
-    </SheetHeader>
+    </DrawerHeader>
   );
 }
 
-export function LessonQuestionPanel({
+function getFinalFocus(): HTMLElement | true {
+  return getLessonFocusTarget() ?? true;
+}
+
+export function LessonQuestionDrawer({
+  identity,
   navigation,
-  metadata,
+  open,
+  quote,
 }: {
+  identity: TutorIdentity;
   navigation: LessonQuestionNavigation;
-  metadata: LessonQuestionPanelMetadata;
+  open: boolean;
+  quote?: React.ReactNode;
 }) {
   const controller = useLessonQuestionController();
-  const { isAuthenticated } = usePlayerViewer();
-  const { state } = controller;
+  const { canAskQuestions } = controller;
 
   return (
     <LessonQuestionNavigationContext value={navigation}>
-      <Sheet onOpenChange={(open) => !open && controller.close()} open={state.isOpen}>
-        <SheetContent
-          className="gap-0 outline-none data-[side=right]:w-full sm:max-w-md"
-          showCloseButton={false}
-          side="right"
+      <Drawer onOpenChange={(next) => !next && controller.close()} open={open}>
+        <DrawerPopup
+          backdropClassName="[--backdrop-opacity:0.4] dark:[--backdrop-opacity:0.4]"
+          className="h-[70dvh] max-h-[70dvh] outline-none"
+          data-slot="lesson-question-drawer"
+          finalFocus={getFinalFocus}
         >
-          <LessonQuestionPanelHeader controller={controller} metadata={metadata} />
+          <LessonQuestionPanelHeader controller={controller} identity={identity} />
 
-          <div className="min-h-0 flex-1">
-            <QuestionThread controller={controller} isAuthenticated={isAuthenticated} />
-          </div>
+          {quote}
 
-          {isAuthenticated && <QuestionComposer controller={controller} />}
-        </SheetContent>
-      </Sheet>
+          <DrawerContent className="min-h-0 flex-1 overflow-hidden px-0 pb-0">
+            <QuestionThread identity={identity} />
+          </DrawerContent>
+
+          {canAskQuestions && (
+            <QuestionComposer
+              className="px-3 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              controller={controller}
+            />
+          )}
+        </DrawerPopup>
+      </Drawer>
     </LessonQuestionNavigationContext>
   );
 }

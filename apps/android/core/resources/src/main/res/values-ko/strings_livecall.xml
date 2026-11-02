@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "livecall_channel": "38b312ca1fc7418446e6e5242819e590fe5d3abb27d8afed24bb7c40a22fbabb"
+}
+-->
+<resources>
+    <!-- The notification channel of an ongoing call with an AI character. -->
+    <string name="livecall_channel">대화</string>
+</resources>

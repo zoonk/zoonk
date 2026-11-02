@@ -1,10 +1,10 @@
+import { AdminSection } from "@/components/admin-section";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { getSubscriptionProviderLabel, getSubscriptionStatusLabel } from "@/lib/subscription";
 import { Badge } from "@zoonk/ui/components/badge";
-import { Separator } from "@zoonk/ui/components/separator";
 import { ChangePlanDialog } from "./change-plan-dialog";
-import { DetailField } from "./detail-field";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
 type UserSubscriptionRecord = NonNullable<UserSubscriptions["active"]>;
@@ -15,21 +15,19 @@ export async function UserSubscription({ userId }: { userId: string }) {
   const subscriptions = await getUserSubscriptions(userId);
 
   return (
-    <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Subscription</h3>
-        {canChangeSubscriptionPlan(subscriptions.active) && (
+    <AdminSection
+      action={
+        canChangeSubscriptionPlan(subscriptions.active) && (
           <ChangePlanDialog
             userId={userId}
             currentPlan={getCurrentSubscriptionPlan(subscriptions.active)}
           />
-        )}
-      </div>
-
-      <Separator />
-
+        )
+      }
+      title="Subscription"
+    >
       <UserSubscriptionDetails subscriptions={subscriptions} />
-    </section>
+    </AdminSection>
   );
 }
 
@@ -37,7 +35,7 @@ function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscri
   const subscription = subscriptions.active;
 
   return (
-    <dl className="mt-2">
+    <DetailFields>
       <DetailField label="Plan">
         <span className="capitalize">{subscription?.plan ?? "Free"}</span>
       </DetailField>
@@ -49,7 +47,7 @@ function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscri
       <IncompleteCheckoutField subscription={subscriptions.incomplete} />
       <LastCancellationField subscription={subscriptions.canceled} />
       <StripeCustomerField subscription={subscription} />
-    </dl>
+    </DetailFields>
   );
 }
 
@@ -188,10 +186,7 @@ function getCurrentSubscriptionPlan(subscription: UserSubscriptionRecord | null)
   return subscription?.plan ?? "free";
 }
 
-/**
- * Better Auth can schedule cancellation with an explicit timestamp or with the
- * current period end, so both fields participate in the admin lifecycle signal.
- */
+/** Better Auth schedules a cancellation by timestamp or at the period end, so both count. */
 function getScheduledCancellation(subscription: UserSubscriptionRecord | null) {
   if (!subscription?.cancelAt && !subscription?.cancelAtPeriodEnd) {
     return null;

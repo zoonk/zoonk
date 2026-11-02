@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="essay_your_essay">Your essay</string>
+    <string name="essay_your_answer">Your answer</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">Estimated score, from 0 to %1$s</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s of %2$s</string>
+    <string name="essay_criterion_formal_writing">Formal writing</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Topic and references</string>
+    <string name="essay_criterion_argument">Argument</string>
+    <string name="essay_criterion_cohesion">Cohesion</string>
+    <string name="essay_criterion_intervention">Intervention proposal</string>
+    <string name="essay_criterion_addressing">Addressing and parties</string>
+    <string name="essay_criterion_facts">Facts</string>
+    <string name="essay_criterion_legal_basis">Legal basis</string>
+    <string name="essay_criterion_requests">Requests</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
+    <string name="essay_criterion_closing">Closing and form</string>
+    <string name="essay_next_step">Next step</string>
+    <string name="essay_what_to_rewrite">What to rewrite</string>
+    <string name="essay_for_example">For example: %1$s</string>
+    <string name="essay_nothing_left">Nothing left to work on</string>
+    <string name="essay_full_marks">Every criterion has full marks in this estimate.</string>
+    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
+    <string name="essay_title">Writing practice</string>
+    <string name="essay_title_ap">Free response · AP scoring guidelines</string>
+    <string name="essay_title_enem">Essay · ENEM rubric</string>
+    <string name="essay_supporting_texts">Supporting texts</string>
+    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
+    <string name="essay_motivating_texts">Motivating texts</string>
+    <!-- The legal case an OAB written exam answer is about. -->
+    <string name="essay_the_case">The case</string>
+    <!-- The grade of the learner's last essay draft. -->
+    <string name="essay_last_grade">Your last grade</string>
+    <string name="essay_rewrite_label">Rewrite what needs work</string>
+    <plurals name="essay_words">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">You skipped this essay.</string>
+    <string name="essay_back_to_today">Back to Today</string>
+    <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">You\'ve reached your daily time limit. Your text stays here.</string>
+    <string name="essay_limit_reached">You\'ve used today\'s essay grades. Your text stays here; send it tomorrow.</string>
+    <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
+    <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
+    <string name="essay_skip_rewrite">Skip the rewrite</string>
+    <string name="essay_grading_button">Grading…</string>
+    <string name="essay_grade_rewrite">Grade the rewrite</string>
+    <string name="essay_send">Send for grading</string>
+    <string name="essay_leave_title">Leave for now?</string>
+    <string name="essay_leave_description">Your text stays on this device, here when you come back.</string>
+    <string name="essay_keep_writing">Keep writing</string>
+    <!-- %1$s is the criterion to work on next, such as "Argument". -->
+    <string name="essay_next_step_named">Next step: %1$s</string>
+    <string name="essay_see_grade">See the grade</string>
+    <string name="essay_too_short">Too short to grade</string>
+    <string name="essay_too_short_detail">Write the whole essay, then send it again.</string>
+    <string name="essay_rewrite">Rewrite</string>
+    <string name="essay_finish_failed">That didn\'t go through. Try again in a moment.</string>
+    <string name="essay_see_comments">See comments on every criterion</string>
+    <string name="essay_comments">Comments</string>
+    <string name="essay_proposal_elements">The five elements of the proposal</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
+    <string name="essay_element_agent">Who acts</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
+    <string name="essay_element_action">What they do</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
+    <string name="essay_element_means">By what means</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
+    <string name="essay_element_effect">To what end</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
+    <string name="essay_element_detail">A detail</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_present">Present</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_missing">Missing</string>
+</resources>

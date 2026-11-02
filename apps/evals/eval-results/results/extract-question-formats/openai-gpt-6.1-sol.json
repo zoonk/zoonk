@@ -1,0 +1,117 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [{ "kind": "numeric", "section": {} }],
+          "present": [
+            { "kind": "multipleChoice", "options": 4, "section": null, "select": null },
+            { "kind": "numeric", "section": {} }
+          ]
+        },
+        "id": "en-jee-choice-everywhere-numeric-section-b-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "The JEE-style practice test has Section A and Section B. In both Section A and Section B, multiple-choice questions offer four options; select one answer. Section B also contains numerical-value questions: type an integer answer.",
+              "title": "Practice test directions"
+            }
+          ],
+          "exam": "JEE-style practice test",
+          "parts": ["Section A", "Section B"]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "Facts 11/11. passages found 9/9", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Facts 11/11. passages found 9/9", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 11/11. passages found 9/9",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            { "kind": "multipleChoice", "passage": {}, "select": "all" },
+            { "description": {}, "kind": "numeric" },
+            { "kind": "multipleChoice", "passage": {}, "section": {} },
+            { "kind": "multipleChoice", "options": 4, "section": {} }
+          ],
+          "present": [
+            { "kind": "essay" },
+            { "kind": "multipleChoice", "options": 4, "section": {}, "select": null },
+            { "kind": "multipleChoice", "options": 5, "select": null },
+            { "kind": "multipleChoice", "passage": {}, "section": {}, "select": null },
+            { "kind": "multipleChoice", "options": 6, "section": {}, "select": 2 },
+            { "kind": "multipleChoice", "select": "all" },
+            { "kind": "numeric", "section": {} }
+          ]
+        },
+        "id": "en-gre-general-test-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "GRE General Test Structure",
+              "url": "https://www.ets.org/gre/test-takers/general-test/prepare/test-structure.html"
+            },
+            {
+              "title": "Practice Book for the Paper-delivered GRE General Test",
+              "url": "https://www.ets.org/content/dam/ets-india/pdfs/gre/paper-delivered-test-practice-book.pdf"
+            }
+          ],
+          "exam": "GRE General Test",
+          "parts": [
+            "Analytical Writing",
+            "Verbal Reasoning (Section 1)",
+            "Verbal Reasoning (Section 2)",
+            "Quantitative Reasoning (Section 1)",
+            "Quantitative Reasoning (Section 2)",
+            "Verbal Reasoning",
+            "Quantitative Reasoning"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [{ "kind": "multipleChoice" }],
+          "present": [{ "kind": "shortAnswer" }, { "kind": "essay" }]
+        },
+        "id": "pt-class-notes-in-passing-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Geografia – Climas do Brasil\n\nO clima equatorial é quente e úmido o ano todo. O semiárido tem chuvas escassas e mal distribuídas, e o subtropical tem as quatro estações bem definidas.\n\nMassas de ar: a Equatorial Continental traz umidade para o interior no verão, e a Polar Atlântica traz as frentes frias.\n\nAvisos: trabalho em dupla até quarta. Na avaliação de sexta, o professor disse que vai pedir para legendar o mapa dos climas e escrever um texto explicando a seca no semiárido.",
+              "title": "Anotações de geografia"
+            }
+          ],
+          "exam": "Avaliação de geografia"
+        }
+      }
+    }
+  ],
+  "taskId": "extract-question-formats"
+}

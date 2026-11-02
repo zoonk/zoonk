@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "listening_elapsed": "244eaa31c78d6d01c5bffdd340743cd1564621572f13bd2e529a54defe95e797",
+  "listening_failed": "15fa1c5b5594650c3dce24c102f467b73f9ff736b2ee52c2bb43ce2dd9baca58",
+  "listening_note_free": "c691d0eedce073e0b05c597f43f68305d729fc9a8c8842e1231950b2d4507098",
+  "listening_note_once": "2070844511661ca4c5d34cef8796d97423e0e31ca24a33d600bd23e553edac18",
+  "listening_note_one_more": "4919ca9b06ebd4e17bf53380ea0068f730695733df98f976f16c7af5bb9b6d25",
+  "listening_note_restarted": "f05c20b33da2d3ad861597854f2a5dd82568f2cd5e4680f68640f245b3a92ffa",
+  "listening_note_twice": "728a0f10eb1b001f622a956e53070ad2e2976b165cd4ed2fc93717f7f2558c5d",
+  "listening_note_used": "877c8f0f4f6b57b101f56cbd0ddc47fb26bebc56900ab1a901e366b7a0262f14",
+  "listening_play": "0e9b4b8b0cb9403024d2ff0385f1a46f055e4796e7baa8e06e15055cb04f5f6c",
+  "listening_play_again": "9718cfd6de892da206d4c63b507bcb00ce9043fc0f000f0d868dc090da65ec58",
+  "listening_playing": "4577cf7a5f138ea49bc7880b24b77dbb8e57313e02dfa462375a367415aea8c9",
+  "listening_playing_note": "6f418ea1a05b69aea324fa47430295cf12f0af24c8e4836e67effacc861dbb1d",
+  "listening_questions": "9b058ea4439c83aa1a5ace0853c352fb495c9cf6f6cfe0997be7718212406972",
+  "listening_recording": "5320bd24db56711f5f075d8d7c330760f29d59c9a3f1dcdd2d599b5eff219c53",
+  "listening_stop": "4a8ddbd5b4c28c57496102e27ba4f424c3977412bc966ad6bc0d57de02c808eb",
+  "listening_transcript": "cf25452f753ffbc595cc7b2ace1bf79bf0fa5163966bbcd6a8ed1ffd44638214"
+}
+-->
+<resources>
+    <string name="listening_recording">음성</string>
+    <string name="listening_play">음성 재생하기</string>
+    <string name="listening_play_again">다시 재생하기</string>
+    <string name="listening_playing">재생 중</string>
+    <string name="listening_stop">중지</string>
+    <!-- How far the recording played: "0:42 of 2:10". -->
+    <string name="listening_elapsed">%1$s / %2$s</string>
+    <string name="listening_note_free">원하는 만큼 다시 들어 보세요.</string>
+    <string name="listening_note_restarted">재생이 중간에 멈춰서 처음부터 한 번 더 들을 수 있어요.</string>
+    <string name="listening_note_used">재생 횟수를 모두 사용했어요. 들은 내용을 바탕으로 답해 보세요.</string>
+    <string name="listening_note_one_more">한 번 더 들을 수 있어요.</string>
+    <string name="listening_note_once">실제 시험처럼 한 번만 들을 수 있어요. 먼저 문제를 읽어 보세요.</string>
+    <string name="listening_note_twice">실제 시험처럼 두 번 들을 수 있어요. 먼저 문제를 읽어 보세요.</string>
+    <string name="listening_failed">녹음 파일을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
+    <string name="listening_playing_note">재생하고 있어요. 실제 시험처럼 일시 정지할 수 없어요.</string>
+    <plurals name="listening_questions">
+        <item quantity="other">녹음 내용에 관한 문제 (%d)</item>
+    </plurals>
+    <string name="listening_transcript">대본</string>
+</resources>

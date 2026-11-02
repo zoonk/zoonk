@@ -1,0 +1,109 @@
+import { describe, expect, it } from "vitest";
+import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
+import reading from "./_test-utils/cgu-2026-structure.json";
+import {
+  BIOLOGY,
+  CHEMISTRY,
+  EXANI_STRUCTURE,
+  MODULES,
+  PREMED,
+} from "./_test-utils/choice-blueprint";
+import { listExamChoiceViews } from "./exam-choice-views";
+
+const citation = { passage: "…", sourceId: "notice" };
+const LANGUAGES = "Linguagens, Códigos e suas Tecnologias";
+const FOREIGN = "Língua Estrangeira";
+
+function subject(name: string, questions: number | null, extra: object = {}) {
+  return { citation, name, questions, topics: [], weight: null, ...extra };
+}
+
+const enem: ExamStructure = {
+  formats: [{ citation, description: "Cinco alternativas", kind: "multipleChoice", options: 5 }],
+  mock: null,
+  rules: [],
+  subjects: [
+    subject(LANGUAGES, 45),
+    subject("Língua Inglesa", 5, { choiceGroup: FOREIGN, partOf: LANGUAGES, shortName: "Inglês" }),
+    subject("Língua Espanhola", 5, { choiceGroup: FOREIGN, partOf: LANGUAGES }),
+    subject("Matemática e suas Tecnologias", 45),
+  ],
+};
+
+describe(listExamChoiceViews, () => {
+  it("shows each choice's options and the learner's pick, none while unpicked", () => {
+    const [view] = listExamChoiceViews({
+      picks: {
+        examChoices: [{ group: FOREIGN, subjects: ["Língua Espanhola"] }],
+        examSubjects: [],
+      },
+      structure: enem,
+    });
+
+    expect(view).toMatchObject({
+      group: FOREIGN,
+      leftOut: { examPoints: null, examQuestions: 90, name: FOREIGN, points: null, questions: 5 },
+      options: [
+        { name: "Língua Inglesa", shortName: "Inglês" },
+        { name: "Língua Espanhola", shortName: null },
+      ],
+      subjects: ["Língua Espanhola"],
+      take: 1,
+    });
+
+    expect(
+      listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: enem })[0]
+        ?.subjects,
+    ).toStrictEqual([]);
+  });
+
+  it("asks for as many modules as candidates take, and says what two of them are worth", () => {
+    const exani = examStructureSchema.parse(EXANI_STRUCTURE);
+    const unpicked = { examChoices: [], examSubjects: [] };
+
+    const picked = {
+      examChoices: [{ group: MODULES, subjects: [BIOLOGY, CHEMISTRY] }],
+      examSubjects: [],
+    };
+
+    expect(listExamChoiceViews({ picks: unpicked, structure: exani })).toMatchObject([
+      {
+        group: MODULES,
+        leftOut: { examQuestions: 138, name: MODULES, questions: 48 },
+        subjects: [],
+        take: 2,
+      },
+    ]);
+
+    expect(listExamChoiceViews({ picks: picked, structure: exani })[0]?.subjects).toStrictEqual([
+      BIOLOGY,
+      CHEMISTRY,
+    ]);
+
+    const premedOnly = {
+      ...exani,
+      subjects: exani.subjects.map((item) =>
+        item.choiceGroup && item.name !== PREMED ? { ...item, questions: null } : item,
+      ),
+    };
+
+    expect(
+      listExamChoiceViews({ picks: unpicked, structure: premedOnly })[0]?.leftOut.questions,
+    ).toBeNull();
+  });
+
+  it("says an unpicked specialty leaves out its whole test, by the notice's counts and points", () => {
+    const cgu = examStructureSchema.parse(reading);
+
+    expect(
+      listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: cgu })[0]
+        ?.leftOut,
+    ).toStrictEqual({
+      examPoints: 360,
+      examQuestions: 170,
+      name: "Conhecimentos específicos (P3)",
+      points: 180,
+      questions: 90,
+    });
+  });
+});

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "i18n:lint": "eloqnt lint --strict",
-    "i18n": "eloqnt translate",
+    "i18n": "node scripts/add-missing-strings.mts && reuse-translations && eloqnt translate",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

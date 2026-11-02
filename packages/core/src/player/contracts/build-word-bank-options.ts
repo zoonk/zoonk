@@ -1,6 +1,17 @@
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import {
+  segmentLearnerWords,
+  segmentWords,
+  stripPunctuation,
+  trimPunctuation,
+} from "@zoonk/utils/string";
+import {
+  type StepContentByKind,
+  parseStepContent,
+  safeParseStepContent,
+} from "../../library/steps/contract/step-contract";
+import { getTileRomanization } from "./_utils/tile-romanization";
 import {
   type SerializedStep,
   type SerializedWord,
@@ -10,7 +21,6 @@ import { type DistractorWord } from "./translation-options";
 
 type WordDataInput = {
   audioUrl: string | null;
-  pronunciation: string | null;
   romanization: string | null;
   translation: string;
   word: string;
@@ -20,46 +30,37 @@ type WordMetadata = Omit<WordBankOption, "word">;
 
 const WORD_BANK_DISTRACTOR_LIMIT = 4;
 
-/**
- * Word-bank lookups should ignore punctuation and casing so the same visible token resolves
- * to one metadata entry regardless of where it came from.
- */
-function normalizeWordKey(word: string): string {
-  return stripPunctuation(word).toLowerCase().trim();
+/** Texts with the same key share one Word row and its audio. */
+export function normalizeWordKey({ language, word }: { language: string; word: string }): string {
+  return trimPunctuation(word).toLocaleLowerCase(language);
 }
 
-/**
- * Multi-word lesson entries can still supply metadata for their individual tokens. This
- * keeps canonical sentence chips hydrated even when the lesson stored a phrase as one word.
- */
-function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadata][] {
+function splitMultiWordEntries({
+  language,
+  lessonWord,
+}: {
+  language: string;
+  lessonWord: SerializedWord;
+}): [string, WordMetadata][] {
   const wordTokens = lessonWord.word.split(" ").filter(Boolean);
 
   if (wordTokens.length <= 1) {
     return [];
   }
 
-  const pronunciationTokens = lessonWord.pronunciation?.split(" ").filter(Boolean) ?? [];
   const romanizationTokens = lessonWord.romanization?.split(" ").filter(Boolean) ?? [];
-  const canSlicePronunciation = pronunciationTokens.length === wordTokens.length;
   const canSlice = romanizationTokens.length === wordTokens.length;
 
   return wordTokens.map((token, index) => [
-    normalizeWordKey(token),
+    normalizeWordKey({ language, word: token }),
     {
       audioUrl: null,
-      pronunciation: canSlicePronunciation ? (pronunciationTokens[index] ?? null) : null,
       romanization: canSlice ? (romanizationTokens[index] ?? null) : null,
       translation: null,
     },
   ]);
 }
 
-/**
- * Sentence-level token metadata is more precise for audio and romanization and can now
- * fill reading prompt hints. Existing lesson-word translations still win because those
- * are attached to the explicit lesson resource the learner is practicing.
- */
 function mergeWordMetadata({
   current,
   incoming,
@@ -69,64 +70,37 @@ function mergeWordMetadata({
 }): WordMetadata {
   return {
     audioUrl: incoming.audioUrl ?? current?.audioUrl ?? null,
-    pronunciation: incoming.pronunciation ?? current?.pronunciation ?? null,
     romanization: incoming.romanization ?? current?.romanization ?? null,
     translation: current?.translation ?? incoming.translation ?? null,
   };
 }
 
-/**
- * Different sources contribute metadata for the same visible token. Reducing them into a
- * final lookup keeps the merge rule immutable and makes the source order explicit: later
- * entries can refine earlier metadata without mutating shared state in place.
- */
-function getUniqueMetadataKeys(entries: readonly (readonly [string, WordMetadata])[]): string[] {
-  return [...new Set(entries.map(([key]) => key))];
-}
-
-/**
- * A token can collect metadata from lesson words, distractor words, and sentence-level
- * word data. Merging one key at a time keeps the precedence rule obvious and avoids
- * in-place mutation while these small arrays are being prepared for the player.
- */
-function getMergedWordMetadata(
-  entries: readonly (readonly [string, WordMetadata])[],
-  key: string,
-): WordMetadata {
-  return entries
-    .filter(([entryKey]) => entryKey === key)
-    .map(([, metadata]) => metadata)
-    .reduce((current, incoming) => mergeWordMetadata({ current, incoming }));
-}
-
-/**
- * Different sources contribute metadata for the same visible token. Building the final
- * lookup from stable keys keeps the merge deterministic without mutating a shared map.
- */
 function buildMergedWordMetadataLookup(
   entries: readonly (readonly [string, WordMetadata])[],
 ): Map<string, WordMetadata> {
-  return new Map(
-    getUniqueMetadataKeys(entries).map((key) => [key, getMergedWordMetadata(entries, key)]),
+  return entries.reduce(
+    (lookup, [key, incoming]) =>
+      lookup.set(key, mergeWordMetadata({ current: lookup.get(key), incoming })),
+    new Map<string, WordMetadata>(),
   );
 }
 
-/**
- * Canonical lesson words and hydrated distractor words share one metadata lookup. Sentence-
- * specific word metadata overrides both because it is the most precise source.
- */
-function buildWordMetadataLookup(params: {
+type WordOptionSources = {
   distractorWords: DistractorWord[];
+  language: string;
   lessonWords: SerializedWord[];
   sentenceWordMap: Map<string, WordDataInput>;
-}): Map<string, WordMetadata> {
+};
+
+function buildWordMetadataLookup(params: WordOptionSources): Map<string, WordMetadata> {
+  const { language } = params;
+
   const lessonEntries = params.lessonWords.flatMap((lessonWord) => [
-    ...splitMultiWordEntries(lessonWord),
+    ...splitMultiWordEntries({ language, lessonWord }),
     [
-      normalizeWordKey(lessonWord.word),
+      normalizeWordKey({ language, word: lessonWord.word }),
       {
         audioUrl: lessonWord.audioUrl,
-        pronunciation: lessonWord.pronunciation,
         romanization: lessonWord.romanization,
         translation: lessonWord.translation,
       },
@@ -136,23 +110,17 @@ function buildWordMetadataLookup(params: {
   const distractorEntries = params.distractorWords.map(
     (word) =>
       [
-        normalizeWordKey(word.word),
-        {
-          audioUrl: word.audioUrl,
-          pronunciation: word.pronunciation,
-          romanization: word.romanization,
-          translation: null,
-        },
+        normalizeWordKey({ language, word: word.word }),
+        { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
       ] as const,
   );
 
   const sentenceEntries = [...params.sentenceWordMap.values()].map(
     (word) =>
       [
-        normalizeWordKey(word.word),
+        normalizeWordKey({ language, word: word.word }),
         {
           audioUrl: word.audioUrl,
-          pronunciation: word.pronunciation,
           romanization: word.romanization,
           translation: word.translation || null,
         },
@@ -166,79 +134,117 @@ function buildWordMetadataLookup(params: {
   ]);
 }
 
-/**
- * Reading chips and word-bank tiles both need the same metadata lookup rule. Wrapping the
- * lookup keeps the exported builders focused on lesson-level behavior instead of map code.
- */
-function createWordOptionBuilder(params: {
-  distractorWords: DistractorWord[];
-  lessonWords: SerializedWord[];
-  sentenceWordMap: Map<string, WordDataInput>;
-}): (word: string) => WordBankOption {
+function createWordOptionBuilder(params: WordOptionSources): (word: string) => WordBankOption {
   const metadataLookup = buildWordMetadataLookup(params);
 
   return (word) => {
-    const metadata = metadataLookup.get(normalizeWordKey(word));
+    const metadata = metadataLookup.get(normalizeWordKey({ language: params.language, word }));
 
     return {
       audioUrl: metadata?.audioUrl ?? null,
-      pronunciation: metadata?.pronunciation ?? null,
-      romanization: metadata?.romanization ?? null,
+      romanization: getTileRomanization({ romanization: metadata?.romanization ?? null, word }),
       translation: metadata?.translation ?? null,
       word,
     };
   };
 }
 
-/**
- * Listening word banks intentionally stay as plain strings because learner-language
- * distractors do not get target-language enrichment.
- */
+/** Listening distractors are learner-language strings and must not receive target-language enrichment. */
 function emptyWordOption(word: string): WordBankOption {
-  return { audioUrl: null, pronunciation: null, romanization: null, translation: null, word };
+  return { audioUrl: null, romanization: null, translation: null, word };
 }
 
-/**
- * Sentence chips should use the same lookup path as reading word-bank options so the UI
- * never shows different romanization or audio metadata for the same token.
- */
-export function buildSentenceWordOptions(
-  sentence: string,
-  lessonWords: SerializedWord[],
-  distractorWords: DistractorWord[],
-  sentenceWordMap: Map<string, WordDataInput>,
-): WordBankOption[] {
-  const buildOption = createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap });
+/** Uses the same token metadata precedence as reading banks. */
+export function buildSentenceWordOptions({
+  sentence,
+  ...sources
+}: WordOptionSources & { sentence: string }): WordBankOption[] {
+  const buildOption = createWordOptionBuilder(sources);
   return segmentWords(sentence).map((word) => buildOption(word));
 }
 
+export type LessonLanguages = { language: string; targetLanguage: string };
+
+type BankSentence = { distractors: string[]; sentence: string };
+
+type BankStep = { content: unknown; kind: string; sentenceId: string | null };
+
 /**
- * Reading and listening both produce arrange-words banks. This small config object keeps
- * the public builder declarative and avoids branching logic during option construction.
+ * Distractor tiles keep the case they are written in: it is part of the spelling ("Hund", "Sie",
+ * "I"), and one that could start the sentence keeps the capital the real first word has.
  */
+function getReadingBankWords(sentence: BankSentence) {
+  return {
+    correctWords: segmentWords(sentence.sentence),
+    distractors: sanitizeDistractors({
+      distractors: sentence.distractors,
+      input: sentence.sentence,
+      shape: "single-word",
+    }),
+  };
+}
+
+function getFillBlankWords(content: StepContentByKind["fillBlank"]): string[] {
+  return [...content.answers, ...content.distractors];
+}
+
+type BankWordsInput = { sentences: ReadonlyMap<string, BankSentence> };
+
+function getTargetBankWords({ sentences, step }: BankWordsInput & { step: BankStep }): string[] {
+  const sentence = step.sentenceId ? sentences.get(step.sentenceId) : undefined;
+
+  if (step.kind === "reading" && sentence) {
+    const { correctWords, distractors } = getReadingBankWords(sentence);
+    return [...correctWords, ...distractors];
+  }
+
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const parsed = safeParseStepContent("fillBlank", step.content);
+  return parsed.success ? getFillBlankWords(parsed.data) : [];
+}
+
+/** The target-language words a lesson's reading and fill-in-the-blank tiles show, as their Word rows save them. */
+export function listTargetBankWords({
+  sentences,
+  steps,
+}: BankWordsInput & { steps: readonly BankStep[] }): string[] {
+  return steps
+    .flatMap((step) => getTargetBankWords({ sentences, step }))
+    .map((word) => trimPunctuation(word))
+    .filter(Boolean);
+}
+
+type WordBankConfig = {
+  correctWords: string[];
+  distractors: string[];
+  language: string;
+  usesTargetLanguageMetadata: boolean;
+};
+
 function getWordBankConfig(
   step: SerializedStep,
-): { correctWords: string[]; distractors: string[]; usesTargetLanguageMetadata: boolean } | null {
+  languages: LessonLanguages,
+): WordBankConfig | null {
   if (step.kind === "reading" && step.sentence) {
     return {
-      correctWords: segmentWords(step.sentence.sentence),
-      distractors: sanitizeDistractors({
-        distractors: step.sentence.distractors,
-        input: step.sentence.sentence,
-        shape: "single-word",
-      }),
+      ...getReadingBankWords(step.sentence),
+      language: languages.targetLanguage,
       usesTargetLanguageMetadata: true,
     };
   }
 
   if (step.kind === "listening" && step.sentence) {
     return {
-      correctWords: segmentWords(step.sentence.translation),
+      correctWords: segmentLearnerWords(step.sentence.translation),
       distractors: sanitizeDistractors({
         distractors: step.sentence.translationDistractors,
         input: step.sentence.translation,
-        shape: "single-word",
+        shape: "single-learner-word",
       }),
+      language: languages.language,
       usesTargetLanguageMetadata: false,
     };
   }
@@ -246,61 +252,71 @@ function getWordBankConfig(
   return null;
 }
 
-/**
- * Distractors only need one deterministic runtime guard now: never show a token that is
- * already part of the canonical answer.
- */
-function removeCanonicalWordCollisions(distractors: string[], correctWords: string[]): string[] {
-  const canonicalWordKeys = new Set(correctWords.map((word) => normalizeWordKey(word)));
+function removeCanonicalWordCollisions({
+  correctWords,
+  distractors,
+  language,
+}: {
+  correctWords: string[];
+  distractors: string[];
+  language: string;
+}): string[] {
+  const toKey = (word: string) => stripPunctuation(word).toLocaleLowerCase(language).trim();
+  const canonicalWordKeys = new Set(correctWords.map((word) => toKey(word)));
 
-  return distractors.filter((word) => !canonicalWordKeys.has(normalizeWordKey(word)));
+  return distractors.filter((word) => !canonicalWordKeys.has(toKey(word)));
 }
 
-/**
- * Lowercase visible distractors so generated capitalization cannot identify
- * which word-bank tiles are extra options.
- */
-function normalizeDistractorCasing(distractor: string): string {
-  return distractor.toLocaleLowerCase();
-}
-
-/**
- * `prepareLessonData` is the boundary that turns generated lesson resources
- * into the player payload. Capping here keeps the stored AI distractor set
- * intact while sending the UI four varied extra tiles instead of always taking
- * the first generated distractors.
- */
-function getVisibleDistractors(distractors: string[]): string[] {
-  return shuffle(distractors)
-    .slice(0, WORD_BANK_DISTRACTOR_LIMIT)
-    .map((distractor) => normalizeDistractorCasing(distractor));
-}
-
-/**
- * Builds the final arrange-words option list from canonical tokens plus stored direct
- * distractors. There is no semantic filtering, fallback lesson lookup, or local top-up.
- */
 export function buildWordBankOptions(
   step: SerializedStep,
   lessonWords: SerializedWord[],
   distractorWords: DistractorWord[],
   sentenceWordMap: Map<string, WordDataInput>,
+  languages: LessonLanguages,
 ): WordBankOption[] {
-  const config = getWordBankConfig(step);
+  const config = getWordBankConfig(step, languages);
 
   if (!config) {
     return [];
   }
 
-  const distractors = getVisibleDistractors(
-    removeCanonicalWordCollisions(config.distractors, config.correctWords),
+  const distractors = shuffle(removeCanonicalWordCollisions(config)).slice(
+    0,
+    WORD_BANK_DISTRACTOR_LIMIT,
   );
 
   const words = shuffle([...config.correctWords, ...distractors]);
 
   const buildOption = config.usesTargetLanguageMetadata
-    ? createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap })
+    ? createWordOptionBuilder({
+        distractorWords,
+        language: languages.targetLanguage,
+        lessonWords,
+        sentenceWordMap,
+      })
     : emptyWordOption;
 
   return words.map((word) => buildOption(word));
+}
+
+/** Only a language lesson loads target words, so other lessons' tiles stay silent. */
+export function buildFillBlankOptions({
+  step,
+  ...sources
+}: WordOptionSources & { step: SerializedStep }): WordBankOption[] {
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const content = parseStepContent("fillBlank", step.content);
+  const buildOption = createWordOptionBuilder(sources);
+
+  return shuffle(getFillBlankWords(content)).map((word) => {
+    const option = buildOption(word);
+    const romanization = content.romanizations?.[word];
+
+    return romanization
+      ? { ...option, romanization: getTileRomanization({ romanization, word }) }
+      : option;
+  });
 }

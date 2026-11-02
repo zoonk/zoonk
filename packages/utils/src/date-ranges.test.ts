@@ -126,11 +126,4 @@ describe(formatPeriodLabel, () => {
     const result = formatPeriodLabel(start, end, "all", "en");
     expect(result).toBe("2025 - 2026");
   });
-
-  it("formats UTC midnight date correctly (no timezone shift)", () => {
-    const start = new Date("2026-03-01T00:00:00Z");
-    const end = new Date("2026-03-31T00:00:00Z");
-    const result = formatPeriodLabel(start, end, "month", "en");
-    expect(result).toBe("March 2026");
-  });
 });

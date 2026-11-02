@@ -1,16 +1,93 @@
 import SwiftUI
 
+extension View {
+  /// The feedback form, its store kept with the screen that opens it: unfolding iPhone Duo makes
+  /// the sheet's content again, which would lose a half-written message or a send in flight.
+  func feedbackSheet(
+    isPresented: Binding<Bool>, context: FeedbackContext, isReport: Bool = false
+  ) -> some View {
+    modifier(FeedbackSheetPresenter(isPresented: isPresented, context: context, isReport: isReport))
+  }
+}
+
+private struct FeedbackSheetPresenter: ViewModifier {
+  @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Binding var isPresented: Bool
+  let context: FeedbackContext
+  let isReport: Bool
+
+  @State private var store: FeedbackFormStore?
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: isPresented, initial: true) { _, isShown in
+        store =
+          isShown
+          ? FeedbackFormStore(
+            api: FeedbackAPI.live(), context: context, session: session, learner: learner)
+          : nil
+      }
+      .sheet(item: $store, onDismiss: dismissed, content: form)
+  }
+
+  private func dismissed() {
+    isPresented = false
+  }
+
+  private func form(_ store: FeedbackFormStore) -> some View {
+    FeedbackForm(store: store, isReport: isReport)
+      .accessibilitySizeStyles()
+  }
+}
+
 struct FeedbackSheet: View {
+  @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let api: any FeedbackAPIClient
+  var context: FeedbackContext?
+  var isReport = false
+
+  var body: some View {
+    OwnedFeedbackForm(
+      store: FeedbackFormStore(api: api, context: context, session: session, learner: learner),
+      isReport: isReport)
+  }
+}
+
+private struct OwnedFeedbackForm: View {
+  @State var store: FeedbackFormStore
+  let isReport: Bool
+
+  var body: some View {
+    FeedbackForm(store: store, isReport: isReport)
+  }
+}
+
+extension FeedbackFormStore: Identifiable {
+  /// Only a visitor or a guest, whose account has no real email, types an email to be answered at.
+  convenience init(
+    api: any FeedbackAPIClient, context: FeedbackContext?, session: SessionStore,
+    learner: LearnerSummaryStore
+  ) {
+    self.init(
+      api: api, context: context,
+      defaultEmail: learner.summary.value?.identity.isAnonymous == true
+        ? nil : session.account?.user.email,
+      token: session.authenticatedSession?.bearerToken)
+  }
+
+  var asksForEmail: Bool {
+    defaultEmail.isEmpty
+  }
+}
+
+private struct FeedbackForm: View {
   @Environment(\.dismiss) private var dismiss
   @FocusState private var focusedField: FeedbackField?
-  @State private var store: FeedbackFormStore
-
-  init(api: any FeedbackAPIClient, defaultEmail: String? = nil) {
-    _store = State(
-      initialValue: FeedbackFormStore(
-        api: api,
-        defaultEmail: defaultEmail))
-  }
+  @Bindable var store: FeedbackFormStore
+  let isReport: Bool
 
   var body: some View {
     NavigationStack {
@@ -22,31 +99,37 @@ struct FeedbackSheet: View {
         }
       }
       .navigationTitle(
-        Text(
-          "Feedback",
-          tableName: "Feedback",
-          comment: "Navigation title for the feedback form.")
+        isReport
+          ? Text(
+            "Report a problem", tableName: "Feedback",
+            comment: "Navigation title for the form reporting a problem with a page")
+          : Text(
+            "Send feedback",
+            tableName: "Feedback",
+            comment: "Navigation title for the feedback form.")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(action: dismiss.callAsFunction) {
-            if store.state == .sent {
+        if store.state == .sent {
+          ToolbarItem(placement: .confirmationAction) {
+            Button(action: dismiss.callAsFunction) {
               Text(
                 "Done",
                 tableName: "Feedback",
                 comment: "Dismisses the feedback success confirmation.")
-            } else {
+            }
+          }
+        } else {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(action: dismiss.callAsFunction) {
               Text(
                 "Cancel",
                 tableName: "Feedback",
                 comment: "Dismisses the feedback form without sending it.")
             }
+            .disabled(store.state == .submitting)
           }
-          .disabled(store.state == .submitting)
-        }
 
-        if store.state != .sent {
           ToolbarItem(placement: .confirmationAction) {
             Button(action: submit) {
               if store.state == .submitting {
@@ -76,75 +159,79 @@ struct FeedbackSheet: View {
 
   private var form: some View {
     Form {
-      Section {
-        Text(
-          "Share feedback, ask a question, or tell us what we could improve.",
-          tableName: "Feedback",
-          comment: "Introduction shown above the feedback fields."
-        )
-        .foregroundStyle(.secondary)
+      if !isReport {
+        Section {
+          Text(
+            "Found a problem or have an idea? Tell us below or email hello@zoonk.com.",
+            tableName: "Feedback",
+            comment: "Introduction shown above the feedback fields."
+          )
+          .foregroundStyle(.secondary)
+          .listRowBackground(Color.clear)
+        }
+      }
+
+      if store.asksForEmail {
+        Section {
+          TextField(
+            text: $store.email,
+            prompt: Text(
+              "you@example.com",
+              tableName: "Feedback",
+              comment: "Example email address in the feedback form.")
+          ) {
+            Text(
+              "Email address",
+              tableName: "Feedback",
+              comment: "Email field label in the feedback form.")
+          }
+          .focused($focusedField, equals: .email)
+          .textInputAutocapitalization(.never)
+          .keyboardType(.emailAddress)
+          .autocorrectionDisabled()
+          .textContentType(.emailAddress)
+          .submitLabel(.next)
+          .onSubmit {
+            focusedField = .message
+          }
+          .accessibilityLabel(
+            Text(
+              "Email address",
+              tableName: "Feedback",
+              comment: "Email field label in the feedback form."))
+        } footer: {
+          Text(
+            "We'll use this email to contact you.",
+            tableName: "Feedback",
+            comment: "Explains why the feedback form asks for an email address.")
+        }
       }
 
       Section {
-        TextField(
-          text: $store.email,
-          prompt: Text(
-            "you@example.com",
-            tableName: "Feedback",
-            comment: "Example email address in the feedback form.")
-        ) {
-          Text(
-            "Email address",
-            tableName: "Feedback",
-            comment: "Email field label in the feedback form.")
-        }
-        .focused($focusedField, equals: .email)
-        .textInputAutocapitalization(.never)
-        .keyboardType(.emailAddress)
-        .autocorrectionDisabled()
-        .textContentType(.emailAddress)
-        .submitLabel(.next)
-        .onSubmit {
-          focusedField = .message
-        }
-        .accessibilityLabel(
-          Text(
-            "Email address",
-            tableName: "Feedback",
-            comment: "Email field label in the feedback form."))
-      } footer: {
-        Text(
-          "We'll use this email to contact you.",
-          tableName: "Feedback",
-          comment: "Explains why the feedback form asks for an email address.")
-      }
-
-      Section {
-        TextField(
+        MultilineTextField(
           text: $store.message,
           prompt: Text(
-            "How can we help?",
+            "How can we help you?",
             tableName: "Feedback",
             comment: "Placeholder in the feedback message field."),
-          axis: .vertical
-        ) {
-          Text(
+          label: Text(
             "Message",
             tableName: "Feedback",
             comment: "Message field label in the feedback form.")
-        }
+        )
         .focused($focusedField, equals: .message)
         .lineLimit(5...10)
-        .accessibilityLabel(
-          Text(
-            "Message",
-            tableName: "Feedback",
-            comment: "Message field label in the feedback form."))
       } footer: {
-        Text(
-          "Please provide as much detail as possible.",
-          tableName: "Feedback",
-          comment: "Guidance below the feedback message field.")
+        if store.attachesScreen {
+          Label {
+            Text(
+              "This screen is attached",
+              tableName: "Feedback",
+              comment: "Says the message is sent with the page it was written on")
+          } icon: {
+            Image(systemName: "paperclip")
+          }
+        }
       }
 
       if case .failed(let failure) = store.state {
@@ -154,7 +241,7 @@ struct FeedbackSheet: View {
           } icon: {
             Image(systemName: "exclamationmark.triangle")
           }
-          .foregroundStyle(.red)
+          .foregroundStyle(.destructive)
           .accessibilityAddTraits(.isStaticText)
         }
       }
@@ -172,18 +259,14 @@ struct FeedbackSheet: View {
     ContentUnavailableView {
       Label {
         Text(
-          "Thanks for your feedback",
+          "Thanks! We got your message.",
           tableName: "Feedback",
-          comment: "Confirmation title after feedback is sent.")
+          comment: "Confirmation after feedback is sent.")
       } icon: {
         Image(systemName: "checkmark.circle.fill")
-          .foregroundStyle(.green)
+          .foregroundStyle(.success)
+          .accessibilityHidden(true)
       }
-    } description: {
-      Text(
-        "Your message was sent.",
-        tableName: "Feedback",
-        comment: "Confirmation message after feedback is sent.")
     }
   }
 

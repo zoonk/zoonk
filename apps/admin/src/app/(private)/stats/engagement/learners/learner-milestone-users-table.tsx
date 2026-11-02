@@ -1,4 +1,5 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { type LearnerMilestoneUser } from "@/data/stats/get-learner-milestones";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
@@ -10,12 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
-/**
- * The table focuses on the metrics that explain why each learner matched the
- * selected milestone, while the user name remains the link into account detail.
- */
 export function LearnerMilestoneUsersTable({
   emptyMessage,
   users,
@@ -28,43 +24,31 @@ export function LearnerMilestoneUsersTable({
   }
 
   return (
-    <div className="rounded-lg border">
-      <Table>
-        <TableCaption className="sr-only">Learners matching the selected milestone</TableCaption>
-        <LearnerMilestoneUsersTableHeader />
+    <Table>
+      <TableCaption className="sr-only">Learners matching the selected milestone</TableCaption>
+      <LearnerMilestoneUsersTableHeader />
 
-        <TableBody>
-          {users.map((user) => (
-            <LearnerMilestoneUserRow key={user.id} user={user} />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+      <TableBody>
+        {users.map((user) => (
+          <LearnerMilestoneUserRow key={user.id} user={user} />
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
-/**
- * The skeleton reuses the real header so column labels stay in one place while
- * placeholder rows mimic the loaded table body.
- */
 export function LearnerMilestoneUsersTableSkeleton() {
   return (
-    <AdminTableSkeleton>
-      <Table>
-        <LearnerMilestoneUsersTableHeader />
+    <Table>
+      <LearnerMilestoneUsersTableHeader />
 
-        <AdminTableSkeletonRows>
-          <LearnerMilestoneSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+      <AdminTableSkeletonRows>
+        <LearnerMilestoneSkeletonRow />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }
 
-/**
- * The loaded table and skeleton need identical columns. Sharing the header
- * avoids maintaining copy and alignment in two separate render paths.
- */
 function LearnerMilestoneUsersTableHeader() {
   return (
     <TableHeader>
@@ -80,10 +64,6 @@ function LearnerMilestoneUsersTableHeader() {
   );
 }
 
-/**
- * A separate row component keeps the skeleton table readable without deep JSX
- * nesting in the fallback wrapper.
- */
 function LearnerMilestoneSkeletonRow() {
   return (
     <TableRow>
@@ -112,18 +92,14 @@ function LearnerMilestoneSkeletonRow() {
   );
 }
 
-/**
- * Rows make the user identity clickable and keep the milestone numbers aligned
- * for fast scanning across the two related completion metrics.
- */
 function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="block" href={`/users/${user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${user.id}`} prefetch>
           <span className="font-medium">{user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
 
       <TableCell className="text-right tabular-nums">
@@ -135,16 +111,19 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
       <TableCell className="text-right tabular-nums">
         {user.totalBrainPower.toLocaleString()}
       </TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(user.lastCompletedAt)}</TableCell>
+      <TableCell className="text-muted-foreground">
+        {formatLearnerDate(user.lastLearningDate)}
+      </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 
-/**
- * Admin tables use compact date-only formatting because the surrounding column
- * label already explains which timestamp is being shown.
- */
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString();
+}
+
+/** Learner-local dates are stored as UTC midnight, so UTC shows the day the learner saw. */
+function formatLearnerDate(date: Date) {
+  return new Date(date).toLocaleDateString(undefined, { timeZone: "UTC" });
 }

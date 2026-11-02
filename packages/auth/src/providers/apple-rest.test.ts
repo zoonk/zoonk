@@ -36,6 +36,7 @@ describe("Apple REST authentication", () => {
     await expect(
       exchangeNativeAppleAuthorizationCode({
         authorizationCode: "single-use-code",
+        clientIdentifier: configuration.appBundleIdentifier,
         dependencies: { configuration, getClientSecret, request },
       }),
     ).resolves.toStrictEqual({
@@ -58,6 +59,39 @@ describe("Apple REST authentication", () => {
     expect(body.get("code")).toBe("single-use-code");
     expect(body.get("grant_type")).toBe("authorization_code");
     expect(body.has("redirect_uri")).toBe(false);
+  });
+
+  it("exchanges a code from Apple's authorize page with the Services ID and its redirect URI", async () => {
+    getClientSecret.mockResolvedValue("web-client-secret");
+
+    request.mockResolvedValue(
+      Response.json({
+        access_token: "apple-access-token",
+        expires_in: 3600,
+        id_token: "apple-id-token",
+        refresh_token: "apple-refresh-token",
+        token_type: "Bearer",
+      }),
+    );
+
+    await exchangeNativeAppleAuthorizationCode({
+      authorizationCode: "single-use-code",
+      clientIdentifier: configuration.clientId,
+      dependencies: { configuration, getClientSecret, request },
+      redirectURI: "https://api.zoonk.com/auth/apple/android",
+    });
+
+    expect(getClientSecret).toHaveBeenCalledExactlyOnceWith({
+      clientIdentifier: configuration.clientId,
+      configuration,
+    });
+
+    const [, options] = request.mock.calls[0] ?? [];
+    const body = new URLSearchParams(options?.body as string);
+
+    expect(body.get("client_id")).toBe(configuration.clientId);
+    expect(body.get("client_secret")).toBe("web-client-secret");
+    expect(body.get("redirect_uri")).toBe("https://api.zoonk.com/auth/apple/android");
   });
 
   it("revokes a refresh token with the same native client identifier", async () => {
@@ -84,6 +118,7 @@ describe("Apple REST authentication", () => {
     await expect(
       exchangeNativeAppleAuthorizationCode({
         authorizationCode: "expired-code",
+        clientIdentifier: configuration.appBundleIdentifier,
         dependencies: { configuration, getClientSecret, request },
       }),
     ).rejects.toMatchObject({
@@ -97,6 +132,7 @@ describe("Apple REST authentication", () => {
     await expect(
       exchangeNativeAppleAuthorizationCode({
         authorizationCode: "single-use-code",
+        clientIdentifier: configuration.appBundleIdentifier,
         dependencies: { configuration, getClientSecret, request },
       }),
     ).rejects.toMatchObject({ reason: "unavailable" } satisfies Partial<AppleAuthorizationError>);

@@ -1,0 +1,49 @@
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withApiImageUrls } from "@/lib/file-urls";
+import { learnerAccessError } from "@/lib/learner-errors";
+import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { readBody, readPathParams } from "@/lib/request-input";
+import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
+import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
+import { submitChapterTestOut } from "@zoonk/core/learner/test-out/submit";
+import { type NextRequest, NextResponse } from "next/server";
+
+type TestOutContext = RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test-out">;
+
+async function getTestOut(_request: Request, context: TestOutContext) {
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
+
+  const result = await getChapterTestOut(path);
+
+  if (result.status === "nothingToSkip") {
+    return NextResponse.json(result);
+  }
+
+  if (result.status !== "ready") {
+    return learnerAccessError(result.status);
+  }
+
+  return NextResponse.json(withApiImageUrls(result.testOut));
+}
+
+async function submitTestOut(request: NextRequest, context: TestOutContext) {
+  const [body, path] = await Promise.all([
+    readBody(request, chapterTestOutInputSchema),
+    readPathParams(context, goalChapterPathParamsSchema),
+  ]);
+
+  const result = await submitChapterTestOut({ ...path, input: body });
+
+  if (result.status === "nothingToSkip") {
+    return NextResponse.json(result);
+  }
+
+  if (result.status !== "ready") {
+    return learnerAccessError(result.status);
+  }
+
+  return NextResponse.json(result.outcome);
+}
+
+export const GET = withApiErrorBoundary(getTestOut);
+export const POST = withApiErrorBoundary(submitTestOut);

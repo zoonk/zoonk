@@ -31,7 +31,6 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
     hasRequiredConfiguration
   }
 
-  /// Presents Google's supported native authorization flow and returns the signed ID token that Better Auth verifies on the server.
   func signIn(from anchor: GoogleAuthenticationAnchor) async throws -> String {
     guard isAvailable else {
       throw GoogleAuthenticationError.unavailable
@@ -57,17 +56,15 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
     }
   }
 
-  /// Removes Google's local credential after Zoonk signs out so the SDK cannot silently reuse a provider session that the app no longer represents.
   func signOut() {
     GIDSignIn.sharedInstance.signOut()
   }
 
-  /// Forwards the custom-scheme OAuth callback to the SDK instead of parsing provider credentials in product code.
   func handle(_ url: URL) {
     _ = GIDSignIn.sharedInstance.handle(url)
   }
 
-  /// Prevents the provider SDK from raising an Objective-C exception when a developer has not supplied the public OAuth build settings yet.
+  /// The SDK raises an Objective-C exception without the public OAuth build settings.
   private var hasRequiredConfiguration: Bool {
     guard
       let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String,
@@ -82,7 +79,7 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
     return hasCallbackScheme(for: clientID)
   }
 
-  /// Confirms the reversed client identifier was embedded as a URL scheme so Google can return from the browser without crashing the SDK flow.
+  /// The SDK flow crashes when the reversed client ID isn't a registered URL scheme.
   private func hasCallbackScheme(for clientID: String) -> Bool {
     guard
       let urlTypes = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes")
@@ -98,7 +95,6 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
     return registeredSchemes.contains(callbackScheme)
   }
 
-  /// Starts the iOS flow from the controller currently presenting the account sheet.
   private func providerSignInResult(from anchor: GoogleAuthenticationAnchor) async throws
     -> GIDSignInResult
   {
@@ -114,7 +110,6 @@ struct GoogleAuthenticationClient: GoogleAuthenticating {
 }
 
 extension UIViewController {
-  /// Follows the active presentation chain so Google's system sheet is anchored to the account sheet the user interacted with.
   fileprivate var topPresentedViewController: UIViewController {
     presentedViewController?.topPresentedViewController ?? self
   }

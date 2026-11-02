@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "audio_check_failed": "9653d7a0063ba4d4e5fa478146aab4ea2e4a73fa53a6d3a2bac56fee216273c7",
+  "audio_checking": "d6df13ca1bcf3c2f49ba8af0adec4eaa00100b2b72f1d987ae13416659db8118",
+  "audio_checking_slow": "3755b414776afeb9af9d85d4db6aabc8ae955d7f17f6117bf8b766e7d32cc914",
+  "audio_did_not_play": "557643e5074bbdca402951dbe843856ac0a121d25a69e04e578c38ba5e98ac91",
+  "audio_getting_ready": "fec41db744ca04e6e16e3e3e112ccaa9ff09df363e1bb9bbd54334c127544fc8",
+  "audio_here_is_what_it_says": "38fa4ce53cff2e983ca7282512e401ebd563073439f9ae16355d16fbdcd3c90a",
+  "audio_listening": "8373e8ba0c1f3d230368f8b9d5580866acb909a9e95c0261c21843ef6c5b6e9f",
+  "audio_microphone_off_answer": "d756b4aecace22aeaf90a26556581124e72fd5b4ef74c4c2d14057f35fb30d66",
+  "audio_microphone_off_title": "c9682e144fb4b557c387e784154f9f4e7e399b41e18489b760ffdc42cc25a6f2",
+  "audio_no_speech": "bc7a4777dd617d1c7ed962574d0738e21a94681a320f981fcbcea26ad907174c",
+  "audio_open_settings": "254d1e1928829c039ff9d74a1077a1b6447f53c19457421aa1e950d51eed3677",
+  "audio_record": "e5e63c7b203b5ffb642aa74f3aab779ae4aab1e8d3375505d85bcffb87c1483e",
+  "audio_record_stop": "7816575b06d1910b02636e2ea15967cd543e5d433854723fad77ca7eae90fd2e",
+  "audio_say_it": "c9c35f34188f528e7e7c70b5c5d5e3e8b1efaeb2b5b90aeb6aee5f4db19b738c",
+  "audio_stop": "cc8ccf05f451de2348bf05c85d5fb4138c8127e8934c54dc5634b80869958b43",
+  "audio_try_again": "a6c3df419b992d78cfbc3cb8d83a46b58dab24f37a2a11511c3f2533f97ef874",
+  "audio_try_again_label": "239b186981b64b8ce4f39a4ca49982a426a2d7d90bda85cb6e5c57e7b10ca1bf"
+}
+-->
+<resources>
+    <string name="audio_getting_ready">Przygotowujemy nagranie…</string>
+    <string name="audio_stop">Zatrzymaj odtwarzanie</string>
+    <string name="audio_try_again_label">Odtwórz ponownie</string>
+    <string name="audio_did_not_play">Nie udało się odtworzyć nagrania.</string>
+    <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
+    <string name="audio_here_is_what_it_says">%1$s Oto treść nagrania:</string>
+    <string name="audio_try_again">Spróbuj ponownie</string>
+    <string name="audio_record">Nagraj</string>
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <string name="audio_record_stop">Zatrzymaj</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
+    <string name="audio_listening">Słuchamy… Dotknij „Zatrzymaj”, aby sprawdzić odpowiedź.</string>
+    <string name="audio_checking">Sprawdzamy…</string>
+    <string name="audio_checking_slow">Nadal sprawdzamy. Trwa to dłużej niż zwykle.</string>
+    <string name="audio_no_speech">Nie usłyszeliśmy żadnych słów. Spróbuj ponownie.</string>
+    <string name="audio_check_failed">Tym razem nie udało nam się sprawdzić twojej odpowiedzi. Spróbuj ponownie.</string>
+    <string name="audio_say_it">Naciśnij przycisk i powiedz to na głos</string>
+    <string name="audio_microphone_off_title">Mikrofon jest wyłączony</string>
+    <string name="audio_microphone_off_answer">Włącz dostęp do mikrofonu dla Zoonka w ustawieniach, aby odpowiadać na głos.</string>
+    <string name="audio_open_settings">Otwórz ustawienia</string>
+</resources>

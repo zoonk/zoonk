@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createGoal } from "./guests/_test-utils/learner-data";
 import { reauthorizeAppleForAccountDeletion, signInWithNativeApple } from "./native-apple";
 
 const APPLE_ISSUER = "https://appleid.apple.com";
@@ -9,6 +10,7 @@ const APPLE_PROVIDER_ID = "apple";
 const mocks = vi.hoisted(() => ({
   enforceSignInRateLimit: vi.fn(),
   exchangeAuthorizationCode: vi.fn(),
+  linkGuest: vi.fn(),
   revokeToken: vi.fn(),
   signInExistingAppleAccount: vi.fn(),
   signInNativeAppleAccount: vi.fn(),
@@ -17,6 +19,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("./native-apple-session", () => ({
   enforceNativeAppleSignInRateLimit: mocks.enforceSignInRateLimit,
+  linkNativeAppleGuest: mocks.linkGuest,
   signInWithExistingAppleAccount: mocks.signInExistingAppleAccount,
   signInWithNativeAppleAccount: mocks.signInNativeAppleAccount,
 }));
@@ -39,10 +42,21 @@ vi.mock("./providers/apple-token", () => ({
 
 const credentials = {
   authorizationCode: "single-use-code",
+  client: "app",
   idToken: "native-identity-token",
   nonce: "raw-nonce",
   user: { email: "learner@example.com", name: { firstName: "Ada", lastName: "Lovelace" } },
-};
+} as const;
+
+/** The iOS app signs in with its bundle identifier; the Android app with the web Services ID. */
+const CLIENTS = [
+  { client: "app", clientIdentifier: "com.zoonk.dev", redirectURI: undefined },
+  {
+    client: "web",
+    clientIdentifier: "com.zoonk.web",
+    redirectURI: expect.stringMatching(/\/auth\/apple\/android$/u),
+  },
+] as const;
 
 const authorization = {
   accessToken: "apple-access-token",
@@ -57,10 +71,10 @@ const nativeSignInRequest = {
   requestURL: "http://localhost:4000/v1/sessions/apple",
 };
 
-/**
- * Uses persisted UUIDs in mocked provider responses so rollback tests exercise
- * real Prisma relationships instead of inventing a parallel database model.
- */
+function createSignInRequest(client: (typeof CLIENTS)[number]["client"]) {
+  return { ...nativeSignInRequest, credentials: { ...credentials, client } };
+}
+
 function createTestUser() {
   const id = randomUUID();
 
@@ -69,20 +83,12 @@ function createTestUser() {
   });
 }
 
-/**
- * Represents the Apple link that Better Auth would have persisted before the
- * native orchestration verifies ownership and stores provider credentials.
- */
 function createAppleAccount({ subject, userId }: { subject: string; userId: string }) {
   return prisma.account.create({
     data: { accountId: subject, providerId: APPLE_PROVIDER_ID, userId },
   });
 }
 
-/**
- * Persists the session returned by the mocked Better Auth boundary so every
- * cleanup assertion observes the production cascade and unique-token behavior.
- */
 async function createSessionResponse({ userId }: { userId: string }) {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
   const token = `native-apple-${randomUUID()}`;
@@ -99,10 +105,6 @@ async function createSessionResponse({ userId }: { userId: string }) {
   };
 }
 
-/**
- * Gives both Apple identity-token checks one request-unique subject so durable
- * accounts left by other integration tests cannot affect exact-owner lookup.
- */
 function verifySubject(subject: string) {
   mocks.verifyIdentityToken.mockResolvedValue({ issuer: APPLE_ISSUER, subject });
 }
@@ -114,6 +116,9 @@ describe(signInWithNativeApple, () => {
     // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
     mocks.enforceSignInRateLimit.mockResolvedValue(undefined);
     mocks.exchangeAuthorizationCode.mockResolvedValue(authorization);
+
+    // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
+    mocks.linkGuest.mockResolvedValue(undefined);
 
     // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
     mocks.revokeToken.mockResolvedValue(undefined);
@@ -136,39 +141,56 @@ describe(signInWithNativeApple, () => {
     expect(mocks.signInNativeAppleAccount).not.toHaveBeenCalled();
   });
 
-  it("persists Apple's exchanged tokens on the exact verified account", async () => {
-    const subject = `apple-${randomUUID()}`;
-    const user = await createTestUser();
+  it.each(CLIENTS)(
+    "persists Apple's exchanged tokens on the exact verified account ($client)",
+    async ({ client, clientIdentifier, redirectURI }) => {
+      const subject = `apple-${randomUUID()}`;
+      const user = await createTestUser();
 
-    const [account, sessionResponse] = await Promise.all([
-      createAppleAccount({ subject, userId: user.id }),
-      createSessionResponse({ userId: user.id }),
-    ]);
+      const [account, sessionResponse] = await Promise.all([
+        createAppleAccount({ subject, userId: user.id }),
+        createSessionResponse({ userId: user.id }),
+      ]);
 
-    verifySubject(subject);
+      verifySubject(subject);
 
-    mocks.signInNativeAppleAccount.mockResolvedValue({
-      changes: { sessionToken: sessionResponse.token },
-      response: sessionResponse,
-      success: true,
-    });
+      mocks.signInNativeAppleAccount.mockResolvedValue({
+        changes: { sessionToken: sessionResponse.token },
+        response: sessionResponse,
+        success: true,
+      });
 
-    await expect(signInWithNativeApple(nativeSignInRequest)).resolves.toStrictEqual(
-      sessionResponse,
-    );
+      const request = createSignInRequest(client);
 
-    const persistedAccount = await prisma.account.findUniqueOrThrow({ where: { id: account.id } });
-    expect(persistedAccount.accessToken).toBe(authorization.accessToken);
-    expect(persistedAccount.idToken).toBe(authorization.idToken);
-    expect(persistedAccount.refreshToken).toBe(authorization.refreshToken);
-    expect(persistedAccount.accessTokenExpiresAt).toBeInstanceOf(Date);
-    expect(mocks.revokeToken).not.toHaveBeenCalled();
+      await expect(signInWithNativeApple(request)).resolves.toStrictEqual(sessionResponse);
 
-    expect(mocks.signInNativeAppleAccount).toHaveBeenCalledExactlyOnceWith({
-      credentials,
-      headers: nativeSignInRequest.headers,
-    });
-  });
+      const persistedAccount = await prisma.account.findUniqueOrThrow({
+        where: { id: account.id },
+      });
+
+      expect(persistedAccount.accessToken).toBe(authorization.accessToken);
+      expect(persistedAccount.idToken).toBe(authorization.idToken);
+      expect(persistedAccount.refreshToken).toBe(authorization.refreshToken);
+      expect(persistedAccount.accessTokenExpiresAt).toBeInstanceOf(Date);
+      expect(mocks.revokeToken).not.toHaveBeenCalled();
+
+      expect(mocks.verifyIdentityToken.mock.calls).toStrictEqual([
+        [{ clientIdentifier, nonce: credentials.nonce, token: credentials.idToken }],
+        [{ clientIdentifier, token: authorization.idToken }],
+      ]);
+
+      expect(mocks.exchangeAuthorizationCode).toHaveBeenCalledExactlyOnceWith({
+        authorizationCode: credentials.authorizationCode,
+        clientIdentifier,
+        redirectURI,
+      });
+
+      expect(mocks.signInNativeAppleAccount).toHaveBeenCalledExactlyOnceWith({
+        credentials: request.credentials,
+        headers: request.headers,
+      });
+    },
+  );
 
   it("selects the verified Apple identity by provider and subject", async () => {
     const subject = `apple-${randomUUID()}`;
@@ -222,16 +244,150 @@ describe(signInWithNativeApple, () => {
     });
   });
 
-  it("rejects an Apple account that belongs to another Zoonk user", async () => {
-    const subject = `apple-${randomUUID()}`;
-    const [sessionUser, accountOwner] = await Promise.all([createTestUser(), createTestUser()]);
+  it.each(CLIENTS)(
+    "rejects an Apple account that belongs to another Zoonk user ($client)",
+    async ({ client, clientIdentifier }) => {
+      const subject = `apple-${randomUUID()}`;
+      const [sessionUser, accountOwner] = await Promise.all([createTestUser(), createTestUser()]);
 
-    const [account, sessionResponse] = await Promise.all([
-      createAppleAccount({ subject, userId: accountOwner.id }),
-      createSessionResponse({ userId: sessionUser.id }),
+      const [account, sessionResponse] = await Promise.all([
+        createAppleAccount({ subject, userId: accountOwner.id }),
+        createSessionResponse({ userId: sessionUser.id }),
+      ]);
+
+      verifySubject(subject);
+
+      mocks.signInNativeAppleAccount.mockResolvedValue({
+        changes: { sessionToken: sessionResponse.token },
+        response: sessionResponse,
+        success: true,
+      });
+
+      await expect(signInWithNativeApple(createSignInRequest(client))).rejects.toThrow(
+        "Apple account does not belong to the authenticated user",
+      );
+
+      await expect(
+        prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+      ).resolves.toBeNull();
+
+      await expect(
+        prisma.account.findUnique({ where: { id: account.id } }),
+      ).resolves.not.toBeNull();
+
+      expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
+        clientIdentifier,
+        token: authorization.refreshToken,
+        tokenType: "refresh_token",
+      });
+    },
+  );
+
+  it.each(CLIENTS)(
+    "revokes Apple's token and takes back only its session when persistence fails ($client)",
+    async ({ client, clientIdentifier }) => {
+      const subject = `apple-${randomUUID()}`;
+      const user = await createTestUser();
+
+      const [account, sessionResponse] = await Promise.all([
+        createAppleAccount({ subject, userId: user.id }),
+        createSessionResponse({ userId: user.id }),
+      ]);
+
+      verifySubject(subject);
+
+      mocks.exchangeAuthorizationCode.mockResolvedValue({
+        ...authorization,
+        expiresIn: Number.NaN,
+      });
+
+      mocks.signInNativeAppleAccount.mockResolvedValue({
+        changes: { sessionToken: sessionResponse.token },
+        response: sessionResponse,
+        success: true,
+      });
+
+      await expect(signInWithNativeApple(createSignInRequest(client))).rejects.toThrow();
+
+      const [persistedUser, persistedAccount, persistedSession] = await Promise.all([
+        prisma.user.findUnique({ where: { id: user.id } }),
+        prisma.account.findUnique({ where: { id: account.id } }),
+        prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+      ]);
+
+      expect(persistedUser).not.toBeNull();
+      expect(persistedAccount).not.toBeNull();
+      expect(persistedSession).toBeNull();
+
+      expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
+        clientIdentifier,
+        token: authorization.refreshToken,
+        tokenType: "refresh_token",
+      });
+    },
+  );
+
+  it.each([{ otherDevice: "still signed in" }, { otherDevice: "signed out since" }])(
+    "keeps a new account another device moved its guest into ($otherDevice) when this sign-in fails to save its grant",
+    async ({ otherDevice }) => {
+      const subject = `apple-${randomUUID()}`;
+      const user = await createTestUser();
+
+      const [account, sessionResponse, otherSignIn] = await Promise.all([
+        createAppleAccount({ subject, userId: user.id }),
+        createSessionResponse({ userId: user.id }),
+        createSessionResponse({ userId: user.id }),
+      ]);
+
+      const movedGoal = await createGoal(user.id);
+
+      if (otherDevice === "signed out since") {
+        await prisma.session.delete({ where: { token: otherSignIn.token } });
+      }
+
+      verifySubject(subject);
+
+      mocks.exchangeAuthorizationCode.mockResolvedValue({
+        ...authorization,
+        expiresIn: Number.NaN,
+      });
+
+      mocks.signInNativeAppleAccount.mockResolvedValue({
+        changes: { sessionToken: sessionResponse.token },
+        response: sessionResponse,
+        success: true,
+      });
+
+      await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow();
+
+      const [ownSession, keptUser, keptAccount, keptGoal] = await Promise.all([
+        prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+        prisma.user.findUnique({ where: { id: user.id } }),
+        prisma.account.findUnique({ where: { id: account.id } }),
+        prisma.goal.findUnique({ where: { id: movedGoal.id } }),
+      ]);
+
+      expect(ownSession).toBeNull();
+      expect(keptUser).not.toBeNull();
+      expect(keptAccount?.userId).toBe(user.id);
+      expect(keptGoal?.userId).toBe(user.id);
+    },
+  );
+
+  it("keeps the new account when the guest can't move, since another sign-in may already use it", async () => {
+    const subject = `apple-${randomUUID()}`;
+    const user = await createTestUser();
+
+    const [account, sessionResponse, otherSignIn] = await Promise.all([
+      createAppleAccount({ subject, userId: user.id }),
+      createSessionResponse({ userId: user.id }),
+      createSessionResponse({ userId: user.id }),
     ]);
 
+    const otherGuestGoal = await createGoal(user.id);
+
     verifySubject(subject);
+    mocks.linkGuest.mockRejectedValue(new Error("Guest link failed"));
 
     mocks.signInNativeAppleAccount.mockResolvedValue({
       changes: { sessionToken: sessionResponse.token },
@@ -239,58 +395,25 @@ describe(signInWithNativeApple, () => {
       success: true,
     });
 
-    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow(
-      "Apple account does not belong to the authenticated user",
-    );
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow("Guest link failed");
 
-    await expect(
+    expect(mocks.linkGuest).toHaveBeenCalledExactlyOnceWith({
+      headers: nativeSignInRequest.headers,
+      userId: user.id,
+    });
+
+    const [ownSession, otherSession, keptAccount, keptGoal] = await Promise.all([
       prisma.session.findUnique({ where: { token: sessionResponse.token } }),
-    ).resolves.toBeNull();
-
-    await expect(prisma.account.findUnique({ where: { id: account.id } })).resolves.not.toBeNull();
-
-    expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.dev",
-      token: authorization.refreshToken,
-      tokenType: "refresh_token",
-    });
-  });
-
-  it("revokes Apple's token and rolls back new auth rows when persistence fails", async () => {
-    const subject = `apple-${randomUUID()}`;
-    const user = await createTestUser();
-
-    const [account, sessionResponse] = await Promise.all([
-      createAppleAccount({ subject, userId: user.id }),
-      createSessionResponse({ userId: user.id }),
-    ]);
-
-    verifySubject(subject);
-    mocks.exchangeAuthorizationCode.mockResolvedValue({ ...authorization, expiresIn: Number.NaN });
-
-    mocks.signInNativeAppleAccount.mockResolvedValue({
-      changes: { accountId: account.id, sessionToken: sessionResponse.token, userId: user.id },
-      response: sessionResponse,
-      success: true,
-    });
-
-    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow();
-
-    const [persistedUser, persistedAccount, persistedSession] = await Promise.all([
-      prisma.user.findUnique({ where: { id: user.id } }),
+      prisma.session.findUnique({ where: { token: otherSignIn.token } }),
       prisma.account.findUnique({ where: { id: account.id } }),
-      prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+      prisma.goal.findUnique({ where: { id: otherGuestGoal.id } }),
     ]);
 
-    expect(persistedUser).toBeNull();
-    expect(persistedAccount).toBeNull();
-    expect(persistedSession).toBeNull();
-
-    expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.dev",
-      token: authorization.refreshToken,
-      tokenType: "refresh_token",
-    });
+    expect(ownSession).toBeNull();
+    expect(otherSession?.userId).toBe(user.id);
+    expect(keptAccount?.refreshToken).toBe(authorization.refreshToken);
+    expect(keptGoal?.userId).toBe(user.id);
+    expect(mocks.revokeToken).not.toHaveBeenCalled();
   });
 });
 

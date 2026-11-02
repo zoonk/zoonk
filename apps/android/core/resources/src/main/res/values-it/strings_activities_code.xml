@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_code_badge_query_data": "7e159ae2505c3d609677f410503e25e2a254f7676a033da0b2825341132127cc",
+  "activities_code_badge_run": "5987578b010d9741fceb41f323de510088763583309e41c04c3ff67a42faf86b",
+  "activities_code_badge_step_through": "20dabdafe711cb1daab53a3f39e17e73b700030550de67d6f37c320eb877ef6b",
+  "activities_code_badge_test_pattern": "f1eb67eb9d078e16831c77698df59d46e38f3ab2a3a293b18fdb6f5282859829",
+  "activities_code_before_first_line": "26ba002abe3521ac0005df9186e3c225794559398d6ec50d051daf474a7abb24",
+  "activities_code_changed_code": "ddb1d3a59d6f42c558493129178ef08f6479f7f5f531d855d45f6369ec505802",
+  "activities_code_changed_query": "c0fe70bca1a9a3687a1fe4f01b264f3d5f7efa933ef646b9675b1b4fd4a0fa9e",
+  "activities_code_code": "f76d06c30e14484a5c880c26362eff1e80a9480178d7242c023fd9133b38985f",
+  "activities_code_current_line": "d7f871a8d92f96886a9243286f6e230203339022e0f7e6cc8260b8183356a3d4",
+  "activities_code_error_line": "69e4ec1b4498626627215b4e42158c96faf14192fdc9db5ea1c63e57779177e7",
+  "activities_code_examples_pass": "1d925127228519cbfe028b258c1720833368c936e8629a4c9a906a24d9f39390",
+  "activities_code_expected": "af2006777bdf2cccc8224a3fd93df00acdfd795196ea5e015fe1cffb99e02456",
+  "activities_code_expected_result": "450765474d94f51332e2411bc381f874df39883db524b6c959625235b7c6b070",
+  "activities_code_expected_result_in_order": "3f59da6074a01c24b3c942b41f160c1df1877719f2f69881b6888c737a5595c1",
+  "activities_code_formula_that_works": "5831fe4676383b61019db1d604fe109700128656424f26bc885ef360350dd2f0",
+  "activities_code_hint_mistake": "46583f122a7bd1bf656aad10c4a61126fc208b3d0a56b5ec3ff78eb55018dac4",
+  "activities_code_line_yours": "d90c31357a5ffcf582ac1d0e0f1756d3372403435fbeb44d051b4f81a7b7fd35",
+  "activities_code_lines_yours": "6c70c9fe7ca367096fb5af4594c8b1fefc477ac0a70dde4ca84664304331b09e",
+  "activities_code_no_table": "c6a94b8e02576bc826679550e65bca941c54e414ddefaeb2b96d81e247b19b26",
+  "activities_code_not_quite": "703f72b0f9bb24e645eced4268e5df549c5ea5c0bb51343f0dd9501f899223f5",
+  "activities_code_not_set": "2063cbdbedab3270cb17b8894a13b367cff28b7401f9f479ddc2674f04b4f75d",
+  "activities_code_nothing_printed": "eaebfa828c66d6b127b1133598b31ac643eb81b25b3f85c5690885759aaa184f",
+  "activities_code_output": "a80b536687558eb9f7f292969f9f09085f2df9d29f5ee8da4d3ec1dcdc3fa965",
+  "activities_code_pass_count": "f21c049d4ac8cbbcb1033abf87527aa23918e04c6e7b7e4c2d7b5622bd10c85f",
+  "activities_code_pattern_cant_run": "31b420df57484fc7292b601ff65cf80b5077e92b7512f15cb1ed3933b52e55ae",
+  "activities_code_pattern_that_works": "b41bf8d157b7d1a49056409d948d0f962d0eca2ddc7ac389f36c675971b3ebd7",
+  "activities_code_predict_first": "0c65604e23559fd4d00f7c385f314efef3d8bf881d366ef705755d9b955fb41e",
+  "activities_code_query": "6221f585c11f288aad0ebfcc0e2d2cfef1cf7d5f66cd7376a08d709bd68e22c0",
+  "activities_code_query_that_works": "d00453a9dcda2273741cf0bfa7ec1f6959c4d73b6580d150bfa68770e695cebb",
+  "activities_code_query_timeout": "fd43dd6f6f6d9ef3767e13b258554e4b54e1b8b9065cc3f78449476b37ada3f2",
+  "activities_code_query_too_many_rows": "513a826112fa7300a5c0d2ae0667d0db25ecd2b1b18e7fa4a76c71a3244713f5",
+  "activities_code_result_no_rows": "621506111c69d786ce756cc2c6c9aa02c04f9368ae357227773116abcb2c004c",
+  "activities_code_row_extra": "b9729467a1d32c7d8b0b706dba1c719305ef8d923d0addd6537bd252ca4978ec",
+  "activities_code_row_missing": "413add69c8f3904c8abdc067d2213565c0ff18a715ce903d709e243e7b0610ee",
+  "activities_code_run": "6892dfe4931ee1de588af53e3c4df07af680e30a08691f208e0869230b569f76",
+  "activities_code_run_again": "512d4ff05b50fa4ff02d8987afeb1b1e150c0763792fc2db68519ed94d76f09d",
+  "activities_code_run_to_see": "00adefe42b2fa03397e9da130814c231fe60d98ad95bf3f1101e97af1bb54330",
+  "activities_code_running": "8a064a68d7d9fb68d773ce163880ab2a1d47519242af97faa1faf7166e7fa1e0",
+  "activities_code_runtime_failed": "9bdb489c497434b539c01ec8877b027962869d1833af2fd5707280d01fff6cda",
+  "activities_code_runtime_loading": "f487675fe380f431977c30bdf69a257d12e05c33febd46be99a5c652b82a958c",
+  "activities_code_sample_doesnt_match": "0dcae04f4d57d8f729f58bb037697741bcaad091225958f7c45cf065a6cf7b72",
+  "activities_code_sample_matched": "6027296d1c5623a009a538908b031a0b98937e3636fb14abb6b6df2580e37b57",
+  "activities_code_sample_matches": "d586d237c6e2811761786f201b69772dd1c7e5704a70a40396f30b4347a49bef",
+  "activities_code_sample_no_match": "09e724a96e565db3a202d9df7b2e9287320882c8cf77dcb2da8ab8a394d674e3",
+  "activities_code_should_give": "f1e2d1b54a2cf61822080062b8d866af002c4daa16805b67a14924d085b0ff5d",
+  "activities_code_should_match": "26d59ac7de8d33abd4a3670b60d6a687c9e771d19e2e396a0dceb3e272c7ea50",
+  "activities_code_should_not_match": "b424dca2daa9927e3044592daa4c38d0a8e1a1ae2a3db31603746addb700eee1",
+  "activities_code_show_another_hint": "0858112a074cf14ad3f0d4e2771e0b0a3d19058aeb246ad77e44c5bf97d228da",
+  "activities_code_show_hint": "a6a17dcd209405a3b6c2c32f7739e640e2ac89782f84b54edb5adcbb34312890",
+  "activities_code_snippet_any": "0826ab1328503b029ca2385944ed4fc9656592c7428bd597602d20c61a0e8071",
+  "activities_code_snippet_digit": "776743afd5e116bdcf03a0e300097bac465916fb238516e50d333ab9673fc5b2",
+  "activities_code_snippet_divided_by": "a20407fac153165a0ba0a148dfe9bcde8bb358f1753a8989bad6b1547c98cf63",
+  "activities_code_snippet_end": "df63e44c4f0362cd63e2a169e4d7ef022a5b7bc2dde041c5ae41576bb3364368",
+  "activities_code_snippet_group": "2551c62e96b0692743cdf5afd5674098f878adc31d6b7006daac8c5ac982eb53",
+  "activities_code_snippet_minus": "e12817db3f0904be1fd25c5d490fbb1871044771596508dc1bca24dc7693188a",
+  "activities_code_snippet_one_of": "d148aa602146b2b59c8d15ca646f77f473f6a8aa99e9b7c27472dd4e03814c71",
+  "activities_code_snippet_one_or_more": "50db2c56f6d50589476ff60fda267b7d4a1daf5baf416c947b46c9ffa98eb8ff",
+  "activities_code_snippet_optional": "4562c49f5c69113c0d73e888bb66ed73deb5753c630ebd3e7abd09f5cbe7b509",
+  "activities_code_snippet_or": "dab96b5454028d3b8dfd918287476efcc95a23e32201325cf4142b55b9627c9c",
+  "activities_code_snippet_parentheses": "c0ae22cf66e3752b4c49c861f0a8e20e6c61cd3d4afd284f0758bcd20dcb0ecc",
+  "activities_code_snippet_plus": "b4ef7550b48081fa2f46595944f7b0ba81d2f501f0ee4a90fa8c62c02387af3a",
+  "activities_code_snippet_power": "db98e773addb58325e7bea0d3f2395d90c96eaf7b2f94b9bf3a4e2590e3f444a",
+  "activities_code_snippet_repeat": "2ce9d854f10d844b53bede8c57ce0cc00ddb8e2ff2d556af88236d3586e90929",
+  "activities_code_snippet_space": "cbb454b63774bce9fb4285b51d05d1aa14d5440f5f429aa352f41c8572e9c8d7",
+  "activities_code_snippet_start": "a6635a073b57a30f633487effd9de251181ccdcbf4058193700a3fb0bee12440",
+  "activities_code_snippet_times": "02a28ea8bc65ad548ca42c6d3059fa879228bc3752b77440f684cafa8e6ee799",
+  "activities_code_snippet_word": "3ac3b6ef7f4cc92b3c046d931b4ff153d72e6fcceef0b0c02d834d065293934c",
+  "activities_code_snippet_zero_or_more": "1596bc92f4f9cf98b3d2e5d21df0d4e0727a3bc413aaf8f427122e5f3d871cf2",
+  "activities_code_sql_words": "1b4da1c6c122ccccd8526724f798288cf5ecf060a1fed8463fdd2c41709cd76b",
+  "activities_code_start_over": "cb887c75e47e8c712e86475da17ae9b1144fe16c3ea0d7a3af68001988be52bb",
+  "activities_code_step_back": "f0be9abfc10d95e20a9d0f9768451579c697a48196670f1641528a047f338150",
+  "activities_code_step_forward": "adda9adbd841c08b1043155f71b2bf4b2299909f3f298adf4ab27da362dce1df",
+  "activities_code_step_next_line": "d3c0fc7df06d19bc83cf578a6d6b362fc140593198878094c4e503cf8d7f8198",
+  "activities_code_step_of": "8090dc15c469ae26e87d97d5fe9f3ac7e3ceddd60d42f4e17af9d5ad6a8f080e",
+  "activities_code_step_to_see": "670f5f29f63c389c4fe81dd4681975b1cc444e896a0043ef0753d5c3fb87be46",
+  "activities_code_stopped_after": "2814f978194b3856794d18bef5f630cadc69955a494f58231a111e5a447fd9f4",
+  "activities_code_symbols": "3184d4e075b74c7877469ff109b9a525d494ff805e865eacc61333116ed2cc40",
+  "activities_code_table_named": "fa2c8990133910e338f4a63fedc729a45673514a6d88a4d0217557c62222aaf0",
+  "activities_code_table_rows": "607745518bb1d5a3f9e4c31572a0516b66a2f2752ad00e9b44f57a487607d25b",
+  "activities_code_too_much_output": "9dfa5f20b55a99b4f88c9e91a0e85ed51f264f29a4c1068dd7905f3218e60680",
+  "activities_code_value_was": "7bb5edb8187f0caee9f83f9b9cf15283ba60a7de2d7e8b774deed5de9dc7b9a4",
+  "activities_code_variables": "17c1b5c0624d2354233c012ee8ac0111ea3690e4af2d866817d50cb86cf8f29a",
+  "activities_code_whole_run": "2d2d5d65321eefa12561a12635ca7d88c0d3c6d1508a3aee0ff4ed4f80f5f57d",
+  "activities_code_whole_run_explored": "2726003ca0cea51ffe569acaf31165b16407620ba2812597ed80a7c93461adf9",
+  "activities_code_you_said_right": "9959f0f3d740a4b0c7357c28632a66b6ebaf698ddc69b2f78fcb97e2be9ee505",
+  "activities_code_you_said_wrong": "4ccdeeb628c45fbae7bc6b1e3868ff8da6576884373a3a0bec47c6229892d299",
+  "activities_code_your_formula": "2fba29731d6fcc4c76bf68f46eee65c15a43adef2d8951020b931848e0da70f5",
+  "activities_code_your_output": "4115958acbd3c763f62846c5725d3d4c1b9e9ed2f958addff2a12b0978623031",
+  "activities_code_your_pattern": "47166ebb0274a7681a0727a3ece9dd79be204b4a9c85af45237a09aa19e962e1",
+  "activities_code_your_predictions": "e774fe54d244e8eeb98c623dfae1f29c6ea435bc285b55806cd21acdca2ccd74",
+  "activities_code_your_query": "df55f1ccc1f16743320e2a106a34259abd5f9aea2fec5ab2e1be4c78026cf161",
+  "activities_code_your_result": "433eac708be361a8ab987e355f4798c7b115e0de28a65d60217dd1d38f872a07",
+  "activities_code_your_result_rows": "40b776feeddab92735f65896b7c2e5e0b5d54ab85eddc7fadc9e5905922924a0"
+}
+-->
+<resources>
+    <string name="activities_code_badge_run">Esegui il codice</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_loading">Stiamo preparando %1$s. La prima volta ci vuole qualche secondo.</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_failed">Non siamo riusciti a caricare %1$s. Controlla la connessione e riprova.</string>
+    <string name="activities_code_run">Esegui</string>
+    <string name="activities_code_run_again">Esegui di nuovo</string>
+    <string name="activities_code_running">In esecuzione</string>
+    <string name="activities_code_start_over">Ricomincia dal codice originale</string>
+    <!-- The name of a block of program code, for TalkBack. -->
+    <string name="activities_code_code">Codice</string>
+    <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
+    <plurals name="activities_code_lines_yours">
+        <item quantity="one">Puoi modificare la riga %1$s</item>
+        <item quantity="many">Puoi modificare le righe %1$s</item>
+        <item quantity="other">Puoi modificare le righe %1$s</item>
+    </plurals>
+    <!-- A line of code the learner may edit, for TalkBack. -->
+    <string name="activities_code_line_yours">Riga %1$d, puoi modificarla</string>
+    <string name="activities_code_your_output">Il tuo risultato</string>
+    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <string name="activities_code_output">Risultato</string>
+    <!-- The output the program should print. -->
+    <string name="activities_code_expected">Risultato atteso</string>
+    <string name="activities_code_run_to_see">Esegui il codice per vedere il risultato</string>
+    <string name="activities_code_nothing_printed">Non è stato stampato nulla</string>
+    <string name="activities_code_changed_code">Hai modificato il codice. Eseguilo di nuovo per vedere il nuovo risultato.</string>
+    <!-- A program's error and the line it happened on, like "Line 2: NameError: name 'x' is not defined". -->
+    <string name="activities_code_error_line">Riga %1$d: %2$s</string>
+    <plurals name="activities_code_stopped_after">
+        <item quantity="one">Esecuzione interrotta dopo %d secondo. C’è un ciclo che non finisce mai?</item>
+        <item quantity="many">Esecuzione interrotta dopo %d secondi. C’è un ciclo che non finisce mai?</item>
+        <item quantity="other">Esecuzione interrotta dopo %d secondi. C’è un ciclo che non finisce mai?</item>
+    </plurals>
+    <string name="activities_code_too_much_output">Esecuzione interrotta perché il programma ha stampato troppo testo. C’è un ciclo che non termina mai?</string>
+    <!-- Before the feedback for a likely mistake the program's output shows. -->
+    <string name="activities_code_not_quite">Non proprio:</string>
+    <string name="activities_code_badge_test_pattern">Verifica una regola</string>
+    <!-- The field for a regular expression, for TalkBack. -->
+    <string name="activities_code_your_pattern">La tua espressione regolare</string>
+    <!-- The field for a spreadsheet formula, for TalkBack. -->
+    <string name="activities_code_your_formula">La tua formula</string>
+    <!-- The row of buttons that type regular expression or formula symbols, for TalkBack. -->
+    <string name="activities_code_symbols">Simboli</string>
+    <!-- What the regular expression symbol ^ means, for TalkBack. -->
+    <string name="activities_code_snippet_start">Inizio del testo</string>
+    <!-- What the regular expression symbol $ means, for TalkBack. -->
+    <string name="activities_code_snippet_end">Fine del testo</string>
+    <!-- What the regular expression symbol \d means, for TalkBack. -->
+    <string name="activities_code_snippet_digit">Qualsiasi cifra</string>
+    <!-- What the regular expression symbol \w means, for TalkBack. -->
+    <string name="activities_code_snippet_word">Qualsiasi lettera, cifra o trattino basso</string>
+    <!-- What the regular expression symbol \s means, for TalkBack. -->
+    <string name="activities_code_snippet_space">Qualsiasi spazio</string>
+    <!-- What the regular expression symbol . means, for TalkBack. -->
+    <string name="activities_code_snippet_any">Qualsiasi carattere</string>
+    <!-- What the regular expression brackets [ ] mean, for TalkBack. -->
+    <string name="activities_code_snippet_one_of">Uno di questi caratteri</string>
+    <!-- What the regular expression braces { } mean, for TalkBack. -->
+    <string name="activities_code_snippet_repeat">Ripeti un certo numero di volte</string>
+    <!-- What the regular expression parentheses ( ) mean, for TalkBack. -->
+    <string name="activities_code_snippet_group">Gruppo</string>
+    <!-- What the regular expression symbol ? means, for TalkBack. -->
+    <string name="activities_code_snippet_optional">Facoltativo</string>
+    <!-- What the regular expression symbol + means, for TalkBack. -->
+    <string name="activities_code_snippet_one_or_more">Una o più volte</string>
+    <!-- What the regular expression symbol * means, for TalkBack. -->
+    <string name="activities_code_snippet_zero_or_more">Zero o più volte</string>
+    <!-- What the regular expression symbol | means, for TalkBack. -->
+    <string name="activities_code_snippet_or">Oppure</string>
+    <!-- The + sign in a formula, for TalkBack. Not "Plus", the subscription's name. -->
+    <string name="activities_code_snippet_plus">Segno più</string>
+    <!-- The − sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_minus">Meno</string>
+    <!-- The × sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_times">Per</string>
+    <!-- The ÷ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_divided_by">Diviso per</string>
+    <!-- The ^ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_power">Elevato a</string>
+    <!-- Parentheses in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_parentheses">Parentesi</string>
+    <string name="activities_code_pattern_cant_run">Questa espressione non può essere eseguita. Controlla che le parentesi siano chiuse e non ripetere gruppi che contengono già ripetizioni.</string>
+    <!-- Example texts the regular expression should match. -->
+    <string name="activities_code_should_match">Deve corrispondere</string>
+    <!-- Example texts the regular expression should not match. -->
+    <string name="activities_code_should_not_match">Non deve corrispondere</string>
+    <!-- An example text the pattern matches, as it should. -->
+    <string name="activities_code_sample_matches">corrisponde</string>
+    <!-- An example text the pattern doesn't match, as it should. -->
+    <string name="activities_code_sample_doesnt_match">non corrisponde</string>
+    <!-- An example text the pattern should match but doesn't. -->
+    <string name="activities_code_sample_no_match">nessuna corrispondenza</string>
+    <!-- An example text the pattern shouldn't match but does. -->
+    <string name="activities_code_sample_matched">corrisponde</string>
+    <!-- How many examples of a list pass, like "1 of 3 pass". -->
+    <plurals name="activities_code_pass_count">
+        <item quantity="one">%1$d su %2$d supera il test</item>
+        <item quantity="many">%1$d su %2$d superano il test</item>
+        <item quantity="other">%1$d su %2$d superano il test</item>
+    </plurals>
+    <!-- How many examples pass in all, for TalkBack, like "2 of 5 examples pass." -->
+    <plurals name="activities_code_examples_pass">
+        <item quantity="one">%1$d esempio su %2$d supera il test.</item>
+        <item quantity="many">%1$d esempi su %2$d superano il test.</item>
+        <item quantity="other">%1$d esempi su %2$d superano il test.</item>
+    </plurals>
+    <!-- The output a spreadsheet formula should give for an example's cells. -->
+    <string name="activities_code_should_give">Risultato atteso</string>
+    <!-- What the learner's formula gives for an example's cells. -->
+    <string name="activities_code_your_result">Il tuo risultato</string>
+    <string name="activities_code_show_hint">Mostra un suggerimento</string>
+    <string name="activities_code_show_another_hint">Mostra un altro suggerimento</string>
+    <!-- A likely mistake, before the hint for it, like "Matches extra digits:". -->
+    <string name="activities_code_hint_mistake">%1$s:</string>
+    <string name="activities_code_pattern_that_works">Un’espressione che funziona</string>
+    <string name="activities_code_formula_that_works">Una formula che funziona</string>
+    <string name="activities_code_badge_query_data">Interroga i dati</string>
+    <!-- The field for a SQL query, and its label. -->
+    <string name="activities_code_your_query">La tua query</string>
+    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <string name="activities_code_query">Query</string>
+    <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
+    <string name="activities_code_sql_words">Parole chiave SQL, tabelle e colonne</string>
+    <plurals name="activities_code_query_timeout">
+        <item quantity="one">La query ha impiegato più di %d secondo ed è stata interrotta.</item>
+        <item quantity="many">La query ha impiegato più di %d secondi ed è stata interrotta.</item>
+        <item quantity="other">La query ha impiegato più di %d secondi ed è stata interrotta.</item>
+    </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">La query ha restituito troppe righe. Manca la condizione di un join?</string>
+    <plurals name="activities_code_table_rows">
+        <item quantity="one">%d riga</item>
+        <item quantity="many">%d righe</item>
+        <item quantity="other">%d righe</item>
+    </plurals>
+    <!-- A database table's name, for TalkBack, like "Table countries". -->
+    <string name="activities_code_table_named">Tabella %1$s</string>
+    <!-- A row of the learner's result that the expected result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_extra">non prevista</string>
+    <!-- A row of the expected result that the learner's result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_missing">manca nel tuo risultato</string>
+    <string name="activities_code_no_table">La query è stata eseguita ma non ha restituito una tabella. Usa SELECT per ottenere delle righe.</string>
+    <string name="activities_code_result_no_rows">Il tuo risultato non contiene righe</string>
+    <plurals name="activities_code_your_result_rows">
+        <item quantity="one">Il tuo risultato: %d riga</item>
+        <item quantity="many">Il tuo risultato: %d righe</item>
+        <item quantity="other">Il tuo risultato: %d righe</item>
+    </plurals>
+    <string name="activities_code_changed_query">Hai modificato la query. Eseguila di nuovo per vedere il nuovo risultato.</string>
+    <string name="activities_code_expected_result">Risultato atteso</string>
+    <string name="activities_code_expected_result_in_order">Risultato atteso, in questo ordine</string>
+    <string name="activities_code_query_that_works">Una query che funziona</string>
+    <string name="activities_code_badge_step_through">Passo per passo</string>
+    <string name="activities_code_step_back">Torna al passo precedente</string>
+    <string name="activities_code_step_forward">Vai al passo successivo</string>
+    <!-- Where a code trace stands before any line ran. -->
+    <string name="activities_code_before_first_line">Prima della prima riga</string>
+    <!-- Where a code trace stands, like "Step 2 of 4". -->
+    <string name="activities_code_step_of">Passaggio %1$d di %2$d</string>
+    <!-- The line of code that just ran, for TalkBack. -->
+    <string name="activities_code_current_line">Riga corrente</string>
+    <!-- The variables a code trace watches, for TalkBack. -->
+    <string name="activities_code_variables">Variabili</string>
+    <!-- A variable's value before the step that changed it, shown before its new value, like "3 →". -->
+    <string name="activities_code_value_was">%1$s →</string>
+    <!-- A variable with no value yet. -->
+    <string name="activities_code_not_set">senza valore</string>
+    <string name="activities_code_predict_first">Prima fai una previsione. Poi vai avanti per vedere cosa succede.</string>
+    <string name="activities_code_step_to_see">Vai avanti per vedere se hai ragione.</string>
+    <string name="activities_code_step_next_line">Vai avanti per eseguire la prossima riga.</string>
+    <string name="activities_code_whole_run">L’esecuzione è terminata. Controlla le tue previsioni quando vuoi.</string>
+    <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
+    <string name="activities_code_whole_run_explored">L’esecuzione finisce qui.</string>
+    <!-- The learner's predictions of a code trace's values, for TalkBack. -->
+    <string name="activities_code_your_predictions">Le tue previsioni</string>
+    <!-- A right prediction, like "You said 6, and it was." -->
+    <string name="activities_code_you_said_right">Hai detto %1$s, ed era proprio così.</string>
+    <!-- A wrong prediction and the real value, like "You said 5; it was 6." -->
+    <string name="activities_code_you_said_wrong">Hai detto %1$s; il valore era %2$s.</string>
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "testout_already_skipped": "0d6235a2d079c3356c5bd833f654711ad7580f3b31a6c0c486b33e5c705d09b5",
+  "testout_aside_title": "6ba8a366fea648dfab604c286b65db738d4ac4d6422da7bd8b19599cfa970030",
+  "testout_continue": "252ed225e3a947b8962c40f1c02d2098da9d89b2fea0421e72de8a4c18292a50",
+  "testout_intro_detail": "119bf84d4a474c48515cdecc5f750313db7b63616af050fc668e7e9e9c7e186d",
+  "testout_intro_title": "78d9bdb66c0305fe8a9f5e73367e20ed6df26c273319ccb85bbb4a0489281fad",
+  "testout_lessons_back": "8655b0c8e7e29f8e671f302fb230b10c3db3a004bb0903a19f1d31ec05426dd5",
+  "testout_lessons_left": "603b1ed8f7b18e079430f71ea1a06d4dd5289bb3aacd334be3b68e43d23dc441",
+  "testout_lessons_off": "1d8d373eff5fa5ae5df06f921908683e7a5e9866114cfd95289c3d7f3b98ffc3",
+  "testout_not_passed": "888134274886b6fad6f123a406927a7131ac2ced7a9300845829ba5554944022",
+  "testout_not_passed_detail": "316cefa36ef8bbcffe67be3dfe0a368f8c1fbb9a8a190b7abcdb53b82aa7dd81",
+  "testout_passed": "b99693ef65a2d8f905331e110ce6aa38ea8c8af80e47e876cea1c1c901028bcc",
+  "testout_rule": "b4221f680137c4b7321f5affa16f57c7736690c0e76c6a91eb96ba9ca0baca7a",
+  "testout_see_plus": "cdaa2fd28efc6c65cf508f22bbdf79c4a66803526cac7f8480150ecc26d49387",
+  "testout_start": "f8c1dd370fe68feeeda98111ed85f4e32f0201c55259e3d9b4d51137fe2f4dbb",
+  "testout_starting": "dc11c5f4e1c0b73e585d13398fad04dccab1311b1ad9bd6e8c612f4d0312067a",
+  "testout_this_chapter": "d18af84b42e75a3cfd79ef2cb6ef31a30590223132c749b6086cb92374a98b34",
+  "testout_title": "ed8a452bf5c7dbdfcc26eb2d343d9c097043e57c999921d4d9d85f92a8e60d83",
+  "testout_writing": "d78fc65d4c0fd26a87d65f1f22bddb41e96d9d45f874ccb0ee6ed0e2f5161e9f",
+  "testout_writing_detail": "e1ace6643062e1930b3c076f540fe08e0c79b5f79aa5a468eeabef99acf610a7",
+  "testout_writing_line": "f7d0e38498e94c884cb9a36c041a08eab7b40502fd3bcd193befe452415fceac",
+  "testout_writing_questions": "79b68a74f8f923add19d6a4e798b140bda64c52fbfb090e162f26803a9e978c9",
+  "testout_writing_title": "205f6aecefebf2e23ec8c55977b7e408751011bcb4a8b4428da29374d4b239ab"
+}
+-->
+<resources>
+    <!-- A chapter test-out's title. %1$s is the chapter's name. -->
+    <string name="testout_title">Zdaj test i pomiń: %1$s</string>
+    <!-- Stands in for a chapter's name while it isn't known. -->
+    <string name="testout_this_chapter">Ten rozdział</string>
+    <string name="testout_intro_title">Już to znasz?</string>
+    <string name="testout_intro_detail">Kilka pytań z tego rozdziału. Jeśli dobrze ci pójdzie, plan pominie to, co już wiesz.</string>
+    <string name="testout_start">Rozpocznij test</string>
+    <string name="testout_starting">Rozpoczynamy…</string>
+    <string name="testout_see_plus">Poznaj Plus</string>
+    <string name="testout_writing">Przygotowujemy dla ciebie pytania</string>
+    <string name="testout_writing_questions">Przygotowujemy pytania do tego rozdziału</string>
+    <string name="testout_writing_line">Wybieramy umiejętności do sprawdzenia…</string>
+    <string name="testout_writing_title">Przygotowujemy twój test</string>
+    <string name="testout_writing_detail">Przygotowujemy kilka pytań z tego rozdziału. Gdy będą gotowe, test otworzy się tutaj.</string>
+    <!-- A chapter test-out's rule above each question. %1$d is the share of right answers that passes, such as 80. -->
+    <string name="testout_rule">Przy %1$d%% poprawnych odpowiedzi pomijasz rozdział. Informacje zwrotne dopiero na końcu.</string>
+    <string name="testout_aside_title">Co pominiesz po zaliczeniu testu</string>
+    <plurals name="testout_lessons_left">
+        <item quantity="one">Pozostała %d lekcja</item>
+        <item quantity="few">Pozostały %d lekcje</item>
+        <item quantity="many">Pozostało %d lekcji</item>
+        <item quantity="other">Pozostało %d lekcji</item>
+    </plurals>
+    <string name="testout_passed">Już to znasz</string>
+    <string name="testout_not_passed">Jeszcze nie, ale to w porządku</string>
+    <string name="testout_not_passed_detail">Rozdział zostaje w twoim planie, a twoje odpowiedzi pomogą dobrać odpowiedni poziom na początek.</string>
+    <!-- The learner passed this chapter\'s test. "It" is the chapter. -->
+    <string name="testout_already_skipped">Ten rozdział jest już pominięty w twoim planie.</string>
+    <!-- The learner passed this chapter\'s test, so these lessons left the plan. -->
+    <plurals name="testout_lessons_off">
+        <item quantity="one">Z twojego planu usunięto %d lekcję.</item>
+        <item quantity="few">Z twojego planu usunięto %d lekcje.</item>
+        <item quantity="many">Z twojego planu usunięto %d lekcji.</item>
+        <item quantity="other">Z twojego planu usunięto %d lekcji.</item>
+    </plurals>
+    <string name="testout_lessons_back">Lekcje wróciły do twojego planu.</string>
+    <string name="testout_continue">Kontynuuj</string>
+</resources>

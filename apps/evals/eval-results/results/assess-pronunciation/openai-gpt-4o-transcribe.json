@@ -1,0 +1,726 @@
+{
+  "modelId": "openai/gpt-4o-transcribe",
+  "results": [
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"How much is the rent?\" (expected \"How much is the rent?\") and we heard \"How much is the rent?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the rent?\" (expected \"How much is the rent?\") and we heard \"How much is the rent?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the rent?\" (expected \"How much is the rent?\") and we heard \"How much is the rent?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-rent-correct-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "How much is the rent?",
+          "targetText": "How much is the rent?",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"How much is the hent?\" (expected \"How much is the rent?\") and we heard \"How much is the hent?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the hent?\" (expected \"How much is the rent?\") and we heard \"How much is the hent?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"How much is the hent?\" (expected \"How much is the rent?\") and we heard \"How much is the hent?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["rent?"], "stressWords": [] },
+        "id": "en-rent-hent-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "How much is the hent?",
+          "targetText": "How much is the rent?",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" (expected \"I've lived here since 2020.\") and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" (expected \"I've lived here since 2020.\") and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I live here since 2020.\" (expected \"I've lived here since 2020.\") and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["I've", "lived"], "stressWords": [] },
+        "id": "en-lived-live-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "I live here since 2020.",
+          "targetText": "I've lived here since 2020.",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" (expected \"Is the apartment still available?\") and we heard \"Is the apartment still available?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" (expected \"Is the apartment still available?\") and we heard \"Is the apartment still available?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Is the apartment still available?\" (expected \"Is the apartment still available?\") and we heard \"Is the apartment still available?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-available-correct-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "Is the apartment still available?",
+          "targetText": "Is the apartment still available?",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" (expected \"Can I see the apartment on Saturday?\") and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" (expected \"Can I see the apartment on Saturday?\") and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Can I see apartment on Saturday?\" (expected \"Can I see the apartment on Saturday?\") and we heard \"Can I see apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["the"], "stressWords": [] },
+        "id": "en-missing-the-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "Can I see apartment on Saturday?",
+          "targetText": "Can I see the apartment on Saturday?",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"The sheep is very big\" (expected \"The ship is very big\") and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The sheep is very big\" (expected \"The ship is very big\") and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The sheep is very big\" (expected \"The ship is very big\") and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["ship"], "stressWords": [] },
+        "id": "en-ship-sheep-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "The sheep is very big",
+          "targetText": "The ship is very big",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" (expected \"I think it's cheap\") and we heard \"I think it's cheap.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" (expected \"I think it's cheap\") and we heard \"I think it's cheap.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I sink it's cheap\" (expected \"I think it's cheap\") and we heard \"I think it's cheap.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-think-sink-1",
+        "userInput": {
+          "language": "en",
+          "spokenText": "I sink it's cheap",
+          "targetText": "I think it's cheap",
+          "learnerLanguage": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "pt-disponivel-correct-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "O apartamento ainda está disponível?",
+          "targetText": "O apartamento ainda está disponível?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\") and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["está"], "stressWords": [] },
+        "id": "pt-estar-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "O apartamento ainda estar disponível?",
+          "targetText": "O apartamento ainda está disponível?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" (expected \"Eu quero mais café\") and we heard \"Eu quero mas café.\". Expected flagged words []; flagged [\"mais\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" (expected \"Eu quero mais café\") and we heard \"Eu quero mas café.\". Expected flagged words []; flagged [\"mais\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Eu quero mas café\" (expected \"Eu quero mais café\") and we heard \"Eu quero mas café.\". Expected flagged words []; flagged [\"mais\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "pt-mais-mas-1",
+        "userInput": {
+          "language": "pt",
+          "spokenText": "Eu quero mas café",
+          "targetText": "Eu quero mais café",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\") and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\") and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\") and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "es-alquiler-correct-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "¿Cuánto cuesta el alquiler?",
+          "targetText": "¿Cuánto cuesta el alquiler?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Tengo un pero\" (expected \"Tengo un perro\") and we heard \"Tengo un pero.\". Expected flagged words [\"perro\"]; flagged [\"perro\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Tengo un pero\" (expected \"Tengo un perro\") and we heard \"Tengo un pero.\". Expected flagged words [\"perro\"]; flagged [\"perro\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Tengo un pero\" (expected \"Tengo un perro\") and we heard \"Tengo un pero.\". Expected flagged words [\"perro\"]; flagged [\"perro\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["perro"], "stressWords": [] },
+        "id": "es-perro-pero-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "Tengo un pero",
+          "targetText": "Tengo un perro",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\") and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\") and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\") and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["el"], "stressWords": [] },
+        "id": "es-missing-el-1",
+        "userInput": {
+          "language": "es",
+          "spokenText": "Quiero ver piso mañana",
+          "targetText": "Quiero ver el piso mañana",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Can we order desert?\" (expected \"Can we order dessert?\") and we heard \"Can we order desert?\". Expected flagged words []; flagged [\"dessert?\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Can we order desert?\" (expected \"Can we order dessert?\") and we heard \"Can we order desert?\". Expected flagged words []; flagged [\"dessert?\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Can we order desert?\" (expected \"Can we order dessert?\") and we heard \"Can we order desert?\". Expected flagged words []; flagged [\"dessert?\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-dessert-desert-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "Can we order desert?",
+          "targetText": "Can we order dessert?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"The bed is very come-for-table.\" (expected \"The bed is very comfortable.\") and we heard \"The bed is very comforttable.\". Expected flagged words []; flagged [\"comfortable.\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"The bed is very come-for-table.\" (expected \"The bed is very comfortable.\") and we heard \"The bed is very comforttable.\". Expected flagged words []; flagged [\"comfortable.\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"The bed is very come-for-table.\" (expected \"The bed is very comfortable.\") and we heard \"The bed is very comforttable.\". Expected flagged words []; flagged [\"comfortable.\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-comfortable-stress-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "The bed is very come-for-table.",
+          "targetText": "The bed is very comfortable."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I want to live now.\" (expected \"I want to leave now.\") and we heard \"I want to live now.\". Expected flagged words [\"leave\"]; flagged [\"leave\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I want to live now.\" (expected \"I want to leave now.\") and we heard \"I want to live now.\". Expected flagged words [\"leave\"]; flagged [\"leave\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"I want to live now.\" (expected \"I want to leave now.\") and we heard \"I want to live now.\". Expected flagged words [\"leave\"]; flagged [\"leave\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["leave"], "stressWords": [] },
+        "id": "en-leave-live-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "I want to live now.",
+          "targetText": "I want to leave now."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"I need to booky a room.\" (expected \"I need to book a room.\") and we heard \"I need to bookie a room.\". Expected flagged words []; flagged [\"book\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"I need to booky a room.\" (expected \"I need to book a room.\") and we heard \"I need to bookie a room.\". Expected flagged words []; flagged [\"book\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"I need to booky a room.\" (expected \"I need to book a room.\") and we heard \"I need to bookie a room.\". Expected flagged words []; flagged [\"book\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "en-book-booky-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "I need to booky a room.",
+          "targetText": "I need to book a room."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O médico chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"Um médico chegou cedo.\". Expected flagged words []; flagged [\"O\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"O médico chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"Um médico chegou cedo.\". Expected flagged words []; flagged [\"O\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"O médico chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"Um médico chegou cedo.\". Expected flagged words []; flagged [\"O\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "pt-medico-correct-1",
+        "userInput": {
+          "language": "pt",
+          "learnerLanguage": "en",
+          "spokenText": "O médico chegou cedo.",
+          "targetText": "O médico chegou cedo."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O medico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O medico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"O medíco chegou cedo.\" (expected \"O médico chegou cedo.\") and we heard \"O medico chegou cedo.\". Expected flagged words []; flagged [\"médico\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "pt-medico-stress-1",
+        "userInput": {
+          "language": "pt",
+          "learnerLanguage": "en",
+          "spokenText": "O medíco chegou cedo.",
+          "targetText": "O médico chegou cedo."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"¿Dónde está el telefóno?\" (expected \"¿Dónde está el teléfono?\") and we heard \"¿Dónde está el teléfono?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Dónde está el telefóno?\" (expected \"¿Dónde está el teléfono?\") and we heard \"¿Dónde está el teléfono?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"¿Dónde está el telefóno?\" (expected \"¿Dónde está el teléfono?\") and we heard \"¿Dónde está el teléfono?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "es-telefono-stress-1",
+        "userInput": {
+          "language": "es",
+          "learnerLanguage": "en",
+          "spokenText": "¿Dónde está el telefóno?",
+          "targetText": "¿Dónde está el teléfono?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"The desert is hot.\" (expected \"The dessert is hot.\") and we heard \"The desert is hot.\". Expected flagged words [\"dessert\"]; flagged [\"dessert\"]. Stress errors [\"dessert\"]; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The desert is hot.\" (expected \"The dessert is hot.\") and we heard \"The desert is hot.\". Expected flagged words [\"dessert\"]; flagged [\"dessert\"]. Stress errors [\"dessert\"]; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"The desert is hot.\" (expected \"The dessert is hot.\") and we heard \"The desert is hot.\". Expected flagged words [\"dessert\"]; flagged [\"dessert\"]. Stress errors [\"dessert\"]; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["dessert"], "stressWords": ["dessert"] },
+        "id": "en-dessert-desert-fits-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "The desert is hot.",
+          "targetText": "The dessert is hot."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"sink\" (expected \"think\") and we heard \"Sink\". Expected flagged words [\"think\"]; flagged [\"think\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"sink\" (expected \"think\") and we heard \"Sink\". Expected flagged words [\"think\"]; flagged [\"think\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"sink\" (expected \"think\") and we heard \"Sink\". Expected flagged words [\"think\"]; flagged [\"think\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["think"], "stressWords": [] },
+        "id": "en-think-alone-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "sink",
+          "targetText": "think"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"hent\" (expected \"rent\") and we heard \"Hent\". Expected flagged words [\"rent\"]; flagged [\"rent\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"hent\" (expected \"rent\") and we heard \"Hent\". Expected flagged words [\"rent\"]; flagged [\"rent\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"hent\" (expected \"rent\") and we heard \"Hent\". Expected flagged words [\"rent\"]; flagged [\"rent\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["rent"], "stressWords": [] },
+        "id": "en-rent-alone-1",
+        "userInput": {
+          "language": "en",
+          "learnerLanguage": "pt",
+          "spokenText": "hent",
+          "targetText": "rent"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"telefóno\" (expected \"teléfono\") and we heard \"Teléfono.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"telefóno\" (expected \"teléfono\") and we heard \"Teléfono.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"telefóno\" (expected \"teléfono\") and we heard \"Teléfono.\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "es-telefono-alone-1",
+        "userInput": {
+          "language": "es",
+          "learnerLanguage": "en",
+          "spokenText": "telefóno",
+          "targetText": "teléfono"
+        }
+      }
+    }
+  ],
+  "taskId": "assess-pronunciation"
+}

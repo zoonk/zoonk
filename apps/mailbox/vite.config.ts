@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { createEmailInboxPlugin } from "./src/server/email-inbox-plugin";
+import { createEmailInboxPlugin } from "./src/server/email-inbox-plugin.ts";
 
 const DEFAULT_MAILBOX_PORT = 3202;
 const port = Number(process.env.PORT) || DEFAULT_MAILBOX_PORT;

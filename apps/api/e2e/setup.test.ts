@@ -1,132 +1,147 @@
+import { type Page } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const REDIRECT_URL = "http://localhost:49152/test";
+
+async function signInToSetup({
+  email,
+  page,
+  redirectTo = REDIRECT_URL,
+}: {
+  email: string;
+  page: Page;
+  redirectTo?: string;
+}) {
+  await page.goto(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
+  await page.getByLabel(/email/iu).fill(email);
+  await page.getByRole("button", { name: /^continue$/iu }).click();
+  await page.waitForURL(/\/auth\/otp/u);
+
+  const otp = await getOTPForEmail(email);
+
+  if (!otp) {
+    throw new Error("OTP not found in database");
+  }
+
+  await page.getByRole("textbox", { name: "Code from the email" }).fill(otp);
+
+  await page.waitForURL(/\/auth\/setup/u);
+}
 
 test.describe("Profile Setup Flow", () => {
   test.afterAll(async () => {
     await disconnectDb();
   });
 
-  test("new user is redirected to setup after OTP", async ({ page }) => {
-    const email = `e2e-setup-redirect-${Date.now()}@zoonk.test`;
+  test("a new account gives its name; the username starts from the email and is checked as it changes", async ({
+    page,
+  }) => {
+    const prefix = `e2esetup${Date.now()}`;
+    const email = `${prefix}@zoonk.test`;
+    const chosen = `${prefix}_x`;
+    const redirectTo = `${REDIRECT_URL}/`;
 
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await signInToSetup({ email, page, redirectTo });
 
-    const otp = await getOTPForEmail(email);
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    const submit = page.getByRole("button", { name: /^continue$/iu });
 
-    if (!otp) {
-      throw new Error("OTP not found in database");
-    }
+    await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await name.fill("   ");
+    await name.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
+    await submit.click();
 
-    await page.waitForURL(/\/auth\/setup/u);
+    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
+    await expect(page).toHaveURL(/\/auth\/setup/u);
 
-    await expect(page.getByRole("heading", { name: /complete your profile/iu })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /^name$/iu })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /username/iu })).toBeVisible();
+    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
+    await page.getByRole("button", { name: "Change username" }).click();
+
+    const username = page.getByRole("textbox", { exact: true, name: "Username" });
+    await expect(username).toHaveValue(prefix);
+
+    await username.fill("admin");
+    await expect(page.getByText("admin is already taken")).toBeVisible();
+    await expect(submit).toBeDisabled();
+
+    await username.fill("ab");
+
+    await expect(submit).toBeDisabled();
+
+    await name.fill("Test User");
+    await username.fill(chosen);
+    await expect(page.getByText(`${chosen} is available`)).toBeVisible();
+
+    const redirectPromise = page.waitForRequest((req) => {
+      const url = req.url();
+      return url.startsWith(redirectTo) && new URL(url).searchParams.has("token");
+    });
+
+    await submit.click();
+
+    const redirectRequest = await redirectPromise;
+    const redirectUrl = new URL(redirectRequest.url());
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(redirectTo);
+    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject({
+      name: "Test User",
+      username: chosen,
+    });
 
     await cleanupVerifications(email);
   });
 
-  test("completes setup and redirects to callback", async ({ page }) => {
-    const email = `e2e-setup-full-${Date.now()}@zoonk.test`;
+  test("revisiting the callback writes nothing; a named account without a username confirms one on the setup", async ({
+    page,
+  }) => {
+    const prefix = `e2enamed${Date.now()}`;
+    const email = `${prefix}@zoonk.test`;
+    const callback = `/auth/callback?redirectTo=${encodeURIComponent(REDIRECT_URL)}`;
+    const unnamed = { displayUsername: null, name: "Named Learner", username: null };
 
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await prisma.user.create({ data: { email, emailVerified: true, name: "Named Learner" } });
 
-    const otp = await getOTPForEmail(email);
+    await signInToSetup({ email, page });
 
-    if (!otp) {
-      throw new Error("OTP not found in database");
-    }
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
+      unnamed,
+    );
 
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
+    await page.goto(callback);
     await page.waitForURL(/\/auth\/setup/u);
 
-    await page.getByRole("textbox", { name: /^name$/iu }).fill("Test User");
-    await page.getByRole("textbox", { name: /username/iu }).fill(`testuser${Date.now()}`);
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
+      unnamed,
+    );
 
-    // Wait for availability check to complete
-    await expect(page.getByText(/is available/iu)).toBeVisible();
+    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toHaveValue(
+      "Named Learner",
+    );
 
-    const redirectPromise = page.waitForRequest((req) => {
+    const handoff = page.waitForRequest((req) => {
       const url = req.url();
       return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
     });
 
     await page.getByRole("button", { name: /^continue$/iu }).click();
+    await handoff;
 
-    const redirectRequest = await redirectPromise;
-    const redirectUrl = new URL(redirectRequest.url());
+    const saved = await prisma.user.findUniqueOrThrow({ where: { email } });
+    expect(saved).toMatchObject({ name: "Named Learner", username: prefix });
 
-    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(REDIRECT_URL);
-    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
+    const again = await page.request.get(callback, { maxRedirects: 0 });
+    const location = new URL(again.headers().location ?? "", REDIRECT_URL);
 
-    await cleanupVerifications(email);
-  });
+    expect(again.status()).toBe(307);
+    expect(`${location.origin}${location.pathname}`).toBe(REDIRECT_URL);
+    expect(location.searchParams.get("token")).toBeTruthy();
 
-  test("shows taken for blocked username", async ({ page }) => {
-    const email = `e2e-setup-blocked-${Date.now()}@zoonk.test`;
-
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    const otp = await getOTPForEmail(email);
-
-    if (!otp) {
-      throw new Error("OTP not found in database");
-    }
-
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
-    await page.waitForURL(/\/auth\/setup/u);
-
-    await page.getByRole("textbox", { name: /username/iu }).fill("admin");
-
-    await expect(page.getByText(/is already taken/iu)).toBeVisible();
-
-    await cleanupVerifications(email);
-  });
-
-  test("shows validation for short username", async ({ page }) => {
-    const email = `e2e-setup-short-${Date.now()}@zoonk.test`;
-
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    const otp = await getOTPForEmail(email);
-
-    if (!otp) {
-      throw new Error("OTP not found in database");
-    }
-
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
-    await page.waitForURL(/\/auth\/setup/u);
-
-    await page.getByRole("textbox", { name: /username/iu }).fill("ab");
-
-    await expect(page.getByText(/3-30 characters/iu)).toBeVisible();
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toStrictEqual(saved);
 
     await cleanupVerifications(email);
   });

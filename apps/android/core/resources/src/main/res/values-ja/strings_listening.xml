@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "listening_elapsed": "acf1b1615fc198c0dd573d57670da8c6e2f7fc6496baa0e38500cf37eaa6afdd",
+  "listening_failed": "d00e0cab852dddc46ed7b4a05c58a161ad028871658dac11984f036116ba6c48",
+  "listening_note_free": "7a2fa8321b71da75299db4de3cb7947ceb02fd7d04cf12a0e99b68f2fa2716f7",
+  "listening_note_once": "c61afe8b5e26b941091d1c1f4c7b0251bb46b6f372e3b4c3ea284b7e28ad4538",
+  "listening_note_one_more": "35bcc04d12fb24ed01115eb322fe8ac9536fe4979d9754d96384f36fb1f8395a",
+  "listening_note_restarted": "89c5fdd99fbc3e9ac232ba487beced7f83bd3bd0cd17fedc6fa37e0068470a89",
+  "listening_note_twice": "3eaa3bcef6f31633f9cafa1e65a8f9a9a947302e241fb44740cf7bdeae04efd8",
+  "listening_note_used": "94728b76a36a3dc302b5476cf0c54dc72e6c0dae59f50fb333a0f765956c82ea",
+  "listening_play": "13778f041a1711d399eca6acb5bc8b06cabd4572f6025ecd370114001b4a7a63",
+  "listening_play_again": "89e4b412a66e1c2962e175432f8b464fa2aaa008cdedbfc1486a19b97f6cef60",
+  "listening_playing": "70de17e9d4bd77f81fc4eaf8e381754eb4fab357b13d37d1e1e3e420db0e81b5",
+  "listening_playing_note": "1c6c507533502a2a445a67bd207b1fbc71b400450ae6789951153caf96fc58c0",
+  "listening_questions": "2e7238f4479c21ded11b55d21d36c32646fe41d839e01a1ca3c990faf10280d1",
+  "listening_recording": "e14b0a682ba1ce34972d23f047d257cc1016d78feb7596b0d2d759e9e93cdfc4",
+  "listening_stop": "fcaa7802421b11407a7d7651862a270fd0d1a38b37e7798cefe05843d7b39d1f",
+  "listening_transcript": "fb0b2f40e7f699f39bd5b98361d9d61055cfa135d60d294c0f561c2c3ada1a4c"
+}
+-->
+<resources>
+    <string name="listening_recording">音声</string>
+    <string name="listening_play">音声を再生する</string>
+    <string name="listening_play_again">もう一度再生する</string>
+    <string name="listening_playing">再生中</string>
+    <string name="listening_stop">停止</string>
+    <!-- How far the recording played: "0:42 of 2:10". -->
+    <string name="listening_elapsed">%1$s / %2$s</string>
+    <string name="listening_note_free">何度でも聞き直せます。</string>
+    <string name="listening_note_restarted">音声が途中で止まったため、もう一度最初から再生できます。</string>
+    <string name="listening_note_used">再生回数の上限に達しました。聞いた内容をもとに答えてください。</string>
+    <string name="listening_note_one_more">あと1回聞けます。</string>
+    <string name="listening_note_once">試験と同じく、聞けるのは1回です。先に問題を読んでください。</string>
+    <string name="listening_note_twice">試験と同じく、聞けるのは2回です。先に問題を読んでください。</string>
+    <string name="listening_failed">音声を読み込めませんでした。通信状況を確認して、もう一度試してください。</string>
+    <string name="listening_playing_note">再生しています。試験と同じく、一時停止はできません。</string>
+    <plurals name="listening_questions">
+        <item quantity="other">この音声の問題（%d）</item>
+    </plurals>
+    <string name="listening_transcript">文字起こし</string>
+</resources>

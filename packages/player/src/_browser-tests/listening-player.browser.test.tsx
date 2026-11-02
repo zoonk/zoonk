@@ -1,0 +1,388 @@
+import { ListeningPlayer } from "@zoonk/learn/listening/player";
+import { ListeningStimulus } from "@zoonk/learn/listening/stimulus";
+import { useState } from "react";
+import { renderToString } from "react-dom/server";
+import { describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
+import { TestIntl, render } from "../_test-utils/render";
+import { wavClip } from "../_test-utils/speech-clips";
+
+const PLAY_TIMEOUT = 5000;
+
+function toneUrl(seconds: number): string {
+  return URL.createObjectURL(wavClip(seconds));
+}
+
+const RECORDING_URL = toneUrl(0.4);
+
+function Recording({
+  onPlayed,
+  played: initial = 0,
+  plays,
+  url = RECORDING_URL,
+}: {
+  onPlayed: () => void;
+  played?: number;
+  plays: number | null;
+  url?: string;
+}) {
+  const [played, setPlayed] = useState(initial);
+
+  return (
+    <ListeningPlayer
+      durationMs={400}
+      onPlayed={() => {
+        onPlayed();
+        setPlayed((count) => count + 1);
+      }}
+      played={played}
+      plays={plays}
+      title="Booking a hall"
+      url={url}
+    />
+  );
+}
+
+const recording = () => page.getByRole("region", { name: "Recording" });
+
+describe("listening recordings", () => {
+  it("plays twice, never pausing, then has nothing left to play", async () => {
+    const onPlayed = vi.fn();
+    render(<Recording onPlayed={onPlayed} plays={2} url={toneUrl(0.5)} />);
+
+    await expect.element(recording().getByText("Booking a hall")).toBeVisible();
+    await expect.element(page.getByText(/You hear it twice, like in the exam/u)).toBeVisible();
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+
+    await expect
+      .element(page.getByText("Playing. It doesn't pause, like in the exam."))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Playing" })).toBeDisabled();
+    expect(onPlayed).toHaveBeenCalledOnce();
+
+    await expect
+      .element(page.getByText("You can listen one more time."), { timeout: PLAY_TIMEOUT })
+      .toBeVisible();
+
+    await page.getByRole("button", { name: "Play it again" }).click();
+
+    await expect
+      .element(page.getByText("You've used every play. Answer from what you heard."), {
+        timeout: PLAY_TIMEOUT,
+      })
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+    expect(onPlayed).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps the plays already used, so coming back doesn't give them back", async () => {
+    render(<Recording onPlayed={vi.fn()} played={1} plays={1} />);
+
+    await expect
+      .element(page.getByText("You've used every play. Answer from what you heard."))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+  });
+
+  it("costs no play when the recording doesn't load, and can be tried again", async () => {
+    const onPlayed = vi.fn();
+    render(<Recording onPlayed={onPlayed} plays={1} url="/missing-recording.mp3" />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+
+    await expect
+      .element(page.getByText("The recording didn't load. Check your connection and try again."))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Play the recording" })).toBeEnabled();
+    expect(onPlayed).not.toHaveBeenCalled();
+  });
+
+  it("plays and pauses freely in review, without counting plays", async () => {
+    const onPlayed = vi.fn();
+    render(<Recording onPlayed={onPlayed} plays={null} url={toneUrl(3)} />);
+
+    await expect.element(page.getByText("Listen again as often as you like.")).toBeVisible();
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await page.getByRole("button", { name: "Pause" }).click();
+
+    await expect.element(page.getByRole("button", { name: "Play the recording" })).toBeEnabled();
+    expect(onPlayed).not.toHaveBeenCalled();
+  });
+});
+
+const PLAYING = "Playing. It doesn't pause, like in the exam.";
+const USED_UP = "You've used every play. Answer from what you heard.";
+
+const RESTARTED =
+  "The recording stopped before the end, so you can play it once more from the start.";
+
+function cutOff() {
+  document.querySelector("audio")?.pause();
+}
+
+function setView(url: string) {
+  return {
+    audio: { durationMs: 400, url },
+    plays: 1 as const,
+    task: "Part 1: a conversation between two people in an everyday social context",
+    title: "Booking a hall",
+    transcript: null,
+  };
+}
+
+describe("a set's recording", () => {
+  it("keeps its play limit across the set's questions, each of which shows it", async () => {
+    const playsKey = crypto.randomUUID();
+    const view = setView(toneUrl(0.4));
+    const { unmount } = render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await expect.element(page.getByText(view.task)).toBeVisible();
+    await page.getByRole("button", { name: "Play the recording" }).click();
+
+    await expect
+      .element(page.getByText("You've used every play. Answer from what you heard."), {
+        timeout: PLAY_TIMEOUT,
+      })
+      .toBeVisible();
+
+    unmount();
+    render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+  });
+
+  it("starts with every play when the same recording is asked again elsewhere", async () => {
+    const view = setView(toneUrl(0.4));
+    const { unmount } = render(<ListeningStimulus set={view} playsKey={`block-1:${view.title}`} />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(USED_UP), { timeout: PLAY_TIMEOUT }).toBeVisible();
+
+    unmount();
+    render(<ListeningStimulus set={view} playsKey={`block-2:${view.title}`} />);
+
+    await expect.element(page.getByRole("button", { name: "Play the recording" })).toBeEnabled();
+    await expect.element(page.getByText(USED_UP)).not.toBeInTheDocument();
+  });
+
+  it("lists the set's questions to read before it plays, then folds them while it plays", async () => {
+    const questions = {
+      current: 0,
+      prompts: ["Which room does Tom book?", "Which day does Tom book in the end?"],
+    };
+
+    render(
+      <ListeningStimulus
+        questions={questions}
+        set={setView(toneUrl(1.2))}
+        playsKey={crypto.randomUUID()}
+      />,
+    );
+
+    const list = page.getByRole("button", { name: "Questions on this recording (2)" });
+
+    await expect.element(list).toHaveAttribute("aria-expanded", "true");
+    await expect.element(page.getByText("Which day does Tom book in the end?")).toBeVisible();
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+
+    await expect.element(list).toHaveAttribute("aria-expanded", "false");
+
+    await expect
+      .element(page.getByText("Which day does Tom book in the end?"))
+      .not.toBeInTheDocument();
+
+    await list.click();
+    await expect.element(page.getByText("Which day does Tom book in the end?")).toBeVisible();
+  });
+
+  it("keeps the questions folded when a reload finds the play used", async () => {
+    const playsKey = crypto.randomUUID();
+
+    const ui = (
+      <ListeningStimulus
+        playsKey={playsKey}
+        questions={{ current: 0, prompts: ["Which room does Tom book?", "Which day?"] }}
+        set={setView(toneUrl(0.4))}
+      />
+    );
+
+    const { unmount } = render(ui);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(USED_UP), { timeout: PLAY_TIMEOUT }).toBeVisible();
+
+    unmount();
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(<TestIntl>{ui}</TestIntl>);
+    document.body.append(container);
+    render(ui, { container, hydrate: true });
+
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Questions on this recording (2)" }))
+      .toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shows who said what and plays freely once its questions are answered", async () => {
+    const playsKey = crypto.randomUUID();
+
+    render(
+      <ListeningStimulus
+        set={{
+          ...setView(toneUrl(0.4)),
+          transcript: [
+            { speaker: "Receptionist", text: "Which day were you thinking of?" },
+            { speaker: "Tom", text: "Tuesday, no, sorry, Thursday the twelfth." },
+            { speaker: "Tom", text: "We'll need it from six." },
+          ],
+        }}
+        playsKey={playsKey}
+      />,
+    );
+
+    const transcript = page.getByRole("region", { name: "Transcript" });
+
+    await expect.element(transcript.getByText("Receptionist")).not.toBeInTheDocument();
+    await transcript.getByRole("button", { name: "Transcript" }).click();
+    await expect.element(transcript.getByText("Receptionist")).toBeVisible();
+
+    expect(transcript.getByText("Tom", { exact: true }).elements()).toHaveLength(1);
+
+    await expect
+      .element(transcript.getByText("Tuesday, no, sorry, Thursday the twelfth."))
+      .toBeVisible();
+
+    await expect.element(page.getByText("Listen again as often as you like.")).toBeVisible();
+  });
+
+  it("in practice, gives back a play cut off before its end, once, and says so", async () => {
+    render(<ListeningStimulus practice set={setView(toneUrl(3))} playsKey={crypto.randomUUID()} />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(PLAYING)).toBeVisible();
+
+    cutOff();
+    await expect.element(page.getByText(RESTARTED)).toBeVisible();
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(PLAYING)).toBeVisible();
+
+    cutOff();
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+  });
+
+  it("in practice, gives back a play cut off by a reload", async () => {
+    const playsKey = crypto.randomUUID();
+    const view = setView(toneUrl(3));
+    const { unmount } = render(<ListeningStimulus practice set={view} playsKey={playsKey} />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(PLAYING)).toBeVisible();
+
+    unmount();
+    render(<ListeningStimulus practice set={view} playsKey={playsKey} />);
+
+    await expect.element(page.getByText(RESTARTED)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play the recording" })).toBeEnabled();
+  });
+
+  it("in a mock, counts a play cut off before its end, as the exam does", async () => {
+    const playsKey = crypto.randomUUID();
+    const view = setView(toneUrl(3));
+    const { unmount } = render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(PLAYING)).toBeVisible();
+
+    cutOff();
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+
+    unmount();
+    render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+    expect(page.getByText(RESTARTED).elements()).toHaveLength(0);
+  });
+
+  it("in a mock, counts a play cut off by a reload", async () => {
+    const playsKey = crypto.randomUUID();
+    const view = setView(toneUrl(3));
+    const { unmount } = render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(PLAYING)).toBeVisible();
+
+    unmount();
+    render(<ListeningStimulus set={view} playsKey={playsKey} />);
+
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+  });
+
+  it("in a mock, opens with the plays another tab or device used", async () => {
+    const record = vi.fn(async () => true);
+
+    render(
+      <ListeningStimulus
+        playsKey={crypto.randomUUID()}
+        served={{ played: 1, record }}
+        set={setView(toneUrl(0.4))}
+      />,
+    );
+
+    await expect.element(page.getByText(USED_UP)).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+    expect(record).not.toHaveBeenCalled();
+  });
+
+  it("in a mock, counts each play on the mock as it starts", async () => {
+    const record = vi.fn(async () => true);
+
+    render(
+      <ListeningStimulus
+        playsKey={crypto.randomUUID()}
+        served={{ played: 0, record }}
+        set={setView(toneUrl(0.4))}
+      />,
+    );
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+    await expect.element(page.getByText(USED_UP), { timeout: PLAY_TIMEOUT }).toBeVisible();
+    expect(record).toHaveBeenCalledOnce();
+  });
+
+  it("in a mock, stops a play the mock had none left for, from a page that didn't know", async () => {
+    const record = vi.fn(async () => false);
+
+    render(
+      <ListeningStimulus
+        playsKey={crypto.randomUUID()}
+        served={{ played: 0, record }}
+        set={setView(toneUrl(3))}
+      />,
+    );
+
+    await page.getByRole("button", { name: "Play the recording" }).click();
+
+    await expect.element(page.getByText(USED_UP), { timeout: 1000 }).toBeVisible();
+    expect(record).toHaveBeenCalledOnce();
+    expect(document.querySelector("audio")?.paused).toBe(true);
+    await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
+  });
+
+  it("shows nothing while the recording isn't voiced", async () => {
+    const { container } = render(
+      <ListeningStimulus set={{ ...setView(""), audio: null }} playsKey={crypto.randomUUID()} />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+});

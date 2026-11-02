@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { appendFile } from "node:fs/promises";
 import { z } from "zod";
 import { github, vercel, waitFor } from "./api.mts";
@@ -5,6 +6,122 @@ import { PROJECTS, requiredEnv } from "./config.mts";
 
 type Target = "preview" | "staging" | "production";
 type Project = (typeof PROJECTS)[number];
+
+/** RFC 1035: Vercel shortens a longer generated label in a way its docs don't spell out. */
+const MAX_DNS_LABEL = 63;
+
+type AppUrls = { api: string | null; main: string | null };
+type CourseCacheAccess = { bypass: string | null; secret: string };
+
+function getProject(app: Project["app"]): Project {
+  const project = PROJECTS.find((candidate) => candidate.app === app);
+
+  if (!project) {
+    throw new Error(`Missing the ${app} project`);
+  }
+
+  return project;
+}
+
+/**
+ * Previews use the branch URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`,
+ * which always serves the branch's latest deployment. Null when Vercel would shorten the label.
+ */
+export function getAppUrl({
+  app,
+  branch,
+  target,
+  teamSlug,
+}: {
+  app: Project["app"];
+  branch: string;
+  target: Target;
+  teamSlug: string;
+}): string | null {
+  const project = getProject(app);
+
+  if (target !== "preview") {
+    return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
+  }
+
+  const branchSlug = branch
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]+/gu, "-")
+    .replaceAll(/^-+|-+$/gu, "");
+
+  const label = `${project.name}-git-${branchSlug}-${teamSlug}`;
+
+  return label.length > MAX_DNS_LABEL ? null : `https://${label}.vercel.app`;
+}
+
+async function getTeamSlug(): Promise<string | null> {
+  try {
+    const team = z
+      .object({ slug: z.string() })
+      .parse(await vercel({ path: `/v2/teams/${requiredEnv("VERCEL_ORG_ID")}` }));
+
+    return team.slug;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveAppUrls(target: Target): Promise<AppUrls> {
+  const teamSlug = target === "preview" ? await getTeamSlug() : "";
+
+  if (teamSlug === null) {
+    process.stdout.write("Unknown Vercel team slug: preview addresses can't be predicted\n");
+    return { api: null, main: null };
+  }
+
+  const branch = requiredEnv("DEPLOY_REF");
+
+  const urls = {
+    api: getAppUrl({ app: "api", branch, target, teamSlug }),
+    main: getAppUrl({ app: "main", branch, target, teamSlug }),
+  };
+
+  if (!urls.api || !urls.main) {
+    process.stdout.write("Branch name too long for predictable preview addresses\n");
+  }
+
+  return urls;
+}
+
+const protectionBypassSchema = z.object({
+  protectionBypass: z.record(z.string(), z.object({ scope: z.string() })).optional(),
+});
+
+/**
+ * The secret comes from the PR database's address, so a run still working on a superseded API
+ * deployment reaches the newer main app. Production and staging keep the projects' own values.
+ */
+async function getPreviewCacheAccess(): Promise<CourseCacheAccess> {
+  const { protectionBypass = {} } = protectionBypassSchema.parse(
+    await vercel({ path: `/v9/projects/${getProject("main").id}` }),
+  );
+
+  const bypass = Object.entries(protectionBypass).find(
+    ([, value]) => value.scope === "automation-bypass",
+  );
+
+  const secret = createHmac("sha256", requiredEnv("DATABASE_URL"))
+    .update("app-cache-secret")
+    .digest("hex");
+
+  return { bypass: bypass?.[0] ?? null, secret };
+}
+
+/**
+ * Neon's URLs say `sslmode=require`, which pg 8 already treats as `verify-full` but warns about on
+ * every boot, since pg 9 will stop verifying the certificate. Only the URL pg reads changes: Prisma's
+ * CLI reads the unpooled one and would treat `verify-full` as `prefer`, falling back to plain TCP.
+ */
+function withVerifiedCertificate(databaseUrl: string): string {
+  const url = new URL(databaseUrl);
+  url.searchParams.set("sslmode", "verify-full");
+  return url.toString();
+}
 
 const deploymentSchema = z.object({
   aliasAssigned: z.boolean().optional(),
@@ -26,13 +143,13 @@ const deploymentPageSchema = z.object({
   pagination: z.object({ next: z.number().nullable().optional() }),
 });
 
-export async function assertCurrentPreview(): Promise<void> {
+export async function assertPullRequestOpen(): Promise<void> {
   const pr = z
-    .object({ head: z.object({ sha: z.string() }), state: z.string() })
+    .object({ state: z.string() })
     .parse(await github(`pulls/${requiredEnv("PR_NUMBER")}`));
 
-  if (pr.state !== "open" || pr.head.sha !== requiredEnv("DEPLOY_SHA")) {
-    throw new Error("This preview was superseded or its PR was closed");
+  if (pr.state !== "open") {
+    throw new Error("This preview's PR was closed");
   }
 }
 
@@ -85,23 +202,30 @@ async function deployApp({
   project,
   target,
   apiUrl,
+  cache,
+  mainAppUrl,
 }: {
   project: Project;
   target: Target;
   apiUrl: string;
+  cache: CourseCacheAccess | null;
+  mainAppUrl: string | null;
 }): Promise<string> {
   if (target === "preview") {
-    await assertCurrentPreview();
+    await assertPullRequestOpen();
   }
 
   const domain = target === "production" ? project.productionDomain : project.stagingDomain;
 
   const env = {
-    DATABASE_URL: requiredEnv("DATABASE_URL"),
+    DATABASE_URL: withVerifiedCertificate(requiredEnv("DATABASE_URL")),
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
     ...(project.app === "api" ? { NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" } : {}),
+    ...(project.app === "api" && mainAppUrl ? { MAIN_APP_URL: mainAppUrl } : {}),
+    ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
+    ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),
   };
 
   const response = await vercel({
@@ -126,19 +250,28 @@ async function deployApp({
     },
     method: "POST",
     path: "/v13/deployments",
-    query: { forceNew: "1" },
+    query: { forceNew: "1", withCache: "1" },
   });
 
   const deployment = z.object({ id: z.string() }).parse(response);
+  return waitForDeployment({ app: project.app, id: deployment.id, target });
+}
 
+export async function waitForDeployment({
+  app,
+  id,
+  target,
+}: {
+  app: string;
+  id: string;
+  target: Target;
+}): Promise<string> {
   async function checkDeployment(): Promise<string | undefined> {
     if (target === "preview") {
-      await assertCurrentPreview();
+      await assertPullRequestOpen();
     }
 
-    const current = deploymentSchema.parse(
-      await vercel({ path: `/v13/deployments/${deployment.id}` }),
-    );
+    const current = deploymentSchema.parse(await vercel({ path: `/v13/deployments/${id}` }));
 
     if (
       current.readyState === "ERROR" ||
@@ -146,7 +279,7 @@ async function deployApp({
       current.readyState === "BLOCKED" ||
       current.aliasError
     ) {
-      throw new Error(`Vercel ${project.app} deployment failed: ${current.readyState}`);
+      throw new Error(`Vercel ${app} deployment failed: ${current.readyState}`);
     }
 
     if (current.readyState === "READY" && (target === "preview" || current.aliasAssigned)) {
@@ -156,29 +289,38 @@ async function deployApp({
     return undefined;
   }
 
-  const url = await waitFor({ check: checkDeployment, description: project.app });
-  process.stdout.write(`${project.app}: ${url}\n`);
+  const url = await waitFor({ check: checkDeployment, description: app });
+  process.stdout.write(`${app}: ${url}\n`);
 
   if (process.env.GITHUB_STEP_SUMMARY) {
-    await appendFile(process.env.GITHUB_STEP_SUMMARY, `- ${project.app}: ${url}\n`);
+    await appendFile(process.env.GITHUB_STEP_SUMMARY, `- ${app}: ${url}\n`);
   }
 
   return url;
 }
 
 export async function deploy(target: Target): Promise<void> {
-  const [api, ...clients] = PROJECTS;
+  const [urls, cache] = await Promise.all([
+    resolveAppUrls(target),
+    target === "preview" ? getPreviewCacheAccess() : null,
+  ]);
 
-  if (target === "preview") {
-    const apiUrl = await deployApp({ apiUrl: "https://api.zoonk.dev", project: api, target });
-    await Promise.all(clients.map((project) => deployApp({ apiUrl, project, target })));
+  const shared = { cache, mainAppUrl: urls.main, target };
+
+  // Without the API's predictable address, the consumers wait for its actual deployment URL.
+  if (!urls.api) {
+    const [api, ...clients] = PROJECTS;
+    const apiUrl = await deployApp({ ...shared, apiUrl: "", project: api });
+
+    await Promise.all(clients.map((project) => deployApp({ ...shared, apiUrl, project })));
+
     return;
   }
 
-  const apiUrl = target === "production" ? "https://api.zoonk.com" : "https://api.zoonk.dev";
-  // Wait for every result: a failed app must not hide the status of the other builds.
+  const apiUrl = urls.api;
+
   const results = await Promise.allSettled(
-    PROJECTS.map((project) => deployApp({ apiUrl, project, target })),
+    PROJECTS.map((project) => deployApp({ ...shared, apiUrl, project })),
   );
 
   const failures = results.filter((result) => result.status === "rejected");

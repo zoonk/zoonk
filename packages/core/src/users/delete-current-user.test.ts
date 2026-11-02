@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { deleteCurrentUser } from "./delete-current-user";
+import { deleteCurrentUser, deleteShownAccount } from "./delete-current-user";
 
 const mocks = vi.hoisted(() => ({
   captureDeletionCleanup: vi.fn(),
@@ -33,9 +33,10 @@ vi.mock("./get-session", () => ({ getSession: mocks.getSession }));
 
 const appleCredentials = {
   authorizationCode: "single-use-code",
+  client: "app",
   idToken: "apple-id-token",
   nonce: "raw-nonce",
-};
+} as const;
 
 const emailCredentials = { email: "learner@example.com", otp: "123456" };
 
@@ -48,10 +49,12 @@ describe(deleteCurrentUser, () => {
     currentUserId = currentUser.id;
     mocks.deleteUser.mockResolvedValue({ success: true });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: null,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: null,
+        result: await operation(),
+      }),
+    );
 
     mocks.getRequestHeaders.mockResolvedValue(
       new Headers({ authorization: "Bearer current-token", cookie: "session=stale-cookie" }),
@@ -78,13 +81,30 @@ describe(deleteCurrentUser, () => {
     expect(mocks.reauthorizeApple).not.toHaveBeenCalled();
   });
 
+  it("logs the deleted account's id and nothing else, so its analytics can be removed", async () => {
+    await deleteCurrentUser({});
+
+    await expect(
+      prisma.accountDeletion.findMany({ where: { userId: currentUserId } }),
+    ).resolves.toStrictEqual([
+      {
+        analyticsRemovedAt: null,
+        deletedAt: expect.any(Date),
+        id: expect.any(String),
+        userId: currentUserId,
+      },
+    ]);
+  });
+
   it("keeps deletion available without fresh Apple credentials", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: true,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: true,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({})).resolves.toStrictEqual({ appleAuthorizationRevoked: true });
 
@@ -95,10 +115,12 @@ describe(deleteCurrentUser, () => {
   it("deletes with the fresh session returned after native Apple revocation", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: true,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: true,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ appleCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: true,
@@ -132,10 +154,12 @@ describe(deleteCurrentUser, () => {
   it("reports stored Apple revocation failure after email reauthentication", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: false,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: false,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ emailCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: false,
@@ -145,10 +169,12 @@ describe(deleteCurrentUser, () => {
   it("reports failure when either fresh or stored Apple revocation is unavailable", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
-    mocks.captureDeletionCleanup.mockImplementation(async (operation: () => Promise<unknown>) => ({
-      appleAuthorizationRevoked: false,
-      result: await operation(),
-    }));
+    mocks.captureDeletionCleanup.mockImplementation(
+      async ({ operation }: { operation: () => Promise<unknown> }) => ({
+        appleAuthorizationRevoked: false,
+        result: await operation(),
+      }),
+    );
 
     await expect(deleteCurrentUser({ appleCredentials })).resolves.toStrictEqual({
       appleAuthorizationRevoked: false,
@@ -185,8 +211,26 @@ describe(deleteCurrentUser, () => {
 
     await expect(deleteCurrentUser(input)).rejects.toBe(deletionError);
 
+    await expect(prisma.accountDeletion.count({ where: { userId: currentUserId } })).resolves.toBe(
+      0,
+    );
+
     await expect(
       prisma.session.findUnique({ where: { token: temporarySessionToken } }),
     ).resolves.toBeNull();
+  });
+
+  describe(deleteShownAccount, () => {
+    it("deletes the account the page showed while it holds the session", async () => {
+      await expect(deleteShownAccount({ shownUserId: currentUserId })).resolves.toBe("deleted");
+
+      expect(mocks.deleteUser).toHaveBeenCalledOnce();
+    });
+
+    it("deletes nothing once another account holds the session than the one the page showed", async () => {
+      await expect(deleteShownAccount({ shownUserId: randomUUID() })).resolves.toBe("otherAccount");
+
+      expect(mocks.deleteUser).not.toHaveBeenCalled();
+    });
   });
 });

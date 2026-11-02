@@ -1,25 +1,51 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
+import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { type TTSVoice, isOpenAITTSSupportedLanguage } from "@zoonk/utils/languages";
+import { type TTSVoice, getBaseLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { segmentWords } from "@zoonk/utils/string";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { captureAiGeneration } from "../../provenance/ai-generation-sink";
+import { type TaskProvenance } from "../../provenance/task-provenance";
+import { checkWordPronunciation } from "../language/check-word-pronunciation";
+import { type WordIpa, writeWordIpa } from "../language/word-ipa";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
-import promptTemplate from "./generate-language-audio.prompt.md";
-import { type SpeechModelName, speechModels } from "./speech-models";
+import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
+import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
+import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
+import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
-const DEFAULT_VOICE: TTSVoice = "Kore";
-const MAX_ATTEMPTS_PER_PROVIDER = 2;
+const TASK = "language-audio";
+const MS_PER_SECOND = 1000;
 
-/* oxlint-disable-next-line no-magic-numbers -- 850 KiB fits an 18-second 24 kHz mono WAV. */
-const MAX_PROVIDER_AUDIO_BYTES = 850 * 1024;
+/** A check usually takes about 3s; one took 43s in its eval (11 Oct 2026). */
+const PRONUNCIATION_CHECK_TIMEOUT_MS = 15_000;
+const PRONUNCIATION_LISTENS = 2;
 
-const READ_ALOUD_TEMPLATE =
-  "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
+/** `promptVersion` covers the voice and the instructions it was read with. */
+export type SpeechProvenance = Pick<
+  TaskProvenance,
+  "generatedAt" | "model" | "promptVersion" | "runId"
+>;
 
-export type AudioResult = { audio: Uint8Array; format: "mp3" };
-export type LanguageAudioTextType = "sentence" | "word";
+type VoicedAudio = {
+  audio: Uint8Array;
+  durationSeconds: number;
+  format: "mp3";
+  model: SpeechModelName;
+  providerMetadata: Record<string, unknown>;
+};
+
+export type AudioResult = {
+  audio: Uint8Array;
+  durationMs: number;
+  format: "mp3";
+  provenance: TaskProvenance;
+};
+
 export type LanguageAudioUsage = "alphabetSymbol";
 
 const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
@@ -27,163 +53,176 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
   string
 >;
 
-/**
- * Skips task-level guidance for normal English word and sentence audio because
- * the extra instructions exist to prevent non-English words from being read
- * with English pronunciation. Usage-specific audio still gets its task prompt,
- * and the provider supplies the minimal guidance Gemini needs to stay in speech
- * mode.
- */
-function shouldBuildInstructions({
-  languageCode,
-  usage,
-}: {
-  languageCode?: string;
-  usage?: LanguageAudioUsage;
-}) {
-  return Boolean(usage) || Boolean(languageCode && languageCode !== "en");
-}
+type LookAlike = { [Key in keyof WordIpa]: NonNullable<WordIpa[Key]> };
 
 /**
- * Expands the TTS prompt with optional usage-specific instructions. Keeping the
- * usage structured avoids passing learner-facing romanization or pronunciation
- * hints into the audio model, which can make output less stable.
- */
-function buildInstructions({
-  languageCode,
-  usage,
-}: {
-  languageCode?: string;
-  usage?: LanguageAudioUsage;
-}): string | undefined {
-  if (!shouldBuildInstructions({ languageCode, usage })) {
-    return undefined;
-  }
-
-  const languageName = languageCode
-    ? getPromptLanguageName({ language: languageCode })
-    : getPromptLanguageName({ language: "en" });
-
-  const languagePrompt =
-    languageCode && languageCode !== "en"
-      ? promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName)
-      : "";
-
-  const usagePrompt = usage ? usagePrompts[usage] : "";
-  const readAloudPrompt = READ_ALOUD_TEMPLATE.replaceAll("{{LANGUAGE}}", () => languageName);
-
-  return [languagePrompt, usagePrompt, readAloudPrompt].filter(Boolean).join("\n\n");
-}
-
-/**
- * Chooses the automatic provider order from language support and content type.
- * English always prefers OpenAI. Other supported languages prefer OpenAI for
- * sentences and Gemini for words, while Gemini-only languages never reach
- * OpenAI.
- */
-function getDefaultProviderOrder({
-  languageCode,
-  textType,
-}: {
-  languageCode?: string;
-  textType: LanguageAudioTextType;
-}): readonly SpeechModelName[] {
-  if (languageCode === "en") {
-    return [speechModels.openai, speechModels.google];
-  }
-
-  if (!isOpenAITTSSupportedLanguage(languageCode)) {
-    return [speechModels.google];
-  }
-
-  if (textType === "sentence") {
-    return [speechModels.openai, speechModels.google];
-  }
-
-  return [speechModels.google, speechModels.openai];
-}
-
-/**
- * Tries every selected provider twice because transport retries cannot observe
- * semantic failures discovered only after decoded-signal validation. Explicit
- * model requests keep their existing two attempts for the audio test tool.
+ * Each automatic model is tried once: the next one is the retry. An explicit model gets a second
+ * attempt, since transport retries can't see silent or malformed audio. A word English spells the
+ * same only goes to Gemini Flash, which read 27 of 27 with its IPA and two listens (11 Oct 2026);
+ * Flash Lite follows the IPA less, and MAI-Voice can't take it.
  */
 function getSpeechModels({
-  languageCode,
+  lookAlike,
+  language,
   model,
-  textType,
 }: {
-  languageCode?: string;
+  lookAlike: LookAlike | null;
+  language: string;
   model?: SpeechModelName;
-  textType: LanguageAudioTextType;
 }): readonly SpeechModelName[] {
-  const providerOrder = model
-    ? [model]
-    : getDefaultProviderOrder({ ...(languageCode ? { languageCode } : {}), textType });
-
-  return Array.from({ length: MAX_ATTEMPTS_PER_PROVIDER }, () => providerOrder).flat();
-}
-
-/**
- * Rejects suspiciously large audio from every provider before upload. Keeping
- * one task-level limit prevents a provider-specific implementation from
- * bypassing the prompt-leak safeguard when tasks choose different models.
- */
-function assertExpectedAudioSize({ audio, model }: { audio: Uint8Array; model: SpeechModelName }) {
-  if (audio.byteLength <= MAX_PROVIDER_AUDIO_BYTES) {
-    return;
+  if (model) {
+    return [model, model];
   }
 
-  throw new Error(
-    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${MAX_PROVIDER_AUDIO_BYTES} bytes.`,
-  );
+  if (lookAlike) {
+    return [speechModels.geminiFlash, speechModels.geminiFlash, speechModels.geminiFlash];
+  }
+
+  return getSpeakingModels({
+    candidates: [
+      speechModels.geminiFlash,
+      speechModels.geminiFlashLite,
+      speechModels.maiVoiceFlash,
+    ],
+    language,
+  });
 }
 
 /**
- * Generates WAV and converts it to the one upload format inside the retry
- * boundary. Malformed or silent audio therefore follows the same provider
- * fallback path as transport and API failures, regardless of which provider
- * produced it.
+ * Only a word alone gets read the English way: in a sentence the other words give the language
+ * away. Null when the IPA couldn't be written, so the clip is still voiced.
+ */
+async function findLookAlike({
+  analytics,
+  language,
+  text,
+  usage,
+}: {
+  analytics?: AiGenerationContext;
+  language: string;
+  text: string;
+  usage?: LanguageAudioUsage;
+}): Promise<LookAlike | null> {
+  const canLookEnglish =
+    !usage &&
+    getBaseLanguage(language) !== "en" &&
+    !usesNonLatinScript(language) &&
+    segmentWords(text).length === 1;
+
+  if (!canLookEnglish) {
+    return null;
+  }
+
+  const { data, error } = await safeAsync(() => writeWordIpa({ analytics, language, word: text }));
+
+  if (error) {
+    logError("Writing a word's IPA failed; voicing it without:", error);
+    return null;
+  }
+
+  const { englishIpa, ipa } = data.data;
+  return englishIpa && ipa ? { englishIpa, ipa } : null;
+}
+
+/**
+ * Two listens, since one let a half-English "time" through that another caught (11 Oct 2026). With
+ * no answer at all the clip is kept: the IPA already steers it, and no audio is worse.
+ */
+async function assertNativeReading({
+  analytics,
+  audio,
+  language,
+  lookAlike,
+  model,
+  text,
+}: {
+  analytics?: AiGenerationContext;
+  audio: Uint8Array;
+  language: string;
+  lookAlike: LookAlike;
+  model: SpeechModelName;
+  text: string;
+}) {
+  const listen = () =>
+    safeAsync(() =>
+      checkWordPronunciation({
+        abortSignal: AbortSignal.timeout(PRONUNCIATION_CHECK_TIMEOUT_MS),
+        analytics,
+        audio,
+        englishIpa: lookAlike.englishIpa,
+        ipa: lookAlike.ipa,
+        language,
+        mediaType: "audio/mpeg",
+        word: text,
+      }),
+    );
+
+  const listens = await Promise.all(Array.from({ length: PRONUNCIATION_LISTENS }, listen));
+  const checks = listens.flatMap(({ data }) => (data ? [data.data] : []));
+
+  for (const { error } of listens) {
+    if (error) {
+      logError("Checking a word's pronunciation failed:", error);
+    }
+  }
+
+  const heardElse = checks.find((check) => !check.soundsNative);
+
+  if (heardElse) {
+    throw new Error(
+      `${model} didn't read "${text}" with its language's sounds (heard /${heardElse.heard}/)`,
+    );
+  }
+}
+
+type VoiceInput = {
+  analytics?: AiGenerationContext;
+  instructions: string;
+  language: string;
+  lookAlike: LookAlike | null;
+  text: string;
+  voice: TTSVoice;
+};
+
+/**
+ * Inside the retry boundary, so malformed, silent or overlong audio, or a word read the English
+ * way, falls back like a transport failure.
  */
 async function generateWithModel({
+  analytics,
   instructions,
+  language,
+  lookAlike,
   model,
   text,
   voice,
-}: {
-  instructions?: string;
-  model: SpeechModelName;
-  text: string;
-  voice: TTSVoice;
-}): Promise<AudioResult> {
-  const wavAudio = await generateSpeechWithProvider({
-    ...(instructions ? { instructions } : {}),
+}: VoiceInput & { model: SpeechModelName }): Promise<VoicedAudio> {
+  const maxSeconds = getMaxSeconds(text);
+
+  const { audio: wavAudio, providerMetadata } = await generateSpeechWithProvider({
+    instructions,
+    language,
     model,
     text,
     voice,
   });
 
-  assertExpectedAudioSize({ audio: wavAudio, model });
+  assertExpectedAudioSize({ audio: wavAudio, maxSeconds, model });
 
-  const mp3Audio = await convertWavToMp3({ audio: wavAudio, model });
-  return { audio: mp3Audio, format: "mp3" };
+  const { audio, durationSeconds } = await convertWavToMp3({ audio: wavAudio, maxSeconds, model });
+
+  if (lookAlike) {
+    await assertNativeReading({ analytics, audio, language, lookAlike, model, text });
+  }
+
+  return { audio, durationSeconds, format: "mp3", model, providerMetadata };
 }
 
-/**
- * Tries provider-qualified models in order. Each adapter owns transient request
- * retries; this layer owns cross-provider and post-decode quality retries.
- */
+/** Each adapter owns transient request retries; this layer owns cross-model and quality retries. */
 async function generateWithFallback({
-  instructions,
   models,
-  text,
-  voice,
-}: {
-  instructions?: string;
-  models: readonly SpeechModelName[];
-  text: string;
-  voice: TTSVoice;
-}): Promise<AudioResult> {
+  ...input
+}: VoiceInput & { models: readonly SpeechModelName[] }): Promise<VoicedAudio> {
   const [model, ...remainingModels] = models;
 
   if (!model) {
@@ -191,20 +230,14 @@ async function generateWithFallback({
   }
 
   try {
-    return await generateWithModel({
-      ...(instructions ? { instructions } : {}),
-      model,
-      text,
-      voice,
-    });
+    return await generateWithModel({ ...input, model });
   } catch (error) {
+    if (isBlockedTestCall(error)) {
+      throw error;
+    }
+
     if (remainingModels.length > 0) {
-      return generateWithFallback({
-        ...(instructions ? { instructions } : {}),
-        models: remainingModels,
-        text,
-        voice,
-      });
+      return generateWithFallback({ ...input, models: remainingModels });
     }
 
     const lastError = error instanceof Error ? error : new Error(String(error));
@@ -213,38 +246,64 @@ async function generateWithFallback({
   }
 }
 
-/**
- * Generates audio with a language-aware provider order. Callers only need to
- * identify sentences because words are the default used by vocabulary and
- * alphabet generation. An explicit model bypasses automatic provider choice.
- */
+/** The result names the model that actually voiced it, after any fallback. */
 export async function generateLanguageAudio({
+  analytics,
   language,
   model,
   text,
-  textType = "word",
   usage,
-  voice = DEFAULT_VOICE,
+  voice = DEFAULT_LANGUAGE_AUDIO_VOICE,
 }: {
-  language?: string;
+  analytics?: AiGenerationContext;
+  language: string;
   model?: SpeechModelName;
   text: string;
-  textType?: LanguageAudioTextType;
   usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
-  const instructions = buildInstructions({ languageCode: language, usage });
+  const lookAlike = await findLookAlike({ analytics, language, text, usage });
 
-  return safeAsync(() =>
-    generateWithFallback({
-      ...(instructions ? { instructions } : {}),
-      models: getSpeechModels({
-        ...(language ? { languageCode: language } : {}),
-        ...(model ? { model } : {}),
-        textType,
-      }),
+  const { instructions, promptVersion } = getLanguageAudioPrompt({
+    ...(lookAlike ? { ipa: lookAlike.ipa } : {}),
+    language,
+    usagePrompt: usage ? usagePrompts[usage] : "",
+    voice,
+  });
+
+  const models = getSpeechModels({ language, lookAlike, ...(model ? { model } : {}) });
+  const [requestedModel = speechModels.geminiFlash] = models;
+  const runId = randomUUID();
+  const startedAt = performance.now();
+
+  return safeAsync(async () => {
+    const voiced = await generateWithFallback({
+      analytics,
+      instructions,
+      language,
+      lookAlike,
+      models,
       text,
       voice,
-    }),
-  );
+    });
+
+    const provenance = buildSpeechProvenance({
+      instructions,
+      latencyMs: Math.round(performance.now() - startedAt),
+      promptVersion,
+      requestedModel,
+      runId,
+      text,
+      voiced,
+    });
+
+    await captureAiGeneration({ context: analytics, provenance, task: TASK });
+
+    return {
+      audio: voiced.audio,
+      durationMs: Math.round(voiced.durationSeconds * MS_PER_SECOND),
+      format: voiced.format,
+      provenance,
+    };
+  });
 }

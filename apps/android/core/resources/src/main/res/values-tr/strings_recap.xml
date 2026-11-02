@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "recap_days_studied": "8a4d57079f9d2164edd67c5a4d282b2a0feb4a94642e5e132ae76ecb9122aa08",
+  "recap_first_summary": "c9721107ae06064458b60294e233b6dd081993c4d2c1c3632cf840fcc4fc9fbb",
+  "recap_first_summary_detail": "6ad0c82728e9315307861c6f0f2bf1cba19075c70f16c5f407cd2f5ed26da750",
+  "recap_fresh_week": "38e4920cee82ad00b49abcd6c236bb5243d0360b97a85d0b259f6b29af359701",
+  "recap_learned": "0d814d41214878b5bb96c683c3309417399578e41ed08382baa6f887f6a7bdb3",
+  "recap_lets_go": "47c2e8dfba28bb450073e819fe57f90372463ac5a70594c52ea1cd25b306f8c1",
+  "recap_mastered": "2eb02eef1ea6e17c01862ccc46cb9a754302dce1f5efbc5fc6dc5c220455ceae",
+  "recap_mistake_fixed": "e6070b35479d23b144f406e2224f81af77c2e95e485d5a334f4de8ccaad0c1e5",
+  "recap_mistakes_fixed": "d5afcdb788b6e9cf5ec1173c24b2470ee780590361a3a624be3afe09d51c2fcf",
+  "recap_more_questions": "50f3f245986f0c24036f531fa6aa8ad8e8e05bd83629280aaa5245e93948faf8",
+  "recap_more_time": "8e1183bcb7a956ecd4067aab171964714e938b68434db06fa92a21a61eda2eb9",
+  "recap_new_idea": "6ad6aea58f147a56b1535d232510681e0f667b570578cb1ca08aef102ac6b7bc",
+  "recap_new_ideas": "58bcca4e697f364839236ef537a7fb01dd2b9a65f770b6d0583ab16ab7114a9a",
+  "recap_next_week": "4290ca9d6993878587cb1213b6cf5e8c6f86675ae6b4f6a396b3aff7cf55cad0",
+  "recap_phase_done": "1603cb863f18057aba36dd7dbc5b65fca99a81d24078a0d85452b421fba91d36",
+  "recap_questions": "d973b057d200db7c7a7db3b9de1b5b9a12a419bf0d61df8fda86fd21b45cd3d5",
+  "recap_quiet_week": "4a7fcc26ca736c84035a3b8102690ebd426195216321ffe676563ee86f21849d",
+  "recap_review": "214c29380d11476a62901d604145da83e0d232bded355dbb68d7114ac0ab8ce8",
+  "recap_reviews": "d4ad34bcce9c1737ccd7e7d856b0023e73123c6c7dd57fbba85e01659e4329c6",
+  "recap_solid": "67a810b5ddc4a7e2480dd212d440312d536982c2b02062f463bb9fd1401fbb0c",
+  "recap_time": "38b6f89ec777d8c63b578a60cd3a0013c08e1e4fb4cf4b743d6f9d235c8d6080",
+  "recap_trap_hunter_badge": "c7f0574ab460b335f40f5da4676c1d18777b98ddd02461494754f0ac1de70997",
+  "recap_trap_hunter_badges": "50072887ec9a28a0d4ec9e09fbea833566208a811004bf8a82b62306c4bd3b49",
+  "recap_turnaround": "430a5c8150d806ee7e57166db406afe0af505434456800eafa6f5c6c7abfc302",
+  "recap_turnaround_chart": "71d0fcc396fd69355687960fb8192ad2bffdc54655ff84e3922c3900cd1d30ad",
+  "recap_turnaround_detail": "23d11f9c5ff94c6e596e21b1ae330ac402a68715ed148bb812b7d6e2a927857d",
+  "recap_weekly_summary": "b7c10a31b37c864cce110784d44185a3ada49fb2666e72d007629802a9824c3c",
+  "recap_what_a_week": "a75e0792c4b7d5ed2e6b6be67b5f213a0291dba9890750d54e256bececa31b62",
+  "recap_what_a_week_name": "cb34a59f2577a0d3f364cbcb8c19de800c4e4cb9b2b83a789e51b3a807380217"
+}
+-->
+<resources>
+    <plurals name="recap_days_studied">
+        <item quantity="one">%d gün çalıştın</item>
+        <item quantity="other">%d gün çalıştın</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "20 min". -->
+    <string name="recap_more_time">Önceki haftaya göre %1$s daha fazla!</string>
+    <plurals name="recap_more_questions">
+        <item quantity="one">Önceki haftaya göre %d soru daha fazla!</item>
+        <item quantity="other">Önceki haftaya göre %d soru daha fazla!</item>
+    </plurals>
+    <!-- %1$s is the phase's number, %2$s its name. -->
+    <string name="recap_phase_done">%1$s. aşama · %2$s tamamlandı</string>
+    <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
+    <string name="recap_weekly_summary">Haftalık özet · %1$s</string>
+    <!-- %1$s is the learner's first name. -->
+    <string name="recap_what_a_week_name">Ne haftaydı ama, %1$s!</string>
+    <string name="recap_what_a_week">Ne haftaydı ama!</string>
+    <string name="recap_time">Süre</string>
+    <string name="recap_questions">Sorular</string>
+    <string name="recap_quiet_week">Sakin bir hafta</string>
+    <string name="recap_first_summary">İlk özetin pazar günü hazır olacak</string>
+    <string name="recap_fresh_week">Her hafta yeni bir başlangıç.</string>
+    <string name="recap_first_summary_detail">Haftanı sayılarla özetler ve en çok gelişen becerini gösterir.</string>
+    <string name="recap_turnaround">En büyük ilerleme</string>
+    <!-- %1$s and %2$s are percentages: "40% → 85% right answers". -->
+    <string name="recap_turnaround_detail">Doğru cevap oranı: %1$s → %2$s</string>
+    <!-- %1$s is a skill's name. -->
+    <plurals name="recap_mastered">
+        <item quantity="one">%1$s artık Tam öğrenildi düzeyinde: %2$d farklı günde hatırladın.</item>
+        <item quantity="other">%1$s artık Tam öğrenildi düzeyinde: %2$d farklı günde hatırladın.</item>
+    </plurals>
+    <string name="recap_solid">%1$s artık Sağlam: sonraki günlerde de doğru cevap vermeye devam ettin.</string>
+    <string name="recap_turnaround_chart">Haftanın günlerine göre bu beceride verilen doğru cevaplar</string>
+    <string name="recap_learned">Öğrendiklerin</string>
+    <!-- A count stands beside these; the singular reads beside 1. -->
+    <string name="recap_new_idea">yeni bilgi</string>
+    <string name="recap_new_ideas">yeni bilgi</string>
+    <string name="recap_review">tekrar</string>
+    <string name="recap_reviews">tekrar</string>
+    <string name="recap_mistake_fixed">hata düzeltildi</string>
+    <string name="recap_mistakes_fixed">hata düzeltildi</string>
+    <string name="recap_trap_hunter_badge">Tuzak avcısı rozeti</string>
+    <string name="recap_trap_hunter_badges">Tuzak avcısı rozetleri</string>
+    <string name="recap_next_week">Gelecek hafta</string>
+    <string name="recap_lets_go">Başla</string>
+</resources>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "stats_activities": "40d4304cde7c1754010b52be099259c925e47a6e3375bc670cf10c9f6234c86c",
+  "stats_activity": "e24b3672d0ff2abc2e599a2a699d2a363faddd5aead5ab5acb0a5788cc4990d1",
+  "stats_afternoon": "6177a7de0c1abbb3b53d7eacc65ba6c80f0e97cc79fa39572a515e6c7042a2fb",
+  "stats_all_goals": "f256eeb1750f14c2b92f0c2986edd74820c60242a9af141b84de73183085d723",
+  "stats_answer_count": "0479ac3e60973c465209d0972fb6ed0e947d63dcab426fe92f596abe4934a457",
+  "stats_answers": "d80d25764addd3bfe57cd5698df154a6645ea2cb936a88109e0d276765db0aae",
+  "stats_any_day": "0d0ed7f8570703020d4f2c5b2c4c69bf0e547a8daa67131e9ccc24cb9f486545",
+  "stats_any_day_studied": "b33a46ec9752247958820ffd2cb80f1e3113447eb0500970f71646defd29eaeb",
+  "stats_any_time": "ee6b43c94978f5da684994b7dbc4799e6952fa31fbca344910be35b9e9121568",
+  "stats_average": "c89e30dc1b3ee16acdb86354d84d19a45dbb89566252899d5679cb91102006c4",
+  "stats_back_from_today": "0ab50c0c438b65b6e9ebfa513b8b980cce0019f449cca3d042e3a318e15f9d17",
+  "stats_belt_at": "14d6e5ff9d7b3ac7ef44fa3800af9c693e3646dee026cdb06e24338ab8188b94",
+  "stats_belt_current": "aa0eaab3e40f7736af08fdc56d79184a6d8a04ba618921aee73c3dd6770e01b1",
+  "stats_belt_earned": "05fc50e0deb9697919a0fd4f9bb97c72ac133c18f95d7a32255bc4da7a536716",
+  "stats_belt_progression": "ffe68e5e4ef74ddcc3bff33c479d34d3977315eac3b9a445e103018e97d057b8",
+  "stats_best_day": "0be8deb6de8033eb9278196bede0e121f70af99417a5a5d07a8d59880fe9110f",
+  "stats_best_time": "25fb60f7215158dc391d3c14870629cd437ec1fb18a46f4155b92d946037b68f",
+  "stats_brain_power": "30d83d8ffce536defa88e67aab25e3b5525f9dd4582482e7a48a69db97b1e3a3",
+  "stats_brain_power_amount": "c92266dcf75ef0e04c2463de860fb1bf11e852e044f958bdfec3fca1a6b85a24",
+  "stats_calendar_activity_summary": "1165588d3af1d0c49d5f7b2a38f1a52abaad938a5be86e4131b54efaa0e4774e",
+  "stats_calendar_energy_summary": "2387fad1ffadfbdee87d7de82242b96c5a591137083dfd3fadd00e65b3563597",
+  "stats_correct_of_total": "ded9086fec9cc6f23fa3447dd472807b58125e79c0805822c243ef845a5a6ad4",
+  "stats_day_activities": "e53b87f4fbfa06572ef8be9acbd1b673667dfc9d292526719e78e71943b2bff0",
+  "stats_day_energy": "08badf2c33e7a9bc9f83b5822bba897d89f9d32304d80daa2e724df67aa57d67",
+  "stats_day_no_energy": "b7e16bced3e7327f6ed1846d6bbddd6fd68a4f683851bbba37b7887c93350557",
+  "stats_day_no_study": "d2d842c06374d58e0d5e268e34236773ce1b04fa4618eb647b7bca967520a86f",
+  "stats_days": "e5e020bbe6808712ce5c2cd63d69b2c3e4d002025045ce9a8f96675df9715917",
+  "stats_days_even": "bbdc2f6fc182407599e9055139c1824f72e172a888a97005a852021b9bc24d54",
+  "stats_empty_title": "190d58633ec1baa4c2f63498bd7cd25886b72967bcedf70f6fec1e384bfb4bc4",
+  "stats_energy": "707d417bfe2eaa6097fe208434e8d86a12a658f2d8f5f42995768b17bf80ec82",
+  "stats_energy_average": "23dcac7f227037e24d37c1d8868a7e2f1a0c4c74e6b13322c34a14245ac38406",
+  "stats_energy_line": "e5004ceaaf4f5284278d7f05b4c7a540540d0c8e23849737d10094d5f4784a43",
+  "stats_evening": "10502d9329660fecceb7237e262ba5c48549868bdff3af290330acbbed2ece14",
+  "stats_every_belt": "2ba8ed280aeceb4f99fd91633bc4f94e77666016980f603a6c674a65d7f3e00f",
+  "stats_finished": "07c2a73f5ab034c2f0a1cc21c1d1202e3c7e46a88fdf33f8389c61a8baf70349",
+  "stats_full_energy": "5796b7c9d9eb75bad31c8110c2629fc444058960dfffade0ee4210679f6dcf37",
+  "stats_full_energy_days": "a547a9352a47b1f92f4c91f9a7843e4ca877511a4cf32b66775a9b2e179986fb",
+  "stats_go_to_today": "990121b486e814f06e4997897d6c48840d6073cbb33e9b39fdc4d66b8120ddf5",
+  "stats_high": "75f284daa2d37bb5982ba6b12846bc70f5bcbd99f1b75d7a0c0579c46ec17f28",
+  "stats_last_90": "f0e453f20de167df0c762a37d6001e9b339553432a6d8ca8aef28560eec74dad",
+  "stats_less": "78af49161fbaf2868399627139e4f94e27b33f05e0069336d8180276ec1e3997",
+  "stats_lessons": "48d274ae9bf64ea7e0d1953edb2e90e0280848c742053e7cb4490f30847b9906",
+  "stats_lessons_time": "1ff0fdad2ac09ce6f367e61f598eb9342ba92e70789c3d5fbb3a9033fc3aefd9",
+  "stats_level": "d64d8f1578eda9768f8725709f7728712eb39da394ab5e62398b320ed79ae028",
+  "stats_level_line": "cd25e9d637aed413e91f7e064ac9fa067f2a573a0901f0d84ae67b944c3c2109",
+  "stats_level_of": "d9d943ca15e63ea3ad6fe45085f20fc6612ccd3ff6b3965937b58d4a8f77db41",
+  "stats_low": "bdf4b2939eeaaf32152392bb0192b5388901db60c86436470b73652866f5ef7f",
+  "stats_max_level": "5cfd5d2a963039cc36036b16dc131fe8a018e6c25700212cbda9824b03c3ce18",
+  "stats_min_answers": "098ef7766eaa50bb48dadfa4af636241003a4942f0c8327be5963d346e57f1a7",
+  "stats_more": "925eb01d8c7168bc921775ecbbbfc668545b58db3cf279246c55ae9932536fdc",
+  "stats_morning": "eb72003079e060ccee7082521cdbfbf722435b20a5fba2ae4cd9c479ca92d22d",
+  "stats_never_goes_down": "3b0b6c1af2fddc98be957f29730a4a79cf3d98fea99a1fe48b90aa1b309d1814",
+  "stats_next_belt": "8b6d3b47521f24fbe78d04eecd22cf1f9f9270fd04e002968c87ad82b47e7b47",
+  "stats_next_level": "8300e4fbab8586afe214c081f934d96d34fc55ac3b361b3df2863b6b323c9784",
+  "stats_night": "9efe02b03534846f712cfc904df6d8a9c55a30c4ef91b8564984f2e25b8c4119",
+  "stats_no_answers": "48440deefa6f61f650e669cf28427b2031bb282c08518f8c25f5819b019154df",
+  "stats_not_enough": "4c92906be728588c9a987739691dacab895b6583f3d2a4d9aef75f3e0cec777b",
+  "stats_not_yet": "152675764b7139752af6f6e52a023897861964761cb3ba1993a096031c431a44",
+  "stats_of_all_answers": "d0f5322c9abf1737cc7773be430d456bfaca98f7d7dbafb732c5c6d4f4af0962",
+  "stats_open": "a51da30a100e06f01585bdf238ab2b10c212447ea12bfa6e915ea96489424624",
+  "stats_overview": "71ab8b754a34cb4144afb90b85dfa5eeb7e3c28e12a7847cd527f8cf92761020",
+  "stats_part_failed": "6db80ca9756ce4fe60eeffde2f2fbc556be3ca6ee56c979f175a7e285552c709",
+  "stats_past_year": "3e3894e786b6ac786c1f986300c97f48bb9935eef43d27ee86b188e64623fe57",
+  "stats_patterns": "b6beff88ba6ec5ca568dc216b679c0920cd18a8cbb2386672b569701e1e03993",
+  "stats_patterns_90": "45f2b1125f76247e831828f92d9a133b1cc1b27f702785d6b85599e561876c39",
+  "stats_patterns_intro": "734c9479219b23c12b0b42f708f7e6b5b7772675e4746156141ef86f1794f8f6",
+  "stats_period": "d3f239f1198a1c34d24bb80ad931d03ef6f8fc90243b24de9d55b2ca4a35a281",
+  "stats_range": "e2293057d47dc88c693503ca00e7e1d1282fbe46246649903375a2949f389fa0",
+  "stats_right": "c0b8695b1b04f85e3a062d85835a0d0afa8de00aa126e0575b4c9943059bea49",
+  "stats_right_answers": "5f0f63a352b7ac051d6805aeca4ada2933da28a799bf9a3a160d7ea80c93b64c",
+  "stats_right_count": "e3cf4c9df9fc7f740f68add13a9ea5605724d17c6cb04070a57903c71b1dbea9",
+  "stats_right_last_90": "de6f9ee2c0f0f8414d02fb5f99746f3876dab653be42cf959b213b99fadfacca",
+  "stats_score": "abc81df9ea7a4391ec98d137cfae83caf663b2a536147d002846611b51eb5d2c",
+  "stats_score_90": "4b7148acd4a991a6db18cbb428a6cdc8a0492fa33ac8879b6d389c58a2afaeb5",
+  "stats_score_across": "e4e0031c8a4962aa99df7ce18d716ce41cf3474acf15494fd27e0d774e6fa620",
+  "stats_score_after_answers": "8fe1515b74b2c01bf40a8ff5fe2c3b7a5c00bbe826b25caabd9823e240ff8f58",
+  "stats_score_answers": "24bb106d2f8346638d3470ee8b52ea07df8fb55d55685839ada04701df59998b",
+  "stats_score_line": "3871c4aada48fc66861265b6d83961e3c842d333821ac7a93adbd18eb20a5d1d",
+  "stats_score_trend": "644f7d76f44446b299d5f61bbaca233c94cf0161e50f12e16e9677e2a454e2ad",
+  "stats_score_week": "4486b54bcb213fee8d428ccfbe839181c9ab06d5c0e17bbcfce60eaefe6a76ff",
+  "stats_see_all": "fa89cae6c593097c89e07350d51940a2e08c13817d3ef452f78404065e9f08cb",
+  "stats_since_start": "3eb2d72aa37d9fbba1067193258603ad053cbb443b906e2d6bf2f9c6c5a38ab9",
+  "stats_study_days": "8e44b257638b1a5947baca3934d2e779a550017a046aa07053d08e8f157344d6",
+  "stats_studying_total": "9a92eddb5988020a35613476edfdc37cae3417cab983c681441e6488b020312a",
+  "stats_throughout_day": "4b6526f047016ed7bbb1752182a4e128ef2cdbc4b526d5b131b2796b13ef83be",
+  "stats_throughout_week": "1f33301b922d050275fa482fabd70e5b7aaf9c95a4309b5b2898dc503c68e5ad",
+  "stats_time": "58756143218e1638f24c77c8b47333812c370b979f3664f7d771c20138955945",
+  "stats_times_even": "1131444472920c6c634cb3ef0efd95d28c891be4687f665ba615a22b3ed5631e",
+  "stats_to_belt": "ea4f9fb0c244aa0992d8dfdb29deab54eeebd4e8daa0b2c167b474c8e85aac53",
+  "stats_to_go": "07ba3b89d1d9d4bb41bd6c05c10882f8745d39ebe68ab9443eabfda9553a587d",
+  "stats_to_level": "a8240b2788aa65a3663b340b69c8208b5910d597c09dd3cedbf71a07ac561d89",
+  "stats_today": "7a2450af7b93fe6d666ad802784690dfd96e4ddd1b4726e6e23ebe01980a28f3",
+  "stats_week_spread": "d9ceb3c550e302c086d985d8fa5c21abdc35c94bdf958f360440b40b732f7941",
+  "stats_within_points": "106f57d5bc4d13350691a9d9d5222819e600c5a2396bff66e720e71c1fe39913"
+}
+-->
+<resources>
+    <string name="stats_all_goals">Tutti gli obiettivi</string>
+    <string name="stats_open">Apri le statistiche</string>
+    <string name="stats_overview">Panoramica</string>
+    <string name="stats_level">Livello</string>
+    <string name="stats_energy">Energia</string>
+    <string name="stats_activity">Attività</string>
+    <string name="stats_score">Punteggio</string>
+    <string name="stats_patterns">Tendenze</string>
+    <string name="stats_empty_title">Inizia a imparare per seguire i tuoi progressi</string>
+    <string name="stats_go_to_today">Vai a Oggi</string>
+    <string name="stats_not_yet">Non ancora</string>
+    <string name="stats_part_failed">Non siamo riusciti a caricare questa parte.</string>
+    <string name="stats_energy_average">Media %1$s</string>
+    <string name="stats_study_days">Giorni di studio</string>
+    <plurals name="stats_lessons_time">
+        <item quantity="one">%1$s lezione · %2$s</item>
+        <item quantity="many">%1$s lezioni · %2$s</item>
+        <item quantity="other">%1$s lezioni · %2$s</item>
+    </plurals>
+    <string name="stats_right_count">%1$s/%2$s corrette</string>
+    <string name="stats_right_last_90">Risposte corrette negli ultimi 90 giorni</string>
+    <string name="stats_score_90">Punteggio · 90 giorni</string>
+    <string name="stats_score_after_answers">Il tuo punteggio appare dopo le prime risposte.</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
+    <string name="stats_patterns_90">Tendenze · 90 giorni</string>
+    <string name="stats_see_all">Vedi tutto</string>
+    <string name="stats_best_day">Giorno migliore</string>
+    <string name="stats_best_time">Orario migliore</string>
+    <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
+    <string name="stats_week_spread">Variazione nella settimana</string>
+    <string name="stats_range">%1$s–%2$s</string>
+    <string name="stats_brain_power">Potenza Mentale</string>
+    <string name="stats_brain_power_amount">%1$s punti di Potenza Mentale</string>
+    <string name="stats_never_goes_down">Non diminuisce mai</string>
+    <string name="stats_next_level">Prossimo livello</string>
+    <string name="stats_max_level">Livello massimo raggiunto</string>
+    <string name="stats_to_level">Al livello %1$s</string>
+    <string name="stats_to_belt">Alla %1$s</string>
+    <string name="stats_belt_progression">Progressione delle cinture</string>
+    <string name="stats_level_of">Livello %1$s di %2$s</string>
+    <string name="stats_to_go">Ancora %1$s</string>
+    <string name="stats_next_belt">Prossima cintura</string>
+    <string name="stats_belt_at">%1$s a %2$s punti di Potenza Mentale</string>
+    <!-- Shown instead of the next belt once the learner has earned every belt. -->
+    <string name="stats_every_belt">Tutte le cinture ottenute</string>
+    <string name="stats_belt_earned">Ottenuta</string>
+    <string name="stats_belt_current">Attuale</string>
+    <string name="stats_level_line">Ogni lezione aggiunge %1$s punti di Potenza Mentale, che non diminuisce mai.</string>
+    <string name="stats_today">Oggi</string>
+    <string name="stats_average">Media</string>
+    <string name="stats_since_start">Da quando hai iniziato</string>
+    <string name="stats_full_energy">Al 100%</string>
+    <string name="stats_full_energy_days">Giorni con Energia al massimo</string>
+    <string name="stats_energy_line">Ogni lezione che completi aumenta la tua Energia. Nei giorni di pausa cala un po’, ma conservi la tua cintura e i tuoi progressi.</string>
+    <string name="stats_low">Basso</string>
+    <string name="stats_high">Alto</string>
+    <string name="stats_any_day_studied">Ogni giorno in cui hai studiato</string>
+    <string name="stats_lessons">Lezioni</string>
+    <string name="stats_finished">Completato</string>
+    <string name="stats_time">Tempo</string>
+    <string name="stats_studying_total">Di studio in totale</string>
+    <string name="stats_past_year">Ultimi 12 mesi</string>
+    <string name="stats_less">Meno</string>
+    <string name="stats_more">Più</string>
+    <plurals name="stats_calendar_activity_summary">
+        <item quantity="one">%1$s giorno con attività negli ultimi 12 mesi, con un massimo di %2$s</item>
+        <item quantity="many">%1$s giorni con attività negli ultimi 12 mesi, con un massimo di %2$s</item>
+        <item quantity="other">%1$s giorni con attività negli ultimi 12 mesi, con un massimo di %2$s</item>
+    </plurals>
+    <plurals name="stats_activities">
+        <item quantity="one">%1$s attività</item>
+        <item quantity="many">%1$s attività</item>
+        <item quantity="other">%1$s attività</item>
+    </plurals>
+    <string name="stats_day_no_study">%1$s · Non hai studiato</string>
+    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
+    <plurals name="stats_day_activities">
+        <item quantity="one">%1$s · %2$s attività</item>
+        <item quantity="many">%1$s · %2$s attività</item>
+        <item quantity="other">%1$s · %2$s attività</item>
+    </plurals>
+    <string name="stats_day_no_energy">%1$s · Nessuna Energia registrata</string>
+    <string name="stats_day_energy">%1$s · %2$s Energia</string>
+    <string name="stats_calendar_energy_summary">Energia negli ultimi 12 mesi: %1$s oggi, %2$s in media da quando hai iniziato</string>
+    <string name="stats_right_answers">Risposte corrette</string>
+    <string name="stats_right">Corrette</string>
+    <string name="stats_of_all_answers">Sul totale delle tue risposte</string>
+    <string name="stats_correct_of_total">%1$s su %2$s</string>
+    <string name="stats_period">Periodo</string>
+    <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
+    <string name="stats_back_from_today">A ritroso da oggi</string>
+    <plurals name="stats_days">
+        <item quantity="one">%1$s giorno</item>
+        <item quantity="many">%1$s giorni</item>
+        <item quantity="other">%1$s giorni</item>
+    </plurals>
+    <string name="stats_score_line">Ogni risposta conta allo stesso modo, quindi le lezioni più difficili possono abbassare il tuo punteggio per un po’.</string>
+    <string name="stats_score_trend">Andamento del punteggio settimanale: %1$s. %2$s</string>
+    <plurals name="stats_score_across">
+        <item quantity="one">%1$s su %2$s risposta</item>
+        <item quantity="many">%1$s su %2$s risposte</item>
+        <item quantity="other">%1$s su %2$s risposte</item>
+    </plurals>
+    <plurals name="stats_score_week">
+        <item quantity="one">%1$s: %2$s su %3$s risposta</item>
+        <item quantity="many">%1$s: %2$s su %3$s risposte</item>
+        <item quantity="other">%1$s: %2$s su %3$s risposte</item>
+    </plurals>
+    <string name="stats_patterns_intro">Quando hai risposto meglio negli ultimi 90 giorni.</string>
+    <string name="stats_answers">Risposte</string>
+    <string name="stats_last_90">Negli ultimi 90 giorni</string>
+    <string name="stats_not_enough">Servono ancora altre risposte</string>
+    <plurals name="stats_within_points">
+        <item quantity="one">Entro %1$d punto</item>
+        <item quantity="many">Entro %1$d punti</item>
+        <item quantity="other">Entro %1$d punti</item>
+    </plurals>
+    <plurals name="stats_score_answers">
+        <item quantity="one">%1$s · %2$s risposta</item>
+        <item quantity="many">%1$s · %2$s risposte</item>
+        <item quantity="other">%1$s · %2$s risposte</item>
+    </plurals>
+    <plurals name="stats_answer_count">
+        <item quantity="one">%1$s risposta</item>
+        <item quantity="many">%1$s risposte</item>
+        <item quantity="other">%1$s risposte</item>
+    </plurals>
+    <string name="stats_no_answers">Nessuna risposta</string>
+    <string name="stats_throughout_week">Durante la settimana</string>
+    <string name="stats_throughout_day">Durante la giornata</string>
+    <string name="stats_any_day">Qualsiasi giorno</string>
+    <string name="stats_any_time">A qualsiasi ora</string>
+    <!-- Answers given from midnight to 6 AM. -->
+    <string name="stats_night">Notte</string>
+    <string name="stats_morning">Mattina</string>
+    <string name="stats_afternoon">Pomeriggio</string>
+    <!-- Answers given from 6 PM to midnight. -->
+    <string name="stats_evening">Sera</string>
+    <plurals name="stats_days_even">
+        <item quantity="one">I punteggi dei vari giorni differiscono al massimo di %1$d punto, quindi va bene qualsiasi giorno.</item>
+        <item quantity="many">I punteggi dei vari giorni differiscono al massimo di %1$d punti, quindi va bene qualsiasi giorno.</item>
+        <item quantity="other">I punteggi dei vari giorni differiscono al massimo di %1$d punti, quindi va bene qualsiasi giorno.</item>
+    </plurals>
+    <plurals name="stats_times_even">
+        <item quantity="one">I punteggi nelle varie fasce orarie differiscono al massimo di %1$d punto, quindi va bene qualsiasi orario.</item>
+        <item quantity="many">I punteggi nelle varie fasce orarie differiscono al massimo di %1$d punti, quindi va bene qualsiasi orario.</item>
+        <item quantity="other">I punteggi nelle varie fasce orarie differiscono al massimo di %1$d punti, quindi va bene qualsiasi orario.</item>
+    </plurals>
+    <plurals name="stats_min_answers">
+        <item quantity="one">Serve %1$d risposta per includere un giorno o una fascia oraria nelle statistiche, così una sola risposta corretta per caso non basta a indicare una tendenza.</item>
+        <item quantity="many">Servono %1$d risposte per includere un giorno o una fascia oraria nelle statistiche, così una sola risposta corretta per caso non basta a indicare una tendenza.</item>
+        <item quantity="other">Servono %1$d risposte per includere un giorno o una fascia oraria nelle statistiche, così una sola risposta corretta per caso non basta a indicare una tendenza.</item>
+    </plurals>
+</resources>

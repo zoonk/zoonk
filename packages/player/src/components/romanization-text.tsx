@@ -3,5 +3,5 @@ export function RomanizationText({ children }: { children?: string | null }) {
     return null;
   }
 
-  return <span className="text-muted-foreground text-xs italic">{children}</span>;
+  return <span className="text-muted-foreground text-xs font-normal">{children}</span>;
 }

@@ -1,5 +1,17 @@
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 import { isAPIError } from "better-auth/api";
+import { ACCESS_ERROR_CODES } from "./access-contract";
+
+const PRODUCT_CODES: Record<string, string> = {
+  CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: ACCESS_ERROR_CODES.untrustedOrigin,
+  INVALID_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
+  MISSING_OR_NULL_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
+  VERIFICATION_FAILED: ACCESS_ERROR_CODES.botDetected,
+};
+
+function toProductCode(code: string | null): string | null {
+  return code === null ? null : (PRODUCT_CODES[code] ?? code);
+}
 
 export class NativeAuthResponseError extends Error {
   readonly body: unknown;
@@ -30,14 +42,13 @@ export type AuthErrorDetails = {
   statusCode?: number;
 };
 
-/** Normalizes dependency and adapter errors at the auth package boundary so consumers do not depend on Better Auth internals. */
 export function getAuthError(error: unknown): AuthErrorDetails | null {
   if (!isAPIError(error) && !(error instanceof NativeAuthResponseError)) {
     return null;
   }
 
   const body = isJsonObject(error.body) ? error.body : null;
-  const code = getString(body, "code");
+  const code = toProductCode(getString(body, "code"));
   const retryAfter = getNumber(error, "retryAfter");
   const statusCode = getNumber(error, "statusCode");
 

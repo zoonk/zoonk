@@ -1,0 +1,109 @@
+import { type Goal } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { toNameWords } from "@zoonk/utils/name-words";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
+import { type ChoiceGroup, listChoiceGroups } from "./choice-groups";
+import { type ExamChoice, type ExamPicks, findChosenOptions } from "./exam-choices";
+import { scopeExamStructure } from "./exam-scope";
+
+type Subject = ExamStructure["subjects"][number];
+type Option = Pick<Subject, "name" | "shortName">;
+
+function toPhrase(text: string): string {
+  return ` ${toNameWords(text).join(" ")} `;
+}
+
+function saysOption({ option, said }: { option: Option; said: string }): boolean {
+  return [option.name, option.shortName ?? ""].some((name) => {
+    const phrase = toPhrase(name);
+    return phrase.trim() !== "" && said.includes(phrase);
+  });
+}
+
+function namesOption({ option, said }: { option: Option; said: string }): boolean {
+  return [option.name, option.shortName ?? ""].some((name) => {
+    const phrase = toPhrase(name);
+    return phrase.trim() !== "" && phrase === said;
+  });
+}
+
+/**
+ * The reading's position may hold more than the options ("Auditor de TI, desenvolvimento de
+ * sistemas"); a typed answer must be an option's name, since nothing filtered what it rejects or
+ * doubts ("possivelmente Auditoria"). Null unless they name exactly as many as candidates take.
+ */
+function findNamedOptions({
+  group,
+  read,
+  typed,
+}: {
+  group: ChoiceGroup<Subject>;
+  read: readonly string[];
+  typed: readonly string[];
+}): string[] | null {
+  const readPhrases = read.map((text) => toPhrase(text));
+  const typedPhrases = typed.map((text) => toPhrase(text));
+
+  const named = group.options.filter(
+    (option) =>
+      readPhrases.some((said) => saysOption({ option, said })) ||
+      typedPhrases.some((said) => namesOption({ option, said })),
+  );
+
+  return named.length === group.take ? named.map((option) => option.name) : null;
+}
+
+/**
+ * Only what the learner stated as theirs: the goal's own words can name an option for another
+ * goal or with doubt, which the goal reading leaves out of the position it records. The position
+ * is the reading's while it still holds the value the reading wrote; a target answer or an edit
+ * on the understood screen replaces it with the learner's own typing.
+ */
+function readStatedTexts(details: Record<string, unknown>): { read: string[]; typed: string[] } {
+  const followUps: unknown[] = Array.isArray(details.followUps) ? details.followUps : [];
+  const position = typeof details.targetPosition === "string" ? details.targetPosition : null;
+  const fromReading = position !== null && position === details.positionFromReading;
+
+  return {
+    read: fromReading ? [position] : [],
+    typed: [
+      fromReading ? null : position,
+      details.targetNote,
+      ...followUps.map((item) => (isJsonObject(item) ? item.answer : null)),
+    ].filter((text): text is string => typeof text === "string"),
+  };
+}
+
+/**
+ * The options the learner states they take (the position the goal reading recorded, and their
+ * target and follow-up answers), for the choices they haven't picked. Once they answered the
+ * choice's question, even with "Decide later", nothing is picked for them.
+ */
+export function findNamedChoices({
+  goal,
+  picks,
+  structure: whole,
+}: {
+  goal: Pick<Goal, "details">;
+  picks: ExamPicks;
+  structure: ExamStructure;
+}): ExamChoice[] {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  if (getAnsweredQuestions(details).includes("examChoice")) {
+    return [];
+  }
+
+  const { read, typed } = readStatedTexts(details);
+  const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
+
+  return listChoiceGroups(structure).flatMap((group) => {
+    const isPicked = picks.examChoices.some(
+      (choice) => choice.group === group.name && findChosenOptions({ choice, structure }),
+    );
+
+    const subjects = isPicked ? null : findNamedOptions({ group, read, typed });
+    return subjects ? [{ group: group.name, subjects }] : [];
+  });
+}

@@ -1,0 +1,275 @@
+import { randomUUID } from "node:crypto";
+import { type Browser, type Locator, type Page, expect } from "@playwright/test";
+import { prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
+import {
+  goalFixture,
+  layOutPlanFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+
+const DAYS_TO_EXAM = 32;
+const TIME_MACHINE_DAYS_AGO = 4;
+const SHORT_ID_LENGTH = 6;
+
+const LESSON_TITLE = "Discounts in your head";
+const LESSON_CAN_DO = "You'll work out a discount in your head";
+
+async function createLesson({ written }: { written: boolean }) {
+  const lesson = { canDo: LESSON_CAN_DO, estimatedMinutes: 3, title: LESSON_TITLE };
+
+  if (!written) {
+    return libraryLessonFixture(lesson);
+  }
+
+  const playable = await playableLessonFixture({ lesson, steps: ["check"] });
+  return playable.lesson;
+}
+
+export async function writeStudyLesson(lessonId: string) {
+  await libraryStepFixture({
+    content: playableStepContent.check,
+    kind: "check",
+    lessonId,
+    position: 0,
+  });
+
+  await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
+}
+
+async function createContent({ writtenLesson }: { writtenLesson: boolean }) {
+  const [percentages, discounts, lesson] = await Promise.all([
+    skillFixture({ name: `Percentages ${randomUUID()}` }),
+    skillFixture({ name: `Discounts ${randomUUID()}` }),
+    createLesson({ written: writtenLesson }),
+  ]);
+
+  const [items] = await Promise.all([
+    Promise.all(
+      ["Capsule one", "Capsule two", "Practice one", "Practice two"].map((label) =>
+        itemFixture({
+          content: choiceItemContent(`${label}: ${randomUUID()}?`),
+          skillId: percentages.id,
+        }),
+      ),
+    ),
+    lessonSkillFixture({ lessonId: lesson.id, skillId: discounts.id }),
+  ]);
+
+  return { discounts, items, lesson, percentages };
+}
+
+type StudyDayOptions = { reviewDone?: boolean; writtenLesson?: boolean };
+
+/** The right option is always the first. */
+export async function createStudyDay({
+  reviewDone = false,
+  writtenLesson = true,
+}: StudyDayOptions = {}) {
+  const [user, content] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    createContent({ writtenLesson }),
+  ]);
+
+  const { discounts, items, lesson, percentages } = content;
+
+  const goal = await goalFixture({
+    dailyMinutes: 10,
+    kind: "exam",
+    targetDate: new Date(toUTCMidnight(new Date()).getTime() + DAYS_TO_EXAM * MS_PER_DAY),
+    timezone: "UTC",
+    title: `E2E exam ${randomUUID().slice(0, SHORT_ID_LENGTH)}`,
+    userId: user.id,
+  });
+
+  const [
+    {
+      items: [planItem],
+    },
+    session,
+  ] = await Promise.all([
+    planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: lesson.id, skillId: discounts.id, titleSnapshot: lesson.title }],
+    }),
+    studySessionFixture({ goalId: goal.id, plannedMinutes: 7, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    attemptFixture({
+      answer: { selectedIndex: 1 },
+      answeredAt: new Date(Date.now() - TIME_MACHINE_DAYS_AGO * MS_PER_DAY),
+      isCorrect: false,
+      itemId: items[0]?.id,
+      skillId: percentages.id,
+      userId: user.id,
+    }),
+  ]);
+
+  const [capsuleOne, capsuleTwo, practiceOne, practiceTwo] = items.map((item) => item.id);
+
+  await Promise.all([
+    studySessionBlockFixture({
+      estimatedMinutes: 2,
+      kind: "review",
+      payload: {
+        capsules: [
+          {
+            format: "rapidFire",
+            itemIds: [capsuleOne, capsuleTwo],
+            key: `skill:${percentages.id}`,
+            lessonId: null,
+            skillIds: [percentages.id],
+            title: "Percentages",
+          },
+        ],
+        skillIds: [percentages.id],
+      },
+      position: 0,
+      sessionId: session.id,
+      ...(reviewDone ? { status: "completed" as const } : {}),
+    }),
+    studySessionBlockFixture({
+      canDo: LESSON_CAN_DO,
+      estimatedMinutes: 3,
+      kind: "learn",
+      lessonId: lesson.id,
+      payload: { planItemId: planItem?.id, skillIds: [discounts.id], title: lesson.title },
+      position: 1,
+      sessionId: session.id,
+    }),
+    studySessionBlockFixture({
+      estimatedMinutes: 2,
+      kind: "practice",
+      payload: { itemIds: [practiceOne, practiceTwo], skillIds: [percentages.id] },
+      position: 2,
+      sessionId: session.id,
+    }),
+  ]);
+
+  return { goal, lesson, session, user };
+}
+
+export async function carryLessons({ count, goalId }: { count: number; goalId: string }) {
+  const [plan, skill, lessons] = await Promise.all([
+    prisma.plan.findUniqueOrThrow({ where: { goalId } }),
+    skillFixture({ name: `Missed lessons ${randomUUID()}` }),
+    Promise.all(
+      Array.from({ length: count }, (_, index) =>
+        playableLessonFixture({
+          lesson: { estimatedMinutes: 3, title: `Missed lesson ${index + 1}` },
+          steps: ["check"],
+        }),
+      ),
+    ),
+  ]);
+
+  await prisma.planItem.updateMany({
+    data: { position: { increment: count } },
+    where: { kind: "boss", planId: plan.id },
+  });
+
+  const items = await Promise.all(
+    lessons.map(async ({ lesson }, index) => {
+      await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+
+      return planItemFixture({
+        kind: "lesson",
+        lessonId: lesson.id,
+        planId: plan.id,
+        position: index + 1,
+        scheduledFor: new Date(toUTCMidnight(new Date()).getTime() + MS_PER_DAY),
+        skillId: skill.id,
+        titleSnapshot: lesson.title,
+      });
+    }),
+  );
+
+  await Promise.all([
+    planChangeFixture({
+      kind: "missedDays",
+      payload: { carriedItemIds: items.map((item) => item.id), days: 1, source: "system" },
+      planId: plan.id,
+    }),
+    layOutPlanFixture(plan.id),
+  ]);
+
+  return lessons.map(({ lesson }) => lesson);
+}
+
+type StoredMission = {
+  anchor: Record<string, string>;
+  detail?: Record<string, number | string>;
+  firstStep?: boolean;
+  kind: string;
+  opens?: Record<string, string>;
+  total: number;
+};
+
+export async function saveMissions(sessionId: string, picks: StoredMission[]) {
+  await prisma.studySession.update({
+    data: { missions: { picks, version: 1 } },
+    where: { id: sessionId },
+  });
+}
+
+export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
+  const context = await browser.newContext({ storageState: user.storageState });
+  return context.newPage();
+}
+
+/** The Enter listener attaches right after the grade shows, so the press retries until the feedback goes. */
+async function continueWithEnter(page: Page) {
+  const feedback = page.getByRole("region", { name: "Answer feedback" });
+  await expect(feedback.getByText("Correct!")).toBeVisible();
+
+  await expect(async () => {
+    await page.keyboard.press("Enter");
+    await expect(feedback).toBeHidden({ timeout: 1000 });
+  }).toPass({ timeout: 5000 });
+}
+
+async function checkWithEnter(page: Page) {
+  await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
+  await page.keyboard.press("Enter");
+}
+
+const ARRIVED_TIMEOUT_MS = 2000;
+
+/**
+ * A screen ignores presses in its first half second, as meant for the screen before it, so this
+ * presses again until `arrived` shows (or hides, with `visible: false`).
+ */
+export async function pressUntil(
+  press: () => Promise<void>,
+  arrived: Locator,
+  { visible = true } = {},
+) {
+  await expect(async () => {
+    if ((await arrived.isVisible()) !== visible) {
+      await press();
+    }
+
+    await expect(arrived).toBeVisible({ timeout: ARRIVED_TIMEOUT_MS, visible });
+  }).toPass({ timeout: 10_000 });
+}
+
+export async function answerRight(page: Page, question: RegExp | string) {
+  await expect(page.getByRole("heading", { name: question })).toBeVisible();
+  await page.keyboard.press("1");
+  await checkWithEnter(page);
+  await continueWithEnter(page);
+}

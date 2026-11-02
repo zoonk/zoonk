@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type CapturedEmail } from "../email";
-import { type EmailPayload } from "../email-payload";
+import { type EmailPayload } from "../email-payload.ts";
+import { type CapturedEmail } from "../email.ts";
 
 const MAX_EMAIL_COUNT = 100;
 
@@ -10,12 +10,6 @@ export type EmailInbox = {
   list: () => CapturedEmail[];
 };
 
-/**
- * Keeps local messages for the lifetime of the Vite process so development
- * email never requires a database, migration, cleanup job, or production
- * service. The small limit prevents a long-running dev session from growing
- * without bound.
- */
 export function createEmailInbox(): EmailInbox {
   let emails: CapturedEmail[] = [];
 

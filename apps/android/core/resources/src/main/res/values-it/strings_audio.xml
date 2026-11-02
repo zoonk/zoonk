@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "audio_check_failed": "004120dfe51ab5d27fff0b8632adeebde0276c417d4235baf83a08ad5304956e",
+  "audio_checking": "e903c85e2a1a65bee57bacbe11fb079ba9bde4211986aba82261490fc30aad50",
+  "audio_checking_slow": "89ba8158e8d3d8342cafd61741ae0ca5d88c507964fc2f6a1712dc5ead3c98d8",
+  "audio_did_not_play": "114379d12f7dd0d26f2899fce8a4dd9ad8aefa1f869dfc3b945c1055f49a5ada",
+  "audio_getting_ready": "67f07e24b6fc6dba259570961ba82acb113da806e3f46b12cd7b29bfda2c5bc4",
+  "audio_here_is_what_it_says": "3d023a62e9951d4ebad166624ee4b54fa9540da6aa1c0176818d37ce2958e750",
+  "audio_listening": "bca6f3ffe4f547398a94510432bd3dbac7d872908e217b2ee8e51e8d4edcd8bc",
+  "audio_microphone_off_answer": "ed0c7bc5538e384e983e9f742aee5fabc5381d534a89c1b5734fca7b9e1a8ee5",
+  "audio_microphone_off_title": "31d9a5396e04209c3ec3aeb69813158053c536ebd83cd781396c89ba2232b016",
+  "audio_no_speech": "edbb064c72e192a31655fe945e0accac9da3e0716a94f033c7ab40eede025e34",
+  "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
+  "audio_record": "0549bac6ef4a692f6a1fc52e2da296642de0781a85de07073bb93fbbcc505e5b",
+  "audio_record_stop": "07337096018e9f5d206ed1221fe7ef8937003c09558c558793d3ecf810e3acdc",
+  "audio_say_it": "c1a6dfc73712049023a17daaefeba1d92f6ac0c987c039e6c1933b04e85fce7c",
+  "audio_stop": "22284f62dee2722b23680d45a15b6062cee7f832483e4172a6b30243fb52afed",
+  "audio_try_again": "48117bede2a6ff6f0e24834f5e3775ac17ea38e969cd769a512df77bf6d77f4a",
+  "audio_try_again_label": "678b9ed050de05dd19b0eb1f8d2e35f73d9e4066ee7ab59917baa89422fb228d"
+}
+-->
+<resources>
+    <string name="audio_getting_ready">Stiamo preparando l’audio…</string>
+    <string name="audio_stop">Interrompi l’audio</string>
+    <string name="audio_try_again_label">Riprova ad ascoltare l’audio</string>
+    <string name="audio_did_not_play">L’audio non è partito.</string>
+    <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
+    <string name="audio_here_is_what_it_says">%1$s Ecco cosa dice:</string>
+    <string name="audio_try_again">Riprova</string>
+    <string name="audio_record">Registra</string>
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <string name="audio_record_stop">Interrompi</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
+    <string name="audio_listening">Stiamo ascoltando… Tocca Interrompi per controllare.</string>
+    <string name="audio_checking">Stiamo controllando…</string>
+    <string name="audio_checking_slow">Stiamo ancora controllando. Ci stiamo mettendo più del solito.</string>
+    <string name="audio_no_speech">Non abbiamo sentito nessuna parola. Riprova.</string>
+    <string name="audio_check_failed">Questa volta non abbiamo potuto controllare la tua risposta. Riprova.</string>
+    <string name="audio_say_it">Tocca e dillo ad alta voce</string>
+    <string name="audio_microphone_off_title">Il microfono è disattivato</string>
+    <string name="audio_microphone_off_answer">Attiva il microfono per Zoonk da Impostazioni per rispondere a voce.</string>
+    <string name="audio_open_settings">Apri Impostazioni</string>
+</resources>

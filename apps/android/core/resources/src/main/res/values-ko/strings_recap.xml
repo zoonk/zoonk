@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "recap_days_studied": "e1c429062614168120176e6e31fbcf7550aa2c59b313138692d2818336f8f28a",
+  "recap_first_summary": "4d5c676cef1c26571735c76f4683944d36c2bdaf15893a9e183d8bc5ed3b7693",
+  "recap_first_summary_detail": "457b6a41c87be512065f9578f50b08d0d56729844993de60b4782dfc4208e6ff",
+  "recap_fresh_week": "76452fb05fbb71f20967b84e72ae3a846ec6007ae4f7a8b202ad1db6fab897fa",
+  "recap_learned": "2a4b2a0a43e38b392cd2e41e730e316813670a82dbeed1a643755748f7617c13",
+  "recap_lets_go": "75f8495ac9e8569228b81550e26b64b6650b42890632bbc3fcb9aeafa0c3faa4",
+  "recap_mastered": "dda52b34eb6ad1913957e9d027130bedca3f83ab475d0dbc8706db70f79315c4",
+  "recap_mistake_fixed": "6617a249bf4dd60f730af7ded18f63b9123eba1f6cc185e3783da0c58d58580d",
+  "recap_mistakes_fixed": "8d1a97fc54b9ff0f99965d31125f115f20753da2c9525a43b4ef02af97271ece",
+  "recap_more_questions": "a2b2e3159a2f4fa96afe58c98a2faf75973f11a9b5842f51697c55d9055326d1",
+  "recap_more_time": "60f081fe324d517ab2ee87a4b1534b943f6f79cd0b63b125f42caf5c38f4f935",
+  "recap_new_idea": "c392f4d6d931be67f8231de56fbdec8ab548a384f9c2d99140bc09382ef45aa0",
+  "recap_new_ideas": "06e43a05d2061a093dfd2482c5d6488882240b3d9ad98e3a3e8928e18ab3567d",
+  "recap_next_week": "aa25c43184198eeaca62cabea0aeaccbeac58512ccf2c90df90fa1e05daa54d5",
+  "recap_phase_done": "48819f8b7e3f01366c15376fb6344d1efc9162302c1a59fe51d43b604453ca1d",
+  "recap_questions": "75c3e78acb0c5b3678eea3c8c8bd866ce10697d58eef3c1dd1d55ac806ed9e95",
+  "recap_quiet_week": "4f57495e2f9324f4ab00fb46fc495cf39b63064a8c0b72998460d4160efbfc98",
+  "recap_review": "eedcb18c0648a785704c271e6d992c190eddeaa368cd7e264284a8744784443d",
+  "recap_reviews": "eb97a9abb9bf01e103077ece0049bee48f2358994d58a8605fab5c78e75ad5ab",
+  "recap_solid": "d5a4a5a77e9184083d5abfb96e97f9244ae3265f40ff2a207e95786476cdd7e8",
+  "recap_time": "c4fe087bf3a432f267820f0a028f5434627821992318e317fa3602a9013e1632",
+  "recap_trap_hunter_badge": "4096344882dc8f7ad82ea3c634b6e6270513fab78823dd9c9195e0148f53b77f",
+  "recap_trap_hunter_badges": "6d02a2e970c56b2d3391b5292a4ecae301c8b6b1ef8e57023a951af2919e0626",
+  "recap_turnaround": "25fbb094d75c6415413451c80bde144b66dae1d03c3694afa9bf903bd326437c",
+  "recap_turnaround_chart": "a60e8fb91d77ed40298e8132e83d06ca1e28e04c86b883c0c281f8c836e5d420",
+  "recap_turnaround_detail": "a5332a427592c035400dd683396657757ffcbfb6c621da4f91cdfbd9039ff7f2",
+  "recap_weekly_summary": "3162e3a1d32624890bce74a36f3241ca033f05bbc78f6ffd06e954e3c3ee27bc",
+  "recap_what_a_week": "1e4be2a3d649422a2b0c8c7a585dfeb2f644eb7171e8db5d7d06711f45145ecf",
+  "recap_what_a_week_name": "c3e0841c2d657761f7c8331adde325341498d0f3f4a9eadbb84b618a74368e93"
+}
+-->
+<resources>
+    <plurals name="recap_days_studied">
+        <item quantity="other">%d일 학습</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "20 min". -->
+    <string name="recap_more_time">전주보다 %1$s 더 공부했어요!</string>
+    <plurals name="recap_more_questions">
+        <item quantity="other">전주보다 %d문제 더 풀었어요!</item>
+    </plurals>
+    <!-- %1$s is the phase's number, %2$s its name. -->
+    <string name="recap_phase_done">%1$s단계 · %2$s 완료</string>
+    <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
+    <string name="recap_weekly_summary">주간 요약 · %1$s</string>
+    <!-- %1$s is the learner's first name. -->
+    <string name="recap_what_a_week_name">멋진 한 주였어요, %1$s님!</string>
+    <string name="recap_what_a_week">멋진 한 주였어요!</string>
+    <string name="recap_time">시간</string>
+    <string name="recap_questions">문제</string>
+    <string name="recap_quiet_week">조용한 한 주</string>
+    <string name="recap_first_summary">첫 주간 요약은 일요일에 볼 수 있어요</string>
+    <string name="recap_fresh_week">매주가 새로운 시작이에요.</string>
+    <string name="recap_first_summary_detail">한 주의 학습을 숫자로 보여 주고, 가장 크게 성장한 스킬도 알려 줘요.</string>
+    <string name="recap_turnaround">가장 크게 성장한 스킬</string>
+    <!-- %1$s and %2$s are percentages: "40% → 85% right answers". -->
+    <string name="recap_turnaround_detail">정답률 %1$s → %2$s</string>
+    <!-- %1$s is a skill's name. -->
+    <plurals name="recap_mastered">
+        <item quantity="other">이제 %1$s의 숙련도는 마스터예요. 서로 다른 날에 %2$d번 기억해 냈어요.</item>
+    </plurals>
+    <string name="recap_solid">이제 %1$s의 숙련도는 안정이에요: 날이 지나도 꾸준히 정답을 맞혔어요.</string>
+    <string name="recap_turnaround_chart">이번 주 이 스킬의 요일별 정답 기록</string>
+    <string name="recap_learned">배운 내용</string>
+    <!-- A count stands beside these; the singular reads beside 1. -->
+    <string name="recap_new_idea">새 개념</string>
+    <string name="recap_new_ideas">새 개념</string>
+    <string name="recap_review">복습</string>
+    <string name="recap_reviews">복습</string>
+    <string name="recap_mistake_fixed">바로잡은 실수</string>
+    <string name="recap_mistakes_fixed">바로잡은 실수</string>
+    <string name="recap_trap_hunter_badge">함정 사냥꾼 배지</string>
+    <string name="recap_trap_hunter_badges">함정 사냥꾼 배지</string>
+    <string name="recap_next_week">다음 주</string>
+    <string name="recap_lets_go">시작하기</string>
+</resources>

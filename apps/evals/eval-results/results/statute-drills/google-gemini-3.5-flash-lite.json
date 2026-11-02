@@ -1,0 +1,198 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All six keys match the supplied texts, and the references and quoted excerpts are correct. The final statement remains true despite listing only some exceptions. However, the fourth explanation should clearly say that entry by judicial determination is restricted to daytime; its current wording can suggest that the determination itself must occur during the day. No wrong-key or misquotation cap is triggered.",
+          "score": 8,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each false statement changes one substantive element: law to administrative order, daytime to any time, or non-bailable to bailable. Each misconception explicitly names its substitution. These are precise, text-grounded traps, and no cap is triggered.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The set contains six Portuguese right/wrong statements, exactly three false, and closely preserves the constitutional wording. It fits the requested Cebraspe style. The final explanation could address the learner more naturally instead of referring to what is valid 'for the format.' No style cap is triggered.",
+          "score": 9,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five supplied provisions are covered, with easy, medium, and hard drills. The two home-inviolability drills test distinct elements: the timing of judicially authorized entry and the disaster/assistance exceptions. No element is tested twice in the same way, and no concentration or repetition cap is triggered.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2753,
+          "inputTokens": 2756,
+          "outputTokens": 765,
+          "reasoningTokens": 222
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The fourth drill's explanation ambiguously attaches the daytime restriction to the judicial determination itself. The supplied text restricts entry pursuant to that determination, not when the determination may be issued. The statement and its false key are nevertheless correct.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the final explanation more learner-facing: explain that disaster and providing assistance are expressly authorized exceptions, and that listing these exceptions without claiming they are exhaustive keeps the statement true. This would be clearer than saying the omission is valid 'for the format.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
+        "id": "pt-cebraspe-cf88-art5-direitos-fundamentais-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 5º, caput",
+              "text": "Art. 5º Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade, nos termos seguintes:"
+            },
+            {
+              "reference": "Art. 5º, II",
+              "text": "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei;"
+            },
+            {
+              "reference": "Art. 5º, III",
+              "text": "III - ninguém será submetido a tortura nem a tratamento desumano ou degradante;"
+            },
+            {
+              "reference": "Art. 5º, XI",
+              "text": "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;"
+            },
+            {
+              "reference": "Art. 5º, XLII",
+              "text": "XLII - a prática do racismo constitui crime inafiançável e imprescritível, sujeito à pena de reclusão, nos termos da lei;"
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All answer keys agree with the supplied text. The first true statement remains acceptable despite omitting the exception because it does not deny exceptions. The fill-in restores the source sentence correctly, and the multiple-choice question has exactly one matching answer. No wrong-key or misquotation cap applies. However, several multiple-choice reasons fail the requirement to quote the supporting provision.",
+          "score": 8,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false documentation statement correctly changes only the responsible actor, and the gap removes a substantive term rather than filler. However, the multiple-choice distractors include a double change to likelihood and risk threshold and two wholesale substitutions of the exception condition. These are several nonminimal traps, triggering the cap of 7. Their misconception labels are specific, but that does not repair the distractor construction.",
+          "score": 7,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The six drills provide the requested generic mix of true/false, fill-in-the-blank, and four-option multiple choice in English. Most statements and the gap passage preserve the source wording. The invented multiple-choice conditions depart substantially from that wording, and several explanations assert correctness rather than walking the learner through the textual contrast.",
+          "score": 8,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three supplied paragraphs are covered, with three drills on paragraph 1, one on paragraph 2, and two on paragraph 5. No element is tested twice in the same way, and neither coverage cap is triggered. Difficulty variety is weaker than the labels suggest: both 'hard' drills are straightforward recognition tasks rather than especially subtle textual distinctions.",
+          "score": 8,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2766,
+          "inputTokens": 2769,
+          "outputTokens": 916,
+          "reasoningTokens": 247
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The multiple-choice distractors violate the required single-element trap design. One changes both 'unlikely' to 'likely' and 'a risk' to 'a high risk'; the other two replace the statutory exception with substantially rewritten conditions about notifying data subjects or resolving the breach. These do not preserve the surrounding statutory wording.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several multiple-choice explanations do not quote the supporting article text, especially the correct answer's explanation, which merely asserts that the wording is exact. The 'hard' labels are also poorly calibrated: the delayed-notification statement is direct verbatim recognition, and two exception distractors are conspicuously unlike the source.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use minimal edits to the exception clause for all distractors, and quote Article 33(1) in their explanations. For stronger coverage of the requested distinctions, test 'any' in the documentation duty or the processor-to-controller notification relationship rather than only the breach-event term.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "style": "generic"
+        }
+      }
+    }
+  ],
+  "taskId": "statute-drills"
+}

@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { waitForTurn } from "../../../scripts/dev/queue.mts";
 
 type DeviceFamily = "ipad" | "iphone";
 
@@ -26,6 +27,8 @@ const PREFERRED_DEVICE_TYPES = {
   ipad: "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB",
   iphone: "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
 } satisfies Record<DeviceFamily, string>;
+
+const SIMULATOR_APP_BUNDLE_IDENTIFIERS = ["com.apple.iphonesimulator", "com.apple.dt.Devices"];
 
 const appleDirectory = path.resolve(import.meta.dirname, "..");
 const derivedDataPath = path.join(appleDirectory, "DerivedData", "Simulator");
@@ -174,6 +177,7 @@ function bootSimulator(device: Simulator) {
   runCommand({ arguments: ["simctl", "bootstatus", device.udid, "-b"], command: "xcrun" });
 }
 
+/** Signed so it carries its entitlements: an unsigned build can't use the Keychain to save sign-in. */
 function buildApp(device: Simulator) {
   runCommand({
     arguments: [
@@ -189,7 +193,6 @@ function buildApp(device: Simulator) {
       `id=${device.udid}`,
       "-derivedDataPath",
       derivedDataPath,
-      "CODE_SIGNING_ALLOWED=NO",
       "build",
     ],
     command: "xcodebuild",
@@ -220,15 +223,26 @@ function getBundleIdentifier(appPath: string) {
   });
 }
 
+/** Xcode 27 replaced the Simulator app with DeviceHub. */
+function showSimulator(device: Simulator) {
+  const isOpen = SIMULATOR_APP_BUNDLE_IDENTIFIERS.some(
+    (bundleIdentifier) =>
+      spawnSync("open", ["-b", bundleIdentifier, "--args", "-CurrentDeviceUDID", device.udid], {
+        stdio: "ignore",
+      }).status === 0,
+  );
+
+  if (!isOpen) {
+    throw new Error("Neither Simulator nor DeviceHub could be opened.");
+  }
+}
+
 function installAndLaunchApp({ appPath, device }: { appPath: string; device: Simulator }) {
   const bundleIdentifier = getBundleIdentifier(appPath);
 
   runCommand({ arguments: ["simctl", "install", device.udid, appPath], command: "xcrun" });
 
-  runCommand({
-    arguments: ["-a", "Simulator", "--args", "-CurrentDeviceUDID", device.udid],
-    command: "open",
-  });
+  showSimulator(device);
 
   runCommand({
     arguments: ["simctl", "launch", "--terminate-running-process", device.udid, bundleIdentifier],
@@ -236,7 +250,7 @@ function installAndLaunchApp({ appPath, device }: { appPath: string; device: Sim
   });
 }
 
-function runSimulator(family: DeviceFamily) {
+async function runSimulator(family: DeviceFamily) {
   const catalog = parseSimulatorCatalog(
     readCommand({
       arguments: ["simctl", "list", "devices", "available", "--json"],
@@ -250,14 +264,21 @@ function runSimulator(family: DeviceFamily) {
     `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
   );
 
-  bootSimulator(device);
-  buildApp(device);
+  const turn = await waitForTurn();
+
+  try {
+    bootSimulator(device);
+    buildApp(device);
+  } finally {
+    turn?.release();
+  }
+
   installAndLaunchApp({ appPath: getAppPath(), device });
   process.stdout.write(`${APP_SCHEME} is running on ${device.name}.\n`);
 }
 
 try {
-  runSimulator(getDeviceFamily(process.argv[2]));
+  await runSimulator(getDeviceFamily(process.argv[2]));
 } catch (error) {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;

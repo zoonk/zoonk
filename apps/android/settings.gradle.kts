@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -16,4 +17,17 @@ dependencyResolutionManagement {
 
 rootProject.name = "ZoonkAndroid"
 
-include(":app", ":lint-checks")
+include(":app", ":api", ":lint-checks")
+include(":core:data", ":core:designsystem", ":core:navigation", ":core:resources", ":core:ui")
+include(
+    ":feature:account",
+    ":feature:activities",
+    ":feature:catalog",
+    ":feature:conversation",
+    ":feature:exam",
+    ":feature:onboarding",
+    ":feature:plan",
+    ":feature:practice",
+    ":feature:player",
+    ":feature:today",
+)

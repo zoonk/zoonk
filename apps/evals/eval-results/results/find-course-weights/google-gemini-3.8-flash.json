@@ -1,0 +1,83 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "id": "pt-enem-medicina-ufmg-1",
+        "userInput": {
+          "course": "Medicina",
+          "exam": "ENEM",
+          "institution": "UFMG",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias",
+            "Redação"
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "Missed the published weights", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "Missed the published weights", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published weights",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "id": "en-enem-medicine-ufrj-1",
+        "language": "en",
+        "userInput": {
+          "course": "Medicine",
+          "exam": "ENEM",
+          "institution": "Federal University of Rio de Janeiro (UFRJ)",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias",
+            "Redação"
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "atLeast": [], "status": "unknown" },
+        "id": "pt-enem-instituicao-inexistente-1",
+        "userInput": {
+          "course": "Direito",
+          "exam": "ENEM",
+          "institution": "Faculdade Imaginária de Estudos Avançados de Pirapora do Norte",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias",
+            "Redação"
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    }
+  ],
+  "taskId": "find-course-weights"
+}

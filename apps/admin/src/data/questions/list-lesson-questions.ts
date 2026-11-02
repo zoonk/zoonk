@@ -49,9 +49,13 @@ function getLessonQuestionSearchWhere({ search }: { search?: string }) {
       { thread: { user: { name: containsSearch } } },
       { thread: { user: { email: containsSearch } } },
       { thread: { user: { username: containsSearch } } },
-      { thread: { lesson: { normalizedTitle: containsSearch } } },
-      { thread: { lesson: { chapter: { normalizedTitle: containsSearch } } } },
-      { thread: { lesson: { chapter: { course: { normalizedTitle: containsSearch } } } } },
+      { thread: { libraryLesson: { normalizedTitle: containsSearch } } },
+      { thread: { libraryLesson: { homeChapter: { normalizedTitle: containsSearch } } } },
+      {
+        thread: {
+          libraryLesson: { homeChapter: { homeCourse: { normalizedTitle: containsSearch } } },
+        },
+      },
     ],
   };
 }

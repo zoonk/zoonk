@@ -1,0 +1,4813 @@
+msgid ""
+msgstr ""
+"Language: tr\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @eloqnt/format-po\n"
+"X-Message-Key: msgctxt\n"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/auth-gate.tsx
+#: src/components/login-bar-link.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Giriş yap"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/components/auth-gate.tsx
+msgctxt "0vL5u1"
+msgid "Create an account"
+msgstr "Hesap oluştur"
+
+#: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+msgctxt "PlBReU"
+msgid "Log out"
+msgstr "Çıkış yap"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "C81_uG"
+msgid "Logout"
+msgstr "Çıkış yap"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "U3l-Q9"
+msgid "Home page"
+msgstr "Ana sayfaya git"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "Kursları keşfet"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+msgctxt "ng8fsM"
+msgid "Start a goal"
+msgstr "Bir hedefe başla"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "5Wwopw"
+msgid "Pricing"
+msgstr "Fiyatlar"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "xIoGG9"
+msgid "Go to"
+msgstr "Gezinme"
+
+#. Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "CbsWrd"
+msgid "bug, problem, report, idea, suggestion, feature request, contact"
+msgstr "bug, hata, sorun, hata bildir, fikir, öneri, özellik isteği, iletişim"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Geri bildirim gönder"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "tv5FG3"
+msgid "Blog"
+msgstr "Blog"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/support/page.tsx
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "SENRqu"
+msgid "Help"
+msgstr "Yardım"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "ChuNUI"
+msgid "Your plan"
+msgstr "Planın"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "dXSivY"
+msgid "My account"
+msgstr "Hesabım"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "y7pLO8"
+msgid "Mock exam {number}"
+msgstr "Deneme sınavı {number}"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zP4GPk"
+msgid "Mock exams"
+msgstr "Deneme sınavları"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "42u92h"
+msgid "In the catalog"
+msgstr "Katalogda"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zMX-mq"
+msgid "Ask {buddy}: “{question}”"
+msgstr "{buddy} ile konuş: “{question}”"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "t-HGE_"
+msgid "opens the chat"
+msgstr "sohbeti açar"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "Q7LVft"
+msgid "Start a new goal: “{goal}”"
+msgstr "Yeni bir hedefe başla: “{goal}”"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "MA35Hh"
+msgid "Start a goal: “{goal}”"
+msgstr "Bir hedefe başla: “{goal}”"
+
+#. Heading over the option to ask the buddy the typed question.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Sor"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "Q25Oon"
+msgid "New goal"
+msgstr "Yeni bir hedefe başla"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "u82Vi2"
+msgid "Continue today's session"
+msgstr "Bugünkü çalışmana devam et"
+
+#. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "Zu-MTq"
+msgid "full, half or one subject"
+msgstr "tamamı, yarısı veya tek branş"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
+msgctxt "g5EneG"
+msgid "Take a mock exam"
+msgstr "Deneme sınavına gir"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "AFQMLq"
+msgid "Practice your mistakes"
+msgstr "Yanlışların üzerinde çalış"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "z6HKe1"
+msgid "Ask {buddy}…"
+msgstr "{buddy} ile konuş…"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "QTg-WT"
+msgid "Start a new goal"
+msgstr "Yeni bir hedefe başla"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+#: src/components/catalog/course-plan-window.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Bugün"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/(app)/(learn)/plan/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+#: src/components/learn/journey-page-bar.tsx
+msgctxt "fz0z4c"
+msgid "Plan"
+msgstr "Plan"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "1L2nnA"
+msgid "Buddy"
+msgstr "Arkadaş"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "g3GlDw"
+msgid "Mistakes notebook"
+msgstr "Yanlış defteri"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "Xy7a7A"
+msgid "Exam"
+msgstr "Sınav"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "ONqlu6"
+msgid "Speaking"
+msgstr "Konuşma"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/mind-maps/page.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Zihin haritaları"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/logbook/page.tsx
+msgctxt "_qTRbZ"
+msgid "Logbook"
+msgstr "Çalışma günlüğü"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/layout.tsx
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "H3eDAS"
+msgid "Statistics"
+msgstr "İstatistikler"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "Ie60UL"
+msgid "Switch to {goal}"
+msgstr "{goal} hedefine geç"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "wL7VAE"
+msgid "Actions"
+msgstr "İşlemler"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "OXDyuT"
+msgid "Your goals"
+msgstr "Hedeflerin"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+msgctxt "eclXxO"
+msgid "Quick explanations"
+msgstr "Kısa açıklamalar"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
+#: src/app/[lang]/(app)/(settings)/settings/page.tsx
+msgctxt "D3idYv"
+msgid "Settings"
+msgstr "Ayarlar"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "itPgxd"
+msgid "Profile"
+msgstr "Profil"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "dVx3yz"
+msgid "Memory"
+msgstr "Bellek"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+msgctxt "R_6nsx"
+msgid "Subscription"
+msgstr "Abonelik"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+msgctxt "2GURQY"
+msgid "Appearance"
+msgstr "Görünüm"
+
+#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "PCSt5T"
+msgid "Preferences"
+msgstr "Tercihler"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/footer-languages.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Dil"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "4tfrGE"
+msgid "Couldn't open your next step. Try again."
+msgstr "Sıradaki adımını açamadık. Tekrar dene."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "60v8Pt"
+msgid "Search or ask"
+msgstr "Ara veya sor"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "z5av6z"
+msgid "Go to a page, run an action or ask a question."
+msgstr "Bir sayfaya git, işlem yap veya soru sor."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Vazgeç"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/search-dropdown-item.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "qpMObd"
+msgid "Search or ask…"
+msgstr "Ara veya sor…"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "3ATcmQ"
+msgid "move"
+msgstr "gezin"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "-9qP4Y"
+msgid "open"
+msgstr "aç"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "kapat"
+
+#: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "6b2CRH"
+msgid "User menu"
+msgstr "Kullanıcı menüsü"
+
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+#: src/components/pricing/plus-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "BGwIJy"
+msgid "Chapter {number} of {total}"
+msgstr "Ünite {number} / {total}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+msgctxt "t_2u2K"
+msgid "{count, plural, one {# short lesson} other {# short lessons}}"
+msgstr "{count, plural, other {# kısa ders}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+#: src/components/catalog/plan-workload.tsx
+msgctxt "iqLF8D"
+msgid "Lessons"
+msgstr "Dersler"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "n7xPkB"
+msgid "{count, plural, one {# lesson} other {# lessons}}"
+msgstr "{count, plural, other {# ders}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+msgctxt "QNnsRX"
+msgid "{minutes, plural, one {# minute} other {# minutes}}."
+msgstr "{minutes, plural, other {# dakika}}."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+#: src/components/catalog/first-question.tsx
+msgctxt "xIVf67"
+msgid "No sign-up needed."
+msgstr "Kayıt olmana gerek yok."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Derse başla"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "x5DbVQ"
+msgid "Start this lesson"
+msgstr "Bu derse başla"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "h4RNnR"
+msgid "{count, plural, one {# idea} other {# ideas}}"
+msgstr "{count, plural, other {# kavram}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "kvjzxh"
+msgid "What you'll learn"
+msgstr "Öğreneceklerin"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "nxKjXi"
+msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
+msgstr "{count, plural, other {# ders}} · {duration}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "qCHG2P"
+msgid "Chapter {number}: {chapter}"
+msgstr "Ünite {number}: {chapter}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
+msgctxt "AvS60l"
+msgid "Go to the chapter"
+msgstr "Üniteye git"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+msgctxt "f-_t_p"
+msgid "This lesson is part of the {course} course."
+msgstr "Bu ders {course} kursunun bir parçası."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "TEMmOs"
+msgid "Example plan"
+msgstr "Örnek plan"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "JZFs07"
+msgid "An example. Your plan follows your answers, so it can start later and end sooner."
+msgstr "Bu bir örnek. Planın cevaplarına göre şekillenir, bu yüzden daha ileriden başlayıp daha erken bitebilir."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+#: src/app/[lang]/(home)/_components/final-call.tsx
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "Ücretsiz başla, hesap gerekmez."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "XUON71"
+msgid "Start here and Zoonk writes its lessons for your level."
+msgstr "Buradan başla, Zoonk bu ünitenin derslerini seviyene göre hazırlasın."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "LxAk-r"
+msgid "Your plan from this chapter"
+msgstr "Bu üniteden başlayan planın"
+
+#. Heading over the ways to start a plan. “your level” is what the learner already knows.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "NCLSU6"
+msgid "Start today, at your level"
+msgstr "Bugün kendi seviyenden başla"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "H_k_3P"
+msgid "It follows the course from here, at your pace, with reviews before you forget."
+msgstr "Kursu buradan itibaren senin tempona göre takip eder, unutmadan önce tekrar yapmanı sağlar."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "6i_Ywx"
+msgid "A few quick questions, then your plan and your first lesson."
+msgstr "Önce birkaç kısa soru, ardından planın ve ilk dersin."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Ünite seçenekleri"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "DcXGUl"
+msgid "{chapter}: {course} course"
+msgstr "{chapter}: {course} kursu"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "kRwSyb"
+msgid "What you'll be able to do"
+msgstr "Yapabileceklerin"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "fIvfRs"
+msgid "Who it's for"
+msgstr "Kimler için"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
+msgctxt "SFqn9B"
+msgid "Try a lesson"
+msgstr "Bir ders dene"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "VO_HQW"
+msgid "Your plan until {date}, at {time} a day"
+msgstr "{date} tarihine kadar olan planın: günde {time}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "ZSMfHW"
+msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
+msgstr "Sıfırdan başlamak için planın: günde {minutes, plural, other {# dakika}}"
+
+#. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "rEPdIs"
+msgid "Course outline"
+msgstr "Kurs içeriği"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {# ünite}}"
+
+#. After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "5RluHj"
+msgid "{count, plural, one {# lesson written so far} other {# lessons written so far}}"
+msgstr "{count, plural, other {Şimdiye kadar # ders hazırlandı}}"
+
+#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "bdvt9X"
+msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
+msgstr "Planını oluşturduğunda Zoonk bu kursun ünitelerini ve derslerini seviyenden başlayarak senin için hazırlar."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "FwtWUq"
+msgid "This course is also available in your language."
+msgstr "Bu kurs senin dilinde de var."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "vZu-i7"
+msgid "Your plan follows this course"
+msgstr "Planın bu kursu takip ediyor"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "Sm_2tk"
+msgid "Course options"
+msgstr "Kurs seçenekleri"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "Kurslar"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+msgctxt "xbvV6c"
+msgid "{count, plural, one {# chapter left out} other {# chapters left out}}"
+msgstr "{count, plural, other {# ünite dışarıda kaldı}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+#: src/components/catalog/area-study.ts
+msgctxt "IldniG"
+msgid "Left out"
+msgstr "Dışarıda kaldı"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
+msgctxt "ArogzQ"
+msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
+msgstr "{count, plural, =0 {# / {total, number} ders} other {# / {total, number} ders}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "OGR3YM"
+msgid "Show fewer chapters"
+msgstr "Daha az ünite göster"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "IiIBmN"
+msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
+msgstr "{count, plural, other {# ünite daha göster}}"
+
+#. Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "H7iemn"
+msgid "Not written yet. Zoonk writes its chapters as learners reach it."
+msgstr "Henüz hazırlanmadı. Zoonk üniteleri öğrenciler bu seviyeye ulaştıkça hazırlar."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "wieA_m"
+msgid "week {week, number}"
+msgstr "{week, number}. hafta"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "rci8_D"
+msgid "weeks {first, number}–{last, number}"
+msgstr "{first, number}–{last, number}. haftalar"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+msgctxt "434gtt"
+msgid "Week {week, number}"
+msgstr "{week, number}. hafta"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+#: src/components/catalog/area-study.ts
+msgctxt "v1x8m2"
+msgid "quick lessons and lessons written as you reach them"
+msgstr "hızlı dersler ve sırası geldikçe hazırlanan dersler"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+msgctxt "YFq7jF"
+msgid "quick lessons"
+msgstr "hızlı dersler"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
+#: src/components/catalog/area-study.ts
+msgctxt "Xa1Q8P"
+msgid "lessons written as you reach them"
+msgstr "sırası geldikçe hazırlanan dersler"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "6CUqWy"
+msgid "Learn {course} in short lessons, with a plan that starts at your level and fits your schedule. Start free. {description}"
+msgstr "Seviyene ve programına uygun bir planla, kısa derslerle {course} öğren. Ücretsiz başla. {description}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "gyGolN"
+msgid "Learn {course}"
+msgstr "{course} öğren"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "zQvVDJ"
+msgid "All"
+msgstr "Tümü"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Sola kaydır"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Sağa kaydır"
+
+#: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
+msgctxt "tuZsq-"
+msgid "Course categories"
+msgstr "Kurs kategorileri"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "Kurs yok"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "Wc7aau"
+msgid "No courses available yet."
+msgstr "Henüz kurs bulunmuyor."
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "T0mfNV"
+msgid "Loading more courses…"
+msgstr "Daha fazla kurs yüklüyoruz…"
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+msgctxt "W_5hwr"
+msgid "Something went wrong. Please try again."
+msgstr "Bir sorun oluştu. Lütfen tekrar dene."
+
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/auth/callback/route.ts
+#: src/components/errors/page-error-message.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Tekrar dene"
+
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+msgctxt "ONxggU"
+msgid "Start from a course, or tell Zoonk what you're getting ready for."
+msgstr "Bir kursla başla ya da neye hazırlandığını Zoonk’a anlat."
+
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+msgctxt "WgPMAP"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
+msgstr "Yapay zekâyla istediğin konuyu öğrenmek için tüm Zoonk kurslarını keşfet. Bilim, matematik, teknoloji ve daha pek çok konuda etkileşimli dersler bul."
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+msgctxt "yAw6p8"
+msgid "{belt}, level {level}. Statistics"
+msgstr "{belt}, {level}. seviye. İstatistikler"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
+msgctxt "ZKtRoA"
+msgid "Skip to content"
+msgstr "İçeriğe geç"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+msgctxt "l5SUmq"
+msgid "Start with a goal"
+msgstr "Bir hedefle başla"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+msgctxt "FqgLH3"
+msgid "Tell us what you want to learn, and we'll plan every day until you get there."
+msgstr "Ne öğrenmek istediğini söyle, hedefine ulaşana kadar her gününü biz planlayalım."
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, {level}. seviye"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "zF7Cth"
+msgid "Guest"
+msgstr "Misafir"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "UTFsoN"
+msgid "Study"
+msgstr "Çalışma"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "JZy6jo"
+msgid "Sidebar"
+msgstr "Kenar çubuğu"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Kenar çubuğunu daralt"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "Kenar çubuğunu genişlet"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
+msgctxt "CPAYvm"
+msgid "{count, plural, one {# activity left} other {# activities left}}"
+msgstr "{count, plural, other {# etkinlik kaldı}}"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "ijwVvk"
+msgid "Earlier questions"
+msgstr "Önceki sorular"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "6hIrBQ"
+msgid "From an earlier version of {course}"
+msgstr "{course} kursunun önceki bir sürümünden"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "TnUbiV"
+msgid "From an earlier version of this course"
+msgstr "Bu kursun önceki bir sürümünden"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "vgDvJf"
+msgid "No answer was saved."
+msgstr "Cevap kaydedilmedi."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "zqnAPr"
+msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
+msgstr "Kurslarını yeniden hazırlamadan önce sorduğun sorular. Dersler değişti, bu yüzden sorularını tekrar okuyabilmen için burada tutuyoruz."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "YPd0dY"
+msgid "You have no earlier questions."
+msgstr "Daha önce sorduğun bir soru yok."
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O3OEwU"
+msgid "Older questions"
+msgstr "Daha eski soruları gör"
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "Arkadaşın"
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+msgctxt "6YPtag"
+msgid "Your buddy answers your questions and adjusts your plan."
+msgstr "Arkadaşın sorularını cevaplar ve planını düzenler."
+
+#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+msgctxt "BV0cQk"
+msgid "Your day"
+msgstr "Günün"
+
+#: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
+msgctxt "dOgCSN"
+msgid "Chapter"
+msgstr "Ünite"
+
+#: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
+msgctxt "LzFnTo"
+msgid "A chapter of your plan, with its lessons and how far you are."
+msgstr "Planındaki bir ünitenin dersleri ve ilerleme durumun."
+
+#: src/app/[lang]/(app)/(learn)/content/units/[chapterId]/page.tsx
+msgctxt "xkB-8Z"
+msgid "Unit"
+msgstr "Ünite"
+
+#: src/app/[lang]/(app)/(learn)/content/units/[chapterId]/page.tsx
+msgctxt "9dC4eV"
+msgid "A unit of your language plan, with its lessons and how far you are."
+msgstr "Dil planındaki bir ünitenin dersleri ve ilerleme durumun."
+
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
+msgctxt "9HjIgh"
+msgid "Your exam"
+msgstr "Sınavın"
+
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
+msgctxt "KixPd0"
+msgid "Your exam's areas, how ready you are for each, and its mock exams."
+msgstr "Sınavındaki alanlar, her birine ne kadar hazır olduğun ve deneme sınavları."
+
+#: src/app/[lang]/(app)/(learn)/mind-maps/page.tsx
+msgctxt "JKdNG-"
+msgid "Each chapter's ideas on one map, to review how they connect."
+msgstr "Her ünitedeki kavramlar, aralarındaki ilişkileri gözden geçirmen için tek bir haritada."
+
+#: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
+msgctxt "iY3_pj"
+msgid "The questions you got wrong, why, and practice until you get them right."
+msgstr "Yanlış yanıtladığın sorular, hatalarının nedenleri ve doğru yanıtlayana kadar yapabileceğin alıştırmalar."
+
+#: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+msgctxt "OsH_hN"
+msgid "Mock exam, timed like the real one"
+msgstr "Gerçek sınavdaki gibi süreli bir deneme sınavı"
+
+#: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
+#: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
+msgctxt "R6T7P_"
+msgid "What you'll study each day until your goal, and what it covers."
+msgstr "Hedefine ulaşana kadar her gün ne çalışacağın ve planının neleri kapsadığı."
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "Planından önce birkaç soru"
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "Soruları cevapla, hedefine ulaşana kadar günlük planını hazırlayacağız."
+
+#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Devam et"
+
+#: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+msgctxt "wRaHK-"
+msgid "Your plan at a glance"
+msgstr "Bir bakışta planın"
+
+#: src/app/[lang]/(app)/(learn)/speaking/page.tsx
+msgctxt "LdUCtG"
+msgid "Speaking practice"
+msgstr "Konuşma pratiği"
+
+#: src/app/[lang]/(app)/(learn)/speaking/page.tsx
+msgctxt "wxCaBV"
+msgid "Calls in the language you're learning, at your level."
+msgstr "Öğrendiğin dilde, seviyene uygun sohbetler."
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "UKxoV8"
+msgid "Welcome back"
+msgstr "Tekrar hoş geldin"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "N2AOpV"
+msgid "Your quick explanation"
+msgstr "Kısa açıklaman"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "Iqgfb9"
+msgid "Quick explanation"
+msgstr "Kısa açıklama"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "kgu6gE"
+msgid "Continue explanation"
+msgstr "Açıklamaya devam et"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+msgctxt "B1ehqx"
+msgid "Each day's lessons, reviews and practice for your goal."
+msgstr "Hedefin için günlük dersler, tekrarlar ve alıştırmalar."
+
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "vr-vFm"
+msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
+msgstr "Ücretsiz pakette aynı anda tek hedef üzerinde çalışabilirsin. Bu hedefe devam etmek için diğer hedefini duraklat veya daha fazla hedef için Plus’a geç."
+
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "4CJCep"
+msgid "Resume {goal}"
+msgstr "{goal} hedefine devam et"
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "kL0PL2"
+msgid "Start a new goal, or pick another one above."
+msgstr "Yeni bir hedefe başla veya yukarıdan başka bir hedef seç."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "WDKpPN"
+msgid "You finished {goal}."
+msgstr "{goal} hedefini tamamladın."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "EQpfkS"
+msgid "Finished"
+msgstr "Tamamlandı"
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Devam edene kadar hiçbir şey planlanmaz."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "CSgdxh"
+msgid "{goal} is paused."
+msgstr "{goal} hedefi duraklatıldı."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "ND345k"
+msgid "This goal is paused."
+msgstr "Bu hedef duraklatıldı."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr "Duraklatıldı"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "nggkj2"
+msgid "Continue setting up"
+msgstr "Planını oluşturmaya devam et"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "DchlAP"
+msgid "It's built from what you tell us."
+msgstr "Planını bize anlattıklarına göre hazırlıyoruz."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "zvtDTr"
+msgid "Your plan for {goal} needs a few more answers."
+msgstr "{goal} için planını tamamlamak üzere birkaç cevaba daha ihtiyacımız var."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "dMgVfu"
+msgid "Setting up"
+msgstr "Hazırlık aşamasında"
+
+#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
+msgctxt "irPOsS"
+msgid "A mock exam to find your level"
+msgstr "Seviyeni belirlemek için bir deneme sınavı"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8Dn3GJ"
+msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "{chapters, plural, other {# ünite}} · {lessons, plural, other {# ders}}"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "Cr5XrH"
+msgid "{count, plural, one {and # more chapter} other {and # more chapters}}"
+msgstr "{count, plural, other {ve # ünite daha}}"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "IyoCIG"
+msgid "Your plan starts at this chapter and follows the course from there, in the time you have each day."
+msgstr "Planın bu üniteden başlar ve kurstaki dersleri her gün ayırabildiğin süreye göre düzenler."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8s-b4U"
+msgid "How much do you already know?"
+msgstr "Bu konuda ne kadar bilgin var?"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "eePhP0"
+msgid "It only changes where your plan starts."
+msgstr "Bu sadece planının nereden başlayacağını değiştirir."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "C1D9a4"
+msgid "Your plan follows this course, in the time you have each day."
+msgstr "Planın bu kurstaki dersleri her gün ayırabildiğin süreye göre düzenler."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "6CVLNb"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
+msgstr "Şimdilik günde {minutes, plural, other {# dakika}}. Sonraki adımlarda değiştirebilirsin."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/public/goal-form.tsx
+#: src/components/public/start-plan-link.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "Planımı oluştur"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+msgctxt "1bImNc"
+msgid "Starting your plan…"
+msgstr "Planını başlatıyoruz…"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "6e3fLf"
+msgid "Start {course}"
+msgstr "{course} kursuna başla"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "9m9h0p"
+msgid "Start a course"
+msgstr "Bir kursa başla"
+
+#: src/app/[lang]/(app)/(onboarding)/start/page.tsx
+msgctxt "j8Jfmw"
+msgid "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Start free, no account needed."
+msgstr "Ne başarmak istediğini kendi sözlerinle yaz. Zoonk yalnızca eksik bilgileri sorar ve ayırabildiğin süreye uygun bir plan hazırlar. Ücretsiz başla, hesap gerekmez."
+
+#: src/app/[lang]/(app)/(onboarding)/start/page.tsx
+msgctxt "G4ZsrK"
+msgid "Start with your goal"
+msgstr "Hedefinle başla"
+
+#: src/app/[lang]/(app)/(settings)/_components/settings-eyebrow.tsx
+msgctxt "DId5yN"
+msgid "{email} · Plus"
+msgstr "{email} · Plus"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "Bq4K5C"
+msgid "For your safety, sign in again, then delete your account."
+msgstr "Güvenliğin için tekrar giriş yap, ardından hesabını sil."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "scfgdM"
+msgid "Sign in again"
+msgstr "Tekrar giriş yap"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "Hesabını silemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "Hesabı sil"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "YRbz6b"
+msgid "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there."
+msgstr "Hesabını ve içindeki her şeyi kalıcı olarak siler. Plus’ı App Store veya Google Play’den aldıysan oradan iptal etmelisin."
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Hesabımı sil"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "lNbJX1"
+msgid "Delete…"
+msgstr "Sil…"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "TcCxtt"
+msgid "Delete your account?"
+msgstr "Hesabın silinsin mi?"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "B62Z1j"
+msgid "Deleting your account ends Plus right away."
+msgstr "Hesabını sildiğinde Plus hemen sona erer."
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "_nHp1D"
+msgid "Everything Zoonk keeps about you, as one file"
+msgstr "Zoonk’un seninle ilgili sakladığı her şey tek dosyada"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "RcXC-q"
+msgid "Download my data"
+msgstr "Verilerimi indir"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "cQNx6-"
+msgid "Preparing your data…"
+msgstr "Verilerini hazırlıyoruz…"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "Ob8gKI"
+msgid "Preparing…"
+msgstr "Hazırlıyoruz…"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "İndir"
+
+#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
+msgctxt "owirfw"
+msgid "We couldn't prepare the download. Try again."
+msgstr "İndirilecek dosyayı hazırlayamadık. Tekrar dene."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "I4oZQq"
+msgid "Your name, username and account on Zoonk."
+msgstr "Zoonk’taki adın, kullanıcı adın ve hesabın."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "TwyMau"
+msgid "Account"
+msgstr "Hesap"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "ZTyMjO"
+msgid "Your data"
+msgstr "Verilerin"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "O7G-L3"
+msgid "How Zoonk and your buddy call you"
+msgstr "Zoonk ve arkadaşın sana bu adla seslenir"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "HAlOn1"
+msgid "Name"
+msgstr "Ad"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "Kullanıcı adı"
+
+#: src/app/[lang]/(app)/(settings)/profile/page.tsx
+msgctxt "1VpnDN"
+msgid "Your name, username and account."
+msgstr "Adın, kullanıcı adın ve hesabın."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "Kontrol ediyoruz…"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "9N4_rz"
+msgid "{username} is available"
+msgstr "{username} kullanılabilir"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username} zaten kullanılıyor"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Kaydet"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "Kaydedildi."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "VnpW_P"
+msgid "Choose your buddy, sounds, a daily time limit and the app's language."
+msgstr "Arkadaşını, sesleri, günlük süre sınırını ve uygulama dilini seç."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Gizlilik"
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "BbrYZc"
+msgid "Your buddy, lessons and language, the way you like them."
+msgstr "Arkadaşın, derslerin ve uygulama dilin tam istediğin gibi."
+
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "LCU3Qs"
+msgid "See, correct or delete what Zoonk remembers about you."
+msgstr "Zoonk’un seninle ilgili hatırladıklarını gör, düzelt veya sil."
+
+#: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
+msgctxt "KTQxC5"
+msgid "What Zoonk remembers to give you examples and plans that fit your life."
+msgstr "Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "cEOHN2"
+msgid "Cancel Plus"
+msgstr "Plus’ı iptal et"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "2LA7kt"
+msgid "Cancel Plus?"
+msgstr "Plus iptal edilsin mi?"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "OHwgQT"
+msgid "Plus ends right away, and we stop retrying your renewal payment."
+msgstr "Plus hemen sona erer ve yenileme ödemeni almayı tekrar denemeyiz."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "ZwO-lB"
+msgid "You keep Plus until the end of the period you already paid for."
+msgstr "Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "wBf7zr"
+msgid "We couldn't cancel Plus. Try again or email {email}."
+msgstr "Plus’ı iptal edemedik. Tekrar dene veya {email} adresine e-posta gönder."
+
+#. Zoonk's support address; your language may have its own.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "orvpWh"
+msgid "Go back"
+msgstr "Geri dön"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "qO091u"
+msgid "Your subscription will end on <mono>{date}</mono>."
+msgstr "Aboneliğin <mono>{date}</mono> tarihinde sona erecek."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "xWINkR"
+msgid "Current billing period ends on <mono>{date}</mono>."
+msgstr "Mevcut fatura dönemi <mono>{date}</mono> tarihinde sona erecek."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "HkeWp4"
+msgid "Your last renewal payment failed."
+msgstr "Son yenileme ödemen alınamadı."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono> tarihinde yenilenecek."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "iwAsxo"
+msgid "Website subscription"
+msgstr "Web sitesi aboneliği"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "CrGYez"
+msgid "Subscription ending"
+msgstr "Abonelik sona eriyor"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "3a5wL8"
+msgid "Active"
+msgstr "Aktif"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "oESc06"
+msgid "What's included"
+msgstr "Pakete dahil olanlar"
+
+#: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
+msgctxt "kkHvAa"
+msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
+msgstr "Bugün <mono>{used, number} / {limit, number}</mono> ders arkadaşı mesajı kullanıldı"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "lRRr8l"
+msgid "Changed your mind? Keep Plus, and it renews as before."
+msgstr "Fikrini mi değiştirdin? Plus’ı koru, aboneliğin eskisi gibi yenilensin."
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Plus’ı koru"
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "S4ds_U"
+msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
+msgstr "Plus’ı koruyamadık. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "3iCRcP"
+msgid "Manage in App Store"
+msgstr "App Store’da yönet"
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "tiFovn"
+msgid "Manage in Google Play"
+msgstr "Google Play’de yönet"
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "Tp4wJB"
+msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
+msgstr "Bu abonelik App Store üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Apple’ın abonelik ayarlarını kullan."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "unNUPf"
+msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
+msgstr "Bu abonelik Google Play üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Google Play’i kullan."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "P0ZHma"
+msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+msgstr "Bu abonelik Zoonk tarafından yönetiliyor. Değiştirmek veya iptal etmek için yardıma ihtiyacın olursa destek ekibine ulaş."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Destek ekibiyle iletişime geç"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "bF03Os"
+msgid "Confirming your subscription"
+msgstr "Aboneliğini onaylıyoruz"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "weaUjp"
+msgid "Still confirming your subscription"
+msgstr "Aboneliğini onaylamaya devam ediyoruz"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "7lERBM"
+msgid "Stripe is confirming your payment. It usually takes a few seconds."
+msgstr "Stripe ödemeni onaylıyor. Bu genellikle birkaç saniye sürer."
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "gDgnVG"
+msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
+msgstr "Bu işlem normalden uzun sürüyor. Ödemen tamamlandıysa Stripe onaylar onaylamaz Plus burada görünür."
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "QI17io"
+msgid "Checking with Stripe…"
+msgstr "Stripe üzerinden kontrol ediyoruz…"
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "Tekrar kontrol et"
+
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+msgctxt "uPJSSB"
+msgid "Subscribe to Zoonk Plus"
+msgstr "Zoonk Plus’a abone ol"
+
+#: src/app/[lang]/(app)/(settings)/support/page.tsx
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+msgctxt "e60J1V"
+msgid "Ask a question, report a problem or share an idea. We answer by email."
+msgstr "Bir soru sor, sorun bildir veya fikrini paylaş. E-postayla cevap veriyoruz."
+
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+msgctxt "l1XTI5"
+msgid "Follow us"
+msgstr "Bizi takip et"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "FVh2Tr"
+msgid "Start learning to track your progress"
+msgstr "İlerlemeni takip etmek için öğrenmeye başla"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Bugün sayfasına git"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/lib/public/public-labels.ts
+msgctxt "9uOFF3"
+msgid "Overview"
+msgstr "Genel bakış"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Seviye"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Enerji"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Etkinlik"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Puan"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "Eğilimler"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+msgctxt "QbGIBZ"
+msgid "Your stats"
+msgstr "İstatistiklerin"
+
+#. Legend of a heatmap, from the lightest to the darkest squares.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.Xsvev8"
+msgid "Activity from less to more"
+msgstr "Etkinlik düzeyi: azdan çoğa"
+
+#. The light end of a heatmap's legend: less activity.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.mFYgAX"
+msgid "Less"
+msgstr "Daha az"
+
+#. The dark end of a heatmap's legend: more activity.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.I5NMJ8"
+msgid "More"
+msgstr "Daha fazla"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "-eNLo_"
+msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{date} · {count, plural, =0 {Çalışılmadı} other {# etkinlik}}"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "Son 12 ay"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "MnYAxL"
+msgid "Activity by day"
+msgstr "Günlere göre etkinlik"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "RZVnqi"
+msgid "Any day you studied"
+msgstr "Çalıştığın her gün"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "CjJYVQ"
+msgid "Days studied"
+msgstr "Çalışılan gün sayısı"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "-ZYXXk"
+msgid "{count, plural, =0 {Finished} one {Finished} other {Finished}}"
+msgstr "{count, plural, =0 {Tamamlanan yok} other {Tamamlandı}}"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "jfPES_"
+msgid "Studying in total"
+msgstr "Toplam çalışma süresi"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
+msgctxt "ug01Mk"
+msgid "Time"
+msgstr "Süre"
+
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "LYW_o7"
+msgid "Your study days, lessons finished and time spent learning."
+msgstr "Çalıştığın günler, tamamladığın dersler ve öğrenmeye ayırdığın süre."
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "Düşükten yükseğe Enerji düzeyi"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "Düşük"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "Yüksek"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "5ZmEgv"
+msgid "{date} · No Energy recorded"
+msgstr "{date} · Enerji kaydı yok"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "beOKv0"
+msgid "{date} · {percentage} Energy"
+msgstr "{date} · {percentage} Enerji"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "0i1UHO"
+msgid "Energy by day"
+msgstr "Günlere göre Enerji"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "OiTvvB"
+msgid "Since you started"
+msgstr "Başladığından beri"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "FnRTEV"
+msgid "Average"
+msgstr "Ortalama"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "WUD69_"
+msgid "Days with full Energy"
+msgstr "Enerjinin tam olduğu günler"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "1bzMX0"
+msgid "At 100%"
+msgstr "%100’de"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+msgctxt "y6wXa9"
+msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
+msgstr "Tamamladığın her ders Enerjini artırır. Ara verdiğin günlerde biraz azalır, kuşağın ve ilerlemen korunur."
+
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+msgctxt "wSjCCg"
+msgid "Your Energy now and over the past 12 months."
+msgstr "Şu anki ve son 12 aydaki Enerjin."
+
+#: src/app/[lang]/(app)/(stats)/layout.tsx
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "5CNApj"
+msgid "All goals"
+msgstr "Tüm hedefler"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "CIQa5T"
+msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
+msgstr "{color, select, white {Beyaz} yellow {Sarı} orange {Turuncu} green {Yeşil} blue {Mavi} purple {Mor} brown {Kahverengi} red {Kırmızı} gray {Gri} black {Siyah} other {Kuşak}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "SeonFl"
+msgid "Every belt earned"
+msgstr "Tüm kuşakları kazandın"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "e6TtsL"
+msgid "Next belt"
+msgstr "Sıradaki kuşak"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "0ZGPb-"
+msgid "{belt} at <mono>{points}</mono> Brain Power"
+msgstr "{belt} için <mono>{points}</mono> Beyin Gücü"
+
+#. The Brain Power the learner still needs to earn the next belt.
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "dzpvr6"
+msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
+msgstr "{points, plural, other {<mono>#</mono> Beyin Gücü kaldı}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "3DtX17"
+msgid "Belt progression"
+msgstr "Kuşaklarda ilerleme"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "EX6xiz"
+msgid "Level <mono>{level}</mono> of {count}"
+msgstr "Seviye <mono>{level}</mono> / {count}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "pgt3eW"
+msgid "Max level reached"
+msgstr "En yüksek seviyeye ulaştın"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "Cm04Yp"
+msgid "Next level"
+msgstr "Sonraki seviye"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "cmc2-s"
+msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
+msgstr "{color, select, yellow {Sarı kuşağa kalan} orange {Turuncu kuşağa kalan} green {Yeşil kuşağa kalan} blue {Mavi kuşağa kalan} purple {Mor kuşağa kalan} brown {Kahverengi kuşağa kalan} red {Kırmızı kuşağa kalan} gray {Gri kuşağa kalan} black {Siyah kuşağa kalan} other {Sonraki kuşağa kalan}}"
+
+#. Label above the points still needed to reach that level.
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "57EFxN"
+msgid "To level {level}"
+msgstr "{level}. seviyeye kalan"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Beyin Gücü"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "pDD9dm"
+msgid "Never goes down"
+msgstr "Asla azalmaz"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "wbDtI_"
+msgid "Every lesson adds {points} Brain Power, and it never goes down."
+msgstr "Her dersle {points} Beyin Gücü kazanırsın ve Beyin Gücün asla azalmaz."
+
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "Wzw2i9"
+msgid "Your belt, level and Brain Power."
+msgstr "Kuşağın, seviyen ve Beyin Gücün."
+
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+msgctxt "eBJm5e"
+msgid "See when you perform best over the past 90 days."
+msgstr "Son 90 günde en başarılı olduğun zamanları gör."
+
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+msgctxt "SXjWkq"
+msgid "When you answer best, over the last 90 days."
+msgstr "Son 90 günde en iyi cevap verdiğin zamanlar."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "00_IyC"
+msgid "Night"
+msgstr "Gece"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "_kzk_m"
+msgid "Morning"
+msgstr "Sabah"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "mF-J9o"
+msgid "Afternoon"
+msgstr "Öğleden sonra"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "Akşam"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {Cevap yok} other {# cevap}}"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "Hafta boyunca"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "Gün boyunca"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "cwmQSC"
+msgid "Any day"
+msgstr "Her gün"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "wmdZZD"
+msgid "Any time"
+msgstr "Günün her saati"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "QF6BDw"
+msgid "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
+msgstr "Günler arasındaki puan farkı en fazla {points, plural, =0 {# puan} other {# puan}}, bu yüzden her gün uygun."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "S1QB1r"
+msgid "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
+msgstr "Günün farklı saatleri arasındaki puan farkı en fazla {points, plural, =0 {# puan} other {# puan}}, bu yüzden her saat uygun."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+msgctxt "1M3zAD"
+msgid "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
+msgstr "Bir günün ya da saatin hesaba katılması için {count, plural, other {# cevap}} gerekir, bu yüzden şans eseri doğru verilen tek bir cevap bir eğilim oluşturmaz."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "0Fab5z"
+msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
+msgstr "En fazla {points, plural, =0 {# puan} other {# puan}} fark"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "yJxUpG"
+msgid "Not enough answers yet"
+msgstr "Henüz yeterli cevap yok"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "9DVTlI"
+msgid "{score} · {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} · {count, plural, other {# cevap}}"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "En iyi gün"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "En iyi saat"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "WDXXIC"
+msgid "In the last 90 days"
+msgstr "Son 90 günde"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Cevaplar"
+
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "-JqpHp"
+msgid "See your answer accuracy and weekly trend over the past 90 days."
+msgstr "Son 90 gündeki doğru cevap oranını ve haftalık değişimini gör."
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "33eat_"
+msgid "Weekly score trend"
+msgstr "Haftalık puan değişimi"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "i2_Jga"
+msgid "{score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} ({count, plural, other {# cevap üzerinden}})"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
+msgctxt "l-oCrn"
+msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{label}: {score} ({count, plural, other {# cevap üzerinden}})"
+
+#: src/app/[lang]/(app)/(stats)/score/score-chart-plot.tsx
+msgctxt "q9WSEF"
+msgid "{count, plural, one {# answer} other {# answers}}"
+msgstr "{count, plural, other {# cevap}}"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Doğru cevaplar"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "OLmtAV"
+msgid "Of all your answers"
+msgstr "Tüm cevapların içinde"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "gAnLDP"
+msgid "Right"
+msgstr "Doğru"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "3YnSzO"
+msgid "{correct} of {total}"
+msgstr "{correct} / {total}"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "60UdOE"
+msgid "Back from today"
+msgstr "Bugünden geriye"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "jCNpEL"
+msgid "Period"
+msgstr "Dönem"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "Ip-YhF"
+msgid "Every answer counts the same, so harder lessons can lower your score for a while."
+msgstr "Her cevap aynı ağırlıkta sayılır, bu yüzden daha zor dersler puanını bir süreliğine düşürebilir."
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "Puan · 90 gün"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "eIGEJG"
+msgid "Your score shows after your first answers."
+msgstr "İlk cevaplarını verdikten sonra puanın görünür."
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "kV-RMr"
+msgid "{low}–{high}"
+msgstr "{low}–{high}"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "hofSlo"
+msgid "Patterns · 90 days"
+msgstr "Eğilimler · 90 gün"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "078WAr"
+msgid "See all"
+msgstr "Tümünü gör"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "Henüz yok"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "McGBe4"
+msgid "Spread across the week"
+msgstr "Haftalık dağılım"
+
+#: src/app/[lang]/(app)/(stats)/stats/page.tsx
+msgctxt "Q0jtuV"
+msgid "Your belt, Energy, study days, right answers and when you do best."
+msgstr "Kuşağın, Enerjin, çalışma günlerin, doğru cevapların ve en iyi sonuç aldığın zamanlar."
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "AezvZG"
+msgid "Average {value}"
+msgstr "Ortalama {value}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "I5Pid5"
+msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
+msgstr "{lessons, plural, =0 {# ders} other {# ders}} · {time}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "_qHKLY"
+msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
+msgstr "{correct, plural, =0 {<mono>#/{total}</mono> doğru} other {<mono>#/{total}</mono> doğru}}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "Y_aK5B"
+msgid "Right answers in the last 90 days"
+msgstr "Son 90 gündeki doğru cevaplar"
+
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "X91zpJ"
+msgid "Start with what matters today."
+msgstr "Bugün senin için önemli olanla başla."
+
+#. In Brazilian Portuguese: “Conte sua meta e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "LTU3wD"
+msgid "Tell us your goal and answer a few quick questions. Then just follow each day's plan."
+msgstr "Bize hedefini anlat ve birkaç kısa soruyu cevapla. Sonra her günün planını takip etmen yeterli."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "8AqUKr"
+msgid "Asking for directions"
+msgstr "Yol tarifi sorma"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "wY_wqj"
+msgid "Phrasal verbs for travel"
+msgstr "Seyahatte kullanılan phrasal verbs"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "6Zbcf1"
+msgid "Illustration. Without reviews, you forget almost everything in a few days. With reviews on {dates} and today, it comes back each time, and the gaps between reviews grow."
+msgstr "Görsel. Tekrar yapmazsan birkaç gün içinde neredeyse her şeyi unutursun. {dates} tarihlerinde ve bugün yaptığın tekrarlarla öğrendiklerini her seferinde yeniden hatırlarsın ve tekrarlar arasındaki süre uzar."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "XGOJGX"
+msgid "With reviews"
+msgstr "Tekrar yapıldığında"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "vK_EIg"
+msgid "Without reviewing"
+msgstr "Tekrar yapılmadığında"
+
+#. Marks today on a timeline; lowercase.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "bugün"
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Estudo e esqueço.”
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "BxUa_d"
+msgid "I study and forget."
+msgstr "Çalışıyorum ama unutuyorum."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "yFQn5A"
+msgid "<b>Zoonk brings back what you studied right before you'd forget it.</b> And every mistake comes back for you to practice until you get it right."
+msgstr "<b>Zoonk, çalıştıklarını tam unutmak üzereyken yeniden karşına çıkarır.</b> Yaptığın her yanlış da düzeltene kadar alıştırma yapman için tekrar karşına çıkar."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "Örnek"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "fqtVVy"
+msgid "Quick review"
+msgstr "Hızlı tekrar"
+
+#. {item} is a word or phrase in the language being learned. Use your language's quote marks.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "uzaDyb"
+msgid "“{item}” and {count, number} more"
+msgstr "“{item}” ve {count, number} tane daha"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "5czPwn"
+msgid "An illustration of the forgetting curve. Review dates change with your answers."
+msgstr "Unutma eğrisini gösteren bir görsel. Tekrar tarihleri cevaplarına göre değişir."
+
+#. A messy spreadsheet's file name. Translate “schedule” with one short word of at most 9 letters and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "A2PGPU"
+msgid "schedule_{exam}_FINAL_v3.xlsx"
+msgstr "program_{exam}_FINAL_v3.xlsx"
+
+#. {exam} is a national exam's short name, such as Enem or SAT.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JssoB6"
+msgid "Everything that can come up on the {exam}"
+msgstr "{exam} sınavında çıkabilecek her şey"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "udtNZk"
+msgid "{exam} on {date}"
+msgstr "{exam} sınavı {date} tarihinde"
+
+#. What a worried student types into a search engine: casual, lowercase, no final punctuation. {exam} is the exam's name in lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "--iDsA"
+msgid "where to start studying for the {exam}"
+msgstr "{exam} için çalışmaya nereden başlanır"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JqUc1j"
+msgid "studying for the {exam} from scratch"
+msgstr "{exam} sınavına sıfırdan hazırlanmak"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "a26eAp"
+msgid "what comes up most on the {exam}"
+msgstr "{exam} sınavında en çok ne çıkar"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "9YszG4"
+msgid "Choosing the right chart"
+msgstr "Doğru grafiği seçmek"
+
+#. An SQL clause; keep it as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "u5IbOk"
+msgid "GROUP BY"
+msgstr "GROUP BY"
+
+#. SQL joins; keep “JOIN” as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "leiqEZ"
+msgid "JOINs in SQL"
+msgstr "SQL’de JOIN işlemleri"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "o4Yiw3"
+msgid "Mean and median"
+msgstr "Ortalama ve medyan"
+
+#. A spreadsheet's file name, as short as the English: translate the words and keep the underscores and “.xlsx”. In Brazilian Portuguese: “plano_dados_2027.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "TP_Hp1"
+msgid "data_plan_2027.xlsx"
+msgstr "veri_planı_2027.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "IQ4iqI"
+msgid "Everything that shows up in data analyst job posts"
+msgstr "Veri analisti iş ilanlarında geçen her şey"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "AeiByK"
+msgid "Data analyst by {month}"
+msgstr "{month} ayına kadar veri analisti"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "NJCHOb"
+msgid "what to study to become a data analyst"
+msgstr "veri analisti olmak için ne çalışmalı"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "c0Ycwn"
+msgid "SQL"
+msgstr "SQL"
+
+#. The subject, as a field of study.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "examplePhases.H3eDAS"
+msgid "Statistics"
+msgstr "İstatistik"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "D6C3cx"
+msgid "Real problem: sales by region"
+msgstr "Gerçek hayat problemi: bölgelere göre satışlar"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "dcA_Pq"
+msgid "Data visualization"
+msgstr "Veri görselleştirme"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tFhP5f"
+msgid "data analyst without a degree"
+msgstr "diplomasız veri analisti"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English. Keep “sql” and “python”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "fbK3Am"
+msgid "sql or python first"
+msgstr "önce sql mi python mı"
+
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "CJtdvr"
+msgid "SQL basics"
+msgstr "Temel SQL"
+
+#. A browser tab's title for a video course, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "y0pYPN"
+msgid "Power BI tutorial"
+msgstr "Power BI eğitimi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "uv4tw_"
+msgid "Basic SQL"
+msgstr "Temel SQL"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "jg1oe7"
+msgid "Pivot tables"
+msgstr "Özet tablolar"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "wgNfiX"
+msgid "Window functions"
+msgstr "Pencere fonksiyonları"
+
+#. An Excel function: use its name in your language's Excel.
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "UC--Se"
+msgid "XLOOKUP"
+msgstr "ÇAPRAZARA"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "l5zKvT"
+msgid "Cleaning data"
+msgstr "Veri temizleme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "z5eDEP"
+msgid "Hypothesis tests"
+msgstr "Hipotez testleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EDaTf-"
+msgid "Linear regression"
+msgstr "Doğrusal regresyon"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "dEvP4t"
+msgid "Sampling"
+msgstr "Örnekleme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nwqt7T"
+msgid "Dashboards"
+msgstr "Gösterge panoları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ggbhiR"
+msgid "Business metrics"
+msgstr "İş metrikleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "j7WWaK"
+msgid "Telling stories with data"
+msgstr "Verilerle hikâye anlatımı"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-QNBMa"
+msgid "Data modeling"
+msgstr "Veri modelleme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "uNOJ2Q"
+msgid "Portfolio"
+msgstr "Portföy"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "6pFhsv"
+msgid "Technical interviews"
+msgstr "Teknik mülakatlar"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "x7zrQq"
+msgid "Standard deviation"
+msgstr "Standart sapma"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Dc4Vu-"
+msgid "Correlation"
+msgstr "Korelasyon"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "eIw6xr"
+msgid "Outliers"
+msgstr "Aykırı değerler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ZmRyDX"
+msgid "Subqueries"
+msgstr "Alt sorgular"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "tEPO8C"
+msgid "A/B tests"
+msgstr "A/B testleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "1hS7Sm"
+msgid "Cohort analysis"
+msgstr "Kohort analizi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "vPII9V"
+msgid "Conversion funnels"
+msgstr "Dönüşüm hunileri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "588kpe"
+msgid "Data types"
+msgstr "Veri türleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "P4R1Bq"
+msgid "Aggregations"
+msgstr "Veri toplulaştırma"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "IcBJoJ"
+msgid "Excel charts"
+msgstr "Excel grafikleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ARJh9q"
+msgid "Python basics"
+msgstr "Python temelleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "wgVL5w"
+msgid "Dates and times"
+msgstr "Tarih ve saat"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "3zH6CJ"
+msgid "Missing values"
+msgstr "Eksik değerler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zC81BZ"
+msgid "Exploratory analysis"
+msgstr "Keşifsel analiz"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "tMbwGE"
+msgid "Presenting results"
+msgstr "Sonuçları sunma"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "0quLKn"
+msgid "Data ethics"
+msgstr "Veri etiği"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "bbGAq-"
+msgid "Spreadsheet formulas"
+msgstr "Hesap tablosu formülleri"
+
+#. SQL's common table expressions; keep “CTE” as is.
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "d7M-cZ"
+msgid "CTEs"
+msgstr "CTE’ler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "TXLox5"
+msgid "KPIs"
+msgstr "Temel performans göstergeleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "awaJec"
+msgid "Normal distribution"
+msgstr "Normal dağılım"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PJ5JJ-"
+msgid "Data warehouses"
+msgstr "Veri ambarları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "q0cGvG"
+msgid "Time series"
+msgstr "Zaman serileri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "XhQrGb"
+msgid "APIs"
+msgstr "API’ler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nIuCY9"
+msgid "Web scraping"
+msgstr "Web sitelerinden veri çekme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "8T-5rH"
+msgid "Database normalization"
+msgstr "Veritabanı normalizasyonu"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "MAHiMB"
+msgid "Primary and foreign keys"
+msgstr "Birincil ve yabancı anahtarlar"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "2wfjbs"
+msgid "String functions"
+msgstr "Metin işlevleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "wzwD5F"
+msgid "Regular expressions"
+msgstr "Düzenli ifadeler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Y9p5ZI"
+msgid "Confidence intervals"
+msgstr "Güven aralıkları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "PnrXip"
+msgid "P-values"
+msgstr "P değerleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EO14ud"
+msgid "Descriptive statistics"
+msgstr "Betimsel istatistik"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "txB4LZ"
+msgid "Percentiles"
+msgstr "Yüzdelik dilimler"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "16HHKv"
+msgid "Moving averages"
+msgstr "Hareketli ortalamalar"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "uSZR3x"
+msgid "Seasonality"
+msgstr "Mevsimsellik"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BjiJ1E"
+msgid "Forecasting"
+msgstr "Tahminleme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HhK3hL"
+msgid "Churn analysis"
+msgstr "Müşteri kaybı analizi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Fu-yVS"
+msgid "Customer segmentation"
+msgstr "Müşteri segmentasyonu"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "nL6Jl0"
+msgid "Retention"
+msgstr "Müşteriyi elde tutma"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "lqhBud"
+msgid "Revenue metrics"
+msgstr "Gelir göstergeleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-746RL"
+msgid "Marketing attribution"
+msgstr "Pazarlama ilişkilendirmesi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "eX_09T"
+msgid "Web analytics"
+msgstr "Web analizi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zOv79c"
+msgid "SQL views"
+msgstr "SQL görünümleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "Hhr-s6"
+msgid "Query performance"
+msgstr "Sorgu performansı"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "-bHJSS"
+msgid "Data pipelines"
+msgstr "Veri işlem hatları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "EG4n7E"
+msgid "Data governance"
+msgstr "Veri yönetişimi"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "KEIWiY"
+msgid "Data quality checks"
+msgstr "Veri kalitesi kontrolleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "0uFAXy"
+msgid "Duplicate records"
+msgstr "Yinelenen kayıtlar"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "zFWRst"
+msgid "Merging tables"
+msgstr "Tabloları birleştirme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "HY506Z"
+msgid "Reshaping data"
+msgstr "Verileri yeniden şekillendirme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "7AD0XE"
+msgid "Conditional formatting"
+msgstr "Koşullu biçimlendirme"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "odlX0e"
+msgid "Excel macros"
+msgstr "Excel makroları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "NRvowL"
+msgid "Writing reports"
+msgstr "Rapor yazma"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "IYAKcM"
+msgid "Your résumé"
+msgstr "Özgeçmişin"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "BqUqk7"
+msgid "LinkedIn profile"
+msgstr "LinkedIn profili"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "POZqkv"
+msgid "Case studies"
+msgstr "Vaka çalışmaları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "LGPe8a"
+msgid "Probability basics"
+msgstr "Olasılığın temelleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "DPaXZT"
+msgid "Bar and line charts"
+msgstr "Çubuk ve çizgi grafikleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "geWuHd"
+msgid "Heatmaps"
+msgstr "Isı haritaları"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "B1BnkW"
+msgid "Data dictionaries"
+msgstr "Veri sözlükleri"
+
+#: src/app/[lang]/(home)/_components/hero-job-topics.ts
+msgctxt "ZHCpf7"
+msgid "Sales dashboards"
+msgstr "Satış panoları"
+
+#. A spreadsheet's row label, short for “Week”.
+#: src/app/[lang]/(home)/_components/hero-mess.tsx
+msgctxt "QZQeY7"
+msgid "Wk {number, number}"
+msgstr "Hf. {number, number}"
+
+#. A topic for learning English before moving to London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "NMkS59"
+msgid "Renting a flat"
+msgstr "Daire kiralama"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0Cj-0J"
+msgid "Phrasal verbs"
+msgstr "Phrasal verbs"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "hYEb-b"
+msgid "Present perfect"
+msgstr "Present perfect"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8piu9j"
+msgid "Pronouncing “th”"
+msgstr "“th” telaffuzu"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "4sbMCg"
+msgid "english_routine.xlsx"
+msgstr "ingilizce_rutini.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "x2ZQ14"
+msgid "Everything there is to study in English"
+msgstr "İngilizcede öğrenilecek her şey"
+
+#. Use your language's name for London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "PnbhyK"
+msgid "English for London"
+msgstr "Londra için İngilizce"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "c2G3Hh"
+msgid "how to learn english fast to move abroad"
+msgstr "yurt dışına taşınmak için hızlıca ingilizce nasıl öğrenilir"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/conversation/[conversationId]/page.tsx
+msgctxt "gegfoA"
+msgid "Conversation"
+msgstr "Sohbet"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "Dil bilgisi"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vuwclE"
+msgid "Pronunciation"
+msgstr "Telaffuz"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "UQZ59R"
+msgid "english in 5 months, is it possible"
+msgstr "5 ayda ingilizce öğrenilir mi"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "RKdJNp"
+msgid "english for moving abroad"
+msgstr "yurt dışına taşınmak için ingilizce"
+
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "ixOmJ_"
+msgid "50 phrasal verbs"
+msgstr "50 phrasal verbs"
+
+#. A browser tab's title for an English video, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "wJv88b"
+msgid "British accent"
+msgstr "İngiliz aksanı"
+
+#. A topic for learning Spanish before moving to Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Yj0irn"
+msgid "Renting an apartment"
+msgstr "Daire kiralama"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "bSmvQe"
+msgid "The preterite"
+msgstr "Belirli geçmiş zaman"
+
+#. A pronunciation topic for learners of Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "O9dZ0A"
+msgid "Rolling the “rr”"
+msgstr "“rr” sesini titreterek söyleme"
+
+#. A Spanish grammar topic: keep “ser” and “estar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vcjevI"
+msgid "Ser and estar"
+msgstr "Ser ve estar"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "BT_r75"
+msgid "spanish_routine.xlsx"
+msgstr "ispanyolca_rutini.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "TTXJCR"
+msgid "Everything there is to study in Spanish"
+msgstr "İspanyolcada öğrenilecek her şey"
+
+#. An example goal's name. Use your language's name for Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr "Meksiko için İspanyolca"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zzQULs"
+msgid "how to learn spanish fast to move abroad"
+msgstr "yurt dışına taşınmak için ispanyolcayı hızlıca nasıl öğrenirim"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zrQn71"
+msgid "spanish in 5 months, is it possible"
+msgstr "5 ayda ispanyolca öğrenilir mi"
+
+#. A search engine's suggestion: casual, lowercase, as short as the English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sbyJjP"
+msgid "spanish for moving abroad"
+msgstr "yurt dışına taşınmak için ispanyolca"
+
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zfHKg5"
+msgid "Verb conjugation"
+msgstr "Fiil çekimi"
+
+#. A browser tab's title for a Spanish video, as short as the English: a phone shows it beside another tab.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "iMmFvT"
+msgid "Mexican slang"
+msgstr "Meksika argosu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "cCtXxl"
+msgid "Small talk"
+msgstr "Havadan sudan sohbet"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oqFdQv"
+msgid "Opening a bank account"
+msgstr "Banka hesabı açma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "8bsSu8"
+msgid "Job interviews"
+msgstr "İş görüşmeleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "Telefon görüşmeleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Qjokqs"
+msgid "In, on and at"
+msgstr "In, on ve at edatları"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "YczFm6"
+msgid "Used to"
+msgstr "Used to yapısı"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nzmFRM"
+msgid "Conditionals"
+msgstr "Koşul cümleleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mQdkOM"
+msgid "Seeing a doctor"
+msgstr "Doktora gitme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "jMB7fa"
+msgid "Irregular verbs"
+msgstr "Düzensiz fiiller"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syvaMe"
+msgid "Will and going to"
+msgstr "Will ve going to yapıları"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DW4q3M"
+msgid "Modal verbs"
+msgstr "Kip fiilleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-9OpIk"
+msgid "Reported speech"
+msgstr "Dolaylı anlatım"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oGUw1v"
+msgid "British slang"
+msgstr "İngiliz argosu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "fJHZbj"
+msgid "Writing emails"
+msgstr "E-posta yazma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MafdkP"
+msgid "Passive voice"
+msgstr "Edilgen çatı"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "Sayılar ve fiyatlar"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zzHAso"
+msgid "Complaining politely"
+msgstr "Kibarca şikâyet etme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GjhjEM"
+msgid "Making friends"
+msgstr "Arkadaş edinme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "xJnXn-"
+msgid "A CV in English"
+msgstr "İngilizce özgeçmiş"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "_FwuCM"
+msgid "False friends"
+msgstr "Yanıltıcı benzer kelimeler"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1PSu6I"
+msgid "Idioms"
+msgstr "Deyimler"
+
+#. The London Underground.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "mYTaWG"
+msgid "Taking the Tube"
+msgstr "Londra metrosuna binme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Umc5eX"
+msgid "Talking about the weather"
+msgstr "Hava durumu hakkında konuşma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "z0C-fI"
+msgid "Past continuous"
+msgstr "Past continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "zhQDK_"
+msgid "Ordering food"
+msgstr "Yemek siparişi verme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HN_h17"
+msgid "Present simple"
+msgstr "Present simple"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NKtlI"
+msgid "Prepositions of time"
+msgstr "Prepositions of time"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "QIQMhT"
+msgid "At the airport"
+msgstr "Havalimanında"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "P0cSVK"
+msgid "Booking a hotel"
+msgstr "Otel rezervasyonu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0CR3bM"
+msgid "Shopping for clothes"
+msgstr "Kıyafet alışverişi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1042Oh"
+msgid "Paying bills"
+msgstr "Fatura ödeme"
+
+#. Signing up with a family doctor in the UK.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "GOdURb"
+msgid "Registering with a GP"
+msgstr "Aile hekimine kayıt"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5dMt7r"
+msgid "Weekend plans"
+msgstr "Hafta sonu planları"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4no0Ie"
+msgid "Formal and informal English"
+msgstr "Resmî ve gündelik İngilizce"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bi371t"
+msgid "Linking words"
+msgstr "Bağlaçlar"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "0Xnpg4"
+msgid "Introducing yourself"
+msgstr "Kendini tanıtma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Atfvsw"
+msgid "Countable and uncountable"
+msgstr "Countable and uncountable"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HgoU30"
+msgid "Present continuous"
+msgstr "Present continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2BJjMD"
+msgid "Asking for help"
+msgstr "Yardım isteme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "UIu-aU"
+msgid "At the supermarket"
+msgstr "Süpermarkette"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "IASTHU"
+msgid "Comparatives"
+msgstr "Comparatives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q--Z-m"
+msgid "Question tags"
+msgstr "Question tags"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "m9ZQKQ"
+msgid "Making an appointment"
+msgstr "Randevu alma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5SYUls"
+msgid "Relative clauses"
+msgstr "Relative clauses"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7XwuCX"
+msgid "Going out at night"
+msgstr "Gece dışarı çıkma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MeYB2K"
+msgid "Some and any"
+msgstr "Some ve any"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "5VRNTq"
+msgid "At the pub"
+msgstr "Barda"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "9NvQ7H"
+msgid "Pronouncing “-ed”"
+msgstr "“-ed” ekinin telaffuzu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "oYAkzR"
+msgid "Talking to coworkers"
+msgstr "İş arkadaşlarıyla konuşma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "JYLSKE"
+msgid "Intonation"
+msgstr "Tonlama"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "wJv3Ip"
+msgid "Getting a SIM card"
+msgstr "SIM kart alma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "C-0je_"
+msgid "Collocations"
+msgstr "Collocations"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "N2RmdO"
+msgid "Taking the bus"
+msgstr "Otobüse binme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Abdyee"
+msgid "Past perfect"
+msgstr "Past perfect"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "E9A2x9"
+msgid "Polite requests"
+msgstr "Kibarca rica etme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "bsQKgn"
+msgid "Word stress"
+msgstr "Kelime vurgusu"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "4CKWuC"
+msgid "Saying sorry"
+msgstr "Özür dileme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "7YlKf7"
+msgid "Since and for"
+msgstr "Since ve for"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "msi3VP"
+msgid "Giving opinions"
+msgstr "Fikir belirtme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "EiRdS_"
+msgid "Make and do"
+msgstr "Make ve do"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "2G3OKf"
+msgid "Agreeing and disagreeing"
+msgstr "Aynı fikirde olma ve olmama"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "LrKF52"
+msgid "Say and tell"
+msgstr "Say ve tell"
+
+#. A UK local tax on homes.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "syConX"
+msgid "Council tax"
+msgstr "Belediye vergisi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "NYRqPJ"
+msgid "Gerunds and infinitives"
+msgstr "Gerunds ve infinitives"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "CzedbT"
+msgid "Describing people"
+msgstr "İnsanları tarif etme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vSnyT6"
+msgid "Too and enough"
+msgstr "Too ve enough"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "pnbTui"
+msgid "Talking about family"
+msgstr "Aile hakkında konuşma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-WrNBl"
+msgid "Listening practice"
+msgstr "Dinleme alıştırması"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Ijevsy"
+msgid "British and American English"
+msgstr "Britanya ve Amerikan İngilizcesi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "q48Kon"
+msgid "Watching series in English"
+msgstr "İngilizce dizi izleme"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "o5dcRe"
+msgid "The subjunctive"
+msgstr "Dilek kipi"
+
+#. A Spanish grammar topic: keep “por” and “para” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "T-SlZH"
+msgid "Por and para"
+msgstr "Por ve para"
+
+#. A Spanish grammar topic: keep “gustar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-T6zu8"
+msgid "Verbs like gustar"
+msgstr "Gustar gibi fiiller"
+
+#. A Spanish grammar topic: keep “tú” and “usted” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "JafIDQ"
+msgid "Tú and usted"
+msgstr "Tú ve usted"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "HgeEzh"
+msgid "A CV in Spanish"
+msgstr "İspanyolca özgeçmiş"
+
+#. Mexico City's subway.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "_lyMF3"
+msgid "Taking the metro"
+msgstr "Metroya binmek"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "8HP4KD"
+msgid "Reflexive verbs"
+msgstr "Dönüşlü fiiller"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "sdWSVm"
+msgid "At the market"
+msgstr "Pazarda"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "sc__2J"
+msgid "The imperfect"
+msgstr "Bitmemiş geçmiş zaman"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "RA4Y2E"
+msgid "Telling a story"
+msgstr "Hikâye anlatmak"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "We9l88"
+msgid "Present tense"
+msgstr "Şimdiki zaman"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MJlEHy"
+msgid "Ordering tacos"
+msgstr "Taco siparişi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "OyVECT"
+msgid "Getting around the city"
+msgstr "Şehir içi ulaşım"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "EKcm9W"
+msgid "Formal and informal Spanish"
+msgstr "Resmî ve gündelik İspanyolca"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "SpESOo"
+msgid "Direct object pronouns"
+msgstr "Doğrudan nesne zamirleri"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "XWWEUL"
+msgid "Gender of nouns"
+msgstr "İsimlerde cinsiyet"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "AtBECX"
+msgid "At the pharmacy"
+msgstr "Eczanede"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1Nx_ds"
+msgid "The future tense"
+msgstr "Gelecek zaman"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "DSjBNA"
+msgid "Street food"
+msgstr "Sokak yemekleri"
+
+#. A Spanish grammar topic: keep “ir a” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "1xhvPH"
+msgid "Ir a + infinitive"
+msgstr "Ir a + mastar"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "MO5fzt"
+msgid "Paying rent"
+msgstr "Kira ödeme"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "nGYOGh"
+msgid "Diminutives"
+msgstr "Küçültme ekleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f5gkO4"
+msgid "Taking a taxi"
+msgstr "Taksiye binme"
+
+#. A Spanish grammar topic: the imperative.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "TY8Ho1"
+msgid "Commands"
+msgstr "Emir kipi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "-S4Hj0"
+msgid "Making plans with friends"
+msgstr "Arkadaşlarla plan yapma"
+
+#. Spanish accent marks, such as “á”.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "f9cc8a"
+msgid "Written accents"
+msgstr "Vurgu işaretleri"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "Mjyrpe"
+msgid "Ordering coffee"
+msgstr "Kahve siparişi verme"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "vuBTA2"
+msgid "The conditional"
+msgstr "Koşul kipi"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "llvcqZ"
+msgid "Asking for the check"
+msgstr "Hesabı isteme"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "OT0oz5"
+msgid "Spanish vowels"
+msgstr "İspanyolcada sesli harfler"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "T1qnCF"
+msgid "Talking to neighbors"
+msgstr "Komşularla konuşma"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "ko14Qa"
+msgid "Emergencies"
+msgstr "Acil durumlar"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "KVimoQ"
+msgid "Haggling"
+msgstr "Pazarlık"
+
+#: src/app/[lang]/(home)/_components/hero-move-topics.ts
+msgctxt "yI2CII"
+msgid "Telling time"
+msgstr "Saati söyleme"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "493J7R"
+msgid "Compare"
+msgstr "Karşılaştır"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "umqEzo"
+msgid "Without Zoonk"
+msgstr "Zoonk olmadan"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "t6BnyS"
+msgid "With Zoonk"
+msgstr "Zoonk ile"
+
+#. {everything} names everything a learner could study, such as “Everything that can come up on the SAT”; {topics} lists a few topics.
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "mWDXW8"
+msgid "{everything}. Today Zoonk picked {topics}."
+msgstr "{everything}. Bugün Zoonk şu konuları seçti: {topics}."
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "uP8SkY"
+msgid "Without Zoonk: a search for where to start, a pile of open tabs and a study schedule abandoned in week two."
+msgstr "Zoonk olmadan: nereden başlayacağını bulmaya çalışmak, bir sürü açık sekme ve ikinci haftada bırakılan bir çalışma programı."
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "eOHX5x"
+msgid "Stuck? Ask Zu."
+msgstr "Takıldın mı? Zu’ya sor."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "60PJVp"
+msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
+msgstr "Hesap açmadan ücretsiz başlayabilirsin. Ücretsiz bir hesapla aynı anda {goals, plural, other {# hedef}} üzerinde çalışabilirsin; ders sayısı ve Zu’ya gönderebileceğin mesaj sayısı sınırlıdır. Sınava hazırlanıyorsan seviye tespit testi, plan ve {days, plural, =7 {ilk hafta} one {ilk gün} other {ilk # gün}} boyunca yapacağın çalışmalar ücretsizdir. Kart bilgisi gerekmez."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NNtrw6"
+msgid "Is Zoonk free?"
+msgstr "Zoonk ücretsiz mi?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "vD4YoD"
+msgid "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime."
+msgstr "Plus bir abonelik paketidir. Tüm hedeflere ve derslere, sınav gününe kadarki planın tamamına, süresi gerçek sınavla aynı olan deneme sınavlarına ve ihtiyaç duyduğun her an Zu’ya erişim sağlar. Konuşma pratiği için de daha fazla hak sunar. Planının tamamını ödeme yapmadan önce görür, istediğin zaman iptal edebilirsin."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iES0bT"
+msgid "See prices"
+msgstr "Fiyatları gör"
+
+#. In Brazilian Portuguese: “O que o Plus tem a mais?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "-VOkdd"
+msgid "What does Plus add?"
+msgstr "Plus neler sunar?"
+
+#. “Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NlHQkl"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”."
+msgstr "Dersleri en güncel yapay zekâ modelleriyle hazırlıyor ve sana ulaşmadan önce kontrol ediyoruz: çeşitli testlerle kalitelerini ölçüyor, içeriklerini başka modellere inceletiyoruz. Dersler sınavının branşlarına ve konularına göre hazırlanır. Nadiren de olsa hata olabilir. Bir yanlış mı gördün? “Sorun bildir” seçeneğine dokun."
+
+#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kf3mxX"
+msgid "Can you trust lessons made by AI?"
+msgstr "Yapay zekânın hazırladığı dersler güvenilir mi?"
+
+#. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "LCjwHc"
+msgid "The iPhone and Android apps are coming soon. For now, Zoonk works in your phone's or computer's browser, with nothing to install."
+msgstr "iPhone ve Android uygulamaları yakında geliyor. Şimdilik Zoonk’u telefonunun veya bilgisayarının tarayıcısında hiçbir şey yüklemeden kullanabilirsin."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "xHun-9"
+msgid "Is there an app?"
+msgstr "Uygulaması var mı?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Prj5qS"
+msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want."
+msgstr "Kalanlar ertesi gün ilk sıraya alınır. Bir tarih değişirse planın sana haber verir. Günlük çalışma süreni de istediğin zaman değiştirebilirsin."
+
+#. In Brazilian Portuguese: “E se eu faltar um dia?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Jd18jf"
+msgid "What if I miss a day?"
+msgstr "Bir gün çalışamazsam ne olur?"
+
+#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva sua meta do seu jeito.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "qxT1fv"
+msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "Hemen hemen her şey. {exam} gibi sınavlar, üniversiteye giriş sınavları, memurluk sınavları ve avukatlık sınavı, diller, yeni bir kariyer veya öğrenmek istediğin herhangi bir konu. Hedefini kendi sözlerinle yaz."
+
+#. In Brazilian Portuguese: “Quais provas e metas dá para estudar?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iJ_ZyQ"
+msgid "Which exams and goals can I study for?"
+msgstr "Hangi sınavlara hazırlanabilir, hangi hedefler için çalışabilirim?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "7Rm1x6"
+msgid "Frequently asked questions"
+msgstr "Sık sorulan sorular"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kxCNVz"
+msgid "Still have questions? Write to <email></email>."
+msgstr "Başka soruların mı var? <email></email> adresine yaz."
+
+#. A chip naming a career change as an example goal: one short word.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "bci5at"
+msgid "Career"
+msgstr "Kariyer"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "8WtyrD"
+msgid "Spanish"
+msgstr "İspanyolca"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "WkrNSk"
+msgid "English"
+msgstr "İngilizce"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "-suPrU"
+msgid "Example goals"
+msgstr "Örnek hedefler"
+
+#. The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "PLtdfK"
+msgid "<line>Stop deciding what to study.</line> <line>Just study.</line>"
+msgstr "<line>Ne çalışacağına kafa yorma.</line> <line>Sadece çalış.</line>"
+
+#. The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "WtT1Bl"
+msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
+msgstr "Hedefini ve tarihini bize söyle. Zoonk, ayırabildiğin süreye göre çalışacaklarını gün gün planlar."
+
+#. An example goal a learner might type, short enough to fit on one line beside a button; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "xlsEx0"
+msgid "become a data analyst by {month}"
+msgstr "{month} ayına kadar veri analisti olmak"
+
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for Mexico City.
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "034zMY"
+msgid "speak Spanish to live in Mexico City"
+msgstr "Meksiko’da yaşamak için İspanyolca konuşmak"
+
+#. An example goal a learner might type, short enough to fit on one line beside a button. Use your language's name for London. In Brazilian Portuguese: “falar inglês para morar em Londres”.
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+msgctxt "a-JAH3"
+msgid "speak English to live in London"
+msgstr "Londra’da yaşamak için İngilizce konuşmak"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "planPhases.6RRX7X"
+msgid "Foundations"
+msgstr "Temeller"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "i4CkTc"
+msgid "From yesterday"
+msgstr "Dünden kalanlar"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "UIUcbm"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, other {# soru}}"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "o3vNiB"
+msgid "In Zoonk"
+msgstr "Zoonk’ta"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "2625DB"
+msgid "{count, plural, one {And # more lesson} other {And # more lessons}}"
+msgstr "{count, plural, other {Ve # ders daha}}"
+
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "dVwY9T"
+msgid "<b>On pace.</b> You finish the {phase} phase on {date}."
+msgstr "<b>Yolunda.</b> {phase} aşamasını {date} tarihinde bitiriyorsun."
+
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "VmWpK7"
+msgid "<b>Your plan changed:</b> you finish the {phase} phase on {date}."
+msgstr "<b>Planın değişti:</b> {phase} aşamasını {date} tarihinde bitiriyorsun."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "0JAP24"
+msgid "Before, it was {date}."
+msgstr "Önceki tarih {date} idi."
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Perdi um dia e desandou tudo.”
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "a1ec1o"
+msgid "I missed a day and it all fell apart."
+msgstr "Bir gün çalışamadım, bütün plan dağıldı."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "qRIKt4"
+msgid "<b>It happens.</b> What's left from yesterday comes first today. If a date changes, your plan tells you."
+msgstr "<b>Olur böyle.</b> Dünden kalanlar bugün ilk sıraya alınır. Bir tarih değişirse planın sana haber verir."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "Dün"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "yesterdaySwitch.cMaydB"
+msgid "Studied"
+msgstr "Çalışıldı"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "yesterdaySwitch.1Gku3Z"
+msgid "No time"
+msgstr "Vaktim yoktu"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "wvKJOA"
+msgid "Example: {goal}, {time} a day."
+msgstr "Örnek: {goal}, günde {time}"
+
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "Tamamlandı"
+
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "zqV6aP"
+msgid "Not done"
+msgstr "Tamamlanmadı"
+
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "tMZXzv"
+msgid "In a spreadsheet"
+msgstr "Hesap tablosunda"
+
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "xM1yHi"
+msgid "So far, so good."
+msgstr "Şimdilik her şey yolunda."
+
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "iFHGDa"
+msgid "The spreadsheet doesn't change by itself. Now you redo the whole week by hand."
+msgstr "Hesap tablosu kendiliğinden güncellenmez. Şimdi tüm haftayı elle yeniden düzenlemen gerekir."
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Será que já sei o suficiente?”
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hlr-77"
+msgid "Do I know enough yet?"
+msgstr "Yeterince öğrendim mi?"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hRjp9H"
+msgid "<b>Take mock exams in the real exam's format and time.</b> At the end, you see an estimate of your score and what's still missing."
+msgstr "<b>Gerçek sınavla aynı formatta ve sürede deneme sınavları çöz.</b> Sonunda tahmini puanını ve kalan eksiklerini görürsün."
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "cpAOYg"
+msgid "Mock exam {number, number} · {name}"
+msgstr "Deneme sınavı {number, number} · {name}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "fi0FtL"
+msgid "Available with Plus"
+msgstr "Plus ile kullanılabilir"
+
+#. Exams report a score, a grade or a band (13–15/20, 2–3등급): use the word that fits your country's exam.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "Tahmini puan"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "RIwxqi"
+msgid "<b>Solid:</b> {topics}"
+msgstr "<b>Sağlam:</b> {topics}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "28PXed"
+msgid "<b>To review:</b> {topics}"
+msgstr "<b>Tekrar edilecekler:</b> {topics}"
+
+#. In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Qfdzfp"
+msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook"
+msgstr "<b>{count, plural, other {# yanlış}}</b> yanlış defterine kaydedildi"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "mM0WGu"
+msgid "The score is only an estimate, made from your answers. Mock exams are available with Plus."
+msgstr "Puan yalnızca cevaplarına göre hesaplanan bir tahmindir. Deneme sınavlarına Plus ile erişebilirsin."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "placedPlan.djZCU5"
+msgid "Skipped"
+msgstr "Atlandı"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "uWZ77n"
+msgid "Percentages"
+msgstr "Yüzdeler"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "YsbwW7"
+msgid "Lessons skipped: <b>{count, number}</b>"
+msgstr "Atlanan dersler: <b>{count, number}</b>"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "ZGEwEX"
+msgid "Answer the question and watch your plan change."
+msgstr "Soruyu cevapla ve planının nasıl değiştiğini gör."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "VXuhxV"
+msgid "<b>You already know this.</b> Your plan skipped {count, plural, one {# lesson} other {# lessons}} on percentages."
+msgstr "<b>Bunu zaten biliyorsun.</b> Planında yüzdelerle ilgili {count, plural, other {# ders}} atlandı."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "C1Q1g9"
+msgid "<b>Noted.</b> Percentages stay in your plan."
+msgstr "<b>Not ettik.</b> Yüzdeler planında kalıyor."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3tHxl3"
+msgid "<b>That's fine.</b> Your plan teaches percentages from the basics."
+msgstr "<b>Sorun değil.</b> Planında yüzdeleri temelden öğreniyorsun."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3PZM1V"
+msgid "Ratio and proportion"
+msgstr "Oran ve orantı"
+
+#. A math topic. In Brazilian Portuguese “Regra de três”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "WBm69y"
+msgid "Cross-multiplication"
+msgstr "İçler dışlar çarpımı"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "mg-aO7"
+msgid "Compound interest"
+msgstr "Bileşik faiz"
+
+#. A math topic. In Brazilian Portuguese “Funções do 1º grau”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "FYV21J"
+msgid "Linear functions"
+msgstr "Doğrusal fonksiyonlar"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "LkDjkt"
+msgid "Question {number, number} · {subject}"
+msgstr "Soru {number, number} · {subject}"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Matematik"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "2F9-v0"
+msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
+msgstr "Bir fiyat %20 artıyor, sonra %20 düşüyor. Yeni fiyat, ilk fiyatın yüzde kaçıdır?"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "akd-cv"
+msgid "Answer options"
+msgstr "Cevap seçenekleri"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Henüz bilmiyorum"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "yFLiQM"
+msgid "It's not scored."
+msgstr "Puanlanmıyor."
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Não sei por onde começar.”
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "JAnSgb"
+msgid "I don't know where to start."
+msgstr "Nereden başlayacağımı bilmiyorum."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "PZYp7C"
+msgid "<b>Start with a few quick questions.</b> In about 2 minutes, Zoonk sees what you already know, and your plan skips that part."
+msgstr "<b>Birkaç kısa soruyla başla.</b> Zoonk yaklaşık 2 dakikada zaten bildiklerini belirler ve planın o kısmı atlar."
+
+#. A school subject area. In Brazilian Portuguese “Ciências da Natureza”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "H0lYkC"
+msgid "Natural sciences"
+msgstr "Fen bilimleri"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "72N7d0"
+msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs and frogs by snakes."
+msgstr "Bir çayırda otları çekirgeler, çekirgeleri kurbağalar, kurbağaları da yılanlar yer."
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "weP8DM"
+msgid "The energy available shrinks at each level of this chain. What's the main reason?"
+msgstr "Bu zincirin her basamağında kullanılabilir enerji azalır. Bunun temel nedeni nedir?"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Cevabın"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "XSkW9E"
+msgid "Predators eat less than their prey"
+msgstr "Yırtıcılar avlarından daha az besin tüketir"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Doğru"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PALJLs"
+msgid "Part of the energy turns into heat as each living thing breathes"
+msgstr "Her canlı solunum yaparken enerjinin bir kısmı ısıya dönüşür"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "bJBtpz"
+msgid "Plants photosynthesize less at night"
+msgstr "Bitkiler geceleri daha az fotosentez yapar"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "_XE_0X"
+msgid "Saved to your mistakes notebook"
+msgstr "Yanlış defterine kaydedildi"
+
+#. The study buddy's casual joke: you don't gain the weight of the plate of food you ate.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "43yP-p"
+msgid "You eat lunch and don't gain the weight of the plate, right? Almost all of it becomes energy for your day. It's the same with the frog: only a small part of the grasshopper becomes frog."
+msgstr "Öğle yemeğini yiyince tabaktaki yemeğin ağırlığı kadar kilo almıyorsun, değil mi? Yediklerinin neredeyse tamamı gün içinde kullanacağın enerjiye dönüşüyor. Kurbağada da durum aynı: çekirgenin sadece küçük bir kısmı kurbağanın vücuduna katılıyor."
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Me dá um exemplo”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Bv5nVy"
+msgid "Give me an example"
+msgstr "Bir örnek ver"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "77DoST"
+msgid "Each animal uses almost all the energy it eats just to stay alive. Very little is left to become body. That little bit is what passes on to whoever eats it."
+msgstr "Her hayvan, yediklerinden aldığı enerjinin neredeyse tamamını sadece hayatta kalmak için kullanır. Vücudunu büyütmek için geriye çok azı kalır. Onu yiyen canlıya da bu küçük kısım geçer."
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Explica mais simples”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "AcKlQI"
+msgid "Explain it more simply"
+msgstr "Daha basit anlat"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "BQcZJ-"
+msgid "Because it's not about how much they eat. Every animal spends almost all the energy from its food just staying alive. Breathing releases that energy as heat. Only about 10% passes to the next level."
+msgstr "Çünkü mesele ne kadar yedikleri değil. Her hayvan, yediklerinden aldığı enerjinin neredeyse tamamını sadece hayatta kalmak için harcar. Solunum sırasında bu enerji ısı olarak açığa çıkar. Bir sonraki basamağa yalnızca yaklaşık %10’u geçer."
+
+#. A learner's casual message asking why their pick, option A, was wrong. In Brazilian Portuguese: “Por que não é a A?”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "DU0e9Q"
+msgid "Why isn't it A?"
+msgstr "A şıkkı neden yanlış?"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "buddyNames.vPjK_E"
+msgid "Zu"
+msgstr "Zu"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Dh-vx4"
+msgid "Your study buddy"
+msgstr "Ders arkadaşın"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "sJ9v9R"
+msgid "Questions for Zu"
+msgstr "Zu’ya sorular"
+
+#. A learner's own worry, in their casual words, shown as a big quote. It's an exam question. In Brazilian Portuguese: “Travei numa questão.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "TnQe8p"
+msgid "I got stuck on a question."
+msgstr "Bir soruda takıldım."
+
+#. In Brazilian Portuguese: “<b>Pergunte ali mesmo na questão.</b> Zu explica do jeito mais simples que você precisar.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PhcYdR"
+msgid "<b>Ask right there in the question.</b> Zu explains it as simply as you need."
+msgstr "<b>Takıldığın yerde sor.</b> Zu, konuyu ihtiyacına göre sadeleştirerek anlatır."
+
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "5imFxC"
+msgid "Tell Zoonk your goal and the date. It breaks everything into a daily plan that fits your time and starts from what you already know. Start free, no account needed."
+msgstr "Zoonk’a hedefini ve tarihini söyle. Her şeyi ayırabildiğin süreye uygun, bildiklerinden yola çıkan günlük bir plana dönüştürür. Ücretsiz başla, hesap açmana gerek yok."
+
+#. The landing's title. In Brazilian Portuguese: “Zoonk: Pare de decidir o que estudar. Só estude.”
+#: src/app/[lang]/(home)/page.tsx
+msgctxt "loiLth"
+msgid "Zoonk: Stop deciding what to study. Just study."
+msgstr "Zoonk: Ne çalışacağını düşünme. Sadece çalış."
+
+#: src/app/[lang]/(home)/page.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/public-visitor-actions.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "Ücretsiz başla"
+
+#: src/app/[lang]/account-deleted-toast.tsx
+msgctxt "H30ctc"
+msgid "Your account was deleted."
+msgstr "Hesabın silindi."
+
+#: src/app/[lang]/challenge/[planItemId]/page.tsx
+#: src/app/[lang]/checkpoint/[blockId]/page.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Meydan okuma"
+
+#: src/app/[lang]/error.tsx
+#: src/components/errors/global-error-content.tsx
+#: src/components/public/not-found-message.tsx
+msgctxt "mShMz9"
+msgid "Go to the home page"
+msgstr "Ana sayfaya git"
+
+#: src/app/[lang]/essay/[blockId]/page.tsx
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "Yazma alıştırması"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "UOYMne"
+msgid "Build a plan for {course}"
+msgstr "{course} için bir plan oluştur"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "CJ4yhP"
+msgid "Build a plan for the whole subject"
+msgstr "Konunun tamamı için bir plan oluştur"
+
+#: src/app/[lang]/explain/[goalId]/explain-client.tsx
+msgctxt "xuyfqZ"
+msgid "I want to understand {topic} in depth"
+msgstr "{topic} konusunu derinlemesine anlamak istiyorum"
+
+#: src/app/[lang]/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Odak testi"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "K6x1SC"
+msgid "We couldn't open the lesson. Try again, or log in to keep going."
+msgstr "Dersi açamadık. Tekrar dene veya devam etmek için giriş yap."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "ZGpU-B"
+msgid "Opening your lesson"
+msgstr "Dersini açıyoruz"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Geri dön"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
+msgctxt "A6lEGi"
+msgid "About this lesson"
+msgstr "Bu ders hakkında"
+
+#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "27L4n6"
+msgid "Ready to do instead"
+msgstr "Bunun yerine başlayabilirsin"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aa5y6W"
+msgid "Ready while you wait"
+msgstr "Beklerken başlayabilirsin"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {# kavramı tekrar et}}"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "X6rSIT"
+msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
+msgstr "Genellikle bir iki dakika sürer. Ders hazır olur olmaz burada açılır."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "Dr8j6a"
+msgid "This lesson isn't written yet"
+msgstr "Bu ders henüz hazırlanmadı"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "kCHykv"
+msgid "Zoonk writes it when you start. It takes a minute or two."
+msgstr "Başladığında Zoonk dersi hazırlar. Bir iki dakika sürer."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "RFCwI6"
+msgid "Starting…"
+msgstr "Başlatıyoruz…"
+
+#: src/app/[lang]/mistakes/practice/page.tsx
+msgctxt "HGnX5e"
+msgid "Practice mistakes"
+msgstr "Yanlışlarına çalış"
+
+#: src/app/[lang]/mock/[blockId]/page.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "6ppMud"
+msgid "Mock exam"
+msgstr "Deneme sınavı"
+
+#: src/app/[lang]/pattern/[patternId]/page.tsx
+msgctxt "KS_o38"
+msgid "Mistake pattern"
+msgstr "Tekrarlayan hata"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "A-ZnsR"
+msgid "A plan for {subject}"
+msgstr "{subject} için bir plan"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ILuHAq"
+msgid "A study plan"
+msgstr "Bir çalışma planı"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "TTuJ75"
+msgid "~{time}"
+msgstr "~{time}"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "4zm4MM"
+msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
+msgstr "Aynı konuda kendi temponda ilerleyebileceğin, sana özel bir planın olur. Birkaç soruyu cevapla, ardından zaten bildiklerini atla."
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "ql_IXy"
+msgid "A study plan someone shared with you"
+msgstr "Seninle paylaşılan bir çalışma planı"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "8jQqTq"
+msgid "Start from this plan"
+msgstr "Bu planla başla"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "7ip5wV"
+msgid "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
+msgstr "~{time} çalışma · {phases, plural, other {# aşama}} · {skills, plural, other {# beceri}}"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "3aNmDX"
+msgid "How much time a day?"
+msgstr "Günde ne kadar zaman?"
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "W97xmd"
+msgid "You can't start another goal right now. Finish or pause one first."
+msgstr "Şu anda başka bir hedefe başlayamazsın. Önce bir hedefini bitir ya da duraklat."
+
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "Bir sorun oluştu. Birazdan tekrar dene."
+
+#: src/app/[lang]/privacy/page.tsx
+msgctxt "afKQHy"
+msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
+msgstr "Kişisel bilgilerini nasıl kullandığımızı ve koruduğumuzu öğrenmek için Zoonk’un gizlilik politikasını oku."
+
+#: src/app/[lang]/privacy/page.tsx
+msgctxt "vx0nkZ"
+msgid "Privacy Policy"
+msgstr "Gizlilik Politikası"
+
+#: src/app/[lang]/pronunciation/page.tsx
+msgctxt "mSmk6Q"
+msgid "Say it again"
+msgstr "Tekrar söyle"
+
+#: src/app/[lang]/session/page.tsx
+msgctxt "hnntJl"
+msgid "Today's session"
+msgstr "Bugünkü çalışma"
+
+#: src/app/[lang]/terms/page.tsx
+msgctxt "DaGtoz"
+msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
+msgstr "Platformumuzu ve hizmetlerimizi kullanırken geçerli olan kuralları ve koşulları öğrenmek için Zoonk’un kullanım koşullarını oku"
+
+#: src/app/[lang]/terms/page.tsx
+msgctxt "UhkSyx"
+msgid "Terms of Use"
+msgstr "Kullanım koşulları"
+
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+msgctxt "5-s6we"
+msgid "Test out of a chapter"
+msgstr "Testi geçerek üniteyi atla"
+
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "KGN7UU"
+msgid "This chapter"
+msgstr "Bu ünite"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "zNLs8L"
+msgid "Usage data"
+msgstr "Kullanım verileri"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pu2Edv"
+msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Zoonk’u nasıl kullandığını anlamak ve daha iyi hale getirmek için çerezleri ve oturum kayıtlarını kullanabilir miyiz? <link>Gizlilik</link>"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "pvtgR2"
+msgid "Decline"
+msgstr "Reddet"
+
+#: src/app/[lang]/usage-data-notice.tsx
+msgctxt "sjzLbX"
+msgid "Accept"
+msgstr "Kabul et"
+
+#: src/app/auth/apple/route.ts
+msgctxt "5JUHBB"
+msgid "Go back to Zoonk"
+msgstr "Zoonk’a dön"
+
+#: src/app/auth/apple/route.ts
+msgctxt "99__Yc"
+msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
+msgstr "Tarayıcın Zoonk uygulamasını açamadı. Bu sayfayı kapat ve uygulamada Apple ile tekrar giriş yap."
+
+#. Signing the learner in failed.
+#: src/app/auth/callback/route.ts
+msgctxt "1KzRxp"
+msgid "We couldn't sign you in."
+msgstr "Oturumunu açamadık."
+
+#: src/app/global-not-found.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "QRccCM"
+msgid "Page not found"
+msgstr "Sayfa bulunamadı"
+
+#: src/components/auth-gate.tsx
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Bu sayfayı kullanmak için hesap oluştur"
+
+#: src/components/auth-gate.tsx
+msgctxt "DrBO6u"
+msgid "Your plan and progress move to your account, safe on any device."
+msgstr "Planın ve ilerlemen hesabına taşınır, her cihazda güvende kalır."
+
+#: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Oturumun sona erdi"
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Devam etmek için giriş yap"
+
+#: src/components/auth-gate.tsx
+msgctxt "pb0Q20"
+msgid "Log in to pick up your plan."
+msgstr "Planına devam etmek için giriş yap."
+
+#: src/components/auth-gate.tsx
+msgctxt "eSXQ3z"
+msgid "Log in to pick up where you left off, or start free."
+msgstr "Kaldığın yerden devam etmek için giriş yap veya ücretsiz başla."
+
+#: src/components/auth-gate.tsx
+msgctxt "77LoTm"
+msgid "Start something new"
+msgstr "Yeni bir şeye başla"
+
+#: src/components/catalog/area-study.ts
+msgctxt "ug2Ory"
+msgid "{count, plural, one {# quick lesson} other {# quick lessons}}"
+msgstr "{count, plural, other {# hızlı ders}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "T9NkkS"
+msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
+msgstr "{fitting, plural, =0 {# / {total, number} ders sığıyor} other {# / {total, number} ders sığıyor}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "XP3dEr"
+msgid "{count, plural, one {+ # quick lesson} other {+ # quick lessons}}"
+msgstr "{count, plural, other {+ # hızlı ders}}"
+
+#: src/components/catalog/area-study.ts
+msgctxt "pJM3om"
+msgid "{time} of study"
+msgstr "{time} çalışma"
+
+#: src/components/catalog/catalog-back-to-top.tsx
+msgctxt "Gs9Kfp"
+msgid "Back to top"
+msgstr "En üste dön"
+
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "Q4d9LI"
+msgid "With Zoonk, your plan starts at this chapter and fits your schedule."
+msgstr "Zoonk ile planın bu üniteden başlar ve programına uyum sağlar."
+
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "Deu0Hn"
+msgid "With Zoonk, your plan starts at your level and fits your schedule."
+msgstr "Zoonk ile planın senin seviyenden başlar ve programına uyum sağlar."
+
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "ZmNtfT"
+msgid "Where this chapter sits in the course"
+msgstr "Bu ünitenin kurstaki yeri"
+
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "7-fN2b"
+msgid "After this chapter"
+msgstr "Bu üniteden sonra"
+
+#: src/components/catalog/course-exam-eyebrow.tsx
+msgctxt "U-M99k"
+msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
+msgstr "Sınav {dates} civarında · {days, plural, =0 {bugün} other {yaklaşık # gün kaldı}}"
+
+#: src/components/catalog/course-exam-eyebrow.tsx
+msgctxt "_of7g2"
+msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
+msgstr "Sınav {dates} tarihinde · {days, plural, =0 {bugün} other {# gün kaldı}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "aaZjUM"
+msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
+msgstr "{weeks, plural, other {<big>~#</big> hafta}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "BzWLOy"
+msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
+msgstr "pazartesiden cumaya günde {minutes, plural, other {# dakika}} çalışarak tüm kursu sıfırdan bitirmek için."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "JR79VT"
+msgid "Starting today, you'd finish around <strong>{month}</strong>."
+msgstr "Bugün başlarsan <strong>{month}</strong> gibi bitirebilirsin."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "lM5n28"
+msgid "+ {count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "+ {count, plural, other {# ders daha}}"
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "vEgeBR"
+msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them."
+msgstr "{date} tarihine kadar, pazartesiden cumaya günde {time}, önce en sık karşılaşılan konular: kursta {count, plural, =0 {dersler} other {# ders}} hazır, ilerledikçe yenilerini hazırlıyoruz."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "lhlS-t"
+msgid "by {date}, at {time} a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
+msgstr "{date} tarihine kadar, pazartesiden cumaya günde {time} çalışarak en sık karşılaşılan konuları hızlı derslerle öğrenirsin. Daha fazla zamanın olduğunda kapsamlı derslere geçersin."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "ngWcm1"
+msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}."
+msgstr "{date} tarihine kadar, pazartesiden cumaya günde {time} çalışarak en sık karşılaşılan konulardan başlayıp kursun {count, number} dersini tamamlarsın. Kursta toplam {total, plural, other {# ders}} var."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "O tarihe kadar hepsine zaman yetmez. Başlamadan önce, seviyene ve ayırdığın zamana göre ne kadarını tamamlayabileceğini görürsün."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "Bu, kurstaki tüm konuları ayrıntılı olarak kapsar."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "Bu, kurstaki tüm sınav konularını ayrıntılı olarak kapsar."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "YTiAat"
+msgid "<big>{time}</big> of study"
+msgstr "<big>{time}</big> çalışma"
+
+#: src/components/catalog/course-progress.tsx
+msgctxt "YdCF9O"
+msgid "Continue your plan"
+msgstr "Planına devam et"
+
+#: src/components/catalog/course-progress.tsx
+msgctxt "mElWfu"
+msgid "You are here"
+msgstr "Buradasın"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "xpsuUj"
+msgid "Guess first. It doesn't count."
+msgstr "Önce tahmin et. Bu tahmin sayılmaz."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "ShLQAa"
+msgid "Quick question"
+msgstr "Kısa bir soru"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "Ekbc8q"
+msgid "Your answer starts the {minutes}-minute lesson."
+msgstr "Cevabın {minutes} dakikalık dersi başlatır."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "E07b8i"
+msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
+msgstr "Seçimin {minutes} dakikalık dersi açar. Cevabını orada kontrol et."
+
+#: src/components/catalog/first-question.tsx
+msgctxt "KUHspv"
+msgid "Continue the lesson"
+msgstr "Derse devam et"
+
+#: src/components/catalog/first-question.tsx
+msgctxt "7U_QZr"
+msgid "You've started this lesson. It picks up where you left off."
+msgstr "Bu derse başladın. Kaldığın yerden devam edebilirsin."
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "tc8knM"
+msgid "Lessons not written yet"
+msgstr "Henüz hazırlanmamış dersler"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "7o2WBm"
+msgid "Reviews and practice"
+msgstr "Tekrarlar ve alıştırmalar"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "lH5xFH"
+msgid "Challenges and mock exams"
+msgstr "Meydan okumalar ve deneme sınavları"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "___zLu"
+msgid "Challenges"
+msgstr "Meydan okumalar"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "5nUlrS"
+msgid "What fills the time"
+msgstr "Çalışma sürenin dağılımı"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "wk-8Dt"
+msgid "{time} in all"
+msgstr "Toplam {time}"
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "RYqUsZ"
+msgid "What you studied comes back right before you'd forget it."
+msgstr "Çalıştıkların tam unutmak üzereyken tekrar karşına çıkar."
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "GDUlmD"
+msgid "Of this, {time} comes after the exam."
+msgstr "Bu sürenin {time} kadarı sınavdan sonraya kalır."
+
+#: src/components/catalog/plan-workload.tsx
+msgctxt "3MtrI6"
+msgid "Lessons not written yet are written as you reach them."
+msgstr "Henüz hazırlanmamış dersler sıra onlara geldiğinde hazırlanır."
+
+#: src/components/catalog/try-lesson.tsx
+msgctxt "iHnKCj"
+msgid "Try a lesson · free · {time}"
+msgstr "Bir ders dene · ücretsiz · {time}"
+
+#: src/components/catalog/try-lesson.tsx
+msgctxt "tTC5l3"
+msgid "{chapter} · lesson {number, number}"
+msgstr "{chapter} · {number, number}. ders"
+
+#: src/components/errors/page-error-message.tsx
+msgctxt "R6Dkep"
+msgid "It might be your connection or a problem on our side. Trying again usually fixes it."
+msgstr "Sorun bağlantından ya da bizden kaynaklanıyor olabilir. Tekrar denemek genellikle sorunu çözer."
+
+#: src/components/errors/page-error-message.tsx
+msgctxt "9nolIL"
+msgid "This page didn't load"
+msgstr "Bu sayfa yüklenemedi"
+
+#: src/components/learn/detail-skeleton.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "Yüklüyoruz"
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "Hv1OVQ"
+msgid "Your plan needs a document"
+msgstr "Planın için bir belge gerekiyor"
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "osDDWB"
+msgid "Thanks. We're reading it now, and your plan will update in a few minutes."
+msgstr "Teşekkürler. Şimdi belgeyi okuyoruz, planın birkaç dakika içinde güncellenecek."
+
+#: src/components/learn/upload-request-client.tsx
+msgctxt "p4N05H"
+msgid "Upload"
+msgstr "Yükle"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "Ücretsiz hesap oluştur"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "m5_Dxl"
+msgid "Your current plan"
+msgstr "Mevcut paketin"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "Ücretsiz"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "NynllM"
+msgid "No card needed."
+msgstr "Kart gerekmez."
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "SJVGSo"
+msgid "A plan for your goal and your date"
+msgstr "Hedefine ve belirlediğin tarihe uygun bir plan"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "Bj_ci-"
+msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
+msgstr "Sınav için: seviye belirleme testi, planın ve {days, plural, =7 {ilk haftası} one {ilk günü} other {ilk # günü}}"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "5ZDN6U"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgstr "Yapay zekâ destekli bir ders arkadaşı: günde {count, plural, other {# mesaj}}"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "JfcsFI"
+msgid "Speaking practice calls, with lower limits than Plus"
+msgstr "Plus’a göre daha düşük limitlerle konuşma pratiği sohbetleri"
+
+#: src/components/pricing/free-plan.tsx
+msgctxt "kTr3m7"
+msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
+msgstr "{goals, plural, other {# hedef}} · ayda {lessons, plural, other {# ders}}"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "ktRBJl"
+msgid "Your whole exam plan, every day to the exam"
+msgstr "Sınava kadar her günü kapsayan eksiksiz planın"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "CRK05Z"
+msgid "Mock exams, timed like the real one"
+msgstr "Gerçek sınavla aynı süre sınırına sahip deneme sınavları"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "qYv-RO"
+msgid "An AI study buddy whenever you're stuck"
+msgstr "Takıldığın her an yanında olan yapay zekâ destekli bir ders arkadaşı"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "GEER8U"
+msgid "Higher limits for speaking calls"
+msgstr "Konuşma pratiği sohbetlerinde daha yüksek limitler"
+
+#: src/components/pricing/plus-benefits.tsx
+msgctxt "joZG7W"
+msgid "Every goal · every lesson"
+msgstr "Her hedef · her ders"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus’a geç"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "PFGLfW"
+msgid "Manage your plan"
+msgstr "Paketini yönet"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "Fiyat ödeme ekranında gösterilir"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "aylık"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "PMrrSl"
+msgid "Billed every month."
+msgstr "Her ay ödeme alınır."
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "qxHg3H"
+msgid "per year"
+msgstr "yıllık"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "8fp1TZ"
+msgid "That's <mono>{amount}</mono> a month."
+msgstr "Ayda <mono>{amount}</mono> eder."
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "u2XWYU"
+msgid "Billing period"
+msgstr "Ödeme dönemi"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "Aylık"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "Yıllık"
+
+#: src/components/pricing/plus-plan.tsx
+msgctxt "EMZyX7"
+msgid "save {amount}"
+msgstr "{amount} tasarruf"
+
+#. Reassurance next to the subscribe button: the learner can cancel whenever they want.
+#: src/components/pricing/plus-plan.tsx
+msgctxt "dyhF_4"
+msgid "Cancel anytime."
+msgstr "İstediğin zaman iptal edebilirsin."
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "jPlE1k"
+msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
+msgstr "Zoonk Plus ile sınavına, yeni işine veya taşınmaya hazırlan: sınırsız ders ve hedef, deneme sınavlarıyla eksiksiz sınav hazırlığı ve yapay zekâ ders arkadaşın. Ücretsiz başla."
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "DfjjXa"
+msgid "Zoonk Plus: plans and pricing"
+msgstr "Zoonk Plus: paketler ve fiyatlar"
+
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "rmN6Kk"
+msgid "Start free. <rest>Plus when you want everything.</rest>"
+msgstr "Ücretsiz başla. <rest>Tüm özellikleri istediğinde Plus’a geç.</rest>"
+
+#. “Free” and “Plus” are the names of the two subscription tiers.
+#: src/components/pricing/plus-pricing.tsx
+msgctxt "xrpz7X"
+msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
+msgstr "Ücretsiz paket aynı anda tek bir hedefi kapsar. Plus, büyük güne kadar tüm hedeflerini kapsar."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "1vrigA"
+msgid "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:"
+msgstr "Hesap açmadan {count, plural, other {# dersle}} ücretsiz başla. Ücretsiz bir hesapla şunlardan yararlanabilirsin:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PKf2T8"
+msgid "With the free plan, you get:"
+msgstr "Ücretsiz paketle şunlardan yararlanabilirsin:"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "Uoc-Co"
+msgid "{count, plural, one {# goal} other {# goals}} at a time"
+msgstr "Aynı anda {count, plural, other {# hedef}}"
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "dkfN6h"
+msgid "{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day"
+msgstr "Ayda {month, plural, other {# ders}}, günde en fazla {day, number} ders"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "PVvHeY"
+msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
+msgstr "{days, plural, =7 {Sınav hazırlığının ilk haftası} one {Sınav hazırlığının ilk günü} other {Sınav hazırlığının ilk # günü}}"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "FZOFIX"
+msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
+msgstr "Günde {tutor, plural, other {arkadaşına # mesaj}} ve {uploads, plural, other {# yükleme}}"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "QKrdr3"
+msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
+msgstr "Plus’a göre daha düşük limitlerle pratik sohbetleri (sınavların konuşma bölümleri Plus’a dahildir)"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "Sık sorulan sorular"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "XPjDwN"
+msgid "Still unsure?"
+msgstr "Aklında hâlâ soru var mı?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jVRlNg"
+msgid "What's in the free plan?"
+msgstr "Ücretsiz pakette neler var?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "zAc0Zf"
+msgid "Is Plus really unlimited?"
+msgstr "Plus gerçekten sınırsız mı?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "flRDel"
+msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
+msgstr "Neredeyse. Derslerde, hedeflerde ve arkadaşınla iletişimde limitler yalnızca botları ve otomatik araçları engellemek için var, öğrenmeni kısıtlamak için değil. Sesli sohbetlerin günlük ve aylık limitleri var; bu limitler ücretsiz pakettekinden daha yüksek. <link>Adil kullanım politikamızı oku</link>."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "jNjtlE"
+msgid "What happens if I cancel?"
+msgstr "İptal edersem ne olur?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "z1FMPn"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
+msgstr "Plus’ı ödemesini yaptığın dönemin sonuna kadar kullanmaya devam edersin. Ardından ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur."
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "94whIk"
+msgid "Can I get a refund?"
+msgstr "Ücret iadesi alabilir miyim?"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "Ko-avu"
+msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "{email} adresine yaz, durumu inceleyelim. App Store veya Google Play üzerinden yapılan satın alımlarda Apple’ın veya Google’ın iade kuralları geçerlidir."
+
+#: src/components/pricing/plus-questions.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "xkr-zo"
+msgid "Terms"
+msgstr "Koşullar"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "4YTeTA"
+msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
+msgstr "{days, plural, =7 {Seviye belirleme ve 1. hafta} one {Seviye belirleme ve 1. gün} other {Seviye belirleme ve ilk # gün}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "NsXWWN"
+msgid "Closing gaps"
+msgstr "Eksikleri tamamlama"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "KV-O0y"
+msgid "Practice"
+msgstr "Pratik"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "Csk9Zg"
+msgid "Final review"
+msgstr "Son tekrar"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "avI1bO"
+msgid "An exam plan"
+msgstr "Sınav planı"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "2ZZIpk"
+msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
+msgstr "{days, plural, =7 {Ücretsiz: seviye belirleme ve 1. hafta · Plus: sınav gününe kadar kalan tüm haftalar, deneme sınavları dahil} one {Ücretsiz: seviye belirleme ve 1. gün · Plus: sınav gününe kadar kalan tüm günler, deneme sınavları dahil} other {Ücretsiz: seviye belirleme ve ilk # gün · Plus: sınav gününe kadar kalan tüm günler, deneme sınavları dahil}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "Q-aTo1"
+msgid "Exam day"
+msgstr "Sınav günü"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "x-wBHO"
+msgid "Any other goal"
+msgstr "Diğer hedefler"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "KshPEJ"
+msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
+msgstr "{count, plural, one {Hafta içi her gün yaklaşık bir kısa ders.} other {Hafta içi her gün yaklaşık # kısa ders.}}"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "en1DQp"
+msgid "What free covers"
+msgstr "Ücretsiz paketin kapsamı"
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "XnAqzA"
+msgid "See your whole plan before you pay."
+msgstr "Ödeme yapmadan önce tüm planını gör."
+
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "PH2HUb"
+msgid "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way."
+msgstr "Sınava hazırlıkta seviye belirleme testi, planın ve ilk haftası ücretsiz. Plus ile sınav gününe kadar çalışmaya devam eder, bu süreçte deneme sınavları da çözersin."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "iB3ixY"
+msgid "You already have Plus through the App Store."
+msgstr "App Store üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "Fwt_t3"
+msgid "You already have Plus through Google Play."
+msgstr "Google Play üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "okYAd9"
+msgid "You already have Plus through the Zoonk website."
+msgstr "Zoonk web sitesi üzerinden zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "mtWXkr"
+msgid "You already have Plus."
+msgstr "Zaten Plus aboneliğin var."
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Abone ol"
+
+#: src/components/pricing/subscribe-button.tsx
+msgctxt "qQDa8p"
+msgid "Unable to start checkout. Contact us at hello@zoonk.com"
+msgstr "Ödeme işlemi başlatılamadı. hello@zoonk.com adresinden bize ulaş"
+
+#: src/components/progress/progress-day-count-label.ts
+msgctxt "r9koty"
+msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
+msgstr "{count, plural, =0 {# gün} other {# gün}}"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus’ı incele"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "Planına git"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "6qTSET"
+msgid "We couldn't start this course."
+msgstr "Bu kursu başlatamadık."
+
+#: src/components/public/day-list.tsx
+msgctxt "m9CrfE"
+msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
+msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, number} tamamlandı}}"
+
+#: src/components/public/footer-explore-links.tsx
+msgctxt "3snD6d"
+msgid "Popular courses"
+msgstr "Popüler kurslar"
+
+#: src/components/public/footer-explore-links.tsx
+msgctxt "VKb1MS"
+msgid "Categories"
+msgstr "Kategoriler"
+
+#: src/components/public/goal-example.ts
+msgctxt "IWESF6"
+msgid "get ready for the ENEM in November"
+msgstr "hazirandaki YKS’ye hazırlanmak"
+
+#. An example goal a learner might type, short enough to fit on one line beside a button. In Brazilian Portuguese: “virar analista de dados até junho”.
+#: src/components/public/goal-example.ts
+msgctxt "y6HOW4"
+msgid "become a data analyst by June"
+msgstr "hazirana kadar veri analisti olmak"
+
+#: src/components/public/goal-form.tsx
+msgctxt "47CC_y"
+msgid "Write your goal in the box first, in your own words."
+msgstr "Önce hedefini kutuya kendi cümlelerinle yaz."
+
+#: src/components/public/goal-form.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "Hedefim"
+
+#: src/components/public/goal-form.tsx
+msgctxt "0u-6yz"
+msgid "For example: <example></example>"
+msgstr "Örneğin: <example></example>"
+
+#: src/components/public/not-found-message.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "Bağlantı eski veya yanlış yazılmış olabilir."
+
+#: src/components/public/not-found-message.tsx
+msgctxt "Rx6qZ-"
+msgid "We couldn't find this page"
+msgstr "Bu sayfayı bulamadık"
+
+#: src/components/public/public-footer.tsx
+msgctxt "Vge-RX"
+msgid "Footer"
+msgstr "Alt bilgi"
+
+#: src/components/public/public-footer.tsx
+msgctxt "k7JNE3"
+msgid "© {year} Zoonk"
+msgstr "© {year} Zoonk"
+
+#: src/lib/belt-colors.ts
+#: src/lib/belt-label.ts
+msgctxt "_6Vlf7"
+msgid "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
+msgstr "{color, select, white {Beyaz kuşak} yellow {Sarı kuşak} orange {Turuncu kuşak} green {Yeşil kuşak} blue {Mavi kuşak} purple {Mor kuşak} brown {Kahverengi kuşak} red {Kırmızı kuşak} gray {Gri kuşak} black {Siyah kuşak} other {Kuşak}}"
+
+#: src/lib/categories/category.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "Sanat"
+
+#: src/lib/categories/category.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "İş dünyası"
+
+#: src/lib/categories/category.ts
+msgctxt "n5D_Ku"
+msgid "Communication"
+msgstr "İletişim"
+
+#: src/lib/categories/category.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "Kültür"
+
+#: src/lib/categories/category.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Ekonomi"
+
+#: src/lib/categories/category.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "Mühendislik"
+
+#: src/lib/categories/category.ts
+msgctxt "aTYLZQ"
+msgid "Exams"
+msgstr "Sınavlar"
+
+#: src/lib/categories/category.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "Coğrafya"
+
+#: src/lib/categories/category.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "Sağlık"
+
+#: src/lib/categories/category.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "Tarih"
+
+#: src/lib/categories/category.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "Diller"
+
+#: src/lib/categories/category.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "Hukuk"
+
+#: src/lib/categories/category.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Bilim"
+
+#: src/lib/categories/category.ts
+msgctxt "OV_2-4"
+msgid "Society"
+msgstr "Toplum"
+
+#: src/lib/categories/category.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Teknoloji"
+
+#: src/lib/categories/category.ts
+msgctxt "XL8IWT"
+msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
+msgstr "{category} kursları. En iyi çevrimiçi {category} kursları ve etkileşimli derslerle öğren."
+
+#: src/lib/categories/category.ts
+msgctxt "4HKnmB"
+msgid "{category} Courses"
+msgstr "{category} kursları"
+
+#: src/lib/categories/category.ts
+msgctxt "BBu_dn"
+msgid "Courses in {category}"
+msgstr "{category} alanında kurslar"
+
+#: src/lib/public/public-labels.ts
+msgctxt "3Rx6Qo"
+msgid "Advanced"
+msgstr "İleri seviye"
+
+#: src/lib/public/public-labels.ts
+msgctxt "0H9Fkb"
+msgid "Beginner"
+msgstr "Başlangıç"
+
+#: src/lib/public/public-labels.ts
+msgctxt "o5_DJA"
+msgid "Intermediate"
+msgstr "Orta seviye"

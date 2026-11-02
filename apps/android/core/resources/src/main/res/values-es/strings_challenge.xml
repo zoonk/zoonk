@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "challenge_back_to_today": "da99283168462c2962d3d91a3cc491b0f8d9f12fe527a02cde8b8d1311645bac",
+  "challenge_call_detail": "809bbf5d4d6cd37cdfa11722471d230bbefe399859d3f7e73437ff4cefad4b7b",
+  "challenge_call_goals": "f479789a1869db6db00b0dc46e86c8ec0d9d85c47b3625b88a3f4461ba19dd74",
+  "challenge_call_goals_title": "e6aa3e5be8fba5afc4e9a286699bf4e328d29908defaad51cd1d2e1c9dc2dca6",
+  "challenge_call_level": "d9c247b5439e3a7bd9ca249021bf06068b7e72901609e9f8c39d9482d79fbf68",
+  "challenge_call_passed": "a3750730d487c64b249d22c35369a0a99f795a8f6edc1ec2e0a2e7bdebc5a984",
+  "challenge_call_plus": "c9e2470c74a1e3e5c8e63770435ae70d6a6b885dc1b49d2eff573060b555ae6d",
+  "challenge_call_result": "b3212ad7c361b36c4ae025d756ef386e1d6fd0ace3aa1575fb1d61ed3b7d0096",
+  "challenge_call_title": "8032ccf431b54a63c46251719c7375902452f0f51c654c36e20807994a8ea004",
+  "challenge_call_to_win": "46c4447bca54a0d242a45ffbdc61c9dfc63fa5ca0c79e9542e217462ccead6a4",
+  "challenge_change_failed": "76da2ca99c75152148c167a078af0d729dd6a4ca76a66efaca78f70e398dac0e",
+  "challenge_continue": "074472cab193e909d78e2083ab51042e81239b2e6d636d5e920b70fb0478a5b6",
+  "challenge_day_time": "5b3fd0aa380b2e594d82b685fe648a2acd04b2b9408887cc64252770bf9aa2c9",
+  "challenge_mock_plus": "2ea4c8d8188de3caf0c0f93b23837b2bbcab8d278ca2fa69ff16f37abfcaaacf",
+  "challenge_mock_start": "3ac10336b10beeccbc168d398a52b8438a1c608da5929f1cf6e6728108d49c4b",
+  "challenge_move": "078c416608a9a999b48df99f18be43c1b60422b1133d9c97854f5a4459220dad",
+  "challenge_move_before_monday": "baf645a69d07749356d939bef3e77f7d5176838f70106b77852f09ef15bb4c1d",
+  "challenge_move_collision": "815445551288ecc9c326b240c62c2e6ec2f1529aa13280e813835cb913718048",
+  "challenge_move_no_room": "313c227bcace20f5db0f600af726523630a12573e08d2203276f22d8d7e2622c",
+  "challenge_move_unfunded": "6162392c8521cfa3fd96ba5797f4c4ba6be0e835de399f4d3d447c2ca880af89",
+  "challenge_moved_detail": "73399dce56547ee8364aac30af4d33c0fc9358a109c7db731c2a3b6cf711c23b",
+  "challenge_moved_title": "9ff0d7ee3b40c500cf18ff84164cea0648228ff8f2ed2498d1c1178f7d157070",
+  "challenge_next_session": "ef82f227fb6819466f8be7b86a30edc52fd3eafa974fa00188226d6b09afa2ea",
+  "challenge_not_ready": "519b2d4708c0f37d739508a30e4784cf8070a66f164032a7b8fd20ec55c2f40f",
+  "challenge_objective_only": "734107e0b26902e40224c36c2dde0f066303a654c5ccf577dbf1ec4ba9de4364",
+  "challenge_opens_after_lessons": "21fb970a1b7b9f61cd7f503bff203febcb7161d5d2fafe42a28e9317f902a202",
+  "challenge_opens_in": "858c2cf15f5e304fa76f1bba034f43d239a0f3545fb4ce32e852acd78e9450ff",
+  "challenge_opens_tomorrow": "b1c600c0efcc3dc54813ed850e850fb4ac08d397a4845091de9ec3af65c04327",
+  "challenge_penalty_cancels": "319450dedaaa5e9e8523cdabef68a7af4fa7b44a71354c3e768b570ddff8612b",
+  "challenge_penalty_costs": "1a627b326e75610aff110c330831a72b4822ef3cc8fe543bec164a7c8d6c6d2d",
+  "challenge_prize": "48686fa07d6d9aeb1cff2673088a8fbfbdc4b6262856c9562505298180c363a9",
+  "challenge_questions": "19af3b1e2ac50643166367b5d5f838b63d126d8f639f315134db55c03b6e0072",
+  "challenge_rematch": "733a929516079f7ac8a4c3313af29a3a10033c84c490aecabff7b5affab29389",
+  "challenge_result_at_end": "4fc6212a4e1a1114d3b067fb6fdfa5c1fe7f74cce5afb848ed0d529e5993a8a3",
+  "challenge_result_right": "e1f131f87ae4a2d3f787194ffc3f248422195af7bb8160032a52e6ab0ff46f8e",
+  "challenge_section_questions": "1d1759b34b3276349bb93f536638165b80495c4aaa44c398c27423c1c4ff67a9",
+  "challenge_section_size": "e20314603d800f0b65d6f65078b90ff37221cc03b033b4e28b3248052444188e",
+  "challenge_see_plus": "9be4f24601a5d0902dcc4fc681b1d17c31cbc10dded5045bc0369d1955a52f93",
+  "challenge_see_result": "e40268441fdce6a3355e601c5926791e32fb989bb78ffdfd9c83311b771484a2",
+  "challenge_start": "76eb92bc475dec4c5269674af2600b7aa571d664d6b6d2e55461d8a4a9fb944f",
+  "challenge_start_failed": "31730dde4580d1d6c1f0e5609809d0ce206282000c72d6f9a7f7757006394ba0",
+  "challenge_start_slow": "75f8d53cd8529f11aa195365062f9f8a912e17118ee5b7270647e4bd3f976184",
+  "challenge_starting": "86acdb3e659e9075b57cc36d16d060c69f25d717a67db293252c8fb9c3704db2",
+  "challenge_today": "67aebb1c96a885b0b5e28be20cc386a2841a885ba59fbfd64e25cb841070711f",
+  "challenge_tomorrow": "2de100ab433ba3f1a919cda74963ce4c221fa485b9ce222e73922de920ede5c2",
+  "challenge_topic_count": "8ecc72ebe782b8152a5d6a05bd90e38416b934c47a36670560d326ee5abd345e",
+  "challenge_topics_asked": "789a270e313aee3a08a8cbce1bbbd1cd86aa6cb59a63cce0149bd2b04962ccd5",
+  "challenge_topics_weekly": "15b388cde7f8e9c4c7c6519141da94d8c2c7c13920b0f2324786941b4ddef728",
+  "challenge_topics_will_ask": "9f2daf9343d06a0bf03a11188451e4f69ec15d3b2181e14c70a63c51589f6641",
+  "challenge_trickster_mixed": "12d970b8ccce3b6f6cab34679ded4ef7d3b09f360fe707c7502f8496ce3c5422",
+  "challenge_trickster_recording_count": "be04f13d9c6f6a5111d4d98d6eb79c2dd320d4dfeb9eaeec4997e612f3b988d8",
+  "challenge_trickster_recordings": "94a6a824703d6dcbe81095db6b5aff84261e0b7dddb1b4311b3ad0cc095dc33b",
+  "challenge_trickster_rule": "6e483f09a7c52cc3a8ca001158c8a59741d2e835e2ed585b7d03a8f15f89d862",
+  "challenge_undo": "b6431e30a3dbe22216573eab92ea72f9438dbad96266e5a42b6dd2def1b32119",
+  "challenge_used_up_move": "85c9eaa26b415bf3992cb1a2147be41bd14acaa75be3b67b425fefe5bac23f25",
+  "challenge_used_up_next_session": "25db59a34f340f3988893106d06cfa522f07f1d5bf877ab1b88a367666f57b2c",
+  "challenge_used_up_on": "73e569c0f7dd19b47c32928d07d81ed520f095570482c1d0c02f5394b4c5645e",
+  "challenge_used_up_tomorrow": "d6bb51b7420acf3fb6b8daee51360df728359daac82b837b3f99596de782e0ea",
+  "challenge_used_up_weekly": "873b9da2b1fea0644c72a095e7159bf293d0ceae23079f9891cc1466af1334cc",
+  "challenge_weekly_detail": "8688810b10bdbe23f5582aed88ac2ffdc44c58e67f366a25fd1a1526166e71e2",
+  "challenge_weekly_rule": "ff70f08c96a53dc0530ed3b94e1a7d475d436efd5fc3545a9b149ab3fb8785c1",
+  "challenge_writing": "bf74f5044f26274995d6e265636f4897426ad44bf558074a43fd875794a9bf21",
+  "challenge_writing_detail": "70d6bd24333beb2960a2cc576310239aec1c7ed0ee6235a0abe21cd14339b8e7",
+  "challenge_writing_line": "5edcebc80b38e97b846fe4838744fb8c3c5c84a27a45c22b544c68014eef9a39",
+  "challenge_writing_questions": "519dd2ba177ba2e7477ed9aa376d45f1feede834f41cdf81ec52ae31c63929c9",
+  "challenge_writing_title": "6b371126473549083818f1c6e94954e0723943a89c256b9ac270c3385495306d",
+  "challenge_written_asked": "d7febd6aa013ed7c34575249c8d5196fecb3c3218a740f0bda74809de3de79f8",
+  "challenge_written_practiced": "ff4d6cd0b0ce529af71f26ed2bec903be3b1ad05b7cafbbca57b4b9573178d51"
+}
+-->
+<resources>
+    <string name="challenge_writing">Preparando tu desafío</string>
+    <string name="challenge_writing_questions">Preparando preguntas sobre lo que estudiaste</string>
+    <string name="challenge_writing_line">Eligiendo qué habilidades evaluar…</string>
+    <string name="challenge_writing_title">Preparando tu desafío</string>
+    <string name="challenge_writing_detail">Estamos preparando las preguntas. El desafío empezará aquí cuando estén listas.</string>
+    <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
+    <string name="challenge_rematch">Nuevo intento · %1$s</string>
+    <string name="challenge_trickster_recordings">Preguntas sobre grabaciones de esta fase, que escucharás como en el examen, sin pistas.</string>
+    <plurals name="challenge_trickster_recording_count">
+        <item quantity="one">Preguntas sobre %d grabación de esta fase, que se reproduce como en el examen, sin pistas.</item>
+        <item quantity="many">Preguntas sobre %d grabaciones de esta fase, que se reproducen como en el examen, sin pistas.</item>
+        <item quantity="other">Preguntas sobre %d grabaciones de esta fase, que se reproducen como en el examen, sin pistas.</item>
+    </plurals>
+    <string name="challenge_trickster_mixed">Preguntas variadas de esta fase, sin pistas.</string>
+    <string name="challenge_trickster_rule">Después de cada respuesta verás si acertaste o no. Al final verás la explicación y las trampas que preparó. Si gana, tendrás una revancha al día siguiente.</string>
+    <string name="challenge_weekly_detail">Preguntas sobre lo que estudiaste esta semana, sin pistas.</string>
+    <string name="challenge_weekly_rule">Después de cada respuesta verás si acertaste o no, y al final sabrás por qué.</string>
+    <plurals name="challenge_questions">
+        <item quantity="one">%d pregunta</item>
+        <item quantity="many">%d preguntas</item>
+        <item quantity="other">%d preguntas</item>
+    </plurals>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="challenge_prize">+%1$s de Poder Mental</string>
+    <!-- The learner's right answers (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_result_right">
+        <item quantity="one">%1$d acierto de %2$d</item>
+        <item quantity="many">%1$d aciertos de %2$d</item>
+        <item quantity="other">%1$d aciertos de %2$d</item>
+    </plurals>
+    <string name="challenge_topics_weekly">Temas de esta semana</string>
+    <string name="challenge_topics_asked">Lo que preguntó</string>
+    <string name="challenge_topics_will_ask">Lo que preguntará</string>
+    <plurals name="challenge_topic_count">
+        <item quantity="one">%d tema</item>
+        <item quantity="many">%d temas</item>
+        <item quantity="other">%d temas</item>
+    </plurals>
+    <string name="challenge_today">Hoy</string>
+    <string name="challenge_tomorrow">Mañana</string>
+    <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
+    <string name="challenge_day_time">%1$s · %2$s</string>
+    <string name="challenge_mock_start">Empezar el simulacro</string>
+    <string name="challenge_objective_only">Solo la parte objetiva</string>
+    <string name="challenge_section_questions">Preguntas</string>
+    <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
+    <plurals name="challenge_section_size">
+        <item quantity="one">%1$d pregunta · %2$s</item>
+        <item quantity="many">%1$d preguntas · %2$s</item>
+        <item quantity="other">%1$d preguntas · %2$s</item>
+    </plurals>
+    <string name="challenge_written_asked">Se hace por escrito en el simulacro y se califica con los criterios del examen después de la entrega.</string>
+    <string name="challenge_written_practiced">Parte escrita: la practicas en tus sesiones de redacción y se califica con los criterios del examen.</string>
+    <string name="challenge_penalty_cancels">Una respuesta incorrecta anula una correcta, así que deja un enunciado en blanco si tienes dudas.</string>
+    <!-- %1$s is the share of a right answer a wrong one costs, like 25%; %2$s is the confidence below which leaving it blank pays off, like 20%. -->
+    <string name="challenge_penalty_costs">Una respuesta incorrecta resta %1$s de lo que vale una correcta, así que deja la pregunta en blanco si tu confianza es menor al %2$s.</string>
+    <string name="challenge_result_at_end">Solo verás tu resultado al final, como el día del examen.</string>
+    <string name="challenge_mock_plus">Plus incluye simulacros: cuando quieras y cada semana en tu plan.</string>
+    <string name="challenge_call_title">La llamada de la unidad</string>
+    <string name="challenge_call_detail">Una llamada en vivo para hacerte entender. Habla o escribe.</string>
+    <!-- %1$s is the call's length; %2$s its level, like B1. -->
+    <string name="challenge_call_level">%1$s · Nivel %2$s</string>
+    <plurals name="challenge_call_goals">
+        <item quantity="one">%d objetivo</item>
+        <item quantity="many">%d objetivos</item>
+        <item quantity="other">%d objetivos</item>
+    </plurals>
+    <!-- %1$s is how many goals win the call. -->
+    <string name="challenge_call_to_win">%1$s para ganar</string>
+    <string name="challenge_call_goals_title">Qué comunicar</string>
+    <string name="challenge_call_passed">Desafío superado</string>
+    <!-- The goals the learner got across (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_call_result">
+        <item quantity="one">%1$d objetivo de %2$d</item>
+        <item quantity="many">%1$d objetivos de %2$d</item>
+        <item quantity="other">%1$d objetivos de %2$d</item>
+    </plurals>
+    <string name="challenge_call_plus">Las llamadas de los desafíos están incluidas en Plus. Tu plan sigue adelante sin ellas.</string>
+    <string name="challenge_start">Empezar</string>
+    <string name="challenge_starting">Iniciando…</string>
+    <string name="challenge_start_failed">No se pudo completar. Inténtalo de nuevo en un momento.</string>
+    <string name="challenge_start_slow">Aún se está iniciando. Está tardando más de lo normal.</string>
+    <string name="challenge_continue">Continuar</string>
+    <string name="challenge_see_result">Ver cómo te fue</string>
+    <string name="challenge_see_plus">Ver Plus</string>
+    <string name="challenge_opens_tomorrow">Disponible mañana</string>
+    <plurals name="challenge_opens_in">
+        <item quantity="one">Disponible en %d día</item>
+        <item quantity="many">Disponible en %d días</item>
+        <item quantity="other">Disponible en %d días</item>
+    </plurals>
+    <string name="challenge_opens_after_lessons">Se abre al completar las lecciones de esta fase</string>
+    <string name="challenge_not_ready">Este desafío aún no está listo.</string>
+    <string name="challenge_next_session">En tu próxima sesión</string>
+    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Alcanzaste tu límite de tiempo diario. Te perderás el desafío de esta semana.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_move">Alcanzaste tu límite de tiempo diario. Mueve el desafío al lunes para no perderlo.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_next_session">Alcanzaste tu límite de tiempo diario. El desafío estará disponible en tu próxima sesión.</string>
+    <!-- The daily time limit is a setting that stops study for the day. -->
+    <string name="challenge_used_up_tomorrow">Alcanzaste tu límite de tiempo diario. El desafío estará disponible mañana.</string>
+    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">Alcanzaste tu límite de tiempo diario. El desafío estará aquí el %1$s.</string>
+    <string name="challenge_back_to_today">Volver a Hoy</string>
+    <string name="challenge_move">Mover al lunes</string>
+    <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
+    <string name="challenge_moved_title">Se movió al %1$s</string>
+    <string name="challenge_moved_detail">Tu plan movió las siguientes lecciones para hacerle espacio.</string>
+    <string name="challenge_undo">Deshacer</string>
+    <string name="challenge_move_before_monday">Un desafío semanal o un simulacro solo se puede reprogramar para el próximo lunes o una fecha posterior. Se mantiene en su fecha actual.</string>
+    <string name="challenge_move_collision">Ese día ya hay un desafío semanal o un simulacro, así que este se mantiene en su fecha actual.</string>
+    <string name="challenge_move_no_room">Tu plan no puede hacer espacio para este desafío el lunes. Se mantiene en su fecha actual.</string>
+    <!-- %1$s is the mock's length, like 5 hr, describing the mock as in "a 5-hour mock exam"; %2$s is the day it would move to, like Nov 3 ("on Nov 3"). -->
+    <string name="challenge_move_unfunded">Tu plan no tiene espacio para este simulacro de %1$s el %2$s. Se queda donde está.</string>
+    <string name="challenge_change_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+</resources>

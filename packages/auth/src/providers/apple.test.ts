@@ -69,23 +69,26 @@ describe("Apple provider profile mapping", () => {
     expect(mappedUser).toStrictEqual({ email: "stable-apple-subject@apple.placeholder.local" });
   });
 
-  it("keeps the public social endpoint scoped to the web Services ID", async () => {
+  it("keeps the public social endpoint to the web Services ID's redirect flow", async () => {
     const { appleProvider } = await import("./apple");
 
-    expect(appleProvider.apple).toMatchObject({ clientId: "com.zoonk.web" });
+    expect(appleProvider.apple).toMatchObject({
+      clientId: "com.zoonk.web",
+      disableIdTokenSignIn: true,
+    });
+
     expect(appleProvider.apple).not.toHaveProperty("appBundleIdentifier");
     expect(appleProvider.apple).not.toHaveProperty("audience");
   });
 
-  it("scopes the internal native provider to the app bundle identifier", async () => {
+  it("lets the internal native provider accept ID tokens for the app and the Services ID", async () => {
     const { getNativeAppleProvider } = await import("./apple");
 
     expect(getNativeAppleProvider().apple).toMatchObject({
-      appBundleIdentifier: "com.zoonk.dev",
+      audience: ["com.zoonk.dev", "com.zoonk.web"],
       clientId: "com.zoonk.web",
+      disableIdTokenSignIn: false,
     });
-
-    expect(getNativeAppleProvider().apple).not.toHaveProperty("audience");
   });
 
   it("keeps existing web Apple sign-in enabled before native configuration is deployed", async () => {

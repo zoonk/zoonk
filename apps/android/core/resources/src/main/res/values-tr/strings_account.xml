@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "account_agreement": "61659e9d2c422de0c030ee2ce07f6f7154913a6cebfc968f9c4bf7af7f2f9658",
+  "account_change": "29dd8da7a4002acc4fe052562d52aacdcf32f8a90fcb1afa9e3bfa885990d982",
+  "account_change_email": "faf054401856f18184782a14cd71f4544dfa3c511a691573fd78038c08328086",
+  "account_change_username": "2b7c3193793da2d886c15b82d987ac33ff2f4250a219b70886461ed1dec24827",
+  "account_check_email_description": "ddc486bd193302a01f439da92edd9b036b79d04a16a4f6b8e13955e4411ca693",
+  "account_check_email_title": "c2b7d0098802ba27ada7b2ad54652f58d9e1ac909e913cc506c92104e04b5b10",
+  "account_code_label": "53967a6d0dae8be1a597e90932c3e684f4ab01a04455576bd6a024550fe7f55e",
+  "account_continue": "46b7e3c566da75ce131c9e8e909f27ab6b9c198a6d115901d747adf3bb10f55c",
+  "account_continue_with_apple": "996bb696d66377f31c4462687fd28ffa7e06200d2bd9423b1888af30edd5da4f",
+  "account_continue_with_google": "f4f8036176991d7adeb7901ddd2fd1a4a371b3751e12a765fd1dab19d8b473d7",
+  "account_did_not_get_it": "debcf2553481ea248078dfd2ea1b49daf825137fc99d3717337b775e7ec42033",
+  "account_email": "b6e4c797b9be0df6cad6cbfd3b080ae240cb7ab71cacc25c9f2ee9238864eb0d",
+  "account_email_placeholder": "6732b7cf0b432c0994b0503c73ecb1f54acff4f7b8ff26d4bee45eceb41a3660",
+  "account_failure_bot_detected": "963edb740732031e6b07950d6640b6c5677487cc041757ac3cfd78db5cf128f2",
+  "account_failure_code_expired": "1fec3bcedebefdb7056b34ea946b5e43119aa87ac5ae58ec84e2b56702d7cc53",
+  "account_failure_code_locked": "a5d0338977bfa043b4ed0162d3616e41e66981f42317a6abc1d2612aba48a3d6",
+  "account_failure_disposable_email": "fb651a1f3d4b771f52e622ebe9d948aedddbba8f3c4fbb42724b8e729960e6dd",
+  "account_failure_invalid_email": "a0c7aa04777c551845b9f5091e1c7b4cce22c8b2788dc2450bcc612d3ad9a41c",
+  "account_failure_network": "b378b0cd8cc4d9dedbeeed130f3280b282b99065c24fc915793a42c5441d6deb",
+  "account_failure_rate_limited": "56dc40fc5b1e6fbf00939b4a2a8dd8aa9d40a4d34295b1c3f6918157ac604c73",
+  "account_failure_sign_in": "58859a42d928bca4d1b22c1305b296dc74ca6c20126626b1536e6afca05a526c",
+  "account_failure_wrong_code": "f8189e1a6f4f1ce217aab85969a41b1b38a30c76fb3377e69508f0139a68cfe6",
+  "account_menu_create_account": "14b6f34274abbfab0658dbec1e643fc5e141d556ff6373ea0fd37874194575cc",
+  "account_menu_help": "03dbd9cf15b3f31ffdf20a84cb099271524c3f9f37f74cc5d83a1854ee153e76",
+  "account_menu_log_out": "2d2d19f823836cbda6ebec7d0940b49b06dd9ada9dcf75af707fa3282947ba92",
+  "account_menu_pricing": "6b80a0363b749012dc7853a6f6fcb27e6d988113f0440e533d14dd2fd73374f1",
+  "account_menu_settings": "7a6e198dce1fcfbfd6b4bde21fbae06d5ccedb958d91b4a2efa15d30100ed128",
+  "account_menu_subscription": "d7e90662d8e8acba7ac394d47d73d535879fea5bc9bdd3fa2e22435baaf47108",
+  "account_name": "87240420ee765577badd845ac53744667eddf2d8a741c2349227ec48392a9cd7",
+  "account_name_description": "92e4a484c851e43602c8e1e145a7852fdbf43152ff5a90ec490bc0b4edf6bee4",
+  "account_new_code_failed": "edd975b301424acd76170bde276fe73339a2910ef11799f564473968adadfe67",
+  "account_new_code_sent": "7e54006401c7c74c18946743b590f385c8c819f9c998c4ab2b2927baece89844",
+  "account_new_code_wait": "ea1b08e0e24ac568dbac0cde34a55a2ed525775347f16742f99280a8832f4649",
+  "account_or": "5d89a0ccc3fc499e49e7147167808c85ec473cb17fd97d782fb502c659f1ad1d",
+  "account_privacy": "de1d6fd33fbd835658e56817b5f86c640a63aa03fda30378bd40e3f1be9ce17b",
+  "account_save_failed": "4c8f61e726962dfdee24b3d2382b92b60237c5fcb4679e4c9e7d9b6c978d7878",
+  "account_send_again": "63b47b96b031e005e690fc5ed6d1ad1554177d212cd83d418e30412d1d020b48",
+  "account_send_new_code": "4c19c9086f8ce86c9ab6427d8868e76a2a3d5699daf6d583560df96d714fe860",
+  "account_setup_description": "8fea7ace8ffec08d9e7ac6c4c12d474470b23792281795e67c704220a0dfbbdc",
+  "account_setup_title": "d2d7319a2dbf3a501946ce92716517ed8620d7681e61e3534700840fd185b73a",
+  "account_sign_in_expired": "99babd03233caaa14ffcbf175d2e5b39cad9b5cf2b058b84b786da207339d9fb",
+  "account_sign_in_title": "b1a788803661eb67cd0a6e9b74c2ba6e3028ff3a0d825a145370786c2839f1d7",
+  "account_sign_out_failed": "400e2e770ed12fd6ac9682937a88641214be6fd0add4f22e49238cd865ccb8a0",
+  "account_terms": "54726db05126ce3184136a8ae980d87c03e0a53cf82c09af58f7192c13b3c56d",
+  "account_unavailable_description": "f0de24bc7cd8118bcce45f066b943add4ee19c5e9208d7eef21f9c4c93b6bf52",
+  "account_unavailable_title": "e2a0c2b2dd024811eec50ed567a8cdeebb89dac8b6f9bbd3bf4037994dd4f40b",
+  "account_username": "116da6b06e9f55e5f645c5e54bd3bd28b99e38f1bcb7ac972230161e01296b6f",
+  "account_username_available": "66fdb8556eb7a0b55597c626cf4ba25effeff3ca916879a6196ab3bb66472194",
+  "account_username_checking": "5a8fd0d9e4421dc83d5c7f81e4b765c06886b4848d2b3937827693debefb0eb7",
+  "account_username_line": "e4dbb46744123e31df05b0ca6d609b9902a4231276392718e7903118ab8318f9",
+  "account_username_rules": "ac20034fdf3c0ee63800c1a46e737f829eec67adc6509310e254d157f30d06c6",
+  "account_username_taken": "9f6364387f52f361dc8ea70286611ec00425b2d19eb5a039025da05d3f9895b4",
+  "account_welcome_description": "313d5f83ce56ea798caa3a756f3ca9160f3f1b2a704eded5d121cdff9862d374",
+  "account_welcome_note": "3c841f12937fd075a1fa99c59a10b2fc48d580e4430362a7857ba7617d80245a",
+  "account_welcome_title": "6278d555305e942521c70bdc14410b8fba17260f4c5f2d6fe2b66032926dbf6c"
+}
+-->
+<resources>
+    <string name="account_welcome_title">Büyük güne kadar her gün ne çalışacağın belli olsun.</string>
+    <string name="account_welcome_description">Zoonk’a hedefini ve tarihini söyle. Planın programına uyar ve bir gün çalışamazsan yeniden düzenlenir.</string>
+    <string name="account_welcome_note">Ücretsiz başla, hesap gerekmez.</string>
+    <string name="account_terms">Hizmet Koşulları</string>
+    <string name="account_privacy">Gizlilik Politikası</string>
+    <string name="account_sign_in_title">Giriş yap veya hesap oluştur</string>
+    <string name="account_sign_in_expired">Bu giriş işleminin süresi doldu. Tekrar dene.</string>
+    <string name="account_continue_with_google">Google ile devam et</string>
+    <string name="account_continue_with_apple">Apple ile devam et</string>
+    <string name="account_or">Veya</string>
+    <string name="account_email">E-posta</string>
+    <string name="account_email_placeholder">me@gmail.com</string>
+    <string name="account_continue">Devam et</string>
+    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
+    <string name="account_agreement">Devam ederek Zoonk’un %1$s ve %2$s metinlerini kabul edersin.</string>
+    <string name="account_check_email_title">E-postanı kontrol et</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_check_email_description">%1$s adresine gönderdiğimiz kodu gir.</string>
+    <string name="account_code_label">E-postadaki kod</string>
+    <string name="account_send_new_code">Yeni bir kod gönder</string>
+    <string name="account_did_not_get_it">Kod gelmedi mi?</string>
+    <string name="account_send_again">Tekrar gönder</string>
+    <string name="account_change_email">E-posta adresini değiştir</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_new_code_sent">%1$s adresine yeni bir kod gönderdik.</string>
+    <string name="account_new_code_wait">Yeni bir kod istemeden önce bir dakika bekle.</string>
+    <string name="account_new_code_failed">Yeni bir kod gönderemedik. Tekrar dene.</string>
+    <string name="account_failure_invalid_email">Geçerli bir e-posta adresi gir</string>
+    <string name="account_failure_disposable_email">Geçici e-posta adresleri desteklenmiyor. Başka bir e-posta adresi veya asıl adresini gizleyen bir takma adres kullan.</string>
+    <string name="account_failure_bot_detected">Güvenlik kontrolü bu isteği engelledi. Google ile devam et seçeneğini dene veya hello@zoonk.com adresinden bize ulaş.</string>
+    <string name="account_failure_network">Zoonk bağlantı kuramadı. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="account_failure_rate_limited">Çok fazla deneme yapıldı. Bir dakika bekle, sonra tekrar dene.</string>
+    <string name="account_failure_wrong_code">Bu kod doğru değil. E-postayı kontrol edip tekrar dene.</string>
+    <string name="account_failure_code_expired">Bu kodun süresi doldu. Yeni bir kod al.</string>
+    <string name="account_failure_code_locked">Bu kodla çok fazla hatalı deneme yapıldı. Yeni bir kod al.</string>
+    <string name="account_failure_sign_in">Giriş yaparken bir hata oluştu. Lütfen tekrar dene veya hello@zoonk.com adresinden bize ulaş</string>
+    <string name="account_setup_title">Sana nasıl hitap edelim?</string>
+    <string name="account_setup_description">Adını ve kullanıcı adını daha sonra profilinden değiştirebilirsin.</string>
+    <string name="account_name">Ad</string>
+    <string name="account_name_description">Zoonk ve arkadaşın sana bu adla seslenir</string>
+    <string name="account_username">Kullanıcı adı</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_line">Kullanıcı adın: @%1$s</string>
+    <string name="account_change">Değiştir</string>
+    <string name="account_change_username">Kullanıcı adını değiştir</string>
+    <string name="account_username_checking">Kontrol ediyoruz…</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_available">%1$s kullanılabilir</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_taken">%1$s zaten kullanılıyor</string>
+    <string name="account_username_rules">3–30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi.</string>
+    <string name="account_save_failed">Profilini kaydedemedik. Tekrar dene.</string>
+    <string name="account_menu_settings">Ayarlar</string>
+    <string name="account_menu_subscription">Abonelik</string>
+    <string name="account_menu_pricing">Fiyatlar</string>
+    <string name="account_menu_help">Yardım</string>
+    <string name="account_menu_log_out">Çıkış yap</string>
+    <string name="account_menu_create_account">Hesap oluştur</string>
+    <string name="account_sign_out_failed">Zoonk oturumunu kapatamadı. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="account_unavailable_title">Hesabını kontrol edemedik</string>
+    <string name="account_unavailable_description">Oturumun hâlâ açık. Bağlantında bir sorun olabilir, birazdan tekrar dene.</string>
+</resources>

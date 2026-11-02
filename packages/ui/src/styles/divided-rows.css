@@ -1,0 +1,17 @@
+/*
+ * Hairlines touching the highlighted row turn transparent rather than go, so nothing moves when the
+ * highlight does.
+ */
+@utility divided-rows {
+  & > * + *,
+  & > :is(ol, ul) > li + li {
+    border-top-width: 1px;
+  }
+
+  & > :is([aria-current], [data-highlighted]),
+  & > :is([aria-current], [data-highlighted]) + *,
+  & > :is(ol, ul) > :is([aria-current], [data-highlighted]),
+  & > :is(ol, ul) > :is([aria-current], [data-highlighted]) + li {
+    border-top-color: transparent;
+  }
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "9046fdd1a81bf9baccdeccbcc90ffa840cc003902dbc531c940f777704b71a6b",
+  "pattern_correct_version": "de61835fdf23ad7908acc1621bc8067844b717a4cd49a73538b27c2de52963b3",
+  "pattern_done": "b92615c74426d0152dfc78463f6fd771100aceb65d0620247880a90e9d3888ca",
+  "pattern_got_it": "5ab5bf7352bfcf3016e9d8546f3e16349d18906a1ca81d7c388dc542a8fc5fb1",
+  "pattern_just_typos": "5ed057aacd71148d5fd208a7603d95cce431713b0460c7b3fcc6e934ae80b980",
+  "pattern_keep_going": "788af3e80f20f3451231179998e55cc5ebecdb8ac1f7beb88aaf15ff69191c13",
+  "pattern_noticed": "7861a639e1eb36ffe102d72eb91a42a045aeff12626f1b6072fe8db0e9a180de",
+  "pattern_practice": "d15ebacb126d0336adad5e3747a234f7fb85081c498d9f98f2094df6e532aa30",
+  "pattern_quoted": "090303e7250b0bc407a25d85f98789fd4294d75f326aa043bf56c3666a387274",
+  "pattern_rule": "a2dd13867cba79ffcc7dd513b2857d7904cd32106cc45f11280f6feec1064e28",
+  "pattern_see_how_you_did": "dcaabef2a79048c0084ee7c9ed97261c545eec33c46b2ea45f6a7e01317060f5",
+  "pattern_see_rule": "1f80be28dab05b3f8624c9e9172b2237168fb9c3a09c10b333603b9c5ca5e6b7",
+  "pattern_seen": "25c51f24d4aa72284ef7247516f771707d432a0133e94e186261b2950736690c",
+  "pattern_seen_times": "7b012464cdc82c45f9afe276e79c7213826c433972882800ed86a47efcba6b23",
+  "pattern_title": "729097cceec227ef845caafc3cf0bfc0d4951276b4678d00dedfba7999216207",
+  "pattern_typos_detail": "27aa4516468723c51bac0d34de1e174b2c7c944fcc5040579b3ab1a53c6e1624",
+  "pattern_where_you_slipped": "96510a92849d1fdc353cfe99eafd15d3c173208f1c0c17235efeb273df2ec55f",
+  "pattern_you_said": "c6b8192984ffc45b7dd4826befa5cbaa59fe9e6f29d1450bf0aed22794350f31"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">ミスの傾向</string>
+    <string name="pattern_noticed">ミスの傾向が見つかりました</string>
+    <string name="pattern_seen">最近の回答で見られました。</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="other">最近の回答で%d回見られました。</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">このルールを練習する · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">同じミスが見られたほかの文</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">「%1$s」</string>
+    <string name="pattern_rule">ルール</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">こう言いました</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">正しい文</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">間違えたところ</string>
+    <string name="pattern_see_rule">ルールを見る</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">結果を見る</string>
+    <string name="pattern_got_it">このルールが身につきました。</string>
+    <string name="pattern_keep_going">ルールを知ることが第一歩です。使うたびに、少しずつ身についていきます。</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">完了</string>
+    <string name="pattern_just_typos">入力ミスだけです</string>
+    <string name="pattern_typos_detail">最近の間違いは入力ミスで、ルールの理解不足ではありません。練習は必要ありません。</string>
+</resources>

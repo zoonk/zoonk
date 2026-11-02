@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "moment_brain_power": "073b94dd7811d4b27d2d2a13dd44628f4d1d1ddd3eee08dc397cc76777e39fb0",
+  "moment_score": "575104792141819e9839a69f70300a626a5cd8fcf17ddf2989650441dde58818",
+  "moment_score_spoken": "2ef0783c8e0433babb851e52e5ce0700e0e2ed1c1371f05447f12f537d8c376e"
+}
+-->
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="one">%1$s z %2$s poprawnie</item>
+        <item quantity="few">%1$s z %2$s poprawnie</item>
+        <item quantity="many">%1$s z %2$s poprawnie</item>
+        <item quantity="other">%1$s z %2$s poprawnie</item>
+    </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="one">%1$s z %2$s zabrzmiało poprawnie</item>
+        <item quantity="few">%1$s z %2$s zabrzmiały poprawnie</item>
+        <item quantity="many">%1$s z %2$s zabrzmiało poprawnie</item>
+        <item quantity="other">%1$s z %2$s zabrzmiało poprawnie</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">+%1$s pkt Mocy Umysłu</string>
+</resources>

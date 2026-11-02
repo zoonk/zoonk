@@ -1,9 +1,14 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("API_URL", () => {
+  // `API_URL` is read when the module loads: each test loads it again after stubbing its env,
+  // whatever loaded it before in this worker.
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
   afterEach(() => {
     vi.unstubAllEnvs();
-    vi.resetModules();
   });
 
   it("uses the API deployment explicitly supplied to a preview consumer", async () => {

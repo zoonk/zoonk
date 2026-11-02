@@ -1,10 +1,6 @@
 import { CONTRIBUTION_CALENDAR_DAYS_PER_WEEK } from "@zoonk/utils/contribution-calendar";
 
-/**
- * Keeps arrow-key movement aligned with the calendar's column-major DOM order:
- * adjacent indexes move between weekdays, while seven indexes move between
- * matching weekdays in neighboring weeks.
- */
+/** The calendar's DOM is column-major: one index moves a weekday, seven move a week. */
 export function getContributionCalendarTargetIndex({
   currentIndex,
   key,

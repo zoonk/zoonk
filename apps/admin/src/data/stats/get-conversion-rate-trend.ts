@@ -6,11 +6,6 @@ import { type RateTrendRow, toRateTrendPoint } from "@/data/stats/_utils/rate-tr
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Creates the same daily, monthly, or yearly bucket boundaries used by the
- * visible chart. Each bucket exposes its final instant so the numerator can
- * measure the active subscriber stock after that bucket's additions and churn.
- */
 function getConversionBucketSeriesSql({
   end,
   period,
@@ -59,19 +54,13 @@ function getConversionBucketSeriesSql({
 }
 
 /**
- * A bucket before the first tracked learner has no conversion rate. Omitting
- * it lets the chart completion step render a gap, while a bucket with learners
- * and no paid access still remains an honest 0% value.
+ * A bucket before the first tracked learner has no rate; one with learners and no paid access is
+ * an honest 0%.
  */
 function hasConversionDenominator(row: RateTrendRow): boolean {
   return row.denominator > BigInt(0);
 }
 
-/**
- * Shows the active paid share at the end of each visible bucket. The numerator
- * is a point-in-time subscriber stock while the denominator is the cumulative
- * tracked learner population at the same instant.
- */
 export const getConversionRateTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const bucketSeriesSql = getConversionBucketSeriesSql({ end, period, start });

@@ -1,9 +1,8 @@
 const SENTRY_PII_FIELD_DENYLIST = ["forwarded", "-ip", "remote-", "via", "-user"];
 
 /**
- * Preserves our collection policy across Sentry's expanded v11 defaults.
- * Filter identifying fields from cookies, headers, and query parameters, and keep
- * user details, request bodies, database values, and AI/GraphQL content disabled.
+ * Sentry v11 collects more by default; this keeps identifying fields filtered and user details,
+ * request bodies, database values and AI/GraphQL content off.
  */
 export function getSentryDataCollection() {
   return {

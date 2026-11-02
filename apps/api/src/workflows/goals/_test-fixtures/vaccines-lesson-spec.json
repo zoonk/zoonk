@@ -1,0 +1,79 @@
+{
+  "lessons": [
+    {
+      "canDo": "Describe how innate defenses spot and flag a threat",
+      "description": "Learn how early immune defenses notice common signs of microbes or injury without identifying a particular germ.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "brief": "You scrape your knee. Before your body knows whether any germ entered, what might tell it something is wrong?",
+          "skills": [],
+          "visual": "A small scrape in the skin, with nearby cells shown beneath it."
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "brief": "Some immune cells stationed in tissues act like watchguards. They look for signs of trouble rather than the name of a particular germ.",
+          "skills": [0],
+          "visual": "A watchguard immune cell beside ordinary tissue cells."
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "brief": "One sign is a feature shared by many microbes, like a recognizable part of their outer surface. It is more like spotting a familiar uniform than reading someone's name tag.",
+          "skills": [0],
+          "visual": "Two different-looking microbes with the same outer feature highlighted."
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "brief": "Ask which clue a watchguard could notice early: a shared feature on several bacteria or the exact name of one bacterium. Include the exact name as the tempting wrong answer.",
+          "skills": [0],
+          "visual": null
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "brief": "Injured body cells can also give off signs of damage, even when no microbe is present. Like a smoke alarm, the watchguard can notice trouble without knowing its exact cause.",
+          "skills": [0],
+          "visual": "An injured cell and a microbe, each with a different sign pointing toward the same watchguard cell."
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "brief": "When a watchguard detects one of these signs, it can warn nearby cells. The warning flags a possible threat; it does not prove which germ, if any, is there.",
+          "skills": [0],
+          "visual": "A watchguard cell sending a simple warning signal to neighboring cells."
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "brief": "Ask which situations could trigger an early warning: a cut with damaged cells, a microbe with a recognizable outer feature, or only a germ whose exact identity is known. Include 'only a germ whose exact identity is known' as the tempting wrong answer.",
+          "skills": [0],
+          "visual": null
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "brief": "While gardening, you get a small splinter and notice the skin around it has been hurt. Ask what an early watchguard might detect and why it could warn nearby cells before knowing whether a germ entered.",
+          "skills": [0],
+          "visual": "A splinter breaking the skin, with nearby injured cells and a watchguard cell."
+        }
+      ],
+      "skills": [
+        {
+          "description": "Innate defenses notice shared signs of microbes or damaged cells and can warn nearby cells without identifying a particular germ.",
+          "example": "A watchguard immune cell notices damaged cells beside a splinter and sends a warning.",
+          "hard": false,
+          "name": "Explain how innate defenses detect and flag threats",
+          "topic": "Innate immune detection",
+          "useCase": "Understanding why your body can react quickly when you scrape your skin."
+        }
+      ],
+      "supportMode": "explanationFirst",
+      "title": "Innate immune detection"
+    }
+  ]
+}

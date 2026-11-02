@@ -1,0 +1,58 @@
+import { type QuestionTutor, type TutorItem } from "../../questions/question-tutor";
+import { type TaskFrameAside } from "../../shell/task-frame";
+import { type StudyBlockDetail, type StudyQuestion } from "../session-types";
+import { type useBlockDrill } from "./block-question";
+import { type QuestionBlockPhase } from "./question-block-state";
+
+export function getBlockTutorItem({
+  blockDrill,
+  detail,
+  index,
+  phase,
+  question,
+}: {
+  blockDrill: Pick<ReturnType<typeof useBlockDrill>, "drill" | "stage">;
+  detail: StudyBlockDetail;
+  index: number;
+  phase: QuestionBlockPhase;
+  question: StudyQuestion | null;
+}): TutorItem | null {
+  const answered = phase.kind === "feedback";
+  const timed = blockDrill.drill !== null && blockDrill.drill.timeLimitSeconds !== null;
+
+  if (!question || question.placement || blockDrill.stage === "idea" || (timed && !answered)) {
+    return null;
+  }
+
+  return {
+    answered,
+    blockId: detail.block.id,
+    itemId: question.itemId,
+    missed: phase.kind === "feedback" && !phase.feedback.isCorrect,
+    position: index,
+    text: question.question,
+  };
+}
+
+export function withTutorAside({
+  aside,
+  tutor,
+}: {
+  aside: TaskFrameAside;
+  tutor: QuestionTutor | null | undefined;
+}): TaskFrameAside {
+  if (!tutor) {
+    return aside;
+  }
+
+  return {
+    ...aside,
+    children: (
+      <>
+        {aside.children}
+        {tutor.aside}
+      </>
+    ),
+    meta: tutor.asideMeta(aside.meta),
+  };
+}

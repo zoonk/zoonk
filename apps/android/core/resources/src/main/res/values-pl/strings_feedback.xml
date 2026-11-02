@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "7692068eb09b47378ad6ddefcdd9c5dd264b31edda292e06201660249d1a44d2",
+  "feedback_failed": "86e22101708776f016d8ce1b73309e27c179256784e4e9c4eeb4a05fe1ea8880",
+  "feedback_follow_us": "bb421ae716a23c7015111f17b13b33fc292be6ed79086c2c65cf82d8eb7c09fd",
+  "feedback_help_description": "f1b6cd13af01a493b5f158fb1e07eee7466559131319f384e4e23f44a189ee48",
+  "feedback_message": "4ac54f1b98a737350c2d4b82190c55b5b15cd758f9e8b8280216f170ebd3f378",
+  "feedback_message_placeholder": "8b369673088dadb4f937d37e10fcc8faefe469f4143017ae81ffc4e33d82aa74",
+  "feedback_more": "6199e3a404e98b6b7e26904da989ba22d432a4d3652652c63bca5b76de06ea38",
+  "feedback_report_problem": "739646ca69eba68e36f3bf30627c27a319cf7167b397cec457f27b428e88bd40",
+  "feedback_screen_attached": "291c9268b2172d5bc6327e91d0ff3ad245ec221eca1ace06736ca3c4bbf0110e",
+  "feedback_send": "1d5f2e33b6be99830afbddc7be7df42afaedb557c60f11038eef4ea3af9e5678",
+  "feedback_send_feedback": "993682308c79221659fa10ba0b871cc20607e6d97471f2bf82e80753b2bc7cb2",
+  "feedback_send_feedback_description": "d564827269f485b4b7cf6d69f415226df1406897cd77c64bd0b30897c7262bcf",
+  "feedback_sent": "efc738d9d98bd95265d0446411029bd10f9c4c441c23242814e647fcd4d338fe",
+  "feedback_thanks": "d2b72c7bf96b4ba898ce355dd38173a996e18de2365418a408826c6ca1b6a81b"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Zadaj pytanie, zgłoś problem lub podziel się pomysłem. Odpowiadamy e-mailem.</string>
+    <string name="feedback_message">Wiadomość</string>
+    <string name="feedback_message_placeholder">Jak możemy ci pomóc?</string>
+    <string name="feedback_screen_attached">Dołączono ten ekran</string>
+    <string name="feedback_email">Adres e-mail do odpowiedzi</string>
+    <string name="feedback_send">Wyślij wiadomość</string>
+    <string name="feedback_sent">Wiadomość wysłana! Wkrótce się odezwiemy.</string>
+    <string name="feedback_failed">Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz do nas na hello@zoonk.com.</string>
+    <string name="feedback_follow_us">Obserwuj nas</string>
+    <string name="feedback_report_problem">Zgłoś problem</string>
+    <string name="feedback_send_feedback">Wyślij opinię</string>
+    <string name="feedback_send_feedback_description">Coś nie działa lub masz pomysł? Napisz do nas poniżej lub na hello@zoonk.com.</string>
+    <string name="feedback_thanks">Dzięki! Twoja wiadomość dotarła.</string>
+    <string name="feedback_more">Więcej opcji</string>
+</resources>

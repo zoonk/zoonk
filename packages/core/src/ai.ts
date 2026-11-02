@@ -1,1 +1,1 @@
-export { zoonkGateway } from "@zoonk/ai/gateway";
+export { zoonkDefaultProvider } from "@zoonk/ai/gateway";

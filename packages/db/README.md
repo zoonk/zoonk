@@ -64,17 +64,17 @@ Run the following commands to set up Prisma:
 
 #### Local Curriculum Content
 
-The local `zoonk` database is the source of truth for development curriculum content. The regular Prisma seed only creates local users, accounts, subscriptions, organizations, enrollments, and progress; it does not create courses or lesson content.
+The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`). This package writes each persona's history and what's due this week; core's planner lays out the rest of their plans (`pnpm --filter @zoonk/core seed`, which the Prisma seed runs after the regular one), so a seeded plan is the one the app makes.
 
-To refresh the local curriculum from a database copy, provide its connection string for this command:
+To refresh the local curriculum from a database copy, run the regular seed once (it creates the local AI organization), then provide the copy's connection string:
 
 ```sh
-pnpm --filter @zoonk/db db:seed
 CONTENT_SOURCE_DATABASE_URL='postgresql://...' pnpm --filter @zoonk/db db:sync-content
-pnpm --filter @zoonk/db db:seed
 ```
 
-The content sync accepts only local development databases: `zoonk` or `zoonk_wt_<id>_dev`. It replaces the AI organization's courses, categories, chapters, lessons, vocabulary, sentences, pronunciations, resource links, and steps without importing source users or progress. Existing local prompt links, enrollments, completions, lesson progress, and attempts are mapped onto matching content in the replacement; the whole operation rolls back if any mapping is missing. Run the regular seed before the first sync to create the local AI organization, then run it afterward to initialize content-linked seed data on a new database.
+The content sync accepts only local development databases: `zoonk` or `zoonk_wt_<id>_dev`. It replaces the AI organization's catalog: its courses (updated in place by slug), every public Library chapter, lesson, step, variant, skill, item and image, and it adds or updates the organization's words, sentences and pronunciations. It never imports source users or progress, and it never touches private content or learners' own courses. Local learners' links (plans, study blocks, attempts, mistakes, question threads, mastery and example lines) move onto the matching copied content by natural key. The whole sync rolls back if a link can't be matched, or if other local rows point at content it would replace.
+
+Seeded content stays as the seed wrote it. The seed gives its courses and Library rows UUID version 8 ids (`seedId`), which generated content never has, so the sync never reads those rows from the source and never removes or overwrites them locally. Everything under them stays too (a seeded lesson's steps, including ones generated locally, and the pictures they show), so the `v2-*` personas keep their goals, plans and history. A source row that shares a natural key with a row that stays (a seeded course's slug, a Library chapter, lesson or skill identity, an image's reuse key) is left out along with the rows that need it, and the sync logs how many.
 
 #### Useful Commands
 
@@ -84,7 +84,7 @@ The content sync accepts only local development databases: `zoonk` or `zoonk_wt_
 
 ### Worktree Databases
 
-Run `pnpm worktree:setup` from a linked worktree's root. The Codex environment runs this automatically. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
+Run `pnpm worktree:setup` from a linked worktree's root. Codex, T3 Code, and Claude Code run this automatically when they create a worktree. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
 
 | Database             | Initial content                                     |
 | -------------------- | --------------------------------------------------- |
@@ -94,7 +94,7 @@ Run `pnpm worktree:setup` from a linked worktree's root. The Codex environment r
 
 The ID comes from the worktree's absolute path, so branches can be renamed without losing their database. Test databases contain seeded users, organizations, and progress; they do not copy development content. Setup runs the development copy alongside dependency installation and runs independent migrations and seeds in parallel. It prints its elapsed time when all three databases are ready.
 
-Use Node.js 24 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH`. On Windows, add PostgreSQL's `bin` directory to `PATH`; when using WSL, install and run these tools inside WSL. The local connection role needs permission to create databases and read the source. An unreachable local PostgreSQL server fails setup with a connection error; start it and rerun setup. Remote source URLs and missing source databases skip isolation. The primary checkout keeps its existing databases.
+Use Node.js 26 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH`. On Windows, add PostgreSQL's `bin` directory to `PATH`; when using WSL, install and run these tools inside WSL. The local connection role needs permission to create databases and read the source. An unreachable local PostgreSQL server fails setup with a connection error; start it and rerun setup. Remote source URLs and missing source databases skip isolation. The primary checkout keeps its existing databases.
 
 Setup writes development URLs into this worktree's app/package environment files, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. CI continues to use its configured URLs. Do not manually change the tracked `.env.test` or `.env.e2e` defaults. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
 

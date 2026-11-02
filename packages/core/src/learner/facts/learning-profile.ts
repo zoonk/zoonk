@@ -1,0 +1,31 @@
+import "server-only";
+import { prisma } from "@zoonk/db";
+import { cacheTag } from "next/cache";
+import { getGoalsCacheTag, getLearningProfileCacheTag } from "../../cache/tags";
+import { readOwnedGoal } from "./owned-goal";
+
+/** Internal GET fact; the public capability derives the actor, including for a guest. */
+export async function readLearningProfile(userId: string) {
+  "use cache: private";
+
+  cacheTag(getLearningProfileCacheTag(userId));
+
+  return prisma.userLearningProfile.findUnique({ where: { userId } });
+}
+
+export async function readActiveGoal(userId: string) {
+  "use cache: private";
+
+  cacheTag(getGoalsCacheTag(userId), getLearningProfileCacheTag(userId));
+
+  const profile = await readLearningProfile(userId);
+
+  if (profile?.activeGoalId) {
+    return readOwnedGoal(userId, profile.activeGoalId);
+  }
+
+  return prisma.goal.findFirst({
+    orderBy: { createdAt: "asc" },
+    where: { status: "active", userId },
+  });
+}

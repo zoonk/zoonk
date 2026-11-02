@@ -5,7 +5,13 @@ import { useExtracted } from "next-intl";
 import { PlayerReadScene, PlayerReadSceneBody, PlayerReadSceneStack } from "./player-read-scene";
 import { RomanizationText } from "./romanization-text";
 
-export function VocabularyStep({ step }: { step: SerializedStep }) {
+export function VocabularyStep({
+  children,
+  step,
+}: {
+  children?: React.ReactNode;
+  step: SerializedStep;
+}) {
   const t = useExtracted();
   const word = step.word;
 
@@ -21,7 +27,7 @@ export function VocabularyStep({ step }: { step: SerializedStep }) {
         className="flex flex-col gap-6"
       >
         <PlayerReadSceneStack className="gap-2">
-          <p className="text-4xl font-bold tracking-tight sm:text-5xl">{word.word}</p>
+          <p className="text-title lg:text-[2.5rem]">{word.word}</p>
 
           <RomanizationText>{word.romanization}</RomanizationText>
 
@@ -31,6 +37,7 @@ export function VocabularyStep({ step }: { step: SerializedStep }) {
         </PlayerReadSceneStack>
 
         <PlayerReadSceneBody>{word.translation}</PlayerReadSceneBody>
+        {children}
       </div>
     </PlayerReadScene>
   );

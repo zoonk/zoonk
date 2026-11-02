@@ -1,9 +1,11 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
+import { findAvailableUsername } from "@zoonk/auth/available-username";
 import { normalizeUsername } from "@zoonk/auth/username-rules";
 import { type User, prisma } from "@zoonk/db";
-import { cacheTag, revalidateTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { headers } from "next/headers";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getSession } from "./get-session";
 
@@ -23,10 +25,6 @@ export type CurrentUser = Pick<
   | "username"
 >;
 
-/**
- * Projects the database user into the account fields shared with product
- * clients, excluding billing identifiers, moderation state, and auth internals.
- */
 function toCurrentUser(user: User): CurrentUser {
   return {
     analyticsDisabled: user.analyticsDisabled,
@@ -42,20 +40,12 @@ function toCurrentUser(user: User): CurrentUser {
   };
 }
 
-/**
- * Loads one trusted user row after the public capability derives identity from
- * the authenticated session.
- */
 async function findCurrentUser(userId: string): Promise<CurrentUser | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   return user ? toCurrentUser(user) : null;
 }
 
-/**
- * Returns the authenticated account resource without accepting an acting user
- * id from an app. The private cache shares the complete read across callers in
- * the same render tree.
- */
+/** Returns the session's account; its private cache shares reads only within the render tree. */
 export async function getCurrentUser() {
   "use cache: private";
 
@@ -69,10 +59,7 @@ export async function getCurrentUser() {
   return findCurrentUser(session.user.id);
 }
 
-/**
- * Omits unchanged profile fields so idempotent updates do not ask the identity
- * provider to rewrite the current username.
- */
+/** Better Auth must not rewrite an unchanged username. */
 function getSessionUserUpdate({
   currentUser,
   input,
@@ -80,25 +67,19 @@ function getSessionUserUpdate({
   currentUser: CurrentUser;
   input: CurrentUserUpdate;
 }): CurrentUserUpdate {
+  const username = input.username === undefined ? undefined : normalizeUsername(input.username);
+
   return {
     ...(input.name !== undefined && input.name !== currentUser.name && { name: input.name }),
-    ...(input.username !== undefined &&
-      input.username !== currentUser.username && { username: input.username }),
+    ...(username !== undefined && username !== currentUser.username && { username }),
   };
 }
 
-/**
- * Detects whether a partial account patch changes any identity field.
- */
 function hasSessionUserUpdate(input: CurrentUserUpdate): boolean {
   return Object.keys(input).length > 0;
 }
 
-/**
- * Updates the authenticated account through Better Auth, expires the cached
- * account resource, and returns the fresh public user. Core owns the
- * current-user comparison and apps never pass user IDs.
- */
+/** Requires sign-in; updates through Better Auth and returns the fresh account after cache invalidation. */
 export async function updateCurrentUser({ input }: { input: CurrentUserUpdate }) {
   const session = await getSession();
 
@@ -126,21 +107,33 @@ export async function updateCurrentUser({ input }: { input: CurrentUserUpdate })
     return null;
   }
 
-  revalidateTag(getUserSessionCacheTag(user.id), { expire: 0 });
+  revalidateCacheTags([getUserSessionCacheTag(user.id)]);
 
   return user;
 }
 
-/**
- * Reuses Better Auth's canonical normalization, reserved-name policy, and
- * uniqueness lookup for the public product endpoint used by profile clients.
- * The later profile update remains authoritative because availability can
- * change between this read and a mutation.
- */
+/** Uses Better Auth's username rules; availability is advisory because the later update is authoritative. */
 export async function getUsernameAvailability(username: string) {
   const normalizedUsername = normalizeUsername(username);
 
   const result = await auth.api.isUsernameAvailable({ body: { username: normalizedUsername } });
 
   return { isAvailable: result.available, username: normalizedUsername };
+}
+
+/** Returns null without a session or when all email-derived names are taken. */
+export async function suggestCurrentUsername(): Promise<string | null> {
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const currentUser = await findCurrentUser(session.user.id);
+
+  if (!currentUser) {
+    return null;
+  }
+
+  return currentUser.username ?? findAvailableUsername(currentUser.email);
 }

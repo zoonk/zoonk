@@ -31,7 +31,12 @@ function validateScoreCategories(categories: ScoreCategory[]): void {
   }
 }
 
-/** Formats task-level dimensions as an explicit, independently scored judge rubric. */
+/** Throws for duplicate category IDs or weights that do not total 100. */
+export function defineScoreCategories(categories: ScoreCategory[]): ScoreCategory[] {
+  validateScoreCategories(categories);
+  return categories;
+}
+
 export function formatScoreCategories(categories: ScoreCategory[]): string {
   validateScoreCategories(categories);
 
@@ -43,7 +48,6 @@ export function formatScoreCategories(categories: ScoreCategory[]): string {
     .join("\n\n");
 }
 
-/** Persists the full human-readable rubric used for a categorized judgment. */
 export function formatExpectationsWithCategories({
   categories,
   expectations,
@@ -56,10 +60,6 @@ export function formatExpectationsWithCategories({
     : expectations;
 }
 
-/**
- * Rejects incomplete or invented category IDs at the model-output boundary and
- * snapshots the configured labels and weights into the persisted score.
- */
 export function resolveCategoryScores({
   categories,
   judgeScores,
@@ -100,7 +100,6 @@ export function resolveCategoryScores({
   });
 }
 
-/** Averages persisted category scores while retaining their display metadata. */
 export function summarizeCategoryScores(
   scoreGroups: (CategoryScore[] | undefined)[],
 ): CategoryScoreSummary[] {

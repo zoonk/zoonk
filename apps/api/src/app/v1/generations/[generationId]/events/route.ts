@@ -2,44 +2,35 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { workflowEventsQuerySchema } from "@/lib/openapi/schemas/workflows";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
+import { readRunState } from "@/workflows/_shared/run-activity";
 import { getRun } from "workflow/api";
 
-/**
- * Validates a generation-events request and streams its durable workflow run
- * without changing the SSE chunks returned by Workflow.
- */
+const SSE_HEADERS = {
+  "Cache-Control": "no-cache, no-transform",
+  "Content-Type": "text/event-stream",
+};
+
 async function streamGenerationEvents(
   request: Request,
   context: RouteContext<"/v1/generations/[generationId]/events">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: generationPathParamsSchema,
-  });
+  const path = await readPathParams(context, generationPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const query = readQueryParams(request, workflowEventsQuerySchema);
 
-  const query = parseQueryParams(new URL(request.url).searchParams, workflowEventsQuerySchema);
+  const { stalled, status } = await readRunState(path.generationId);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const run = getRun(path.data.generationId);
-
-  if (!(await run.exists)) {
+  if (!status) {
     return errors.notFound("Generation not found");
   }
 
-  const stream = run.getReadable<string>({ startIndex: query.data.startIndex });
+  // A stalled run would hold the stream open forever.
+  const stream = stalled
+    ? ""
+    : getRun(path.generationId).getReadable<string>({ startIndex: query.startIndex });
 
-  return new Response(stream, {
-    headers: { "Cache-Control": "no-cache, no-transform", "Content-Type": "text/event-stream" },
-  });
+  return new Response(stream, { headers: SSE_HEADERS });
 }
 
 export const GET = withApiErrorBoundary(streamGenerationEvents);

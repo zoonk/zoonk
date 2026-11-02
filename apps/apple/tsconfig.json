@@ -1,4 +1,5 @@
 {
+  "compilerOptions": { "allowImportingTsExtensions": true },
   "exclude": ["node_modules"],
   "extends": "@zoonk/tsconfig/base.json",
   "include": [".eloqnt/**/*.ts", "scripts/**/*.mts"]

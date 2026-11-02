@@ -1,0 +1,77 @@
+import "server-only";
+import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/identity/subject";
+import { prisma, sql } from "@zoonk/db";
+import { buildImageReuseKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { isInRequestScope } from "../_utils/exact-match-scope";
+import { type IdentityKindSearch, type ImageIdentityRequest } from "../_utils/identity-requests";
+import { IMAGE_SCENE_DOCUMENT } from "../_utils/search-documents";
+import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
+
+const SCENE_LANGUAGE = "en";
+
+async function findExactImage({
+  request,
+  reuseKey,
+}: {
+  request: ImageIdentityRequest;
+  reuseKey: string;
+}): Promise<string | null> {
+  const asset = await prisma.mediaAsset.findUnique({
+    select: { id: true, kind: true, ownerId: true, visibility: true },
+    where: { reuseKey },
+  });
+
+  if (asset?.kind !== "image" || !isInRequestScope({ ownerId: request.ownerId, row: asset })) {
+    return null;
+  }
+
+  return asset.id;
+}
+
+async function findImageCandidateIds({
+  request,
+  search,
+}: {
+  request: ImageIdentityRequest;
+  search: TextSearch;
+}): Promise<string[]> {
+  return findRankedIds({
+    document: IMAGE_SCENE_DOCUMENT,
+    filters: sql`m.kind = 'image'
+      AND m.visibility = 'public'
+      AND m.prompt IS NOT NULL
+      AND (m.language IS NULL OR (${request.textAllowed} AND m.language = ${request.language}))`,
+    search,
+  });
+}
+
+export async function loadImageCandidates(
+  ids: readonly string[],
+): Promise<LibraryIdentityCandidate[]> {
+  const assets = await prisma.mediaAsset.findMany({ where: { id: { in: [...ids] } } });
+
+  return assets.map((asset) => ({ id: asset.id, item: { title: asset.prompt ?? "" } }));
+}
+
+export function getImageIdentitySearch(request: ImageIdentityRequest): IdentityKindSearch {
+  const reuseKey = scopeIdentityKey({
+    key: buildImageReuseKey({
+      language: request.hasLabels ? request.language : null,
+      prompt: request.prompt,
+    }),
+    ownerId: request.ownerId,
+  });
+
+  return {
+    aiSubject: {
+      goal: request.goal,
+      item: { title: request.prompt },
+      kind: "image",
+      language: SCENE_LANGUAGE,
+    },
+    baseTerms: [],
+    findCandidateIds: (search) => findImageCandidateIds({ request, search }),
+    findExact: () => findExactImage({ request, reuseKey }),
+    identityKey: reuseKey,
+  };
+}

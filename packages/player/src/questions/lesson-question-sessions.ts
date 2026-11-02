@@ -1,4 +1,4 @@
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext, isAboutCheckedAnswer } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import {
   INITIAL_LESSON_QUESTION_STATE,
@@ -6,10 +6,11 @@ import {
   type LessonQuestionState,
   lessonQuestionReducer,
 } from "./lesson-question-state";
+import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
 
 export type LessonQuestionSessionAction = {
   action: LessonQuestionAction;
-  context: PlayerQuestionContext;
+  context: LessonQuestionContext;
 };
 
 type LessonQuestionSessions = Partial<Record<string, LessonQuestionState>>;
@@ -20,13 +21,31 @@ export function getLessonQuestionSession({
   context,
   sessions,
 }: {
-  context: PlayerQuestionContext;
+  context: LessonQuestionContext;
   sessions: LessonQuestionSessions;
 }): LessonQuestionState {
   return sessions[getLessonQuestionScope(context)] ?? { ...INITIAL_LESSON_QUESTION_STATE, context };
 }
 
-/** Late responses update their own step, while revisiting a step restores its saved conversation immediately. */
+export function getShownLessonQuestionSession({
+  context,
+  session,
+}: {
+  context: LessonQuestionContext;
+  session: LessonQuestionState;
+}): LessonQuestionState {
+  if (isAboutCheckedAnswer(context)) {
+    return session;
+  }
+
+  const questions = session.questions.filter(
+    (question) =>
+      !isAboutCheckedAnswer(question.context) || doesLessonQuestionBlockNewQuestion(question),
+  );
+
+  return questions.length === session.questions.length ? session : { ...session, questions };
+}
+
 export function lessonQuestionSessionsReducer(
   state: LessonQuestionSessions,
   { action, context }: LessonQuestionSessionAction,

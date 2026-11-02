@@ -24,7 +24,6 @@ describe("Closed PR cleanup", () => {
     const deletions: string[] = [];
     const prReads: URL[] = [];
 
-    // Closing a PR deletes a database; intercept only the external provider boundaries.
     vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
       if (url.hostname === "api.github.com") {
         prReads.push(url);

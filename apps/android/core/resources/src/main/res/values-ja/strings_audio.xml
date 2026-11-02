@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "audio_check_failed": "4189d629d3db5a10697dc5a1f594dd13a2be8bfbb94ed4d75ef84a775b728e08",
+  "audio_checking": "09be0b34443ce96bdfa5aff29fa20cf400cec2ffca67249af4dde7785f806aa1",
+  "audio_checking_slow": "dc8f55279ca45cde58ccde60c28464cc0109e5c84da3a27ed7f57ebcb715b936",
+  "audio_did_not_play": "fe74943b1eac66053e4d89162b2bad8b89d92ecfae88706a598778466246b8ec",
+  "audio_getting_ready": "044cbc868ec019a7f5ef24f9a3ac3462ff22af9cb291516af66c3fc8d51734bd",
+  "audio_here_is_what_it_says": "70e538659f1065640d548af207c2de0c847da3e21032a3f973d81e9700548709",
+  "audio_listening": "c9348d8aefd9969ccd1cba95d7e4e18e9c7ee404a480dd5d5059e68e0ee09aa3",
+  "audio_microphone_off_answer": "90b63a3ed9a858d59cef86352d78c906857061091a380182a81ac2417428293a",
+  "audio_microphone_off_title": "12154dd0d90bcd2ddcdca1783c36ccb9fcc359797693643ba2e4e29b42310db2",
+  "audio_no_speech": "59688df3e7f3d67a754f719b43161f1cd677629f09fabe4deec27b2dd24a3005",
+  "audio_open_settings": "9945fe5c9979a3d245acb4c0ee47b7e75fa99feb86d6a2536dc26cf1d48822e2",
+  "audio_record": "8327ca0ab6c34341f29cc190040b83eecc676a3c891d85699258f5402327ec30",
+  "audio_record_stop": "c8146287dc6cca3de5a501f0c9e6d1c2bcb713af26790824e08587c34024a715",
+  "audio_say_it": "9d6812732fe8d393968e3ce7a104f3b82a90ffa5a3070a4dcb42dceefe83dfa6",
+  "audio_stop": "67ff582a452558ae1c77c577b18cbf0624e31b6f9d6969c3201d7c143e52850c",
+  "audio_try_again": "f0b8a4648895808bf6240d79cfa9b9625eec4916b22e6d01ac4a1b3a3b824a08",
+  "audio_try_again_label": "f3fe2290d4a82ee932039cab958881d189844ea72a74dafbb47b2298a0b99a12"
+}
+-->
+<resources>
+    <string name="audio_getting_ready">音声を準備しています…</string>
+    <string name="audio_stop">音声を止める</string>
+    <string name="audio_try_again_label">音声をもう一度再生する</string>
+    <string name="audio_did_not_play">音声を再生できませんでした。</string>
+    <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
+    <string name="audio_here_is_what_it_says">%1$s 音声の内容はこちらです：</string>
+    <string name="audio_try_again">もう一度試す</string>
+    <string name="audio_record">録音する</string>
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <string name="audio_record_stop">停止</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
+    <string name="audio_listening">録音しています…「停止」をタップすると答え合わせをします。</string>
+    <string name="audio_checking">答え合わせをしています…</string>
+    <string name="audio_checking_slow">答え合わせを続けています。いつもより時間がかかっています。</string>
+    <string name="audio_no_speech">言葉が聞き取れませんでした。もう一度試してください。</string>
+    <string name="audio_check_failed">今回は答え合わせができませんでした。もう一度試してください。</string>
+    <string name="audio_say_it">タップして声に出して言ってください</string>
+    <string name="audio_microphone_off_title">マイクがオフになっています</string>
+    <string name="audio_microphone_off_answer">声に出して答えるには、設定でZoonkにマイクの使用を許可してください。</string>
+    <string name="audio_open_settings">設定を開く</string>
+</resources>

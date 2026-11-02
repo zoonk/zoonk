@@ -2,11 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSession } from "./get-session";
 
-/**
- * Lets native clients offer Apple reauthentication during account deletion so
- * the server can revoke a linked Sign in with Apple grant. The bearer session
- * intentionally does not expose which providers the user has linked.
- */
+/** Requires sign-in; provider linkage is omitted from bearer sessions, so native deletion reads it separately. */
 export async function getCurrentUserHasAppleAccount() {
   const session = await getSession();
 

@@ -1,0 +1,389 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "detail": true,
+            "effect": true,
+            "means": true
+          },
+          "nextStepCriteria": ["c1", "c2", "c3", "c4"],
+          "totalBand": { "max": 1000, "min": 840 },
+          "zeroReason": null
+        },
+        "id": "enem-strong-pt-1",
+        "userInput": {
+          "essay": "No início do século XX, a Revolta da Vacina, no Rio de Janeiro, mostrou como a falta de informação pode transformar uma medida de saúde pública em motivo de medo e revolta. Mais de cem anos depois, o Brasil, que construiu um dos maiores programas públicos de imunização do mundo, volta a enfrentar a queda da cobertura vacinal, agora alimentada pela desinformação que circula nas redes. Esse cenário é agravado pela lógica das plataformas digitais e pela fragilidade da educação científica no país.\n\nEm primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais favorecem conteúdos que despertam emoções fortes, como o medo. Segundo o sociólogo Zygmunt Bauman, a modernidade líquida é marcada por vínculos frágeis e pela desconfiança em relação às instituições, e é justamente nesse ambiente que boatos sobre supostos efeitos colaterais ganham mais alcance do que os dados oficiais. Assim, pais que buscam orientação na internet frequentemente encontram primeiro o alarme falso, e não a explicação do especialista, o que os leva a adiar ou a recusar a vacinação dos filhos.\n\nAlém disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.\n\nPortanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.",
+          "language": "pt",
+          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": { "action": true, "agent": true, "effect": true, "means": false },
+          "nextStepCriteria": ["c2", "c3", "c5"],
+          "totalBand": { "max": 760, "min": 600 },
+          "zeroReason": null
+        },
+        "id": "enem-mid-missing-means-pt-1",
+        "userInput": {
+          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["c1"],
+          "totalBand": { "max": 600, "min": 320 },
+          "zeroReason": null
+        },
+        "id": "enem-weak-norm-errors-pt-1",
+        "userInput": {
+          "essay": "Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.\n\nPrimeiramente os livro são muito caro, uma pessoa pobre nao consegue comprar um livro de cinquenta reais, ai ela desiste. E tambem as biblioteca da minha cidade vive fechada ou nao tem livro novo, entao fica dificil. Concerteza se tivesse mais biblioteca os jovem ia ler mais.\n\nOutro ponto é que na escola os professor manda ler uns livro muito antigo, que ninguem entende, tipo Machado de Assis, e os aluno fica com raiva da leitura. Eu mesmo nunca terminei um livro que a escola mandou. Mais se fosse um livro que a gente gosta seria diferente, porque ai a pessoa le por vontade propria e nao por obrigação.\n\nPortanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["c2"],
+          "totalBand": { "max": 0, "min": 0 },
+          "zeroReason": "offTopic"
+        },
+        "id": "enem-off-topic-pt-1",
+        "userInput": {
+          "essay": "O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.\n\nEm primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.\n\nAlém disso, o ambiente digital expõe os pequenos a riscos como o contato com desconhecidos e o acesso a conteúdos impróprios. O Estatuto da Criança e do Adolescente garante a proteção integral desse público, mas as plataformas ainda falham em verificar a idade dos usuários.\n\nPortanto, o Ministério da Educação deve incluir a educação digital no currículo escolar, por meio de aulas semanais sobre o uso consciente da internet, a fim de proteger as crianças. Além disso, as famílias devem acompanhar o que os filhos acessam.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "en",
+          "interventionElements": { "action": true, "agent": true, "effect": true, "means": false },
+          "nextStepCriteria": ["c2", "c3", "c5"],
+          "totalBand": { "max": 760, "min": 600 },
+          "zeroReason": null
+        },
+        "id": "enem-mid-missing-means-feedback-en-1",
+        "userInput": {
+          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
+          "language": "en",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["c2"],
+          "totalBand": { "max": 0, "min": 0 },
+          "zeroReason": "tooShort"
+        },
+        "id": "enem-too-short-pt-1",
+        "userInput": {
+          "essay": "A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 14.5 (range 12.5–16.5), expected 11–17.5.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 14.5 (range 12.5–16.5), expected 11–17.5.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 14.5 (range 12.5–16.5), expected 11–17.5.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["criterion-4"],
+          "totalBand": { "max": 17.5, "min": 11 },
+          "zeroReason": null
+        },
+        "id": "cebraspe-discursive-lai-pt-1",
+        "userInput": {
+          "essay": "A Lei n.º 12.527/2011, conhecida como Lei de Acesso à Informação (LAI), regulamenta o direito constitucional de acesso a informações públicas e consagra a publicidade como regra e o sigilo como exceção.\n\nA transparência ativa corresponde ao dever dos órgãos e das entidades públicas de divulgar, independentemente de requerimento, informações de interesse coletivo, como despesas, contratos e licitações, preferencialmente em seus sítios oficiais na internet. Já a transparência passiva ocorre quando o cidadão formula um pedido de acesso, que pode ser apresentado por qualquer interessado, sem necessidade de justificar os motivos da solicitação.\n\nQuanto aos prazos, o órgão deve conceder o acesso imediato à informação disponível. Não sendo possível, terá até 20 dias para responder, prazo que pode ser prorrogado por mais 10 dias, mediante justificativa expressa ao requerente.\n\nPor fim, a lei permite classificar como sigilosas as informações imprescindíveis à segurança da sociedade ou do Estado. Nesse caso, a informação ultrassecreta fica restrita por até 50 anos, a secreta por até 25 anos e a reservada por até 10 anos, podendo esses prazos ser renovados indefinidamente pela autoridade competente.\n\nDessa forma, a LAI fortalece o controle social e a participação cidadã na administração pública.",
+          "keyPoints": [
+            "Transparência ativa: os órgãos divulgam informações de interesse coletivo independentemente de requerimento (art. 8º); transparência passiva: atendimento a pedidos de acesso de qualquer interessado (art. 10)",
+            "Acesso imediato; não sendo possível, prazo de até 20 dias, prorrogável por mais 10 dias mediante justificativa expressa (art. 11)",
+            "Graus de sigilo: ultrassecreta até 25 anos, secreta até 15 anos e reservada até 5 anos (art. 24, § 1º)"
+          ],
+          "language": "pt",
+          "prompt": "Redija um texto dissertativo acerca da Lei de Acesso à Informação (Lei n.º 12.527/2011). Ao elaborar seu texto, aborde os seguintes aspectos:\n1 a diferença entre transparência ativa e transparência passiva;\n2 os prazos para a resposta a um pedido de acesso;\n3 a classificação de informações sigilosas e os prazos máximos de restrição de acesso.",
+          "rubric": {
+            "criteria": [
+              {
+                "criterion": "Apresentação e estrutura textual",
+                "description": "Texto dissertativo organizado em introdução, desenvolvimento e conclusão, com parágrafos, clareza e correção gramatical"
+              },
+              {
+                "criterion": "Aspecto 1: transparência ativa e passiva",
+                "description": "Transparência ativa: os órgãos divulgam informações de interesse coletivo independentemente de requerimento (art. 8º); transparência passiva: atendimento a pedidos de acesso de qualquer interessado (art. 10)"
+              },
+              {
+                "criterion": "Aspecto 2: prazos de resposta",
+                "description": "Acesso imediato; não sendo possível, prazo de até 20 dias, prorrogável por mais 10 dias mediante justificativa expressa (art. 11)"
+              },
+              {
+                "criterion": "Aspecto 3: sigilo e prazos",
+                "description": "Graus de sigilo: ultrassecreta até 25 anos, secreta até 15 anos e reservada até 5 anos (art. 24, § 1º)"
+              }
+            ],
+            "kind": "custom",
+            "maxScore": 20
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 23 (range 19.4–26.6), expected 18–26.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 23 (range 19.4–26.6), expected 18–26.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 23 (range 19.4–26.6), expected 18–26.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "en",
+          "nextStepCriteria": ["criterion-1"],
+          "totalBand": { "max": 26, "min": 18 },
+          "zeroReason": null
+        },
+        "id": "ielts-task-2-free-university-en-1",
+        "userInput": {
+          "essay": "In today's world, education is very important for everyone. Many people think that university should be free and I agree with this idea because of many reasons.\n\nFirstly, free university give more opportunities to poor students. In my country, a lot of young people cannot go to university because their family don't have enough money to pay the fees. If university is free, these students can study and get a better job in the future. This is good for them and also for the economy of the country, because the country will have more skilled workers like doctors and engineers.\n\nSecondly, education is a human right. Governments already pay for primary and secondary school, so it is logical that they also pay for university. For example, in Germany university is free and the country has a very strong economy. So other countries should follow this example.\n\nFurthermore, when students have to pay, many of them take big loans and they spend many years paying back the debt. This create a lot of stress and some students even quit their studies. Free education will solve this problem.\n\nOf course, some people have different opinion about this topic.\n\nIn conclusion, I strongly believe that university education should be free for all students because it gives opportunities, it is a human right and it reduces stress.",
+          "language": "en",
+          "prompt": "IELTS Academic Writing Task 2. Write at least 250 words.\nSome people believe that university education should be free for all students, while others think students should pay for their own studies. Discuss both views and give your own opinion.",
+          "rubric": {
+            "criteria": [
+              {
+                "criterion": "Task Response",
+                "description": "Band 0 to 9: addresses all parts of the task (both views and a clear opinion) with relevant, extended and supported ideas"
+              },
+              {
+                "criterion": "Coherence and Cohesion",
+                "description": "Band 0 to 9: logical organization, clear paragraphing and a range of cohesive devices used appropriately"
+              },
+              {
+                "criterion": "Lexical Resource",
+                "description": "Band 0 to 9: range and precision of vocabulary, collocation, spelling and word formation"
+              },
+              {
+                "criterion": "Grammatical Range and Accuracy",
+                "description": "Band 0 to 9: range of structures and how many sentences are free of grammar and punctuation errors"
+              }
+            ],
+            "kind": "custom",
+            "maxScore": 36
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 1.4 (range 0.9–1.9), expected 0.8–2.6.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 1.4 (range 0.9–1.9), expected 0.8–2.6.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 1.4 (range 0.9–1.9), expected 0.8–2.6.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["legal-basis"],
+          "totalBand": { "max": 2.6, "min": 0.8 },
+          "zeroReason": null
+        },
+        "id": "oab-peca-consumer-refund-pt-1",
+        "userInput": {
+          "essay": "EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ___ VARA CÍVEL DA COMARCA DE BELO HORIZONTE/MG\n\nJOANA MARTINS, brasileira, solteira, professora, inscrita no CPF sob o n.º..., residente e domiciliada em Belo Horizonte/MG, por seu advogado, vem propor\n\nAÇÃO DE RESTITUIÇÃO DE QUANTIA PAGA C/C INDENIZAÇÃO POR DANOS MATERIAIS\n\nem face de CASA FRIA ELETRODOMÉSTICOS LTDA., pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º..., com sede em Belo Horizonte/MG, pelos fatos e fundamentos a seguir.\n\nI – DOS FATOS\nA autora comprou da ré, em 5 de março de 2026, uma geladeira por R$ 4.000,00. Vinte dias depois, o aparelho parou de refrigerar. O produto foi levado à assistência técnica indicada pela loja em 26 de março e, até 15 de maio, o problema não foi resolvido. A ré se recusa a devolver o valor, alegando que a responsabilidade é do fabricante. A autora ainda perdeu alimentos no valor de R$ 600,00.\n\nII – DO DIREITO\nTrata-se de relação de consumo, pois a autora é consumidora e a ré é fornecedora.\nO Código de Defesa do Consumidor, em seu art. 12, estabelece que o fabricante responde pelos danos causados por defeitos do produto. Embora o art. 13 diga que o comerciante responde apenas de forma subsidiária, no caso a loja deve responder porque vendeu o produto à autora.\nAlém disso, a autora teve prejuízo com os alimentos perdidos, que deve ser indenizado, conforme o art. 186 do Código Civil.\n\nIII – DOS PEDIDOS\nDiante do exposto, requer:\na) a condenação da ré à devolução do valor de R$ 4.000,00;\nb) a condenação da ré ao pagamento de R$ 600,00 pelos alimentos perdidos;\nc) a condenação da ré ao pagamento de custas e honorários advocatícios.\n\nNestes termos, pede deferimento.\nBelo Horizonte, data.\nAdvogado, OAB n.º...",
+          "keyPoints": [
+            "Endereçamento ao Juízo da Vara Cível da Comarca de Belo Horizonte/MG, foro do domicílio da consumidora (art. 101, I, do CDC)",
+            "Partes: Joana Martins (autora) e Casa Fria Eletrodomésticos Ltda. (ré)",
+            "Breve exposição dos fatos",
+            "Relação de consumo: consumidora e fornecedora (arts. 2º e 3º do CDC)",
+            "Responsabilidade solidária do comerciante pelo vício do produto (art. 18, caput, do CDC), afastando a alegação de responsabilidade exclusiva do fabricante",
+            "Vício não sanado em 30 dias: restituição imediata da quantia paga, monetariamente atualizada, sem prejuízo de perdas e danos (art. 18, § 1º, II, do CDC)",
+            "Danos materiais pelos alimentos perdidos (art. 6º, VI, do CDC)",
+            "Inversão do ônus da prova (art. 6º, VIII, do CDC)",
+            "Pedidos: citação da ré, opção pela audiência de conciliação, inversão do ônus da prova, restituição de R$ 4.000,00 atualizados, indenização de R$ 600,00, custas e honorários, produção de provas",
+            "Valor da causa de R$ 4.600,00 (art. 292, VI, do CPC); local, data, advogado e OAB"
+          ],
+          "language": "pt",
+          "prompt": "Joana Martins, solteira, professora, residente em Belo Horizonte/MG, comprou em 5 de março de 2026, na loja Casa Fria Eletrodomésticos Ltda., com sede em Belo Horizonte/MG, uma geladeira nova por R$ 4.000,00. Vinte dias depois, o aparelho parou de refrigerar. Em 26 de março, Joana levou o produto à assistência técnica indicada pela loja e, até 15 de maio, o vício não havia sido sanado. A loja se recusa a trocar o produto ou a devolver o valor pago, alegando que a responsabilidade é exclusiva do fabricante. Joana perdeu alimentos no valor de R$ 600,00, comprovados por notas fiscais.\nNa qualidade de advogado(a) de Joana, que deseja receber de volta o valor pago e ser indenizada pelo prejuízo, sem recorrer ao Juizado Especial, elabore a peça processual cabível. (Valor: 5,00)",
+          "rubric": { "kind": "oab" }
+        }
+      }
+    }
+  ],
+  "taskId": "grade-essay"
+}

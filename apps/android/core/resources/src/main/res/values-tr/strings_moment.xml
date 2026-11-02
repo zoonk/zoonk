@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "moment_brain_power": "5f02b3a7589a03bf65803d0620166fbb9b504cb2e6a3333fff4e489c1894b0d6",
+  "moment_score": "d15a9fd9b719464c0eda45ffe08953a15ed43667b18c6c0d7aa749a8d3aae143",
+  "moment_score_spoken": "4cec963839a74641c04729c836836588422f39290b9987352346e062c9edfad2"
+}
+-->
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="one">%1$s / %2$s doğru</item>
+        <item quantity="other">%1$s / %2$s doğru</item>
+    </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="one">%1$s / %2$s kelimeyi doğru söyledin</item>
+        <item quantity="other">%1$s / %2$s kelimeyi doğru söyledin</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">+%1$s Beyin Gücü</string>
+</resources>

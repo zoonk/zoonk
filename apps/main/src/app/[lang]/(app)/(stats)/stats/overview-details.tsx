@@ -1,0 +1,162 @@
+import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
+import { type getScoreHistory } from "@zoonk/core/progress/get-score-history";
+import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
+import {
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowLink,
+  ListRowTitle,
+  ListRowTrailing,
+} from "@zoonk/learn/list";
+import {
+  PageSection,
+  PageSectionDetail,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "@zoonk/learn/page";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { ChevronRightIcon } from "lucide-react";
+import { getExtracted, getFormatter } from "next-intl/server";
+import { PatternsNote, getBestDayName, getBestTimeName } from "../patterns/pattern-summary";
+import { ScoreChart } from "../score/score-chart";
+import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";
+
+const PERCENT = 100;
+
+export async function ScoreTrend({
+  history,
+}: {
+  history: Awaited<ReturnType<typeof getScoreHistory>> | null;
+}) {
+  const t = await getExtracted();
+  const format = await getFormatter();
+
+  return (
+    <PageSection aria-labelledby="overview-score">
+      <PageSectionHeader>
+        <PageSectionTitle id="overview-score">{t("Score · 90 days")}</PageSectionTitle>
+        {history && (
+          <PageSectionDetail>
+            {formatMetricPercent({ format, value: history.score })}
+          </PageSectionDetail>
+        )}
+      </PageSectionHeader>
+
+      {history ? (
+        <ScoreChart
+          dataPoints={history.dataPoints}
+          media={OVERVIEW_CHART_MEDIA}
+          performance={history}
+        />
+      ) : (
+        <p className="text-muted-foreground text-sm">
+          {t("Your score shows after your first answers.")}
+        </p>
+      )}
+    </PageSection>
+  );
+}
+
+async function getWeekSpread(patterns: ScorePatternsData): Promise<string | null> {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const spread = patterns.weekSpread;
+
+  if (!spread) {
+    return null;
+  }
+
+  const percent = (value: number) =>
+    format.number(value / PERCENT, { maximumFractionDigits: 0, style: "percent" });
+
+  return t("{low}–{high}", { high: percent(spread.high), low: percent(spread.low) });
+}
+
+function PatternsRow({
+  label,
+  score,
+  value,
+}: {
+  label: string;
+  score?: string | null;
+  value: string;
+}) {
+  return (
+    <ListRow>
+      <ListRowContent>
+        <ListRowTitle>{label}</ListRowTitle>
+      </ListRowContent>
+      <ListRowTrailing className="gap-3">
+        <span className="text-foreground font-sans text-sm first-letter:uppercase">{value}</span>
+        {score && <span>{score}</span>}
+      </ListRowTrailing>
+    </ListRow>
+  );
+}
+
+async function getBestScore(verdict: { best?: { score: number }; kind: string }) {
+  const format = await getFormatter();
+
+  return verdict.kind === "best" && verdict.best
+    ? format.number(verdict.best.score / PERCENT, { maximumFractionDigits: 0, style: "percent" })
+    : null;
+}
+
+export async function PatternsOverview({ patterns }: { patterns: ScorePatternsData | null }) {
+  const t = await getExtracted();
+
+  const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
+  const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
+  const spread = patterns ? await getWeekSpread(patterns) : null;
+  const dayScore = patterns ? await getBestScore(patterns.dayVerdict) : null;
+  const timeScore = patterns ? await getBestScore(patterns.timeVerdict) : null;
+
+  return (
+    <PageSection aria-labelledby="overview-patterns">
+      <PageSectionHeader>
+        <PageSectionTitle id="overview-patterns">{t("Patterns · 90 days")}</PageSectionTitle>
+        <Link
+          className={buttonVariants({ className: "-my-1 -mr-2.5", size: "sm", variant: "ghost" })}
+          href={getMenu("patterns").url}
+          prefetch
+        >
+          {t("See all")}
+          <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
+        </Link>
+      </PageSectionHeader>
+
+      <ListGroup>
+        <PatternsRow label={t("Best day")} score={dayScore} value={day ?? t("Not yet")} />
+        <PatternsRow label={t("Best time")} score={timeScore} value={time ?? t("Not yet")} />
+        {spread && <PatternsRow label={t("Spread across the week")} value={spread} />}
+      </ListGroup>
+
+      {patterns && <PatternsNote patterns={patterns} />}
+    </PageSection>
+  );
+}
+
+export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsData | null }) {
+  const t = await getExtracted();
+
+  const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
+  const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
+
+  const value = [day, time].filter(Boolean).join(" · ");
+
+  return (
+    <ListGroup className="md:hidden">
+      <ListRowLink href={getMenu("patterns").url}>
+        <ListRowContent>
+          <ListRowTitle>{t("Patterns")}</ListRowTitle>
+        </ListRowContent>
+        <ListRowTrailing className="font-sans text-sm first-letter:uppercase">
+          {value || t("Not yet")}
+        </ListRowTrailing>
+      </ListRowLink>
+    </ListGroup>
+  );
+}

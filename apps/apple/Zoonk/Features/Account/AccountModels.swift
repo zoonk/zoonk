@@ -1,7 +1,7 @@
 import Foundation
 
 struct CurrentAccount: Decodable, Equatable {
-  let account: AccountAccess
+  var account: AccountAccess
   let user: AccountUser
 
   var needsProfileSetup: Bool {
@@ -11,39 +11,35 @@ struct CurrentAccount: Decodable, Equatable {
 
 struct AccountAccess: Decodable, Equatable {
   let deletion: AccountDeletionRequirements
-  let subscription: AccountSubscription?
-
-  var subscriptionAction: AccountSubscriptionAction {
-    guard let subscription else {
-      return .subscribe
-    }
-
-    switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-    case .apple:
-      return .manageAppStore
-    case .google:
-      return .explainGooglePlayManagement
-    case nil:
-      return .contactSupport
-    }
-  }
-}
-
-enum AccountSubscriptionAction: Equatable {
-  case contactSupport
-  case explainGooglePlayManagement
-  case manageAppStore
-  case subscribe
+  var subscription: AccountSubscription?
 }
 
 struct AccountDeletionRequirements: Decodable, Equatable {
   let hasAppleAccount: Bool
 }
 
-struct AccountSubscription: Decodable, Equatable {
+struct AccountSubscription: Decodable, Equatable, Hashable {
   let plan: String
   let provider: String
   let status: String?
+  /// When a subscription set to end ends: the date it was set to end, or the end of its paid period
+  /// once its renewal is stopped.
+  var endsAt: Date? = nil
+  var periodEnd: Date? = nil
+}
+
+/// Plus bought on the website, which can sit beside a newer store purchase.
+struct WebPlus: Decodable, Equatable {
+  enum State: String, Decodable {
+    case renewing
+    case ending
+    /// The renewal payment failed, so canceling ends Plus right away and stops the retries.
+    case unpaid
+  }
+
+  let state: State
+  /// When renewing Plus would end if canceled, or when ending Plus ends; nil when unpaid.
+  let periodEnd: Date?
 }
 
 struct AppleSubscriptionSynchronization: Equatable {
@@ -96,9 +92,15 @@ enum AccountSessionState: Equatable {
   case signedOut
   case signedIn(CurrentAccount)
   case unavailable
+
+  var account: CurrentAccount? {
+    if case .signedIn(let account) = self { account } else { nil }
+  }
 }
 
 enum AccountFailure: Equatable {
+  case botDetected
+  case emailCodeDelivery
   case accountDeletion
   case accountMismatch
   case disposableEmail

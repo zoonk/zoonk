@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">Your plan needs a document</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">Upload</string>
+    <string name="research_upload_thanks">Thanks. We\'re reading it now, and your plan will update in a few minutes.</string>
+    <string name="research_upload_sending">Sending it to be read…</string>
+    <string name="research_not_now">Not now</string>
+    <string name="research_class_title">Add your class material</string>
+    <string name="research_class_body">Your teacher\'s test isn\'t published anywhere. Upload the slides, notes or list of topics so your plan follows your class.</string>
+    <string name="research_class_action">Upload your material</string>
+    <string name="research_source_title">We couldn\'t find the official source</string>
+    <string name="research_source_body">Upload the official text or guide you study from so your lessons follow it.</string>
+    <string name="research_source_action">Upload a document</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">We couldn\'t find the official notice</string>
+    <string name="research_notice_body">Upload the notice so your plan follows the real exam.</string>
+    <string name="research_notice_action">Upload the notice</string>
+    <string name="research_guide_title">We couldn\'t find the official guide</string>
+    <string name="research_guide_body">Upload the official guide so your plan follows the real exam.</string>
+    <string name="research_guide_action">Upload the official guide</string>
+    <string name="research_unverified_title">We couldn\'t confirm the exam\'s details</string>
+    <string name="research_unverified_notice_body">What we found didn\'t match the exam\'s details. Upload the official notice so your plan follows the real exam.</string>
+    <string name="research_unverified_guide_body">What we found didn\'t match the exam\'s details. Upload the official guide so your plan follows the real exam.</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">What changed</string>
+</resources>

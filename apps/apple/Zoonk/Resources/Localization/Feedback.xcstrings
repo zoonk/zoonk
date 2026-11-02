@@ -22,10 +22,40 @@
             "value" : "Annuler"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuluj"
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancelar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vazgeç"
           }
         }
       }
@@ -36,7 +66,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe deine E-Mail-Adresse und deine Nachricht und versuche es dann erneut."
+            "value" : "Prüf deine E-Mail-Adresse und deine Nachricht und versuch es noch einmal."
           }
         },
         "es" : {
@@ -51,10 +81,40 @@
             "value" : "Vérifie ton adresse e-mail et ton message, puis réessaie."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlla l’indirizzo email e il messaggio, poi riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスとメッセージを確認して、もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 주소와 메시지를 확인하고 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź adres e-mail i treść wiadomości, a potem spróbuj ponownie."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu email e mensagem e tente de novo."
+            "value" : "Confira seu e-mail e sua mensagem e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta adresini ve mesajını kontrol edip tekrar dene."
           }
         }
       }
@@ -71,7 +131,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Listo"
+            "value" : "Cerrar"
           }
         },
         "fr" : {
@@ -80,10 +140,40 @@
             "value" : "Terminé"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fine"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamknij"
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OK"
+            "value" : "Concluído"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
           }
         }
       }
@@ -109,39 +199,40 @@
             "value" : "Adresse e-mail"
           }
         },
-        "pt" : {
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endereço de email"
-          }
-        }
-      }
-    },
-    "Feedback" : {
-      "comment" : "Navigation title for the feedback form.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback"
+            "value" : "Indirizzo email"
           }
         },
-        "es" : {
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comentarios"
+            "value" : "メールアドレス"
           }
         },
-        "fr" : {
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commentaires"
+            "value" : "이메일 주소"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adres e-mail"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback"
+            "value" : "Endereço de e-mail"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta adresi"
           }
         }
       }
@@ -152,30 +243,119 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback konnte nicht gesendet werden. Versuche es später erneut."
+            "value" : "Dein Feedback konnte nicht gesendet werden. Versuch es später noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos enviar tus comentarios. Inténtalo más tarde."
+            "value" : "No se pudieron enviar tus comentarios. Inténtalo más tarde."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’envoyer ton message. Réessaie plus tard."
+            "value" : "Ton avis n’a pas pu être envoyé. Réessaie plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile inviare il feedback. Riprova più tardi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィードバックを送信できませんでした。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의견을 보내지 못했어요. 나중에 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się wysłać opinii. Spróbuj ponownie później."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível enviar o feedback. Tente de novo mais tarde."
+            "value" : "Não foi possível enviar sua mensagem. Tente de novo mais tarde."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri bildirim gönderilemedi. Daha sonra tekrar dene."
           }
         }
       }
     },
-    "How can we help?" : {
+    "Found a problem or have an idea? Tell us below or email hello@zoonk.com." : {
+      "comment" : "Introduction shown above the feedback fields.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hast du ein Problem entdeckt oder eine Idee? Schreib uns hier oder per E-Mail an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Encontraste un problema o tienes una idea? Cuéntanos abajo o escríbenos a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as rencontré un problème ou tu as une idée ? Dis-le-nous ci-dessous ou écris-nous à hello@zoonk.com."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai trovato un problema o hai un’idea? Scrivici qui sotto o via email a hello@zoonk.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "気になる点やアイデアはありますか？下のフォームか、hello@zoonk.comへのメールでお知らせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제를 발견했거나 아이디어가 떠올랐나요? 아래에 적어 주시거나 hello@zoonk.com으로 이메일을 보내 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coś nie działa lub masz pomysł? Napisz nam poniżej lub na adres hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrou um problema ou tem uma ideia? Conte pra gente abaixo ou envie um e-mail para contato@zoonk.com."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder."
+          }
+        }
+      }
+    },
+    "How can we help you?" : {
       "comment" : "Placeholder in the feedback message field.",
       "localizations" : {
         "de" : {
@@ -193,13 +373,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment peut-on t’aider ?"
+            "value" : "Comment peut-on t’aider ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come possiamo aiutarti?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何かお手伝いできることはありますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무엇을 도와드릴까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jak możemy ci pomóc?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como a gente pode ajudar?"
+            "value" : "Como a gente pode te ajudar?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sana nasıl yardımcı olabiliriz?"
           }
         }
       }
@@ -225,39 +435,105 @@
             "value" : "Message"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Messaggio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メッセージ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiadomość"
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mensagem"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesaj"
+          }
         }
       }
     },
-    "Please provide as much detail as possible." : {
-      "comment" : "Guidance below the feedback message field.",
+    "Report a problem" : {
+      "comment" : "Navigation title for the form reporting a problem with a page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bitte beschreibe dein Anliegen so genau wie möglich."
+            "value" : "Problem melden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Report a problem"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluye todos los detalles que puedas."
+            "value" : "Reportar un problema"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donne-nous autant de détails que possible."
+            "value" : "Signaler un problème"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segnala un problema"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を報告する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 신고"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgłoszenie problemu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dê o máximo de detalhes possível."
+            "value" : "Informar um problema"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorun bildir"
           }
         }
       }
@@ -283,10 +559,99 @@
             "value" : "Envoyer"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보내기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyślij"
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gönder"
+          }
+        }
+      }
+    },
+    "Send feedback" : {
+      "comment" : "Navigation title for the feedback form.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donner ton avis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia feedback"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィードバックを送る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의견 보내기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja opinia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar feedback"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri bildirim gönder"
           }
         }
       }
@@ -309,71 +674,161 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoi du message"
+            "value" : "Envoi de ton avis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo inviando il feedback"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィードバックを送信しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의견을 보내고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wysyłamy opinię"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviando feedback"
+            "value" : "Enviando comentários"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri bildirimini gönderiyoruz"
           }
         }
       }
     },
-    "Share feedback, ask a question, or tell us what we could improve." : {
-      "comment" : "Introduction shown above the feedback fields.",
+    "Thanks! We got your message." : {
+      "comment" : "Confirmation after feedback is sent.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib uns Feedback, stell eine Frage oder sag uns, was wir verbessern können."
+            "value" : "Danke! Deine Nachricht ist angekommen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparte tus comentarios, haznos una pregunta o cuéntanos qué podríamos mejorar."
+            "value" : "¡Gracias! Recibimos tu mensaje."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donne-nous ton avis, pose une question ou dis-nous ce que nous pourrions améliorer."
+            "value" : "Merci ! Nous avons bien reçu ton message."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grazie! Abbiamo ricevuto il tuo messaggio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ありがとうございます！メッセージを受け取りました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "고마워요! 메시지를 잘 받았어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzięki! Twoja wiadomość dotarła."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envie seu feedback, faça uma pergunta ou conte para a gente o que podemos melhorar."
+            "value" : "Valeu! Recebemos sua mensagem."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teşekkürler! Mesajını aldık."
           }
         }
       }
     },
-    "Thanks for your feedback" : {
-      "comment" : "Confirmation title after feedback is sent.",
+    "This screen is attached" : {
+      "comment" : "Says the message is sent with the page it was written on",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Danke für dein Feedback"
+            "value" : "Diese Seite wird mitgesendet"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gracias por tus comentarios"
+            "value" : "Se adjunta esta pantalla"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Merci pour ton message"
+            "value" : "Cette page est jointe au message"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa schermata è allegata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この画面も添付されます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 화면이 함께 첨부돼요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dołączono ten ekran"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agradecemos seu feedback"
+            "value" : "Esta tela está anexada"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ekran mesaja eklendi"
           }
         }
       }
@@ -390,7 +845,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usaremos este correo electrónico para contactarte."
+            "value" : "Usaremos este correo para contactarte."
           }
         },
         "fr" : {
@@ -399,10 +854,40 @@
             "value" : "Nous utiliserons cette adresse e-mail pour te contacter."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Useremo questo indirizzo email per contattarti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ご連絡にはこのメールアドレスを使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 이메일 주소로 연락드릴게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Użyjemy tego adresu e-mail, by się z tobą skontaktować."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente vai usar este email para falar com você."
+            "value" : "Vamos usar este e-mail para entrar em contato com você."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sana ulaşmak için bu e-posta adresini kullanacağız."
           }
         }
       }
@@ -413,13 +898,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist offline. Überprüfe deine Verbindung und versuche es erneut."
+            "value" : "Du bist offline. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión. Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "Estás sin conexión. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -428,10 +913,40 @@
             "value" : "Tu es hors ligne. Vérifie ta connexion et réessaie."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non c’è connessione. Controlla la rete e riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフラインです。ネット接続を確認して、もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인터넷에 연결되어 있지 않아요. 연결 상태를 확인하고 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você está sem conexão. Confira sua internet e tente de novo."
+            "value" : "Você está sem internet. Confira sua conexão e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İnternet bağlantın yok. Bağlantını kontrol edip tekrar dene."
           }
         }
       }
@@ -457,39 +972,40 @@
             "value" : "you@example.com"
           }
         },
-        "pt" : {
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "you@example.com"
           }
-        }
-      }
-    },
-    "Your message was sent." : {
-      "comment" : "Confirmation message after feedback is sent.",
-      "localizations" : {
-        "de" : {
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Nachricht wurde gesendet."
+            "value" : "you@example.com"
           }
         },
-        "es" : {
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu mensaje se ha enviado."
+            "value" : "you@example.com"
           }
         },
-        "fr" : {
+        "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton message a été envoyé."
+            "value" : "you@example.com"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua mensagem foi enviada."
+            "value" : "voce@example.com"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you@example.com"
           }
         }
       }

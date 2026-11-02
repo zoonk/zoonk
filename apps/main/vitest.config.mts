@@ -1,13 +1,21 @@
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: [
       {
-        // Use @zoonk/auth/testing in tests to avoid nextCookies() which requires Next.js context
+        // Match next-intl's production alias for precompiled PO messages.
+        find: /^use-intl\/format-message$/u,
+        replacement: createRequire(import.meta.resolve("next-intl")).resolve(
+          "use-intl/format-message/format-only",
+        ),
+      },
+      {
+        // nextCookies() needs a Next.js request context.
         find: /^@zoonk\/auth$/u,
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
@@ -16,15 +24,18 @@ export default defineConfig({
   },
   test: {
     deps: { optimizer: { ssr: { include: ["next"] } } },
-    env: { ...getTestEnvironment("test"), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
+    env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
+    globalSetup: ["../../packages/db/src/test-database.ts"],
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200
-        inline: ["next-intl"],
+        inline: ["next-intl", "use-intl"],
       },
     },
     setupFiles: "./setup-tests.ts",
+    // On CI two real-database suites share a 4-vCPU runner, where a 1-second test takes four or five.
+    testTimeout: 15_000,
   },
 });

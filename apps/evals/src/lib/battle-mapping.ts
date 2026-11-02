@@ -3,11 +3,6 @@ import { type BattleMatchup, type ModelRanking } from "./types";
 
 type BattleModelMapping = Pick<ModelRanking, "anonymousId" | "modelId">;
 
-/**
- * Judges may change the case or separator in an anonymous label even when the
- * prompt uses labels such as "Model A". Reducing harmless variants to the same
- * value keeps every judge attached to the model that received that label.
- */
 export function normalizeAnonymousId(anonymousId: string): string {
   return anonymousId
     .trim()
@@ -17,12 +12,6 @@ export function normalizeAnonymousId(anonymousId: string): string {
     .toUpperCase();
 }
 
-/**
- * Uses rankings that already contain configured model IDs to recover the
- * anonymous mapping for older battle files. Earlier runs sometimes persisted
- * Opus labels such as "model_A" as model IDs, while other judges in the same
- * matchup retained the real anonymous-to-model relationship.
- */
 function getBattleModelMappings(matchup: BattleMatchup): Map<string, BattleModelMapping> {
   const mappings = new Map<string, BattleModelMapping>();
 
@@ -46,10 +35,6 @@ function getBattleModelMappings(matchup: BattleMatchup): Map<string, BattleModel
   return mappings;
 }
 
-/**
- * Reconnects one malformed historical ranking when another judge preserved the
- * real model ID for the same anonymous output.
- */
 function resolveBattleRanking({
   mappings,
   ranking,
@@ -68,11 +53,6 @@ function resolveBattleRanking({
     : ranking;
 }
 
-/**
- * Repairs model IDs from historical judge results without changing valid
- * rankings. This lets existing leaderboards group every judge under the same
- * configured model instead of requiring the battle to be generated again.
- */
 export function resolveBattleMatchupModelIds(matchup: BattleMatchup): BattleMatchup {
   const mappings = getBattleModelMappings(matchup);
 

@@ -1,4 +1,6 @@
+import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
+import { authRateLimitError } from "@/lib/auth-rate-limit-error";
 import { sessionErrorCodes } from "@/lib/session-error-codes";
 import { DISPOSABLE_EMAIL_ERROR_MESSAGE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
@@ -6,26 +8,6 @@ import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/na
 
 function isInvalidSocialAuthorization(error: unknown) {
   return getAuthError(error)?.statusCode === httpStatus.unauthorized;
-}
-
-function getRateLimitErrorResponse(error: unknown) {
-  const authError = getAuthError(error);
-
-  if (authError?.statusCode !== httpStatus.tooManyRequests) {
-    return null;
-  }
-
-  const response = createErrorResponse({
-    code: sessionErrorCodes.rateLimitExceeded,
-    message: "Too many requests. Try again later",
-    status: httpStatus.tooManyRequests,
-  });
-
-  if (authError.retryAfter !== undefined) {
-    response.headers.set("Retry-After", authError.retryAfter.toString());
-  }
-
-  return response;
 }
 
 function getAccountDisabledErrorResponse(error: unknown) {
@@ -40,8 +22,27 @@ function getAccountDisabledErrorResponse(error: unknown) {
     : null;
 }
 
+/** Native apps send no fetch metadata, so only a request claiming a browser page needs a trusted Origin. */
+function getUntrustedOriginErrorResponse(error: unknown) {
+  return getAuthError(error)?.code === accessErrorCodes.untrustedOrigin
+    ? createErrorResponse({
+        code: accessErrorCodes.untrustedOrigin,
+        message: "This request comes from a page Zoonk doesn't trust",
+        status: httpStatus.forbidden,
+      })
+    : null;
+}
+
 function getSharedSessionErrorResponse(error: unknown) {
   const authError = getAuthError(error);
+
+  if (authError?.code === accessErrorCodes.botDetected) {
+    return createErrorResponse({
+      code: accessErrorCodes.botDetected,
+      message: "This request looks automated",
+      status: httpStatus.forbidden,
+    });
+  }
 
   if (authError?.code === sessionErrorCodes.disposableEmail) {
     return createErrorResponse({
@@ -51,7 +52,11 @@ function getSharedSessionErrorResponse(error: unknown) {
     });
   }
 
-  return getRateLimitErrorResponse(error) ?? getAccountDisabledErrorResponse(error);
+  return (
+    getUntrustedOriginErrorResponse(error) ??
+    authRateLimitError(error) ??
+    getAccountDisabledErrorResponse(error)
+  );
 }
 
 export function getEmailSessionErrorResponse(error: unknown) {

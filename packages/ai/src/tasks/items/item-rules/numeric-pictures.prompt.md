@@ -1,0 +1,1 @@
+- `numeric` questions never point at a picture, since their numbers change each time they're asked.

@@ -1,84 +1,52 @@
 import {
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
+import {
   AdminEditFormSkeleton,
   AdminEditFormSkeletonActions,
   AdminEditFormSkeletonField,
 } from "@/components/admin-edit-form";
+import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { getCourse } from "@/data/courses/get-course";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { CourseCurriculum } from "./course-curriculum";
 import { CourseForm } from "./course-form";
 
-export const metadata: Metadata = { title: "Edit Course" };
+export async function generateMetadata({ params }: PageProps<"/courses/[id]">): Promise<Metadata> {
+  const { id } = await params;
 
-/**
- * The course editor stays anchored to the catalog list through the same compact
- * breadcrumb pattern used by other admin detail pages.
- */
-function CourseBreadcrumb() {
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getCourse(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.title };
+}
+
+const COURSE_PARENTS = [{ href: "/courses", label: "Courses" }];
+
+export default function CoursePage({ params }: PageProps<"/courses/[id]">) {
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/courses">Courses</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Edit</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+    <AdminDetailPage>
+      <Suspense fallback={<CourseSkeleton />}>
+        <CourseContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
-/**
- * The static course edit shell streams the private record into a focused title
- * and slug form without delaying navigation chrome.
- */
-export default function CourseEditPage({ params }: PageProps<"/courses/[id]">) {
-  return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <CourseBreadcrumb />
-          <ContainerTitle>Edit course</ContainerTitle>
-          <ContainerDescription>
-            Update the learner-facing title and course URL slug.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody>
-        <Suspense fallback={<CourseFormSkeleton />}>
-          <CourseFormContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
-  );
-}
-
-/**
- * Only valid, existing course identifiers reach the form, keeping malformed
- * URLs away from Prisma's UUID boundary.
- */
-async function CourseFormContent({ params }: Pick<PageProps<"/courses/[id]">, "params">) {
+async function CourseContent({ params }: Pick<PageProps<"/courses/[id]">, "params">) {
   const { id } = await params;
 
   if (!isUuid(id)) {
@@ -91,19 +59,51 @@ async function CourseFormContent({ params }: Pick<PageProps<"/courses/[id]">, "p
     notFound();
   }
 
-  return <CourseForm course={{ id: course.id, slug: course.slug, title: course.title }} />;
+  return (
+    <>
+      <AdminDetailHeader
+        facts={[
+          course.targetLanguage
+            ? `${course.language.toUpperCase()} → ${course.targetLanguage.toUpperCase()}`
+            : course.language.toUpperCase(),
+          course.isPublished ? "Published" : "Not published",
+          course.visibility === "private" && "Private",
+          `${course.userCount.toLocaleString()} ${course.userCount === 1 ? "learner" : "learners"}`,
+        ]}
+        parents={COURSE_PARENTS}
+        title={course.title}
+      />
+
+      <AdminDetailBody>
+        <AdminSection title="Title and slug">
+          <CourseForm course={{ id: course.id, slug: course.slug, title: course.title }} />
+        </AdminSection>
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <CourseCurriculum courseId={course.id} />
+        </Suspense>
+      </AdminDetailBody>
+    </>
+  );
 }
 
-/**
- * Title and slug placeholders keep the form's final dimensions stable until
- * the course record resolves.
- */
-function CourseFormSkeleton() {
+function CourseSkeleton() {
   return (
-    <AdminEditFormSkeleton>
-      <AdminEditFormSkeletonField />
-      <AdminEditFormSkeletonField />
-      <AdminEditFormSkeletonActions />
-    </AdminEditFormSkeleton>
+    <>
+      <AdminDetailHeaderSkeleton parents={COURSE_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton>
+          <AdminEditFormSkeleton>
+            <div className="flex flex-col gap-7">
+              <AdminEditFormSkeletonField />
+              <AdminEditFormSkeletonField descriptionClassName="h-[2lh] sm:h-lh" />
+            </div>
+            <AdminEditFormSkeletonActions />
+          </AdminEditFormSkeleton>
+        </AdminSectionSkeleton>
+        <AdminSectionSkeleton />
+      </AdminDetailBody>
+    </>
   );
 }

@@ -1,4 +1,5 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
   type BrainPowerLeader,
@@ -16,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 import {
   type LeaderboardPeriod,
   getLeaderboardPeriodDays,
@@ -26,10 +26,6 @@ import {
 
 const TABLE_COLUMN_COUNT = 4;
 
-/**
- * The leaderboard stays server-rendered so ranking and pagination are resolved
- * together from URL state that can be refreshed or shared.
- */
 export async function BrainPowerLeaderboard({
   searchParams,
 }: {
@@ -42,10 +38,7 @@ export async function BrainPowerLeaderboard({
   return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} period={period} />;
 }
 
-/**
- * Parsed pagination values and the minute cache lifetime keep the rolling
- * leaderboard deterministic and available to runtime prefetching.
- */
+/** Primitive props make each leaderboard state its own cache entry. */
 async function CachedBrainPowerLeaderboard({
   limit,
   offset,
@@ -61,6 +54,7 @@ async function CachedBrainPowerLeaderboard({
 
   const { currentPeriodStart } = getRollingUtcDateWindowStarts({
     days: getLeaderboardPeriodDays(period),
+    // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
     now: new Date(),
   });
 
@@ -80,24 +74,20 @@ async function CachedBrainPowerLeaderboard({
         {total.toLocaleString()} {userCountLabel} earned Brain Power {periodDescription}.
       </p>
 
-      <div className="overflow-x-auto rounded-lg border">
-        <Table>
-          <TableCaption className="sr-only">
-            Brain Power leaderboard {periodDescription}
-          </TableCaption>
-          <BrainPowerLeaderboardHeader />
+      <Table>
+        <TableCaption className="sr-only">Brain Power leaderboard {periodDescription}</TableCaption>
+        <BrainPowerLeaderboardHeader />
 
-          <TableBody>
-            {leaders.length > 0 ? (
-              leaders.map((leader) => (
-                <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
-              ))
-            ) : (
-              <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {leaders.length > 0 ? (
+            leaders.map((leader) => (
+              <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
+            ))
+          ) : (
+            <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
+          )}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/leaderboard"
@@ -114,32 +104,22 @@ function getLeaderboardUserCountLabel(total: number): "user" | "users" {
   return total === 1 ? "user" : "users";
 }
 
-/**
- * The fallback matches the loaded table structure so the page remains stable
- * while grouped Brain Power totals are loading.
- */
 export function BrainPowerLeaderboardSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-56" />
 
-      <AdminTableSkeleton className="overflow-x-auto">
-        <Table>
-          <BrainPowerLeaderboardHeader />
+      <Table>
+        <BrainPowerLeaderboardHeader />
 
-          <AdminTableSkeletonRows>
-            <BrainPowerLeaderboardSkeletonRow />
-          </AdminTableSkeletonRows>
-        </Table>
-      </AdminTableSkeleton>
+        <AdminTableSkeletonRows>
+          <BrainPowerLeaderboardSkeletonRow />
+        </AdminTableSkeletonRows>
+      </Table>
     </div>
   );
 }
 
-/**
- * The loaded and loading tables share column labels and alignment so their
- * layout cannot drift as the leaderboard evolves.
- */
 function BrainPowerLeaderboardHeader() {
   return (
     <TableHeader>
@@ -153,10 +133,6 @@ function BrainPowerLeaderboardHeader() {
   );
 }
 
-/**
- * An empty row keeps the table visible when no one earned Brain Power during
- * the rolling window, making the absence of activity explicit.
- */
 function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescription: string }) {
   return (
     <TableRow>
@@ -167,34 +143,26 @@ function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescriptio
   );
 }
 
-/**
- * Each leaderboard row links the user identity to account detail while keeping
- * the rank and Brain Power total aligned for quick comparison.
- */
 function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="text-muted-foreground text-right tabular-nums">
         {leader.rank.toLocaleString()}
       </TableCell>
       <TableCell>
-        <Link className="block" href={`/users/${leader.user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${leader.user.id}`} prefetch>
           <span className="font-medium">{leader.user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{leader.user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>{leader.user.username || "—"}</TableCell>
       <TableCell className="text-right font-medium tabular-nums">
         {leader.brainPower.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 
-/**
- * Placeholder cells mirror the loaded row widths closely enough to avoid a
- * noticeable shift when the leaderboard streams into the page.
- */
 function BrainPowerLeaderboardSkeletonRow() {
   return (
     <TableRow>

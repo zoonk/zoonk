@@ -1,0 +1,157 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "setWeekdayMinutes", "predicted": "setWeekdayMinutes" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "changes": [{ "kind": "setWeekdayMinutes", "minutes": 0, "weekdays": [0] }] },
+        "id": "en-routine-family-sunday-1",
+        "userInput": {
+          "dailyMinutes": 45,
+          "language": "en",
+          "memory": [
+            "Wants to read papers about quantum computers",
+            "Studies at 7:30 am, right after a night shift",
+            "Never studies on Sundays: it's family day"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [45, 45, 45, 45, 45, 45, 45]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "setWeekdayMinutes", "predicted": "setWeekdayMinutes" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "changes": [{ "kind": "setWeekdayMinutes", "minutes": 0, "weekdays": [0] }] },
+        "id": "pt-rotina-domingo-igreja-1",
+        "userInput": {
+          "dailyMinutes": 15,
+          "language": "pt",
+          "memory": [
+            "Estuda à noite, antes de dormir",
+            "Não estuda aos domingos, passa o dia na igreja com a família"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [15, 15, 15, 15, 15, 15, 15]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "changes": [] },
+        "id": "en-routine-time-of-day-only-1",
+        "userInput": {
+          "dailyMinutes": 45,
+          "language": "en",
+          "memory": [
+            "Wants to read papers about quantum computers",
+            "Studies at 7:30 am, right after a night shift"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [45, 45, 45, 45, 45, 45, 45]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "setWeekdayMinutes", "predicted": "setWeekdayMinutes" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "changes": [
+            { "kind": "setWeekdayMinutes", "minutes": { "max": 25, "min": 0 }, "weekdays": [6] }
+          ]
+        },
+        "id": "pt-rotina-cursinho-sabado-1",
+        "userInput": {
+          "dailyMinutes": 45,
+          "language": "pt",
+          "memory": [
+            "Quer cursar Medicina na UFMG",
+            "Estuda à noite, depois da escola",
+            "Faz cursinho aos sábados de manhã"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [45, 45, 45, 45, 45, 45, 45]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "addLightWeek", "predicted": "none" },
+      "steps": [
+        {
+          "conclusion": "Missing {\"date\":\"2026-10-19\",\"kind\":\"addLightWeek\"}.",
+          "kind": "majorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Missing {\"date\":\"2026-10-19\",\"kind\":\"addLightWeek\"}.",
+          "kind": "minorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Missing {\"date\":\"2026-10-19\",\"kind\":\"addLightWeek\"}.",
+          "kind": "potentialImprovements",
+          "score": 1
+        }
+      ],
+      "testCase": {
+        "expected": { "changes": [{ "date": "2026-10-19", "kind": "addLightWeek" }] },
+        "id": "en-routine-school-exams-week-1",
+        "userInput": {
+          "dailyMinutes": 45,
+          "language": "en",
+          "memory": [
+            "Wants to read papers about quantum computers",
+            "Studies at 7:30 am, right after a night shift",
+            "Has exams at school the week of October 19"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [45, 45, 45, 45, 45, 45, 45]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "addLightWeek", "predicted": "addLightWeek" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "changes": [{ "date": "2026-10-12", "kind": "addLightWeek" }] },
+        "id": "pt-rotina-viagem-outubro-1",
+        "userInput": {
+          "dailyMinutes": 15,
+          "language": "pt",
+          "memory": [
+            "Estuda à noite, antes de dormir",
+            "Viaja a trabalho na semana que começa em 12 de outubro"
+          ],
+          "today": "2026-09-28",
+          "weekdayMinutes": [15, 15, 15, 15, 15, 15, 15]
+        }
+      }
+    }
+  ],
+  "taskId": "plan-routine-fit"
+}

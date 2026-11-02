@@ -1,0 +1,148 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "firstDate": "2027-01-17",
+          "officialDomains": ["cebraspe.org.br", "camara.leg.br"],
+          "status": "official"
+        },
+        "id": "pt-camara-registro-redacao-1",
+        "userInput": {
+          "exam": "Concurso da Câmara dos Deputados",
+          "institution": "Câmara dos Deputados",
+          "language": "pt",
+          "role": "registro/redação",
+          "today": "2026-10-05",
+          "words": null,
+          "year": 2027
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "firstDate": "2026-11-08",
+          "officialDomains": ["gov.br", "inep.gov.br"],
+          "status": "official"
+        },
+        "id": "pt-enem-2026-1",
+        "userInput": {
+          "exam": "ENEM",
+          "institution": null,
+          "language": "pt",
+          "role": null,
+          "today": "2026-10-05",
+          "words": null,
+          "year": 2026
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "officialDomains": ["cebraspe.org.br", "gov.br", "pf.gov.br"],
+          "status": "any"
+        },
+        "id": "pt-pf-agente-1",
+        "userInput": {
+          "exam": "Concurso da Polícia Federal",
+          "institution": "Polícia Federal",
+          "language": "pt",
+          "role": "agente",
+          "today": "2026-10-05",
+          "words": null,
+          "year": null
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "month": "2027-03",
+          "officialDomains": ["oab.org.br", "fgv.br"],
+          "status": "any"
+        },
+        "id": "pt-oab-first-phase-march-1",
+        "userInput": {
+          "exam": "Exame de Ordem da OAB, primeira fase",
+          "institution": null,
+          "language": "pt",
+          "role": null,
+          "today": "2026-10-05",
+          "words": "vou fazer a primeira fase da oab em março",
+          "year": 2027
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "officialDomains": ["ielts.org", "britishcouncil.org"],
+          "status": "notOfficial"
+        },
+        "id": "en-ielts-booked-1",
+        "userInput": {
+          "exam": "IELTS Academic",
+          "institution": null,
+          "language": "en",
+          "role": null,
+          "today": "2026-10-05",
+          "words": null,
+          "year": null
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "month": "2027-02",
+          "officialDomains": ["calbar.ca.gov"],
+          "status": "official"
+        },
+        "id": "en-california-bar-1",
+        "userInput": {
+          "exam": "California Bar Exam",
+          "institution": null,
+          "language": "en",
+          "role": null,
+          "today": "2026-10-05",
+          "words": null,
+          "year": 2027
+        }
+      }
+    }
+  ],
+  "taskId": "find-exam-date"
+}

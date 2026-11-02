@@ -1,0 +1,186 @@
+"use client";
+
+import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
+import { Button } from "@zoonk/ui/components/button";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { MediaPending } from "@zoonk/ui/components/media-pending";
+import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
+import { cn } from "@zoonk/ui/lib/utils";
+import { HeadphonesIcon, PlayIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useCallback, useState } from "react";
+import { SURFACE_CLASS } from "../../_components/surface";
+import { RecordButton } from "../../speech/record-button";
+import {
+  SpeechFailedNote,
+  SpeechStatusIcon,
+  useSpeechActionLabel,
+  withoutFailure,
+} from "../../speech/speech-parts";
+import { type useSpokenAudio } from "../../speech/use-spoken-audio";
+import { useSkillName } from "../_utils/use-skill-name";
+import { LevelBar } from "../level-bar";
+
+/** Slower than normal, so a level test isn't a test of catching fast speech. */
+const LISTENING_RATE = 0.9;
+
+const MESSAGE_CLASS = cn(SURFACE_CLASS, "min-h-20");
+
+type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
+type LevelView = ReadyTest["levels"][number];
+type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
+
+export function ListeningMessage({
+  language,
+  pending,
+  question,
+  speech,
+}: {
+  language: string;
+  pending: boolean;
+  question: TestQuestion;
+  speech: ReturnType<typeof useSpokenAudio>;
+}) {
+  const t = useExtracted();
+  const [played, setPlayed] = useState(false);
+  const buttonState = withoutFailure(speech.state);
+  const { status } = buttonState;
+
+  const label = useSpeechActionLabel(
+    buttonState,
+    played ? t("Play the message again") : t("Play the message"),
+  );
+
+  if (!speech.isAvailable) {
+    return <p lang={language}>{question.passage}</p>;
+  }
+
+  if (pending) {
+    return (
+      <MediaPending
+        className={cn(MESSAGE_CLASS, "text-muted-foreground")}
+        icon={<HeadphonesIcon aria-hidden="true" className="size-5" />}
+      >
+        <p role="status">{t("The voice message is on its way…")}</p>
+      </MediaPending>
+    );
+  }
+
+  const play = () => {
+    setPlayed(true);
+
+    speech.speak({
+      rate: LISTENING_RATE,
+      segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
+    });
+  };
+
+  return (
+    <div className={cn(MESSAGE_CLASS, "flex flex-col justify-center gap-3 p-4")}>
+      <div className="flex items-center gap-3">
+        <Button
+          aria-busy={status === "loading"}
+          onClick={status === "loading" || status === "playing" ? speech.cancel : play}
+          size="icon-lg"
+          type="button"
+        >
+          <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
+          <span className="sr-only">{label}</span>
+        </Button>
+        <p
+          aria-live="polite"
+          className="text-muted-foreground flex items-start gap-2 text-sm text-pretty"
+        >
+          <LineMarker aria-hidden="true">
+            <HeadphonesIcon className="size-4" />
+          </LineMarker>
+          {status === "loading"
+            ? t("Getting the message ready. The first time can take a few seconds.")
+            : t("You got a voice message. Listen and answer.")}
+        </p>
+      </div>
+
+      {speech.state.status === "failed" && (
+        <SpeechFailedNote language={language} limit={speech.state.limit} onRetry={play} />
+      )}
+    </div>
+  );
+}
+
+export function SpeakingPrompt({
+  error,
+  onRecorded,
+  pending,
+  sentence,
+}: {
+  error: string | null;
+  onRecorded: (audio: Blob) => void;
+  pending: boolean;
+  sentence: ReadyTest["next"] & { kind: "speaking" };
+}) {
+  const t = useExtracted();
+  const canRecord = useCanRecord();
+  const handle = useCallback(({ audio }: { audio: Blob }) => onRecorded(audio), [onRecorded]);
+  const recorder = useVoiceRecorder({ onRecorded: handle });
+  const isRecording = recorder.status === "recording";
+
+  return (
+    <div className="flex flex-col items-center gap-5 text-center">
+      <div className="flex w-full flex-col gap-1">
+        <p className="text-2xl font-semibold tracking-tight text-balance">
+          {sentence.speaking.sentence}
+        </p>
+        <p className="text-muted-foreground">{sentence.speaking.translation}</p>
+      </div>
+
+      {canRecord && recorder.status !== "denied" ? (
+        <RecordButton
+          className="w-full max-w-xs"
+          disabled={pending || recorder.status === "acquiring"}
+          elapsedMs={recorder.elapsedMs}
+          onStart={() => void recorder.start()}
+          onStop={recorder.stop}
+          recording={isRecording}
+        />
+      ) : (
+        <p>{t("The microphone isn't available here. You can skip this part.")}</p>
+      )}
+
+      <p aria-live="polite" className="text-muted-foreground text-sm">
+        {pending && t("Listening to what you said…")}
+        {!pending &&
+          isRecording &&
+          t({
+            description: '"Stop" is the label of the record button.',
+            message: "Recording… Press Stop when you're done.",
+          })}
+        {!pending &&
+          !isRecording &&
+          (error ??
+            t({
+              description: '"Record" is the label of the record button.',
+              message: "Press Record and say it out loud",
+            }))}
+      </p>
+    </div>
+  );
+}
+
+export function LevelBars({ levels }: { levels: LevelView[] }) {
+  const skillName = useSkillName();
+
+  return (
+    <ul className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
+      {levels.map((level) => (
+        <li
+          className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0"
+          key={level.skill}
+        >
+          <span className="text-sm font-medium">{skillName(level.skill)}</span>
+          <LevelBar score={level.score} />
+          <span className="text-end font-mono text-xs font-medium tabular-nums">{level.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}

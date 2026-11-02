@@ -1,4 +1,4 @@
-import { EmailAccountDeletionError } from "@zoonk/auth/email-deletion-contract";
+import { AccountDeletionEmailMismatchError } from "@zoonk/auth/email-deletion-contract";
 import { NativeAuthResponseError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 import { describe, expect, it } from "vitest";
@@ -23,7 +23,9 @@ describe(getAccountDeletionErrorResponse, () => {
 
   it("maps a verified email belonging to another user to an actionable 401 response", async () => {
     const response = getAccountDeletionErrorResponse(
-      new EmailAccountDeletionError("Email reauthorization does not match the current user"),
+      new AccountDeletionEmailMismatchError(
+        "Email reauthorization does not match the current user",
+      ),
     );
 
     await expect(response?.json()).resolves.toStrictEqual({

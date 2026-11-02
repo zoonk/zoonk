@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "memory_category_background": "e6bc5a6f08d54e1421d5cf7f15a6eaf490d2ba11e8ec0e3fbfdb11aa246a4441",
+  "memory_category_context": "bc300b816c8df9f81bc045a9a9eb21caf846264c59b64c24de5b9ad2afc8e3d8",
+  "memory_category_goals": "db315fd80a12f3876234c774324f25765be6808b119261e796d161340eeb451e",
+  "memory_category_learning": "4ba8f91639c08238c7f2ca0989d88a0091073e3d548162cc0332d3ee50535b33",
+  "memory_category_preferences": "58aff615ad5d113744fc5f50f71bd5a5d3fd2b897a7d750ab2340c4f6923c4e0",
+  "memory_category_routine": "93bcd24b0d32677c605d52eff35f0b4b358ae07ef02949f7f78794f6707af59d",
+  "memory_change_undone": "269260ff6ff5422aafcb745db85d41600f36950b9275aa66d1d585e6579c3666",
+  "memory_delete": "d25a94c1334b5bc6935bad34e4a6588cc4d90bdc6eb2f057bd7ff819d1bf7139",
+  "memory_description": "3b0fb0201d7373c6c053416f7326c98a3172378ca983a91af421f5dd2c6fde2e",
+  "memory_download": "01a0262a59353acd457a012dbe17bb18ea76fcc74b824357f3ed833939ccabf7",
+  "memory_download_description": "fdfb76afba6f3de867b610f6c42d8ced4dab3dcd91d7689d96284e619bb88626",
+  "memory_edit": "42ccdebdbae59df15a498c7c6aa4f77078f589c5927dcf5ba714d6a0d0951c99",
+  "memory_edit_description": "5fbab10c1bf93d1d394c8ca6f7d8908a40859b144b635e2288f4734b4d829a81",
+  "memory_edit_label": "2bf2557377937142cfd403fefc4326dc7022988a9b80e587fdc805e6343f59ab",
+  "memory_edit_title": "2900f6595579edbd394b8e2876744fa2dfdbc3183aeaba626e3376f4be44ede3",
+  "memory_empty_off": "e47e9d1d85881993b5df457cdb8b8a6242fad4c0cb8db7c23234e26051542f94",
+  "memory_empty_on": "531a0a4a03550277ddf2d57075e1b81732eecde592ddd660e1ca80933eaa3c39",
+  "memory_fact_options": "6ff0569541956149bf8401f08acffac51a550920b010dcf0473169a6f568fffa",
+  "memory_fact_source": "2efc6248821d436441090be9ecaf1704dd03caded6cf3e0b3f39943008e4fa00",
+  "memory_save_failed": "5559ecf6ba3ffb331fc7a16e9753087b5922089b178930db5dd1daa852cf158a",
+  "memory_sensitive_note": "f788b11c7cbcec3d872349c523d2c06d228fb6d0bc76ae227311603fdb8a1137",
+  "memory_source_chat": "0ea68b3e634f578522feef39e7aa457dd5b46a5870c96cb756c72268ebfeaf6e",
+  "memory_source_noticed": "ece509397b15d56b5d3aabbbd1a20a98e9af48bb9b3fd660b4f27bc5f6f7dbe9",
+  "memory_source_onboarding": "70c8efac7665933d1fbcb8af604fa19254c8fcba0c40cd48c8564330b11691d5",
+  "memory_source_session": "4011d66a1d6013872ea332861dbcc7f3fa5b5199b7a9da58b8aa7395820580ed",
+  "memory_source_you": "f14d7be85b4d50991a43a5909639c7662a4357b65b3cb58b8335f47e159cc2f6",
+  "memory_undo": "5256769217e7610dd5e7056121ad021f69347c976d5c3ba138bf6570aeb99df8",
+  "memory_undo_failed": "5b60bf6bb232247a035552cb3fc4d36cf32f37272427a165abbfb83d1c7348e1",
+  "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
+  "memory_updated_more": "a46425ec90cbc23a60074e1e8488ac574accabeaa90163e72aba5e9c045952a6",
+  "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
+  "memory_use_off": "9bd26e3ee0262341cd951f4c59f315098ea6870deaa1605e2b7831ecae8ae3e6",
+  "memory_use_on": "61174645c4180607da24d8727cd89141ddfd0fbf62adf510ac2daf2d25c8415a"
+}
+-->
+<resources>
+    <string name="memory_description">生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。</string>
+    <string name="memory_use">メモリを使う</string>
+    <string name="memory_use_on">身近な例や、1週間の予定に合う学習計画</string>
+    <string name="memory_use_off">メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。</string>
+    <string name="memory_empty_on">まだ何もありません。学習やチャットを進めると、Zoonkが学習をサポートするための短いメモがここに表示されます。</string>
+    <string name="memory_empty_off">メモはありません。メモリがオフの間、Zoonkはメモを保存しません。</string>
+    <string name="memory_save_failed">保存できませんでした。もう一度お試しください。</string>
+    <string name="memory_category_goals">目標</string>
+    <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
+    <string name="memory_category_background">基本情報</string>
+    <string name="memory_category_routine">日課</string>
+    <string name="memory_category_preferences">好み</string>
+    <string name="memory_category_learning">学習</string>
+    <string name="memory_category_context">状況</string>
+    <string name="memory_source_noticed">利用状況からわかったこと</string>
+    <string name="memory_source_you">教えてもらったこと</string>
+    <string name="memory_source_chat">チャットから</string>
+    <string name="memory_source_onboarding">初期設定で登録</string>
+    <string name="memory_source_session">学習から</string>
+    <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
+    <string name="memory_fact_source">%1$s · %2$s</string>
+    <!-- %1$s is the fact, like "Studies after work". -->
+    <string name="memory_fact_options">「%1$s」のメニュー</string>
+    <string name="memory_edit">編集</string>
+    <string name="memory_delete">削除</string>
+    <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
+    <string name="memory_edit_title">メモリの編集</string>
+    <string name="memory_edit_description">実際の状況に合うように書き直してください。</string>
+    <string name="memory_edit_label">Zoonkが覚えていること</string>
+    <string name="memory_download">メモリをダウンロードする</string>
+    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
+    <string name="memory_download_description">メモリの内容をすべて1つのファイルに</string>
+    <string name="memory_sensitive_note">Zoonkは、保存を頼まれない限り、健康や宗教などのデリケートな情報を保存しません。</string>
+    <string name="memory_updated">メモリを更新しました：</string>
+    <plurals name="memory_updated_more">
+        <item quantity="other">ほか%d件</item>
+    </plurals>
+    <string name="memory_undo">元に戻す</string>
+    <string name="memory_change_undone">変更を取り消しました</string>
+    <string name="memory_undo_failed">取り消せませんでした。その後、内容が変更されています。</string>
+</resources>

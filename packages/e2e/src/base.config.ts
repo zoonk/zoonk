@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
+import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
+import { getStopWithLauncherEnvironment } from "../../../scripts/dev/process.mts";
+import { getTestEnvironment } from "../../db/src/test-environment";
 
 const CHROMIUM_PROJECT = {
   name: "chromium",
@@ -10,31 +12,40 @@ export function createBaseConfig(options: {
   globalSetup?: string;
   testDir: string;
   webServerEnv?: Record<string, string>;
+  webServerPort?: number;
 }) {
+  assertBrowserLaunchAllowed();
+
   return defineConfig({
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
     globalSetup: options.globalSetup,
     projects: [CHROMIUM_PROJECT],
-    reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
+    reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
     use: {
       screenshot: process.env.CI ? "off" : "only-on-failure",
+      // Learners in tests live in UTC, the zone their goals and fixtures date days in, so the
+      // learner's day never differs from the UTC day late at night on a machine in another zone.
+      timezoneId: "UTC",
       trace: process.env.CI ? "off" : "on-first-retry",
       video: process.env.CI ? "off" : "retain-on-failure",
     },
     webServer: {
-      command: "pnpm start -p 0",
+      command: `pnpm start:app -p ${options.webServerPort ?? 0}`,
       env: {
         ...getTestEnvironment("e2e"),
+        ...getStopWithLauncherEnvironment({
+          environment: process.env,
+          launcherPid: String(process.pid),
+        }),
         STRIPE_SECRET_KEY: "sk_test_fake",
         ...options.webServerEnv,
       },
       // Let pnpm forward shutdown to the server in its separate process group.
       gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
       timeout: 120_000,
-      // Capture port from Next.js stdout: "- Local: http://localhost:12345"
       wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/u },
     },
   });

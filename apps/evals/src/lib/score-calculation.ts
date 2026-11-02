@@ -2,10 +2,6 @@ import { type CategoryScore, type ScoreStep } from "./types";
 
 const STEP_WEIGHTS = { majorErrors: 3, minorErrors: 2, potentialImprovements: 1 } as const;
 
-/**
- * Calculates the shared weighted score without loading the judge runtime, so
- * client displays and export selection use exactly the same ranking rule.
- */
 export function calculateScore({
   categoryScores,
   steps,

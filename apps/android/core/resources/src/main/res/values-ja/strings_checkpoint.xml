@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "checkpoint_after_lessons": "6503df06842e2de94e930bd1b222f474c5bdde257afd5cc1ee166e6157d4f155",
+  "checkpoint_answer": "98516dd67b5f0000a51d54e7202fabe23314a73561ed73f012bf6fd26ea344ad",
+  "checkpoint_answers": "cdca993060d201c6d99cae6f0deab5941eefa96c27798b83d020a8b489c04c1f",
+  "checkpoint_badge": "66dad14987f016aae86aed33ea00e2ff92b87166abbcac0a4bf265c6ad5d8381",
+  "checkpoint_beat": "0c38bca6f74653eb1146debd47757692b152760789ef7c686ea49724a167f2a8",
+  "checkpoint_broken": "78b979b2afaf04809cca8ea2caade87e9b8df796da56977da99d8aafe216a7e3",
+  "checkpoint_broken_all": "02ed646c264db0e7662142639a3767196a4afc6812b57c5c875669767968c865",
+  "checkpoint_confirm": "16e588ab143c2a85fec185187ff734f23f3470eafa6dc7ca7a2d081ac883b986",
+  "checkpoint_every_answered": "ead2e452026fce18a7cc9ce8c791e40665a37aa90e1696821b5c8893a2d86b04",
+  "checkpoint_final": "782f1cf0c2208ec39f27f8e3b9d510cb3f3a5a41143161358758f8102354644c",
+  "checkpoint_finishing": "a2690c8c1601e0bd59cbde101c82d16ed9abcf11a74de5db29c6ea8673e48ab1",
+  "checkpoint_held": "3015c47bfad83fb777d9e872f596690412102ddff78001fd1716940e9d8a1615",
+  "checkpoint_lost_line": "e24b287658953a813b4963247aca5ccafd471bc846e52318e015b64f5d99c3c7",
+  "checkpoint_new_try_next": "36c7326beadc8215d676973c06798f816dbe44d6157a624144f3400ab58fdcd8",
+  "checkpoint_new_try_tomorrow": "259608f4800405782d7fc4e020aaca14efe7bd3af755977aeaf52e4d38da96ba",
+  "checkpoint_next": "cf20e8b8c63dbbe0e4bc54cd46a678aaa79a158f460fd4ec03996f0d4491125b",
+  "checkpoint_next_phase": "95ea008701e1d8f037afa695437db78b3ee6ba1ff06b34f2e3098f6fb8f9d62e",
+  "checkpoint_next_phase_open": "803c7e6bb2513a4268cff7d7b198cf1aa0ce86776e529fbd6cc43e6371d60dd7",
+  "checkpoint_no_hints_boss": "387d492842dcd426bea079ad8744e1e692579582a06b0265719f26d550152f25",
+  "checkpoint_no_hints_weekly": "444957444205dff97a80815139680447af3238f9a4b10791587920bafd8e6c8d",
+  "checkpoint_no_questions_left": "ae345aa4436582e4d2963cf81d02422d9f0b192a0a0ccb900d76258f08885359",
+  "checkpoint_not_this_time": "637fecd4e1be9f6f72aa071b864cc33b9987ad13c3cc7508d922082a733e0a5e",
+  "checkpoint_nothing_lost": "e4e2fbe99e7c30944a64265117a28001b7afa4f23d2f57179fda7be8be5d4e8b",
+  "checkpoint_passed_later": "e64f8d50c8ab012a87b99a7f670a1ce463ee2bb55e511b700dd65e0694148a0c",
+  "checkpoint_phase": "66c748395953bb1421d254584d8c4d1471189c70c8e4b5c2d67d08904d51713b",
+  "checkpoint_phase_complete": "1324afc208f05662a800d2d63d5db328645c42be95d670f48e16452002e8fd81",
+  "checkpoint_phase_complete_plain": "bc442ac405827ffe5e9d3fa09f6a8d090ae3bf8a8fc0a11e162f42f6bb02c2e8",
+  "checkpoint_phase_done": "38b3aa30632a921989deea37b68bccf9538efc9bd23fb63327dacd897fcf200c",
+  "checkpoint_phase_name": "a7fc4722fe2d7982dc880ea86d541caa5a7383070cb4a6c41d30a0be1479398d",
+  "checkpoint_phase_plain": "5ab894052cbe5369f1bd5ec8a426674314005c9e23ee11c59a0660ac19cc5942",
+  "checkpoint_prize": "1fa52690794ace1caa66538df626ca90f0c582c321431ef541700d3661930d08",
+  "checkpoint_prize_phase": "7ca86ea11aea94f28c467e1a25f72e0b5e764c7774e9f4cf3f24aec25dd55256",
+  "checkpoint_questions_left": "ed23fb75dce31eeeb5f01b5d39ed475a15c5709ac83e2e2ddc8c2bcec3200519",
+  "checkpoint_removed_detail": "2d4f354d4c71bffc763d758c4fde0a634d596aab4340c0a2a0b9ac8609a62b20",
+  "checkpoint_removed_title": "28b75b4b0ccdd1674ce230c96a5082cad6b50131c4ebcf2aff64bd4242a8c66c",
+  "checkpoint_retry_after_lessons": "e0417b20e4311ef6324c7c6c3d15cc3270a698b748701d0613887a1c11afd17e",
+  "checkpoint_retry_tomorrow": "fc29d64a75f3c83d01ccd2bc8dbdcaa49c0099db00e72872d13444042879ef66",
+  "checkpoint_review": "a7195be1c7202c61227338d59a63848d7fc17e0a383d9e741a00d66e50e637e4",
+  "checkpoint_rewards": "960bf0019ad89bb81ebb1a69d5ba4c393b209053c68d3c907e4ad4bb88b4931b",
+  "checkpoint_right_to_win": "5b4fee749a5b7862d6b2bd0e7547a4df5ca74a22a7923bfd0debd1a35cd33db4",
+  "checkpoint_right_to_win_of": "e0d1e58e9add80311a6daa0a9fb8d10cb19d1f931350783b65b244a5247b2606",
+  "checkpoint_see_result": "2297b2fead5811a253055b73dd791f3d564ad81070e69ab1ffd8f8c78a9fffcb",
+  "checkpoint_shield": "6161a5c1dc06960591233856cc8076a669b49f07f63a198eeeb13954b93a0242",
+  "checkpoint_shield_value": "11e20fa37fce152960a4c7eb3972647f210242c19d47e1b96b74a56d311bc556",
+  "checkpoint_to_go": "d28e5b8fd9e000d2499c26c83e735373bbe4c004434368a55ac4805f56631171",
+  "checkpoint_trickster": "e6dc46416bbc6fe0fbb5e2f40a53d4519525d73c336f7570d1fe81a7554bb3dc",
+  "checkpoint_weekly": "7d9b451f2ea62a545fa1c30251e0fb52d71341d83bf0b1d9e61eb2d5d10d1391",
+  "checkpoint_weekly_done": "66ba0bcfe9e52a59719d97f864f72517a67e7ab9478ce1c4e5d47cec542b0af1",
+  "checkpoint_whats_next": "1a635f4eabe619c523aff238c731b1f911aa5135090b22bd50f25957e4244b52",
+  "checkpoint_why_later": "7b94f55762aa62b662b9bec62f951d78657d8cd2d95a31cce3f6da249785a4cd",
+  "checkpoint_winning": "0d1b3e8ac051232df72429d0e19ff49eb958f288660d7cac5f6e93a12148f12d",
+  "checkpoint_won_line": "a24a3161911b96a067e35e1dd9eb69c99b5ceec58e7e163d2f133fdcc7d314db"
+}
+-->
+<resources>
+    <string name="checkpoint_trickster">トリックスター</string>
+    <string name="checkpoint_weekly">週間チャレンジ</string>
+    <string name="checkpoint_final">最終チャレンジ</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase">フェーズ%1$sチャレンジ</string>
+    <string name="checkpoint_phase_plain">フェーズチャレンジ</string>
+    <string name="checkpoint_confirm">確定する</string>
+    <string name="checkpoint_next">次へ</string>
+    <string name="checkpoint_see_result">結果を見る</string>
+    <string name="checkpoint_why_later">理由は最後にわかります。</string>
+    <string name="checkpoint_won_line">相手の盾が壊れました。勝利です！</string>
+    <string name="checkpoint_lost_line">今回は相手の盾が耐えました。</string>
+    <string name="checkpoint_retry_tomorrow">明日また挑戦できます。これまでの成果はそのままです。</string>
+    <plurals name="checkpoint_retry_after_lessons">
+        <item quantity="other">明日、短いレッスンを%d回終えると、また挑戦できます。これまでの成果はそのままです。</item>
+    </plurals>
+    <string name="checkpoint_every_answered">すべての問題に答えました。</string>
+    <string name="checkpoint_shield">トリックスターの盾</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="other">%1$d枚が壊れた（全%2$d枚）</item>
+    </plurals>
+    <plurals name="checkpoint_to_go">
+        <item quantity="other">あと%d</item>
+    </plurals>
+    <!-- The shield wasn't broken: the boss won. -->
+    <string name="checkpoint_held">耐えた</string>
+    <!-- The whole shield is broken: the learner won. -->
+    <string name="checkpoint_broken_all">壊れた</string>
+    <plurals name="checkpoint_broken">
+        <item quantity="other">%d枚が壊れた</item>
+    </plurals>
+    <string name="checkpoint_no_questions_left">残りの問題はありません</string>
+    <plurals name="checkpoint_questions_left">
+        <item quantity="other">残り%d問</item>
+    </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
+    <plurals name="checkpoint_right_to_win">
+        <item quantity="other">%d問正解で勝利</item>
+    </plurals>
+    <string name="checkpoint_no_hints_boss">ヒントはありません。答えるたびに正解かどうかがわかり、最後に理由とトリックスターのひっかけの解説が表示されます。</string>
+    <string name="checkpoint_no_hints_weekly">ヒントはありません。答えるたびに正解かどうかがわかり、最後に理由の解説が表示されます。</string>
+    <string name="checkpoint_winning">勝利</string>
+    <string name="checkpoint_finishing">完了</string>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="checkpoint_prize">+%1$s</string>
+    <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
+    <string name="checkpoint_prize_phase">+%1$s · フェーズ%2$s完了</string>
+    <string name="checkpoint_removed_title">問題が削除されました</string>
+    <string name="checkpoint_removed_detail">まだどの問題にも答えていなかったため、このチャレンジは採点されません。これまでの成果は失われません。</string>
+    <string name="checkpoint_weekly_done">週間チャレンジ完了</string>
+    <string name="checkpoint_beat">トリックスターに勝ちました！</string>
+    <string name="checkpoint_not_this_time">今回はクリアできませんでした</string>
+    <!-- %1$d right answers were needed out of %2$d questions. -->
+    <plurals name="checkpoint_right_to_win_of">
+        <item quantity="other">%1$d問正解で勝利（全%2$d問）</item>
+    </plurals>
+    <string name="checkpoint_rewards">報酬</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase_complete">フェーズ%1$s完了</string>
+    <string name="checkpoint_phase_complete_plain">フェーズ完了</string>
+    <string name="checkpoint_badge">ひっかけハンターのバッジ</string>
+    <string name="checkpoint_next_phase">次のフェーズ</string>
+    <!-- A phase without a name, by its number. -->
+    <string name="checkpoint_phase_name">フェーズ%1$d</string>
+    <string name="checkpoint_whats_next">次にすること</string>
+    <string name="checkpoint_passed_later">再挑戦でクリア</string>
+    <string name="checkpoint_phase_done">このフェーズは完了しました。</string>
+    <string name="checkpoint_new_try_tomorrow">明日また挑戦できます</string>
+    <string name="checkpoint_new_try_next">次回の学習でまた挑戦できます</string>
+    <string name="checkpoint_nothing_lost">これまでの成果はそのままです。</string>
+    <plurals name="checkpoint_after_lessons">
+        <item quantity="other">つまずいた内容を短いレッスン%d回で復習してからです。これまでの成果はそのままです。</item>
+    </plurals>
+    <!-- %1$s is the next phase's name. -->
+    <string name="checkpoint_next_phase_open">次のフェーズ「%1$s」はもう始められます。</string>
+    <string name="checkpoint_answers">答え</string>
+    <string name="checkpoint_review">答えを見直す</string>
+    <!-- %1$s is the right answer. -->
+    <string name="checkpoint_answer">正解：%1$s</string>
+</resources>

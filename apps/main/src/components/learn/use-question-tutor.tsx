@@ -1,0 +1,15 @@
+"use client";
+
+import { useTutorConfig } from "@/lib/learn/tutor-config";
+import { useTutorCards } from "@/lib/learn/use-tutor-cards";
+import { type QuestionTutor } from "@zoonk/learn/question-tutor";
+import { getQuestionTutor } from "@zoonk/player/tutor/item";
+import { useMemo } from "react";
+import { type TutorViewer } from "./main-ask-tutor";
+
+/** Pages that use it need the learn catalog (`scope="learn"`). */
+export function useQuestionTutor({ buddy, canAsk, goalId }: TutorViewer): QuestionTutor {
+  const cards = useTutorCards(goalId);
+  const tutor = useTutorConfig({ buddy, canAsk, cards });
+  return useMemo(() => getQuestionTutor(tutor), [tutor]);
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "8306432341b491c33c8736a118b722c13c4ceb4184832303c5b1c20978eff0b8",
+  "steps_progress": "546ee9b0a8ecda90dba810dadca6e13aa1a9301a81b8dbfc3a49161c6ad2c01f"
+}
+-->
+<resources>
+    <string name="steps_continue">Kontynuuj</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">Krok %1$d z %2$d</string>
+</resources>

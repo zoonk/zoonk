@@ -1,0 +1,5 @@
+export const CALIBRATION_COUNT_IN = 3;
+
+export const CALIBRATION_CLICKS = 6;
+
+export const CALIBRATION_INTERVAL_MS = 1000;

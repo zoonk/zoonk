@@ -23,10 +23,11 @@ const METRIC_PERCENT_OPTIONS = {
   trailingZeroDisplay: "stripIfInteger",
 } satisfies LocalizedNumberOptions;
 
-/**
- * Formats count-style values through the app formatter so grouping and digits
- * follow the active locale instead of the runtime default locale.
- */
+const GOAL_PROGRESS_OPTIONS = {
+  maximumFractionDigits: 2,
+  style: "percent",
+} satisfies LocalizedNumberOptions;
+
 export function formatWholeNumber({
   format,
   value,
@@ -37,10 +38,7 @@ export function formatWholeNumber({
   return format.number(value);
 }
 
-/**
- * Formats progress percentages stored as 0-100 values. Intl percent formatting
- * expects a ratio, so this helper keeps the conversion in one place.
- */
+/** Takes 0–100; Intl's percent style expects a ratio. */
 export function formatMetricPercent({
   format,
   value,
@@ -49,4 +47,15 @@ export function formatMetricPercent({
   value: number;
 }): string {
   return format.number(value / 100, METRIC_PERCENT_OPTIONS);
+}
+
+/** To the hundredth of a percent, since a whole percentage would sit at "0%" for weeks. */
+export function formatGoalProgress({
+  format,
+  share,
+}: {
+  format: LocalizedNumberFormatter;
+  share: number;
+}): string {
+  return format.number(share, GOAL_PROGRESS_OPTIONS);
 }

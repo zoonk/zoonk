@@ -1,0 +1,186 @@
+import { isRoundedAnswer } from "@zoonk/utils/rounded-answer";
+import { removeAccents } from "@zoonk/utils/string";
+
+const APOSTROPHES = /[’‘`´]/gu;
+const DECIMAL_SEPARATOR = /(?<=\d),(?=\d)/gu;
+const SYMBOLS = /[^\p{L}\p{N}\p{M}\s'.-]/gu;
+const STRAY_PERIOD = /\.(?!\d)/gu;
+const LOOSE_CONNECTORS = /(?<=^|\s)['-]+(?=\s|$)/gu;
+const WHITESPACE = /\s+/gu;
+const NUMBER = /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u;
+const DIGIT = /\d/u;
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+/** Below this length a one-letter change is usually a different word ("cat" and "car"). */
+const MIN_LENGTH_FOR_ONE_TYPO = 4;
+const MIN_LENGTH_FOR_TWO_TYPOS = 8;
+
+export type TypedAnswerMatch =
+  | { kind: "exact" | "typo" | "rounded"; acceptedAnswer: string }
+  | { kind: "none"; acceptedAnswer: null };
+
+/**
+ * Accents stay because they change words in several languages ("e" and "é" in Portuguese), and a
+ * decimal comma becomes a point so "1,5" and "1.5" match. `locale` sets the casing rules.
+ */
+export function normalizeTypedAnswer(text: string, locale = "und"): string {
+  return text
+    .normalize("NFC")
+    .toLocaleLowerCase(locale)
+    .replaceAll(APOSTROPHES, "'")
+    .replaceAll(DECIMAL_SEPARATOR, ".")
+    .replaceAll(SYMBOLS, " ")
+    .replaceAll(STRAY_PERIOD, " ")
+    .replaceAll(LOOSE_CONNECTORS, " ")
+    .replaceAll(WHITESPACE, " ")
+    .trim();
+}
+
+function parseNumber(normalized: string): number | null {
+  return NUMBER.test(normalized) ? Number(normalized) : null;
+}
+
+function getAllowedTypos(length: number): number {
+  if (length >= MIN_LENGTH_FOR_TWO_TYPOS) {
+    return 2;
+  }
+
+  return length >= MIN_LENGTH_FOR_ONE_TYPO ? 1 : 0;
+}
+
+function getCell(rows: number[][], row: number, column: number): number {
+  return rows[row]?.[column] ?? Number.POSITIVE_INFINITY;
+}
+
+/** Letters as a reader sees them, so an accented letter or emoji counts as one. */
+function toGraphemes(text: string): string[] {
+  return Array.from(graphemes.segment(text), (segment) => segment.segment);
+}
+
+/** Optimal string alignment distance: a swap of two neighboring letters counts once. */
+function getEditDistance(source: string, target: string): number {
+  const from = toGraphemes(source);
+  const to = toGraphemes(target);
+
+  const rows = Array.from({ length: from.length + 1 }, (_, row) =>
+    Array.from({ length: to.length + 1 }, (__, column) => Math.max(row, column)),
+  );
+
+  for (let row = 1; row <= from.length; row += 1) {
+    for (let column = 1; column <= to.length; column += 1) {
+      const cost = from[row - 1] === to[column - 1] ? 0 : 1;
+
+      const isSwap =
+        row > 1 &&
+        column > 1 &&
+        from[row - 1] === to[column - 2] &&
+        from[row - 2] === to[column - 1];
+
+      const best = Math.min(
+        getCell(rows, row - 1, column) + 1,
+        getCell(rows, row, column - 1) + 1,
+        getCell(rows, row - 1, column - 1) + cost,
+        isSwap ? getCell(rows, row - 2, column - 2) + 1 : Number.POSITIVE_INFINITY,
+      );
+
+      rows[row]?.splice(column, 1, best);
+    }
+  }
+
+  return getCell(rows, from.length, to.length);
+}
+
+/** Numbers never count as typos: "1985" and "1986" are different answers. */
+function isTypo(answer: string, accepted: string): boolean {
+  if (DIGIT.test(answer) || DIGIT.test(accepted)) {
+    return false;
+  }
+
+  const plainAnswer = removeAccents(answer);
+  const plainAccepted = removeAccents(accepted);
+
+  if (plainAnswer === plainAccepted) {
+    return true;
+  }
+
+  const allowed = getAllowedTypos(Math.min(plainAnswer.length, plainAccepted.length));
+
+  return allowed > 0 && getEditDistance(plainAnswer, plainAccepted) <= allowed;
+}
+
+function isRounded(answer: string, accepted: string): boolean {
+  const answerNumber = parseNumber(answer);
+  const acceptedNumber = parseNumber(accepted);
+
+  return (
+    answerNumber !== null &&
+    acceptedNumber !== null &&
+    isRoundedAnswer({ expected: acceptedNumber, value: answer })
+  );
+}
+
+function isExact(answer: string, accepted: string): boolean {
+  if (answer === accepted) {
+    return true;
+  }
+
+  const answerNumber = parseNumber(answer);
+  const acceptedNumber = parseNumber(accepted);
+
+  return answerNumber !== null && answerNumber === acceptedNumber;
+}
+
+/**
+ * Turkish lowercases "I" to "ı" and "İ" to "i", so an answer also matches in Turkish casing:
+ * "ışık" for "Işık", "izmir" for "İzmir". Written in lowercase, "ı" and "i" stay different letters.
+ */
+const CASE_LOCALES = ["und", "tr"] as const;
+
+function toCaseKeys(text: string): string[] {
+  return CASE_LOCALES.map((locale) => normalizeTypedAnswer(text, locale));
+}
+
+/**
+ * "typo" is a slip the caller may accept with a note; "rounded" a number rounded to the places
+ * typed, which the caller may accept outside language practice.
+ */
+export function matchTypedAnswer({
+  acceptedAnswers,
+  answer,
+}: {
+  acceptedAnswers: readonly string[];
+  answer: string;
+}): TypedAnswerMatch {
+  const answerKeys = toCaseKeys(answer);
+
+  if (!answerKeys[0]) {
+    return { acceptedAnswer: null, kind: "none" };
+  }
+
+  const candidates = acceptedAnswers
+    .map((accepted) => ({ accepted, keys: toCaseKeys(accepted) }))
+    .filter((candidate) => Boolean(candidate.keys[0]));
+
+  const findCandidate = (matches: (answer: string, accepted: string) => boolean) =>
+    candidates.find((candidate) =>
+      answerKeys.some((key, index) => matches(key, candidate.keys[index] ?? "")),
+    );
+
+  const exact = findCandidate(isExact);
+
+  if (exact) {
+    return { acceptedAnswer: exact.accepted, kind: "exact" };
+  }
+
+  const typo = findCandidate(isTypo);
+
+  if (typo) {
+    return { acceptedAnswer: typo.accepted, kind: "typo" };
+  }
+
+  const rounded = findCandidate(isRounded);
+
+  return rounded
+    ? { acceptedAnswer: rounded.accepted, kind: "rounded" }
+    : { acceptedAnswer: null, kind: "none" };
+}

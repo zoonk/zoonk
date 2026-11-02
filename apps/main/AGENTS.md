@@ -1,7 +1,7 @@
 - Every reusable product capability exposed by Main must also be reachable through the public API so native apps, CLI tools, and agents can provide the same behavior. Audit new Main pages against the OpenAPI document; exclude only delivery-specific concerns such as URLs, redirects, metadata, prefetch presentation, and SEO.
 - Do not add direct Prisma access to an app for a capability that belongs in another app, the public API, mobile, CLI, or an agent. Web-only indexing and SEO queries such as sitemaps may remain in a web app.
-
-Use the shared [web UI and localization guidance](../../.agents/guides/web.md) for React composition, typed links, and translated copy. Reusable business behavior belongs in core capabilities governed by [packages/core/AGENTS.md](../../packages/core/AGENTS.md).
+- A Server Action whose result carries a run the learner follows (such as creating a goal or writing a setup lesson) forwards the whole operation to its API endpoint with `postAsLearner`, instead of calling core and then asking the API to start the work.
+- Every page's App Shell is static (`ensureStatic = "shell"` in the root layout), so a default `Link` into a private page prefetches only that shell. Link to a learner's content with a link that prefetches in full: `LearnLink`, `ListRowLink` or Main's `Link prefetch`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

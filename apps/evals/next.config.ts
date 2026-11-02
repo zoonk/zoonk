@@ -13,12 +13,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  turbopack: {
-    rules: {
-      // Allow to import MDX files used for AI prompts
-      "*.md": { as: "*.js", loaders: ["raw-loader"] },
-    },
-  },
+  turbopack: { rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } } },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },
 };

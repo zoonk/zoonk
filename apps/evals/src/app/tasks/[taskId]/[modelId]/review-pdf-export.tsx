@@ -16,15 +16,10 @@ import { FileTextIcon, PrinterIcon } from "lucide-react";
 import { useState } from "react";
 import { printReviewOutputs } from "./review-print-document";
 
-/** Labels the fallback bucket naturally while keeping language codes compact. */
 function getLanguageLabel(language: string): string {
   return language === "other" ? "Other" : language.toUpperCase();
 }
 
-/**
- * Lets reviewers choose language slices while explaining that repeated runs are
- * reduced to each test case's lowest-scoring output before the print view opens.
- */
 export function ReviewPdfExport({
   entries,
   taskName,
@@ -38,7 +33,6 @@ export function ReviewPdfExport({
   const [open, setOpen] = useState(false);
   const selectedEntries = entries.filter((entry) => selectedLanguages.includes(entry.language));
 
-  /** Resets stale export errors whenever the language picker opens again. */
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
 
@@ -47,7 +41,6 @@ export function ReviewPdfExport({
     }
   }
 
-  /** Adds or removes one language without disturbing the review order of its outputs. */
   function handleLanguageChange({ checked, language }: { checked: boolean; language: string }) {
     setSelectedLanguages((currentLanguages) =>
       checked
@@ -56,7 +49,6 @@ export function ReviewPdfExport({
     );
   }
 
-  /** Opens a print-only window containing only the chosen language entries. */
   function printReview() {
     setError(null);
 
@@ -83,7 +75,7 @@ export function ReviewPdfExport({
         Export review PDF
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent closeLabel="Close">
         <DialogHeader>
           <DialogTitle>Export review PDF</DialogTitle>
           <DialogDescription>
@@ -121,12 +113,12 @@ export function ReviewPdfExport({
         </p>
 
         {error && (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive-text text-sm" role="alert">
             {error}
           </p>
         )}
 
-        <DialogFooter showCloseButton>
+        <DialogFooter closeLabel="Close">
           <Button disabled={selectedEntries.length === 0} onClick={printReview}>
             <PrinterIcon />
             Print or save PDF

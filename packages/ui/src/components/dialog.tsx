@@ -6,15 +6,10 @@ import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { createContext, useContext } from "react";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
-/**
- * Passes the `open` state from Dialog to DialogPortal so it can hide the portal
- * on Activity cleanup (preventing flash on back-navigation) and only remove
- * the hidden class on genuine close-to-open transitions.
- *
- * Workaround for: https://github.com/vercel/next.js/issues/86577
- */
+/** Lets the portal stay hidden after Next.js's Activity cleanup until a real reopen: https://github.com/vercel/next.js/issues/86577 */
 const DialogOpenContext = createContext<boolean | undefined>(undefined);
 
 function Dialog({ open, ...props }: DialogPrimitive.Root.Props) {
@@ -35,11 +30,6 @@ function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" ref={ref} {...props} />;
 }
 
-/**
- * Some dialog layouts need Base UI's viewport between the backdrop and popup so
- * the popup can be positioned and clipped like the upstream command palette
- * demo instead of using the centered default DialogContent wrapper.
- */
 function DialogViewport({ className, ...props }: DialogPrimitive.Viewport.Props) {
   return (
     <DialogPrimitive.Viewport
@@ -70,28 +60,28 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 function DialogContent({
   className,
   children,
-  showCloseButton = true,
+  closeLabel,
   ...props
-}: DialogPrimitive.Popup.Props & { showCloseButton?: boolean }) {
+}: DialogPrimitive.Popup.Props & { closeLabel?: string }) {
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         className={cn(
-          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 bg-background ring-foreground/5 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-4xl p-6 text-sm ring-1 duration-100 outline-none sm:max-w-md",
+          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl p-6 text-sm ring-1 duration-100 outline-none sm:max-w-md",
           className,
         )}
         data-slot="dialog-content"
         {...props}
       >
-        {children}
-        {showCloseButton && (
+        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+        {closeLabel && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
             render={<Button className="absolute top-4 right-4" size="icon-sm" variant="ghost" />}
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -99,18 +89,15 @@ function DialogContent({
   );
 }
 
-/**
- * DialogPopup exposes the raw Base UI popup for custom layouts that cannot use
- * DialogContent because they need to supply their own portal, backdrop, or
- * viewport structure.
- */
-function DialogPopup({ className, ...props }: DialogPrimitive.Popup.Props) {
+function DialogPopup({ children, className, ...props }: DialogPrimitive.Popup.Props) {
   return (
     <DialogPrimitive.Popup
       className={cn("bg-background text-foreground outline-none", className)}
       data-slot="dialog-content"
       {...props}
-    />
+    >
+      <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+    </DialogPrimitive.Popup>
   );
 }
 
@@ -122,10 +109,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function DialogFooter({
   className,
-  showCloseButton = false,
+  closeLabel,
   children,
   ...props
-}: React.ComponentProps<"div"> & { showCloseButton?: boolean }) {
+}: React.ComponentProps<"div"> & { closeLabel?: string }) {
   return (
     <div
       className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
@@ -133,8 +120,10 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>Close</DialogPrimitive.Close>
+      {closeLabel && (
+        <DialogPrimitive.Close render={<Button variant="outline" />}>
+          {closeLabel}
+        </DialogPrimitive.Close>
       )}
     </div>
   );

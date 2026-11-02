@@ -1,35 +1,23 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { toGenerationResource } from "@/lib/generation-resource";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
+import { readClientRunStatus } from "@/workflows/_shared/run-activity";
 import { NextResponse } from "next/server";
-import { getRun } from "workflow/api";
 
-/**
- * Returns the current status of a durable generation so clients can recover
- * without depending on an uninterrupted event-stream connection.
- */
 async function getGeneration(
   _request: Request,
   context: RouteContext<"/v1/generations/[generationId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: generationPathParamsSchema,
-  });
+  const path = await readPathParams(context, generationPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const status = await readClientRunStatus(path.generationId);
 
-  const run = getRun(path.data.generationId);
-
-  if (!(await run.exists)) {
+  if (!status) {
     return errors.notFound("Generation not found");
   }
 
-  return NextResponse.json(await toGenerationResource(run));
+  return NextResponse.json({ id: path.generationId, status });
 }
 
 export const GET = withApiErrorBoundary(getGeneration);

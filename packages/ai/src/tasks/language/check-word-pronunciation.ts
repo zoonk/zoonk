@@ -1,0 +1,106 @@
+import "server-only";
+import { Output, generateText } from "ai";
+import { z } from "zod";
+import { formatUntrustedInput } from "../../evaluate/untrusted-input";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { runTaskGeneration } from "../../provenance/run-task-generation";
+import { buildProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
+import { isCloserToNative } from "./_utils/ipa-similarity";
+import systemPrompt from "./check-word-pronunciation.prompt.md";
+
+/** MiMo V2.6 Flash costs less but called a native clip English. */
+const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["xiaomi/mimo-v2.6-pro"] as const;
+
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before choosing. */
+const schema = z.object({
+  heard: z.string(),
+  pronunciation: z.enum(["native", "english", "unclear"]),
+});
+/* oxlint-enable eslint/sort-keys */
+
+export type WordPronunciationCheck = z.infer<typeof schema> & {
+  /** Called native, and what it heard is closer to the word's IPA than to the English reading. */
+  soundsNative: boolean;
+};
+
+export type CheckWordPronunciationParams = {
+  audio: Uint8Array;
+  mediaType: string;
+  word: string;
+  language: string;
+  ipa: string;
+  englishIpa: string;
+  analytics?: AiGenerationContext;
+  abortSignal?: AbortSignal;
+  model?: string;
+  useFallback?: boolean;
+};
+
+function buildUserPrompt({
+  englishIpa,
+  ipa,
+  language,
+  word,
+}: Pick<CheckWordPronunciationParams, "englishIpa" | "ipa" | "language" | "word">): string {
+  return `LANGUAGE: ${getPromptLanguageName({ language })}
+NATIVE: /${ipa}/
+ENGLISH: /${englishIpa}/
+
+${formatUntrustedInput({ WORD: word })}`;
+}
+
+/**
+ * A transcript writes the same spelling either way, so the model listens. It let a half-English
+ * "time" through as native, so a clip only passes when what it heard is closer to the word's IPA.
+ */
+export async function checkWordPronunciation({
+  abortSignal,
+  analytics,
+  audio,
+  englishIpa,
+  ipa,
+  language,
+  mediaType,
+  model = defaultModel,
+  useFallback = true,
+  word,
+}: CheckWordPronunciationParams) {
+  const userPrompt = buildUserPrompt({ englishIpa, ipa, language, word });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+
+  const { provenance, result } = await runTaskGeneration({
+    analytics,
+    generate: () =>
+      generateText({
+        abortSignal,
+        instructions: systemPrompt,
+        messages: [
+          {
+            content: [
+              { text: userPrompt, type: "text" },
+              { data: audio, mediaType, type: "file" },
+            ],
+            role: "user",
+          },
+        ],
+        model,
+        output: Output.object({ schema }),
+        providerOptions,
+      }),
+    systemPrompt,
+    task: "check-word-pronunciation",
+  });
+
+  const heard = result.output.heard.replaceAll(/[/[\]]/gu, "").trim();
+  const { pronunciation } = result.output;
+
+  const data: WordPronunciationCheck = {
+    heard,
+    pronunciation,
+    soundsNative: pronunciation === "native" && isCloserToNative({ englishIpa, heard, ipa }),
+  };
+
+  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+}

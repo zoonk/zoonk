@@ -1,11 +1,12 @@
+import { deployBlog } from "./blog.mts";
 import { requiredEnv } from "./config.mts";
-import { assertCurrentPreview, cancelPreviews, deploy } from "./deployment.mts";
+import { assertPullRequestOpen, cancelPreviews, deploy } from "./deployment.mts";
 
 const command = process.argv[2] ?? "";
 
 switch (command) {
   case "check-preview":
-    await assertCurrentPreview();
+    await assertPullRequestOpen();
     break;
   case "cancel-previews":
     await cancelPreviews();
@@ -16,11 +17,16 @@ switch (command) {
     });
 
     break;
+  case "blog":
+    await deployBlog();
+    break;
   case "preview":
   case "staging":
   case "production":
     await deploy(command);
     break;
   default:
-    throw new Error("Expected check-preview, cancel-previews, preview, staging, or production");
+    throw new Error(
+      "Expected blog, check-preview, cancel-previews, cancel-run, preview, staging, or production",
+    );
 }

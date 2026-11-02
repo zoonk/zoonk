@@ -6,6 +6,7 @@
     "dev": "node ../../scripts/dev/run-service.mts mailbox",
     "dev:app": "vite",
     "dev:direct": "vite",
+    "start": "node ../../scripts/dev/run-service.mts mailbox",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

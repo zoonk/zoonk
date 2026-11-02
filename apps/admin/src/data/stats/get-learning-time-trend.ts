@@ -5,10 +5,6 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Sums recorded learning time inside each visible bucket so the trend remains
- * additive when the page moves from daily to monthly or yearly views.
- */
 export const getLearningTimeTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`daily_progress.date`, period });

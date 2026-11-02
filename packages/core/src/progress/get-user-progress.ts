@@ -1,11 +1,8 @@
 import "server-only";
+import { readUserProgress } from "../learner/facts/user-progress";
 import { getProgressSession } from "./_utils/progress-cache";
-import { getUserProgress as queryUserProgress } from "./progress-metrics";
 
-/**
- * Returns the authenticated learner's canonical progress row without allowing
- * an app to choose which learner owns the protected read.
- */
+/** Uses the authenticated learner; null without a session or progress row. */
 export async function getUserProgress() {
   "use cache: private";
 
@@ -15,5 +12,5 @@ export async function getUserProgress() {
     return null;
   }
 
-  return queryUserProgress({ userId: session.user.id });
+  return readUserProgress(session.user.id);
 }

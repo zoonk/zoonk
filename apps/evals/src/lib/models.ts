@@ -1,10 +1,17 @@
+import {
+  JEV_MODEL_ID,
+  LUNA_DECISIONS_MODEL_ID,
+  isNativeEvaluationModel,
+} from "@zoonk/ai/evaluate/models";
 import { type Reasoning } from "@zoonk/ai/provider-options";
+
+type ModelKind = "generation" | "evaluation" | "image" | "speech" | "transcription";
 
 export type ModelConfig = {
   id: string;
   name: string;
-  inputCost: number;
-  outputCost: number;
+  kind: ModelKind;
+  gatewayModelId: string;
   reasoning?: Reasoning;
 };
 
@@ -20,49 +27,96 @@ export const REASONING_OPTIONS = [
   { label: "Extra high", value: "xhigh" },
 ] as const satisfies readonly { label: string; value: Reasoning }[];
 
-export const EVAL_MODELS: ModelConfig[] = [
-  { id: "anthropic/claude-opus-5.5", inputCost: 4, name: "claude-opus-5.5", outputCost: 20 },
-  { id: "anthropic/claude-fable-5.1", inputCost: 10, name: "claude-fable-5.1", outputCost: 50 },
-  { id: "anthropic/claude-sonnet-5", inputCost: 2, name: "claude-sonnet-5", outputCost: 10 },
-  { id: "anthropic/claude-haiku-4.5", inputCost: 1, name: "claude-haiku-4.5", outputCost: 5 },
-  { id: "deepseek/deepseek-v4-pro", inputCost: 0.43, name: "deepseek-v4-pro", outputCost: 0.87 },
-  {
-    id: "deepseek/deepseek-v4-flash",
-    inputCost: 0.14,
-    name: "deepseek-v4-flash",
-    outputCost: 0.28,
-  },
-  { id: "google/gemini-3.8-flash", inputCost: 1.5, name: "gemini-3.8-flash", outputCost: 7.5 },
-  {
-    id: "google/gemini-3.5-flash-lite",
-    inputCost: 0.3,
-    name: "gemini-3.5-flash-lite",
-    outputCost: 2.5,
-  },
-  { id: "google/gemini-3.5-flash", inputCost: 1.5, name: "gemini-3.5-flash", outputCost: 9 },
-  { id: "google/gemini-3.1-pro-preview", inputCost: 2, name: "gemini-3.1-pro", outputCost: 12 },
-  {
-    id: "google/gemini-3.1-flash-lite",
-    inputCost: 0.25,
-    name: "gemini-3.1-flash-lite",
-    outputCost: 1.5,
-  },
-  { id: "google/gemini-3-flash", inputCost: 0.5, name: "gemini-3-flash", outputCost: 3 },
-  { id: "openai/gpt-6-astra", inputCost: 10, name: "gpt-6-astra", outputCost: 50 },
-  { id: "openai/gpt-6-sol", inputCost: 2, name: "gpt-6-sol", outputCost: 10 },
-  { id: "openai/gpt-6-luna", inputCost: 0.1, name: "gpt-6-luna", outputCost: 0.5 },
-  { id: "openai/gpt-5.6-sol", inputCost: 4, name: "gpt-5.6-sol", outputCost: 20 },
-  { id: "openai/gpt-5.6-terra", inputCost: 2, name: "gpt-5.6-terra", outputCost: 12 },
-  { id: "openai/gpt-5.6-luna", inputCost: 0.2, name: "gpt-5.6-luna", outputCost: 1.2 },
-  { id: "openai/gpt-5.5", inputCost: 5, name: "gpt-5.5", outputCost: 30 },
-  { id: "openai/gpt-5.4-mini", inputCost: 0.75, name: "gpt-5.4-mini", outputCost: 4.5 },
-  { id: "openai/gpt-5.4-nano", inputCost: 0.2, name: "gpt-5.4-nano", outputCost: 1.25 },
+const GENERATION_MODELS: { id: string; name: string }[] = [
+  { id: "anthropic/claude-opus-5.5", name: "claude-opus-5.5" },
+  { id: "anthropic/claude-fable-5.1", name: "claude-fable-5.1" },
+  { id: "anthropic/claude-sonnet-5.5", name: "claude-sonnet-5.5" },
+  { id: "anthropic/claude-sonnet-5", name: "claude-sonnet-5" },
+  { id: "anthropic/claude-haiku-5.5", name: "claude-haiku-5.5" },
+  { id: "anthropic/claude-haiku-4.5", name: "claude-haiku-4.5" },
+  { id: "deepseek/deepseek-v4-pro", name: "deepseek-v4-pro" },
+  { id: "deepseek/deepseek-v4-flash", name: "deepseek-v4-flash" },
+  { id: "google/gemini-4-argon", name: "gemini-4-argon" },
+  { id: "google/gemini-3.8-flash", name: "gemini-3.8-flash" },
+  { id: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite" },
+  { id: "google/gemini-3.1-pro-preview", name: "gemini-3.1-pro" },
+  { id: "google/gemini-3.1-flash-lite", name: "gemini-3.1-flash-lite" },
+  { id: "google/gemini-3-flash", name: "gemini-3-flash" },
+  { id: "openai/gpt-6-astra", name: "gpt-6-astra" },
+  { id: "openai/gpt-6.1-sol", name: "gpt-6.1-sol" },
+  { id: "openai/gpt-6.1-terra", name: "gpt-6.1-terra" },
+  { id: "openai/gpt-6-sol", name: "gpt-6-sol" },
+  { id: "openai/gpt-6-luna", name: "gpt-6-luna" },
+  { id: "openai/gpt-5.6-sol", name: "gpt-5.6-sol" },
+  { id: "openai/gpt-5.6-terra", name: "gpt-5.6-terra" },
+  { id: "openai/gpt-5.6-luna", name: "gpt-5.6-luna" },
+  { id: "openai/gpt-5.5", name: "gpt-5.5" },
+  { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
+  { id: "xiaomi/mimo-v2.6-pro", name: "mimo-v2.6-pro" },
 ];
 
-/**
- * Gives each portable AI SDK reasoning value a concise label for selectors,
- * breadcrumbs, and comparison tables.
- */
+const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
+  { gatewayModelId: JEV_MODEL_ID, name: "jev" },
+  { gatewayModelId: LUNA_DECISIONS_MODEL_ID, name: "gpt-6-luna-decisions" },
+  { gatewayModelId: "liquid/d1", name: "liquid-d1" },
+  { gatewayModelId: "openai/gpt-6-luna", name: "gpt-6-luna (evaluation)" },
+  { gatewayModelId: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite (evaluation)" },
+  { gatewayModelId: "anthropic/claude-haiku-5.5", name: "claude-haiku-5.5 (evaluation)" },
+  { gatewayModelId: "anthropic/claude-haiku-4.5", name: "claude-haiku-4.5 (evaluation)" },
+];
+
+const IMAGE_MODELS: { id: string; name: string }[] = [
+  { id: "openai/gpt-image-2.5-flare", name: "gpt-image-2.5-flare" },
+  { id: "openai/gpt-image-2.5-sunburst", name: "gpt-image-2.5-sunburst" },
+  { id: "openai/gpt-image-2", name: "gpt-image-2" },
+  { id: "microsoft/mai-image-2.6", name: "mai-image-2.6" },
+  { id: "microsoft/mai-image-2.6-flash", name: "mai-image-2.6-flash" },
+  { id: "bytedance/seedream-5.0-pro", name: "seedream-5.0-pro" },
+];
+
+const SPEECH_MODELS: { id: string; name: string }[] = [
+  { id: "google/gemini-3.8-flash-tts", name: "gemini-3.8-flash-tts" },
+  { id: "google/gemini-3.8-flash-lite-tts", name: "gemini-3.8-flash-lite-tts" },
+  { id: "microsoft/mai-voice-2.1-flash", name: "mai-voice-2.1-flash" },
+];
+
+const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
+  { id: "openai/gpt-transcribe", name: "gpt-transcribe" },
+  { id: "google/gemini-3.5-transcribe", name: "gemini-3.5-transcribe" },
+  { id: "microsoft/mai-transcribe-2", name: "mai-transcribe-2" },
+  { id: "spacexai/grok-stt", name: "grok-stt" },
+];
+
+export const EVAL_MODELS: ModelConfig[] = [
+  ...GENERATION_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "generation" as const,
+  })),
+  ...EVALUATION_MODELS.map((model) => ({
+    ...model,
+    id: isNativeEvaluationModel(model.gatewayModelId)
+      ? model.gatewayModelId
+      : `${model.gatewayModelId}/evaluation`,
+    kind: "evaluation" as const,
+  })),
+  ...IMAGE_MODELS.map((model) => ({ ...model, gatewayModelId: model.id, kind: "image" as const })),
+  ...SPEECH_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "speech" as const,
+  })),
+  ...TRANSCRIPTION_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "transcription" as const,
+  })),
+];
+
+export function getModelFamily(model: Pick<ModelConfig, "gatewayModelId">): string {
+  return model.gatewayModelId.split("/")[0] ?? model.gatewayModelId;
+}
+
 export function getReasoningLabel(reasoning: Reasoning = DEFAULT_REASONING): string {
   return REASONING_OPTIONS.find((option) => option.value === reasoning)?.label ?? reasoning;
 }
@@ -75,26 +129,17 @@ export function getModelDisplayName(model: ModelConfig): string {
   return model.name;
 }
 
-/**
- * Accepts only reasoning values supported by AI SDK's portable top-level
- * reasoning option so untrusted form and route values cannot reach generation.
- */
 export function parseReasoning(value: string | null): Reasoning | null {
   return REASONING_OPTIONS.find((option) => option.value === value)?.value ?? null;
 }
 
-/**
- * Separates a saved evaluation id into its configured gateway model and optional
- * reasoning level. Provider-default evaluations intentionally keep the original
- * unsuffixed model id so existing output and result files remain compatible.
- */
-function parseModelEvaluationId(
+function parseReasoningVariantId(
   modelId: string,
-): { gatewayModelId: string; reasoning?: Reasoning } | null {
+): { configuredModelId: string; reasoning?: Reasoning } | null {
   const separatorIndex = modelId.lastIndexOf(":");
 
   if (separatorIndex === -1) {
-    return { gatewayModelId: modelId };
+    return { configuredModelId: modelId };
   }
 
   const reasoning = parseReasoning(modelId.slice(separatorIndex + 1));
@@ -103,49 +148,36 @@ function parseModelEvaluationId(
     return null;
   }
 
-  return { gatewayModelId: modelId.slice(0, separatorIndex), reasoning };
+  return { configuredModelId: modelId.slice(0, separatorIndex), reasoning };
 }
 
-/**
- * Resolves both configured models and their saved reasoning variants. Variants
- * inherit pricing and display metadata from the configured gateway model while
- * retaining their unique id for output, score, and leaderboard isolation.
- */
 export function getModelById(modelId: string): ModelConfig | null {
-  const evaluation = parseModelEvaluationId(modelId);
+  const variant = parseReasoningVariantId(modelId);
+  const model = variant && EVAL_MODELS.find((item) => item.id === variant.configuredModelId);
 
-  if (!evaluation) {
+  if (!model || (variant.reasoning && model.kind !== "generation")) {
     return null;
   }
 
-  const model = EVAL_MODELS.find((item) => item.id === evaluation.gatewayModelId);
-
-  if (!model) {
-    return null;
-  }
-
-  return evaluation.reasoning ? { ...model, id: modelId, reasoning: evaluation.reasoning } : model;
+  return variant.reasoning ? { ...model, id: modelId, reasoning: variant.reasoning } : model;
 }
 
-/**
- * Get the base model ID to pass to the AI gateway.
- * Strips any reasoning suffix (e.g., "openai/gpt-5.2:high" -> "openai/gpt-5.2")
- */
-export function getGatewayModelId(modelId: string): string {
-  return parseModelEvaluationId(modelId)?.gatewayModelId ?? modelId;
-}
-
-/**
- * Builds the stable id used to isolate generated outputs and scores for one
- * model/reasoning pair. Provider-default reuses the base id for compatibility.
- */
-export function getModelEvaluationId({
+export function getModelVariantId({
   modelId,
   reasoning,
 }: {
   modelId: string;
   reasoning: Reasoning;
 }): string {
-  const gatewayModelId = getGatewayModelId(modelId);
-  return reasoning === DEFAULT_REASONING ? gatewayModelId : `${gatewayModelId}:${reasoning}`;
+  const configuredModelId = parseReasoningVariantId(modelId)?.configuredModelId ?? modelId;
+  return reasoning === DEFAULT_REASONING ? configuredModelId : `${configuredModelId}:${reasoning}`;
+}
+
+function getFamilyFromId(modelId: string): string {
+  const model = getModelById(modelId);
+  return model ? getModelFamily(model) : (modelId.split("/")[0] ?? modelId);
+}
+
+export function canJudge({ judgeId, modelId }: { judgeId: string; modelId: string }): boolean {
+  return getFamilyFromId(judgeId) !== getFamilyFromId(modelId);
 }

@@ -6,14 +6,8 @@ import { type DecodedAudio, assertAudibleAudioSignal } from "./validate-audio-si
 const MP3_BITRATE_KBPS = 48;
 const MP3_SAMPLE_RATE = 24_000;
 
-type EncodableAudio = DecodedAudio & { channelCount: 1 | 2 };
+export type EncodableAudio = DecodedAudio & { channelCount: 1 | 2 };
 
-/**
- * Rejects empty or unsupported provider WAV shapes before they reach the
- * encoder. TTS responses should be mono, but accepting stereo keeps this
- * boundary safe if a provider changes its channel layout without changing the
- * WAV contract.
- */
 function getChannelCount({
   channelData,
   model,
@@ -30,11 +24,6 @@ function getChannelCount({
   throw new Error(`${model} returned invalid WAV audio`);
 }
 
-/**
- * Decodes provider WAV into normalized samples and verifies that every channel
- * represents the same non-empty timeline. Wrapping parser errors here gives
- * the retry layer one stable provider failure regardless of the malformed WAV.
- */
 function decodeWavAudio({
   audio,
   model,
@@ -61,11 +50,7 @@ function decodeWavAudio({
   }
 }
 
-/**
- * Copies encoder-owned chunks into one stable upload buffer. The encoder reuses
- * its WASM memory between encode and finalize, so the caller copies each chunk
- * before invoking the next encoder operation.
- */
+/** The encoder reuses its WASM memory between encode and finalize, so chunks are copied first. */
 function combineMp3Chunks({
   finalChunk,
   firstChunk,
@@ -79,21 +64,23 @@ function combineMp3Chunks({
   return audio;
 }
 
-/**
- * Validates provider WAV and encodes it as a compact 48 kbps MP3. Keeping one
- * final codec avoids shipping separate decoder paths and gives storage and
- * playback a consistent media contract.
- */
-export async function convertWavToMp3({
+export function decodeSpeechWav({
   audio,
+  maxSeconds,
   model,
 }: {
   audio: Uint8Array;
+  maxSeconds: number;
   model: SpeechModelName;
-}): Promise<Uint8Array> {
+}): EncodableAudio {
   const decodedAudio = decodeWavAudio({ audio, model });
-  assertAudibleAudioSignal({ audio: decodedAudio, model });
+  assertAudibleAudioSignal({ audio: decodedAudio, maxSeconds, model });
+  return decodedAudio;
+}
 
+export async function encodeMp3(
+  decodedAudio: EncodableAudio,
+): Promise<{ audio: Uint8Array; durationSeconds: number }> {
   const encoder = await createMp3Encoder();
 
   encoder.configure({
@@ -105,5 +92,18 @@ export async function convertWavToMp3({
 
   const firstChunk = Uint8Array.from(encoder.encode(decodedAudio.channelData));
   const finalChunk = Uint8Array.from(encoder.finalize());
-  return combineMp3Chunks({ finalChunk, firstChunk });
+
+  return {
+    audio: combineMp3Chunks({ finalChunk, firstChunk }),
+    durationSeconds: decodedAudio.samplesDecoded / decodedAudio.sampleRate,
+  };
+}
+
+export async function convertWavToMp3(input: {
+  audio: Uint8Array;
+  maxSeconds: number;
+  model: SpeechModelName;
+}): Promise<{ audio: Uint8Array; durationSeconds: number }> {
+  const decoded = decodeSpeechWav(input);
+  return encodeMp3(decoded);
 }

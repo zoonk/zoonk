@@ -1,9 +1,41 @@
 import Foundation
 import OpenAPIRuntime
 
+enum FeedbackContentKind: String, Equatable, Sendable {
+  case chapter
+  case course
+  case plan
+}
+
+/// What a report is about: a piece of content, or a screen without one (main's `screen`).
+struct FeedbackContext: Equatable, Sendable {
+  let contentID: String?
+  let contentKind: FeedbackContentKind?
+  let screen: String
+
+  init(contentID: String, contentKind: FeedbackContentKind, screen: String? = nil) {
+    self.contentID = contentID
+    self.contentKind = contentKind
+    self.screen = screen ?? contentKind.rawValue
+  }
+
+  init(screen: String) {
+    contentID = nil
+    contentKind = nil
+    self.screen = screen
+  }
+}
+
 struct FeedbackSubmission: Equatable, Sendable {
+  let context: FeedbackContext?
   let email: String
   let message: String
+
+  init(context: FeedbackContext? = nil, email: String, message: String) {
+    self.context = context
+    self.email = email
+    self.message = message
+  }
 }
 
 enum FeedbackFailure: Error, Equatable, Sendable {
@@ -13,13 +45,15 @@ enum FeedbackFailure: Error, Equatable, Sendable {
 }
 
 protocol FeedbackAPIClient: Sendable {
-  func submit(_ submission: FeedbackSubmission) async throws
+  func submit(_ submission: FeedbackSubmission, token: String?) async throws
 }
 
 struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
+  private let appVersion: String?
   private let clients: APIClientFactory
 
-  init(clients: APIClientFactory) {
+  init(clients: APIClientFactory, appVersion: String? = currentAppVersion()) {
+    self.appVersion = appVersion
     self.clients = clients
   }
 
@@ -28,12 +62,15 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
       clients: APIClientFactory.live(baseURL: configuration.apiBaseURL))
   }
 
-  func submit(_ submission: FeedbackSubmission) async throws {
-    try await perform { client in
+  func submit(_ submission: FeedbackSubmission, token: String?) async throws {
+    let context = makeContextPayload(submission.context)
+
+    try await perform(token: token) { client in
       let output = try await client.createFeedback(
         .init(
           body: .json(
             .init(
+              context: context,
               email: submission.email,
               message: submission.message))))
 
@@ -48,12 +85,12 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     }
   }
 
-  /// Keeps generated transport failures behind stable form recovery states while preserving task cancellation.
   private func perform<Output: Sendable>(
+    token: String?,
     operation: @Sendable (Client) async throws -> Output
   ) async throws -> Output {
     do {
-      return try await operation(clients.makeClient())
+      return try await operation(clients.makeClient(token: token))
     } catch {
       if isRequestCancellation(error) {
         throw CancellationError()
@@ -68,6 +105,27 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
       }
 
       throw FeedbackFailure.unavailable
+    }
+  }
+
+  private func makeContextPayload(
+    _ context: FeedbackContext?
+  ) -> Components.Schemas.FeedbackSubmission.ContextPayload {
+    .init(
+      appVersion: appVersion,
+      contentId: context?.contentID,
+      contentKind: context?.contentKind.map(makeContentKindPayload),
+      platform: .ios,
+      screen: context?.screen)
+  }
+
+  private func makeContentKindPayload(
+    _ kind: FeedbackContentKind
+  ) -> Components.Schemas.FeedbackSubmission.ContextPayload.ContentKindPayload {
+    switch kind {
+    case .chapter: .chapter
+    case .course: .course
+    case .plan: .plan
     }
   }
 
@@ -98,4 +156,12 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
 
     return false
   }
+}
+
+func currentAppVersion() -> String? {
+  let info = Bundle.main.infoDictionary
+  let version = info?["CFBundleShortVersionString"] as? String
+  let build = info?["CFBundleVersion"] as? String
+
+  return version.map { version in build.map { "\(version) (\($0))" } ?? version }
 }

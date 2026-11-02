@@ -1,8 +1,7 @@
-import { type Organization, type PrismaClient } from "../../generated/prisma/client";
+import { type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-// Deterministic random for reproducible seed data
-function seededRandom(seed: number) {
+export function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10_000;
   return x - Math.floor(x);
 }
@@ -26,7 +25,7 @@ function buildOwnerDailyProgress(
 
   return indices
     .filter((i) => {
-      // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
+      // sin(0) is 0, which would always skip today.
       const seed = (i + 1) * 12_345;
       return seededRandom(seed) > 0.15;
     })
@@ -87,72 +86,7 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
   ]);
 }
 
-async function seedStepAttempts({
-  now,
-  org,
-  prisma,
-  today,
-  users,
-}: {
-  now: Date;
-  org: Organization;
-  prisma: PrismaClient;
-  today: Date;
-  users: SeedUsers;
-}) {
-  const lesson = await prisma.lesson.findFirst({
-    where: { language: "en", organizationId: org.id, slug: "verifying-nodejs-npm-and-path" },
-  });
-
-  if (!lesson) {
-    return;
-  }
-
-  const steps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    where: { lessonId: lesson.id },
-  });
-
-  const firstStep = steps[0];
-
-  if (!firstStep) {
-    return;
-  }
-
-  const attemptData = steps
-    .slice(0, 3)
-    .map((step, index) => ({
-      answer: { selectedOption: index === 1 ? 0 : 1 },
-      answeredAt: new Date(now.getTime() - (3 - index) * 60 * 1000),
-      dayOfWeek: now.getDay(),
-      durationSeconds: 15 + Math.floor(Math.random() * 30),
-      hourOfDay: now.getHours(),
-      isCorrect: index !== 1,
-      stepId: step.id,
-      userId: users.owner.id,
-    }));
-
-  await prisma.stepAttempt.createMany({ data: attemptData });
-
-  await prisma.lessonProgress.upsert({
-    create: {
-      completedAt: now,
-      completedDate: today,
-      durationSeconds: 180,
-      lessonId: lesson.id,
-      startedAt: new Date(now.getTime() - 3 * 60 * 1000),
-      userId: users.owner.id,
-    },
-    update: {},
-    where: { userLesson: { lessonId: lesson.id, userId: users.owner.id } },
-  });
-}
-
-export async function seedProgress(
-  prisma: PrismaClient,
-  org: Organization,
-  users: SeedUsers,
-): Promise<void> {
+export async function seedProgress(prisma: PrismaClient, users: SeedUsers): Promise<void> {
   const now = new Date();
   const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 
@@ -169,6 +103,4 @@ export async function seedProgress(
       }),
     ),
   );
-
-  await seedStepAttempts({ now, org, prisma, today, users });
 }

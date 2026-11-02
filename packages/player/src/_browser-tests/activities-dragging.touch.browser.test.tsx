@@ -1,0 +1,101 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
+import { openActivity } from "../_test-utils/activity-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { holdAndDrag, swipeUpFrom, tap } from "../_test-utils/touch-screen";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep } from "../preview/preview-steps";
+
+const SWIPE_PX = 200;
+
+describe("dragging activity items with a finger", () => {
+  it("labeled diagram: a name held and dragged onto a spot labels it", async () => {
+    openActivity({ template: "labeledDiagram" });
+
+    await holdAndDrag({
+      from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
+      to: page.getByRole("button", { name: "Spot 3: empty" }),
+    });
+
+    await expect
+      .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
+      .toBeVisible();
+  });
+
+  it("labeled diagram: a name dragged while its picture is drawn stays off the spots", async () => {
+    const step = activityStep({
+      content: activityContentFixtures.labeledDiagram,
+      image: null,
+      imagePending: true,
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([step]) });
+    await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+
+    await holdAndDrag({
+      from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
+      to: page.getByRole("button", { name: "Spot 3: empty" }),
+    });
+
+    await expect
+      .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("categorize: an item held and dragged onto a group sorts it", async () => {
+    openActivity({ template: "categorize" });
+
+    await holdAndDrag({
+      from: page.getByRole("button", { exact: true, name: "Burning wood" }),
+      to: page.getByRole("region", { name: "New substance" }),
+    });
+
+    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).toBeVisible();
+
+    await expect
+      .element(
+        page
+          .getByRole("region", { name: "New substance" })
+          .getByRole("button", { exact: true, name: "Burning wood" }),
+      )
+      .toBeVisible();
+  });
+
+  it("argument builder: a quote held and dragged onto the evidence is picked", async () => {
+    openActivity({ template: "argumentBuilder" });
+
+    await holdAndDrag({
+      from: page.getByRole("button", { name: /^Use as evidence: It is too rash/u }),
+      to: page.getByRole("region", { name: "Evidence" }),
+    });
+
+    await expect.element(page.getByRole("button", { name: "Take the quote out" })).toBeVisible();
+  });
+
+  it("labeled diagram: a quick swipe over the names scrolls instead of dragging", async () => {
+    openActivity({ template: "labeledDiagram" });
+    const lastSpot = page.getByRole("button", { name: "Spot 5: empty" });
+    await expect.element(lastSpot).toBeVisible();
+    await expect.element(lastSpot).not.toBeInViewport();
+
+    // A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+    try {
+      await swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX);
+      vi.runOnlyPendingTimers();
+    } finally {
+      vi.useRealTimers();
+    }
+
+    await expect.element(lastSpot).toBeInViewport();
+    await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
+  });
+
+  it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {
+    openActivity({ template: "labeledDiagram" });
+    await tap(page.getByRole("button", { name: "Put Aorta on spot 1" }));
+    await expect.element(page.getByRole("button", { name: "Spot 1: Aorta" })).toBeVisible();
+  });
+});

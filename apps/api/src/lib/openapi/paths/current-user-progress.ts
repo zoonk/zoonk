@@ -3,7 +3,6 @@ import {
   currentUserEnergyResponseSchema,
   currentUserLevelResponseSchema,
   currentUserProgressResponseSchema,
-  currentUserProgressSnapshotResponseSchema,
   currentUserScorePatternsResponseSchema,
   currentUserScoreResponseSchema,
 } from "../schemas/current-user-progress";
@@ -13,10 +12,6 @@ import { AUTHENTICATED_SECURITY } from "../security";
 const requestTimeZoneDescription =
   "Calendar boundaries use the validated timezone resolved from the request and fall back to UTC.";
 
-/**
- * Builds the shared successful and authenticated error responses for one
- * current-user progress resource without weakening each operation's schema.
- */
 function getCurrentUserProgressResponses({
   description,
   schema,
@@ -27,7 +22,6 @@ function getCurrentUserProgressResponses({
     | typeof currentUserEnergyResponseSchema
     | typeof currentUserLevelResponseSchema
     | typeof currentUserProgressResponseSchema
-    | typeof currentUserProgressSnapshotResponseSchema
     | typeof currentUserScorePatternsResponseSchema
     | typeof currentUserScoreResponseSchema;
 }) {
@@ -113,19 +107,6 @@ export const currentUserProgressPaths = {
       }),
       security: AUTHENTICATED_SECURITY,
       summary: "Get current learner Score patterns",
-      tags: ["Progress"],
-    },
-  },
-  "/me/progress/snapshot": {
-    get: {
-      description: `Pre-completion milestone facts used by interactive lesson players. ${requestTimeZoneDescription}`,
-      operationId: "getCurrentUserProgressSnapshot",
-      responses: getCurrentUserProgressResponses({
-        description: "Current learner player progress snapshot",
-        schema: currentUserProgressSnapshotResponseSchema,
-      }),
-      security: AUTHENTICATED_SECURITY,
-      summary: "Get current learner progress snapshot",
       tags: ["Progress"],
     },
   },

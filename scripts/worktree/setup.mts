@@ -2,7 +2,11 @@ import { realpathSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { getPnpmCommand } from "../dev/process.mts";
-import { pruneDatabases } from "./cleanup.mts";
+import {
+  listRemovedWorktrees,
+  pruneDatabases,
+  stopProcessesInRemovedDirectories,
+} from "./cleanup.mts";
 import { type WorktreeDatabase, markDatabase, prepareDatabases } from "./databases.mts";
 import {
   copyEnvironment,
@@ -23,7 +27,7 @@ function log(message: string): void {
 function installDependencies(): Promise<string> {
   const pnpm = getPnpmCommand(process.env);
 
-  /** Direct setup calls have no npm_execpath, and pnpm may only be a .cmd shim on Windows. */
+  // Direct setup calls have no npm_execpath, and pnpm may only be a .cmd shim on Windows.
   if (process.platform === "win32" && pnpm.command === "pnpm") {
     return run({
       args: ["/d", "/s", "/c", "pnpm install --frozen-lockfile --prefer-offline"],
@@ -94,7 +98,28 @@ async function setupIsolatedDatabases(source: URL): Promise<void> {
   ]);
 
   await together(freshTests.map((database) => initializeTestDatabase({ database, source })));
-  await pruneDatabases({ source, worktree });
+
+  const stopped = await listRemovedWorktrees(source)
+    .then(stopProcessesInRemovedDirectories)
+    .catch((error: unknown) => {
+      log(
+        `Skipped stopping processes in removed worktrees: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return [];
+    });
+
+  if (stopped.length > 0) {
+    log(`Stopped ${stopped.length} processes still running in removed worktrees.`);
+  }
+
+  // Another worktree's test run locks its database while copying it; a later setup prunes it.
+  await pruneDatabases({ source, worktree }).catch((error: unknown) => {
+    log(
+      `Skipped pruning idle worktree databases: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
+
   log(`Databases ready: ${databases.map((database) => database.name).join(", ")}`);
 }
 

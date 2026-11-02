@@ -1,6 +1,8 @@
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
+import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
+import { appProofHeaderParamsSchema } from "../schemas/app-attest";
 import {
   badRequestResponse,
   forbiddenResponse,
@@ -14,7 +16,7 @@ import {
   googleSessionRequestSchema,
   sessionTokenResponseSchema,
 } from "../schemas/sessions";
-import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
+import { AUTHENTICATED_SECURITY, OPTIONAL_BEARER_SECURITY, PUBLIC_SECURITY } from "../security";
 
 const sessionTokenResponse = {
   content: { "application/json": { schema: sessionTokenResponseSchema } },
@@ -43,15 +45,22 @@ const signupValidationResponse = {
 
 const emailCodeForbiddenResponse = {
   ...forbiddenResponse,
-  description: `Account disabled or email code locked. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}.`,
+  description: `Account disabled, email code locked, or the request had no bot proof (BotID's, App Attest's or Play Integrity's). Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
 } as const;
+
+const botCheckForbiddenResponse = {
+  ...forbiddenResponse,
+  description: `The request had no bot proof (BotID's, App Attest's or Play Integrity's), or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
+} as const;
+
+const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the \`X-App-Attest-*\` headers or the Android app's Play Integrity token in the \`X-Play-Integrity-*\` headers (see \`POST /v1/app-attest/challenges\`); without any of them they get 403 ${accessErrorCodes.botDetected}.`;
 
 const googleAuthorizationResponse = {
   ...unauthorizedResponse,
   description: `Google authorization is invalid or expired. Error code: ${sessionErrorCodes.googleAuthorizationInvalid}.`,
 } as const;
 
-const rateLimitResponse = {
+export const authRateLimitResponse = {
   ...tooManyRequestsResponse,
   description: `Request rate limit exceeded. Error code: ${sessionErrorCodes.rateLimitExceeded}.`,
   headers: z.object({
@@ -66,18 +75,20 @@ const rateLimitResponse = {
 export const sessionPaths = {
   "/email-sign-in-codes": {
     post: {
+      description: `Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. ${EMAIL_CODE_BOT_CHECK}`,
       operationId: "createEmailSignInCode",
       requestBody: {
         content: { "application/json": { schema: emailSignInCodeRequestSchema } },
         required: true,
       },
+      requestParams: { header: appProofHeaderParamsSchema },
       responses: {
         "204": { description: "Sign-in code sent" },
         "400": signupValidationResponse,
-        "403": forbiddenResponse,
-        "429": rateLimitResponse,
+        "403": botCheckForbiddenResponse,
+        "429": authRateLimitResponse,
       },
-      security: PUBLIC_SECURITY,
+      security: OPTIONAL_BEARER_SECURITY,
       summary: "Send an email sign-in code",
       tags: ["Sessions"],
     },
@@ -94,7 +105,7 @@ export const sessionPaths = {
         "400": signupValidationResponse,
         "401": appleAuthorizationResponse,
         "403": accountDisabledResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with Apple",
@@ -117,16 +128,18 @@ export const sessionPaths = {
   },
   "/sessions/email-code": {
     post: {
+      description: `Signs in with the code from \`POST /v1/email-sign-in-codes\`, creating the account the first time. ${EMAIL_CODE_BOT_CHECK}`,
       operationId: "createEmailCodeSession",
       requestBody: {
         content: { "application/json": { schema: emailCodeSessionRequestSchema } },
         required: true,
       },
+      requestParams: { header: appProofHeaderParamsSchema },
       responses: {
         "200": sessionTokenResponse,
         "400": emailCodeErrorResponse,
         "403": emailCodeForbiddenResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with an email code",
@@ -145,7 +158,7 @@ export const sessionPaths = {
         "400": signupValidationResponse,
         "401": googleAuthorizationResponse,
         "403": accountDisabledResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with Google",

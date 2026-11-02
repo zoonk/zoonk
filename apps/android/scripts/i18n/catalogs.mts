@@ -1,23 +1,52 @@
+import { globSync, readFileSync } from "node:fs";
 import { glob, readFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import createAndroidXmlCodec from "@eloqnt/format-android-xml";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 
 export const ANDROID_ROOT = fileURLToPath(new URL("../../", import.meta.url));
-export const SOURCE_CATALOG = "app/src/main/res/values/strings";
-export const TARGET_CATALOG = "app/src/main/res/values-{code}/strings";
 
-export function catalogFile(locale: string) {
-  const catalog =
-    locale === DEFAULT_LOCALE ? SOURCE_CATALOG : TARGET_CATALOG.replace("{code}", locale);
+const CATALOG_RES = "core/resources/src/main/res";
 
-  return `${catalog}.xml`;
+export function catalogNames(root: string) {
+  return globSync(`${CATALOG_RES}/values/strings*.xml`, { cwd: root })
+    .map((file) => basename(file, ".xml"))
+    .toSorted();
+}
+
+export function catalogPath(catalog: string) {
+  return {
+    source: `${CATALOG_RES}/values/${catalog}`,
+    targets: `${CATALOG_RES}/values-{code}/${catalog}`,
+  };
+}
+
+export function catalogFile({ catalog, locale }: { catalog: string; locale: string }) {
+  const { source, targets } = catalogPath(catalog);
+  return `${locale === DEFAULT_LOCALE ? source : targets.replace("{code}", locale)}.xml`;
+}
+
+export function readSourceCatalogs(root: string) {
+  return catalogNames(root).map((catalog) =>
+    readFileSync(resolve(root, catalogFile({ catalog, locale: DEFAULT_LOCALE })), "utf8"),
+  );
 }
 
 export async function untrackedCatalogs(root: string) {
-  const files = await Array.fromAsync(glob("app/src/**/res/values*/*.xml", { cwd: root }));
-  const tracked = new Set(SUPPORTED_LOCALES.map((locale) => catalogFile(locale)));
+  const files = await Array.fromAsync(
+    glob(["*/src/**/res/values*/*.xml", "*/*/src/**/res/values*/*.xml"], {
+      cwd: root,
+      exclude: (path) => path === "node_modules",
+    }),
+  );
+
+  const tracked = new Set(
+    catalogNames(root).flatMap((catalog) =>
+      SUPPORTED_LOCALES.map((locale) => catalogFile({ catalog, locale })),
+    ),
+  );
+
   const untracked = files.filter((file) => !tracked.has(file));
 
   async function containsMessages(file: string) {

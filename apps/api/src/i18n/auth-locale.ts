@@ -3,10 +3,7 @@ import { type NextRequest } from "next/server";
 
 export const AUTH_LOCALE_HEADER = "x-zoonk-auth-locale";
 
-/**
- * Accepts locale handoffs only on central-auth pages. API clients cannot use
- * this query parameter to change the locale cookie or the request locale.
- */
+/** Only central-auth pages take the handoff, so API clients can't change the locale with it. */
 export function getAuthLocale(request: NextRequest): SupportedLocale | null {
   if (!request.nextUrl.pathname.startsWith("/auth/")) {
     return null;

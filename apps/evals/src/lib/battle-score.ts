@@ -6,7 +6,13 @@ import { normalizeAnonymousId } from "./battle-mapping";
 import battleSystemPrompt from "./battle-system-prompt.md";
 import { calculateScore } from "./score-calculation";
 import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
-import { type ModelRanking, type ScoreCategory, judgeCategoryScoreSchema } from "./types";
+import {
+  type ModelRanking,
+  type ScoreCategory,
+  type TokenUsage,
+  judgeCategoryScoreSchema,
+  toTokenUsage,
+} from "./types";
 
 const MAX_BATTLE_RANKING_ATTEMPTS = 3;
 
@@ -30,10 +36,18 @@ type BattleRankingResult =
   | z.infer<typeof battleRankingSchema>
   | z.infer<typeof categorizedBattleRankingSchema>;
 
-/**
- * Rejects labels that cannot be connected to an anonymized output instead of
- * persisting the judge's label as though it were a configured model ID.
- */
+type BattleRankingGeneration = { result: BattleRankingResult; usage: TokenUsage };
+
+function addUsage(first: TokenUsage, second: TokenUsage): TokenUsage {
+  return {
+    cacheReadTokens: (first.cacheReadTokens ?? 0) + (second.cacheReadTokens ?? 0),
+    cacheWriteTokens: (first.cacheWriteTokens ?? 0) + (second.cacheWriteTokens ?? 0),
+    inputTokens: first.inputTokens + second.inputTokens,
+    outputTokens: first.outputTokens + second.outputTokens,
+    reasoningTokens: (first.reasoningTokens ?? 0) + (second.reasoningTokens ?? 0),
+  };
+}
+
 function getModelMapping({
   anonymousId,
   judgeId,
@@ -56,11 +70,6 @@ function getModelMapping({
   return modelMapping;
 }
 
-/**
- * Adds the provider completion details that AI SDK's default output getter
- * omits. These fields distinguish truncation, filtering, and Gateway responses
- * that forgot to include a finish reason without logging the generated text.
- */
 function createNoBattleRankingError({
   attempt,
   finishReason,
@@ -79,11 +88,6 @@ function createNoBattleRankingError({
   });
 }
 
-/**
- * Retries only the successful provider calls that ended without a complete
- * structured output. AI SDK retries transport/provider exceptions itself, but
- * it does not retry this post-generation state because the request completed.
- */
 async function generateBattleRankingResult({
   attempt = 1,
   judgeId,
@@ -94,7 +98,7 @@ async function generateBattleRankingResult({
   judgeId: string;
   prompt: string;
   schema: z.ZodType<BattleRankingResult>;
-}): Promise<BattleRankingResult> {
+}): Promise<BattleRankingGeneration> {
   const generationResult = await safeAsync(() =>
     generateText({
       instructions: battleSystemPrompt,
@@ -109,9 +113,10 @@ async function generateBattleRankingResult({
   }
 
   const generation = generationResult.data;
+  const usage = toTokenUsage(generation.usage);
 
   if (generation.finishReason === "stop") {
-    return generation.output;
+    return { result: generation.output, usage };
   }
 
   const finishReason = generation.finishReason ?? "missing";
@@ -136,13 +141,16 @@ async function generateBattleRankingResult({
     throw error;
   }
 
-  return generateBattleRankingResult({ attempt: attempt + 1, judgeId, prompt, schema });
+  const retry = await generateBattleRankingResult({
+    attempt: attempt + 1,
+    judgeId,
+    prompt,
+    schema,
+  });
+
+  return { result: retry.result, usage: addUsage(usage, retry.usage) };
 }
 
-/**
- * Asks one judge to score every anonymized contestant and maps the judge's
- * labels back to the model IDs used by the persisted battle leaderboard.
- */
 export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
@@ -150,7 +158,7 @@ export async function generateBattleRankings(params: {
   anonymizedOutputs: { anonymousId: string; output: string }[];
   mapping: { anonymousId: string; modelId: string }[];
   scoreCategories?: ScoreCategory[];
-}): Promise<ModelRanking[]> {
+}): Promise<{ rankings: ModelRanking[]; usage: TokenUsage }> {
   const { judgeId, expectations, userPrompt, anonymizedOutputs, mapping, scoreCategories } = params;
 
   const outputsSection = anonymizedOutputs
@@ -183,9 +191,14 @@ Ties are allowed if outputs are truly equivalent in quality.
 `;
 
   const schema = scoreCategories ? categorizedBattleRankingSchema : battleRankingSchema;
-  const result = await generateBattleRankingResult({ judgeId, prompt: evalPrompt, schema });
 
-  return result.rankings.map((ranking) => {
+  const { result, usage } = await generateBattleRankingResult({
+    judgeId,
+    prompt: evalPrompt,
+    schema,
+  });
+
+  const rankings = result.rankings.map((ranking): ModelRanking => {
     const modelMapping = getModelMapping({ anonymousId: ranking.anonymousId, judgeId, mapping });
 
     if (scoreCategories && "categoryScores" in ranking) {
@@ -214,4 +227,6 @@ Ties are allowed if outputs are truly equivalent in quality.
       score: ranking.score,
     };
   });
+
+  return { rankings, usage };
 }

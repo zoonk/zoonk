@@ -9,10 +9,6 @@ export const subscriptionFilterLabels: Record<SubscriptionFilter, string> = {
   incomplete: "Incomplete",
 };
 
-/**
- * The unfiltered view remains the safe fallback for malformed or shared URLs,
- * so an invalid status can never hide subscription records from support.
- */
 export function parseSubscriptionFilter(status: string | string[] | undefined): SubscriptionFilter {
   const value = Array.isArray(status) ? status[0] : status;
 
@@ -27,10 +23,6 @@ export function getSubscriptionStatusLabel(status: string | null) {
   return status ? status.replaceAll("_", " ") : "—";
 }
 
-/**
- * Provider labels use product names instead of raw enum casing so billing
- * records scan consistently across the subscription list and user details.
- */
 export function getSubscriptionProviderLabel(provider: string) {
   if (provider === "apple") {
     return "Apple";

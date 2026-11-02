@@ -6,9 +6,12 @@ import XCTest
 final class FeedbackFormStoreTests: XCTestCase {
   func testSubmitNormalizesFieldsAndPublishesSuccess() async {
     let api = FeedbackAPISpy(result: .success(()))
+    let context = FeedbackContext(contentID: CourseChapter.testFixture.id, contentKind: .chapter)
     let store = FeedbackFormStore(
       api: api,
-      defaultEmail: "  LEARNER@zoonk.test ")
+      context: context,
+      defaultEmail: "  LEARNER@zoonk.test ",
+      token: "learner-session")
     store.message = "  Please clarify the first chapter. \n"
 
     await store.submit()
@@ -19,9 +22,12 @@ final class FeedbackFormStoreTests: XCTestCase {
     XCTAssertEqual(
       submissions,
       [
-        FeedbackSubmission(
-          email: "learner@zoonk.test",
-          message: "Please clarify the first chapter.")
+        FeedbackSubmissionRecord(
+          submission: FeedbackSubmission(
+            context: context,
+            email: "learner@zoonk.test",
+            message: "Please clarify the first chapter."),
+          token: "learner-session")
       ])
   }
 
@@ -59,20 +65,25 @@ final class FeedbackFormStoreTests: XCTestCase {
   }
 }
 
+private struct FeedbackSubmissionRecord: Equatable {
+  let submission: FeedbackSubmission
+  let token: String?
+}
+
 private actor FeedbackAPISpy: FeedbackAPIClient {
-  private var recordedSubmissions = [FeedbackSubmission]()
+  private var recordedSubmissions = [FeedbackSubmissionRecord]()
   private let result: Result<Void, Error>
 
   init(result: Result<Void, Error>) {
     self.result = result
   }
 
-  func submit(_ submission: FeedbackSubmission) async throws {
-    recordedSubmissions.append(submission)
+  func submit(_ submission: FeedbackSubmission, token: String?) async throws {
+    recordedSubmissions.append(FeedbackSubmissionRecord(submission: submission, token: token))
     try result.get()
   }
 
-  func submissions() -> [FeedbackSubmission] {
+  func submissions() -> [FeedbackSubmissionRecord] {
     recordedSubmissions
   }
 }

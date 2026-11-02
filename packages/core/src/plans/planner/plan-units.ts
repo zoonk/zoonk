@@ -1,0 +1,325 @@
+import { type CourseLevel } from "@zoonk/db";
+import { followCourseLessonOrder } from "./course-unit-order";
+import { countStandInLessons } from "./stand-in-size";
+
+export type PlannerLesson = {
+  courseOrder?: { phase: number; position: number };
+  band?: CourseLevel | null;
+  chapterId: string | null;
+  lessonId: string;
+  minutes: number;
+  skillIds: readonly string[];
+  title: string;
+};
+
+export type UnitSkill = {
+  area: string;
+  focused?: boolean;
+  index?: number;
+  lessons: number;
+  name: string;
+  outcome?: boolean;
+  outlined?: boolean;
+  phase: number;
+  reduced?: boolean;
+  skillId: string;
+};
+
+export type QueueUnit = {
+  announced?: boolean;
+  area: string;
+  opensDay?: boolean;
+  startsAt?: number;
+  heldOn?: number;
+  after?: Date;
+  afterDay?: number;
+  chapterId: string | null;
+  /** Already sized to a base's selected core: splitting it again would keep only a ninth. */
+  coreOnly?: boolean;
+  depth?: boolean;
+  dueBy?: Date;
+  focused?: boolean;
+  inProgress?: boolean;
+  key: string;
+  kind: "boss" | "lesson";
+  lessonId: string | null;
+  lessons?: number;
+  minutes: number;
+  outcome?: boolean;
+  phase: number;
+  rankedOut?: boolean;
+  reduced?: boolean;
+  skillId: string | null;
+  title: string;
+};
+
+/**
+ * The single estimate every plan and session uses for a lesson not written yet; written lessons
+ * keep their own.
+ */
+export const DEFAULT_LESSON_MINUTES = 4;
+
+export function getLessonKey(lessonId: string) {
+  return `lesson:${lessonId}`;
+}
+
+export function getSkillKey(skillId: string) {
+  return `skill:${skillId}`;
+}
+
+export function getBossKey(phase: number) {
+  return `boss:${phase}`;
+}
+
+function toLessonUnit({
+  lesson,
+  paceFactor,
+  skill,
+  teaches,
+}: {
+  lesson: PlannerLesson;
+  paceFactor: number;
+  skill: UnitSkill;
+  teaches: UnitSkill;
+}): QueueUnit {
+  return {
+    area: teaches.area,
+    chapterId: lesson.chapterId,
+    key: getLessonKey(lesson.lessonId),
+    kind: "lesson",
+    lessonId: lesson.lessonId,
+    minutes: lesson.minutes * paceFactor,
+    ...(teaches.focused ? { focused: true } : {}),
+    ...(teaches.outcome ? { outcome: true } : {}),
+    ...(teaches.reduced ? { reduced: true } : {}),
+    phase: skill.phase,
+    skillId: teaches.skillId,
+    title: lesson.title,
+  };
+}
+
+function toPlaceholderUnit({
+  lessons,
+  paceFactor,
+  skill,
+}: {
+  lessons: number;
+  paceFactor: number;
+  skill: UnitSkill;
+}) {
+  return {
+    area: skill.area,
+    chapterId: null,
+    key: getSkillKey(skill.skillId),
+    kind: "lesson",
+    lessonId: null,
+    lessons,
+    minutes: lessons * DEFAULT_LESSON_MINUTES * paceFactor,
+    ...(skill.focused ? { focused: true } : {}),
+    ...(skill.outcome ? { outcome: true } : {}),
+    ...(skill.reduced ? { reduced: true } : {}),
+    phase: skill.phase,
+    skillId: skill.skillId,
+    title: skill.name,
+  } satisfies QueueUnit;
+}
+
+function apportion({ needs, total }: { needs: readonly number[]; total: number }): number[] {
+  const sum = needs.reduce((acc, need) => acc + need, 0);
+  const exact = needs.map((need) => (sum > 0 ? (total * need) / sum : total / needs.length));
+  const whole = exact.map((share) => Math.floor(share));
+  const left = total - whole.reduce((acc, count) => acc + count, 0);
+
+  const extra = new Set(
+    exact
+      .map((share, index) => ({ index, remainder: share - (whole[index] ?? 0) }))
+      .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index)
+      .slice(0, left)
+      .map((entry) => entry.index),
+  );
+
+  const counts = whole.map((count, index) => count + (extra.has(index) ? 1 : 0));
+
+  if (total < needs.length) {
+    return counts;
+  }
+
+  return counts.reduce<number[]>((shares, count, index) => {
+    if (count > 0) {
+      return shares;
+    }
+
+    const largest = shares.indexOf(Math.max(...shares));
+
+    return shares.map((share, at) => {
+      if (at === index) {
+        return 1;
+      }
+
+      return at === largest ? share - 1 : share;
+    });
+  }, counts);
+}
+
+export function assignLessonSkills({
+  lessons,
+  skills,
+}: {
+  lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
+  skills: readonly Pick<UnitSkill, "index" | "lessons" | "skillId">[];
+}): Map<string, string> {
+  const order = new Map(skills.map((skill, position) => [skill.skillId, skill.index ?? position]));
+  const sizes = new Map(skills.map((skill) => [skill.skillId, skill.lessons]));
+
+  const taughtBy = lessons.map((lesson) => ({
+    chapterId: lesson.chapterId,
+    lessonId: lesson.lessonId,
+    skillIds: lesson.skillIds
+      .filter((skillId) => order.has(skillId))
+      .toSorted((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0)),
+  }));
+
+  const single = new Map(
+    taughtBy.flatMap((lesson) =>
+      lesson.skillIds.length === 1 ? [[lesson.lessonId, lesson.skillIds[0] ?? ""] as const] : [],
+    ),
+  );
+
+  const alone = Map.groupBy([...single.values()], (skillId) => skillId);
+
+  const groups = Map.groupBy(
+    taughtBy.filter((lesson) => lesson.skillIds.length > 1),
+    (lesson) => `${lesson.chapterId ?? ""}:${lesson.skillIds.join("+")}`,
+  );
+
+  const shared = [...groups.values()].flatMap((group) => {
+    const skillIds = group[0]?.skillIds ?? [];
+
+    const counts = apportion({
+      needs: skillIds.map((skillId) =>
+        Math.max(1, (sizes.get(skillId) ?? 1) - (alone.get(skillId)?.length ?? 0)),
+      ),
+      total: group.length,
+    });
+
+    const runs = skillIds.flatMap((skillId, index) =>
+      Array.from({ length: counts[index] ?? 0 }, () => skillId),
+    );
+
+    return group.map((lesson, position) => [lesson.lessonId, runs[position] ?? ""] as const);
+  });
+
+  return new Map([...single, ...shared.filter(([, skillId]) => skillId)]);
+}
+
+function countAssigned(teaching: ReadonlyMap<string, string>): Map<string, number> {
+  return [...teaching.values()].reduce(
+    (counts, skillId) => counts.set(skillId, (counts.get(skillId) ?? 0) + 1),
+    new Map<string, number>(),
+  );
+}
+
+export function getStandInLessons({
+  lessons,
+  skills,
+}: {
+  lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
+  skills: readonly Pick<UnitSkill, "index" | "lessons" | "outlined" | "skillId">[];
+}): Map<string, number> {
+  const taught = countAssigned(assignLessonSkills({ lessons, skills }));
+
+  return new Map(
+    skills.map((skill) => [
+      skill.skillId,
+      countStandInLessons({
+        lessons: skill.lessons,
+        outlined: skill.outlined,
+        taught: taught.get(skill.skillId) ?? 0,
+      }),
+    ]),
+  );
+}
+
+function getPlannedSkillId({
+  lesson,
+  place,
+  prerequisites,
+  skills,
+  teaches,
+}: {
+  lesson: PlannerLesson;
+  place: ReadonlyMap<string, number>;
+  prerequisites: ReadonlyMap<string, readonly string[]>;
+  skills: readonly UnitSkill[];
+  teaches: string | undefined;
+}): string | undefined {
+  const first = skills.find((skill) => lesson.skillIds.includes(skill.skillId))?.skillId;
+  const firstPlace = place.get(first ?? "") ?? 0;
+
+  const buildsOnLater = (prerequisites.get(teaches ?? "") ?? []).some(
+    (skillId) => (place.get(skillId) ?? -1) > firstPlace,
+  );
+
+  return buildsOnLater ? teaches : first;
+}
+
+export function buildLessonUnits({
+  lessons,
+  paceFactor,
+  preserveCourseOrder = false,
+  prerequisites = new Map(),
+  skills,
+}: {
+  lessons: readonly PlannerLesson[];
+  paceFactor: number;
+  preserveCourseOrder?: boolean;
+  prerequisites?: ReadonlyMap<string, readonly string[]>;
+  skills: readonly UnitSkill[];
+}): QueueUnit[] {
+  const bySkillId = new Map(skills.map((skill) => [skill.skillId, skill]));
+  const teaching = assignLessonSkills({ lessons, skills });
+  const counts = countAssigned(teaching);
+  const place = new Map(skills.map((skill, index) => [skill.skillId, index]));
+  const firstSkill = new Map<string, string>();
+
+  lessons.forEach((lesson) => {
+    const skillId = getPlannedSkillId({
+      lesson,
+      place,
+      prerequisites,
+      skills,
+      teaches: teaching.get(lesson.lessonId),
+    });
+
+    if (skillId && !firstSkill.has(lesson.lessonId)) {
+      firstSkill.set(lesson.lessonId, skillId);
+    }
+  });
+
+  // One pass: filtering every lesson for each skill cost a real-size exam a twentieth of each
+  // build.
+  const byFirstSkill = Map.groupBy(lessons, (lesson) => firstSkill.get(lesson.lessonId));
+
+  const units = skills.flatMap((skill) => {
+    const own = (byFirstSkill.get(skill.skillId) ?? [])
+      .filter((lesson) => lesson.skillIds.includes(skill.skillId))
+      .map((lesson) =>
+        toLessonUnit({
+          lesson,
+          paceFactor,
+          skill,
+          teaches: bySkillId.get(teaching.get(lesson.lessonId) ?? "") ?? skill,
+        }),
+      );
+
+    const missing = countStandInLessons({
+      lessons: skill.lessons,
+      outlined: skill.outlined,
+      taught: counts.get(skill.skillId) ?? 0,
+    });
+
+    return missing > 0 ? [...own, toPlaceholderUnit({ lessons: missing, paceFactor, skill })] : own;
+  });
+
+  return preserveCourseOrder ? followCourseLessonOrder({ lessons, units }) : units;
+}

@@ -5,6 +5,8 @@ type SecurityRequirement = Record<string, string[]>;
 
 export const PUBLIC_SECURITY: SecurityRequirement[] = [];
 
+export const OPTIONAL_BEARER_SECURITY: SecurityRequirement[] = [{}, { bearerAuth: [] }];
+
 export const AUTHENTICATED_SECURITY: SecurityRequirement[] = [
   { bearerAuth: [] },
   { cookieAuth: [] },

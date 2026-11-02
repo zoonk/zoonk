@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "3db2ceed1016d046d3cf0b5b0a7350ec4bee36f7d5010216adb3ee332d67a640",
+  "richtext_math_fraction": "8abb5ed76d387f8aa2397e0a56bb159e373f3f263667726813ed4b40849a156c",
+  "richtext_math_power": "d88f498ba312c8020e09f4cef53656f8fe6165ac375fe1c1d2d114d713c97a77",
+  "richtext_math_root": "aaa110417fff719128d4298e4c16512f3b726fa0a42c87d5852e3b1f8c47f9f8",
+  "richtext_math_squared": "8d6ed7286ae29fb0000e3647ffa978fa266093b98f24a6901dc3e3eac09b7afe",
+  "richtext_math_subscript": "87272f566718ffa949b95b4821399c5e23250f9aef6079f3426a65b776caaa68"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">제곱</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">세제곱</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">의 %1$s제곱</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">아래 첨자 %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">분자 %1$s, 분모 %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">%1$s의 제곱근</string>
+</resources>

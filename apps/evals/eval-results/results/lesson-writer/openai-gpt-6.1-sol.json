@@ -1,0 +1,421 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The goal-versus-solution distinction is correct, and each choice check has one defensible answer. The banking check appropriately distinguishes solving the reported findability problem from merely increasing spending limits. The AI activity intentionally introduces the specified mistake in step 2, and its later steps consistently build on that mistake.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The writing is concise and beginner-friendly. Progress bars and spending limits are explained immediately, and the explanation makes UX goals concrete by contrasting a desired change with a proposed design. No substantial unexplained terminology or skipped reasoning appears.",
+          "score": 9,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks test classification, diagnosis, and application rather than sentence recall. Distractors represent plausible misconceptions, including the required payment-button redesign, and the banking application adds the new challenge of choosing an outcome relevant to the reported difficulty. However, the activity's why and interaction feedback refer to \"Step 2\" instead of identifying the selected statement by its content, violating the explicit feedback requirement.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The output uses US English, opens directly with the intended unscored guess, follows the planned screen sequence, and ends with one sentence per summary idea. The food-delivery activity and banking application closely follow their briefs. One setting weakness remains: the opening examples and first check use generic checkout or an online store rather than explicitly placing the situation in a product team and its app. No CAST was supplied, so Wichita's membership cannot be verified.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4832,
+          "inputTokens": 4835,
+          "outputTokens": 960,
+          "reasoningTokens": 388
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The activity's feedback identifies the mistake as \"Step 2\" rather than naming \"show the delivery fee on the home screen,\" contrary to the requirement against positional references. Also, the early examples describe checkout and an online store without establishing the required product-team-and-app setting.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the activity slightly more independent by asking where the AI's answer goes wrong without announcing the precise mistake to look for. Retain the explanation of the goal-versus-solution distinction in the feedback.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The findError activity is an AI assistant's answer (`author: \"ai\"`) whose one mistake is in step 2 as the brief says: a solution (\"show the fee on the home screen\") taken as the goal; the steps after it build on it, and the last step is never the wrong one\n      - Every situation happens in a product team and its app (food delivery, banking), never at a bakery or a market; people and towns come from CAST\n      - No reason or reveal points at an option by its place (\"the second one\", \"option B\"): each names the option by what it says\n      - The checks and the application each ask something new\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-ux-goals-spot-ai-1",
+        "userInput": {
+          "chapterTitle": "UX goals and outcomes",
+          "courseTitle": "UX Design",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Write a UX goal that names the change without naming a solution",
+            "description": "State what should change in people's experience before choosing a design, and catch a goal that hides a solution.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "A team writes the goal 'Add a progress bar to checkout'. Ask the learner to guess, without scoring, whether that is a goal or a solution. Answer: a solution.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "findError",
+                "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
+                "kind": "activity",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Write a goal that names the change in people's experience, not the design that might cause it.",
+                "example": "'Fewer people give up when the fee appears' instead of 'Add a fee banner'.",
+                "hard": false,
+                "name": "Write a UX goal without a solution",
+                "topic": "UX goals",
+                "useCase": "Agreeing with a product team on what a redesign must change before designing it."
+              },
+              {
+                "description": "Tell a real UX goal from a proposed solution written as if it were a goal.",
+                "example": "'Redesign the button' is a solution; 'people finish payment on the first try' is a goal.",
+                "hard": false,
+                "name": "Tell a UX goal from a proposed solution",
+                "topic": "UX goals",
+                "useCase": "Reviewing a brief or an AI assistant's summary before a design sprint."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Writing UX goals"
+          },
+          "activityTemplates": [
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step. Check kinds this template supports: interaction.",
+              "id": "findError",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"author\":{\"type\":\"string\",\"const\":\"ai\"},\"correction\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"errorStepId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"problem\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"steps\":{\"minItems\":3,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"expression\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"result\":{\"type\":\"number\"},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160}},\"required\":[\"id\",\"text\"],\"additionalProperties\":false}},\"why\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"correction\",\"errorStepId\",\"problem\",\"steps\",\"why\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"findError\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The anatomy, diagram part IDs, front-view orientation, pumping destinations and thicker left-ventricular wall are correct at the intended level. Left-to-right flow through a small ventricular septal defect is appropriate for the described ordinary case. Each check has one defensible correct answer, and the reasons match their options.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The Brazilian Portuguese is direct and generally accessible, but the explanation clusters several technical terms and multiple ideas on one screen without the required everyday comparisons before introducing the names. There is also a skipped causal link between the thicker ventricular wall and the stronger push needed to reason about the septal hole. These multiple clarity shortcomings trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The labeling activity meaningfully tests spatial identification and explains the likely left-right reversal. The chamber check includes the required right-ventricle trap and useful option-specific feedback. However, the application distinguishes opposite flow directions using a stronger-left-side premise not explicitly established before the learner answers, weakening its assessment of taught understanding.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with the heart’s organization, follows the planned screen sequence and finishes with sentence-length summary ideas. The SUS consultation in Natal provides a concrete, realistic application. The principal slip is that the application only partially follows from prior teaching: separation and mixing are established, but the reason for the specific flow direction is supplied afterward.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6005,
+          "inputTokens": 6008,
+          "outputTokens": 1048,
+          "reasoningTokens": 457
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introduces câmaras, átrios, ventrículos and septo together, exceeding the beginner requirement to introduce only one new technical term per screen. The application also requires a left-to-right flow prediction before explicitly teaching that the left ventricle produces greater pressure; that missing connection appears only in the answer feedback.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Within the planned screens, introduce technical names through familiar comparisons such as receiving rooms, pumps and a dividing wall. In the chamber-check feedback, explicitly connect the left ventricle’s thicker wall to its stronger push, preparing learners to predict flow through the septal hole.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - Atria receive and ventricles pump; the right side sends blood to the lungs and the left side to the whole body; the septum keeps the two sides apart\n      - The labeled diagram uses the checked heart diagram and its part ids, with labels in Portuguese, and its feedback explains the left-right mix-up of a heart seen from the front\n      - The check about which chamber pumps to the body uses the right-ventricle trap and explains the thicker wall of the left ventricle\n      - The application about a hole in the septum follows from what the lesson taught\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-camaras-do-coracao-beginner-1",
+        "userInput": {
+          "chapterTitle": "Sistema circulatório",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Localizar as quatro câmaras do coração e dizer para onde cada lado bombeia o sangue",
+            "description": "Conheça átrios e ventrículos, o septo que separa os dois lados e o caminho do sangue para os pulmões e para o corpo.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "O coração bate cerca de 100 mil vezes por dia sem misturar o sangue que vai para os pulmões com o que vai para o corpo. Peça um palpite, sem avaliar, de como ele consegue isso.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
+              },
+              {
+                "activityTemplate": "labeledDiagram",
+                "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Nomear e localizar átrios, ventrículos e septo num desenho do coração visto de frente.",
+                "example": "No desenho de frente, o ventrículo esquerdo fica embaixo, à direita de quem olha.",
+                "hard": false,
+                "name": "Localizar as câmaras do coração",
+                "topic": "Anatomia do coração",
+                "useCase": "Ler desenhos e exames do coração na escola e em provas."
+              },
+              {
+                "description": "Dizer para onde cada lado do coração bombeia o sangue: o direito para os pulmões, o esquerdo para o corpo.",
+                "example": "O ventrículo direito manda sangue para os pulmões pela artéria pulmonar.",
+                "hard": true,
+                "name": "Seguir o caminho do sangue no coração",
+                "topic": "Circulação",
+                "useCase": "Entender por que um defeito num lado do coração afeta os pulmões ou o corpo."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "As quatro câmaras do coração"
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\nanimal-cell (An animal cell as seen under a microscope): cell-membrane, cytoplasm, nucleus, nucleolus, mitochondrion, rough-endoplasmic-reticulum, golgi-apparatus, ribosome, lysosome\natom (An atom in the shell (Bohr) model): nucleus, proton, neutron, electron, electron-shell\ndigestive-system (The human digestive system, front view): mouth, esophagus, stomach, liver, gallbladder, pancreas, small-intestine, large-intestine, rectum\nearth-layers (The layers of the Earth, cut open): crust, mantle, outer-core, inner-core\nelectric-circuit (A simple series circuit with a battery, switch, bulb and resistor): battery, switch, bulb, resistor, wire\nflower (A flower cut in half to show its parts): petal, sepal, anther, filament, stigma, style, ovary, receptacle, stem\nhuman-ear (The human ear: outer, middle and inner ear): pinna, ear-canal, eardrum, ossicles, semicircular-canals, cochlea, auditory-nerve, eustachian-tube\nhuman-eye (The human eye from the side, light entering on the left): cornea, iris, pupil, lens, retina, optic-nerve, sclera, vitreous-humor\nhuman-heart (The human heart seen from the front, so its right side is on the viewer's left): right-atrium, left-atrium, right-ventricle, left-ventricle, aorta, pulmonary-artery, superior-vena-cava, inferior-vena-cava, pulmonary-veins, septum\ninsect (An insect's body from above): head, thorax, abdomen, antenna, compound-eye, wing, leg\nleaf-cross-section (A cross-section of a leaf): cuticle, upper-epidermis, palisade-mesophyll, spongy-mesophyll, lower-epidermis, stoma, guard-cell, vein\nneuron (A motor neuron): dendrite, cell-body, nucleus, axon, myelin-sheath, node-of-ranvier, axon-terminal\nplant (A flowering plant from roots to flower): roots, stem, leaf, flower, bud, fruit\nplant-cell (A plant cell as seen under a microscope): cell-wall, cell-membrane, cytoplasm, nucleus, chloroplast, central-vacuole, mitochondrion\nrespiratory-system (The human respiratory system, front view): nasal-cavity, larynx, trachea, bronchus, bronchiole, lung, diaphragm\nvolcano (A volcano cut open during an eruption): magma-chamber, main-vent, crater, lava-flow, ash-cloud, side-vent, crust\nwater-cycle (The water cycle over land and sea): evaporation, transpiration, condensation, precipitation, surface-runoff, infiltration, groundwater Check kinds this template supports: interaction.",
+              "id": "labeledDiagram",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"diagramId\":{\"type\":\"string\",\"maxLength\":60,\"pattern\":\"^[\\\\da-z]+(?:-[\\\\da-z]+)*$\"},\"distractors\":{\"maxItems\":3,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"mixUps\":{\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"feedback\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"labels\":{\"minItems\":2,\"maxItems\":2,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}}},\"required\":[\"feedback\",\"labels\"],\"additionalProperties\":false}},\"parts\":{\"minItems\":2,\"maxItems\":8,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"partId\":{\"type\":\"string\",\"maxLength\":60,\"pattern\":\"^[\\\\da-z]+(?:-[\\\\da-z]+)*$\"}},\"required\":[\"label\",\"partId\"],\"additionalProperties\":false}}},\"required\":[\"diagramId\",\"distractors\",\"mixUps\",\"parts\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"labeledDiagram\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The identification rules are appropriately framed as a simple key rather than a universal botanical classification. The case follows Needles → Bundles → Pine, and its picture requests exactly two long needles per bundle. Both scored checks have one defensible correct answer, and their reasons match their options.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The key's broad-to-fine order is explained before the activity, and the language is generally concrete and beginner-friendly. However, the explanation concentrates several new terms on one screen, contrary to the vocabulary constraint. Lobes are defined descriptively but without an everyday comparison. This is a localized clarity weakness, not a barrier to completing the lesson.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The activity requires walking the pictured case through the key, and its feedback addresses stopping prematurely at needles. The next check includes the planned lobes-first trap and explains why both narrower questions come later. The application requires classification using both leaf type and lobe shape, including a useful right-name/wrong-reason distractor. The unscored hook is appropriately evaluated through its shared reveal.",
+          "score": 10,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens directly with the park-tree puzzle, and follows the five planned screens in order before the summary. The application names a concrete US park and stays on the same key. Only screens with planned visuals request images, and the activity alt describes the visible needles and paired bases without naming the tree. The summary uses one sentence per idea.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5291,
+          "inputTokens": 5294,
+          "outputTokens": 965,
+          "reasoningTokens": 397
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation introduces several new labels on one screen—tree key, needles, broad leaves, bundles, and lobes—despite the clarity requirement to avoid multiple new terms together. The definitions are understandable, but lobes lack the requested everyday comparison.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "In the explanation's image, add small illustrations of bundled needles and single needles beside those branches. This would make the distinction central to the following activity easier to recognize without adding another screen.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The key's order is explained (broadest feature first) before the learner walks it\n      - The decision tree's case is the leaf the plan describes (long needles in bundles of two) and walking its answers reaches pine; the questions follow the explanation's key\n      - The activity asks for a picture of the case in its `image`, whose `alt` describes what the learner must look at (needles, bundles) without naming the tree\n      - Screens without a planned Visual have no image\n      - The check uses the planned trap (asking about lobes first), and the application stays on the same key\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tree-key-beginner-1",
+        "userInput": {
+          "chapterTitle": "Trees and plants",
+          "courseTitle": "Nature around you",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Name a common tree from one of its leaves with a simple key",
+            "description": "Tell needles from broad leaves, then use a key one question at a time to name pines, spruces, oaks and maples.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In a park, two trees look alike from far away, but one keeps its leaves all winter. Ask the learner to guess, without scoring, which part of a tree gives it away fastest.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
+              },
+              {
+                "activityTemplate": "decisionTree",
+                "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": "A pine twig with long needles growing in bundles of two, close up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Use a branching key one question at a time, from the broadest feature to the finest, to name a common tree from a leaf.",
+                "example": "Needles in bundles of two lead to a pine; single needles lead to a spruce.",
+                "hard": false,
+                "name": "Name a tree with a leaf key",
+                "topic": "Identifying trees",
+                "useCase": "Naming trees on a walk or in a park from one leaf."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Name a tree from one leaf"
+          },
+          "activityTemplates": [
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome. Check kinds this template supports: interaction.",
+              "id": "decisionTree",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"case\":{\"type\":\"object\",\"properties\":{\"answers\":{\"minItems\":1,\"maxItems\":15,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"branch\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"nodeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"branch\",\"nodeId\"],\"additionalProperties\":false}},\"description\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"outcomeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"answers\",\"description\",\"outcomeId\"],\"additionalProperties\":false},\"nodes\":{\"minItems\":3,\"maxItems\":15,\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"branches\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"next\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"label\",\"next\"],\"additionalProperties\":false}},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"question\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"branches\",\"id\",\"kind\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"outcome\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"id\",\"kind\",\"label\"],\"additionalProperties\":false}]}},\"rootId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"case\",\"nodes\",\"rootId\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"decisionTree\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-writer"
+}

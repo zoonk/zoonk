@@ -1,11 +1,12 @@
 "use client";
 
+import { type TutorTarget } from "@zoonk/core/lesson-questions/contract";
 import { type Dispatch, useCallback, useRef } from "react";
-import { type PlayerQuestionContext } from "../player-context";
 import {
   type LessonQuestionConnection,
   getLessonQuestionThreadRequest,
 } from "./lesson-question-api";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionScope, getLessonQuestionScopeQuery } from "./lesson-question-scope";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
@@ -16,21 +17,21 @@ export function useLessonQuestionThread({
   dispatch,
   dispatchToContext,
   getState,
-  lessonId,
+  target,
   state,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   dispatchToContext: Dispatch<LessonQuestionSessionAction>;
-  getState: (context: PlayerQuestionContext) => LessonQuestionState;
-  lessonId: string;
+  getState: (context: LessonQuestionContext) => LessonQuestionState;
+  target: TutorTarget;
   state: LessonQuestionState;
 }) {
   const latestLoadRevisions = useRef(new Map<string, number>());
 
   const loadThread = useCallback(
-    async (context: PlayerQuestionContext) => {
+    async (context: LessonQuestionContext) => {
       const dispatchToSession = (action: LessonQuestionAction) =>
         dispatchToContext({ action, context });
 
@@ -51,7 +52,7 @@ export function useLessonQuestionThread({
 
       const result = await getLessonQuestionThreadRequest({
         connection,
-        lessonId,
+        target,
         ...getLessonQuestionScopeQuery(context),
       });
 
@@ -75,7 +76,7 @@ export function useLessonQuestionThread({
 
       return questions;
     },
-    [connection, canAskQuestions, dispatchToContext, getState, lessonId],
+    [connection, canAskQuestions, dispatchToContext, getState, target],
   );
 
   const load = useCallback(
@@ -96,7 +97,7 @@ export function useLessonQuestionThread({
       connection,
       ...getLessonQuestionScopeQuery(state.context),
       cursor: state.nextCursor,
-      lessonId,
+      target,
     });
 
     if (loadRevision !== latestLoadRevisions.current.get(scope)) {
@@ -118,7 +119,7 @@ export function useLessonQuestionThread({
     connection,
     canAskQuestions,
     dispatch,
-    lessonId,
+    target,
     state.context,
     state.hasMore,
     state.isLoadingEarlier,
@@ -126,7 +127,7 @@ export function useLessonQuestionThread({
   ]);
 
   const reconcileLatestThread = useCallback(
-    async (context: PlayerQuestionContext) => {
+    async (context: LessonQuestionContext) => {
       const dispatchToSession = (action: LessonQuestionAction) =>
         dispatchToContext({ action, context });
 
@@ -136,7 +137,7 @@ export function useLessonQuestionThread({
 
       const result = await getLessonQuestionThreadRequest({
         connection,
-        lessonId,
+        target,
         ...getLessonQuestionScopeQuery(context),
       });
 
@@ -151,7 +152,7 @@ export function useLessonQuestionThread({
 
       return true;
     },
-    [connection, canAskQuestions, dispatchToContext, lessonId],
+    [connection, canAskQuestions, dispatchToContext, target],
   );
 
   return { load, loadEarlier, loadThread, reconcileLatestThread };

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "d8d0019d7c28f4dd6a50e0ec5ada663c129ee920ba735ce9192d7b2abd2fdb7c",
+  "richtext_math_fraction": "3694850e6339b19abd87861d24bf269fe5fb31656795e269f49dd995f1fdf6ac",
+  "richtext_math_power": "1ea7c85aa8ae320db3bea2b32b9a2e3f143aa28dbc37ae7ec70859839032fade",
+  "richtext_math_root": "f9640faca4bebec75a4b30e7e4995c6254de58760a2a35c339a02ec29adae9e5",
+  "richtext_math_squared": "3817917a58968fac2e4bc165e714168c57db98e175d1d50b6e129e74982a967c",
+  "richtext_math_subscript": "95fbe9d72baed3a8322654ef9de5db5077a1cfcdc53b345933ccdd014b14e524"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">の2乗</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">の3乗</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">の%1$s乗</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">添え字%1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">分子%1$s、分母%2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">%1$sの平方根</string>
+</resources>

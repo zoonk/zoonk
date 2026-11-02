@@ -1,0 +1,82 @@
+export type Moment = { id: string; summary: string; title: string; where: string };
+
+export const MOMENTS: readonly Moment[] = [
+  {
+    id: "task-end",
+    summary:
+      'The end of any work that earns Brain Power or Energy (a lesson in the session or on its own, a session\'s block, a notebook practice, a drill, a round, a quick explanation) opens one way: its title says what happened ("Practice done"), with a quiet line under it where it has one, then what it earned as readouts (the score in the text color, "3 of 5 right" or, for a pronunciation round judged by how each try sounded, "2 of 3 sounded right"; Brain Power in violet) and its other facts on one mono line ("2 mistakes fixed"), then what it did to the day and what\'s next. While it saves, the title is already in place, a quiet shimmering line sits where the readouts land and the main action waits in the bar; an end whose last button sends the work (a drill, a round) keeps that button busy until it opens. A result told in steps (a call, a mock, a test) leads with its own anchor and puts its facts on tiles, Brain Power\'s number violet there too.',
+    title: "A task's end",
+    where:
+      "`MomentHeader` with `MomentReadouts` (`BrainPowerReadout`), then `DayMoment`; `PendingMoment` (`MomentSaving`, `PendingMainAction`) while it saves. `StudyMoment`, the lesson's `LessonCompletionMoment`, `PracticeDone`, `PatternDrillResult`, the round's result and `ExplainEnding` all use them.",
+  },
+  {
+    id: "mission",
+    summary:
+      "The work that completed a mission: the buddy's face beside \"Mission done!\", smiling as the mission's check stamps in (\"Just done\"), what's left for the day's bonus and the violet track filling.",
+    title: "A mission done",
+    where:
+      "`MissionMoment` on its violet-tinted panel (in `DayMoment`), `MissionTrack`, `MissionsRing`'s moment.",
+  },
+  {
+    id: "missions",
+    summary:
+      "The day's last mission: the whole buddy cheering, \"Today's missions done!\" and the bonus as Brain Power's violet readout. On Today the reward lights up as a solid violet chip and the buddy's ring closes in violet.",
+    title: "Today's missions done",
+    where:
+      "`MissionMoment` with the bonus paid, `BrainPowerReward` earned, `MissionsRing` complete.",
+  },
+  {
+    id: "reached",
+    summary:
+      "What any result took the learner to, as rows under its missions: \"Level up!\" with the new level on its belt's color and the belt's ten levels as a meter in that color; Energy's next tenth with its bolt and an amber meter, and what it means for the buddy. Work that earns only Energy (a test) shows Energy's row alone.",
+    title: "A level or Energy reached",
+    where: "`ReachedMoment` in `DayMoment`, `BeltTicks`, `Meter`.",
+  },
+  {
+    id: "ceremony",
+    summary:
+      "A new belt, the buddy's next stage or new glasses: the loudest moment, full screen and before the result it crowned, wherever the work earned it (a block, a lesson on its own, a mock, a duel, a practice, a drill, a round, a call, a test). The buddy big, wearing what changed and cheering (proud for new glasses), a title, one line and one action (new glasses add \"Not now\"). As it closes, the result is drawn under it and its moment plays, so the ceremony fades out over the result, never over an empty screen; once it's gone, the result's title takes the focus. A badge has no ceremony: the challenge's result shows it, and the result shows at once.",
+    title: "A milestone's ceremony",
+    where:
+      "`MilestoneCeremony`, put first by `MomentAfterCeremony` or a step's `moment` (`getCeremonyMoment`); the result's title carries `MOMENT_TITLE_PROPS`.",
+  },
+  {
+    id: "challenge",
+    summary:
+      "The Trickster acting out the result (his defeat when the learner won, smug when he did), the title, the score as a readout, then the day's moment (missions, a level or Energy reached) and what the duel earned as rows, with what comes next.",
+    title: "A challenge's end",
+    where: "`CheckpointResultView` (`MomentReadouts`, `DayMoment`).",
+  },
+  {
+    id: "mock",
+    summary:
+      "A mock done: a graded result, so its score leads, the words naming it small above the number, with the answers it comes from as tiles; then the day's moment as every block's end has it (missions, a level or Energy reached), how each area went and what's next. A milestone it crowned opens first, full screen.",
+    title: "A mock's end",
+    where:
+      "`MockResultView`'s score step (`StepTitleLabel`, `StepTitleNumber`, `MockResultAnswers`), then `DayMoment`; `MilestoneCeremony` before it.",
+  },
+  {
+    id: "summary",
+    summary:
+      "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy proud of the day, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows. On a wide screen what it earned is the aside, so the tiles leave Brain Power to it.",
+    title: "The session's end",
+    where: "`SessionSummary`, `RewardsStep` and `EarnedToday` (`BrainPowerReadout`, `BeltTicks`).",
+  },
+];
+
+export const MOMENT_RULES: readonly string[] = [
+  "One family, one order: a celebration sits where a task's result sits (top of the column, under the header) and reads the title, what was earned as readouts, the day's moment (`DayMoment`: missions, then a level or Energy reached), then what's next, each part 24px from the next (`StepWithDayMoment` keeps it in a result told in steps). A graded result (a mock's score) leads with its number, the words naming it small above. Its one action is pinned in the bar and Enter presses it.",
+  "Warmer than everyday screens, never busy: the buddy or the Trickster where it's the subject, a big readout for what was earned, and nothing to read twice.",
+  "Color only by meaning: violet for Brain Power and missions, a belt in its own colors, Energy amber, done blue. Louder means a solid fill or a tint whose color is the reward (the lit chip, the missions panel) and a short motion, never a new color.",
+  "Each fires once, when it's earned: never on load, never as decoration, and never in the way of the next step.",
+  "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`. The buddy (`moment-buddy`) and the Trickster react with their parts, once (`reaction`), never as one block: `/design/characters` maps each moment to its act.",
+];
+
+export const PRINCIPLES: readonly string[] = [
+  "Neutral by default, colored on purpose: tone steps separate, color signals.",
+  "Soft colors in the regular theme; strict contrast when the device asks for more.",
+  "One meaning per hue, the same on every screen, and never color alone.",
+  "The text color is the action and the learner's pick; blue is progress made, up to where the learner is.",
+  "Titles, not labels; readouts with meters; fewer boxes.",
+  "Modern and quiet like Linear and Vercel: nothing crowded, nothing flashy, except a few earned moments.",
+];

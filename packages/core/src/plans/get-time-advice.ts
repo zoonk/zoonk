@@ -1,0 +1,356 @@
+import "server-only";
+import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
+import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
+import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
+import { applyChangeOperations } from "./_utils/part-areas";
+import { type PlanContext } from "./_utils/plan-context";
+import { toShownShare } from "./_utils/plan-feasibility-view";
+import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
+import { readPlanReadiness } from "./_utils/plan-readiness";
+import { loadPlanAtToken } from "./_utils/plan-token";
+import { computePlan } from "./_utils/replan";
+import { getChangePlanning } from "./_utils/steered-areas";
+import { getSuggestedTime } from "./_utils/suggested-time";
+import { MIN_DAILY_MINUTES } from "./daily-minutes";
+import { type LearnerPlanOperation } from "./plan-contract";
+import { getFullCourseEnd } from "./planner/after-exam";
+import { FITTING_DATE_TRIES } from "./planner/fitting-date";
+import { type MostCoverage } from "./planner/most-coverage";
+import { addDays, toIsoDate } from "./planner/plan-calendar";
+import { applyPlanOperations } from "./planner/plan-operations";
+import { type PlanState } from "./planner/plan-state";
+import { getScheduleOperations } from "./planner/schedule-operations";
+import { hasCompleteSkillCoverage } from "./planner/skill-minutes";
+import {
+  type PlanTimeAdvice,
+  type PlanTimeAdviceInput,
+  type PlanTimeToCover,
+  type PlanTimeToCoverInput,
+} from "./time-advice-contract";
+
+export type PlanTimeAdviceResult =
+  | { advice: PlanTimeAdvice; status: "ready" }
+  | { status: "notFound" | "unauthorized" };
+
+export type PlanTimeToCoverResult =
+  | { status: "ready"; time: PlanTimeToCover }
+  | { status: "notFound" | "unauthorized" };
+
+type Waiting = { readingNotice: boolean; ready: false };
+
+type SharedDay = { count: number; place: number };
+
+/**
+ * A week asked about is the time question's, whose minutes, in and out, are the day the goals typed
+ * together share, as saving the schedule splits it. Without one, they're the goal's own.
+ */
+async function loadSharedDay({
+  context,
+  input,
+}: {
+  context: PlanContext;
+  input: PlanTimeToCoverInput;
+}): Promise<SharedDay> {
+  if (input.studyDays === undefined) {
+    return { count: 1, place: 0 };
+  }
+
+  const goalIds = await findOnboardingGoalIds(context.goal);
+  return { count: goalIds.length, place: Math.max(0, goalIds.indexOf(context.goal.id)) };
+}
+
+function toGoalWeek<Week extends PlanTimeToCoverInput>({
+  day,
+  week,
+}: {
+  day: SharedDay;
+  week: Week;
+}): Week {
+  return week.weekendMinutes === undefined
+    ? week
+    : { ...week, weekendMinutes: getGoalShare({ ...day, budget: week.weekendMinutes }) };
+}
+
+function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null }) {
+  return minutes === null ? null : getBudgetForGoal({ ...day, minutes });
+}
+
+function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
+  const minutes = toDayMinutes({ day, minutes: most?.minutes ?? null });
+  return most && minutes !== null ? { coveredShare: most.coveredShare, minutes } : null;
+}
+
+function getSearchWeekdayMinutes({
+  input,
+  state,
+}: {
+  input: PlanTimeToCoverInput;
+  state: PlanState;
+}): number {
+  return input.weekendMinutes === undefined ? state.goal.dailyMinutes : MIN_DAILY_MINUTES;
+}
+
+function withStudyWeek({
+  context,
+  dailyMinutes,
+  fullCourse = false,
+  input,
+}: {
+  context: PlanContext;
+  dailyMinutes: number;
+  fullCourse?: boolean;
+  input: PlanTimeToCoverInput;
+}): PlanState {
+  const schedule = getScheduleOperations({
+    input: { ...input, dailyMinutes },
+    state: context.state,
+  });
+
+  const result = applyPlanOperations({
+    goalKind: context.goal.kind,
+    operations: fullCourse ? [...schedule, { fullCourse, kind: "setFullCourse" }] : schedule,
+    state: context.state,
+    today: context.today,
+  });
+
+  if ("error" in result) {
+    throw new Error(`Cannot evaluate the study schedule: ${result.error}`);
+  }
+
+  return result.state;
+}
+
+async function loadAskedPlan(
+  goalId: string,
+): Promise<
+  { context: PlanContext; status: "ready" } | { status: "notFound" | "unauthorized" } | Waiting
+> {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const readiness = await readPlanReadiness(goalId);
+
+  if (readiness && !readiness.ready) {
+    return { readingNotice: readiness.readingNotice, ready: false };
+  }
+
+  // After the readiness, never beside it: the plan read is then built and placed as far as it said.
+  const context = readiness && (await loadPlanAtToken(goalId));
+
+  return context ? { context, status: "ready" } : { status: "notFound" };
+}
+
+async function planAtDate(context: PlanContext, targetDate: Date | null) {
+  const operations: LearnerPlanOperation[] = [
+    { kind: "setTargetDate", targetDate: targetDate && toIsoDate(targetDate) },
+  ];
+
+  const result = await applyChangeOperations({ context, operations });
+
+  if ("error" in result) {
+    return null;
+  }
+
+  return computePlan({ ...getChangePlanning(result.operations), context, state: result.state });
+}
+
+async function findCoveringDate(context: PlanContext): Promise<string | null> {
+  const open = await planAtDate(context, null);
+  const end = open?.feasibility.endDate ?? null;
+
+  if (!end) {
+    return null;
+  }
+
+  for (const days of Array.from({ length: FITTING_DATE_TRIES }, (_, index) => index)) {
+    const targetDate = addDays(end, days);
+
+    // oxlint-disable-next-line no-await-in-loop -- the earliest date that fits wins, so each try waits for the one before it.
+    const planned = await planAtDate(context, targetDate);
+
+    if (planned?.feasibility.fits) {
+      return toIsoDate(targetDate);
+    }
+  }
+
+  return null;
+}
+
+export async function getPlanTimeAdvice({
+  goalId,
+  input,
+}: {
+  goalId: string;
+  input: PlanTimeAdviceInput;
+}): Promise<PlanTimeAdviceResult> {
+  const asked = await loadAskedPlan(goalId);
+
+  if ("ready" in asked) {
+    return {
+      advice: {
+        coveredShare: null,
+        endDate: null,
+        fullCourseEndDate: null,
+        measure: "goal",
+        numbers: null,
+        readingNotice: asked.readingNotice,
+        ready: false,
+        targetDate: null,
+        targetDateNamedMonth: false,
+      },
+      status: "ready",
+    };
+  }
+
+  if (asked.status !== "ready") {
+    return asked;
+  }
+
+  const { context } = asked;
+  const day = await loadSharedDay({ context, input });
+  const week = toGoalWeek({ day, week: input });
+
+  const dailyMinutes =
+    input.dailyMinutes === undefined
+      ? context.state.goal.dailyMinutes
+      : getGoalShare({ ...day, budget: input.dailyMinutes });
+
+  const fullCourse = context.goal.kind === "exam" && input.fullCourse === true;
+
+  const [computed, dateKind] = await Promise.all([
+    computePlan({
+      context,
+      mode: "forced",
+      pace: "saved",
+      state: withStudyWeek({ context, dailyMinutes, fullCourse, input: week }),
+    }),
+    loadGoalDateKind(context.goal),
+  ]);
+
+  const { feasibility } = computed;
+  const end = computed.built.estimate.endDate;
+  const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
+
+  return {
+    advice: {
+      coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
+      endDate:
+        !targetDate && end && hasCompleteSkillCoverage(computed.built.skillMinutes)
+          ? toIsoDate(end)
+          : null,
+      fullCourseEndDate: fullCourse
+        ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
+        : null,
+      measure: feasibility.measure,
+      numbers: await buildPlanNumbersView({ computed, context }),
+      readingNotice: false,
+      ready: true,
+      targetDate,
+      targetDateNamedMonth: dateKind.namedMonth,
+    },
+    status: "ready",
+  };
+}
+
+/**
+ * Plans the goal at each daily time (seconds of CPU for a big exam), so it runs only for a learner's
+ * POST, such as onboarding's time question asking once the plan exists: never for a render, a GET,
+ * metadata or a prefetch.
+ */
+export async function findPlanTimeToCover({
+  goalId,
+  input,
+}: {
+  goalId: string;
+  input: PlanTimeToCoverInput;
+}): Promise<PlanTimeToCoverResult> {
+  const asked = await loadAskedPlan(goalId);
+
+  if ("ready" in asked) {
+    return {
+      status: "ready",
+      time: {
+        fittingDate: null,
+        most: null,
+        pastDate: false,
+        readingNotice: asked.readingNotice,
+        ready: false,
+        recommendedMinutes: null,
+        suggested: null,
+        targetDate: null,
+        targetDateNamedMonth: false,
+      },
+    };
+  }
+
+  if (asked.status !== "ready") {
+    return asked;
+  }
+
+  const { context } = asked;
+  const day = await loadSharedDay({ context, input });
+  const week = toGoalWeek({ day, week: input });
+  const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
+
+  const [computed, dateKind] = await Promise.all([
+    computePlan({
+      context,
+      mode: "forced",
+      pace: "saved",
+      state: stateAt(getSearchWeekdayMinutes({ input: week, state: context.state })),
+      studyScheduleAt: (dailyMinutes) => {
+        const state = stateAt(dailyMinutes);
+
+        return {
+          dailyMinutes: state.goal.dailyMinutes,
+          weekdayMinutes: state.settings.weekdayMinutes,
+        };
+      },
+    }),
+    loadGoalDateKind(context.goal),
+  ]);
+
+  const { feasibility } = computed;
+
+  const ownWeek = input.studyDays === undefined && input.weekendMinutes === undefined;
+  const pastDate = context.goal.targetDate !== null && context.goal.targetDate < context.today;
+  const movesDate = ownWeek && context.goal.kind !== "exam" && (pastDate || !feasibility.fits);
+
+  // Nothing covers a date that has passed, so no time is searched for.
+  const recommendedMinutes = pastDate
+    ? null
+    : toDayMinutes({ day, minutes: feasibility.recommendedMinutes });
+
+  const most = toMostDay({ day, most: pastDate ? null : feasibility.most });
+
+  const suggested =
+    pastDate || !context.goal.targetDate
+      ? null
+      : getSuggestedTime({
+          coverageAt: (budget) => feasibility.coverageAt(getGoalShare({ ...day, budget })),
+          everything: recommendedMinutes,
+          most,
+        });
+
+  return {
+    status: "ready",
+    time: {
+      fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
+      most,
+      pastDate,
+      readingNotice: false,
+      ready: true,
+      recommendedMinutes,
+      suggested: suggested && {
+        ...suggested,
+        split: getDaySplit({ ...day, budget: suggested.minutes }),
+      },
+      targetDate: context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null,
+      targetDateNamedMonth: dateKind.namedMonth,
+    },
+  };
+}

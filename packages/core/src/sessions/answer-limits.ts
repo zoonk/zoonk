@@ -1,0 +1,1 @@
+export const MAX_SESSION_TYPED_ANSWER_LENGTH = 500;

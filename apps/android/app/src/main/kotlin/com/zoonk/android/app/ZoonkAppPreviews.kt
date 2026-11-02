@@ -1,6 +1,8 @@
 package com.zoonk.android.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.zoonk.android.ui.theme.ZoonkTheme
 
@@ -10,13 +12,13 @@ import com.zoonk.android.ui.theme.ZoonkTheme
     showSystemUi = true,
 )
 @Preview(
-    name = "Expanded tablet",
-    device = "spec:width=1280dp,height=800dp,dpi=240",
+    name = "Medium foldable",
+    device = "spec:width=673dp,height=841dp,dpi=420",
     showSystemUi = true,
 )
 @Preview(
-    name = "Foldable window",
-    device = "spec:width=673dp,height=841dp,dpi=420",
+    name = "Expanded tablet",
+    device = "spec:width=1280dp,height=800dp,dpi=240",
     showSystemUi = true,
 )
 @Preview(
@@ -28,7 +30,8 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 )
 @Composable
 private fun ZoonkAppPreview() {
-    ZoonkTheme(dynamicColor = false) {
-        ZoonkApp()
+    ZoonkTheme {
+        val context = LocalContext.current
+        ZoonkApp(app = remember { AppContainer.preview(context) })
     }
 }

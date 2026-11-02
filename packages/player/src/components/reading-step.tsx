@@ -1,12 +1,8 @@
 "use client";
 
 import {
-  buildAcceptedArrangeWordSequences,
-  getAcceptedArrangeWordLengths,
-} from "@zoonk/core/player/contracts/arrange-words-answers";
-import {
+  type ReadingPromptWord,
   type SerializedStep,
-  type WordBankOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import {
   Popover,
@@ -15,74 +11,72 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { cn } from "@zoonk/ui/lib/utils";
+import { splitEdgePunctuation, stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
-import {
-  type ReadingPromptWordHint,
-  buildReadingPromptWordHints,
-} from "./_utils/reading-prompt-word-hints";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
+import { ScreenChip } from "./screen-chip";
 
-/**
- * One prompt word can either be plain text or a small translation trigger.
- *
- * Reading learners tap the sentence they are translating, not the answer bank,
- * so the interactive affordance belongs on these prompt words.
- */
-function ReadingPromptWord({ hint }: { hint: ReadingPromptWordHint }) {
-  if (!hint.translation) {
-    return <span>{hint.word}</span>;
+function PromptWord({
+  promptWord,
+  standalone,
+}: {
+  promptWord: ReadingPromptWord;
+  standalone: boolean;
+}) {
+  if (!promptWord.translation) {
+    return <span>{promptWord.word}</span>;
   }
+
+  const { after, before, word } = splitEdgePunctuation(promptWord.word);
 
   return (
     <Popover>
-      <PopoverTrigger className="focus-visible:border-ring focus-visible:ring-ring/50 decoration-foreground/30 hover:text-foreground inline rounded-sm border-0 bg-transparent p-0 font-[inherit] text-inherit underline decoration-dotted underline-offset-4 transition-colors outline-none focus-visible:ring-[3px]">
-        {hint.word}
+      <PopoverTrigger
+        className={cn(
+          "group focus-visible:border-ring focus-visible:ring-ring/50 rounded-sm border-0 bg-transparent p-0 font-[inherit] text-inherit outline-none focus-visible:ring-[3px]",
+          standalone ? "inline-flex min-h-11 min-w-11 items-center" : "inline",
+        )}
+      >
+        {before}
+        <span className="decoration-foreground/30 group-hover:decoration-foreground/70 underline decoration-dotted underline-offset-4 transition-colors">
+          {word}
+        </span>
+        {after}
       </PopoverTrigger>
 
       <PopoverContent
-        className="w-fit max-w-none min-w-0 gap-0 rounded-xl px-3 py-2"
+        backdrop={false}
+        className="w-fit max-w-(--available-width) min-w-0 gap-0 rounded-xl px-3 py-2 shadow-md"
         sideOffset={8}
       >
         <PopoverHeader className="gap-0.5">
-          <PopoverTitle className="text-base">{hint.translation}</PopoverTitle>
+          <PopoverTitle className="text-base">{promptWord.translation}</PopoverTitle>
         </PopoverHeader>
       </PopoverContent>
     </Popover>
   );
 }
 
-/**
- * Renders the visible reading prompt as tappable word tokens.
- *
- * The serialized lesson stores target-word metadata, while the prompt sentence
- * is learner-language text. `buildReadingPromptWordHints` aligns those two
- * shapes so this component can stay focused on rendering.
- */
 function ReadingPromptText({
+  promptWords,
   sentence,
-  sentenceWordOptions,
 }: {
+  promptWords: ReadingPromptWord[];
   sentence: string;
-  sentenceWordOptions: WordBankOption[];
 }) {
-  const replaceName = useReplaceName();
-  const prompt = stripWrappingQuotes(replaceName(sentence));
-  const hints = buildReadingPromptWordHints({ prompt, sentenceWordOptions });
-  const hasWordSpaces = prompt.includes(" ");
+  const hasWordSpaces = stripWrappingQuotes(sentence).includes(" ");
 
   return (
     <span>
-      {hints.map((hint, index) => (
+      {promptWords.map((promptWord, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Prompt words can repeat in generated sentences, no unique ID.
-        <Fragment key={`${hint.word}-${hint.translation ?? "none"}-${index}`}>
+        <Fragment key={`${promptWord.word}-${promptWord.translation ?? "none"}-${index}`}>
           {index > 0 && hasWordSpaces ? " " : null}
-          <ReadingPromptWord hint={hint} />
+          <PromptWord promptWord={promptWord} standalone={promptWords.length === 1} />
         </Fragment>
       ))}
     </span>
@@ -95,7 +89,7 @@ export function ReadingStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
@@ -106,27 +100,21 @@ export function ReadingStep({
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
-  const correctWords = acceptedWordSequences[0] ?? [];
-  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
-
   return (
     <ArrangeWordsInteraction
-      acceptedWordLengths={acceptedWordLengths}
+      answer={step.sentence.sentence}
       answerKind="reading"
-      correctWords={correctWords}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}
-      stepId={step.id}
       wordBankOptions={step.wordBankOptions}
     >
       <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Translate this sentence:")}</SectionLabel>
+        <ScreenChip>{t("Translate")}</ScreenChip>
         <QuestionText>
           <ReadingPromptText
+            promptWords={step.readingPromptWords}
             sentence={step.sentence.translation}
-            sentenceWordOptions={step.sentenceWordOptions}
           />
         </QuestionText>
       </div>

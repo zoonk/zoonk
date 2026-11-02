@@ -2,10 +2,12 @@ import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { runTaskGeneration } from "../../provenance/run-task-generation";
 import systemPrompt from "./image-prompt-safety-rewrite.prompt.md";
 
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["deepseek/deepseek-v4-flash", "google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["deepseek/deepseek-v4-flash", "google/gemini-3.5-flash-lite"] as const;
 const MAX_ERROR_CONTEXT_LENGTH = 1200;
 
 const schema = z.object({ input: z.string().min(1) }).strict();
@@ -18,15 +20,11 @@ export type ImageInputSafetyRewriteParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  analytics?: AiGenerationContext;
 };
 
-/**
- * Generates one safer replacement for the caller-owned image input after an
- * image model rejects the assembled prompt. Production retry code and evals
- * both use this task so the rewrite contract stays aligned as we tune
- * protected-character or sensitive-topic behavior.
- */
 export async function rewriteImageInputForSafetyRetry({
+  analytics,
   errorContext,
   input,
   model = defaultModel,
@@ -37,23 +35,25 @@ export async function rewriteImageInputForSafetyRetry({
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
-  const { output, usage } = await generateText({
-    instructions: systemPrompt,
-    model,
-    output: Output.object({ schema }),
-    prompt: userPrompt,
-    providerOptions,
-    reasoning,
+  const { provenance, result } = await runTaskGeneration({
+    analytics,
+    generate: () =>
+      generateText({
+        instructions: systemPrompt,
+        model,
+        output: Output.object({ schema }),
+        prompt: userPrompt,
+        providerOptions,
+        reasoning,
+      }),
+    libraryInput: true,
+    systemPrompt,
+    task: "image-prompt-safety-rewrite",
   });
 
-  return { data: output, systemPrompt, usage, userPrompt };
+  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/**
- * Gives the rewrite model enough rejection context to identify the blocked
- * class of content, while keeping the rewrite target limited to the dynamic
- * input that production callers will place back into their stable prompt.
- */
 function getImageInputSafetyRewriteUserPrompt({
   errorContext,
   input,
@@ -72,11 +72,7 @@ function getImageInputSafetyRewriteUserPrompt({
   `;
 }
 
-/**
- * Prevents very large provider payloads from crowding out the original prompt
- * in the rewrite request. The safety wording appears at the start of current
- * Gateway errors, so a short prefix is enough for classification context.
- */
+/** The safety wording opens Gateway's errors, so a short prefix is enough context. */
 function truncateErrorContext({ errorContext }: { errorContext: string }): string {
   if (errorContext.length <= MAX_ERROR_CONTEXT_LENGTH) {
     return errorContext;

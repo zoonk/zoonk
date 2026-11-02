@@ -35,6 +35,10 @@
 	<string>$(GOOGLE_SERVER_CLIENT_ID)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Zoonk hears what you say in speaking exercises and calls. Nothing is recorded outside them.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Zoonk saves the mind maps you choose to your photos.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -44,6 +48,10 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIStatusBarStyle</key>
@@ -63,5 +71,11 @@
 	</array>
 	<key>ZoonkAPIBaseURL</key>
 	<string>$(ZOONK_API_BASE_URL)</string>
+	<key>ZoonkPostHogHost</key>
+	<string>https://us.i.posthog.com</string>
+	<key>ZoonkPostHogProjectToken</key>
+	<string>phc_heRkm81pJM9NQvrFukoEOx6ltCwjz2hnzxR1dPxBW5S</string>
+	<key>ZoonkSentryDSN</key>
+	<string>https://f60c0962ecea93d5db1613f10c6cbc2c@o4509253667454976.ingest.us.sentry.io/4512352508968960</string>
 </dict>
 </plist>

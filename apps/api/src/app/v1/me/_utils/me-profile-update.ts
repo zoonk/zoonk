@@ -1,10 +1,6 @@
 import { errors, httpStatus } from "@/lib/api-errors";
 import { getAuthError } from "@zoonk/auth/errors";
 
-/**
- * Converts Better Auth update failures into the API app's standard error
- * envelope while preserving the status distinctions clients can act on.
- */
 export function getProfileUpdateErrorResponse(error: unknown) {
   const authError = getAuthError(error);
 

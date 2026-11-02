@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "practice_already_answered": "4362b9ff579957e8eff5748053f24f439607f00e56b27a3a42906c9014015f7e",
+  "practice_check": "cfd41d1ae4beb7fa6c6fc08f6989a1932aad31594d32b2a35c4251e4795d409d",
+  "practice_close": "d0ffd13b0e7187cbffad9fec9b28ee7c69a9fce023c0ef934586eecc03e1fd7e",
+  "practice_continue": "da13e3dd6965d849db62bd46de1099218078a3364683e7b3f26db8abac2fb254",
+  "practice_count": "1cb11f09c6d3e5240895ddae539b2b459136de1dd519cb981638ae6d578b45e5",
+  "practice_done_review": "2e8e0b4e3c4cf93cdf235d5d1f0253bc434c55061adfe6143de659b0db7d5643",
+  "practice_done_title": "80df0ae8f09401766c8f07b9646c525134e07a99a168e58afdb085f074052139",
+  "practice_finish": "a224ffd7ad2efb29af620e0676b5b1e83d990859940099ad548649396be28623",
+  "practice_finish_now": "4fc794e90e80447577fc7b22ad0d78cccd069a9e76caaa0f58cb5c6d20b610e2",
+  "practice_finish_ready_detail": "0db249bb4ecb665c3f73f003aba3049f4551adabfd7146febccbd9794acf696f",
+  "practice_finish_ready_title": "32f62ca1b09b7f1d626a7e57e26f78138723a60dd0e25428bc9918756c89d025",
+  "practice_net": "f412c31a996c2eec12cbd150097514487e9fc90d06f618499d8d7367935310f5",
+  "practice_net_hint": "9dea4c9bb8dd68b9f45b72302bdbc549f97744de6f59f0641dbdafd0225fad05",
+  "practice_net_right": "6b962b6d5229ed4513b07243a68faf5666e594a835fe441bc44d8a0843ccc54b",
+  "practice_net_tally": "66732a0b7a12322ee2ff9fa204c0c15392b517c17600bf1bd0d3000471fbddb1",
+  "practice_net_wrong": "355ad1ffd5f1217667ce64b1914f4aaacaff13ead53f83463966af9e58e09deb",
+  "practice_next": "5f03a455487d7af03dc5a112100cf4e94170bfdcceb230cb932f339b9bf56cd7",
+  "practice_not_found_description": "be51d92ef26dafdc910e706670b9bf24d5d06b3c6885932b1f0622c967040d54",
+  "practice_not_found_title": "47bce236f490cb951bd50507329c8f99d6758221beeaf18fac8508072af34b21",
+  "practice_pause_failed": "0b39b76377c1e52b4eb3108a93a8f76e80d3e3b1cbd2d81039d5dc86a6a6be32",
+  "practice_pause_stop": "3f5c54990ffb3414bb69cd90169992029c1707c22d1e5bad9ef92a880f565b01",
+  "practice_pause_text": "3b923785d2e80ff38d4b9ad90076633ff6ccc3612a0c4cea15f6d3bdacc882da",
+  "practice_progress": "ec4a6c86d92a50fe9723f08d798007031c4708aa73b8de760a1c9cc06d187b89",
+  "practice_save_error": "ef24919fed92ca180d002b565fa932de3f76cdd927edf1a7c25e2ee4a0f7aa78",
+  "practice_time_machine_answered": "a358cd5debb54729f27b75f9ed3e30867aeb2c9c4485868d25f0e9a038221dc9",
+  "practice_time_machine_right_again": "4c1e107ef9ce67ba8e258d716d41b53d594455656e3247f4ea2d6d3290ea72df",
+  "practice_time_machine_right_before": "bb78692e0d3f30313510b0f0928a8f5ce68637b1a50eb003c2ab2976aab6ba74",
+  "practice_time_machine_seen": "284893bde76a0d74884c1409ab7bd9b0f021f45e2c558b6f6d2a07a892f7a685",
+  "practice_time_machine_tripped": "937ef08340f819902d619fb9ce77eefb5097fa22122e5f8612a88dd25538bca9",
+  "practice_try_again": "abb96c63f3a375c87ae792cbf0fa3c24501d2a9a52cc32fbfcb0eea6fca316bf",
+  "practice_undo": "968c5f1d764793aed6c39f02513cb19490ed6a14a1966ac786712a5cdc06b283",
+  "practice_undo_failed": "40832f0839175f6c2e39e5253c16ed74a3aa948125ecb6eeab5db560165bc430"
+}
+-->
+<resources>
+    <string name="practice_progress">%1$d번 문제 (총 %2$d문제)</string>
+    <string name="practice_check">정답 확인</string>
+    <string name="practice_continue">계속하기</string>
+    <string name="practice_finish">끝내기</string>
+    <!-- Goes to the next question of a test graded only at its end. -->
+    <string name="practice_next">다음</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">이 답으로 제출하기</string>
+    <string name="practice_undo">되돌리기</string>
+    <string name="practice_undo_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
+    <!-- Where the learner is in a test, such as "3 of 10". -->
+    <string name="practice_count">%1$d/%2$d</string>
+    <string name="practice_try_again">다시 시도</string>
+    <string name="practice_finish_ready_title">더 답할 문제가 없어요</string>
+    <string name="practice_finish_ready_detail">마치고 결과를 확인해 보세요.</string>
+    <string name="practice_already_answered">이미 이 문제에 답했어요.</string>
+    <string name="practice_save_error">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
+    <plurals name="practice_net_right">
+        <item quantity="other">%d문제 정답</item>
+    </plurals>
+    <plurals name="practice_net_wrong">
+        <item quantity="other">%d문제 오답</item>
+    </plurals>
+    <!-- Right answers minus wrong ones, which can be negative. -->
+    <string name="practice_net">순점수 %1$d</string>
+    <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_hint">하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요.</string>
+    <!-- %1$s is a day and month, like October 8. -->
+    <string name="practice_time_machine_seen">이 문제를 %1$s에 봤어요.</string>
+    <string name="practice_time_machine_right_again">%1$s에 이어 이번에도 맞혔어요.</string>
+    <string name="practice_time_machine_right_before">%1$s에 맞혔던 문제예요. 지금 복습하면 더 오래 기억할 수 있어요.</string>
+    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
+    <string name="practice_time_machine_answered">%1$s에 “%2$s”(이)라고 답했어요.</string>
+    <string name="practice_time_machine_tripped">%1$s에 헷갈렸던 문제예요.</string>
+    <string name="practice_pause_text">몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될 때가 많아요. 오늘 한 공부는 모두 의미가 있어요.</string>
+    <string name="practice_pause_stop">오늘 학습 마치기</string>
+    <string name="practice_pause_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="practice_done_title">연습 완료</string>
+    <string name="practice_done_review">복습 완료</string>
+    <string name="practice_not_found_title">이제 이 문제를 볼 수 없어요</string>
+    <string name="practice_not_found_description">이미 끝났거나 다른 곳으로 옮겨졌을 수 있어요. 오늘 화면에서 다음 학습을 확인하세요.</string>
+    <string name="practice_close">닫기</string>
+</resources>

@@ -1,13 +1,13 @@
 {
-  "originHash" : "28a96092b1ccad1e8694c811b4c1d42ed129031d39bf1e209313c31290dd728e",
+  "originHash" : "04f671301ebaf40dc7c1fb56f9fc2ba9566f5c71895a5601bc5c9268ff4fff0e",
   "pins" : [
     {
       "identity" : "app-check",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/app-check.git",
       "state" : {
-        "revision" : "97f7d74dd0e8f3d0fe5fc75cc8957aa73bdc948a",
-        "version" : "11.3.2"
+        "revision" : "c7eb17e5545f36e43dc50e70da09c2e999714e16",
+        "version" : "12.0.0"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleSignIn-iOS",
       "state" : {
-        "revision" : "7823e518f5d4db765ccac3e140dd3265ef0a1cf1",
-        "version" : "10.0.0"
+        "revision" : "bfaebbc04a4d13ed7a89b0fc1fb8ad66b362cc1c",
+        "version" : "10.1.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "92c8f6dc3ac375d6febdfcb3db68bc3d10633db3",
-        "version" : "8.1.3"
+        "revision" : "5459ee5603def3db0fe14ca522185f42c48d978e",
+        "version" : "8.1.5"
       }
     },
     {
@@ -74,12 +74,21 @@
       }
     },
     {
-      "identity" : "promises",
+      "identity" : "posthog-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/promises.git",
+      "location" : "https://github.com/PostHog/posthog-ios",
       "state" : {
-        "revision" : "f4a19a3c313dc2616c70bb49d29a799fb16be837",
-        "version" : "2.4.1"
+        "revision" : "990479a3a4ef860f78099ead840b636fd7849c2e",
+        "version" : "3.93.1"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "4e1e4ba9ce329f91ad6bfb63bab6da576a3f348c",
+        "version" : "9.32.0"
       }
     },
     {
@@ -105,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "98ef3c98609a1e31b7e157b5b619579001a789d6",
-        "version" : "1.7.1"
+        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
+        "version" : "1.7.5"
       }
     },
     {
@@ -132,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-generator",
       "state" : {
-        "revision" : "39d49cf22abab58a07f02bb76808b5d2839b294a",
-        "version" : "1.13.1"
+        "revision" : "75962579db43e88440bbad021c74570f0955d1fd",
+        "version" : "1.14.3"
       }
     },
     {
@@ -141,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-runtime",
       "state" : {
-        "revision" : "9e53df53e043b53046a371b31aaf0a1e26eef946",
-        "version" : "1.12.1"
+        "revision" : "6927ad435adf4d00fe55fc61b9a07a04673c79c8",
+        "version" : "1.13.3"
       }
     },
     {
@@ -150,8 +159,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-urlsession",
       "state" : {
-        "revision" : "08796d36c99ad2318929bfa1d1e40f82194b65cc",
-        "version" : "1.3.1"
+        "revision" : "c97e0f0187d95542b4a254f5bb4dc67f43bf73c9",
+        "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "webrtc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stasel/WebRTC",
+      "state" : {
+        "revision" : "3cc466ea040e5dcd1344697bf211dc4c079d1a0c",
+        "version" : "156.0.0"
       }
     },
     {

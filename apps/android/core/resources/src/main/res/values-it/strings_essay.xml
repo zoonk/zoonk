@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "essay_back_to_today": "e9ee40c7c28ab37b2e37eb85794305e3c1e41ee23ac5c7f8d400044b603c7c1a",
+  "essay_comments": "0ca5e593383f68f45081d29185939b604a637b8038314de353aa6b2d87f67613",
+  "essay_criterion_addressing": "9eda6d5f1ca4f1f42ba947d9b0e903fc6cd8ea25de08a4d28746f8d5f5b44fc9",
+  "essay_criterion_argument": "a5bbcb99471539d3278912aa44d60b82683bb42edf811808c9d4cd7dda4ebadb",
+  "essay_criterion_closing": "6b863ae4b51b05ed3bfa4e7444f7f06602068570a5ed321d7c603b4cdc575227",
+  "essay_criterion_cohesion": "40cea0ded48d64bf5958e3ae2db2011d393640138144413eddbdcbeac2649809",
+  "essay_criterion_facts": "dc03e3f72ad14cc6646c75631a97a78d49ec8baf0303722c20cdbe98b15fb4e8",
+  "essay_criterion_formal_writing": "b26491525deae1881a5fba9b47c3d7d9e70f9ee493ae187080b611227ef5d154",
+  "essay_criterion_intervention": "bf4f77d26860d0775cfe9e3b156e559708b6c4c77821aaf7c1ce785430e46442",
+  "essay_criterion_legal_basis": "a62003873dfd60e7044408a9eacb9e022a7170bff72ee6a4353868a806e5d1b2",
+  "essay_criterion_requests": "752051d6cc24c27944b0e21ad688da14abb1cebf6ccdd5cab309cb25e3639231",
+  "essay_criterion_topic": "af24a1f6b92e8b049ec62e371b4847b990e648bd014858946ddccb01557f01a4",
+  "essay_daily_limit_reached": "3f767cc03a9cc752027f92f74be9a40ab4e33952491ef5e79b0de0eb3d97bddc",
+  "essay_element_action": "f7073fea6c7e8ab61b29f0f595ce21a24d57114ffeb3bf9458350c7034cc4742",
+  "essay_element_agent": "d90b4c226e26544d8aeca0be22f28df7a1064e19b04923e443408b0181b591d9",
+  "essay_element_detail": "ce9c646a37191c07ba10f56da2a40ef181765f86701b4e719ffb5c0ada4828b9",
+  "essay_element_effect": "eb832fae3a7c35a7106638db5c8ecb49e925341891f070ec2fa655980195f03a",
+  "essay_element_means": "e2ad0412436110a337521dae080d0a81786a5171a98debfe25f50192952317a1",
+  "essay_element_missing": "55d4da58262f442009526507c3525eef2e89a8f69a70913c0c4c78b1d85eef91",
+  "essay_element_present": "fcca711a37e0f68a4c83747689088396eb63aca613bc22c442571640765f8f61",
+  "essay_finish_failed": "2a499ba22747126eb83cedbb58bb23fced36e52b45393bac3d6dfe1758919abd",
+  "essay_for_example": "49e2c97c27b42a7fc4dedd85c85026c9202513c02c6d6839e12e235aa4d1aa8e",
+  "essay_full_marks": "f21c446d5ad9b3018efb4b4ee690557cfbbfca3ec616cd33cd0acb7741a347a1",
+  "essay_grade_rewrite": "2f4a3d45da9e4f6c887aef726f35a78ea953a939a37a8ee3e230bad80853bf22",
+  "essay_grading": "f1f7eaee94b2ceb10878e8bfc256528c61197451b61b7d1e1581b83f2d52a8cb",
+  "essay_grading_button": "bfa41e8f3031d2bcb6f88e2a787e1629c36a21eb64f716c9f180bf819f35b873",
+  "essay_grading_slow": "6990f574ca3f232eca309ff2d5b2d93e12a83088b3aafad227df84590628dd39",
+  "essay_keep_writing": "5b2686ce2d6b5e461ee5cceaa424a87112ccbba9d021b20dbc761b8bf972596d",
+  "essay_last_grade": "45cb69d05f35d1a4ae92fa65d993c7c8bd45da52baa4a6ab4f27539a1f84849c",
+  "essay_leave_description": "7d5400dbc1f17d6b644a3ec1acba9df5e9df3a8adad3066e6fb4215099ecea0b",
+  "essay_leave_title": "993e0ffc8d797fee53bab6b40766e5762fb4011d772de4a574dfb07f2e455ccc",
+  "essay_limit_reached": "1f7768c1360cb8bf47a61d87c5b3d7039efcdfd2c3844cea81b6863d52128ea7",
+  "essay_motivating_texts": "50c442d198a62f3d37764732890421efd97254bd3497c434b845f2e9e42e32d8",
+  "essay_next_step": "e2c6493ded94098529be4278692bd0e1d2eb7d48c09b30761fe9f4535e69d5b5",
+  "essay_next_step_named": "2fc944a065fd1a33effa47b59e292f6b98281594254ffd799355fbbeb6584b2a",
+  "essay_nothing_left": "8d51b289257b58729fdfe46cace43476b1a578dac6df7e62f6cc249cc7189bd0",
+  "essay_proposal_elements": "f28354f8c2fd76198162600383ffabf508d12a25d9d164bd6fa700d67d340651",
+  "essay_range": "4c5a7bd367e3105c932253848de5710509ad32cfe65af4f744ec27a2afbd94b6",
+  "essay_rewrite": "80fc2e4ea684a3057b5ca70b5e3ed571fe8b87f05f019166a4301ced368b137c",
+  "essay_rewrite_label": "f677f9edafc2e523bd4e72dd6b3ce77a6edbcfddd5f035206f1f2f85bbffaafa",
+  "essay_scale": "c74be9201a9ee9d70eb3c25108fc70d73406c6ea46a9061df801db94a9107acc",
+  "essay_score_of": "262c072440ac6ee0bcc1eef94c68c2de8f30a2b46b6395c4ae33f516ecfc9616",
+  "essay_see_comments": "5b24e0701e68097063637b70a0b41d46b06cdda5256c8f0a630ca904974d3c63",
+  "essay_see_grade": "ecc0fdad167a56e43f29406ab92931d151598f8c5082208e7bad375e8d483d9a",
+  "essay_send": "33945bd09a7ccfcd81b337c5ed94deeb42a0add174651725456328af5bdcb3f4",
+  "essay_send_failed": "adc5016b34ebbd81dffd5e1f8d5802bafe32e97e1cb5459d46274fed760a3e28",
+  "essay_skip_rewrite": "693d48bba7a499c97df276b04a244e33928d86891068852c2419f466e4d49ae2",
+  "essay_skipped": "921842ed3553d93830f977a87eae69a4b85c9ecab11262f4c05bef3089277089",
+  "essay_supporting_texts": "be60a6fadb40798f5e0a8aa48dec490ce54ceccfe163ae5ad56bc759b3eae22c",
+  "essay_the_case": "6575a5597b8cfaca28d5457215b977b216fbc4b6538c993781bdf5d0e7b6ab1d",
+  "essay_title": "3082c86cfcd97aaf8a00f9233c82b77d0f906f5c2510b59c822adeaaf40be34e",
+  "essay_title_ap": "5c24da2663f7653cc8b71e7f7b932156d94bac4deebeb1266f952c40ec270743",
+  "essay_title_enem": "89a8bd16376e2e37d683a9adfaa4d65ee7b6a092936433d7f9f708b5aac88654",
+  "essay_too_short": "ef1ca7e6a582c4bc8b1c82eb66d5012e1070433c3b7d8c06917899f09fed5e5d",
+  "essay_too_short_detail": "6372a6d9cf8c4b07fe1423430ad1e02c54e707ab32ef8a90a8d80f5f8acf1f9e",
+  "essay_what_to_rewrite": "923d7d85bf3c57bfc4c1b00f096fc23eab2b28c77b32d5df8d93a5989b92f68e",
+  "essay_words": "9640cc2338ddfaead6cc1ddd96e4e00cb3661459bc96efd4b63caffaa82cc9d4",
+  "essay_your_answer": "bae2f9e301b7069406bac07fea1b03abe9f8d6f018afd03364de0692fb91be7c",
+  "essay_your_essay": "ccabc10d80bbeb19b002392bc99fe26cea7105ae606b2e4309ccf0d34db40e5a"
+}
+-->
+<resources>
+    <string name="essay_your_essay">Il tuo tema</string>
+    <string name="essay_your_answer">La tua risposta</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">Punteggio stimato, da 0 a %1$s</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s su %2$s</string>
+    <string name="essay_criterion_formal_writing">Scrittura formale</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Argomento e riferimenti</string>
+    <string name="essay_criterion_argument">Argomentazione</string>
+    <string name="essay_criterion_cohesion">Coesione</string>
+    <string name="essay_criterion_intervention">Proposta d’intervento</string>
+    <string name="essay_criterion_addressing">Intestazione e parti</string>
+    <string name="essay_criterion_facts">Fatti</string>
+    <string name="essay_criterion_legal_basis">Fondamento giuridico</string>
+    <string name="essay_criterion_requests">Richieste</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
+    <string name="essay_criterion_closing">Conclusione e forma</string>
+    <string name="essay_next_step">Prossimo passo</string>
+    <string name="essay_what_to_rewrite">Cosa riscrivere</string>
+    <string name="essay_for_example">Per esempio: %1$s</string>
+    <string name="essay_nothing_left">Non c’è altro da migliorare</string>
+    <string name="essay_full_marks">In questa stima hai il punteggio massimo per ogni criterio.</string>
+    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
+    <string name="essay_title">Esercizio di scrittura</string>
+    <string name="essay_title_ap">Risposta aperta · criteri di valutazione AP</string>
+    <string name="essay_title_enem">Tema · griglia di valutazione ENEM</string>
+    <string name="essay_supporting_texts">Testi di supporto</string>
+    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
+    <string name="essay_motivating_texts">Testi da cui prendere spunto</string>
+    <!-- The legal case an OAB written exam answer is about. -->
+    <string name="essay_the_case">Il caso</string>
+    <!-- The grade of the learner's last essay draft. -->
+    <string name="essay_last_grade">Il tuo ultimo voto</string>
+    <string name="essay_rewrite_label">Riscrivi le parti da migliorare</string>
+    <plurals name="essay_words">
+        <item quantity="one">%d parola</item>
+        <item quantity="many">%d parole</item>
+        <item quantity="other">%d parole</item>
+    </plurals>
+    <!-- On an essay the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Hai saltato questo tema.</string>
+    <string name="essay_back_to_today">Torna a Oggi</string>
+    <string name="essay_send_failed">L’invio non è riuscito. Il tuo testo è ancora qui. Riprova tra poco.</string>
+    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
+    <string name="essay_daily_limit_reached">Hai raggiunto il limite di tempo giornaliero. Il tuo testo resta qui.</string>
+    <string name="essay_limit_reached">Hai esaurito le valutazioni dei temi per oggi. Il tuo testo resta qui; invialo domani.</string>
+    <string name="essay_grading">Stiamo esaminando il tuo tema in base a ciascun criterio. Possono volerci fino a 30 secondi.</string>
+    <string name="essay_grading_slow">Stiamo ancora valutando il testo. Ci stiamo mettendo più del solito.</string>
+    <string name="essay_skip_rewrite">Salta la riscrittura</string>
+    <string name="essay_grading_button">Stiamo valutando…</string>
+    <string name="essay_grade_rewrite">Valuta la nuova versione</string>
+    <string name="essay_send">Invia per la valutazione</string>
+    <string name="essay_leave_title">Vuoi fermarti per ora?</string>
+    <string name="essay_leave_description">Il tuo testo resta su questo dispositivo e lo ritrovi qui quando torni.</string>
+    <string name="essay_keep_writing">Continua a scrivere</string>
+    <!-- %1$s is the criterion to work on next, such as "Argument". -->
+    <string name="essay_next_step_named">Prossimo passo: %1$s</string>
+    <string name="essay_see_grade">Vedi il voto</string>
+    <string name="essay_too_short">Troppo breve per essere valutato</string>
+    <string name="essay_too_short_detail">Scrivi tutto il tema, poi invialo di nuovo.</string>
+    <string name="essay_rewrite">Riscrivi</string>
+    <string name="essay_finish_failed">Qualcosa non ha funzionato. Riprova tra un attimo.</string>
+    <string name="essay_see_comments">Leggi i commenti su ogni criterio</string>
+    <string name="essay_comments">Commenti</string>
+    <string name="essay_proposal_elements">I cinque elementi della proposta</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
+    <string name="essay_element_agent">Chi agisce</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
+    <string name="essay_element_action">Cosa fa</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
+    <string name="essay_element_means">Con quali mezzi</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
+    <string name="essay_element_effect">A quale scopo</string>
+    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
+    <string name="essay_element_detail">Un dettaglio</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_present">Presente</string>
+    <!-- Whether an element of the proposal is in the essay. -->
+    <string name="essay_element_missing">Assente</string>
+</resources>

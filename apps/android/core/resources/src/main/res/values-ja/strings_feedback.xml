@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "0b9b0af7f5e3fe3a7874419c84c0988e58932c052435f28d5d0e155701bc5546",
+  "feedback_failed": "96e04d152d392e00cbb2fb05808a9dc2940badcf76daf723f0daea99804d46aa",
+  "feedback_follow_us": "20343960c1ef56ceae5dd989a878463f814295733fdc135c1286cec827c98347",
+  "feedback_help_description": "8b1920b886097a3ad0cfc431762c7f61b9002f1335e4aa487682cfcefe5ef9c2",
+  "feedback_message": "de05b4aba1c2b7b3c6aa5b5c1b875a7229e916338c9363022441d4f4c8942fbc",
+  "feedback_message_placeholder": "d5eaf2139cf5bee1be20d80911fd86c8f92d7a13386fec02a7322ef44271f4bf",
+  "feedback_more": "fdce4da14e3a4e12d2629210dfb98300d7bd91cafda4185cbf51ed71eddfc8a4",
+  "feedback_report_problem": "5dd08c21f586d4d0c498a9d560be6779f3734811da24c617d027b0df986b2fa4",
+  "feedback_screen_attached": "4dc1f2c23e36076e268b550bba44884cc079533e3aadbac1a7aa8146562a9c5a",
+  "feedback_send": "64c8c390f329640f7e78850cc40665a645eaada461fc34993e3cf2aca5a5ae17",
+  "feedback_send_feedback": "9f936c3071374012e11543712344268af4f5c2e34f34b1aba7ae6255bb8cf19c",
+  "feedback_send_feedback_description": "44e02c518c68fe011a99d433b53b23d983bb6ca688634f7ab01ffc7981db5dfb",
+  "feedback_sent": "3431b22f3eb8ac43afec72efeb99d7cdc240c4306f3431fdd48cc4abeea42ec5",
+  "feedback_thanks": "568dbe9c715cc5c0a9779e4aa469692e69d9f7017fb30928712eebe535567c66"
+}
+-->
+<resources>
+    <string name="feedback_help_description">質問や問題の報告、アイデアをお寄せください。メールでお返事します。</string>
+    <string name="feedback_message">メッセージ</string>
+    <string name="feedback_message_placeholder">どのようなことでお困りですか？</string>
+    <string name="feedback_screen_attached">この画面が添付されています</string>
+    <string name="feedback_email">返信先のメールアドレス</string>
+    <string name="feedback_send">メッセージを送信する</string>
+    <string name="feedback_sent">メッセージを送信しました！近いうちにお返事します。</string>
+    <string name="feedback_failed">メッセージを送信できませんでした。もう一度試すか、hello@zoonk.comにメールでご連絡ください。</string>
+    <string name="feedback_follow_us">フォローする</string>
+    <string name="feedback_report_problem">問題を報告する</string>
+    <string name="feedback_send_feedback">フィードバックを送る</string>
+    <string name="feedback_send_feedback_description">気になる点やアイデアはありますか？下の欄に書くか、hello@zoonk.comにメールでお知らせください。</string>
+    <string name="feedback_thanks">ありがとうございます！メッセージを受け取りました。</string>
+    <string name="feedback_more">その他のオプション</string>
+</resources>

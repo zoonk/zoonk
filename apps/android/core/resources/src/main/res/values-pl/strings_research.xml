@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "research_change_label": "9351467cb91551982c9def1c49b1524483190f3c967e92196633c6e020a99675",
+  "research_class_action": "78b683d24d93491fa951f49f7e1305543ddad95b65c5a5ff19a85dde08b00ef8",
+  "research_class_body": "78c158ed3cd05a25aa5c529e4753cc0aa3b98f359ce7238a871c29c0b32f11de",
+  "research_class_title": "cb074985bda2ea6fe462a8881c323f781845b818a2135f994138688ce3b8981e",
+  "research_guide_action": "fc3b893bbfde7f49f3aa6c8d2c2cc502481cced9df133b6bd385c7751f319c90",
+  "research_guide_body": "ddc33fb2389430f0de856a9c43fb9addabfcfba43e0182e410f5c80d5303ec78",
+  "research_guide_title": "852f2bda7eddee69832935b329941707cd6b1a37cb8bbbe70f3c3ac64320b87b",
+  "research_not_now": "7c73b736ef0e47c4ab8fac96903d91493300d1b0583913c4833d1eb67959a12a",
+  "research_notice_action": "6c7da52258044eae7249395091b22a332843579301a6a96948987f42895155ea",
+  "research_notice_body": "b25462d3093b0748b63cbe575c756b509023f16d5210435de9d89050719ec30d",
+  "research_notice_title": "3d44ca6e420431943c7e305102f58e166fe9ebbe662c9a3c793313450c873c32",
+  "research_source_action": "3669874040d1afac0528d372206400423e1b9cffce40539dbc6572291082d591",
+  "research_source_body": "53b35150ac0a7739668b3eb0d4bb96ec6f0ce1a6c2d4b327c7eca90d922451df",
+  "research_source_title": "3682a7e04c8af7f598554d06e7c5931a5e6660b9e46be81b4fb701e8fd0a0d34",
+  "research_unverified_guide_body": "a8a9058145d23758c66fd93a10507f8ee4d824d991dc06605a803030c7f2233c",
+  "research_unverified_notice_body": "1a73f0c5df332600943caecd5d34a239a1d3287b1ea54cecb704a2c7d1c3039e",
+  "research_unverified_title": "bace9b7eaface638cf362f93c15c706eac882b6af8eb4e7d4690c706f1092680",
+  "research_upload_label": "434bbde7256a59d2c828f32511ba0bc21eed38989890c0ac097313ff6dcbb2a9",
+  "research_upload_open": "c124f941aff606aa4f3c64dde5dc0d06b7b19bf63d73539baf14f66972f40347",
+  "research_upload_sending": "a87dbc1b30861d71487174a372bd6098f0d4a76f06a727d1b255b69ba23c3368",
+  "research_upload_thanks": "d56b63d811d77097e52db56d9a0279ed042b5d828464c3dcc5902298fad747a7"
+}
+-->
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">Do twojego planu potrzebny jest dokument</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">Prześlij</string>
+    <string name="research_upload_thanks">Dziękujemy. Właśnie go czytamy, a twój plan zaktualizuje się za kilka minut.</string>
+    <string name="research_upload_sending">Wysyłamy dokument do odczytania…</string>
+    <string name="research_not_now">Nie teraz</string>
+    <string name="research_class_title">Dodaj materiały z zajęć</string>
+    <string name="research_class_body">Sprawdzian przygotowany przez twojego nauczyciela nie jest nigdzie opublikowany. Prześlij slajdy, notatki lub listę tematów, żeby dopasować plan do twoich zajęć.</string>
+    <string name="research_class_action">Prześlij swoje materiały</string>
+    <string name="research_source_title">Nie udało nam się znaleźć oficjalnego źródła</string>
+    <string name="research_source_body">Prześlij oficjalny tekst lub informator, z którego się uczysz, żeby dopasować do niego lekcje.</string>
+    <string name="research_source_action">Prześlij dokument</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">Nie udało nam się znaleźć oficjalnego ogłoszenia</string>
+    <string name="research_notice_body">Prześlij ogłoszenie, żeby twój plan odpowiadał wymaganiom egzaminu.</string>
+    <string name="research_notice_action">Prześlij ogłoszenie</string>
+    <string name="research_guide_title">Nie udało nam się znaleźć oficjalnego informatora</string>
+    <string name="research_guide_body">Prześlij oficjalny informator, żeby twój plan odpowiadał wymaganiom egzaminu.</string>
+    <string name="research_guide_action">Prześlij oficjalny informator</string>
+    <string name="research_unverified_title">Nie udało nam się potwierdzić szczegółów egzaminu</string>
+    <string name="research_unverified_notice_body">Znalezione informacje nie zgadzały się z danymi egzaminu. Prześlij oficjalne ogłoszenie, żeby twój plan odpowiadał wymaganiom egzaminu.</string>
+    <string name="research_unverified_guide_body">Znalezione informacje nie zgadzały się z danymi egzaminu. Prześlij oficjalny informator, żeby twój plan odpowiadał wymaganiom egzaminu.</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">Co się zmieniło</string>
+</resources>

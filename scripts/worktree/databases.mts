@@ -53,14 +53,18 @@ async function prepareDatabase({
   });
 
   if (state === "true") {
-    return { mode, name, ready: true };
+    const database = { mode, name, ready: true };
+    // A fresh mark keeps a cleanup that found this worktree missing from dropping its copies.
+    await markDatabase({ database, ready: true, source, worktree });
+    return database;
   }
 
   if (state && state !== "false") {
     throw new Error(`Refusing to replace unmanaged database ${name}.`);
   }
 
-  /** Only unfinished databases from this worktree's previous setup may be rebuilt. Never force a disconnect. */
+  // Only unfinished databases from this worktree's previous setup may be rebuilt. Never force a
+  // disconnect.
   if (state === "false") {
     await query({ source, sql: `DROP DATABASE "${name}"` });
   }
@@ -89,7 +93,7 @@ async function copyDevelopmentDatabase({
   const env = postgresEnvironment(source);
 
   try {
-    /** A logical snapshot works while the primary checkout has open connections. */
+    // A logical snapshot works while the primary checkout has open connections.
     await run({
       args: [
         "-w",

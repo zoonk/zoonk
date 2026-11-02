@@ -14,11 +14,6 @@ import { type GrowthAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { SubscribersTable } from "./subscribers-table";
 
-/**
- * Loads only the selected Growth question. This preserves every existing stat
- * while avoiding the query and visual cost of rendering the other three views
- * behind the current analysis.
- */
 export async function GrowthMetrics({
   statsPeriod,
   view,
@@ -49,10 +44,6 @@ export async function GrowthMetrics({
   return <SignupAnalysis statsPeriod={statsPeriod} />;
 }
 
-/**
- * Signup volume is additive, so discrete bars make empty and high-volume
- * calendar buckets easier to compare than a smoothed line.
- */
 async function SignupAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -81,10 +72,6 @@ async function SignupAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   );
 }
 
-/**
- * Activation follows signup cohorts rather than activity dates, matching the
- * headline definition: users created in the range who completed a lesson.
- */
 async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -117,11 +104,6 @@ async function ActivationRateAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
   );
 }
 
-/**
- * The headline shows period conversion: learners who paid at any point in the
- * selected range. The chart shows end-of-bucket subscriber share so additions
- * and churn produce the stock-style trend admins expect.
- */
 async function ConversionRateAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 

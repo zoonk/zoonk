@@ -1,6 +1,5 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { appleSubscriptionNotificationSchema } from "@zoonk/core/subscriptions/apple-contract";
 import { processAppleSubscriptionNotification } from "@zoonk/core/subscriptions/apple-notification";
 import { safeAsync } from "@zoonk/utils/error";
@@ -8,13 +7,9 @@ import { type NextRequest } from "next/server";
 import { getAppleNotificationErrorResponse } from "./_utils/apple-notification-error";
 
 async function createAppleSubscriptionNotification(request: NextRequest) {
-  const parsed = await parseBody(request, appleSubscriptionNotificationSchema);
+  const parsed = await readBody(request, appleSubscriptionNotificationSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { error } = await safeAsync(() => processAppleSubscriptionNotification(parsed.data));
+  const { error } = await safeAsync(() => processAppleSubscriptionNotification(parsed));
 
   if (error) {
     const response = getAppleNotificationErrorResponse(error);

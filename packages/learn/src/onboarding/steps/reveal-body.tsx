@@ -1,0 +1,228 @@
+"use client";
+
+import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { Button } from "@zoonk/ui/components/button";
+import { DetailActions, DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { Spinner } from "@zoonk/ui/components/spinner";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
+import { Fragment, useState } from "react";
+import { DETAIL_PRIMARY_CLASS } from "../../_components/detail-page";
+import { PageSectionTitle } from "../../_components/page";
+import { SuccessEyebrow } from "../../_components/success-eyebrow";
+import { daysUntilIsoDate } from "../../_utils/iso-date";
+import { useFormatDuration } from "../../_utils/time-format";
+import { usePlanEndText } from "../../journey/use-phase-when";
+import { LearnLink } from "../../learn-link";
+import { PlanChoiceLines } from "../../plan/plan-choice-lines";
+import { PlanChoices } from "../../plan/plan-choices";
+import { usePlanScreen } from "../../plan/plan-context";
+import { PlanEditor } from "../../plan/plan-editor";
+import { type PlanEditorSection } from "../../plan/plan-editor-sections";
+import { useStudyDaysText } from "../../plan/use-study-days-text";
+import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
+import { SavePlanNote } from "../save-plan-note";
+import { UsualStructureNote } from "./notice-reading";
+import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
+import { RevealCoverage } from "./reveal-coverage";
+import { RevealNoticeDay } from "./reveal-notice-day";
+
+/**
+ * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
+ * builds the day once. A Today still on its way shows on the button, not as a tap that did nothing.
+ */
+function StartButton({ href }: { href: string }) {
+  const t = useExtracted();
+  const ref = useEnterClick<HTMLAnchorElement>();
+  const [reached, setReached] = useState(false);
+  const reach = () => setReached(true);
+
+  return (
+    <span className="contents" onFocus={reach} onPointerDown={reach} onPointerEnter={reach}>
+      <LearnLink
+        aria-keyshortcuts="Enter"
+        className={cn(DETAIL_PRIMARY_CLASS, "group/start font-[560]")}
+        href={href}
+        prefetch={reached}
+        ref={ref}
+      >
+        {t("Start")}
+        <ShortcutKbd className="group-has-data-link-pending/start:hidden" tone="inverse">
+          ⏎
+        </ShortcutKbd>
+        <Spinner
+          aria-hidden="true"
+          className="hidden group-has-data-link-pending/start:block"
+          data-icon="inline-end"
+        />
+      </LearnLink>
+    </span>
+  );
+}
+
+function useScheduleFacts(): string[] {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const studyDaysText = useStudyDaysText();
+  const { plan } = usePlanScreen();
+  const { shape, weekdayMinutes } = plan.schedule;
+  const everyDay = weekdayMinutes.every((minutes) => minutes > 0);
+
+  const time =
+    shape.weekend === null
+      ? t("{time} a day", { time: formatDuration(shape.weekdays) })
+      : t("{weekdays} a day, {weekend} on weekends", {
+          weekdays: formatDuration(shape.weekdays),
+          weekend: formatDuration(shape.weekend),
+        });
+
+  return everyDay ? [time] : [time, studyDaysText(weekdayMinutes)];
+}
+
+function RevealFacts() {
+  const t = useExtracted();
+  const today = useMountTime();
+  const planEnd = usePlanEndText();
+  const scheduleFacts = useScheduleFacts();
+  const { plan } = usePlanScreen();
+  const { targetDate, targetDateEstimated } = plan.schedule;
+  const days = targetDate ? daysUntilIsoDate({ isoDate: targetDate, today }) : null;
+
+  const facts = [
+    days !== null &&
+      (targetDateEstimated
+        ? t("{days, plural, one {About # day} other {About # days}}", { days })
+        : t("{days, plural, one {# day} other {# days}}", { days })),
+    days === null && planEnd,
+    ...scheduleFacts,
+  ].filter((fact): fact is string => typeof fact === "string" && fact !== "");
+
+  return (
+    <p className="text-muted-foreground font-mono text-[0.8125rem] tabular-nums">
+      {facts.map((fact, index) => (
+        <Fragment key={fact}>
+          {index > 0 && " · "}
+          <span>{fact}</span>
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
+/**
+ * A language ends at the level the learner picked and an exam at its date; a learn goal without a
+ * date runs as long as its whole subject takes, so the reveal says what sets that. Planning without
+ * a date stops at the longest plan there can be, so only a plan holding every part says it does.
+ */
+function RevealPace() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind !== "learn" || plan.schedule.targetDate || !plan.estimate.endDate) {
+    return null;
+  }
+
+  return (
+    <p className="text-muted-foreground max-w-prose text-sm text-pretty">
+      {plan.feasibility?.fits
+        ? t(
+            "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+          )
+        : t(
+            "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+          )}
+    </p>
+  );
+}
+
+function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
+  return (
+    <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
+      <PageSectionTitle className="hidden min-[72rem]:block">{title}</PageSectionTitle>
+      {children}
+    </div>
+  );
+}
+
+export function RevealBody({
+  isGuest,
+  signUpHref,
+  syllabus,
+  todayHref,
+}: {
+  isGuest: boolean;
+  signUpHref: string;
+  syllabus: SyllabusView | null;
+  todayHref: string;
+}) {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
+    open: false,
+    section: null,
+  });
+
+  return (
+    <OnboardingColumn
+      className="gap-8"
+      rail={
+        <>
+          <RevealRailBlock title={t("What fits")}>
+            <RevealCoverage syllabus={syllabus} />
+          </RevealRailBlock>
+
+          <RevealRailBlock title={t("Choices")}>
+            <PlanChoices />
+          </RevealRailBlock>
+        </>
+      }
+      wide
+    >
+      <DetailHero>
+        <DetailHeroText>
+          <SuccessEyebrow>{t("Plan created")}</SuccessEyebrow>
+          <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
+          <RevealFacts />
+          <PlanChoiceLines
+            choices={plan.examChoices}
+            onChange={() => setEditor({ open: true, section: "choices" })}
+          />
+          <RevealPace />
+          <RevealNoticeDay />
+        </DetailHeroText>
+
+        <div className="flex flex-col gap-2 md:max-w-xs">
+          <DetailActions>
+            <StartButton href={todayHref} />
+            <Button
+              onClick={() => setEditor({ open: true, section: null })}
+              size="lg"
+              variant="outline"
+            >
+              {t("Adjust")}
+            </Button>
+          </DetailActions>
+          {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+        </div>
+      </DetailHero>
+
+      <div className="flex flex-col gap-2">
+        <PlanPhasesBar />
+        <PlanChapterList />
+        {plan.notice === "usual" && <UsualStructureNote />}
+      </div>
+
+      <AreaWeights syllabus={syllabus} />
+
+      <PlanEditor
+        onOpenChange={(open) => setEditor({ ...editor, open })}
+        open={editor.open}
+        section={editor.section}
+      />
+    </OnboardingColumn>
+  );
+}

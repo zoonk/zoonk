@@ -14,12 +14,6 @@ type SendEmailParams = {
   replyTo?: string;
 };
 
-/**
- * Sends product emails through the configured provider while preserving the
- * local development workflow where missing credentials capture messages in a
- * browser inbox. Deployed environments must fail closed so a missing secret
- * cannot turn authentication codes into application logs.
- */
 export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Response>> {
   const { to, subject, htmlBody, textBody, replyTo } = params;
   const apiKey = process.env.MAILER_API_KEY;
@@ -58,11 +52,7 @@ export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Res
   }
 }
 
-/**
- * Handles missing credentials in the one place that knows whether email is
- * optional. Local development needs a disabled-mailer mode for OTP login, but
- * previews and production should expose the configuration problem immediately.
- */
+/** Outside development, a missing key fails instead of logging the email, so sign-in codes never reach logs. */
 async function handleMissingMailerApiKey(params: SendEmailParams): Promise<SafeReturn<Response>> {
   if (getEnvironment() === "development") {
     return captureDevelopmentEmail(params);
@@ -79,11 +69,6 @@ async function handleMissingMailerApiKey(params: SendEmailParams): Promise<SafeR
   return { data: null, error };
 }
 
-/**
- * Delivers a development message to the local-only Vite app instead of mixing
- * HTML and sign-in codes into terminal output. The endpoint is bound to the
- * loopback interface and exists only while the mailbox development server runs.
- */
 async function captureDevelopmentEmail(params: SendEmailParams): Promise<SafeReturn<Response>> {
   try {
     const response = await fetch(localInboxUrl, {

@@ -1,0 +1,262 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite/evaluation",
+  "results": [
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-example-likes-football-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Likes football examples" },
+          "need": "Write a personal example for a lesson on percentages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-example-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Studies after 8 pm" },
+          "need": "Write a personal example for a lesson on percentages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-plan-no-saturdays-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Can't study on Saturdays" },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-plan-football-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Likes football examples" },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-pronunciation-law-goal-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Wants Law at a public university" },
+          "need": "Write a pronunciation drill for Spanish vowels"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-example-nurse-statistics-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "Works as a nurse" },
+          "need": "Write a personal example for a statistics lesson on averages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-tone-short-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Prefers short, direct explanations" },
+          "need": "Choose the length and tone of the tutor's replies"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-priorities-essay-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Needs 700+ in the essay" },
+          "need": "Decide which exam topics to prioritize in the plan"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-example-bus-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Studies on the bus in the morning" },
+          "need": "Write a personal example for a chemistry lesson on acids"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-example-futebol-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Gosta de exemplos de futebol" },
+          "need": "Escrever um exemplo pessoal para uma aula de porcentagem"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-plan-works-late-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Trabalha até as 19h nos dias de semana" },
+          "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-plan-cooking-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Gosta de exemplos de culinária" },
+          "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-explain-proportion-1",
+        "userInput": {
+          "fact": { "category": "learning", "statement": "Confunde grandezas diretas e inversas" },
+          "need": "Explicar o erro do aluno em uma questão de regra de três"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-example-bakery-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "É dono de uma padaria" },
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-pronunciation-medicine-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Quer Medicina na USP" },
+          "need": "Criar exercícios de pronúncia do inglês"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-level-engineer-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "Já é formado em Engenharia" },
+          "need": "Escolher o nível das explicações de uma aula de cálculo"
+        }
+      }
+    }
+  ],
+  "taskId": "memory-relevance"
+}

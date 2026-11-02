@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "d44ce05405dbc2ef32c35460300c059f2668a467b40458a0a7f0006e34685f2a",
+  "pattern_correct_version": "4cd16e7f09e9e23c06234e830cec5298799588e60fdf87c10ba04fea6b974869",
+  "pattern_done": "99ee4c687268fa7862de86504fbe6d05860fff1838df53771f6100cef030be49",
+  "pattern_got_it": "823afbcb4c49592734ddbae097db6d606182bb28f40cf7f3682c157ff7db2800",
+  "pattern_just_typos": "da7f10a196beacaab4eca6078c3d6f7a086ce144b176d83fde6d8180418923d4",
+  "pattern_keep_going": "7f4b57fd4b8439187706f5c0c1a26e8df5e7aeef2f7a93ec11eff42220e442a6",
+  "pattern_noticed": "5dd9999db750636dd56abc7c639765219e92fe0edc09191a01ead2c0b3b219ee",
+  "pattern_practice": "3a78becf5c4b53efdb2143279d367cbb99ba9e79ed4616677a8bc135214647f6",
+  "pattern_quoted": "34e31b7cb6ce8cb3f60af67f8cfd0bcafa893143843022bd3017575d791f21cd",
+  "pattern_rule": "f1cb71f6a8b54e3a20f2f4709d1311bf3e77dcc1e109c481f33bcf872fb759b8",
+  "pattern_see_how_you_did": "f6c815ba8b28fdf57b74be5751779b2f03f228391ad34500f41d98c4ca19fb90",
+  "pattern_see_rule": "40635e6d8ee063902ec6a91c061c9cee521d36c2782317bb932821b00dc308ff",
+  "pattern_seen": "d7903529c806739009d58c22c9962e202aecf18c24726f96c215ee7337e3bcf6",
+  "pattern_seen_times": "9564185803d4bcb564467b903183bab01168cb40a8f417526c8e06b686091f86",
+  "pattern_title": "8d52821698ee8dad014dccd7026c3c4f303eb9e0018d03543356b115dffdb3d0",
+  "pattern_typos_detail": "d92b75306292885069083eb81d24ddd4db611db7c015762b0c10e3c93965a9ad",
+  "pattern_where_you_slipped": "922f9ced75f56c44d113d23102fbeba3107627e61c52ba62a5d7a59d9c6b031e",
+  "pattern_you_said": "0d58472b11e443760d325faaeab408a56043a3e68b87c57c0980dc4a917733b0"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Erreur récurrente</string>
+    <string name="pattern_noticed">On a repéré une erreur récurrente</string>
+    <string name="pattern_seen">Cette erreur est apparue dans tes dernières réponses.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Cette erreur est apparue %d fois dans tes dernières réponses.</item>
+        <item quantity="many">Cette erreur est apparue %d fois dans tes dernières réponses.</item>
+        <item quantity="other">Cette erreur est apparue %d fois dans tes dernières réponses.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Entraîne-toi · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">On la retrouve aussi dans</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">« %1$s »</string>
+    <string name="pattern_rule">La règle</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Tu as dit</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Version correcte</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Là où tu as fait une erreur</string>
+    <string name="pattern_see_rule">Voir la règle</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Voir ton résultat</string>
+    <string name="pattern_got_it">Tu maîtrises cette règle.</string>
+    <string name="pattern_keep_going">Connaître la règle est la première étape. Elle devient plus facile à utiliser à chaque fois.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Terminé</string>
+    <string name="pattern_just_typos">De simples fautes de frappe</string>
+    <string name="pattern_typos_detail">Tes erreurs récentes sont des fautes de frappe, pas une règle que tu ne connais pas. Il n’y a rien à travailler.</string>
+</resources>

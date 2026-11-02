@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CourseCategorySelector: View {
   @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+  let categories: [CourseCategory]
   @Binding var selection: CourseCategory?
 
   var body: some View {
@@ -15,7 +16,7 @@ struct CourseCategorySelector: View {
           )
           .id(scrollID(for: nil))
 
-          ForEach(localizedCourseCategories(), id: \.rawValue) { category in
+          ForEach(categories, id: \.rawValue) { category in
             CourseCategoryButton(
               category: category,
               isSelected: selection == category,
@@ -24,8 +25,9 @@ struct CourseCategorySelector: View {
             .id(scrollID(for: category))
           }
         }
-        .padding(.horizontal, 16)
       }
+      // The row scrolls to the screen's edges while its first chip lines up with the courses.
+      .scrollClipDisabled()
       .scrollIndicators(.hidden)
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
@@ -52,41 +54,34 @@ struct CourseCategorySelector: View {
 }
 
 private struct CourseCategoryButton: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
   let category: CourseCategory?
   let isSelected: Bool
   @Binding var selection: CourseCategory?
 
   var body: some View {
-    Button {
-      selection = category
-    } label: {
-      Label {
-        title
-      } icon: {
-        Image(systemName: category?.systemImage ?? "square.grid.2x2")
-          .font(.system(size: 15, weight: .semibold))
+    Group {
+      if isSelected {
+        button.buttonStyle(.mainAction)
+      } else {
+        button.buttonStyle(.bordered)
       }
-      .font(.subheadline.weight(.semibold))
-      .foregroundStyle(isSelected ? selectedForegroundStyle : Color.primary)
-      .fixedSize(horizontal: true, vertical: false)
-      .padding(.horizontal, 14)
-      .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 0)
-      .frame(height: dynamicTypeSize.isAccessibilitySize ? nil : 38)
-      .background(backgroundStyle, in: Capsule())
     }
-    .buttonStyle(.plain)
-    .frame(minHeight: 44)
     .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 
-  private var backgroundStyle: Color {
-    isSelected ? .primary : Color(uiColor: .secondarySystemBackground)
-  }
+  private var button: some View {
+    Button {
+      selection = category
+    } label: {
+      HStack(spacing: 6) {
+        if let category {
+          SubjectGlyph(subject: category)
+        }
 
-  private var selectedForegroundStyle: Color {
-    Color(uiColor: .systemBackground)
+        title
+      }
+      .font(.subheadline.weight(.semibold))
+    }
   }
 
   @ViewBuilder
@@ -105,5 +100,5 @@ private struct CourseCategoryButton: View {
 #Preview {
   @Previewable @State var selection: CourseCategory?
 
-  CourseCategorySelector(selection: $selection)
+  CourseCategorySelector(categories: localizedCourseCategories(), selection: $selection)
 }

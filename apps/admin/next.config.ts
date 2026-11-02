@@ -22,7 +22,6 @@ const nextConfig: NextConfig = {
   },
   partialPrefetching: true,
   reactCompiler: true,
-  typedRoutes: false,
   typescript: { ignoreBuildErrors: true },
 };
 

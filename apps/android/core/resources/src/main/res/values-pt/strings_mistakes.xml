@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_cause_fixed": "836f2dd170f849f4c087febcf3b9788bd35b59759de43248bd53d0216bdd3306",
+  "mistakes_cause_gap": "fc7feb472ab828f452977524f50c8607dbb0715ae5262ae6059eaea5ee2e0950",
+  "mistakes_cause_guess": "ad1c2df09dad527b008e1bf3424bf9bfaf50be6e6e429f8a31b2f6f263b22249",
+  "mistakes_cause_misread": "938910ed350c9a8b32ecc827be2941c44571c4cca5e0218a1ee6f2764e2e93c3",
+  "mistakes_cause_time": "f616b7b23958493643edf1419b0391a9d4c48817842df004fe5494b72ee1569f",
+  "mistakes_cause_trap": "52191aa3ba475b4b4af2b6889e0ca009f04dd9d55bb31a90f4648ace3b4aefdd",
+  "mistakes_cause_unsorted": "337bf4d7743d37b0bfd85bc5ecd9d496a8fddb96f330b853eac05a382f3e52a0",
+  "mistakes_come_back_tomorrow": "c80461a29b1f4817b155e9bb0b3cc99cf8f26fcf07b567c8e26780d175058265",
+  "mistakes_empty_fixed": "38578a488737a186b9ec6559b014cd1b7d6e07b8da45604cb337de49c44f5f63",
+  "mistakes_empty_open": "b238f88893b8a3519018ea28bbf8b2adfd4550ceb2bc9797bc265af67588a3de",
+  "mistakes_fixed_count": "490f41bf6518c77a4eeaddeb2fa431122ef1b0a29f16d2d2b10bb2cb8d6dc217",
+  "mistakes_more_failed": "d617022b97848c94193c1c4636b5cf4bff9e91710a9322e197a80e623f891e08",
+  "mistakes_not_found_description": "3acf40ba3622f53c7b1fee9921c839a706f21c24162f8da4f636246245acfcb3",
+  "mistakes_notebook_title": "5a3ceec9f80410d6253bb9af31e9cf6c268ff88192adb6d48df7a683efbb0f65",
+  "mistakes_nothing_description": "d1f510209794ed8db12784f57aab59a8a45c1ecca1ec83d4b19bd0bf06863719",
+  "mistakes_nothing_title": "7848741fa5472d906066f541068c18833d273f0b932ce5ef8a78d5cd6f9062fb",
+  "mistakes_open_lesson": "0ff6b4cfadd5c3ccfe92683831deb9edcd433ee02400f0df1be7db529b403c81",
+  "mistakes_other_questions": "dbb0852cbb0f89007d3152f6716a810b6fd126620a3656aa21f4c711036bf0a1",
+  "mistakes_practice": "62fa6170b13e17d99083657cfa1f8539fabd87cfbbbbabb9b32e7acecdfbe2e1",
+  "mistakes_practice_comes_back": "ccafbf5f8ee4e7e0801ba9b109132f072a57561d30644e5579cbae27df4a246d",
+  "mistakes_practice_end": "46fa3a94c4563fed94c6a45caa7285744daa5ceb5c25893bf05a72de48f7a4f6",
+  "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
+  "mistakes_practice_skill": "83d4ac8ae25dd0bc73763a121ea75f23e7386636031feb871dab7e699f4a99c3",
+  "mistakes_practice_title": "5744d6900917a3f7691f536856253acf2d7b181e7bc97271c40b62bc0074463c",
+  "mistakes_practice_tomorrow": "33926b8027ce6dd5d49aa81ef5347197c7cb1e29ef8cc9fb597ef56373f90098",
+  "mistakes_ready": "c351bc56aed7b55628bfdbcda73b6db85f86e8dfa9052ac0fe2c0633845d2537",
+  "mistakes_show_more": "b0f1eca7ad409b4c25eb7a2cd26c7f1c2df15fefe30084bb9b17e0a7cfb90c4f",
+  "mistakes_tab_fixed": "d7c9bffc0405f05829624afa62d797b6ba6919107f83ae389ea6e5568ac84f19",
+  "mistakes_tab_open": "4bdbd06309a824ba5abc287ce6f7cd2984ebe7425306146c2938d489eeb0b6ae",
+  "mistakes_tomorrow": "8879705ac28fad714cb3e4d0db780f4fa2709dfe6a2ef0a7857e28d1b2fb75a6"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">Praticar o que você errou</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">Encerrar a prática. Suas respostas contam.</string>
+    <string name="mistakes_practice_comes_back">O restante volta outro dia, quando fica mais fácil de aprender.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">%d erro corrigido</item>
+        <item quantity="many">%d erros corrigidos</item>
+        <item quantity="other">%d erros corrigidos</item>
+    </plurals>
+    <string name="mistakes_not_found_description">Eles podem ter sido corrigidos ou removidos.</string>
+    <string name="mistakes_nothing_title">Nada para praticar ainda</string>
+    <string name="mistakes_nothing_description">Os erros voltam para prática a partir do dia seguinte.</string>
+    <string name="mistakes_notebook_title">Caderno de erros</string>
+    <plurals name="mistakes_ready">
+        <item quantity="one">%d pronto para praticar</item>
+        <item quantity="many">%d prontos para praticar</item>
+        <item quantity="other">%d prontos para praticar</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="one">%d disponível amanhã</item>
+        <item quantity="many">%d disponíveis amanhã</item>
+        <item quantity="other">%d disponíveis amanhã</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="one">%d corrigido</item>
+        <item quantity="many">%d corrigidos</item>
+        <item quantity="other">%d corrigidos</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">Os erros voltam para prática a partir do dia seguinte.</string>
+    <string name="mistakes_practice">Praticar o que você errou</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">Para corrigir</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">Corrigidos</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">Outras perguntas</string>
+    <string name="mistakes_empty_open">Nada para corrigir agora. Os erros das suas aulas e revisões aparecem aqui.</string>
+    <string name="mistakes_empty_fixed">Os erros que você corrige na prática aparecem aqui.</string>
+    <string name="mistakes_show_more">Mostrar mais</string>
+    <string name="mistakes_more_failed">Não deu para carregar. Tente de novo.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">Ainda não sabia</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">Li errado</string>
+    <string name="mistakes_cause_trap">Caiu em uma pegadinha</string>
+    <string name="mistakes_cause_time">Faltou tempo</string>
+    <string name="mistakes_cause_guess">Chutou</string>
+    <string name="mistakes_cause_unsorted">Ainda sem classificação</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · Corrigido</string>
+    <string name="mistakes_practice_tomorrow">Pratique amanhã</string>
+    <string name="mistakes_practice_skill">Praticar esta habilidade</string>
+    <string name="mistakes_open_lesson">Abrir a aula</string>
+</resources>

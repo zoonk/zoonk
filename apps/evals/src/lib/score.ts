@@ -3,33 +3,32 @@ import { Output, generateText } from "ai";
 import { calculateScore } from "./score-calculation";
 import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
 import systemPrompt from "./system-prompt.md";
-import { type ScoreCategory, type ScoreStep, categorizedScoreSchema, scoreSchema } from "./types";
+import {
+  type JudgeRun,
+  type ScoreCategory,
+  type ScoreStep,
+  categorizedScoreSchema,
+  scoreSchema,
+  toTokenUsage,
+} from "./types";
+
+/**
+ * Scoring mode keeps one judge so scores stay comparable across runs. Battle
+ * mode is where several judges from other model families compare outputs.
+ */
+const SCORING_JUDGE_MODEL_ID = "openai/gpt-6-astra";
 
 const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
 const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
 
-/**
- * Builds deterministic score steps for extractor-style tasks where one exact
- * pass/fail score should apply to the whole output. This avoids judge-model
- * drift where the same classification error receives different scores in the
- * major, minor, and improvement buckets.
- */
 export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
   const steps: ScoreStep[] = SCORE_STEP_KINDS.map((kind) => ({ conclusion, kind, score }));
 
   return { score, steps };
 }
 
-/**
- * This function analyzes the output of a given task and run against the
- * test-case expectations plus the concrete input values. The production
- * system prompt is intentionally excluded so a bad prompt cannot become part
- * of the grading rubric.
- *
- * It returns a list of steps with conclusions and scores, as well as
- * an overall score which is the average of all step scores.
- */
+/** The production system prompt is excluded so a bad prompt cannot become part of the grading rubric. */
 export async function generateScore(params: {
   expectations: string;
   prompt: string;
@@ -61,9 +60,9 @@ export async function generateScore(params: {
   `;
 
   if (scoreCategories) {
-    const { output: result } = await generateText({
+    const { output: result, usage } = await generateText({
       instructions: systemPrompt,
-      model: "openai/gpt-6-astra",
+      model: SCORING_JUDGE_MODEL_ID,
       output: Output.object({ schema: categorizedScoreSchema }),
       prompt: evalPrompt,
     });
@@ -75,19 +74,28 @@ export async function generateScore(params: {
 
     return {
       categoryScores,
+      judge: getJudgeRun(usage),
       score: calculateScore({ categoryScores, steps: result.steps }),
       steps: result.steps,
     };
   }
 
-  const { output: result } = await generateText({
+  const { output: result, usage } = await generateText({
     instructions: systemPrompt,
-    model: "openai/gpt-6-astra",
+    model: SCORING_JUDGE_MODEL_ID,
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
   });
 
-  return { score: calculateScore({ steps: result.steps }), steps: result.steps };
+  return {
+    judge: getJudgeRun(usage),
+    score: calculateScore({ steps: result.steps }),
+    steps: result.steps,
+  };
+}
+
+function getJudgeRun(usage: Parameters<typeof toTokenUsage>[0]): JudgeRun {
+  return { modelId: SCORING_JUDGE_MODEL_ID, usage: toTokenUsage(usage) };
 }
 
 export const getScoreClassName = (score: number) => {
@@ -96,8 +104,8 @@ export const getScoreClassName = (score: number) => {
   const isGoodScore = score >= GOOD_SCORE;
 
   return cn({
-    "text-destructive": isBadScore,
-    "text-success": isGoodScore,
+    "text-destructive-text": isBadScore,
+    "text-success-text": isGoodScore,
     "text-warning": isAverageScore,
   });
 };

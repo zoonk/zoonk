@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "stats_activities": "1f4e47a6fed983a322a37dec3671e5296961ebcf0183e4daf85693c4b72327c9",
+  "stats_activity": "478395044c0bcbc3d0ad42c0e5d50125bdc52bfa44db6105681e7a63957eda81",
+  "stats_afternoon": "f2ba40b129d0781a9516146c9a3566e65425ad6d808018a71f8990f1eeeeadfe",
+  "stats_all_goals": "c66a49273cf9c17a1b0c2712cd142ded053eeebcd72b1f7fc53be5355e44f560",
+  "stats_answer_count": "a61d5c8dbd2d5c410213e0c33ecb7e6418b3a54cae13ae2fcf5c0d42a3c6bba4",
+  "stats_answers": "a4df4937fe6ac437a814bd58e2d0f75c6d33b703e3e6667b860321e3d5dbb017",
+  "stats_any_day": "a525962c2ae59b6e8638f16dac8de85963d61bcbd70662984c50e7b3a14fd410",
+  "stats_any_day_studied": "a0b3d920776b261fb64b3c5ac06d5fde68f95f19aacfa5cc2e7ab40b28a7f2ed",
+  "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
+  "stats_average": "c7788b2acc898b514ddc1ad8f3f09a0995e27603d2c044a95c5b81e223fbeff4",
+  "stats_back_from_today": "b91a24493708a7c76ff93507906b1a7517a42cf0006020d658aae784bbd5099c",
+  "stats_belt_at": "1fe51ff6cb62af6458feba472fbb13139542247c79f360882db4707a64104aa3",
+  "stats_belt_current": "eeca18a1f2b94efda6a63d529939befb480cb0340024de4b74ecd9efd7e5bd17",
+  "stats_belt_earned": "ff9fa09132443349ef65e3fe7608f0e542fd16f0b5c1de2708de6a8b9acf8559",
+  "stats_belt_progression": "cd5e0159cf8f135c8e8c7ac4042a705706cb2077432dd6863f352ceaf6b0f355",
+  "stats_best_day": "c9343adb1e39e7fbb331bd258e356567bb1f7bec9226d342fefb84d74843f590",
+  "stats_best_time": "7de3d7ebe0b08a0d6f3197f3a61f4aab7a25aedd1e47d96d4af583e798e74233",
+  "stats_brain_power": "becec7b5e0f23dd30a0143e7937b7942cee9829cf2e2eb85c0c70ac07f5d3b2d",
+  "stats_brain_power_amount": "c5542f0cf102aa2aa3ba3b26ec12f840e03f5fc3df2e900a13a33c1afa2d6dee",
+  "stats_calendar_activity_summary": "f4ff0ff6807c9d2a8f4d7ea0cf4b671ebc92effc3eef5a7b68de3ab7bbf21579",
+  "stats_calendar_energy_summary": "b7c12006f4e1b488dc81596cdc891bea919d4ce7a099b5bf045553feb70fa8fb",
+  "stats_correct_of_total": "207fa060a3a08f04c1ea9189832f6154b3c4751794c2281f562b82fbe33aacde",
+  "stats_day_activities": "24ec7b9a94b40704d9f386f4c362f8c56cf2320355cd3fab67d59c50d271da30",
+  "stats_day_energy": "d9c5426944244666c2bb63f8b7269b59f156698436980df152a166b6adc67c6c",
+  "stats_day_no_energy": "423f24a91e8b14171f2cf8a04d83456ef7afc97f944aded6cbfe0a12b19e9d23",
+  "stats_day_no_study": "444ee39aac0e9a72e3830858a59bab82469e757b159c5096b59aa062f62dc730",
+  "stats_days": "dfc29661c42d75f015a772b97f713074ea417fc00e88546fc522332bf4cd2bbd",
+  "stats_days_even": "cfddd218dce740df042974dab8f010727b2a783c41e9bad31946bb03ffee3dc4",
+  "stats_empty_title": "0c9be60f57418235093daa11b44296102e75eb674084850505de57f862b72730",
+  "stats_energy": "32f6033d4147aad3f397aca196e1f62ebe9ff078d11e21339611dabf4d7baa33",
+  "stats_energy_average": "13a40513916d7d7cb23733d01fe3dd82f56e51b219950d83c05447c8b113e24b",
+  "stats_energy_line": "b58832f58c49612062f5277e42691b916e612435161d74c2c286e49b9bb51c5c",
+  "stats_evening": "9fafdf75fd6bb534c280dd23b1e7ddfcb2cf3217c79f6918bb727a3f5c0950ef",
+  "stats_every_belt": "db1fecb6e5a872f11142316319c09b9364026a3ab23ce97fb7d38ca6fac8a62a",
+  "stats_finished": "7760f29eb3eb3eb862cbfd1b950c969e6d430fba1ee7867054e4a979b2f9585b",
+  "stats_full_energy": "8b8dbc2e404751e890edfa6b50bf6708b9b569f1d54118cc96f2ec37d6460539",
+  "stats_full_energy_days": "0f732a0dd049e4c192f3d84095ffdca33e9714cff3d54d7c9eecd2d8e1c3a8b9",
+  "stats_go_to_today": "8f3b656edcaa34f60b3bd16fbcfe84d8fe40eb6c13923e9cb4259de7e5cd57f1",
+  "stats_high": "423deceb4a8595c6156023ad5d9576cf57efd123a1c65fbfa38b5cf7cb849612",
+  "stats_last_90": "e249d2013fdd068fd77cbb74ddf7268377cea766094fe1aa71e7cc8d5cba7857",
+  "stats_less": "55d81bc74b9e9c247cc6e2804addec280454530f46f2ae6bfbc0bcc3b5db6a69",
+  "stats_lessons": "b81e6319e8ac935c7f04a8dd4066339212d994c77cb3b8dacb19d9a9bd361bc6",
+  "stats_lessons_time": "f540c5cc32a9bbe5567064c41b29027b8af52fa9286e7a1528e44e7d9404eb22",
+  "stats_level": "d385e5367c4ae1a6835061caec62106c9ece174787eda3cd7674cbc40b3f01ef",
+  "stats_level_line": "4aeb3478b9029e013e436bc0df6a3000241c694b67a31cb64f4f2555965d08e9",
+  "stats_level_of": "fc7a8b7f71bb88087f6c201fedfeadcfd9fccc49374ef79745f91fbe264ba174",
+  "stats_low": "55838519f825ea1dce18bcc0fbd652b70882e25d26d95af238e8730603c507dc",
+  "stats_max_level": "a73c739682cc28667edca91a0d57dcc65b27f8a935b38156b87abe171d1d32e7",
+  "stats_min_answers": "09d7bea30a72ccbbd1c939f1353c3cd9ca0c7fc2459511dd3d76100254d27f55",
+  "stats_more": "f589b37abbfdc48c0364cb157c295eba8bf88597405f0461262ba15b60b592ad",
+  "stats_morning": "80ac19c01a99db65e82cded8094c664e595ed4213c94c2e2239ab66f5d5471c1",
+  "stats_never_goes_down": "4eb0f8a94b3636ce6f6d14f87b896aabac3d4fd535c568a8045d8bba43599a8e",
+  "stats_next_belt": "450795663584f8369478e2bbc3977e2330e66825224f069280ea2b39ce08c699",
+  "stats_next_level": "94a2502b587f021e332844aa969b6817249c57faf97bfade6d79c5906e63d087",
+  "stats_night": "3149ad09bbd0ebf51e2110adb4dbf2bbc44216d333547e28197d18a6d86966c8",
+  "stats_no_answers": "7a18a3fa1d2d51b4be46a497701e36de399b260a3ddfc8d7c0454adc3c1f757d",
+  "stats_not_enough": "15712627b55ef2b8b348469aa665e47c12ebb5824af900d0493192582fbd3620",
+  "stats_not_yet": "562ba61b1a5dd9e118725b6e9e35a983f134a1266be0d8bf409bf0d19bb05cab",
+  "stats_of_all_answers": "66dff2d30637f4a3ba5b24da44c9e4fa0f37f23eea79e86a8f74b8499b38bb26",
+  "stats_open": "70bc0c0ebed0d1db12dc017e9c77580e517628ef0bc52093d5cda5be8b390bb2",
+  "stats_overview": "6a925434d0b1d487401a59d62acffa8cbba73d4e2a414d681be122bfa9fae96b",
+  "stats_part_failed": "d39faf0cf964e62bb471882921e130b0b041971d8be3e7fbf7c1d042d4c02b09",
+  "stats_past_year": "60b4f68f9ccb1cebf1a7cb0bd79d7a0f19f52fa3718e85e1082a09ea3ca09a24",
+  "stats_patterns": "b1a33fe2f3a09a16bdeeb25cbf42271526ef17154dcadea7cff8e3d100543df4",
+  "stats_patterns_90": "2cfaee4381fd68a357e11b95e033d56ef0a93688ec5cabd3b47ebd6083b6ac2d",
+  "stats_patterns_intro": "f46d52a8619ef2295a2349bc8e21c3ff9d2a2c51a689dc6dd76dab84195d9694",
+  "stats_period": "b7fe9ab1ad97b705bd9f705129804a70e069e08858edda3264c9d71d8fa4d969",
+  "stats_range": "a7e7fd431a98cba115cba26085b754e4b618b83c837700875b9dd42e9316b738",
+  "stats_right": "4d69ebff22bb8158fa3a6ee236211051daa3ecf048f1cad095b7e9b7fd17256b",
+  "stats_right_answers": "771ea6139829fdda39dc96270711faa770609624d3b0fcddceba95e89c6f464f",
+  "stats_right_count": "ce338e13bf1bfcb5e9d136c7885dc7c7b74eaf90831b3fbe853161f45ffa3ee1",
+  "stats_right_last_90": "1a6bc94b59f95babc82492011b97d48427b55ab11bd50f43941483c74bf35a89",
+  "stats_score": "34dd9931db33d2e5b227c3e81e243d95ad086b6a42e4f5b894a565c8b31f9329",
+  "stats_score_90": "21bc48a386617f92dbb67f74057a87b4cb4652060c0d3df732ee7e7b6f4609b0",
+  "stats_score_across": "f12e5862d7c0a440c765dbe78b470e633acc1adab7ffeb0df24f7294f60d87e1",
+  "stats_score_after_answers": "b6a46ca378bcf847b3686a3d342a58e226568751c369b1ae5ab525d22ca64e9f",
+  "stats_score_answers": "b67c4acda8b6daba85c64bccc09b7354f95a8517ee2fb07a005311a1807d890d",
+  "stats_score_line": "5eeaa63999a1af6df9d4e22aef105badd45a28173cb4a294a3264a5ac4b10b91",
+  "stats_score_trend": "14fde2dc912d0acd51a0601ed36dc14a11254168c884ba6a98eff591eace626b",
+  "stats_score_week": "34466462158919388fb84af46106db99e5c9757cf514e1b79de2bc2b88e62830",
+  "stats_see_all": "73818409618dc9493b2c772aee6a2cec71d433ea99fa9a1c7a0d9e5d1880c899",
+  "stats_since_start": "6779aec846245c363c323749358afb82fa0cc1ddeb98bdbcbf9dbf097556e7cc",
+  "stats_study_days": "024f87a7aad7e9a6d3b37c42e2a887ac1e1f56a3da036391bc6d571178ffe9fa",
+  "stats_studying_total": "4f06b308a235c822111f98fa08da8fe294a52d5b4ce57157dcf76a92b1a41ca6",
+  "stats_throughout_day": "58a93b1a1152a323d147de2049267f544bae080b9eadcc2ecc72eb8365b684cc",
+  "stats_throughout_week": "a7a89208eb4939381b9e11d185d457e17f347b865945287c193786ca5f8b4864",
+  "stats_time": "fa25f795ae8426bbc00998cf15a8cca66c447a3e71cb68e8759e419c14be423c",
+  "stats_times_even": "ca3d08f2996864e9d87da31915cda62ce4516f59440075b7cf413e0b10d8ad42",
+  "stats_to_belt": "f2b7e42c0296db160b5f28ad475370f6b9fd02f141cfd99fb9ab816a6d6467fe",
+  "stats_to_go": "a91f705e5433d1c8e65727505faa5d27a27e7878eead938f8c78b4e1a5fecb0d",
+  "stats_to_level": "235bb340273e7e91630737b8b99265224fb68c0aea28ca0ff565bf85a3c07bed",
+  "stats_today": "b4a177ce4466ed3233d567bbdc360c80046f25e6de5fd37783e476ff43604f17",
+  "stats_week_spread": "07537a108c86e835fce882875a6860605731703424e45342d67cf6945f711142",
+  "stats_within_points": "11b2840567483b7998281e7c88e650749a696a9b30f6b0533e93f5bb750ba59f"
+}
+-->
+<resources>
+    <string name="stats_all_goals">すべての目標</string>
+    <string name="stats_open">統計を開く</string>
+    <string name="stats_overview">概要</string>
+    <string name="stats_level">レベル</string>
+    <string name="stats_energy">エネルギー</string>
+    <string name="stats_activity">学習量</string>
+    <string name="stats_score">スコア</string>
+    <string name="stats_patterns">傾向</string>
+    <string name="stats_empty_title">学習を始めると進み具合を確認できます</string>
+    <string name="stats_go_to_today">「今日」へ移動する</string>
+    <string name="stats_not_yet">まだ</string>
+    <string name="stats_part_failed">この部分を読み込めませんでした。</string>
+    <string name="stats_energy_average">平均 %1$s</string>
+    <string name="stats_study_days">学習日数</string>
+    <plurals name="stats_lessons_time">
+        <item quantity="other">%1$sレッスン · %2$s</item>
+    </plurals>
+    <string name="stats_right_count">%1$s/%2$s問正解</string>
+    <string name="stats_right_last_90">過去90日間の正解率</string>
+    <string name="stats_score_90">スコア · 90日間</string>
+    <string name="stats_score_after_answers">最初に回答するとスコアが表示されます。</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
+    <string name="stats_patterns_90">傾向 · 90日間</string>
+    <string name="stats_see_all">すべて見る</string>
+    <string name="stats_best_day">正答率が最も高い曜日</string>
+    <string name="stats_best_time">調子のよい時間帯</string>
+    <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
+    <string name="stats_week_spread">曜日ごとのスコアの幅</string>
+    <string name="stats_range">%1$s〜%2$s</string>
+    <string name="stats_brain_power">脳力</string>
+    <string name="stats_brain_power_amount">脳力%1$s</string>
+    <string name="stats_never_goes_down">減ることはありません</string>
+    <string name="stats_next_level">次のレベル</string>
+    <string name="stats_max_level">最高レベルに到達</string>
+    <string name="stats_to_level">レベル%1$sまで</string>
+    <string name="stats_to_belt">%1$sまで</string>
+    <string name="stats_belt_progression">帯の昇級</string>
+    <string name="stats_level_of">レベル%1$s/%2$s</string>
+    <string name="stats_to_go">あと%1$s</string>
+    <string name="stats_next_belt">次の帯</string>
+    <string name="stats_belt_at">%1$s（脳力%2$sで獲得）</string>
+    <!-- Shown instead of the next belt once the learner has earned every belt. -->
+    <string name="stats_every_belt">すべての帯を獲得済み</string>
+    <string name="stats_belt_earned">獲得済み</string>
+    <string name="stats_belt_current">現在の帯</string>
+    <string name="stats_level_line">レッスンを終えるたびに脳力が%1$s増え、減ることはありません。</string>
+    <string name="stats_today">今日</string>
+    <string name="stats_average">平均</string>
+    <string name="stats_since_start">学習を始めてから</string>
+    <string name="stats_full_energy">100%の日数</string>
+    <string name="stats_full_energy_days">エネルギーが満タンの日</string>
+    <string name="stats_energy_line">レッスンを終えるたびにエネルギーが上がります。休みの日は少し下がりますが、帯や学習の進み具合は変わりません。</string>
+    <string name="stats_low">低い</string>
+    <string name="stats_high">高い</string>
+    <string name="stats_any_day_studied">学習したすべての日</string>
+    <string name="stats_lessons">レッスン</string>
+    <string name="stats_finished">完了</string>
+    <string name="stats_time">時間</string>
+    <string name="stats_studying_total">これまでの学習時間</string>
+    <string name="stats_past_year">過去12か月</string>
+    <string name="stats_less">少ない</string>
+    <string name="stats_more">多い</string>
+    <plurals name="stats_calendar_activity_summary">
+        <item quantity="other">過去12か月で学習した日は%1$s日、1日のアクティビティ数の最多は%2$s</item>
+    </plurals>
+    <plurals name="stats_activities">
+        <item quantity="other">%1$s件のアクティビティ</item>
+    </plurals>
+    <string name="stats_day_no_study">%1$s · 学習なし</string>
+    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
+    <plurals name="stats_day_activities">
+        <item quantity="other">%1$s · %2$s件のアクティビティ</item>
+    </plurals>
+    <string name="stats_day_no_energy">%1$s · エネルギーの記録なし</string>
+    <string name="stats_day_energy">%1$s · エネルギー%2$s</string>
+    <string name="stats_calendar_energy_summary">過去12か月のエネルギー：今日は%1$s、開始以来の平均は%2$s</string>
+    <string name="stats_right_answers">正解率</string>
+    <string name="stats_right">正解</string>
+    <string name="stats_of_all_answers">すべての回答のうち</string>
+    <string name="stats_correct_of_total">%1$s / %2$s</string>
+    <string name="stats_period">期間</string>
+    <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
+    <string name="stats_back_from_today">今日からさかのぼって</string>
+    <plurals name="stats_days">
+        <item quantity="other">%1$s日間</item>
+    </plurals>
+    <string name="stats_score_line">どの回答もスコアに同じように反映されるため、難しいレッスンでは一時的にスコアが下がることがあります。</string>
+    <string name="stats_score_trend">週間スコアの推移：%1$s。%2$s</string>
+    <plurals name="stats_score_across">
+        <item quantity="other">%1$s（%2$s件の回答）</item>
+    </plurals>
+    <plurals name="stats_score_week">
+        <item quantity="other">%1$s：%2$s（%3$s件の回答）</item>
+    </plurals>
+    <string name="stats_patterns_intro">過去90日間で、正答率が最も高かった曜日や時間帯です。</string>
+    <string name="stats_answers">回答数</string>
+    <string name="stats_last_90">過去90日間</string>
+    <string name="stats_not_enough">回答数がまだ足りません</string>
+    <plurals name="stats_within_points">
+        <item quantity="other">差は%1$dポイント以内</item>
+    </plurals>
+    <plurals name="stats_score_answers">
+        <item quantity="other">%1$s · %2$s件の回答</item>
+    </plurals>
+    <plurals name="stats_answer_count">
+        <item quantity="other">%1$s件の回答</item>
+    </plurals>
+    <string name="stats_no_answers">回答なし</string>
+    <string name="stats_throughout_week">曜日別</string>
+    <string name="stats_throughout_day">時間帯別</string>
+    <string name="stats_any_day">どの曜日でも</string>
+    <string name="stats_any_time">いつでも</string>
+    <!-- Answers given from midnight to 6 AM. -->
+    <string name="stats_night">深夜・早朝</string>
+    <string name="stats_morning">朝</string>
+    <string name="stats_afternoon">午後</string>
+    <!-- Answers given from 6 PM to midnight. -->
+    <string name="stats_evening">夜</string>
+    <plurals name="stats_days_even">
+        <item quantity="other">曜日ごとのスコアの差は%1$dポイント以内なので、どの曜日でも大丈夫です。</item>
+    </plurals>
+    <plurals name="stats_times_even">
+        <item quantity="other">時間帯ごとのスコアの差は%1$dポイント以内なので、どの時間帯でも大丈夫です。</item>
+    </plurals>
+    <plurals name="stats_min_answers">
+        <item quantity="other">曜日や時間帯ごとに、集計には%1$d件以上の回答が必要です。たまたま正解した1問だけで傾向を判断することはありません。</item>
+    </plurals>
+</resources>

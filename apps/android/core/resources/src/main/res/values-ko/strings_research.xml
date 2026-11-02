@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "research_change_label": "6ca5b0f7df2e9e9cc78a85c2dbe890f386bb8343f67b1fe54953f0b72ae9ef3d",
+  "research_class_action": "81b8adffaf0df25e4d81bb639a92e9cdab3d5e536fa90571f4c7ca4e43a67e54",
+  "research_class_body": "d301e931868508020f17e85a7bfb6b80b7f5d86450be5bca8210a2504b1dea0a",
+  "research_class_title": "6227c5d9c81f8face4e9c8e69d9c49de938228915f0c734d4d4686dc36a60659",
+  "research_guide_action": "a69cedbca7c7ff710da45bdc77e6d032e96c3587768fee7d62a29ffb2e1cf000",
+  "research_guide_body": "f6bcefcf07a54628faf2e8431e47c223da1eef808a3e2ee4d1a8639c2ebd5dc0",
+  "research_guide_title": "ccccd189e8d2de749690d0d6471d892436ac8fe3708b95a4213c74ba17e5b6b7",
+  "research_not_now": "26e21ae8cbac76823f52443eb09d854dfc7d839e9d9d3c9df3277e3d4a48d115",
+  "research_notice_action": "6e9fe13e33214c7de9935a5f618fbf0f2324e8385b16f083917fa8fe68690e4f",
+  "research_notice_body": "9fa258388ed738683024dee0427db8d3cdbb37516fc88c0a4f101ecdbcbefe46",
+  "research_notice_title": "d2069cd1f1fde22b1d952af49edd4b7d0bcfac9299481cc1cc3a470165a02fbd",
+  "research_source_action": "f663716e57b3628ec6ee40b96be7fde922e929bfd782eb9be35afda4e6fff539",
+  "research_source_body": "ba34a606fddb42ff1c952975fa742f508875f253b89735a2de6bdd69458309ef",
+  "research_source_title": "402e652e30005ed1ec2edac638d682d9aaa5448aedc3b3e50c3aac9b87f1d1c9",
+  "research_unverified_guide_body": "3d77fcc8b9a7cf4eeb5e22bf3de1ce32b06fce30d3c8e94aac7647221c652966",
+  "research_unverified_notice_body": "b0ecc6332cab8e00979f8bc55b262bbcec437c7e78e9fa82addf575a20aa1599",
+  "research_unverified_title": "078d0e9d6fb5c49e78290ce9d2436a57cdb464b339e4c5eb9e656b309bd746fd",
+  "research_upload_label": "0195a112ea63f7e46c305c58f30cbaf061fe24de38d0ea67fc11c2e0355f1031",
+  "research_upload_open": "098b5cc8902cc247a76459ae26d91355cb9fee8396180e66682fa5df22454c13",
+  "research_upload_sending": "cc5f1cc0ef121dfdbf2107524c5c22b5385ed4067adaeb87c70f209ffbf39735",
+  "research_upload_thanks": "f6f19464cce1fa3c1db9c676eeff99e364a1142ade6d6c30556fad4687747a2a"
+}
+-->
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">계획에 문서가 필요해요</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">업로드</string>
+    <string name="research_upload_thanks">고마워요. 지금 문서를 읽고 있어요. 몇 분 안에 계획이 업데이트돼요.</string>
+    <string name="research_upload_sending">내용을 읽을 수 있도록 보내고 있어요…</string>
+    <string name="research_not_now">나중에</string>
+    <string name="research_class_title">수업 자료 추가하기</string>
+    <string name="research_class_body">선생님이 내는 시험은 공개되어 있지 않아요. 수업에 맞춰 계획을 세울 수 있도록 슬라이드나 필기, 주제 목록을 올려 주세요.</string>
+    <string name="research_class_action">자료 올리기</string>
+    <string name="research_source_title">공식 자료를 찾지 못했어요</string>
+    <string name="research_source_body">공부할 때 쓰는 공식 문서나 안내서를 올려 주세요. 그 내용에 맞춰 레슨을 만들어요.</string>
+    <string name="research_source_action">문서 올리기</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">공식 공고를 찾지 못했어요</string>
+    <string name="research_notice_body">계획에 실제 시험 내용을 반영할 수 있도록 공고를 올려 주세요.</string>
+    <string name="research_notice_action">공고 업로드</string>
+    <string name="research_guide_title">공식 안내서를 찾지 못했어요</string>
+    <string name="research_guide_body">계획에 실제 시험 내용을 반영할 수 있도록 공식 안내서를 올려 주세요.</string>
+    <string name="research_guide_action">공식 안내서 업로드</string>
+    <string name="research_unverified_title">시험 정보를 확인하지 못했어요</string>
+    <string name="research_unverified_notice_body">찾은 자료가 시험 정보와 일치하지 않았어요. 계획에 실제 시험 내용을 반영할 수 있도록 공식 공고를 올려 주세요.</string>
+    <string name="research_unverified_guide_body">찾은 자료가 시험 정보와 일치하지 않았어요. 계획에 실제 시험 내용을 반영할 수 있도록 공식 안내서를 올려 주세요.</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">바뀐 내용</string>
+</resources>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "tutor_about_answer": "ede289945802733778c02a059a45ced054bb8e1c35f1ddfe3a9a7dbc545f72d2",
+  "tutor_about_chapter": "e74ebbe1b7bc757bdc2600fd93f05ba47769264014aa5606b4ee7b728233f3c6",
+  "tutor_about_lesson": "2862ebc3c38d411ef6c3bce3191bd5002e34e77847e9bb37588215786fe1b877",
+  "tutor_about_mock": "a2d6391a97db367b629754a0eedd26538e150194e4434cec4790cdb85314922a",
+  "tutor_about_plan": "0c4db8e39e16a2ccae87bea862521ca23bffad251e9f4299195b4587d2844bb3",
+  "tutor_about_question": "79fb09ee475f627692ede00bc17b35397ce3d299d521bfaead7522d5890d1b58",
+  "tutor_about_step": "096e1cf433f2a297629a9976bd55290396548c98216bd1cc94e003beddb15dc5",
+  "tutor_about_subject": "587b7312696a553a886d54e402f886f8c5b17573168124e6d43eb6f2ce9dfa36",
+  "tutor_answer_failed": "c3cd11498dd54b41e4262391c14c08e14d79164b1c95a75aa821625c33c7f768",
+  "tutor_ask": "59535619a20b04f59e18d7ebeaad5657a6a1cb16e5c80cef157140047f9d36a2",
+  "tutor_ask_answer": "6f35e9b1597406d492791a90803c494f4f85492288d4c720e9d71c2ff58199e5",
+  "tutor_ask_chapter": "2c0b225f97aae02a088a8fab2ea66ecd934df3264be3585f605d8b271b1c9652",
+  "tutor_ask_mock": "4421028a0a2f9023361aa5a025d5d85a2a3bf2583b668ae403b2dff2762d3973",
+  "tutor_ask_plan": "31e376549564968038e9943694373051e347c9081b1064963d2f02f425d3e99d",
+  "tutor_ask_question": "3ae2f5bd4fac07614e0bbd90b774613d63ae46243481c5ba122f8b752517c40b",
+  "tutor_ask_screen": "a8a0c82aa8cf09d425965ab89533659daa23f96a86cbbbd6362451f9e698ad96",
+  "tutor_ask_subject": "7a61f1886a1ab55e8a1697962827caf9ccb35882183de2a670cb642ef002eb2b",
+  "tutor_check_again": "fe9069f0bb77e81ea3f4575a6145755c65630ee2819cf6bae7b88754adeb5ced",
+  "tutor_close": "82c7a586aac5330be66b587dc9ae69ecf22464ffad9625701581980ceb015374",
+  "tutor_description_answer": "252590d5a2dbcd0120d2e545b1430108b1d4e236e21cc2c6564317f944eb6a7e",
+  "tutor_description_chapter": "61e2758ae8cc40f6983b31e17798bb66a346ac9f6ff634d4762ceda826144709",
+  "tutor_description_item": "2260cd3912f63eec2ad9bb0f74f33e8ee90d2bf855d06810638465d4ed43bf0f",
+  "tutor_description_lesson": "2100e3d6c0d01c78788c9f783809ef3e181db6a5e75da722a8501da0446dcffc",
+  "tutor_description_mock": "20fcb74ba7975faaffed111097aef7b7e49d71767187acfc220108ae8a377072",
+  "tutor_description_plan": "2d96efea4ba09bbd1694ee0bcf8aafce96fa2516bccfb349c5a7377587420297",
+  "tutor_description_step": "60a30c52b4fe7ac91f119b4db3a100c39ec09382d71fb791855b6f9647f7b9a6",
+  "tutor_description_subject": "7d70905c45764708079621ee7e0154d8c3789557c861c2b141506092f26da68f",
+  "tutor_empty_ai": "f14e335a2084a691ab75686aafc25e6c157bcdeb2f5e495d4fb579d6cf7dbfd1",
+  "tutor_empty_title": "f1a1488abf82166c0a02817486410ca9720eabb6c736aa417e0592cc76a3446d",
+  "tutor_error_failed": "8d7aaa8b45ea3428e7cf83a226b05f40be0deec1ab3cff45a54889933f3fc540",
+  "tutor_error_gone": "b708d6da89da73980b87ca6918e425848a153115508d3718d084b4492190522c",
+  "tutor_error_invalid": "db7921acc18402e9194fa4e9dd88addc4b814152833236dee579ee88d0880cd7",
+  "tutor_error_last_question": "c1073785b784079c8c342a94be279badbfb8b0dfadad698e45a23ae5c59e3bcf",
+  "tutor_error_session": "87b6353903b986c84c9e80938cdffe0220a030b4cdfdc507bb94fa7e15debb0b",
+  "tutor_error_slow_down": "333997640ebc32a4969b7b3211a0f556279a08726245bda93396c9b9df861432",
+  "tutor_error_subscription": "55ddbd2185c8cd14df3cb6c3f8931028cc71bff509a81d74acd41886ce304f9f",
+  "tutor_get_answer": "c91dfa6abea4d493add7d2176431e4267a4964d91c56483121c8cd24a275550d",
+  "tutor_guest_title": "46e28b3f7896fa6d1ccb4bc56ba81e8ab1f44ed451f68d3b63332a726e7621fa",
+  "tutor_link_cancel": "07cd2187c07140c4dec65e95efd407fd56a8adf170e8dd1c4a38b6cf725d5490",
+  "tutor_link_description": "b20b9ba1a2789d13a21511aad81fb4514a4366a8c8629e035b91fada96e6d5ab",
+  "tutor_link_open": "8e8f4242b493e8d800c08291734d625dfad86c111b0529a051c17fe282d28c00",
+  "tutor_link_title": "06cf67211b735af313c0e8132fb102b46d164adb971ef7ea70eb28486faee2cb",
+  "tutor_load_earlier": "450581b4c55cca911ecf457f4faf1f81eb9b07b81745ef3ca32e37725cbfbd5a",
+  "tutor_load_earlier_failed": "2b457ad3edcb47fc89677c737cd64b101616cc78fd93ee7bfb9161c71bc329de",
+  "tutor_loading": "8d82edbbdbb5a1ae4b612c4c6587f1b6309a6a69cb0e450945ad39d070e148e9",
+  "tutor_no_answer": "462c2c96cbe1fd59fa428b7d2db46dc75ca4f8d9cbb32d8a032acf29d5772448",
+  "tutor_not_answered": "f46a08e7f681aebf6133909ab33a0f1c50a2ef03ca0c08e021f17fb88afaaab3",
+  "tutor_offer_call": "d2e05b5e0694ec4812721de85dffe2d2fe74de40487837100f3f688b9d29ecb1",
+  "tutor_offer_call_paused": "fae6e4ccd8a872a3fb99d6c237e97c886bc363cb70db9d1409c1e7011227c859",
+  "tutor_offer_call_with": "061ba77866e7bd2a753216022bf2dd6dffcada327351d174c73176655b548eef",
+  "tutor_offer_catalog_course": "efe23a878397cd1ca46554515013826baed6d45224d7f7ff5ed803de4fa765b3",
+  "tutor_offer_chapter_test": "779d86b1e170d827a79a16ef547c6839ef6f70ab39bcb7138341b6f4db37796c",
+  "tutor_offer_chapter_test_lessons": "c764b7db97be589200a0cedd7edc5782280b811186936e0d9ee1404cb9019542",
+  "tutor_offer_choose": "0d6cc0042911b39afe7666bc9b07323399029ca033338142456a9a0490c0277a",
+  "tutor_offer_choose_focus": "0f83d08d8392fe0709370ad6161bce3214be5ed4f91a8d7cd7ff7f05014c0f81",
+  "tutor_offer_choose_focus_description": "c1b13e042ee02f7976063fde30c2a326a7917b5a11a99a2a7bc9ad3fc1ec6a8f",
+  "tutor_offer_essay_biweekly": "7b53d1ff825c8134a7e0de19371c60f07af76503712fd69bdbf83ab616e35be2",
+  "tutor_offer_essay_final_weeks": "a995cc0a01b766f792b34951ba9f3e05b5d74c20de84f5e7e6a94b1becd650a2",
+  "tutor_offer_essay_plus": "debce20f96916c5e9ec33b373ed84866af58c433ed4d966708faecf445a3a71e",
+  "tutor_offer_essay_weekly": "afe4c4b9c3557ff44d84613840c2fc86e30a2d8fbc76648a4aaef1c09100fbc8",
+  "tutor_offer_goal": "c82a4788b6b89c5c791aa41114d56888b4c6190184bee9780a435d7f0ea97972",
+  "tutor_offer_logbook": "5b36606af035780324d145030b8066834a30aa827bca337f05c3ee1ae304325b",
+  "tutor_offer_logbook_description": "a76b928f37b9fec9299e05041e5605d7c9fa1fba0622da0f61adc487ef8a6216",
+  "tutor_offer_manage": "587d8bf1ee0119583d5f904d0b4b254430264531692400ec25cc0bde9805f6a7",
+  "tutor_offer_memory": "1059e71cf298488d13b0fe3ae59979d981fe88cb4950543b3927fa23d162b6f9",
+  "tutor_offer_memory_description": "358bae5ffedc5e7472e4c5d29d375f7a929ab21924147fe3d7b553fa1c147c81",
+  "tutor_offer_mistakes": "6bca06ff4dbdfef321d48af2557e85744ab866c50cc566572e0db4f764df1cf3",
+  "tutor_offer_mistakes_open": "ee13063753f29dfe226055ec8a0ea69d57fdddf612de525866273410360b3d98",
+  "tutor_offer_mock": "f5fe6c41e972e71af3f26c6820ad8089e6e6f5244ee65bd457c9e85a30e66959",
+  "tutor_offer_mock_by_subject": "0ee62fc543fcde3ac1dd062c0c655dafc7d60acb4ddb66c6decc41b7198d73fe",
+  "tutor_offer_mock_description": "e2b4f342c2543b6e849c3f431f58354ed3cf51d15e5c16f78b21d1a517afadcc",
+  "tutor_offer_mock_plus": "0f681818809cad7a6ee9f10bdb3766e075b4a20f8aa8c74355926f3d7444385c",
+  "tutor_offer_one_goal": "395399c8191cecf4407a1146560a277e5777b45e7f8b83f20d673f91dee26523",
+  "tutor_offer_open": "46fd49386d6876f7a523aaa5144da41847a4003e2a9a054778c5542d00b17106",
+  "tutor_offer_plus": "1b738ea655764b735872237944b7d3d67f29798ddf55c0543640f47bcf8de177",
+  "tutor_offer_plus_description": "2f55b3194dd3810b6b6236cd1316cd63d3c08db0b89ef76b1240930d946f09d0",
+  "tutor_offer_plus_subscribed": "73152379d1bf6a75e9222595ff2e54300392a5e38cacfeb565a78a0c2f417364",
+  "tutor_offer_practice": "ffb1a85dd1acb2270113f26a0204d71645f6da3b0a41cb648f91404d7dcf12a5",
+  "tutor_offer_pronunciation": "4c78826ae22d9c92854c1bb22ecda1d6ea87797b9d1f424656356d7ae4376a84",
+  "tutor_offer_see_plus": "409de0f2a62e49ca07fce2cbfcf0dd7d2cd8457b868907dbb3d2505554445756",
+  "tutor_offer_start": "58c67ccd36c73311df8ea8fd6d8d37fbb4668d27b72084cf9ef045e952ba2518",
+  "tutor_offer_start_goal": "ab3bb30f16464f3491d154432dbab8f703c02e7996a58e5f4097b64d10d758c0",
+  "tutor_offer_stats": "53ce5c63e0ab3258fe11c8f18b0f8951542e13edc1ebb3937173523a203b6d97",
+  "tutor_offer_stats_description": "0aa4939c5fb11f344eed147397ddbde0c45bb630cb18a6e7849bc471dc9904d9",
+  "tutor_offer_take_test": "cd8eda0f4ab496ff82508c3bfb1e90323a91ade0df68cf37814d67557b849793",
+  "tutor_page_sign_up": "349a8b2de9f39977b0cd54eebcff21a3a4643f4deec83e02a949af825eb65ab3",
+  "tutor_placeholder_answer": "104c0b18cb6c7b307b9a3def09f3dc47be2e04de023fcac4a99d2ad8b9e06754",
+  "tutor_placeholder_chapter": "cdfae927d4934de7ba2f07cf7d56ad35a51785c9b8812b1cee88c769c154b23f",
+  "tutor_placeholder_item": "675b2ddb063bf99396a720729810655532ad90dcdae0ef787fd41ecb1eec7d39",
+  "tutor_placeholder_lesson": "3db1751e6b1a0760d5c03e9199ccf4abfc4266ce77ef4d28f3c4f359630ccaca",
+  "tutor_placeholder_mock": "0db2111a93862b16489a9c109c5c4e69bdf2381c3a53a63841c505dba4b6e8ae",
+  "tutor_placeholder_plan": "b2f8202aa4df30b24612a5f92780094daa61268ae88c1a5d24eb1d834123aea6",
+  "tutor_placeholder_subject": "38df5d978f5e98f23adb2e1baa4e5db2bc2db83bf89520cdcd6eab3cccc899ac",
+  "tutor_plan_change_apply": "1beaee74a33604511234d6000dd063567b3e4b8ba7ec4946e952c1c591d3c2d7",
+  "tutor_plan_change_declined": "8cad3619e3dcd4615e7d5fb4f74cfef59a2dbb1ec38895fd04a3841577d1d526",
+  "tutor_plan_change_failed": "d8688098102e1caea4ef597e8463419d5e2028514d098d31dd58fd0a7ad776dc",
+  "tutor_plan_change_not_now": "9f4ffa82fb8a5e96504b1bd549c8a530ebe9385f292ebfac39a596be0089c2a2",
+  "tutor_plan_change_one_week": "bf419c0a4922b8871d5d7b2b398f6f6a2d57f07097adac7d4819df9626b258bc",
+  "tutor_plan_change_replaced": "3032d26f37c73d95068c075097a710bdf204a112dde28c927cafbb75e22809f6",
+  "tutor_plan_change_title": "a932fcbfb0d9ce41b4577059fab88046c8eb8033abe74be537972a5daf65f145",
+  "tutor_plan_change_undo": "6ad410121d29f5943b2fec938751b3984ab5f47b5793e1882340cee81a19497e",
+  "tutor_plan_change_use_my_date": "3898b13ed78ff7eb400ebcf9bf5bb4ff053dfbe085d0f7b0d02b4598e37e9762",
+  "tutor_retry_last_question": "8a489340bf3b0a6749bef1915b4c05a1c35595185c6d9366cd12bda1a57280f3",
+  "tutor_send": "fa2db300b29960dcbda52dc712cef32ae4b96372c16714577ac0bc3fe8da934e",
+  "tutor_sign_in": "48c6214ba82cb973fb493647e888ae567d9914fea779a5950cf2a6f39775cb87",
+  "tutor_suggest_chapter": "0610b647a7d6162dd2153d4ee2802faf815ff3f1df0f2b9913469a1d42b34d25",
+  "tutor_suggest_item_asking": "dac01d585de4bdcf832eca35be4525a006253ad077f367d12c5ab19c6555a437",
+  "tutor_suggest_item_idea": "8628f3a88f1fc917edb2ffb271a56fab8e08e2540cf44d86a09e09f52cfb8a84",
+  "tutor_suggest_mock_missed": "7979cbfa00688197ae563732981bd886862e08e414829649bf6332d4465c4233",
+  "tutor_suggest_mock_practice": "43f0fbeb43afc6550f02b5796a4ff7de29b57f0b4cd2d1aa67a447ab7f7565b7",
+  "tutor_suggest_plan_next": "3a1deac59e9440439018c88221276f985c9839385eb065ffaf5a43000f1a1165",
+  "tutor_suggest_plan_today": "95ac62abab290de867988cc1f350971d7d49d0617bf6d8e14f2a10c698d26cbf",
+  "tutor_suggest_subject_cover": "2255c5770f90caf229630d797bcda7020f1ad3e83826496de199e5152c59c4d3",
+  "tutor_suggest_subject_left": "70ceadc7b8f46aee734b7c75b6114fbcb70dd74c4528ad3493558d2e0e811a91",
+  "tutor_suggest_walk_through": "4e291482ee5ccc313e837137f9313f0a281e310a14b5635c4aeedc73ea665036",
+  "tutor_thinking": "480234a0ce4b39601f69d3aafd9059c29d2372d05b8307e99c89d96702df3c33",
+  "tutor_today": "6a6c5b8872b324a27155c2a5e1531309a2dbf44fbec67f4630a4198cd2445108",
+  "tutor_try_again": "06e465e85734398d3a4e97eb2145c38f05d06095dd1467e61af8c5929551d57b",
+  "tutor_view_plans": "d9a43c96e9ffe0f562d611d18ce304a22078a31b5ce15e27ddc38a166d93c30e",
+  "tutor_yesterday": "219e1e594b6f6138e3450eadc63193fdd0cc16ffb683bcc0994e1b697206827c",
+  "tutor_your_buddy": "44f409ab71a1ccd79ddc15c41d26777f31e43d4e1077888cb12dfb54e93522cc"
+}
+-->
+<resources>
+    <!-- Before the buddy is known. -->
+    <string name="tutor_your_buddy">Tu compañero</string>
+    <string name="tutor_ask">Preguntar a %1$s</string>
+    <string name="tutor_ask_chapter">Preguntar a %1$s sobre este capítulo</string>
+    <string name="tutor_ask_mock">Preguntar a %1$s sobre este simulacro</string>
+    <string name="tutor_ask_plan">Preguntar a %1$s sobre tu plan</string>
+    <string name="tutor_ask_subject">Preguntar a %1$s sobre esta materia</string>
+    <string name="tutor_ask_answer">Pregunta a %1$s sobre tu respuesta</string>
+    <string name="tutor_ask_question">Pregunta a %1$s sobre esta pregunta</string>
+    <string name="tutor_ask_screen">Pregunta a %1$s sobre esta pantalla</string>
+    <string name="tutor_description_answer">Pregunta sobre tu respuesta</string>
+    <string name="tutor_description_step">Pregunta sobre esta pantalla</string>
+    <string name="tutor_description_chapter">Haz preguntas sobre este capítulo</string>
+    <string name="tutor_description_lesson">Haz preguntas sobre esta lección</string>
+    <string name="tutor_description_mock">Haz preguntas sobre este simulacro</string>
+    <string name="tutor_description_plan">Haz preguntas sobre tu plan</string>
+    <string name="tutor_description_subject">Haz preguntas sobre esta materia</string>
+    <string name="tutor_description_item">Consultar sobre esta pregunta</string>
+    <string name="tutor_close">Cerrar preguntas</string>
+    <string name="tutor_about_answer">Sobre tu respuesta</string>
+    <string name="tutor_about_chapter">Sobre este capítulo</string>
+    <string name="tutor_about_lesson">Sobre esta lección</string>
+    <string name="tutor_about_mock">Sobre este simulacro</string>
+    <string name="tutor_about_plan">Sobre tu plan</string>
+    <string name="tutor_about_step">Sobre esta parte</string>
+    <string name="tutor_about_subject">Sobre esta materia</string>
+    <string name="tutor_about_question">Sobre esta pregunta</string>
+    <string name="tutor_empty_title">¿En qué te gustaría recibir ayuda?</string>
+    <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
+    <string name="tutor_empty_ai">%1$s es una IA que te acompaña al estudiar y puede cometer errores.</string>
+    <string name="tutor_guest_title">Crear una cuenta gratis para hacer preguntas</string>
+    <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
+    <string name="tutor_loading">Cargando la conversación…</string>
+    <string name="tutor_get_answer">Obtener respuesta</string>
+    <string name="tutor_not_answered">Esta pregunta quedó sin respuesta.</string>
+    <string name="tutor_answer_failed">No pudimos completar esta respuesta.</string>
+    <string name="tutor_check_again">Volver a verificar</string>
+    <string name="tutor_no_answer">No hay una respuesta disponible.</string>
+    <string name="tutor_thinking">Pensando…</string>
+    <string name="tutor_load_earlier">Cargar preguntas anteriores</string>
+    <string name="tutor_load_earlier_failed">No se pudieron cargar las preguntas anteriores. Inténtalo de nuevo.</string>
+    <string name="tutor_error_session">Tu sesión expiró. Vuelve a iniciar sesión.</string>
+    <string name="tutor_error_subscription">Suscríbete para hacer preguntas</string>
+    <string name="tutor_error_gone">Esta lección ya no está disponible.</string>
+    <string name="tutor_error_invalid">No pudimos enviar esta pregunta. Inténtalo de nuevo.</string>
+    <string name="tutor_error_slow_down">Descansa un momento y vuelve a preguntar.</string>
+    <string name="tutor_error_failed">Algo salió mal. Inténtalo de nuevo.</string>
+    <string name="tutor_error_last_question">No pudimos enviar tu última pregunta. Inténtalo de nuevo.</string>
+    <string name="tutor_sign_in">Iniciar sesión</string>
+    <string name="tutor_view_plans">Ver planes</string>
+    <string name="tutor_try_again">Intentar de nuevo</string>
+    <string name="tutor_placeholder_chapter">Pregunta sobre este capítulo…</string>
+    <string name="tutor_placeholder_mock">Pregunta sobre este simulacro…</string>
+    <string name="tutor_placeholder_plan">Pregunta sobre tu plan…</string>
+    <string name="tutor_placeholder_subject">Pregunta sobre esta materia…</string>
+    <string name="tutor_placeholder_item">Consulta sobre esta pregunta…</string>
+    <string name="tutor_placeholder_answer">Pregunta sobre tu respuesta…</string>
+    <string name="tutor_placeholder_lesson">Pregunta sobre el contenido de la lección…</string>
+    <string name="tutor_send">Enviar</string>
+    <string name="tutor_retry_last_question">Volver a enviar la última pregunta</string>
+    <string name="tutor_suggest_walk_through">Explícame esta respuesta paso a paso</string>
+    <string name="tutor_suggest_chapter">¿Qué podré hacer al terminar este capítulo?</string>
+    <string name="tutor_suggest_mock_practice">¿Qué debería practicar primero?</string>
+    <string name="tutor_suggest_mock_missed">¿Por qué me equivoqué en estas preguntas?</string>
+    <string name="tutor_suggest_plan_today">¿Por qué estoy estudiando esto hoy?</string>
+    <string name="tutor_suggest_plan_next">¿Qué sigue?</string>
+    <string name="tutor_suggest_subject_left">¿Qué me falta estudiar aquí?</string>
+    <string name="tutor_suggest_subject_cover">¿Mi plan cubre todo?</string>
+    <string name="tutor_suggest_item_asking">¿Qué me pide esta pregunta?</string>
+    <string name="tutor_suggest_item_idea">¿Con qué concepto se relaciona esta pregunta?</string>
+    <string name="tutor_link_title">¿Abrir este enlace?</string>
+    <string name="tutor_link_description">Este enlace abre un sitio web fuera de Zoonk.</string>
+    <string name="tutor_link_cancel">Cancelar</string>
+    <string name="tutor_link_open">Abrir enlace</string>
+    <string name="tutor_offer_open">Abrir</string>
+    <string name="tutor_offer_choose">Elegir</string>
+    <string name="tutor_offer_start">Empezar</string>
+    <string name="tutor_offer_practice">Práctica</string>
+    <string name="tutor_offer_call_paused">Por ahora, las llamadas están en pausa para todos. Inténtalo de nuevo más tarde.</string>
+    <string name="tutor_offer_start_goal">Crear un nuevo objetivo</string>
+    <!-- The goal the learner may start, in quotes. -->
+    <string name="tutor_offer_goal">“%1$s”</string>
+    <string name="tutor_offer_one_goal">Con el plan gratis puedes seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus.</string>
+    <string name="tutor_offer_catalog_course">Un curso ya disponible en el catálogo</string>
+    <string name="tutor_offer_chapter_test">Prueba: %1$s</string>
+    <plurals name="tutor_offer_chapter_test_lessons">
+        <item quantity="one">Si apruebas, puedes saltarte %d lección que ya conoces.</item>
+        <item quantity="many">Si apruebas, puedes saltarte hasta %d lecciones que ya conoces.</item>
+        <item quantity="other">Si apruebas, puedes saltarte hasta %d lecciones que ya conoces.</item>
+    </plurals>
+    <string name="tutor_offer_take_test">Hacer la prueba</string>
+    <string name="tutor_offer_choose_focus">Elegir en qué enfocarte</string>
+    <string name="tutor_offer_choose_focus_description">Elige las materias en las que quieres profundizar o haz una prueba corta que las elija por ti.</string>
+    <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
+    <string name="tutor_offer_call_with">Una llamada breve para hablar con %1$s, %2$s.</string>
+    <string name="tutor_offer_call">Una breve llamada de voz, a tu nivel.</string>
+    <string name="tutor_offer_mock">Hacer un simulacro</string>
+    <string name="tutor_offer_mock_description">Cuando quieras: un día completo de examen o medio día</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
+    <string name="tutor_offer_mock_by_subject">Cuando quieras: un día completo de examen, medio día o una materia</string>
+    <string name="tutor_offer_mock_plus">Plus incluye simulacros: cuando quieras y cada semana en tu plan.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
+    <string name="tutor_offer_essay_weekly">Práctica semanal en tu plan, con calificación de cada borrador.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
+    <string name="tutor_offer_essay_biweekly">Práctica cada dos semanas en tu plan, con calificación de cada borrador.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
+    <string name="tutor_offer_essay_final_weeks">Práctica en las últimas semanas antes del examen, con calificación de cada borrador.</string>
+    <string name="tutor_offer_essay_plus">Plus incluye práctica de redacción con calificación.</string>
+    <string name="tutor_offer_mistakes">Cuaderno de errores</string>
+    <plurals name="tutor_offer_mistakes_open">
+        <item quantity="one">%d error por corregir, con práctica para repasarlo.</item>
+        <item quantity="many">%d errores por corregir, con práctica para repasar cada uno.</item>
+        <item quantity="other">%d errores por corregir, con práctica para repasar cada uno.</item>
+    </plurals>
+    <plurals name="tutor_offer_pronunciation">
+        <item quantity="one">Volver a decir %d palabra</item>
+        <item quantity="many">Volver a decir %d palabras</item>
+        <item quantity="other">Volver a decir %d palabras</item>
+    </plurals>
+    <string name="tutor_offer_logbook">Bitácora</string>
+    <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
+    <string name="tutor_offer_logbook_description">Lo que hiciste esta semana en comparación con la anterior y lo que sigue.</string>
+    <string name="tutor_offer_memory">Memoria</string>
+    <string name="tutor_offer_memory_description">Consulta, corrige o elimina lo que tu compañero recuerda de ti.</string>
+    <string name="tutor_offer_stats">Estadísticas</string>
+    <string name="tutor_offer_stats_description">Energía, nivel, respuestas correctas y cuándo estudias mejor.</string>
+    <string name="tutor_offer_plus">Plus</string>
+    <string name="tutor_offer_plus_description">Lo que incluye Plus y su precio.</string>
+    <string name="tutor_offer_plus_subscribed">Tu plan y su facturación.</string>
+    <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
+    <string name="tutor_offer_see_plus">Ver Plus</string>
+    <string name="tutor_offer_manage">Administrar</string>
+    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
+    <string name="tutor_plan_change_title">Cambio en tu plan</string>
+    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
+    <string name="tutor_plan_change_one_week">1 semana</string>
+    <string name="tutor_plan_change_apply">Aplicar</string>
+    <string name="tutor_plan_change_not_now">Ahora no</string>
+    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
+    <string name="tutor_plan_change_use_my_date">Usar mi fecha de todos modos</string>
+    <string name="tutor_plan_change_undo">Deshacer</string>
+    <string name="tutor_plan_change_declined">No se aplicó. Tu plan sigue como estaba.</string>
+    <string name="tutor_plan_change_replaced">Esta sugerencia se reemplazó por una más reciente.</string>
+    <string name="tutor_plan_change_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Hoy</string>
+    <string name="tutor_yesterday">Ayer</string>
+    <string name="tutor_page_sign_up">Crea una cuenta gratis para iniciar la conversación.</string>
+</resources>

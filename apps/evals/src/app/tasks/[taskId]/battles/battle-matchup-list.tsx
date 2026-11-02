@@ -20,10 +20,6 @@ type TestCaseEntry = {
   categoryScores?: CategoryScore[];
 };
 
-/**
- * Matches the empty-state footprint without assuming how many judges or model
- * rankings have been persisted in mutable battle result files.
- */
 export function BattleMatchupListSkeleton() {
   return (
     <div aria-hidden="true" className="py-8">

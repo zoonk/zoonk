@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_cause_fixed": "5984def0b5531b256dfece3eeee488d0b6cca1d9599450c4e173e833cdbdf9d6",
+  "mistakes_cause_gap": "9ce0e9027c18d71ade4e0f5de06fbd98ae3def74ca7a35c1d883dd99231881c7",
+  "mistakes_cause_guess": "174b1043a932ea9173a946878571a9ab429bc84e8c899bc83b07451e078b89cd",
+  "mistakes_cause_misread": "1d4f6ad1c3e9e01bfaee9d0873af89f7eac2142596288df4a0cd2a32eedc0a35",
+  "mistakes_cause_time": "934d3db8b3451d464b494c08cc6a0a5362791f3d1adad337615d17434765eb48",
+  "mistakes_cause_trap": "c37453a343375cb2fed19eb3d40bfaf0f99f6de0a8adb84c2683508a2bb6013c",
+  "mistakes_cause_unsorted": "ef4b84f4a846158edcddeb7031048440ae487178ea5aeaa9cbbb6b8fd09c8c16",
+  "mistakes_come_back_tomorrow": "94610ea37f431fd5e291063005e41d9aca5fdbdd6469780afcf54d55ead6c080",
+  "mistakes_empty_fixed": "a09df761899aba1f7e8d256c4795baf8e9e85c107decf7ac2cc4a584632833c9",
+  "mistakes_empty_open": "fb2821385e3e635cff080c6b616f741db68e9aaf095e15b6e8b185d4f2b5884e",
+  "mistakes_fixed_count": "40dd0821e3098b14377903845ccdb89b50ee16fe90ee87c9872aa95a4a114556",
+  "mistakes_more_failed": "fc2c5639801a4f48d709e7fffedd1a979d28426ca3cf068e9d15c74cef279484",
+  "mistakes_not_found_description": "1153d37ff06cabb5472cc3c0762e5b94ecbc56ba884ecbd82d7f411f77698bf3",
+  "mistakes_notebook_title": "5e4fc88162a0e06b2515a3bf7b83b1da04e5aad877ea8d08eb68d9407c08cde1",
+  "mistakes_nothing_description": "929efe9fcde58c3dbae3ccbc0237c09b3533ebc8d0f5a34ba88628b581ce7b0c",
+  "mistakes_nothing_title": "a459267bda60657e1b2426cf66af32385c27070f955e7acd726e7e18579614ca",
+  "mistakes_open_lesson": "2a733fe7df4a8d66a46fb6f696ac0597f08bcb1011e53a073e81604535d37c5e",
+  "mistakes_other_questions": "0ad96dcb5d44dfd4faa1e7441d1e2cad400da0152d0b99a30bf0acac0fa20f84",
+  "mistakes_practice": "0336201bc78ae5e0daab0e0ea4d109b6446aec3ded4c7cd0371266bf8af2ae8b",
+  "mistakes_practice_comes_back": "7b073d89dfdd9c1a4fb9e0a0ae8d1c556fd6bb574b87c60d2bedff1ed21719ff",
+  "mistakes_practice_end": "4d19328f2146e8f3f7ed1a907a3228fd4de9957bc84bab83ecfc32c947b78e6c",
+  "mistakes_practice_fixed": "d8028044861184afb3144a91b79de85ac8583b711529f74ad180c093ff884831",
+  "mistakes_practice_skill": "b7bc33de790ee5362c181734091a9bcb97d63810239d0ce53edffa63e1d61137",
+  "mistakes_practice_title": "fe45f70639a172e97ad0ea9641608214c0f473a277d77ab22cf5ff81c490f3fe",
+  "mistakes_practice_tomorrow": "d57089f8cff3d32407d892c820d1838dd0c860dedf7e0adbd2de47ebd144df55",
+  "mistakes_ready": "51e1f8cb292c1e88a0064a8fc026f13a0d9a33724fc0c1fe1bc5a95b13cb10b6",
+  "mistakes_show_more": "4c7eaa4048f97c4eac056802c445f864b1efd56b6a0b13f7b95c8d8e2904383b",
+  "mistakes_tab_fixed": "993a8c5470c5379ff8f0dc74b55cfac4cacd2abbc78eb0568879189eca18427a",
+  "mistakes_tab_open": "73710df6dbe5a518c5b13e608afb7a73dafa21e6bca4283bcc11ee59f50829c4",
+  "mistakes_tomorrow": "0b1245fdd84475ca51ffaadf51c40bceb05acd6ccb7f2a9774b64d55bb52af65"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">Praca nad błędami</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">Zakończ ćwiczenia. Dotychczasowe odpowiedzi się liczą.</string>
+    <string name="mistakes_practice_comes_back">Do pozostałych wrócimy innego dnia, żeby lepiej utrwalić wiedzę.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">Poprawiono %d błąd</item>
+        <item quantity="few">Poprawiono %d błędy</item>
+        <item quantity="many">Poprawiono %d błędów</item>
+        <item quantity="other">Poprawiono %d błędów</item>
+    </plurals>
+    <string name="mistakes_not_found_description">Być może zostały już poprawione lub usunięte.</string>
+    <string name="mistakes_nothing_title">Jeszcze nie ma nic do przećwiczenia</string>
+    <string name="mistakes_nothing_description">Do błędów możesz wrócić w ćwiczeniach już następnego dnia.</string>
+    <string name="mistakes_notebook_title">Zeszyt błędów</string>
+    <plurals name="mistakes_ready">
+        <item quantity="one">%d do przećwiczenia</item>
+        <item quantity="few">%d do przećwiczenia</item>
+        <item quantity="many">%d do przećwiczenia</item>
+        <item quantity="other">%d do przećwiczenia</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="one">%d dostępny jutro</item>
+        <item quantity="few">%d dostępne jutro</item>
+        <item quantity="many">%d dostępnych jutro</item>
+        <item quantity="other">%d dostępnych jutro</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="one">%d poprawiony</item>
+        <item quantity="few">%d poprawione</item>
+        <item quantity="many">%d poprawionych</item>
+        <item quantity="other">%d poprawionych</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">Do błędów możesz wrócić w ćwiczeniach już następnego dnia.</string>
+    <string name="mistakes_practice">Praca nad błędami</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">Do poprawy</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">Poprawione</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">Inne pytania</string>
+    <string name="mistakes_empty_open">Na razie nie ma nic do poprawy. Tutaj pojawią się błędy z twoich lekcji i powtórek.</string>
+    <string name="mistakes_empty_fixed">Tutaj pojawią się błędy poprawione podczas ćwiczeń.</string>
+    <string name="mistakes_show_more">Pokaż więcej</string>
+    <string name="mistakes_more_failed">Nie udało się wczytać. Spróbuj ponownie.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">Luka w wiedzy</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">Źle odczytane pytanie</string>
+    <string name="mistakes_cause_trap">Wpadnięcie w pułapkę</string>
+    <string name="mistakes_cause_time">Zabrakło czasu</string>
+    <string name="mistakes_cause_guess">Zgadywanie</string>
+    <string name="mistakes_cause_unsorted">Jeszcze bez kategorii</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · Poprawiono</string>
+    <string name="mistakes_practice_tomorrow">Do przećwiczenia jutro</string>
+    <string name="mistakes_practice_skill">Poćwicz tę umiejętność</string>
+    <string name="mistakes_open_lesson">Otwórz lekcję</string>
+</resources>

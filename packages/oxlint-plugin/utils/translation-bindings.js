@@ -78,7 +78,6 @@ function getTranslationVariableNames({ node, sourceCode }) {
   return [];
 }
 
-/** Resolve the nearest declaration so shadowed names never inherit translator behavior. */
 export function isTranslationIdentifier({ node, sourceCode }) {
   if (node.type !== "Identifier") {
     return false;

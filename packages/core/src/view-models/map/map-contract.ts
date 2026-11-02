@@ -1,0 +1,129 @@
+import { CourseLevel, GoalKind, MasteryState } from "@zoonk/db";
+import { z } from "zod";
+import { skillStateCountsSchema } from "../../learner/contract";
+import { planCourseSchema } from "../../plans/plan-course-contract";
+
+const countSchema = z.int().min(0);
+
+const progressStateSchema = z.enum(["done", "current", "upcoming"]);
+
+const phaseStateSchema = z
+  .enum(["done", "unfinished", "current", "upcoming", "leftOut"])
+  .meta({
+    description:
+      "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done. `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done",
+  });
+
+export const mapSkillSchema = z
+  .object({
+    description: z.string().nullable().meta({ description: "The idea in one sentence" }),
+    fading: z.boolean().meta({ description: "Its chance of recall dropped: a review relights it" }),
+    name: z.string(),
+    prerequisiteIds: z
+      .array(z.uuid())
+      .meta({ description: "Skills of the goal learned before this one: the map's links" }),
+    retrievability: z
+      .number()
+      .min(0)
+      .max(1)
+      .nullable()
+      .meta({ description: "The chance of recalling it now; null when never studied" }),
+    skillId: z.uuid(),
+    state: z.enum(MasteryState),
+  })
+  .meta({ id: "MapSkill" });
+
+const mapAreaSchema = z
+  .object({
+    areaId: z
+      .string()
+      .meta({ description: "The chapter's id, or `phase:N` for skills not in a chapter yet" }),
+    chapterId: z.uuid().nullable().meta({ description: "Null before the skills have a chapter" }),
+    counts: skillStateCountsSchema,
+    courseId: z.uuid().nullable().meta({ description: "The course the chapter belongs to" }),
+    current: z.boolean().meta({ description: "The learner is here: the plan's next lesson" }),
+    phase: z.int().min(0),
+    skills: z.array(mapSkillSchema),
+    state: progressStateSchema,
+    title: z.string(),
+  })
+  .meta({ id: "MapArea" });
+
+const mapPhaseSchema = z
+  .object({
+    counts: skillStateCountsSchema,
+    index: z.int().min(0),
+    name: z.string().meta({ description: "Empty for exam phases, which apps name by kind" }),
+    state: phaseStateSchema,
+  })
+  .meta({ id: "MapPhase" });
+
+const courseLinkSchema = z.object({
+  brandSlug: z.string().meta({ description: "With `courseSlug`, the course's public page" }),
+  courseId: z.uuid(),
+  courseSlug: z.string(),
+  title: z.string(),
+});
+
+const studyNextSchema = z
+  .object({
+    nextLevel: z
+      .object({
+        chapterCount: countSchema.meta({ description: "Chapters outlined at that level so far" }),
+        courseId: z.uuid(),
+        level: z.enum(CourseLevel),
+        title: z.string(),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The next level of the plan's course, which `POST /v1/goals/{goalId}/next-level` starts; null at the top",
+      }),
+    related: z
+      .array(courseLinkSchema)
+      .meta({ description: "Other public courses the plan drew from, to explore next" }),
+  })
+  .meta({ id: "StudyNext" });
+
+export const fieldMapViewSchema = z
+  .object({
+    areas: z
+      .array(mapAreaSchema)
+      .meta({ description: "Every chapter of the plan with its skills, in plan order" }),
+    counts: skillStateCountsSchema,
+    course: planCourseSchema.nullable(),
+    courses: z
+      .array(z.object({ courseId: z.uuid(), title: z.string() }))
+      .meta({ description: "The courses the chapters come from, for the map's course view" }),
+    goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
+    next: studyNextSchema
+      .nullable()
+      .meta({
+        description:
+          "What to study next, once the plan is finished: every lesson studied or tested out and every phase's challenge won (the plan's `end` is `finished`). Null before",
+      }),
+    phases: z.array(mapPhaseSchema),
+    refresh: z
+      .object({
+        emphasized: z
+          .boolean()
+          .meta({ description: "The goal is to refresh what the learner knew: lead with this" }),
+        skills: z
+          .array(
+            z.object({
+              name: z.string(),
+              retrievability: z.number().min(0).max(1).nullable(),
+              skillId: z.uuid(),
+            }),
+          )
+          .meta({ description: "Skills fading now, most faded first" }),
+      })
+      .meta({ description: "Refresh mode: what's fading, which `refresh-practice` brings back" }),
+  })
+  .meta({ id: "FieldMap" });
+
+export type MapSkill = z.infer<typeof mapSkillSchema>;
+export type FieldMapView = z.infer<typeof fieldMapViewSchema>;
+export type MapArea = FieldMapView["areas"][number];
+export type MapPhase = FieldMapView["phases"][number];
+export type StudyNextView = z.infer<typeof studyNextSchema>;

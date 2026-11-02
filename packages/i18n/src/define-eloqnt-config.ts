@@ -9,11 +9,7 @@ type EloqntProjectOptions = {
   srcPath?: string | string[] | null;
 };
 
-/**
- * Points Eloqnt at a Codex CLI installed outside this repo.
- * This avoids running the optional Codex binary that the provider can install
- * under node_modules while still letting each developer choose a trusted CLI path.
- */
+/** Runs a trusted Codex CLI from outside the repo, not the optional binary the provider can install under node_modules. */
 function getCodexPath() {
   return process.env.CODEX_PATH ?? "codex";
 }
@@ -26,10 +22,7 @@ function getSrcPath(srcPath: EloqntProjectOptions["srcPath"]) {
   return srcPath ?? "./src";
 }
 
-/**
- * Shares configuration for consumers while allowing local overrides.
- * @public
- */
+/** @public */
 export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
   return defineConfig({
     messages: {
@@ -39,7 +32,7 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       sourceLocale: "en",
       ...options.messages,
     },
-    model: codexCli("gpt-6.1-sol", { codexPath: getCodexPath() }),
+    model: codexCli("gpt-6.1-sol", { codexPath: getCodexPath(), reasoningEffort: "xhigh" }),
     srcPath: getSrcPath(options.srcPath),
     styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),
   });

@@ -1,6 +1,7 @@
 "use client";
 
-import { type BattleLeaderboardEntry, type TaskEvalResults } from "@/lib/types";
+import { type LeaderboardEntry } from "@/lib/leaderboard";
+import { type BattleLeaderboardEntry } from "@/lib/types";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,10 +10,6 @@ import { Leaderboard } from "./leaderboard";
 
 const LEADERBOARD_SKELETON_ROWS = ["leaderboard-row-1", "leaderboard-row-2", "leaderboard-row-3"];
 
-/**
- * Uses neutral table-height rows because URL data decides whether this region
- * becomes Battle Mode tabs, a regular leaderboard, or no leaderboard at all.
- */
 export function LeaderboardTabsSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col divide-y">
@@ -29,24 +26,26 @@ export function LeaderboardTabsSkeleton() {
 
 export function LeaderboardTabs({
   taskId,
-  results,
+  entries,
   battleEntries,
+  battleJudgeCost,
   supportsJudgeMode,
 }: {
   taskId: string;
-  results: TaskEvalResults[];
+  entries: LeaderboardEntry[];
   battleEntries: BattleLeaderboardEntry[];
+  battleJudgeCost: number;
   supportsJudgeMode: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab") ?? "battle";
 
-  const hasRegularResults = results.length > 0;
+  const hasRegularResults = entries.length > 0;
   const hasBattleResults = battleEntries.length > 0;
 
   if (!supportsJudgeMode) {
-    return hasRegularResults ? <Leaderboard results={results} taskId={taskId} /> : null;
+    return hasRegularResults ? <Leaderboard entries={entries} taskId={taskId} /> : null;
   }
 
   if (!(hasRegularResults || hasBattleResults)) {
@@ -67,11 +66,11 @@ export function LeaderboardTabs({
       </TabsList>
 
       <TabsContent value="battle">
-        <BattleLeaderboard entries={battleEntries} taskId={taskId} />
+        <BattleLeaderboard entries={battleEntries} judgeCost={battleJudgeCost} taskId={taskId} />
       </TabsContent>
 
       <TabsContent value="regular">
-        <Leaderboard results={results} taskId={taskId} />
+        <Leaderboard entries={entries} taskId={taskId} />
       </TabsContent>
     </Tabs>
   );

@@ -1,46 +1,74 @@
 "use client";
 
-import { CircleCheck, CircleX } from "lucide-react";
+import { type FeedbackTone, FeedbackVerdict } from "@zoonk/learn/feedback-panel";
+import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type Verdict = "correct" | "incorrect";
+export type Verdict =
+  | "almost"
+  | "correct"
+  | "guess"
+  | "guessRight"
+  | "incorrect"
+  | "sampleAnswer"
+  | "typo"
+  | "unchecked";
 
-const VERDICT_CONFIG: Record<Verdict, { colorClass: string; icon: typeof CircleCheck }> = {
-  correct: { colorClass: "text-success", icon: CircleCheck },
-  incorrect: { colorClass: "text-destructive", icon: CircleX },
+const VERDICT_TONE: Record<Verdict, FeedbackTone> = {
+  almost: "almost",
+  correct: "right",
+  guess: "neutral",
+  guessRight: "right",
+  incorrect: "wrong",
+  sampleAnswer: "neutral",
+  typo: "right",
+  unchecked: "neutral",
 };
 
-/**
- * Returns the user-facing label for a verdict.
- *
- * Centralizes verdict text so it can be reused across
- * components that display feedback results.
- */
-function useVerdictText(verdict: Verdict): string {
+export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict: Verdict }) {
   const t = useExtracted();
 
-  if (verdict === "correct") {
-    return t("Correct!");
-  }
-
-  return t("Not quite");
-}
-
-/**
- * Displays a verdict icon + label for answer feedback.
- *
- * Used across feedback screens to show whether the learner's answer was
- * correct or incorrect. Keeps the icon, color, and label consistent wherever
- * feedback is shown.
- */
-export function VerdictLabel({ verdict }: { verdict: Verdict }) {
-  const { colorClass, icon: Icon } = VERDICT_CONFIG[verdict];
-  const text = useVerdictText(verdict);
+  const labels: Record<Verdict, string> = {
+    almost: t({
+      description: "Verdict on an answer that is almost right.",
+      message: "Almost there",
+    }),
+    correct: t("Correct!"),
+    guess: t("Here's the answer"),
+    guessRight: t("Good guess!"),
+    incorrect: t({
+      description:
+        "Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.",
+      message: "Not quite",
+    }),
+    sampleAnswer: t("Here's a good answer"),
+    typo: t("Right, watch the spelling"),
+    unchecked: t({
+      description: "Verdict when the learner's answer wasn't checked this time.",
+      message: "Not checked this time",
+    }),
+  };
 
   return (
-    <div className="flex items-center gap-1.5 text-sm font-medium">
-      <Icon aria-hidden="true" className={`${colorClass} size-4`} />
-      <span className={colorClass}>{text}</span>
-    </div>
+    <FeedbackVerdict
+      end={end}
+      icon={verdict === "guess" ? <SparklesIcon aria-hidden="true" /> : undefined}
+      tone={VERDICT_TONE[verdict]}
+    >
+      {labels[verdict]}
+    </FeedbackVerdict>
+  );
+}
+
+export function NotQuiteLead() {
+  const t = useExtracted();
+
+  return (
+    <span className="text-destructive-text font-semibold">
+      {t({
+        description: "Starts the explanation of why the learner's answer is wrong.",
+        message: "Not quite:",
+      })}
+    </span>
   );
 }

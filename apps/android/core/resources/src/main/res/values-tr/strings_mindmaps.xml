@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mindmaps_alt": "d0e8c44f3835858ba7a4277e609260fb4a6db5c3d833ec9bf3e1733b2c260993",
+  "mindmaps_alt_chapter": "efb3ea461cbe640e34042e21e349a98b79ac894a10719d7b9e4ba64960b20fe6",
+  "mindmaps_alt_sentence": "621b4f34b62d7f3f2e0c6c45d0f0ed0374c364fd1a54f1bf4687187f29e79717",
+  "mindmaps_as_text": "df22cfa3d091a3c3670fb3b5331483dcbfd8fae9a6d33a5712746f9b952950f4",
+  "mindmaps_as_text_note": "9c97e18de39b24b735c81ba66ed6103e923d3c756558113520fc45346a473a91",
+  "mindmaps_card_create": "96f1454042cbfca280fb3deae84d08a6667b68d83fba739866e3f002f438ea8e",
+  "mindmaps_card_description": "065cdcdea2e55852573c4d97dcac00abef0260b0851b61f778e6faedd0e7557a",
+  "mindmaps_card_failed": "0bc40cb1f3542218918508ccc0e3402079bd6dc2676e5cdce5673a925f3d23c3",
+  "mindmaps_card_generating": "5a951ac7197c19932dc6209195f0b6be8a1938bc13fe0fd53e77d529102c7ca3",
+  "mindmaps_card_generating_title": "bbae2ce4154f7909b0dff72a4f9b2d68180761999c58eb246d14c401595f2a33",
+  "mindmaps_card_title": "377ffd27d41d18fbb0c1d5b5d6050ff6273adf24251a46ee80f58734596fc256",
+  "mindmaps_card_unreachable": "38ca8ba09b671bfa64372f9b7b368d3f47cea52485ee64231faabae7d73ecf6a",
+  "mindmaps_chapter_count": "ff6f716cb1955b1b6665b7cbf339c6a5cedb6c9e055fcb46ef6031b20e9e50f9",
+  "mindmaps_chapter_number": "c5cc22be9a5cb6fcbb06499c047a87f7dac8cc9d5e982ce13f95cea9c4d67e6c",
+  "mindmaps_chapters_finished": "67a843d2b0fdbe7628e302b4aae0d8cef6b0e1adc139edca16223ba517849e86",
+  "mindmaps_continue": "9060ea3a852eab30e20667def345b4714b273511145dc3caa292f014601c5e24",
+  "mindmaps_count": "17fe1544f0bd83e7eda83cac34feb4d4f4fe8647e4c78a03441e71dbd62be2e0",
+  "mindmaps_create": "03191730764d64d8b6a55a0688d1329343d34b7435d02efb7e37a15f5919c385",
+  "mindmaps_create_spoken": "ca96a4020ef46f6f29ff2eca9e73ba5ceb0c797b662d80225a9454127ee5ef91",
+  "mindmaps_download": "b333b45450d635eedd4efa549fd4caa8e85650846a62884b7d00f505a9097d64",
+  "mindmaps_drawing": "12b27c61772a5641dc72c916bfa585172528797834e1f90847b670228111661f",
+  "mindmaps_empty_description": "8267501db0943ee74b5e25d565df2a54b0f81113cc228c89b41b3cd6d8fe3ebf",
+  "mindmaps_empty_title": "4d322cfa95f53c93ea848dd1236b314dc3311559298f0a02688a27faad3f3567",
+  "mindmaps_failed_short": "0d29730ddbbc341b9395da1a889abf00a6810f92fda83e4a6680499fdbc22be9",
+  "mindmaps_first_after": "6d5cdf0e4d7f6d98585baa4c9f121907891660213b677c91ee57b095e7a0f75e",
+  "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
+  "mindmaps_full_screen": "bc7ccc8962220aa83c9c19f80503dcf6b879736ddbaa9c291a59c2c33600acac",
+  "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
+  "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
+  "mindmaps_save_failed": "2be82fcc902724856b6c4488a3f0b35c50e6df79da37f9f83919293e512babd7",
+  "mindmaps_saved": "f8435eb144f3491959b63b6b3b2c8a80dc068fee0f7b39e63b8db33433c19e71",
+  "mindmaps_try_again": "e05a81989159a7ba3ffef11ce37878ea3778d45391e8c9d01f87fbc921a4e3f3",
+  "mindmaps_try_again_spoken": "64218c17f6700b02a63ebf6b367b1eed731ac0e346c567ffaa1792908023de55",
+  "mindmaps_unreachable_short": "8841b691bf7b7d9d4bbc566bdccfc213824c0f3a99ea908bde05f3d9b59cbb1f",
+  "mindmaps_viewer_hint": "a28c6410a24bfc129077d2431de1b49bf2a733df50db809a4a6da38605cea279",
+  "mindmaps_zoom_in": "dfda8dbaf93e84c2deb134c0366ceeb251d60bf099268627161016b526d519f8",
+  "mindmaps_zoom_out": "90e6572e17fb828fb552b0f2a5a0941141332f2476ccfbcf6749a7d68144e0dc"
+}
+-->
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="one">%1$s harita</item>
+        <item quantity="other">%1$s harita</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">Bitirdiğin üniteler</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="one">%d ünite</item>
+        <item quantity="other">%d ünite</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">Ünite %1$s</string>
+    <string name="mindmaps_empty_title">Henüz zihin haritan yok</string>
+    <string name="mindmaps_empty_description">Bir üniteyi bitirdiğinde zihin haritası oluşur: ana fikirleri tek bir görselde.</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="one">İlk haritan %1$s ünitesini bitirince hazır olacak: %2$d ders kaldı.</item>
+        <item quantity="other">İlk haritan %1$s ünitesini bitirince hazır olacak: %2$d ders kaldı.</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">Devam et</string>
+    <string name="mindmaps_keep_studying">Çalışmaya devam et</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">%1$s için zihin haritası</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">Zihin haritası: %1$s. %2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">Zihin haritası: %1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">Metin olarak</string>
+    <string name="mindmaps_drawing">Çiziyoruz…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">Oluştur</string>
+    <string name="mindmaps_try_again">Tekrar dene</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">%1$s için zihin haritası oluştur</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">%1$s için zihin haritası oluşturmayı tekrar dene</string>
+    <string name="mindmaps_failed_short">Bu kez oluşturulamadı.</string>
+    <string name="mindmaps_unreachable_short">Sunucuya ulaşamadık.</string>
+    <string name="mindmaps_card_title">Zihin haritası</string>
+    <string name="mindmaps_card_description">Ünitenin ana fikirlerini tek bir görselde, bir bakışta gözden geçirebilirsin.</string>
+    <string name="mindmaps_card_create">Zihin haritasını oluştur</string>
+    <string name="mindmaps_card_generating_title">Zihin haritasını çiziyoruz…</string>
+    <string name="mindmaps_card_generating">Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; harita hazır olunca burada olacak.</string>
+    <string name="mindmaps_card_failed">Zihin haritası bu kez oluşturulamadı.</string>
+    <string name="mindmaps_card_unreachable">Sunucuya ulaşamadık. Bağlantını kontrol et.</string>
+    <string name="mindmaps_as_text_note">Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz.</string>
+    <string name="mindmaps_full_screen">Tam ekranda aç</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">İndir</string>
+    <string name="mindmaps_saved">Zihin haritası kaydedildi</string>
+    <string name="mindmaps_save_failed">Zihin haritası kaydedilemedi. Tekrar dene.</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">Kısaca:</string>
+    <string name="mindmaps_zoom_in">Yakınlaştır</string>
+    <string name="mindmaps_zoom_out">Uzaklaştır</string>
+    <string name="mindmaps_fit">Ekrana sığdır</string>
+    <string name="mindmaps_viewer_hint">Yakınlaştırıp uzaklaştırmak için iki parmağını açıp kapat, kaydır veya + ve - tuşlarını kullan; hareket ettirmek için sürükle veya ok tuşlarını kullan.</string>
+</resources>

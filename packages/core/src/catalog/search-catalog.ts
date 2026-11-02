@@ -1,10 +1,10 @@
 import "server-only";
-import { searchChapters } from "../chapters/search-chapters";
 import { searchCourses } from "../courses/search-courses";
+import { searchLibraryChapters } from "./_utils/search-library-chapters";
 
 const CATALOG_CHAPTER_SEARCH_LIMIT = 5;
 
-type SearchChapter = Awaited<ReturnType<typeof searchChapters>>[number];
+type SearchChapter = Awaited<ReturnType<typeof searchLibraryChapters>>[number];
 type SearchCourse = Awaited<ReturnType<typeof searchCourses>>[number];
 
 export type CatalogSearchResults = {
@@ -19,6 +19,7 @@ export type CourseSearchResult = {
   imageUrl: string | null;
   language: string;
   slug: string;
+  targetLanguage: string | null;
   title: string;
 };
 
@@ -29,16 +30,11 @@ export type ChapterSearchResult = {
   courseTitle: string;
   description: string;
   id: string;
-  imageUrl: string | null;
   language: string;
   slug: string;
   title: string;
 };
 
-/**
- * Converts a published course search row into the small catalog result shared
- * by delivery apps without exposing the complete database model.
- */
 function toCourseSearchResult(course: SearchCourse): CourseSearchResult {
   return {
     brandSlug: course.organization.slug,
@@ -47,34 +43,31 @@ function toCourseSearchResult(course: SearchCourse): CourseSearchResult {
     imageUrl: course.imageUrl,
     language: course.language,
     slug: course.slug,
+    targetLanguage: course.targetLanguage,
     title: course.title,
   };
 }
 
-/**
- * Preserves the parent course identity a chapter result needs for navigation
- * while keeping the database relation itself inside core.
- */
-function toChapterSearchResult(chapter: SearchChapter): ChapterSearchResult {
-  return {
-    brandSlug: chapter.course.organization.slug,
-    courseId: chapter.course.id,
-    courseSlug: chapter.course.slug,
-    courseTitle: chapter.course.title,
-    description: chapter.description,
-    id: chapter.id,
-    imageUrl: chapter.imageUrl,
-    language: chapter.language,
-    slug: chapter.slug,
-    title: chapter.title,
-  };
+function toChapterSearchResult({ homeCourse, ...chapter }: SearchChapter): ChapterSearchResult[] {
+  if (!homeCourse?.organization) {
+    return [];
+  }
+
+  return [
+    {
+      brandSlug: homeCourse.organization.slug,
+      courseId: homeCourse.id,
+      courseSlug: homeCourse.slug,
+      courseTitle: homeCourse.title,
+      description: chapter.description,
+      id: chapter.id,
+      language: chapter.language,
+      slug: chapter.slug,
+      title: chapter.title,
+    },
+  ];
 }
 
-/**
- * Searches the published catalog as one capability so web and API consumers
- * share language scoping, result limits, and serialized course and chapter
- * shapes instead of composing separate repository reads in each delivery app.
- */
 export async function searchCatalog({
   language,
   query,
@@ -82,15 +75,13 @@ export async function searchCatalog({
   language: string;
   query: string;
 }): Promise<CatalogSearchResults> {
-  const searchParams = { filterByLanguage: true, language, query };
-
   const [courses, chapters] = await Promise.all([
-    searchCourses(searchParams),
-    searchChapters({ ...searchParams, limit: CATALOG_CHAPTER_SEARCH_LIMIT }),
+    searchCourses({ filterByLanguage: true, language, query }),
+    searchLibraryChapters({ language, limit: CATALOG_CHAPTER_SEARCH_LIMIT, query }),
   ]);
 
   return {
-    chapters: chapters.map((chapter) => toChapterSearchResult(chapter)),
+    chapters: chapters.flatMap((chapter) => toChapterSearchResult(chapter)),
     courses: courses.map((course) => toCourseSearchResult(course)),
   };
 }

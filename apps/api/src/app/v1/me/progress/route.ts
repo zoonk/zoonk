@@ -4,10 +4,6 @@ import { serializeCurrentUserProgress } from "@/lib/progress-serializers";
 import { getCurrentUserProgress } from "@zoonk/core/progress/get-current-user";
 import { NextResponse } from "next/server";
 
-/**
- * Returns the compact current-user progress resource used by Home surfaces
- * without loading any detail-page calendar or trend collection.
- */
 async function getCurrentUserProgressRoute() {
   const progress = await getCurrentUserProgress();
 

@@ -1,0 +1,952 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "classification": { "expected": "pass", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "verdict": "pass" },
+        "id": "en-tax-deadlines-sourced-clean-1",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
+                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
+                "title": "More time to file, not to pay",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Paying when she files means paying late: interest and penalties run from April 15.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": [
+              "Your federal tax return for 2025 is due April 15, 2026.",
+              "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "verdict": "pass" },
+        "id": "pt-finalidades-oab-exam-prep-clean-1",
+        "userInput": {
+          "chapterTitle": "Estrutura e competências da OAB",
+          "courseTitle": "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
+          "exams": [
+            {
+              "name": "OAB Exame de Ordem Unificado, 1ª fase",
+              "style": "multipleChoice (4 options): Questões de múltipla escolha com 4 opções (A, B, C e D) e uma única resposta correta."
+            }
+          ],
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Distinguir as finalidades institucionais das corporativas da OAB",
+            "description": "As finalidades previstas no Estatuto mostram quando a OAB atua em defesa da sociedade e quando atua em relação aos advogados.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: A) só a primeira; B) só a segunda; C) ambas; D) nenhuma. Resposta: C; mostre-a após a escolha e deixe a explicação para as próximas telas.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Distinguir a atuação da OAB em defesa da ordem jurídica e da sociedade daquela referente à representação e à organização da advocacia.",
+                "example": "Cobrar rapidez da Justiça é finalidade institucional; selecionar advogados é finalidade corporativa.",
+                "hard": false,
+                "name": "Distinguir as finalidades da OAB",
+                "topic": "Finalidades da OAB",
+                "useCase": "Analisar se uma atuação atribuída à OAB corresponde às finalidades previstas no Estatuto."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Finalidades da OAB"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
+                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
+                  { "isCorrect": true, "text": "As duas propostas." },
+                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
+                ],
+                "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
+                "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você distingue cobrar providências de decidir um caso. A demora pode motivar uma cobrança da OAB, não transferir a ela o papel dos juízes.",
+                    "text": "A OAB pode cobrar melhorias na Justiça, mas não assumir o julgamento do recurso."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você parte de uma preocupação legítima com a demora, mas cobrar rapidez não dá à OAB poder para julgar o recurso.",
+                    "text": "A OAB pode julgar o recurso, pois combater a demora lhe dá esse poder."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você tenta resolver a questão pelo acordo das partes, mas esse acordo não transforma a OAB em órgão julgador do recurso.",
+                    "text": "A OAB só pode julgar o recurso se as partes concordarem."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você evita que a OAB julgue o recurso, mas vai longe demais: ela pode cobrar providências para melhorar a Justiça.",
+                    "text": "A OAB não pode nem cobrar providências contra a demora."
+                  }
+                ],
+                "question": "Como você avalia a proposta de Raimundo?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "title": "Atuação por todos",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
+                "title": "Justiça sem demora",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Thaís vê processos parados e afirma que a OAB só pode cobrar rapidez da Justiça se também provar que alguma lei foi aplicada incorretamente.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você pode apontar a demora sem ter de provar uma aplicação incorreta da lei. O art. 44, I, prevê as duas atuações sem fazer de uma condição da outra.",
+                    "text": "Não. A rápida administração da justiça é uma finalidade prevista por si."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você trata duas atuações do art. 44, I, como requisitos cumulativos. O texto também prevê a rápida administração da justiça por si.",
+                    "text": "Sim. Cobrar rapidez exige provar antes que uma lei foi mal aplicada."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você restringe a cobrança aos interesses da profissão. A rápida administração da justiça interessa à sociedade e consta do art. 44, I.",
+                    "text": "Sim. A OAB só pode cobrar rapidez quando representa advogados."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você dispensa a condição criada por Thaís, mas troca a cobrança por um poder de julgamento que essa finalidade não concede.",
+                    "text": "Não. Para acelerar o caso, a OAB pode julgá-lo diretamente."
+                  }
+                ],
+                "question": "A condição apresentada por Thaís está correta?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A seleção de profissionais que vão exercer a advocacia.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Selecionar advogados diz respeito aos profissionais da advocacia. Essa é uma **finalidade corporativa**. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil. A exclusividade vale para essas atribuições; não limita todas as finalidades da OAB aos advogados.",
+                "title": "Atuação pela profissão",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Murilo lê que a OAB atua com exclusividade na seleção de advogados. Ele conclui que ela não pode defender os direitos humanos de quem não é advogado.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você separa as duas finalidades: a exclusividade qualifica as atribuições relativas aos advogados, sem eliminar a defesa dos direitos humanos prevista no inciso I.",
+                    "text": "Ele estende a exclusividade do art. 44, II, à defesa de interesses de toda a sociedade prevista no inciso I."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você aplica a exclusividade a toda atuação da OAB. O art. 44, II, a liga às atribuições relativas aos advogados; o inciso I trata também de interesses de todos.",
+                    "text": "Ele esquece que a exclusividade vale para toda atuação da OAB, inclusive a defesa de direitos humanos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você troca as finalidades: selecionar advogados é uma atribuição referente à profissão, prevista no art. 44, II.",
+                    "text": "Ele ignora que a seleção de advogados pertence às finalidades voltadas ao interesse de todos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você mistura a defesa dos direitos humanos, prevista no inciso I, com a disciplina dos advogados, prevista no inciso II.",
+                    "text": "Ele supõe que defender direitos humanos faz parte apenas da disciplina dos advogados."
+                  }
+                ],
+                "question": "Onde está o erro de Murilo?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Em Belém, Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; assumir o julgamento de recursos atrasados.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você liga a defesa dos direitos humanos ao inciso I e a seleção de advogados ao inciso II. Nenhum dos dois dá à OAB o julgamento de recursos.",
+                    "text": "Art. 44, I; art. 44, II; não decorre dessas finalidades."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você classifica os dois primeiros como voltados à profissão por serem pedidos à OAB. Mas defender direitos humanos também atende ao interesse de todos e está no inciso I.",
+                    "text": "Art. 44, II; art. 44, II; não decorre dessas finalidades."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você classifica corretamente os dois primeiros, mas confunde cobrar uma Justiça rápida com assumir o julgamento dos recursos.",
+                    "text": "Art. 44, I; art. 44, II; art. 44, I."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você reconhece a defesa dos direitos humanos e rejeita o julgamento pela OAB, mas coloca a seleção de advogados no inciso I. Ela está no inciso II.",
+                    "text": "Art. 44, I; art. 44, I; não decorre dessas finalidades."
+                  }
+                ],
+                "question": "Qual classificação dos três pedidos está correta, na ordem?",
+                "visual": null
+              }
+            ],
+            "summary": [
+              "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
+              "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
+              "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["weakCheck", "level"], "screen": 2, "verdict": "fail" },
+        "id": "pt-finalidades-oab-exam-prep-absurd-option-1",
+        "userInput": {
+          "chapterTitle": "Estrutura e competências da OAB",
+          "courseTitle": "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
+          "exams": [
+            {
+              "name": "OAB Exame de Ordem Unificado, 1ª fase",
+              "style": "multipleChoice (4 options): Questões de múltipla escolha com 4 opções (A, B, C e D) e uma única resposta correta."
+            }
+          ],
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Distinguir as finalidades institucionais das corporativas da OAB",
+            "description": "As finalidades previstas no Estatuto mostram quando a OAB atua em defesa da sociedade e quando atua em relação aos advogados.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: A) só a primeira; B) só a segunda; C) ambas; D) nenhuma. Resposta: C; mostre-a após a escolha e deixe a explicação para as próximas telas.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Distinguir a atuação da OAB em defesa da ordem jurídica e da sociedade daquela referente à representação e à organização da advocacia.",
+                "example": "Cobrar rapidez da Justiça é finalidade institucional; selecionar advogados é finalidade corporativa.",
+                "hard": false,
+                "name": "Distinguir as finalidades da OAB",
+                "topic": "Finalidades da OAB",
+                "useCase": "Analisar se uma atuação atribuída à OAB corresponde às finalidades previstas no Estatuto."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Finalidades da OAB"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
+                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
+                  { "isCorrect": true, "text": "As duas propostas." },
+                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
+                ],
+                "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
+                "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você distingue cobrar providências de decidir um caso: a demora pode motivar uma cobrança da OAB, não transferir a ela o papel dos juízes.",
+                    "text": "A OAB pode cobrar melhorias na Justiça, mas não assumir o julgamento do recurso."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Advogados não são juízes, e Raimundo não é advogado.",
+                    "text": "A OAB pode julgar o recurso, porque toda pessoa que espera um processo é advogada."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "A OAB não decide recursos: seu papel é outro.",
+                    "text": "A OAB deve fechar o tribunal até o recurso ser julgado."
+                  }
+                ],
+                "question": "Como você avalia a proposta de Raimundo?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "title": "Atuação por todos",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
+                "title": "Justiça sem demora",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Thaís vê processos parados e afirma que a OAB só pode cobrar rapidez da Justiça se também provar que alguma lei foi aplicada incorretamente.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você pode apontar a demora sem ter de provar uma aplicação incorreta da lei. O art. 44, I, prevê as duas atuações sem fazer de uma condição da outra.",
+                    "text": "Não. A rápida administração da justiça é uma finalidade prevista por si."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você trata duas atuações do art. 44, I, como requisitos cumulativos. O texto também prevê a rápida administração da justiça por si.",
+                    "text": "Sim. Cobrar rapidez exige provar antes que uma lei foi mal aplicada."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você restringe a cobrança aos interesses da profissão. A rápida administração da justiça interessa à sociedade e consta do art. 44, I.",
+                    "text": "Sim. A OAB só pode cobrar rapidez quando representa advogados."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você dispensa a condição criada por Thaís, mas troca a cobrança por um poder de julgamento que essa finalidade não concede.",
+                    "text": "Não. Para acelerar o caso, a OAB pode julgá-lo diretamente."
+                  }
+                ],
+                "question": "A condição apresentada por Thaís está correta?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A seleção de profissionais que vão exercer a advocacia.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Selecionar advogados diz respeito aos profissionais da advocacia. Essa é uma **finalidade corporativa**. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil. A exclusividade vale para essas atribuições; não limita todas as finalidades da OAB aos advogados.",
+                "title": "Atuação pela profissão",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Murilo lê que a OAB atua com exclusividade na seleção de advogados. Ele conclui que ela não pode defender os direitos humanos de quem não é advogado.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você separa as duas finalidades: a exclusividade qualifica as atribuições relativas aos advogados, sem eliminar a defesa dos direitos humanos prevista no inciso I.",
+                    "text": "Ele estende a exclusividade do art. 44, II, à defesa de interesses de toda a sociedade prevista no inciso I."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você aplica a exclusividade a toda atuação da OAB. O art. 44, II, a liga às atribuições relativas aos advogados; o inciso I trata também de interesses de todos.",
+                    "text": "Ele esquece que a exclusividade vale para toda atuação da OAB, inclusive a defesa de direitos humanos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você troca as finalidades: selecionar advogados é uma atribuição referente à profissão, prevista no art. 44, II.",
+                    "text": "Ele ignora que a seleção de advogados pertence às finalidades voltadas ao interesse de todos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você mistura a defesa dos direitos humanos, prevista no inciso I, com a disciplina dos advogados, prevista no inciso II.",
+                    "text": "Ele supõe que defender direitos humanos faz parte apenas da disciplina dos advogados."
+                  }
+                ],
+                "question": "Onde está o erro de Murilo?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Em Belém, Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; assumir o julgamento de recursos atrasados.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Você liga a defesa dos direitos humanos ao inciso I e a seleção de advogados ao inciso II. Nenhum dos dois dá à OAB o julgamento de recursos.",
+                    "text": "Art. 44, I; art. 44, II; não decorre dessas finalidades."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você classifica os dois primeiros como voltados à profissão por serem pedidos à OAB. Mas defender direitos humanos também atende ao interesse de todos e está no inciso I.",
+                    "text": "Art. 44, II; art. 44, II; não decorre dessas finalidades."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você classifica corretamente os dois primeiros, mas confunde cobrar uma Justiça rápida com assumir o julgamento dos recursos.",
+                    "text": "Art. 44, I; art. 44, II; art. 44, I."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você reconhece a defesa dos direitos humanos e rejeita o julgamento pela OAB, mas coloca a seleção de advogados no inciso I. Ela está no inciso II.",
+                    "text": "Art. 44, I; art. 44, I; não decorre dessas finalidades."
+                  }
+                ],
+                "question": "Qual classificação dos três pedidos está correta, na ordem?",
+                "visual": null
+              }
+            ],
+            "summary": [
+              "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
+              "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
+              "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["incorrect"], "screen": 3, "verdict": "fail" },
+        "id": "en-tax-deadlines-contradicts-source-1",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [0, 1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
+                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
+                "title": "Six more months for everything",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Paying when she files means paying late: interest and penalties run from April 15.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": [
+              "Your federal tax return for 2025 is due April 15, 2026.",
+              "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-quality-check"
+}

@@ -1,0 +1,57 @@
+"use client";
+
+import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
+import { useExtracted } from "next-intl";
+import { type LessonQuestionContext } from "./lesson-question-context";
+import { type OfferedSuggestion } from "./lesson-question-state";
+
+function toOffered(suggestions: readonly LessonTutorSuggestion[]): OfferedSuggestion[] {
+  return suggestions.map(({ id, label }) => ({ question: label, suggestion: id }));
+}
+
+export function useTutorSuggestions({
+  context,
+  lessonSuggestions,
+}: {
+  context: LessonQuestionContext;
+  lessonSuggestions: readonly LessonTutorSuggestion[];
+}): OfferedSuggestion[] {
+  const t = useExtracted();
+
+  switch (context.kind) {
+    case "answer":
+      return [
+        { question: t("Walk me through this answer") },
+        ...toOffered(lessonSuggestions.filter(({ id }) => id === "simpler")),
+      ];
+    case "chapter":
+      return [{ question: t("What will I be able to do after this chapter?") }];
+    case "lesson":
+    case "step":
+      return toOffered(lessonSuggestions);
+    case "mock":
+      return [
+        { question: t("What should I practice first?") },
+        { question: t("Why did I miss these questions?") },
+      ];
+    case "plan":
+      return [
+        { question: t("Why am I studying this today?") },
+        { question: t("What comes next?") },
+      ];
+    case "subject":
+      return [
+        { question: t("What's left to study here?") },
+        { question: t("Does my plan cover all of it?") },
+      ];
+    case "item":
+      return [
+        context.answered
+          ? { question: t("Walk me through this answer") }
+          : { question: t("What is this question asking?") },
+        { question: t("What idea is this question about?") },
+      ];
+    default:
+      return context satisfies never;
+  }
+}

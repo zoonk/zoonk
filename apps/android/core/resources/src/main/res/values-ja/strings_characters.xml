@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_name_beep": "d381072ddd846401156cf409a554599e1eb793576fe725fdc969de42bbfc1eef",
+  "buddy_name_noodle": "729845c88e502e1d2fc8e4e6b20200d09b699bcc9ae643d20a70d3214fb16c98",
+  "buddy_name_otto": "e5a2f32e332dc67b6d5e1539634bd553ce88418fbda5933f58623711eb2106ab",
+  "buddy_name_zu": "7fa0e40d0e29066d9f8119bc1c069bf21c08ccfdf86b7f7fdead9ed2b70ebb65"
+}
+-->
+<resources>
+    <!-- A buddy's own name, used until the learner names it. -->
+    <string name="buddy_name_zu">ズー</string>
+    <string name="buddy_name_noodle">ミソ</string>
+    <string name="buddy_name_beep">ピコ</string>
+    <string name="buddy_name_otto">オクト</string>
+</resources>

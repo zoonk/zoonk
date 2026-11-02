@@ -10,5 +10,7 @@ export default createBaseConfig({
     APPLE_IAP_KEY_ID: "",
     APPLE_IAP_PRIVATE_KEY: "",
     APPLE_IAP_XCODE_BUNDLE_ID: "com.zoonk.dev",
+    // Nothing listens there: tests read where a sign-in that started on the API goes.
+    MAIN_APP_URL: "http://localhost:49153",
   },
 });

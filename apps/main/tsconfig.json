@@ -1,11 +1,16 @@
 {
-  "compilerOptions": { "paths": { "@/*": ["./src/*"] } },
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "paths": { "@/*": ["./src/*"] },
+    "types": ["node", "mdx"]
+  },
   "exclude": ["node_modules"],
   "extends": "@zoonk/tsconfig/nextjs.json",
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "src/app/.well-known/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"

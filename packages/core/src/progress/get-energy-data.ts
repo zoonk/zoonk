@@ -8,10 +8,7 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getUserProgress } from "./get-user-progress";
 import { hasUserLearningProgress } from "./user-progress";
 
-/**
- * Returns current Energy, the visible 53-week timeline, and lifetime insights
- * for the authenticated learner using one request-local clock and timezone.
- */
+/** Returns a 53-week visible timeline plus lifetime insights; null without a session. */
 export async function getEnergyData(): Promise<EnergyData | null> {
   "use cache: private";
 
@@ -44,10 +41,7 @@ export async function getEnergyData(): Promise<EnergyData | null> {
   return buildEnergyData({ ...dateRange, currentEnergy: projection.currentEnergy, rows });
 }
 
-/**
- * Preserves the difference between an unauthenticated request and an
- * authenticated learner who has not created Energy history yet.
- */
+/** Outer null means unauthenticated; energy=null means no Energy history yet. */
 export async function getCurrentUserEnergy(): Promise<{ energy: EnergyData | null } | null> {
   const [session, energy] = await Promise.all([getSession(), getEnergyData()]);
   return session ? { energy } : null;

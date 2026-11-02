@@ -3,7 +3,6 @@
 import {
   Autocomplete,
   type AutocompleteCollectionProps,
-  type AutocompleteEmptyProps,
   type AutocompleteGroupLabelProps,
   type AutocompleteGroupProps,
   type AutocompleteInputProps,
@@ -12,6 +11,7 @@ import {
 } from "@base-ui/react/autocomplete";
 import {
   Dialog,
+  DialogClose,
   DialogDescription,
   DialogOverlay,
   DialogPopup,
@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogViewport,
 } from "@zoonk/ui/components/dialog";
+import { Kbd } from "@zoonk/ui/components/kbd";
 import {
   ScrollAreaContent,
   ScrollAreaRoot,
@@ -32,24 +33,27 @@ import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
-/**
- * CommandDialog provides the Base UI dialog structure used by command palettes:
- * backdrop, visual viewport positioning, and a popup that keeps scrolling inside
- * the palette on iOS.
- */
 function CommandDialog({
   children,
   className,
+  finalFocus,
   ...props
-}: React.ComponentProps<typeof Dialog> & { className?: string; children: React.ReactNode }) {
+}: React.ComponentProps<typeof Dialog> & {
+  className?: string;
+  children: React.ReactNode;
+  finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
+}) {
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/50" />
-        <DialogViewport className="flex items-start justify-center px-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] pointer-fine:pt-[20vh]">
+        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
+        <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
+            finalFocus={finalFocus}
             className={cn(
-              "ring-foreground/5 bg-popover text-popover-foreground w-full max-w-xl overflow-hidden rounded-4xl p-1 shadow-lg ring-1 pointer-fine:max-h-[calc(100dvh-20vh-2rem)]",
+              "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
+              "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",
+              "sm:dark:ring-foreground/20 sm:dark:shadow-[0_24px_64px_-12px_rgb(0_0_0/0.8)]",
               className,
             )}
           >
@@ -61,18 +65,10 @@ function CommandDialog({
   );
 }
 
-/**
- * CommandDialogTitle keeps the accessible dialog title in the DOM without
- * adding visible chrome above the command input.
- */
 function CommandDialogTitle({ className, ...props }: React.ComponentProps<typeof DialogTitle>) {
   return <DialogTitle className={cn("sr-only", className)} {...props} />;
 }
 
-/**
- * CommandDialogDescription keeps the accessible dialog description in the DOM
- * without adding visible text that duplicates the command input placeholder.
- */
 function CommandDialogDescription({
   className,
   ...props
@@ -80,44 +76,55 @@ function CommandDialogDescription({
   return <DialogDescription className={cn("sr-only", className)} {...props} />;
 }
 
-/**
- * CommandInput matches the Base UI autocomplete demo: the input is focused when
- * the dialog opens and keeps a 16px mobile font size to avoid iOS Safari zoom.
- */
-function CommandInput({ className, ...props }: AutocompleteInputProps) {
+/** Its text stays 16px on phones so iOS Safari doesn't zoom in. */
+function CommandInput({
+  cancelLabel,
+  className,
+  ...props
+}: AutocompleteInputProps & { cancelLabel?: string }) {
   return (
-    <div className="p-1 pb-0" data-slot="command-input-wrapper">
-      <div className="bg-input/30 flex h-9 items-center gap-2 rounded-full px-3">
-        <SearchIcon aria-hidden="true" className="text-muted-foreground size-4" />
+    <div
+      className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
+      data-slot="command-input-wrapper"
+    >
+      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-[0.625rem] px-3 ring-[1.5px] ring-inset sm:h-13 sm:rounded-none sm:px-4 sm:ring-0 sm:focus-within:ring-0">
+        <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <Autocomplete.Input
           autoFocus
           className={cn(
-            "placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm",
+            "placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.9375rem]",
             className,
           )}
           data-slot="command-input"
           {...props}
         />
+        <Kbd aria-hidden="true" className="hidden sm:pointer-fine:inline-flex">
+          Esc
+        </Kbd>
       </div>
+
+      {cancelLabel && (
+        <DialogClose className="hit-area focus-visible:ring-ring/50 relative shrink-0 rounded-md text-sm font-medium outline-none focus-visible:ring-[3px] sm:hidden">
+          {cancelLabel}
+        </DialogClose>
+      )}
     </div>
   );
 }
 
-/**
- * CommandList follows Base UI's ScrollArea structure while overriding the
- * content's fit-content width because command results should only scroll
- * vertically and truncate long labels horizontally.
- */
 function CommandList({ children, className, ...props }: Omit<AutocompleteListProps, "render">) {
   return (
     <ScrollAreaRoot
-      className="h-[min(var(--total-height,18rem),18rem)] max-h-[calc(100dvh-8rem)]"
+      className="flex min-h-0 flex-1 flex-col sm:flex-none"
       data-slot="command-scroll-area"
     >
-      <ScrollAreaViewport>
+      <ScrollAreaViewport className="sm:max-h-[min(60vh,28rem)]">
         <ScrollAreaContent style={{ minWidth: 0 }}>
           <Autocomplete.List
-            className={cn("flex flex-col gap-1 p-1 outline-none", className)}
+            className={cn(
+              "flex flex-col px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] outline-none sm:gap-1 sm:p-1.5",
+              className,
+            )}
             data-slot="command-list"
             {...props}
           >
@@ -132,67 +139,41 @@ function CommandList({ children, className, ...props }: Omit<AutocompleteListPro
   );
 }
 
-/**
- * CommandEmpty must stay mounted for Base UI's live-region announcements, so
- * the default styles remove it from layout when Base UI renders no children.
- */
-function CommandEmpty({ className, ...props }: AutocompleteEmptyProps) {
-  return (
-    <Autocomplete.Empty
-      className={cn("py-6 text-center text-sm empty:sr-only empty:p-0", className)}
-      data-slot="command-empty"
-      {...props}
-    />
-  );
-}
-
-/**
- * CommandGroup scopes a set of related command items and passes the group's
- * items to Base UI's collection renderer for keyboard navigation order.
- */
 function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   return (
     <Autocomplete.Group
-      className={cn("text-foreground w-full max-w-full min-w-0 overflow-hidden p-1", className)}
+      className={cn("text-foreground w-full max-w-full min-w-0 overflow-hidden sm:p-1", className)}
       data-slot="command-group"
       {...props}
     />
   );
 }
 
-/**
- * CommandGroupLabel provides the accessible and visual label for a command
- * group without coupling group layout to a heading prop.
- */
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
     <Autocomplete.GroupLabel
-      className={cn("text-muted-foreground px-3 py-2 text-xs font-medium", className)}
+      className={cn(
+        "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case",
+        className,
+      )}
       data-slot="command-group-label"
       {...props}
     />
   );
 }
 
-/**
- * CommandCollection renders the filtered items from the nearest command group
- * or root, letting consumers choose their own item contents.
- */
 function CommandCollection({ ...props }: AutocompleteCollectionProps) {
   return <Autocomplete.Collection {...props} />;
 }
 
-/**
- * CommandItem delegates pointer and keyboard activation to Base UI while
- * keeping the compact command-row styling shared across apps.
- */
 function CommandItem({ className, ...props }: AutocompleteItemProps) {
   return (
     <Autocomplete.Item
       className={cn(
-        "group/command-item relative flex w-full max-w-full min-w-0 cursor-default items-center gap-2 overflow-hidden rounded-2xl px-3 py-2 text-sm outline-hidden select-none",
-        "data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/command-item border-border relative flex min-h-11 w-full max-w-full min-w-0 cursor-default items-center gap-3 overflow-hidden border-t py-2 text-sm outline-hidden select-none sm:rounded-lg sm:border-t-0 sm:px-2.5",
+        "sm:data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "pointer-fine:data-highlighted:after:ring-input pointer-fine:data-highlighted:after:text-muted-foreground max-sm:after:hidden pointer-fine:data-highlighted:after:ml-auto pointer-fine:data-highlighted:after:rounded-[0.3125rem] pointer-fine:data-highlighted:after:px-1 pointer-fine:data-highlighted:after:font-mono pointer-fine:data-highlighted:after:text-[0.6875rem] pointer-fine:data-highlighted:after:ring-1 pointer-fine:data-highlighted:after:content-['⏎']",
+        "[&>svg]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="command-item"
@@ -201,15 +182,15 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   );
 }
 
-/**
- * CommandShortcut gives command rows a consistent trailing shortcut treatment
- * when an app wants to show keyboard accelerators.
- */
-function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
+function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <span
-      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
-      data-slot="command-shortcut"
+    <div
+      aria-hidden="true"
+      className={cn(
+        "text-faint hidden h-9 shrink-0 items-center gap-3.5 border-t px-3.5 text-[0.71875rem] sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
+        className,
+      )}
+      data-slot="command-footer"
       {...props}
     />
   );
@@ -221,11 +202,10 @@ export {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandShortcut,
 };

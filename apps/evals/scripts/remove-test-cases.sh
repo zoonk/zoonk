@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# remove-test-cases.sh — remove specific test cases from all task results
-# Usage: pnpm evals:remove taskId id1 id2 ...
 
 set -euo pipefail
 
@@ -17,8 +15,6 @@ OUTPUTS_DIR="$ROOT/outputs/$TASK_ID"
 RESULTS_DIR="$ROOT/results/$TASK_ID"
 BATTLES_DIR="$ROOT/battles/$TASK_ID"
 
-# Build jq conditions for filtering arrays. `outputs` uses `.testCaseId`,
-# `results` uses `.testCase.id`.
 outputs_cond=""
 results_cond=""
 for id in "${IDS[@]}"; do
@@ -49,7 +45,6 @@ if [[ -d "$RESULTS_DIR" ]]; then
   done
 fi
 
-# Battles are stored one file per test case, named `<testCaseId>.json`.
 if [[ -d "$BATTLES_DIR" ]]; then
   for id in "${IDS[@]}"; do
     rm -f "$BATTLES_DIR/$id.json"

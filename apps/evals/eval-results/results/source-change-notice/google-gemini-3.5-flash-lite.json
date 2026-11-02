@@ -1,0 +1,134 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 950,
+          "outputTokens": 256,
+          "reasoningTokens": 169
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The sentence correctly says the notice changed and the question count is now 100, but does not specify that this count applies to the objective test, as required.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the notice changed and the objective test now has 100 items (or questions), in Portuguese.",
+        "id": "tcdf-question-count-1",
+        "userInput": {
+          "changes": "[{\"after\":100,\"before\":120,\"field\":\"edition.questionCount\"}]",
+          "language": "pt",
+          "source": "Concurso TCDF, Analista Administrativo de Controle Externo"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1024,
+          "outputTokens": 134,
+          "reasoningTokens": 77
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the exam date moved to 22 November 2026 (in Portuguese), and may add \"e mais\" for the other change.",
+        "id": "exam-date-moved-1",
+        "userInput": {
+          "changes": "[{\"after\":[{\"date\":\"2026-11-22\",\"kind\":\"exam\",\"label\":\"Provas objetivas e discursiva\"}],\"before\":[{\"date\":\"2026-11-08\",\"kind\":\"exam\",\"label\":\"Provas objetivas e discursiva\"}],\"field\":\"edition.dates\"},{\"after\":[{\"text\":\"Será permitido o uso de caneta transparente.\"}],\"before\":[],\"field\":\"rules\"}]",
+          "language": "pt",
+          "source": "Concurso TCDF"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 951,
+          "outputTokens": 430,
+          "reasoningTokens": 265
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The phrase 'and more' vaguely implies additional changes without identifying supporting details. Otherwise, the sentence names the documentation first, accurately states the version and removed API from the supplied lines, and meets the language, length, and punctuation requirements.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove the vague ending: 'The Next.js documentation changed: version 17 removes getServerSideProps.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In English, says the documentation changed and names the removed API or the new version from the lines.",
+        "id": "software-docs-1",
+        "userInput": {
+          "changes": "- The `getServerSideProps` API is supported in the pages router.\n+ Version 17 removes `getServerSideProps`; use Server Components to fetch data.",
+          "language": "en",
+          "source": "Next.js documentation"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 981,
+          "outputTokens": 334,
+          "reasoningTokens": 160
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The sentence says the exam changed rather than explicitly saying the dates changed, and it omits Mathematik, leaving the new date insufficiently identified. The new date itself, 06.05.2027, is correct.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Die Abitur Bayern 2027 Prüfung” is an awkward German noun construction. Otherwise, the result is one sentence under 120 characters and contains no unsupported reasons, advice, judgments, promises, or prohibited punctuation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A clearer formulation is: “Die Termine für das Abitur Bayern 2027 wurden geändert: Mathematik findet nun am 6. Mai 2027 statt.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In German, says the dates changed and gives the new Mathematik date (6 May 2027).",
+        "id": "abitur-date-1",
+        "userInput": {
+          "changes": "[{\"after\":[{\"date\":\"2027-05-06\",\"kind\":\"exam\",\"label\":\"Mathematik\"}],\"before\":[{\"date\":\"2027-05-05\",\"kind\":\"exam\",\"label\":\"Mathematik\"}],\"field\":\"edition.dates\"}]",
+          "language": "de",
+          "source": "Abitur Bayern 2027"
+        }
+      }
+    }
+  ],
+  "taskId": "source-change-notice"
+}

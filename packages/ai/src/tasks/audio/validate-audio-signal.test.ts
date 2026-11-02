@@ -3,10 +3,6 @@ import { assertAudibleAudioSignal } from "./validate-audio-signal";
 
 const SAMPLE_RATE = 48_000;
 
-/**
- * Builds normalized decoded audio so each test can describe the signal rule it
- * exercises without coupling the rule to a particular source codec.
- */
 function createDecodedAudio(channelData: Float32Array[]) {
   return { channelData, sampleRate: SAMPLE_RATE, samplesDecoded: channelData[0]?.length ?? 0 };
 }
@@ -18,7 +14,8 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([speech]),
-        model: "openai/gpt-4o-mini-tts",
+        maxSeconds: 18,
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).not.toThrow();
   });
@@ -29,7 +26,8 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([silence]),
-        model: "openai/gpt-4o-mini-tts",
+        maxSeconds: 18,
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
@@ -41,18 +39,20 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([click]),
-        model: "openai/gpt-4o-mini-tts",
+        maxSeconds: 18,
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
 
-  it("rejects audio longer than a learner phrase", () => {
+  it("rejects audio longer than the text could take to read", () => {
     const longSpeech = new Float32Array(SAMPLE_RATE * 19).fill(0.1);
 
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([longSpeech]),
-        model: "google/gemini-2.5-flash-preview-tts",
+        maxSeconds: 18,
+        model: "google/gemini-3.8-flash-tts",
       }),
     ).toThrow("returned audio longer than 18 seconds");
   });
@@ -63,7 +63,8 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([nearSilence]),
-        model: "openai/gpt-4o-mini-tts",
+        maxSeconds: 18,
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
@@ -74,7 +75,8 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([quietSpeech]),
-        model: "openai/gpt-4o-mini-tts",
+        maxSeconds: 18,
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).not.toThrow();
   });

@@ -1,0 +1,304 @@
+msgid ""
+msgstr ""
+"Language: ja\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @eloqnt/format-po\n"
+"X-Message-Key: msgctxt\n"
+
+#: src/app/auth/layout.tsx
+msgctxt "dVItHD"
+msgid "Sign in to Zoonk"
+msgstr "Zoonkにログイン"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "vO6NBp"
+msgid "Temporary email addresses aren't supported. Use another email or a privacy alias."
+msgstr "使い捨てのメールアドレスは使えません。別のメールアドレスか、プライバシー保護用のエイリアスを使ってください。"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/login/social-login.tsx
+msgctxt "pN2p0t"
+msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
+msgstr "ログイン中にエラーが発生しました。もう一度試すか、hello@zoonk.comにお問い合わせください"
+
+#: src/app/auth/login/email-login-form.tsx
+msgctxt "YRe93Y"
+msgid "Enter a valid email address"
+msgstr "有効なメールアドレスを入力してください"
+
+#: src/app/auth/login/email-login-form.tsx
+msgctxt "sy-pv5"
+msgid "Email"
+msgstr "メールアドレス"
+
+#. An example address shown in the empty email field. Keep it as written, like the app's other example addresses.
+#: src/app/auth/login/email-login-form.tsx
+msgctxt "apQW0E"
+msgid "me@gmail.com"
+msgstr "me@gmail.com"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "続ける"
+
+#: src/app/auth/login/page.tsx
+msgctxt "eN8MTJ"
+msgid "Sign in or create an account"
+msgstr "ログインまたはアカウント作成"
+
+#: src/app/auth/login/page.tsx
+msgctxt "o_pwJP"
+msgid "That sign-in expired. Try again."
+msgstr "ログインの有効期限が切れました。もう一度お試しください。"
+
+#: src/app/auth/login/page.tsx
+msgctxt "4wpUNc"
+msgid "Or"
+msgstr "または"
+
+#: src/app/auth/login/page.tsx
+msgctxt "Ju9oB-"
+msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+msgstr "「続ける」をクリックすると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したことになります。"
+
+#: src/app/auth/login/social-login.tsx
+msgctxt "FJ6r9E"
+msgid "Continue with Google"
+msgstr "Googleで続ける"
+
+#: src/app/auth/login/social-login.tsx
+msgctxt "BmecBA"
+msgid "Continue with Apple"
+msgstr "Appleで続ける"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "_8e0dn"
+msgid "Something went wrong. Try again in a moment."
+msgstr "問題が発生しました。少し待ってからもう一度お試しください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "__wP3o"
+msgid "This code expired. Get a new one."
+msgstr "このコードの有効期限が切れました。新しいコードを取得してください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "試行回数の上限に達しました。1分待ってからもう一度お試しください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "P-D93T"
+msgid "Too many wrong tries with this code. Get a new one."
+msgstr "このコードは入力ミスが続いたため使えません。新しいコードを取得してください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "AFMAKd"
+msgid "That code isn't right. Check the email and try again."
+msgstr "コードが違います。メールを確認して、もう一度入力してください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "U2LhAf"
+msgid "We sent a new code to {email}."
+msgstr "{email}に新しいコードを送りました。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "E05GNf"
+msgid "Wait a minute before asking for another code."
+msgstr "コードの再送は1分待ってからお試しください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "bWxjFV"
+msgid "We couldn't send a new code. Try again."
+msgstr "新しいコードを送信できませんでした。もう一度お試しください。"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "5UeJRL"
+msgid "Code from the email"
+msgstr "メールで届いたコード"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "gdlGkp"
+msgid "Send a new code"
+msgstr "新しいコードを送信する"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "X1bhjS"
+msgid "Didn't get it?"
+msgstr "コードが届きませんか？"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "qs4xBq"
+msgid "Send again"
+msgstr "再送信する"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "ChATeO"
+msgid "Change email"
+msgstr "メールアドレスを変更する"
+
+#: src/app/auth/otp/page.tsx
+msgctxt "zx7CKB"
+msgid "Check your email"
+msgstr "メールを確認してください"
+
+#: src/app/auth/otp/page.tsx
+msgctxt "AmelVC"
+msgid "Enter the code we sent to {email}."
+msgstr "{email}に送信したコードを入力してください。"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "CjpGzJ"
+msgid "Create your profile"
+msgstr "プロフィールを作成する"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "SmuYUd"
+msgid "What should we call you?"
+msgstr "何とお呼びすればいいですか？"
+
+#. “it” is the name and username the learner picks on this screen.
+#: src/app/auth/setup/page.tsx
+msgctxt "y9wzAs"
+msgid "You can change it later in your profile."
+msgstr "名前とユーザー名は後からプロフィールで変更できます。"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "確認しています…"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9N4_rz"
+msgid "{username} is available"
+msgstr "{username}は使えます"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username}はすでに使われています"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3〜30文字。半角英小文字（a–z）、数字、アンダースコアのみ使用できます。"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9j8lDu"
+msgid "Your username: @{username}"
+msgstr "ユーザー名：@{username}"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "UJWPJj"
+msgid "Change username"
+msgstr "ユーザー名を変更する"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "BY343C"
+msgid "Change"
+msgstr "変更する"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "HAlOn1"
+msgid "Name"
+msgstr "名前"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "ユーザー名"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "bz5AYp"
+msgid "We couldn't save your profile. Try again."
+msgstr "プロフィールを保存できませんでした。もう一度お試しください。"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgctxt "1vqX2W"
+msgid "Unable to redirect"
+msgstr "移動できません"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgctxt "83K2kN"
+msgid "The destination URL is not recognized as a trusted Zoonk application."
+msgstr "移動先のURLが、信頼できるZoonkアプリのものか確認できません。"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgctxt "-e4BVR"
+msgid "Continue to Zoonk"
+msgstr "Zoonkに進む"
+
+#. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
+#: src/components/auth-frame.tsx
+msgctxt "m-X1D0"
+msgid "Back to Zoonk"
+msgstr "Zoonkに戻る"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "Sd1Qq1"
+msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."
+msgstr "下に{chapter}の短いテストがあります。合格すると、すでに知っている内容のレッスンがスキップされます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "OPj8y4"
+msgid "Below you can choose where to focus, or take a short test that chooses for you."
+msgstr "下で重点的に学ぶ内容を選べます。短いテストを受けて決めてもらうこともできます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "ejo0Qg"
+msgid "Below you can start a short practice call whenever you're ready."
+msgstr "準備ができたら、下で短い会話の練習を始められます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "c7OWI5"
+msgid "Below you can see when your plan practices {subject}."
+msgstr "学習計画でいつ{subject}を練習するか、下で確認できます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "zPC6bz"
+msgid "Below is your week in review."
+msgstr "下に1週間の振り返りをまとめました。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "CinPvg"
+msgid "Below you can see and change what I remember about you."
+msgstr "下で、わたしが覚えていることを確認したり、変更したりできます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "u6lEYv"
+msgid "Below is your mistakes notebook, with practice for each one."
+msgstr "下の間違いノートで、それぞれの間違いに合わせた練習ができます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "qmjNYT"
+msgid "Below you can choose a mock exam to take now."
+msgstr "下から、今すぐ受ける模試を選べます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "aK1CcD"
+msgid "Below is the Plus page."
+msgstr "下にPlusのページがあります。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "KAqcUe"
+msgid "Below you can say again the words that were hard to pronounce."
+msgstr "下で、発音しにくかった単語をもう一度声に出して言えます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "BXdAAo"
+msgid "I've put the change to your plan below. Nothing changes until you apply it."
+msgstr "学習計画の変更案を下にまとめました。適用するまでは、計画は変わりません。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "cVQNWB"
+msgid "Below you can start it as a new goal."
+msgstr "下で新しい目標として始められます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "40I13C"
+msgid "Below are your statistics."
+msgstr "下で統計情報を確認できます。"

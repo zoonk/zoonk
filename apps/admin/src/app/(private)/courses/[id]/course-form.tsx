@@ -6,7 +6,6 @@ import {
   AdminEditFormFeedback,
 } from "@/components/admin-edit-form";
 import { type Course } from "@zoonk/db";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Field,
   FieldContent,
@@ -17,14 +16,9 @@ import {
 import { Input } from "@zoonk/ui/components/input";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { CheckIcon } from "lucide-react";
-import Link from "next/link";
 import { useActionState } from "react";
 import { type UpdateCourseState, updateCourseAction } from "./_actions/update-course";
 
-/**
- * Course identity editing keeps title and slug together because the title is
- * searchable while the slug is the public URL identity admins need to verify.
- */
 export function CourseForm({ course }: { course: Pick<Course, "id" | "slug" | "title"> }) {
   const [state, formAction] = useActionState(updateCourseAction, {
     error: null,
@@ -67,17 +61,13 @@ export function CourseForm({ course }: { course: Pick<Course, "id" | "slug" | "t
         </Field>
       </FieldGroup>
 
-      <AdminEditFormFeedback
-        error={state.status === "error" ? state.error : null}
-        submissionId={state.submissionId}
-        successMessage={state.status === "success" ? "Course updated successfully." : null}
-      />
-
       <AdminEditFormActions>
-        <Link className={buttonVariants({ variant: "outline" })} href="/courses">
-          Cancel
-        </Link>
         <SubmitButton icon={<CheckIcon />}>Save changes</SubmitButton>
+        <AdminEditFormFeedback
+          error={state.status === "error" ? state.error : null}
+          submissionId={state.submissionId}
+          successMessage={state.status === "success" ? "Course updated." : null}
+        />
       </AdminEditFormActions>
     </AdminEditForm>
   );

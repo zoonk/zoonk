@@ -55,8 +55,8 @@ protocol AppStoreSubscriptionClient: Sendable {
 }
 
 struct StoreKitSubscriptionClient: AppStoreSubscriptionClient {
-  /// Includes unfinished deliveries because Zoonk finishes verified transactions only after
-  /// the shared account server records them; current entitlements cover later sign-ins and restores.
+  /// Includes unfinished deliveries: Zoonk finishes a verified transaction only after the account
+  /// server records it.
   func currentEntitlements() async -> [AppStoreSubscriptionTransaction] {
     let unfinished = await collectVerifiedTransactions(from: Transaction.unfinished)
     let current = await collectCurrentEntitlements()
@@ -105,15 +105,6 @@ struct StoreKitSubscriptionClient: AppStoreSubscriptionClient {
   }
 
   private func collectCurrentEntitlements() async -> [AppStoreSubscriptionTransaction] {
-    if #available(iOS 18.4, *) {
-      return await collectCurrentEntitlementsByProduct()
-    }
-
-    return await collectVerifiedTransactions(from: Transaction.currentEntitlements)
-  }
-
-  @available(iOS 18.4, *)
-  private func collectCurrentEntitlementsByProduct() async -> [AppStoreSubscriptionTransaction] {
     var transactions = [AppStoreSubscriptionTransaction]()
 
     for productID in AppStoreSubscriptionProduct.productIDs {

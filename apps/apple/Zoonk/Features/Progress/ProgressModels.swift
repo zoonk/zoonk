@@ -1,47 +1,19 @@
 import Foundation
 
-struct ProgressOverview: Codable, Equatable, Sendable {
-  let activity: ActivitySummary
-  let energy: Double?
-  let level: LevelProgress?
-  let score: ScorePerformance?
-  let strongestDaypart: DaypartScorePattern?
-  let strongestWeekday: WeekdayScorePattern?
-
-  var isEmpty: Bool {
-    activity.isEmpty
-      && energy == nil
-      && level == nil
-      && score == nil
-      && strongestDaypart == nil
-      && strongestWeekday == nil
-  }
-}
-
 struct ActivitySummary: Codable, Equatable, Sendable {
   let learningDays: Int
   let totalLearningSeconds: Int
   let totalLessonCompletions: Int
-
-  var isEmpty: Bool {
-    learningDays == 0
-      && totalLearningSeconds == 0
-      && totalLessonCompletions == 0
-  }
 }
 
 struct ActivityProgress: Codable, Equatable, Sendable {
   let days: [ActivityProgressDay]
   let summary: ActivitySummary
-
-  var isEmpty: Bool {
-    summary.isEmpty
-  }
 }
 
 struct ActivityProgressDay: Codable, Equatable, Identifiable, Sendable {
+  let activitiesCompleted: Int
   let date: ProgressDate
-  let lessonCompletions: Int
 
   var id: ProgressDate { date }
 }
@@ -70,8 +42,16 @@ struct LevelProgress: Codable, Equatable, Sendable {
   let bpToNextLevel: Int
   let isMaxLevel: Bool
   let level: Int
+  /// The belt after this one and the Brain Power it takes; nil on Black, the last belt.
+  let nextBelt: NextBelt?
   let progressInLevel: Int
   let totalBrainPower: Int
+}
+
+struct NextBelt: Codable, Equatable, Sendable {
+  let belt: ProgressBelt
+  let brainPowerToGo: Int
+  let startBrainPower: Int
 }
 
 enum ProgressBelt: String, CaseIterable, Codable, Equatable, Sendable {
@@ -92,8 +72,6 @@ struct ScorePerformance: Codable, Equatable, Sendable {
   let incorrectAnswers: Int
   let score: Double
   let totalAnswers: Int
-
-  var hasAnswers: Bool { totalAnswers > 0 }
 }
 
 struct ScoreProgress: Codable, Equatable, Sendable {
@@ -112,9 +90,32 @@ struct ScoreProgressPoint: Codable, Equatable, Identifiable, Sendable {
 
 struct ScorePatterns: Codable, Equatable, Sendable {
   let dayparts: [DaypartScorePattern]
+  let dayVerdict: PatternVerdict<WeekdayScorePattern>
+  let minimumAnswers: Int
   let strongestDaypart: DaypartScorePattern?
   let strongestWeekday: WeekdayScorePattern?
+  let timeVerdict: PatternVerdict<DaypartScorePattern>
   let weekdays: [WeekdayScorePattern]
+  let weekSpread: ScoreSpread?
+}
+
+enum PatternVerdict<Pattern: Codable & Equatable & Sendable>: Codable, Equatable, Sendable {
+  case best(Pattern)
+  case even(points: Int)
+  case notEnough
+
+  var best: Pattern? {
+    if case .best(let group) = self {
+      return group
+    }
+
+    return nil
+  }
+}
+
+struct ScoreSpread: Codable, Equatable, Sendable {
+  let high: Double
+  let low: Double
 }
 
 struct DaypartScorePattern: Codable, Equatable, Identifiable, Sendable {

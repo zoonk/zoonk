@@ -2,7 +2,7 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const getUser = cacheAdminData(async (id: string) =>
+const cachedGetUser = cacheAdminData(async (id: string) =>
   prisma.user.findUnique({
     include: {
       _count: { select: { ownedCourses: true } },
@@ -14,3 +14,9 @@ export const getUser = cacheAdminData(async (id: string) =>
     where: { id },
   }),
 );
+
+export async function getUser(id: string) {
+  "use cache: private";
+
+  return cachedGetUser(id);
+}

@@ -2,6 +2,7 @@
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
@@ -20,14 +21,6 @@ function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
-/**
- * Semi-transparent overlay behind the drawer.
- *
- * Opacity is tied to `--drawer-swipe-progress` so it fades
- * as the user swipes to dismiss. Transitions are disabled
- * during active swiping (`data-[swiping]:duration-0`) so the
- * backdrop tracks the finger exactly.
- */
 function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
   return (
     <DrawerPrimitive.Backdrop
@@ -47,18 +40,16 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
   );
 }
 
-/**
- * The main drawer panel. Renders as a bottom sheet by default
- * with swipe-to-dismiss support via base-ui's Drawer primitive.
- *
- * The Viewport wrapper is required for swipe gestures to work.
- * The Popup tracks the swipe via `translateY(var(--drawer-swipe-movement-y))`
- * and uses velocity-based exit duration via `--drawer-swipe-strength`.
- */
-function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
+/** Base UI needs the Viewport wrapper for swipe gestures. */
+function DrawerPopup({
+  backdropClassName,
+  className,
+  children,
+  ...props
+}: DrawerPrimitive.Popup.Props & { backdropClassName?: string }) {
   return (
     <DrawerPortal>
-      <DrawerBackdrop />
+      <DrawerBackdrop className={backdropClassName} />
       <DrawerPrimitive.Viewport
         className="fixed inset-0 z-50 flex items-end justify-center"
         data-slot="drawer-viewport"
@@ -78,17 +69,13 @@ function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Pr
           {...props}
         >
           <div className="bg-muted mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
-          {children}
+          <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPortal>
   );
 }
 
-/**
- * Wraps text content inside the drawer to allow text selection
- * without triggering swipe-to-dismiss gestures.
- */
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content
@@ -131,13 +118,11 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 
 export {
   Drawer,
-  DrawerBackdrop,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerPopup,
-  DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
 };

@@ -4,11 +4,11 @@ import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics
 import { prisma } from "@zoonk/db";
 
 export const getCompletionRate = cacheAdminData(async () => {
+  const where = { ...trackedAnalyticsUserRelationWhere, kind: "lesson" } as const;
+
   const [started, completed] = await Promise.all([
-    prisma.lessonProgress.count({ where: trackedAnalyticsUserRelationWhere }),
-    prisma.lessonProgress.count({
-      where: { ...trackedAnalyticsUserRelationWhere, completedAt: { not: null } },
-    }),
+    prisma.learningEvent.count({ where }),
+    prisma.learningEvent.count({ where: { ...where, endedAt: { not: null } } }),
   ]);
 
   return started === 0 ? 0 : (completed / started) * 100;

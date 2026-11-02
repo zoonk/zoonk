@@ -1,0 +1,187 @@
+import "server-only";
+import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
+import { type LanguageConversation } from "@zoonk/db";
+import { type CefrLevel } from "@zoonk/utils/cefr";
+import { toProvenanceData } from "../../../library/_utils/library-rows";
+import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
+import {
+  getSpeakingFormat,
+  getSpeakingTask,
+  listTaskCriteria,
+} from "../../exam-speaking/speaking-formats";
+import {
+  type ConversationFeedback,
+  type ConversationTurn,
+  type SpeakingMockExam,
+  conversationFeedbackSchema,
+} from "../conversation-contract";
+import { getMetObjectives } from "../conversation-rules";
+import { getSpeakingMockOverall, getSpeakingMockRating } from "../speaking-mock-format";
+import { type SavedScenario } from "./conversation-view";
+import { findNewlyMetObjectives } from "./objective-check";
+
+type ReviewInput = {
+  level: CefrLevel;
+  row: Pick<LanguageConversation, "goalId" | "language" | "objectivesMet" | "targetLanguage">;
+  scenario: SavedScenario;
+  spokenSeconds: number;
+  turns: ConversationTurn[];
+  userId: string;
+};
+
+export type WrittenFeedback = {
+  feedback: ConversationFeedback;
+  provenance: ReturnType<typeof toProvenanceData>;
+};
+
+async function writeMockFeedback({
+  exam,
+  input,
+}: {
+  exam: SpeakingMockExam;
+  input: ReviewInput;
+}): Promise<WrittenFeedback> {
+  const { data, provenance } = await scoreSpeaking({
+    ...getSpeakingMockRating(exam),
+    analytics: { contentScope: "personal", distinctId: input.userId },
+    exam,
+    learnerLanguage: input.row.language,
+    spokenSeconds: input.spokenSeconds,
+    turns: input.turns,
+  });
+
+  const feedback = conversationFeedbackSchema.parse({
+    criteria: data.criteria,
+    exam,
+    focus: data.focus,
+    kind: "speakingMock",
+    overall: getSpeakingMockOverall({ criteria: data.criteria, exam }),
+  });
+
+  return { feedback, provenance: toProvenanceData(provenance) };
+}
+
+async function writeExamTaskFeedback({
+  examTask,
+  input,
+}: {
+  examTask: ExamTaskSnapshot;
+  input: ReviewInput;
+}): Promise<WrittenFeedback> {
+  const format = getSpeakingFormat(examTask);
+  const task = format ? getSpeakingTask({ format, task: examTask.task }) : null;
+
+  if (!format || !task) {
+    throw new Error(`No speaking paper for ${examTask.exam} ${examTask.level} ${examTask.task}`);
+  }
+
+  const { data, provenance } = await scoreSpeaking({
+    analytics: { contentScope: "personal", distinctId: input.userId },
+    criteria: listTaskCriteria({ format, task: task.key }),
+    exam: format.exam,
+    learnerLanguage: input.row.language,
+    level: format.level,
+    spokenSeconds: input.spokenSeconds,
+    task: { brief: task.brief, minutes: task.minutes, name: task.name, role: task.role },
+    title: format.title,
+    turns: input.turns,
+  });
+
+  return { feedback: { ...data, kind: "examSpeaking" }, provenance: toProvenanceData(provenance) };
+}
+
+async function writeCallFeedback(
+  input: ReviewInput & { objectivesMet: string[] },
+): Promise<WrittenFeedback> {
+  const { data, provenance } = await writeConversationFeedback({
+    analytics: { contentScope: "personal", distinctId: input.userId },
+    learnerLanguage: input.row.language,
+    level: input.level,
+    objectivesMet: input.objectivesMet,
+    scenario: {
+      characterName: input.scenario.character.name,
+      objectives: input.scenario.objectives.map((objective) => objective.label),
+      situation: input.scenario.situation,
+      title: input.scenario.title,
+    },
+    targetLanguage: input.row.targetLanguage,
+    turns: input.turns,
+  });
+
+  return { feedback: { ...data, kind: "call" }, provenance: toProvenanceData(provenance) };
+}
+
+async function writeFeedback({
+  turns,
+  write,
+}: {
+  turns: ConversationTurn[];
+  write: () => Promise<WrittenFeedback>;
+}): Promise<WrittenFeedback | null> {
+  if (!turns.some((turn) => turn.speaker === "learner")) {
+    return null;
+  }
+
+  return write();
+}
+
+export function getExamTaskObjectives({
+  scenario,
+  turns,
+}: {
+  scenario: SavedScenario;
+  turns: ConversationTurn[];
+}): string[] {
+  const spoke = turns.some((turn) => turn.speaker === "learner");
+  return spoke ? scenario.objectives.map((objective) => objective.label) : [];
+}
+
+async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
+  const newlyMet = await findNewlyMetObjectives(input);
+
+  return getMetObjectives({
+    labels: [...input.row.objectivesMet, ...newlyMet],
+    objectives: input.scenario.objectives,
+  });
+}
+
+/** A live call's objectives are checked again on the whole call; an exam task's need no model. */
+export function checkReviewedObjectives(input: ReviewInput): Promise<string[]> {
+  return input.scenario.examTask
+    ? Promise.resolve(getExamTaskObjectives(input))
+    : findObjectivesMet(input);
+}
+
+/** An exam's score doesn't read the objectives, so it's written alongside their check. */
+export type ExamScore = { exam: false } | { exam: true; feedback: WrittenFeedback | null };
+
+export async function scoreReviewedExam(input: ReviewInput): Promise<ExamScore> {
+  const { exam, examTask } = input.scenario;
+
+  if (examTask) {
+    const feedback = await writeFeedback({
+      turns: input.turns,
+      write: () => writeExamTaskFeedback({ examTask, input }),
+    });
+
+    return { exam: true, feedback };
+  }
+
+  if (exam) {
+    const feedback = await writeFeedback({
+      turns: input.turns,
+      write: () => writeMockFeedback({ exam, input }),
+    });
+
+    return { exam: true, feedback };
+  }
+
+  return { exam: false };
+}
+
+export function writeCallReviewFeedback(
+  input: ReviewInput & { objectivesMet: string[] },
+): Promise<WrittenFeedback | null> {
+  return writeFeedback({ turns: input.turns, write: () => writeCallFeedback(input) });
+}

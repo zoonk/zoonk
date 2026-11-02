@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "speaking_eyebrow": "aa15f9f91e1e0aaec2dcae56b987b9f56df527ebe7442e842818e2459c829e2b",
+  "speaking_facts": "2ec13f278ffdacabb8b1946ade52222d41e4a9d8528b6568f8d147ce100e5f64",
+  "speaking_footer": "0e9395da9a9b6072639483fea4bf36d952a1bddcbf12a204c7b3bd03b1576cda",
+  "speaking_footer_partner": "9b836cc3763d81bba0f916596318f202f4fcb0cef2753e0e6ef0c3e3f92b7227",
+  "speaking_last_at": "3416dd4f7b65970fc65b6f3c205ae9a1cf8a5be57d3c609da41e091280413c1d",
+  "speaking_last_below": "8aae2044c68220ea2981a2e6a1c259d65ccc40e458343074368dffc6a57eb880",
+  "speaking_last_near": "139b1f25230a5cd0414d8a5586677c046d4d417d6a2866d7d99d130d4d29be9d",
+  "speaking_last_none": "cf64d3794341c4048b9c7367bbf013577cb32bc450ef57bfde623e5bf0bb30ec",
+  "speaking_last_result": "f149e88b577d32253725c39596c6b3bbe7b0a529d10c70a2456e30a718c356b6",
+  "speaking_mock_failed": "a4d1b4477e6931db19acb90d3290a40b7eebe843e440e6a4b41077e56774bddb",
+  "speaking_mock_ielts": "5b54550bb4036a7255d3cfceb6ce9aea2806415e0538c840213ed1428a462914",
+  "speaking_mock_opens": "77ac8c199ddad12816de4a4798465593b7b5ad37b270c144cee6ca54e21561ee",
+  "speaking_mock_start": "50ca5fb3f35be330fe5ef9615b38dc3af209b409d381a6394db26849d3a6d395",
+  "speaking_mock_toefl": "a221110114bc9b54d290131d7acafa193fce8178e959422382605481249402c8",
+  "speaking_no_time_day": "5630b274033d9a626b26adb3344d143b527f5f875c02874ea82731df42a07107",
+  "speaking_no_time_month": "79c7766b1c68cf2f2972f405e836bc9458a56c95e6fb7ea7d7a0a3c605a16979",
+  "speaking_official": "e39fca07042da9f84801976e946bbd4b152b2e761320618c5681af2b1be79432",
+  "speaking_official_format": "9f2fd042c6b7bb17b712bc1671a194d1ab9ae59d416b03255211c67f8b423e7c",
+  "speaking_opens_when_ready": "c62e0b9f4073d22b2ad61222699ad650f23791a79091c756f6f8f186affe4ed6",
+  "speaking_plus": "2897d69a5f1e77d70a84d2690a0d28c60775c3ab2ece4208bbd0a640e79e224b",
+  "speaking_prep": "8830a78914e40f4a9f92b82e7cc77a6bb05bbf23d89e9aa8c71fd39c724f388e",
+  "speaking_prep_shared": "7327f0d42ad39bd5e531487d675fe0386561f716e6d97eb2fcd3edb6505c03f4",
+  "speaking_rated_on": "8106c3f7a66f1daf6d82a94b72643ce0dd110e8f78096ba05dd31abd3c6af1f1",
+  "speaking_row": "e144f8e2cdc06ca97bdbd8c863dd24c5ff89ad6beb7b48b02b16f62f46a19f97",
+  "speaking_section": "3401189f0f9df28051228492f73cc6d462b34b749eecd2665473b91e44d611b7",
+  "speaking_start_failed": "c62938dac11ac02cfa1a8a579b1bc9f04f25054d771846102e252a3fdb5fde30",
+  "speaking_start_task": "ddb4b0691e98b59fd0b244b99744ef899277654ddceea228f533d083d85b2505",
+  "speaking_tasks": "e0fbf5e94abb64bce83c88bcd89380ecf55b386cb20e65a3c0eddf5416d1b36e",
+  "speaking_title": "15a214aa5b806af11b7dc087cf4413f6b0785b8c50feed37a3676ce07036c4f9",
+  "speaking_writing_mock": "0899e63f28d2d343fe56b40cfa84efc1bc820ccc0f37387b620747c8ceaff295",
+  "speaking_writing_mock_line_1": "c10b12d16e7357a38b14233defb781d7b5deeb5712a38a6c2b42b1ace011fdaa",
+  "speaking_writing_mock_line_2": "d79e1de9f2c9a1084c60f0e042bc7d31e49478dcb76da96203486fd9a578451a",
+  "speaking_writing_mock_line_3": "5ade970c4ef866f7a78c5f83dd89075935e41f905f4e0fc3f285db702b8838be",
+  "speaking_writing_mock_line_4": "3970b484e79a77786776588659ae5b9c33aacf7eb5f2913092075b4875e881e3",
+  "speaking_writing_mock_phase": "3f767be6a0196bd7a0e8248319a7917e1dc1b2efc1b64d472cea9a6ae699d3ba"
+}
+-->
+<resources>
+    <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
+    <string name="speaking_title">Konuşma pratiği</string>
+    <string name="speaking_eyebrow">Sınav formatında konuşma</string>
+    <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
+    <plurals name="speaking_facts">
+        <item quantity="one">%1$d bölüm · sınavda %2$s</item>
+        <item quantity="other">%1$d bölüm · sınavda %2$s</item>
+    </plurals>
+    <string name="speaking_official">%1$s resmî bir sınav. Sınava girmeyi planlasan da planlamasan da konuşma bölümleriyle pratik yap.</string>
+    <string name="speaking_tasks">Bölümler</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Konuşma</string>
+    <string name="speaking_plus">Konuşma pratiği Plus’a dahildir: sınavın her bölümünü bir sohbette yapar, her birinin ardından resmî ölçütlere göre tahmini bir değerlendirme alırsın.</string>
+    <string name="speaking_opens_when_ready">Kart hazır olur olmaz bölümün açılır.</string>
+    <string name="speaking_no_time_month">Bu bölüm için bu ay yeterli sohbet süren kalmadı</string>
+    <string name="speaking_no_time_day">Bu bölüm için bugün yeterli sohbet süren kalmadı</string>
+    <string name="speaking_start_failed">Bölüm başlamadı. Birazdan tekrar dene.</string>
+    <string name="speaking_footer_partner">Gerçek bir değerlendiricinin veya diğer adayın yerini bir yapay zekâ alır. Her denemede yeni bir kart verilir ve ardından sınavın resmî ölçütlerine göre tahmini bir değerlendirme alırsın; bu resmî bir puan değildir.</string>
+    <string name="speaking_footer">Gerçek bir değerlendiricinin yerini bir yapay zekâ alır. Her denemede yeni bir kart verilir ve ardından sınavın resmî ölçütlerine göre tahmini bir değerlendirme alırsın; bu resmî bir puan değildir.</string>
+    <string name="speaking_official_format">Resmî formatı incele</string>
+    <string name="speaking_start_task">Bu bölüme başla</string>
+    <string name="speaking_last_result">Son sonucunu gör</string>
+    <string name="speaking_last_none">Son deneme: tahmin yok</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
+    <string name="speaking_last_at">Son deneme: %1$s/%2$s ölçüt %3$s seviyesinde</string>
+    <string name="speaking_last_near">Son deneme: %1$s/%2$s ölçüt %3$s düzeyine yakın</string>
+    <string name="speaking_last_below">Son deneme: %1$s düzeyinin altında</string>
+    <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
+    <string name="speaking_prep_shared">Hazırlık süresi: %1$s (bölümler: %2$s)</string>
+    <string name="speaking_prep">Hazırlık için %1$s</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="speaking_rated_on">Değerlendirme ölçütleri: %1$s.</string>
+    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">Sohbette %1$s bölümlerini dene</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_ielts">Bir değerlendiriciyle kısa bir konuşma sınavı. Sonunda her ölçüt için tahmini bir puan.</string>
+    <!-- A band is the exam's score for each criterion. -->
+    <string name="speaking_mock_toefl">Cümleleri tekrarla, ardından bir değerlendiriciyle kısa bir görüşme yap. Sonunda her ölçüt için 1 ile 6 arasında tahmini bir puan.</string>
+    <string name="speaking_mock_start">Deneme sınavını başlat</string>
+    <string name="speaking_mock_opens">Deneme sınavın hazır olur olmaz açılacak.</string>
+    <string name="speaking_mock_failed">Deneme sınavı başlamadı. Birazdan tekrar dene.</string>
+    <string name="speaking_writing_mock">Deneme sınavını hazırlıyoruz</string>
+    <string name="speaking_writing_mock_phase">Değerlendiricinin konuşma metnini hazırlıyoruz</string>
+    <string name="speaking_writing_mock_line_1">Değerlendiricini seçiyoruz…</string>
+    <string name="speaking_writing_mock_line_2">Değerlendiricinin sorularını hazırlıyoruz…</string>
+    <string name="speaking_writing_mock_line_3">Bölümleri yaklaşık beş dakikaya sığdırıyoruz…</string>
+    <string name="speaking_writing_mock_line_4">Yardımcı olacak ifadeler ekliyoruz…</string>
+</resources>

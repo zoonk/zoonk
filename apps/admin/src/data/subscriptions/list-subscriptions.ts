@@ -43,10 +43,6 @@ export type AdminSubscription = Awaited<
   ReturnType<typeof listSubscriptions>
 >["subscriptions"][number];
 
-/**
- * The admin subscription log keeps every lifecycle state visible by default,
- * while applying a narrow status condition only when support selects one.
- */
 export async function listSubscriptions({
   filter,
   limit,
@@ -59,11 +55,7 @@ export async function listSubscriptions({
   return cachedListSubscriptions(filter, limit, offset);
 }
 
-/**
- * The subscriptions table intentionally has no Prisma user relation. Joining
- * only for page references preserves orphan-safe totals without loading every
- * subscription and user into application memory before pagination.
- */
+/** The subscriptions table has no Prisma user relation, so users are joined in SQL for the page only. */
 async function findSubscriptionPageReferences({
   filter,
   limit,
@@ -89,11 +81,6 @@ async function findSubscriptionPageReferences({
   `;
 }
 
-/**
- * Count and page queries share the same user eligibility and status conditions,
- * so orphaned subscription rows or analytics-excluded users cannot inflate
- * pagination or create a short page.
- */
 async function countUserSubscriptions(filter: SubscriptionFilter) {
   const whereCondition = getSubscriptionWhereCondition(filter);
 
@@ -119,7 +106,6 @@ function getSubscriptionIds(pageReferences: SubscriptionPageReference[]) {
   return pageReferences.map((subscription) => subscription.id);
 }
 
-/** Restores the SQL page order after Prisma loads the complete subscription models by id. */
 function orderSubscriptionsByPage({
   pageReferences,
   subscriptions,
@@ -140,10 +126,6 @@ function isSubscription(subscription: Subscription | undefined): subscription is
   return subscription !== undefined;
 }
 
-/**
- * The page query excludes organization-owned references, so its bounded user
- * references need one batched lookup before rendering.
- */
 async function findSubscriptionUsers<T extends { referenceId: string }>({
   subscriptions,
 }: {
@@ -158,7 +140,6 @@ async function findSubscriptionUsers<T extends { referenceId: string }>({
   return prisma.user.findMany({ where: { id: { in: userIds } } });
 }
 
-/** Missing users are excluded because the support table requires a valid account link. */
 function addUserToSubscription({
   subscription,
   usersById,

@@ -1,1 +1,2 @@
-# Feature-specific rules belong next to the dependency or reflection boundary that requires them.
+# WebRTC's native code calls its Java classes by name.
+-keep class livekit.org.webrtc.** { *; }

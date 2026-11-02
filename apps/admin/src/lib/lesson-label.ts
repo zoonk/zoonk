@@ -1,39 +1,18 @@
-import { type LessonKind } from "@zoonk/db";
-
-type LessonLabelInput = { kind: LessonKind; title: string | null };
-
-const lessonKindLabels: Record<LessonKind, string> = {
-  alphabet: "Alphabet",
-  custom: "Custom lesson",
-  explanation: "Explanation",
-  grammar: "Grammar",
-  listening: "Listening",
+const lessonKindLabelsByText: Partial<Record<string, string>> = {
+  boss: "Boss",
+  capsule: "Capsule review",
+  examSpeaking: "Exam speaking task",
+  extraPractice: "Extra practice",
+  finalBoss: "Final boss",
+  library: "Library lesson",
+  mistakePractice: "Mistake practice",
+  patternDrill: "Pattern drill",
   practice: "Practice",
-  quiz: "Quiz",
-  reading: "Reading",
-  review: "Review",
-  translation: "Translation",
-  tutorial: "Tutorial",
-  vocabulary: "Vocabulary",
+  speakingMock: "Speaking mock",
+  weeklyChallenge: "Weekly challenge",
 };
 
-/**
- * Admin tables need the same lesson kind wording in stats, review queues, and
- * lesson lists so generated content logs do not drift across pages.
- */
-export function getAdminLessonKindLabel(kind: LessonKind): string {
-  return lessonKindLabels[kind];
-}
-
-/**
- * Admin review queues can receive structural lessons that intentionally have
- * no stored title. The fallback mirrors the learner-facing kind label closely
- * enough for reviewers to understand what generated item they are checking.
- */
-export function getAdminLessonLabel({ kind, title }: LessonLabelInput): string {
-  if (title) {
-    return title;
-  }
-
-  return getAdminLessonKindLabel(kind);
+/** The ledger stores kinds as text, so an unknown kind shows as stored. */
+export function getAdminLessonKindLabel(kind: string): string {
+  return lessonKindLabelsByText[kind] ?? kind;
 }

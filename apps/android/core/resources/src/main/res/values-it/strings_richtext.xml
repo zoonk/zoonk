@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "f7df217d5be54f9b5edff4e1bb77b186dfa4c45f6b3f5a83160ecf1e3db5c3e6",
+  "richtext_math_fraction": "c5dc350b0beb1d37e25160fbd1e14f91acedf16693f6897bc71f4b5721710318",
+  "richtext_math_power": "586d3cf3866ea2cee62735431d07d4399c7e17ccae36b4c9eea218375aea689d",
+  "richtext_math_root": "5557df7d099c5d0a89b5be933a4181500d7f2446675710aec0f5b84f47bc7008",
+  "richtext_math_squared": "07defa9bc7996ce679208d2d48c216af39dfc8147535a2bf233532f4d0b3e595",
+  "richtext_math_subscript": "ce381f3348edf557810d9fb143875edb5386ab3152fe2eb076f97107191c0afb"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">al quadrato</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">al cubo</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">elevato a %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">pedice %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s su %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">radice quadrata di %1$s</string>
+</resources>

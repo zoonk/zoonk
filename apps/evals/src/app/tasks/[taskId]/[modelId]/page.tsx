@@ -33,10 +33,6 @@ import { TaskModelActionsCard, TaskModelActionsCardSkeleton } from "./task-model
 type TaskModelRouteParams = PageProps<"/tasks/[taskId]/[modelId]">["params"];
 type TaskModelRouteProps = { params: TaskModelRouteParams };
 
-/**
- * Resolves the task and model URL once for the breadcrumb, header, and body so
- * each Suspense region shares identical validation and decoded model data.
- */
 const getTaskModelRoute = cache(async (taskId: string, rawModelId: string) => {
   const { task } = await getTaskRoute(taskId);
   const modelId = decodeURIComponent(rawModelId);
@@ -49,20 +45,12 @@ const getTaskModelRoute = cache(async (taskId: string, rawModelId: string) => {
   return { model, modelId, task, taskId };
 });
 
-/**
- * Resolves Next's Promise-based route params before passing stable primitive
- * cache keys to the shared task and model lookup.
- */
 async function getTaskModelRouteFromParams(params: TaskModelRouteParams) {
   const { modelId, taskId } = await params;
 
   return getTaskModelRoute(taskId, modelId);
 }
 
-/**
- * Keeps the two URL-dependent breadcrumb positions visible while their task
- * and model labels resolve.
- */
 function TaskModelBreadcrumbSkeleton() {
   return (
     <>
@@ -73,10 +61,6 @@ function TaskModelBreadcrumbSkeleton() {
   );
 }
 
-/**
- * Resolves both dynamic labels together so the breadcrumb never mixes task and
- * model names from different route states.
- */
 async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
   const { model, task } = await getTaskModelRouteFromParams(params);
 
@@ -89,10 +73,6 @@ async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
   );
 }
 
-/**
- * Streams URL-specific task metadata into a focused header boundary while the
- * rest of the model page shell remains available.
- */
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
   const { task } = await getTaskModelRouteFromParams(params);
 
@@ -108,10 +88,6 @@ async function TaskModelHeader({ params }: TaskModelRouteProps) {
   );
 }
 
-/**
- * Reads results, generated outputs, and progress in parallel because none of
- * those mutable files depends on another to render the model body.
- */
 const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => {
   const { model, modelId, task } = await getTaskModelRoute(taskId, rawModelId);
 
@@ -128,20 +104,12 @@ const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => 
   return { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName: task.name };
 });
 
-/**
- * Resolves the model route once per consumer before reusing the primitive-keyed
- * content cache across the action and results Suspense regions.
- */
 async function getTaskModelContentFromParams(params: TaskModelRouteParams) {
   const { modelId, taskId } = await params;
 
   return getTaskModelContent(taskId, modelId);
 }
 
-/**
- * Keeps the guaranteed action card independent from the optional output or
- * result section so its fallback always has a matching resolved element.
- */
 async function TaskModelActions({ params }: TaskModelRouteProps) {
   const { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName } =
     await getTaskModelContentFromParams(params);
@@ -167,10 +135,6 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
   );
 }
 
-/**
- * Avoids guessing whether mutable files will resolve to evaluated results,
- * generated-only outputs, or no secondary section at all.
- */
 async function TaskModelResults({ params }: TaskModelRouteProps) {
   const { generatedOutputs, results } = await getTaskModelContentFromParams(params);
 
@@ -181,10 +145,6 @@ async function TaskModelResults({ params }: TaskModelRouteProps) {
   return generatedOutputs && <GeneratedOutputs outputs={generatedOutputs} />;
 }
 
-/**
- * Prefetches the stable model-page structure while URL labels and current eval
- * files stream through focused, visible Suspense fallbacks.
- */
 export default function TaskModelPage({ params }: TaskModelRouteProps) {
   return (
     <main className="flex flex-col gap-4">

@@ -1,0 +1,295 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The supplied questions and sample answers are correct. Two successive 10% increases produce 1.10 × 1.10 = 1.21, a 21% increase. The table's only consecutive-day decrease is Tuesday to Wednesday, from 46 to 38 kg, a drop of 8 kg. At equal operating time, reducing power from 5,000 W to 3,500 W reduces electrical energy consumption because E = Pt. No wrong-key, multiple-answer, or factual-error cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The percentage response clearly addresses the realistic mistake of adding successive rates, and the table key identifies comparison with the wrong baseline. However, all multiple-choice items are absent, so none of the requested distractors, misconception labels, or option-specific explanations is supplied. Empty accepted-answer lists do not document alternative correct wordings, and several key points bundle or duplicate ideas rather than providing independent grading checks. There are no existing generic misconception labels or implausible distractors that trigger their specific caps.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The contexts are in Brazilian Portuguese and the table is correctly placed in context as a GFM pipe table. Nevertheless, the set contains no five-option ENEM questions at all. The table item is a straightforward elementary subtraction exercise, and the electricity item is a simple qualitative prompt rather than an intermediate contextual calculation. The set would look out of place as the requested ENEM placement assessment, triggering the at-most-7 cap; the complete omission of its exam-format component warrants 6.",
+          "score": 6,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The percentage and table questions apply their respective skills rather than merely asking for definitions, and the learner-facing material is in the requested language. The electricity question remains related to its skill but never requires calculating energy or cost, substantially under-testing the specified intermediate competency. With only one question per skill, the requested within-skill variety and paired situations are also absent. The specific recall and same-way repetition caps are not triggered, but coverage and variety remain materially incomplete.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 6 parts passed. Aumentos e descontos percentuais sucessivos, quick 1: The question is empty. Aumentos e descontos percentuais sucessivos, quick 1: Has 0 correct options instead of 1. Leitura de dados em tabelas, quick 1: The question is empty. Consumo de energia elétrica em casa, quick 1: The question is empty.",
+          "score": 5.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2731,
+          "outputTokens": 924,
+          "reasoningTokens": 191
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three required multiple-choice questions are missing: every quick array is empty. This removes half the requested assessment, including all five-option ENEM items and their diagnostic distractors. The electricity question also avoids the skill's required energy and cost calculations, testing only a qualitative relationship.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Every acceptedAnswers list is empty, leaving common correct formulations undocumented. Some key points combine separately checkable claims, and the percentage item redundantly assesses the same explanation in multiple key points. The table question reads more like an elementary classroom exercise than an ENEM item.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Remove the unused gas-heater alternative from the electricity context; it introduces a comparison that the question never asks the learner to make.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "id": "pt-enem-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+              "level": "beginner",
+              "name": "Leitura de dados em tabelas"
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent solutions give x = 17, 150 texts, a 25% increase in orders, an $8 fixed rental fee, and a $185 increase per additional credit; these answers are correct. The milk price fell by 20%, and a 25% increase from $3.20 does restore $4.00. Although the sample answer explains this distinction, the first grading point says the shopper is wrong when the direct question asks about the valid increase. This is one wrong-key item, triggering the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Several distractor explanations lack a valid connection to their options, triggering the cap of 7. Failing to distribute the 3 to the constant would yield x = 9, not x = 7; the proposed errors for x = 3 also do not establish that answer. The explanation for 80% describes 300/240 = 125%, whereas 80% naturally comes from 240/300. Other feedback, such as dividing the change by the new value to obtain 20%, is specific and useful. Empty accepted-answer lists, compound key points, and an unnecessarily prescribed solution order further weaken typed-response grading.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The multiple-choice items generally use concise contexts, direct questions, and four options consistent with Digital SAT Math. However, every typed item requests prose explanations, and one also requires writing an equation. These are not Digital SAT student-produced numeric responses, so a substantial portion of the set would look and score out of place. The stated cap of 7 applies.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions use the requested skills rather than simply asking for definitions, remain in English, and give each skill a different typed situation from its multiple-choice situation. The linear-model pair covers both intercept and slope, and the percent pair changes from growth to a price reduction and reversal. Difficulty coverage is relatively narrow: the equation items are straightforward, and the item labeled hard adds more ambiguity than mathematical challenge.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3990,
+          "outputTokens": 1216,
+          "reasoningTokens": 431
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The percent-change typed question has a contradictory grading key: the answer to the actual question is yes, since $3.20 × 1.25 = $4.00, but the first key point requires saying the shopper is wrong. Several distractor explanations do not explain their selected values, particularly x = 7, x = 3, and 80%. All three typed items require written explanations rather than Digital SAT student-produced numeric answers, and none supplies accepted answers.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The equation-solving key unnecessarily requires subtracting the fixed fee before dividing, excluding other valid solution sequences. Some key points combine multiple independently checkable ideas, while the linear-model key repeats the per-credit interpretation and requires discussion of the fixed fee even though the question does not ask for it.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Broaden the difficulty range with a more demanding equation involving fractions or parentheses on both sides. Keep each grading point focused on one requested idea, and distinguish essential mathematical reasoning from optional explanatory detail.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
+        "id": "en-sat-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+              "level": "intermediate",
+              "name": "Solving linear equations in one variable"
+            },
+            {
+              "description": "Compute the percent increase or decrease between an original and a new value.",
+              "level": "intermediate",
+              "name": "Percent change"
+            },
+            {
+              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
+              "level": "intermediate",
+              "name": "Interpreting linear models"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The mitochondria answer is appropriate for a eukaryotic cell, and the moderate-warming explanation is sound. However, the unspecified enzyme does not support a unique temperature prediction, and the seedling question does not distinguish healthy growth from dark-induced elongation. Light is an energy source, not a raw material, so the photosynthesis stem also needs correction. Two or more questions have factual or answer-defensibility problems, triggering the maximum score of 5.",
+          "score": 5,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors have specific labels and explanations that identify the mistaken reasoning, especially the photosynthesis input/output reversals. Several enzyme alternatives are less plausible learner misconceptions. All acceptedAnswers arrays are empty; sample answers do not establish the range of acceptable correct wording. Multiple typed criteria combine ideas, such as bringing in oxygen and removing carbon dioxide, and some criteria repeat the same light–sugar relationship. These weaknesses prevent reliable point-by-point grading. The several weak distractors warrant the maximum-7 cap.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Jogging and gardening provide accessible everyday settings, and the language is generally suitable for beginners. However, all three multiple-choice items are abstract textbook questions rather than realistic everyday situations, making a substantial portion of the set out of place under the no-exam expectation and triggering the maximum-7 cap. The unusually long correct enzyme option also provides an answer cue.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The output provides exactly one multiple-choice and one typed question per skill, stays in English, and generally keeps each question within its assigned biology topic. The typed items ask learners to explain or predict. Nevertheless, the location and photosynthesis-input questions are direct recall, enzyme coverage omits pH entirely, and cellular respiration never explicitly checks energy storage as ATP. The set therefore only partially diagnoses the supplied skills.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3573,
+          "outputTokens": 1106,
+          "reasoningTokens": 284
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several questions need scientific qualification. The enzyme experiment cannot reliably key 37°C as best or 90°C as disabling without identifying the enzyme or specifying its temperature response; some starch-digesting enzymes tolerate high temperatures. The seedling question makes 'bigger' ambiguous: dark-grown seedlings can elongate using seed reserves, so the light-grown seedlings are not necessarily taller after a week. The photosynthesis multiple-choice question also incorrectly groups light energy with raw materials. All three typed items lack accepted-answer guidance, and several key points combine separately checkable ideas.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some enzyme distractors are weakly grounded in realistic beginner mistakes, particularly becoming bigger or turning into a better substance. The correct enzyme option is conspicuously longer than the alternatives. The enzyme typed rubric requires an explanation of the 5°C tube even though the question explicitly asks only for the best tube and what happens at 90°C. The respiration feedback overgeneralizes by ruling out the cell membrane without specifying a eukaryotic cell.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use short everyday situations for the multiple-choice items rather than mostly textbook recall. Add a pH comparison within the enzyme skill and explicitly assess ATP in cellular respiration. Replace 'bigger' with a clearly defined outcome, specify a familiar enzyme with a stated temperature response, split typed criteria into individual ideas, and supply acceptable paraphrases for each.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one multiple-choice question with a misconception behind every wrong option and one typed question whose key points can be checked one at a time (for cellular respiration, for example: glucose is broken down, oxygen is used, energy is stored as ATP). Each question tests only its own skill.",
+        "id": "en-biology-placement-no-exam-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Explain how cells release energy from glucose using oxygen, and where it happens.",
+              "level": "beginner",
+              "name": "Cellular respiration"
+            },
+            {
+              "description": "Explain how plants use light, water and carbon dioxide to make sugar and release oxygen.",
+              "level": "beginner",
+              "name": "Photosynthesis"
+            },
+            {
+              "description": "Explain how temperature and pH change how fast an enzyme works, and why too much heat stops it.",
+              "level": "beginner",
+              "name": "Enzyme activity"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "placement-items"
+}

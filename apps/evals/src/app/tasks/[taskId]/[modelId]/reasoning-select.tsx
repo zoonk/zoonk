@@ -13,10 +13,6 @@ import {
 
 const REASONING_SELECT_ID = "reasoning-level";
 
-/**
- * Formats portable AI SDK reasoning values as readable labels while preserving
- * the exact value submitted to the output-generation Server Action.
- */
 export function ReasoningSelect({ reasoning }: { reasoning?: Reasoning }) {
   return (
     <div className="flex flex-col gap-2">

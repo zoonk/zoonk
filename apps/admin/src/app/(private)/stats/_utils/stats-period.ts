@@ -21,10 +21,6 @@ type StatsSearchParams = {
   start?: string | string[];
 };
 
-/**
- * Analytics only supports periods that correspond to a real decision: a
- * calendar month, calendar year, all time, or a deliberately chosen range.
- */
 function parseAdminStatsPeriod(value: string): AdminStatsPeriod {
   if (value === "month" || value === "year" || value === "all" || value === "custom") {
     return value;
@@ -33,11 +29,7 @@ function parseAdminStatsPeriod(value: string): AdminStatsPeriod {
   return "year";
 }
 
-/**
- * Custom dates use a strict UTC calendar representation so links behave the
- * same way for admins in every timezone and malformed dates never reach a
- * database boundary.
- */
+/** Strict UTC dates, so links read the same for admins in every time zone. */
 function parseCustomDate(value: string | string[] | undefined): Date | undefined {
   const scalarValue = Array.isArray(value) ? value[0] : value;
 
@@ -54,10 +46,6 @@ function parseCustomDate(value: string | string[] | undefined): Date | undefined
   return date;
 }
 
-/**
- * Includes the full final calendar day because all period queries use
- * inclusive boundaries.
- */
 function getEndOfDay(date: Date): Date {
   return new Date(
     Date.UTC(
@@ -72,21 +60,12 @@ function getEndOfDay(date: Date): Date {
   );
 }
 
-/**
- * Current-period charts stop at today rather than plotting future calendar
- * buckets as false zeroes. Historical and earlier custom ranges keep their
- * complete selected boundary.
- */
+/** Current-period charts stop at today instead of plotting future buckets as zeroes. */
 function getChartEnd(end: Date): Date {
   const today = getEndOfDay(new Date());
   return end < today ? end : today;
 }
 
-/**
- * Compares a custom range with the immediately preceding range of the same
- * duration, which makes the change indicator meaningful without inventing a
- * month or year boundary the admin did not select.
- */
 function getCustomDateRanges({ end, start }: { end: Date; start: Date }) {
   const currentEnd = getEndOfDay(end);
   const duration = currentEnd.getTime() - start.getTime() + 1;
@@ -99,20 +78,11 @@ function getCustomDateRanges({ end, start }: { end: Date; start: Date }) {
   };
 }
 
-/**
- * Daily buckets remain readable for short custom ranges; longer ranges switch
- * to monthly buckets so the chart does not become a wall of tiny points.
- */
 function getCustomChartPeriod({ end, start }: { end: Date; start: Date }): HistoryPeriod {
   const durationDays = Math.floor((end.getTime() - start.getTime()) / MILLISECONDS_PER_DAY) + 1;
   return durationDays <= CUSTOM_PERIOD_MAX_DAILY_DAYS ? "month" : "year";
 }
 
-/**
- * A custom range is used only when both dates are valid, ordered, and not in
- * the future. Invalid or partial shared links safely return to the current
- * calendar year instead of comparing partial data with a complete prior range.
- */
 function getValidCustomRange({
   end,
   start,
@@ -131,11 +101,6 @@ function getValidCustomRange({
   return { end: parsedEnd, start: parsedStart };
 }
 
-/**
- * Calendar ranges only change at period boundaries. Private caching lets
- * runtime prefetching resolve URL-backed controls while reading search params
- * inside the same function.
- */
 export async function getStatsPeriod(params: StatsSearchParams) {
   "use cache: private";
 
@@ -172,10 +137,6 @@ export async function getStatsPeriod(params: StatsSearchParams) {
   };
 }
 
-/**
- * Custom range labels stay compact enough for the mobile header while showing
- * the selected boundaries without ambiguity.
- */
 function formatCustomDate(date: Date): string {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
@@ -185,10 +146,6 @@ function formatCustomDate(date: Date): string {
   }).format(date);
 }
 
-/**
- * Period comparisons use plain language that reflects the actual paired range
- * returned by the shared calendar utility.
- */
 function getComparisonLabel(period: HistoryPeriod): string {
   if (period === "month") {
     return "vs last month";
@@ -201,10 +158,6 @@ function getComparisonLabel(period: HistoryPeriod): string {
   return "";
 }
 
-/**
- * Switching analyses preserves only the normalized period state, preventing
- * unrelated filters from leaking between Growth, Engagement, and Content.
- */
 export function buildStatsPeriodQuery(statsPeriod: StatsPeriod): string {
   const entries: [string, string][] = [
     ["period", statsPeriod.period],
@@ -215,18 +168,10 @@ export function buildStatsPeriodQuery(statsPeriod: StatsPeriod): string {
   return new URLSearchParams(entries).toString();
 }
 
-/**
- * Zero is the canonical current-period offset, so omitting it keeps shared
- * URLs short without changing their meaning.
- */
 function getOffsetQueryEntries(statsPeriod: StatsPeriod): [string, string][] {
   return statsPeriod.offset > 0 ? [["offset", statsPeriod.offset.toString()]] : [];
 }
 
-/**
- * Custom boundaries belong in the URL only when the custom preset is active;
- * calendar and all-time links derive their ranges without duplicated dates.
- */
 function getCustomQueryEntries(statsPeriod: StatsPeriod): [string, string][] {
   if (statsPeriod.period !== "custom") {
     return [];

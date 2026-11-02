@@ -1,0 +1,649 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 1.25 × 0.80 = 1, so item 1 leaves the price unchanged; 1.10 × 1.20 − 1 = 0.32, so item 2 gives 32%; and 1 − 1/(1.50 × 0.80) = 1/6, so item 3 requires approximately 16.7%. Each item has exactly one correct option, correctly keyed, and the worked solutions are accurate. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Distractors generally correspond to specific, realistic mistakes: adding rates, averaging them, multiplying rates rather than factors, ignoring a change, and confusing a remaining-price factor with a discount. Labels are specific and explanations usually diagnose the mistake clearly. The 23.1% explanation stops short of connecting its erroneous intermediate factor to the chosen answer. Neither the generic-label cap nor the several-implausible-distractors cap applies.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All three items use concise everyday contexts, clear commands, formal Brazilian Portuguese, and five comparable options with one correct answer, fitting ENEM-style presentation. However, placing the correct answer first throughout creates an avoidable answer-position pattern. The set is not out of place in the named exam, so the realism cap does not apply.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All items require applying successive percentage changes rather than recalling definitions, and the third adds a useful inverse calculation. Nevertheless, items 1 and 2 both test forward composition of two percentage changes by multiplying two factors and interpreting the net change. This triggers the explicit maximum of 7 for two questions testing the same thing the same way. Learner-facing text is in Portuguese.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3434,
+          "inputTokens": 3437,
+          "outputTokens": 1094,
+          "reasoningTokens": 416
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Items 1 and 2 both ask for the net effect of two successive changes using the same forward multiplication procedure, limiting assessment variety. In item 3, the feedback for 23.1% identifies the incorrect intermediate factor 1.30 but does not explain how that produces the selected discount, leaving the diagnostic explanation incomplete.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Vary the correct answer's position; it is first in all three items. Replace one forward-composition question with a comparison between two offers or a diagnosis of a student's calculation. Complete the 23.1% explanation by showing that the mistaken factor leads to 1 − 1/1.30 ≈ 23.1%.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options.",
+        "id": "pt-enem-matematica-porcentagens-sucessivas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+            "example": "Um produto sobe 10% e depois cai 10%: termina 1% mais barato.",
+            "name": "Aumentos e descontos percentuais sucessivos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are legally defensible. The mayor's self-promotional advertising violates article 37, paragraph 1. Creating a remuneration benefit without specific legislation violates legality and article 37, X. Appointing the appointing authority's spouse to a technical commissioned position constitutes nepotism under Binding Precedent 13, regardless of an express state prohibition. The discussion of political positions does not incorrectly extend an exception to this technical appointment.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false item contains one realistic conceptual trap: applying private individuals' freedom to do what is not prohibited to public administrators. Its misconception label identifies that precise confusion, and its explanation contrasts the two standards and explains the specific legislative requirement for remuneration. Feedback on the true items also connects the facts to the applicable rules.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents a plausible public-administration scenario followed by one assertion judged Certo or Errado. The wording and legal distinctions fit Cebraspe-style questions, and the false assertion uses a recognizable concept-swap trap rather than an implausible claim.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions are entirely in Brazilian Portuguese and require applying constitutional principles to three distinct situations: official advertising, an unauthorized remuneration benefit and nepotism. They suit intermediate practice and avoid pure definition recall. Coverage could be broadened by incorporating efficiency, which is not directly assessed.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2279,
+          "inputTokens": 2282,
+          "outputTokens": 890,
+          "reasoningTokens": 390
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "For broader coverage within the three-item limit, consider incorporating efficiency into one scenario. The current set provides sound applications but concentrates on legality, impersonality and morality.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in Brazilian Portuguese on the principles of public administration (legalidade, impessoalidade, moralidade, publicidade, eficiência) under article 37 of the Brazilian Constitution. False items must hide one realistic trap. Check the legal accuracy of every statement.",
+        "id": "pt-cebraspe-principios-administracao-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+            "name": "Princípios da administração pública (LIMPE)"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent solutions give x = 17, x = 3, and a = -4, respectively. Each appears exactly once and is correctly keyed. The correct-answer derivations and numerical checks are accurate. The distractor-label issue concerns diagnosis of the learner's mistake, not the keys or valid solution steps.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors consistently represent realistic distribution, sign, fraction, or inverse-operation mistakes, and the feedback generally explains them specifically. However, item 1 mislabels the 17/5 error as adding a variable term to both sides, which is itself valid and does not explain that answer. No generic-misconception or several-implausible-distractors cap is triggered.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All three items use concise equations or mathematical conditions, direct questions, and four compact options. The parameter question about infinitely many solutions is consistent with Digital SAT algebra tasks. No wording or option-length cues materially undermine exam realism.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set requires application rather than recall and varies the algebraic demands: distributing with variables on both sides, clearing fractional denominators, and determining a parameter for infinitely many solutions. It remains within linear-equation skills, provides a reasonable difficulty spread, and is entirely in English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2826,
+          "inputTokens": 2829,
+          "outputTokens": 949,
+          "reasoningTokens": 388
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Item 1's 17/5 distractor has an inaccurate misconception label: adding 2x to both sides is a legal operation and does not produce 5x = 17. The actual mistake is moving +2x to the left without changing its sign, effectively removing it from the right while adding it on the left.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "For item 2's 13/2 distractor, show the erroneous intermediate equation (2x + 1)/7 = 2. This would make the connection between adding denominators and the selected answer more explicit.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math multiple-choice items in English on solving linear equations in one variable. Four options each, with distractors from sign errors, distributing incorrectly or stopping one step early.",
+        "id": "en-sat-math-linear-equations-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+            "name": "Solving linear equations in one variable"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give (92 − 80)/80 × 100 = 15, (2500 − 2150)/2500 × 100 = 14, and (1.20 × 0.75 − 1) × 100 = −10. All keys, solution expressions, and worked steps agree. Across the variable ranges, original values remain positive, the first item always increases, the second always decreases, and the third retains valid price multipliers. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The mistakes are realistic and specifically labeled, and the reasons explain the incorrect operation in plain language. However, item 2 permits before = 3000 and after = 1500, where the remaining-percent mistake equals the correct answer. This weakens the diagnostic usefulness of that variant. Neither the generic-misconception cap nor the several-implausible-distractors cap applies.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use concise everyday contexts, direct numeric-response questions, and clear rounding instructions consistent with Digital SAT Math practice. The successive-change item explicitly specifies the sign convention, and its negative numeric answer is compatible with digital SAT student-produced responses. No realism cap applies.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require calculation, remain focused on percent change, and are entirely in English. The successive-change item adds meaningful complexity. Nevertheless, the first two both supply original and final values and request the same direct percent-change calculation; the explicit cap of 7 for two questions testing the same thing the same way applies.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3131,
+          "inputTokens": 3134,
+          "outputTokens": 1067,
+          "reasoningTokens": 426
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Items 1 and 2 test percent change in essentially the same way: subtract the supplied values, divide by the original, and multiply by 100. Changing the context and direction provides some variety, but the explicit repeated-method cap applies to skill fit.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "One permitted variant creates diagnostic ambiguity: with before = 3000 and after = 1500, item 2's 'remaining percent' mistake produces 50, which is also the correct percent decrease. That numerical response cannot identify the stated misconception.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Use a comparison or another distinct application for one of the first two items. Also consider default values that produce a noninteger percentage, so at least one example exercises the requested rounding.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
+        "id": "en-sat-math-percent-change-numeric-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Compute the percent increase or decrease between an original and a new value.",
+            "name": "Percent change"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three answers are correct and uniquely determined: 200 × 0.85 = 170; 3 × 24 × 0.90 = 64.80; 150 × 0.80 × 0.90 = 108. The solution expressions and worked steps agree with these results. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every listed mistake is realistic and specifically labeled. Feedback explains the actual error, including confusing savings with the final price, subtracting percentage points as reais, forgetting quantity, adding successive percentages, and omitting the second discount. No generic labels or answer-only explanations trigger a cap.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The purchases, reais amounts, and Brazilian Portuguese wording are natural. However, two of three questions do not fit the expressly requested beginner, one-step setting: one adds quantity multiplication and another introduces successive discounts. This setting mismatch triggers the maximum score of 7.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All items require calculation of a discounted final price, and the situations and mathematical demands vary. The learner-facing language is Portuguese. However, the variety is achieved largely by exceeding the requested one-step scope, especially through successive discounts. The set therefore only partially fits the specified skill level, despite avoiding recall and duplicate question structures.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3141,
+          "inputTokens": 3144,
+          "outputTokens": 804,
+          "reasoningTokens": 278
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Items 2 and 3 violate the beginner, one-step requirement. Item 2 requires calculating a quantity-based total before applying the discount; item 3 requires successive discounts on changing bases. These materially increase complexity beyond the requested practice.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Use a single remaining-price calculation in the worked solution, and vary prices, familiar percentages, and purchase contexts rather than adding quantities or successive discounts.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday numeric practice in Brazilian Portuguese about the final price after a discount, for beginners, stored as math data. Situations should be everyday purchases in reais, with one step each.",
+        "id": "pt-desconto-preco-final-numeric-1",
+        "userInput": {
+          "count": 3,
+          "format": "numeric",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Calcular quanto se paga por um produto depois de um desconto percentual.",
+            "example": "Uma camiseta de R$ 80 com 25% de desconto sai por R$ 60.",
+            "name": "Preço final com desconto"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent solutions agree with all three keys: mitochondria are the intended organelles; increased muscle activity increases ATP demand and oxygen use in aerobic respiration; germinating seeds consume oxygen and produce carbon dioxide through respiration. The overall glucose-and-oxygen to carbon-dioxide-and-water account is appropriate for this grade level. No wrong-key, competing-answer, or factual-error cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The main requirements for typed responses are not fully met. Items 2 and 3 have empty acceptedAnswers lists, so common correct wordings are not supplied. Their key points also combine separately checkable claims, especially ATP storage with energy release and contraction, and glucose with oxygen or carbon dioxide with water. Each should be split into individual scoring ideas. Distractor-specific caps do not apply because there are no distractors.",
+          "score": 6,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The muscle-cell identification, exercise explanation, and germinating-seed investigation are credible 10th-grade biology test questions. They are concise constructed responses with teacher-usable sample answers, and the language and scientific demands fit the setting. No setting-realism cap is triggered.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set stays in English and covers cellular location, oxygen use, ATP demand, and evidence of respiration across distinct situations. Items 2 and 3 require explanation or application, but item 1 is straightforward organelle recall. The third item also puts substantial emphasis on recalling the overall reaction. Most questions are not purely recall, and no pair tests the same thing in the same way, so the explicit cap does not apply.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2137,
+          "inputTokens": 2140,
+          "outputTokens": 968,
+          "reasoningTokens": 336
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Items 2 and 3 lack accepted-answer variants despite being short-answer items. Several key points also bundle independently gradable ideas: item 2 combines energy release, ATP storage, and muscle contraction; item 3 groups both reactants and both products. These omissions weaken reliable, idea-by-idea grading.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 1 only asks learners to name mitochondria from familiar clues. It tests recall rather than using the skill to explain, predict, or apply cellular respiration.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Strengthen item 3 by explicitly asking learners to connect the oxygen decrease and carbon dioxide increase to consumption and production during respiration, making the reasoning requirement clearer.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Short constructed-response items for a 10th-grade biology unit test in English on cellular respiration. Key points must be checkable one at a time (for example \"glucose is broken down\", \"oxygen is used\", \"energy is stored as ATP\"), and accepted answers only apply to short answers.",
+        "id": "en-school-biology-cellular-respiration-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "High school biology unit test",
+            "style": "Short constructed-response questions from a 10th-grade biology unit test: one or two sentences each, graded by key ideas."
+          },
+          "format": "typed",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Explain how cells release energy from glucose using oxygen, and where it happens.",
+            "name": "Cellular respiration"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each item has one defensible best answer, and each key matches it. Item 1 identifies observable actions and encourages repetition; item 2 combines timely, private feedback with behavioral specificity; item 3 explicitly includes the behavior, customer impact and next action. The competing options omit relevant elements or substitute vague judgments. No clear factual errors or incorrect keys appear.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor represents a recognizable manager mistake, including vague praise, personality judgments, results-only feedback, delayed feedback, group criticism and incomplete behavioral feedback. Labels identify these mistakes specifically, and explanations tell learners what is missing or unhelpful and why. No generic misconception labels or implausible distractors trigger a cap.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The clothing, grocery and hardware store situations are credible workplace examples. The language is accessible to beginners, and the feedback options resemble things managers might actually say. Option lengths are sufficiently comparable that length does not consistently reveal the answer. The set fits the requested workplace setting.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items are in English and require applying the feedback skill rather than recalling a definition. The set covers positive reinforcement, customer-service correction and aisle housekeeping, with item 2 adding timing. However, items 1 and 3 test the same complete-feedback selection task in essentially the same way, so the explicit cap of 7 applies. Different difficulty labels do not meaningfully change that repeated demand.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3009,
+          "inputTokens": 3012,
+          "outputTokens": 1022,
+          "reasoningTokens": 426
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Items 1 and 3 both ask learners to select feedback containing a specific behavior, an effect and a next step. Despite different store situations, they test the same skill in essentially the same way, triggering the skill-fit cap of 7. The correct answer is also the first option in all three items, creating an avoidable answer-position pattern.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace one of the two complete-feedback selection questions with a diagnosis task—for example, identify the missing element in a manager's feedback or choose a concrete next step to replace 'do better.' Vary the correct-answer position across the set.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Workplace multiple-choice items in English for a retail store manager learning to give specific, behavior-based feedback. Situations must be realistic store situations; wrong options should be common manager mistakes such as vague praise, judging personality instead of behavior or waiting weeks to give feedback.",
+        "id": "en-work-behavior-feedback-retail-1",
+        "userInput": {
+          "count": 3,
+          "field": "retail store management",
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Give feedback that names a specific behavior, its effect and what to do next, soon after it happens.",
+            "name": "Giving specific, behavior-based feedback"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The model answers accurately follow the prescriptions and give defensible safety advice. The amoxicillin example maintains eight-hour intervals; metformin with meals can reduce gastrointestinal effects; and avoiding duplicate paracetamol products is appropriate. The paracetamol prescription permits at most four 750 mg doses per 24 hours, or 3,000 mg. No wrong key or factual-error cap is triggered. Alternative spoken phrasings would express the same correct clinical guidance rather than constitute competing answers.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The scenarios address realistic misconceptions: stopping antibiotics when symptoms improve, taking metformin fasting for greater effect, and combining products for faster relief. Explanations address why these behaviors are unsafe or unhelpful. However, every acceptedAnswers array is empty, and multiple key points bundle separate grading decisions. These are repeated weaknesses against the explicit spoken-answer requirements. The caps for implausible distractors and generic misconception labels are not triggered.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The UBS, outpatient clinic, and discharge scenarios are credible Brazilian nursing settings. Patient comments sound natural, and the requested explanations fit a nursing technician reinforcing an existing prescription. The sample responses use accessible Brazilian Portuguese and are short enough to deliver in under a minute at a normal speaking pace. No setting-realism cap is triggered.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each item requires explaining safe medication use to a patient rather than recalling a definition. The set varies meaningfully across treatment duration and allergy response, administration with meals and gastrointestinal effects, and duplicate ingredients, dosing intervals, and alcohol precautions. The language is Portuguese throughout, and the increasing complexity remains approachable for beginners. No recall or repeated-task cap is triggered.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2770,
+          "inputTokens": 2773,
+          "outputTokens": 1060,
+          "reasoningTokens": 378
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three acceptedAnswers arrays are empty. Although sample answers provide useful models, the result does not document common acceptable alternative wordings, as explicitly required for spoken items. This weakens support for consistently grading correct patient explanations expressed differently.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Several key points combine independently checkable ideas. For example, the amoxicillin allergy point combines recognizing symptoms, stopping the medicine, and seeking care; the metformin final point combines avoiding independent dose changes with reporting severe or persistent symptoms. These should be separate criteria so partial answers can be assessed consistently.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For paracetamol, explicitly state the prescribed maximum of four 750 mg tablets in 24 hours, totaling 3,000 mg. Also clarify that suspected excess intake requires immediate professional advice even without symptoms, rather than relying only on later warning signs.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Spoken-answer items in Brazilian Portuguese for nursing technicians practicing how to explain to a patient how to take a prescribed medicine safely. Answers must be possible aloud in under a minute, key points must be checkable ideas (dose, timing, what to avoid, when to call for help) and nothing may contradict standard patient-safety guidance.",
+        "id": "pt-work-enfermagem-orientacao-medicamento-spoken-1",
+        "userInput": {
+          "count": 3,
+          "field": "enfermagem",
+          "format": "spoken",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Orientar o paciente, em palavras simples, sobre dose, horário, cuidados e sinais de alerta de um medicamento prescrito.",
+            "name": "Orientar o paciente sobre o uso seguro de medicamentos"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "generate-items"
+}

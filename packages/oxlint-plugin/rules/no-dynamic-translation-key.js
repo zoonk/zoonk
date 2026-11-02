@@ -6,7 +6,6 @@ function isStringLiteral(node) {
     return false;
   }
 
-  // String literal
   if (node.type === "Literal" && typeof node.value === "string") {
     return true;
   }
@@ -79,13 +78,10 @@ export default defineRule({
 
         const firstArg = node.arguments[0];
 
-        // No arguments - skip (invalid call anyway)
         if (!firstArg) {
           return;
         }
 
-        // Check if first argument is a string literal or a static next-intl
-        // message descriptor with translator context.
         if (!isStaticTranslationArgument(firstArg)) {
           context.report({ loc: firstArg.loc, messageId: "noDynamicKey" });
         }

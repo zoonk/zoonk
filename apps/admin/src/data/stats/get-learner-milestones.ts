@@ -1,6 +1,9 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
+import {
+  completedLessonActivitySql,
+  trackedAnalyticsUserSql,
+} from "@/data/stats/_utils/analytics-user-filter";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { type Sql, prisma, sql } from "@zoonk/db";
 
@@ -9,7 +12,7 @@ type LearnerMilestoneUserRow = {
   createdAt: Date;
   email: string;
   id: string;
-  lastCompletedAt: Date;
+  lastLearningDate: Date;
   learningDays: bigint;
   name: string;
   totalBrainPower: bigint;
@@ -18,22 +21,21 @@ type LearnerMilestoneUserRow = {
 
 type LearnerMilestoneQueryParts = { havingFilter: Sql; primaryOrder: Sql };
 
+const completedLessonsSql = sql`SUM(daily_progress.lessons_completed)`;
+const learningDaysSql = sql`COUNT(*)`;
+
 export type LearnerMilestoneUser = {
   completedLessons: number;
   createdAt: Date;
   email: string;
   id: string;
-  lastCompletedAt: Date;
+  lastLearningDate: Date;
   learningDays: number;
   name: string;
   totalBrainPower: number;
   username: string | null;
 };
 
-/**
- * The engagement page needs the two milestone counts together so it can answer
- * the threshold questions without making each card own a separate data path.
- */
 export const getLearnerMilestoneSummary = cacheAdminData(
   async (completedLessonsThreshold: number, learningDaysThreshold: number) => {
     const [completedLessonsUsers, learningDaysUsers] = await Promise.all([
@@ -55,11 +57,6 @@ export const getLearnerMilestoneSummary = cacheAdminData(
   },
 );
 
-/**
- * The drill-down page uses one route for both learner milestone questions. The
- * kind decides which threshold rule filters users, while each row still shows
- * both completion totals for context.
- */
 export const listLearnerMilestoneUsers = cacheAdminData(
   async (kind: LearnerMilestoneKind, threshold: number, limit: number, offset: number) => {
     const queryParts = getLearnerMilestoneQueryParts({ kind, threshold });
@@ -76,9 +73,8 @@ export const listLearnerMilestoneUsers = cacheAdminData(
 );
 
 /**
- * Raw SQL cannot parameterize aggregate expressions or order columns, so the
- * supported milestone rules are explicitly whitelisted before being composed
- * into the shared learner-progress query.
+ * Raw SQL can't parameterize aggregate expressions or order columns, so the supported rules are
+ * whitelisted.
  */
 function getLearnerMilestoneQueryParts({
   kind,
@@ -89,21 +85,17 @@ function getLearnerMilestoneQueryParts({
 }): LearnerMilestoneQueryParts {
   if (kind === "learningDays") {
     return {
-      havingFilter: sql`COUNT(DISTINCT completed_at::date) >= ${threshold}`,
+      havingFilter: sql`${learningDaysSql} >= ${threshold}`,
       primaryOrder: sql`learner_progress.learning_days DESC, learner_progress.completed_lessons DESC`,
     };
   }
 
   return {
-    havingFilter: sql`COUNT(*) >= ${threshold}`,
+    havingFilter: sql`${completedLessonsSql} >= ${threshold}`,
     primaryOrder: sql`learner_progress.completed_lessons DESC, learner_progress.learning_days DESC`,
   };
 }
 
-/**
- * Counting inside a grouped subquery lets Postgres apply the milestone rule per
- * user before the outer count turns the qualifying user set into one metric.
- */
 async function countUsersByLearnerMilestone({
   queryParts,
 }: {
@@ -113,9 +105,9 @@ async function countUsersByLearnerMilestone({
     SELECT COUNT(*) AS count
     FROM (
       SELECT user_id
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
-      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
+      FROM daily_progress
+      JOIN users ON users.id = daily_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND ${completedLessonActivitySql}
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) qualifying_users
@@ -124,11 +116,6 @@ async function countUsersByLearnerMilestone({
   return Number(result[0].count);
 }
 
-/**
- * The user list shares one learner-progress subquery for both milestones. The
- * whitelisted query parts decide which users qualify and which metric sorts
- * first, while every row still exposes both completion counts.
- */
 async function listUsersByLearnerMilestone({
   limit,
   offset,
@@ -148,16 +135,16 @@ async function listUsersByLearnerMilestone({
       COALESCE(user_progress.total_brain_power, 0)::bigint AS "totalBrainPower",
       learner_progress.completed_lessons AS "completedLessons",
       learner_progress.learning_days AS "learningDays",
-      learner_progress.last_completed_at AS "lastCompletedAt"
+      learner_progress.last_learning_date AS "lastLearningDate"
     FROM (
       SELECT
         user_id,
-        COUNT(*) AS completed_lessons,
-        COUNT(DISTINCT completed_at::date) AS learning_days,
-        MAX(completed_at) AS last_completed_at
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
-      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
+        ${completedLessonsSql} AS completed_lessons,
+        ${learningDaysSql} AS learning_days,
+        MAX(daily_progress.date) AS last_learning_date
+      FROM daily_progress
+      JOIN users ON users.id = daily_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND ${completedLessonActivitySql}
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) learner_progress
@@ -165,17 +152,14 @@ async function listUsersByLearnerMilestone({
     LEFT JOIN user_progress ON user_progress.user_id = users.id
     ORDER BY
       ${queryParts.primaryOrder},
-      learner_progress.last_completed_at DESC,
+      learner_progress.last_learning_date DESC,
       users.created_at DESC
     LIMIT ${limit}
     OFFSET ${offset}
   `;
 }
 
-/**
- * Raw SQL returns bigint values for counts and Brain Power. Converting them at
- * the data boundary keeps table components free from database numeric details.
- */
+/** Raw SQL returns bigint values for counts and Brain Power. */
 function serializeLearnerMilestoneUser({
   row,
 }: {
@@ -186,7 +170,7 @@ function serializeLearnerMilestoneUser({
     createdAt: row.createdAt,
     email: row.email,
     id: row.id,
-    lastCompletedAt: row.lastCompletedAt,
+    lastLearningDate: row.lastLearningDate,
     learningDays: Number(row.learningDays),
     name: row.name,
     totalBrainPower: Number(row.totalBrainPower),

@@ -1,24 +1,20 @@
 import { GatewayInternalServerError } from "@ai-sdk/gateway";
-import { generateImage, generateText } from "ai";
+import { generateImage } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { rewriteImageInputForSafetyRetry } from "../images/image-prompt-safety-rewrite";
 import { generateImageWithSafetyRetry } from "./generate-image-with-safety-retry";
 import type * as Ai from "ai";
-
-vi.mock("server-only", () => ({}));
-
-vi.mock("../images/image-prompt-safety-rewrite.prompt.md", () => ({ default: "Rewrite safely." }));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
 
-  return { ...actual, generateImage: vi.fn(), generateText: vi.fn() };
+  return { ...actual, generateImage: vi.fn() };
 });
 
-/**
- * Creates the smallest AI SDK image result shape this retry helper needs. The
- * retry logic only forwards the result, so the bytes can be fake while the
- * object still matches the SDK contract used by production callers.
- */
+vi.mock("../images/image-prompt-safety-rewrite", () => ({
+  rewriteImageInputForSafetyRetry: vi.fn(),
+}));
+
 function createImageResult() {
   const image = {
     base64: "aW1hZ2U=",
@@ -37,12 +33,7 @@ function createImageResult() {
   };
 }
 
-/**
- * Recreates the Gateway safety wrapper shape from real image failures without
- * importing transitive provider internals. The helper must detect the safety
- * wording whether it appears on the top-level Gateway error or nested response
- * payload.
- */
+/** From real image failures: the safety wording can sit on the error or in its nested response. */
 function createSafetyRejectionError() {
   const cause = {
     isRetryable: false,
@@ -81,10 +72,9 @@ describe(generateImageWithSafetyRetry, () => {
       .mockRejectedValueOnce(createSafetyRejectionError())
       .mockResolvedValueOnce(imageResult);
 
-    vi.mocked(generateText).mockResolvedValueOnce({
-      output: { input: rewrittenInput },
-      usage: {},
-    } as Awaited<ReturnType<typeof generateText>>);
+    vi.mocked(rewriteImageInputForSafetyRetry).mockResolvedValueOnce({
+      data: { input: rewrittenInput },
+    } as Awaited<ReturnType<typeof rewriteImageInputForSafetyRetry>>);
 
     const result = await generateImageWithSafetyRetry({
       buildPrompt: ({ input }) => `Create a course thumbnail for ${input}.`,
@@ -95,7 +85,11 @@ describe(generateImageWithSafetyRetry, () => {
     });
 
     expect(result).toBe(imageResult);
-    expect(generateText).toHaveBeenCalledOnce();
+
+    expect(rewriteImageInputForSafetyRetry).toHaveBeenCalledExactlyOnceWith({
+      errorContext: expect.stringContaining("rejected by the safety system"),
+      input: originalInput,
+    });
 
     expect(generateImage).toHaveBeenNthCalledWith(
       1,
@@ -123,7 +117,7 @@ describe(generateImageWithSafetyRetry, () => {
       }),
     ).rejects.toThrow("Model timed out");
 
-    expect(generateText).not.toHaveBeenCalled();
+    expect(rewriteImageInputForSafetyRetry).not.toHaveBeenCalled();
     expect(generateImage).toHaveBeenCalledOnce();
   });
 });

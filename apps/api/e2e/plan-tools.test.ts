@@ -1,0 +1,183 @@
+import { randomUUID } from "node:crypto";
+import { request } from "@playwright/test";
+import { prisma } from "@zoonk/db";
+import { expect, test } from "@zoonk/e2e/fixtures";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
+import { planChangeResultSchema, planResponseSchema } from "../src/lib/openapi/schemas/plans";
+import { createAuthenticatedApiContext } from "./helpers/auth";
+import { readBody } from "./helpers/response";
+
+const LESSONS = 4;
+
+async function createToolGoal(userId: string) {
+  const word = randomUUID().slice(0, 8);
+  const tools = { python: `Python ${word}`, sheet: `Spreadsheet ${word} (Sheets or Excel)` };
+
+  const [chapter, skill] = await Promise.all([
+    libraryChapterFixture({
+      title: `Data with code ${word}`,
+      tools: [
+        { essential: true, name: tools.sheet },
+        { essential: false, name: tools.python },
+      ],
+    }),
+    skillFixture({ name: `Clean a table ${word}` }),
+  ]);
+
+  const lessons = await Promise.all(
+    Array.from({ length: LESSONS }, (_, index) =>
+      libraryLessonFixture({ homeChapterId: chapter.id, title: `Lesson ${index + 1} ${word}` }),
+    ),
+  );
+
+  await Promise.all(
+    lessons.flatMap((lesson, position) => [
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    ]),
+  );
+
+  const goal = await goalFixture({ dailyMinutes: 12, userId });
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: "Clean real data", name: "Basics" }],
+      skills: [
+        {
+          area: null,
+          lessons: LESSONS,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        },
+      ],
+    },
+    phases: [{ kind: "learn", milestone: "Clean real data", minutes: 0, name: "Basics" }],
+  });
+
+  await Promise.all(
+    lessons.map((lesson, position) =>
+      planItemFixture({
+        chapterId: chapter.id,
+        lessonId: lesson.id,
+        planId: plan.id,
+        position,
+        skillId: skill.id,
+        titleSnapshot: lesson.title,
+      }),
+    ),
+  );
+
+  return { goal, tools };
+}
+
+async function createSetupLesson({ system, tool }: { system: string; tool: string }) {
+  const title = `Set up ${tool} on Windows`;
+
+  const [skill, lesson] = await Promise.all([
+    skillFixture({ identityKey: buildSetupSkillIdentityKey({ system, tool }), name: title }),
+    libraryLessonFixture({ title }),
+  ]);
+
+  await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+
+  return lesson;
+}
+
+test.describe("Plan tools API", () => {
+  let baseURL: string;
+
+  test.beforeAll(() => {
+    baseURL = process.env.E2E_BASE_URL ?? "";
+  });
+
+  test.afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  test("requires authentication", async () => {
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post(`/v1/goals/${randomUUID()}/plan/tool-choices`, {
+      data: { choice: "have", tools: ["Python"] },
+    });
+
+    expect(response.status()).toBe(401);
+    await apiContext.dispose();
+  });
+
+  test("lists the plan's tools and saves the learner's answer for each, refusing tools it doesn't use", async () => {
+    const [{ apiContext, user }, other] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-tools" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-tools-other" }),
+    ]);
+
+    const { goal, tools } = await createToolGoal(user.id);
+
+    const [unknown, noDevice, foreign] = await Promise.all([
+      apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "have", tools: ["Photoshop"] },
+      }),
+      apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "setup", tools: [tools.python] },
+      }),
+      other.apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "have", tools: [tools.python] },
+      }),
+    ]);
+
+    expect([unknown.status(), noDevice.status(), foreign.status()]).toStrictEqual([422, 400, 404]);
+
+    await expect(unknown.json()).resolves.toMatchObject({
+      error: { code: "PLAN_CHANGE_INVALID", details: { reason: "unknownTool" } },
+    });
+
+    const setup = await createSetupLesson({ system: "windows", tool: tools.python });
+
+    const added = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "setup", system: "windows", tools: [tools.python] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    expect(added).toMatchObject({
+      change: { canUndo: true, operations: [{ kind: "setTools" }, { kind: "addSkills" }] },
+      status: "applied",
+    });
+
+    await expect
+      .poll(async () =>
+        prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: goal.id } } }),
+      )
+      .toBe(1);
+
+    const none = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "none", tools: [tools.sheet, tools.python] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    expect(none.status).toBe("applied");
+
+    const after = await readBody({
+      response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+      schema: planResponseSchema,
+    });
+
+    expect(after.tools.map((tool) => tool.choice)).toStrictEqual(["none", "none"]);
+
+    await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
+  });
+});

@@ -1,94 +1,55 @@
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
+import { AdminSectionSkeleton } from "@/components/admin-section";
+import { getUser } from "@/data/users/get-user";
+import { formatDate } from "@/lib/format";
 import { isUuid } from "@zoonk/utils/uuid";
-import Link from "next/link";
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
-import { UserCourses } from "./user-courses";
-import { UserHeader } from "./user-header";
+import { UserActionsMenu } from "./user-actions-menu";
+import { UserAiSpend } from "./user-ai-spend";
+import { UserGoals } from "./user-goals";
+import { UserLearnerSkills } from "./user-learner-skills";
+import { UserLearningProfile } from "./user-learning-profile";
 import { UserLesson } from "./user-lesson";
+import { UserMemorySection } from "./user-memory";
+import { UserStudySessions } from "./user-study-sessions";
 import { UserSubscription } from "./user-subscription";
 
-function UserBreadcrumb() {
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/users" prefetch />}>Users</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Details</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
+export async function generateMetadata({ params }: PageProps<"/users/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getUser(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.name || record.username || record.email };
 }
 
-function HeaderSkeleton() {
-  return (
-    <div className="flex items-center gap-4">
-      <Skeleton className="size-10 rounded-full" />
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-4 w-24" />
-      </div>
-    </div>
-  );
-}
+const USER_PARENTS = [{ href: "/users", label: "Users" }];
 
-function SectionSkeleton() {
-  return (
-    <div className="flex flex-col gap-3">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-px w-full" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-3/4" />
-    </div>
-  );
-}
-
-/**
- * The account shell and breadcrumb do not depend on the dynamic user id, so
- * they remain available while the requested account content streams in.
- */
 export default function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <UserBreadcrumb />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<UserDetailSkeleton />}>
-          <UserDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<UserDetailSkeleton />}>
+        <UserDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
-/**
- * Parameter validation must happen after the dynamic route value resolves and
- * before any independent account query receives the user id.
- */
 async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "params">) {
   const { id: userId } = await params;
 
@@ -98,41 +59,88 @@ async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "par
 
   return (
     <>
-      <Suspense fallback={<HeaderSkeleton />}>
+      <Suspense fallback={<AdminDetailHeaderSkeleton actions="menu" parents={USER_PARENTS} />}>
         <UserHeader userId={userId} />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <UserAccount userId={userId} />
-      </Suspense>
+      <AdminDetailBody>
+        <Suspense fallback={<AdminSectionSkeleton rows={7} />}>
+          <UserAccount userId={userId} />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <UserSubscription userId={userId} />
-      </Suspense>
+        <Suspense fallback={<AdminSectionSkeleton rows={3} />}>
+          <UserSubscription userId={userId} />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <UserLesson userId={userId} />
-      </Suspense>
+        <Suspense fallback={<AdminSectionSkeleton rows={8} />}>
+          <UserLesson userId={userId} />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <UserCourses userId={userId} />
-      </Suspense>
+        <Suspense fallback={<AdminSectionSkeleton rows={5} />}>
+          <UserLearningProfile userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton />}>
+          <UserGoals userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton />}>
+          <UserStudySessions userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <UserLearnerSkills userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <UserMemorySection userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <UserAiSpend userId={userId} />
+        </Suspense>
+      </AdminDetailBody>
     </>
   );
 }
 
-/**
- * The dynamic-route fallback mirrors every independently streamed account
- * section so the page remains stable until the user id is available.
- */
+async function UserHeader({ userId }: { userId: string }) {
+  "use cache: private";
+
+  const user = await getUser(userId);
+
+  if (!user) {
+    notFound();
+  }
+
+  const name = user.name || user.username || user.email;
+
+  return (
+    <AdminDetailHeader
+      menu={<UserActionsMenu banned={user.banned ?? false} userId={user.id} userName={name} />}
+      alert={user.banned ? "Banned" : null}
+      facts={[
+        name !== user.email && user.email,
+        user.username && name !== user.username && `@${user.username}`,
+        user.role === "admin" && "Admin",
+        `Joined ${formatDate(user.createdAt)}`,
+      ]}
+      parents={USER_PARENTS}
+      title={name}
+    />
+  );
+}
+
 function UserDetailSkeleton() {
   return (
     <>
-      <HeaderSkeleton />
-      <SectionSkeleton />
-      <SectionSkeleton />
-      <SectionSkeleton />
-      <SectionSkeleton />
+      <AdminDetailHeaderSkeleton actions="menu" parents={USER_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton rows={7} />
+        <AdminSectionSkeleton rows={3} />
+        <AdminSectionSkeleton rows={8} />
+      </AdminDetailBody>
     </>
   );
 }

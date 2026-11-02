@@ -24,10 +24,6 @@ const OBJECT_TYPE_NODES = new Set([
   "TSTypeLiteral",
 ]);
 
-/**
- * Only simple type-reference names can match local aliases, built-in object types, or configured
- * exceptions. Qualified names remain unknown rather than being guessed from partial syntax.
- */
 function getTypeReferenceName(typeNode) {
   if (typeNode.type !== "TSTypeReference") {
     return null;
@@ -36,20 +32,12 @@ function getTypeReferenceName(typeNode) {
   return typeNode.typeName.type === "Identifier" ? typeNode.typeName.name : null;
 }
 
-/**
- * Some reference-valued arguments, such as request Headers, are deliberately shared by identity.
- * Keeping that policy configurable prevents the object detector from overriding known exceptions.
- */
 function isAllowedTypeReference({ exceptions, typeNode }) {
   const name = getTypeReferenceName(typeNode);
 
   return name ? exceptions.includes(name.toLowerCase()) : false;
 }
 
-/**
- * Next generates route params as a Promise hidden behind an indexed PageProps type. Recognizing
- * that syntax keeps the rule useful without treating every indexed access as an object.
- */
 function isNextRouteParams(typeNode) {
   if (typeNode.type !== "TSIndexedAccessType") {
     return false;
@@ -64,11 +52,6 @@ function isNextRouteParams(typeNode) {
   );
 }
 
-/**
- * A tuple rest annotation describes separate runtime arguments. Unwrapping optional, named, and
- * nested rest elements lets the rule inspect each cache key instead of treating the tuple itself as
- * one object.
- */
 function getTupleCacheArgument(element) {
   if (element.type === "TSNamedTupleMember") {
     return getTupleCacheArgument(element.elementType);
@@ -85,11 +68,6 @@ function getTupleCacheArgument(element) {
   return { spreadsArguments: false, typeNode: element };
 }
 
-/**
- * Parentheses and the readonly modifier change TypeScript syntax without changing whether the
- * runtime value is reference-valued. Returning their inner type keeps that normalization out of
- * the main classifier.
- */
 function getTransparentType(typeNode) {
   if (typeNode.type === "TSParenthesizedType") {
     return typeNode.typeAnnotation;
@@ -102,11 +80,6 @@ function getTransparentType(typeNode) {
   return null;
 }
 
-/**
- * Rest parameter annotations describe a collection, while React receives each collected value as
- * its own cache key. This returns null for non-collection syntax so normal object classification can
- * continue.
- */
 function getSpreadObjectResult({
   exceptions,
   spreadsArguments,
@@ -146,11 +119,7 @@ function getSpreadObjectResult({
     : false;
 }
 
-/**
- * Named types may be known reference-valued built-ins or local aliases. Imported unknown types stay
- * unreported because this syntax-only rule cannot safely distinguish object types from primitive
- * unions defined in another module.
- */
+/** Imported types stay unreported: a syntax-only rule can't tell them from primitive unions. */
 function isTypeReferenceObject({
   exceptions,
   spreadsArguments,
@@ -187,11 +156,6 @@ function isTypeReferenceObject({
   });
 }
 
-/**
- * React compares each runtime cache argument by identity. Following local aliases and TypeScript
- * wrappers reveals reference-valued keys while spread annotations are inspected as the separate
- * arguments they produce.
- */
 function isObjectType({
   exceptions,
   spreadsArguments = false,
@@ -242,10 +206,6 @@ function isObjectType({
   });
 }
 
-/**
- * Tuple elements may be optional, named, or themselves variadic. Normalizing one element before
- * classification keeps the tuple traversal declarative and preserves nested rest semantics.
- */
 function isTupleCacheArgumentObject({ element, exceptions, typeAliases, visitedAliases }) {
   const cacheArgument = getTupleCacheArgument(element);
 
@@ -258,10 +218,6 @@ function isTupleCacheArgumentObject({ element, exceptions, typeAliases, visitedA
   });
 }
 
-/**
- * Diagnostics should name the declared parameter regardless of defaults or rest syntax so the
- * developer can identify the unstable cache key immediately.
- */
 function getParamName(param) {
   if (param.type === "Identifier") {
     return param.name;
@@ -282,19 +238,13 @@ function getParamName(param) {
   return "(unknown)";
 }
 
-/**
- * A rest annotation describes the array collected inside the function, not a single cache key.
- * Inspecting its element type distinguishes safe primitive rest arguments from object arguments.
- */
 function isParamViolation({ exceptions, param, typeAliases }) {
-  // Destructured object pattern like ({ orgSlug }) is always a violation
   if (param.type === "ObjectPattern") {
     return true;
   }
 
   const typeAnnotation = param.typeAnnotation;
 
-  // No type annotation means we can't determine if it's an object
   if (!typeAnnotation) {
     return false;
   }

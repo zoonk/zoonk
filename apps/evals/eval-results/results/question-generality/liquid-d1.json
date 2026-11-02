@@ -1,0 +1,290 @@
+{
+  "modelId": "liquid/d1",
+  "results": [
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "en-general-microwave-1",
+        "userInput": { "question": "How does a microwave heat food?" }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "pt-personal-exame-de-sangue-1",
+        "userInput": { "question": "o que significa o resultado do meu exame de sangue de ontem?" }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "pt-general-inflacao-1",
+        "userInput": { "question": "o que é inflação?" }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "en-personal-my-code-1",
+        "userInput": { "question": "why doesn't my Python script read the CSV I uploaded?" }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "en-general-personal-wording-1",
+        "userInput": {
+          "question": "I never understood how vaccines work, can you explain like I'm 10?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "pt-personal-refinanciar-1",
+        "userInput": { "question": "vale a pena eu refinanciar meu apartamento agora?" }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "pt-general-kid-asked-1",
+        "userInput": { "question": "meu filho perguntou por que as folhas mudam de cor no outono" }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "en-personal-manager-meeting-1",
+        "userInput": {
+          "question": "what did my manager mean when she said my project needs more ownership?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "en-general-difference-1",
+        "userInput": { "question": "what's the difference between weather and climate?" }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "pt-personal-bolo-1",
+        "userInput": { "question": "por que o meu bolo solou ontem?" }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "en-general-black-hole-1",
+        "userInput": { "question": "how do black holes form" }
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "pt-personal-contrato-1",
+        "userInput": {
+          "question": "me explica essa cláusula de multa do contrato de aluguel que eu assinei"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "pt-prod-bacteria-alimento-1",
+        "userInput": { "question": "como uma bactéria se alimenta?" },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "pt-prod-good-evening-night-1",
+        "userInput": { "question": "Qual a diferença entre good evening e good night?" },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": { "expected": "general", "predicted": "general" },
+      "steps": [
+        { "conclusion": "Expected general; got general.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected general; got general.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected general; got general.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": true },
+        "id": "pt-prod-di-solito-1",
+        "userInput": { "question": "Quando eu uso “di solito”?" },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": { "expected": "personal", "predicted": "personal" },
+      "steps": [
+        { "conclusion": "Expected personal; got personal.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected personal; got personal.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected personal; got personal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isGeneral": false },
+        "id": "pt-prod-minha-resposta-errada-1",
+        "userInput": {
+          "question": "Por que minha resposta estava errada? Explique a resposta certa."
+        },
+        "origin": "production"
+      }
+    }
+  ],
+  "taskId": "question-generality"
+}

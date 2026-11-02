@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_cause_fixed": "d15e7065fb2d52bb544d1ea8cca0ad7415accc4386ae9f937eb08beadb08a77e",
+  "mistakes_cause_gap": "8521abe80469c5ff131f021791e89933f4b2cc8f4427c32dae07e0928723b0f4",
+  "mistakes_cause_guess": "e48d647523b24465ab946585495cc9fbd34c5a2a22aa3744c7531e989d3dc07e",
+  "mistakes_cause_misread": "d3492712c45779621758658c078e77c907f783cfce4c59e4bc5912fb399d2670",
+  "mistakes_cause_time": "a7adc04646cc586b41e2bca1830cc3351243a1ac4180b5a8a112383394472b29",
+  "mistakes_cause_trap": "0e844e12b068fc20aa897fde08c87c4a1172baddae567b8a7cfa1b538928db6d",
+  "mistakes_cause_unsorted": "1697ada0b852514bf06ea46645b5c3c809fe5f8c1db7d71de021afd321d72948",
+  "mistakes_come_back_tomorrow": "58ab8a1174851c691870bd5910054084b424545559f29869cd91f22891e7a615",
+  "mistakes_empty_fixed": "089f7835a8aee2076e39b281f0a78c404279ae9ac3e37e1c5c7c3c3134caea54",
+  "mistakes_empty_open": "dd89bd9c81715cd3f9d13beadc0f2d44b4876298bdb3435e4bd8bdff7c358806",
+  "mistakes_fixed_count": "e4e6cf0a4a9bfa4256a6d61a395bbd47c76256eb93f4a6a889931d2db68264e6",
+  "mistakes_more_failed": "a9e4bd3bf2b9af6648c522be5b9f856b21be11c43ff54e92c1a19ef31da09a0a",
+  "mistakes_not_found_description": "bbe4ce8dc814399ff51f306b844a6f705549056f85887f019bb73a66908852de",
+  "mistakes_notebook_title": "0b7cd0639fb2f102aa808eca7685e863ad69c4b2ef7e9786b3bf8e572c9bff62",
+  "mistakes_nothing_description": "bec2c5ffb11fe12732032b61f88670790a1c4edea1d24dff73f930f5af2b51e5",
+  "mistakes_nothing_title": "d6f1eef42a51a494739c4d4f89834a70dfcd5cadfad9e94bd51f53570a3d5a24",
+  "mistakes_open_lesson": "d98824721b294f85a337001ef8da9631566542fef874db63b8e3b1160796be11",
+  "mistakes_other_questions": "ed762989a059fc9e5724038dfe05c55a8170318804becae0ec6b0e396c194ce4",
+  "mistakes_practice": "32e3b3b0a83cb4fa553b483f530f531e873dcf503aa5b5b55fb3a0ccb321312f",
+  "mistakes_practice_comes_back": "b500365a69f12618f58daf6e71ac2073c512ca9b79a3eec0f0ccbe1759205df3",
+  "mistakes_practice_end": "0997f6444b889def68216e3f370bdfeb1c7dfff01bebe5bd01594d89cb4ef945",
+  "mistakes_practice_fixed": "3d26a89032cdd18b0d96996658c1d0f211c29a0d80b4a6a01deae1b2bc7d72fd",
+  "mistakes_practice_skill": "ccf255598a3b2964a61d7ceca8aea5b043cc797410074aae061e138664761ed7",
+  "mistakes_practice_title": "37b0b4f3c940210dfec9f98fef3a3f9887a1f7412e62c74161f26edfb627835a",
+  "mistakes_practice_tomorrow": "e9e964b9241390e69016cf91418243599bd2304f199bdd5feb58c88eafae404b",
+  "mistakes_ready": "58b186e8504cde3430ab976620c08b0f7f770345434ea5ae3c7c5e9e203d965d",
+  "mistakes_show_more": "1bbf067f3904e72e52deee339ed8cee6edb550ab76ac93bde1baed01175334b7",
+  "mistakes_tab_fixed": "4acfc7cacde8862796dc0b9cc3731a58d756d4a5b5a5d970173de6e8f5ade37f",
+  "mistakes_tab_open": "6c6fdd6b252f936f5dbe7fcbc3a5cbbbcb066fc0d91e6f63b954b63c5c88c398",
+  "mistakes_tomorrow": "2dd02bb305239323a3d24e0146c1134d2ca1a9415a6bb14e6036fb754db5e260"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">Yanlışlarına çalış</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">Alıştırmayı bitir. Verdiğin cevaplar geçerli sayılır.</string>
+    <string name="mistakes_practice_comes_back">Kalanlar, aklında daha iyi kalmaları için başka bir gün tekrar gelecek.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">%d yanlış düzeltildi</item>
+        <item quantity="other">%d yanlış düzeltildi</item>
+    </plurals>
+    <string name="mistakes_not_found_description">Düzeltilmiş veya kaldırılmış olabilir.</string>
+    <string name="mistakes_nothing_title">Henüz alıştırma yapacak bir şey yok</string>
+    <string name="mistakes_nothing_description">Yanlış yaptığın soruları ertesi günden itibaren tekrar çözebilirsin.</string>
+    <string name="mistakes_notebook_title">Yanlış defteri</string>
+    <plurals name="mistakes_ready">
+        <item quantity="one">%d yanlış alıştırmaya hazır</item>
+        <item quantity="other">%d yanlış alıştırmaya hazır</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="one">%d yanlış yarın hazır olacak</item>
+        <item quantity="other">%d yanlış yarın hazır olacak</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="one">%d yanlış düzeltildi</item>
+        <item quantity="other">%d yanlış düzeltildi</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">Yanlış yaptığın soruları ertesi günden itibaren tekrar çözebilirsin.</string>
+    <string name="mistakes_practice">Yanlışlarına çalış</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">Düzeltilecekler</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">Düzeltilenler</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">Diğer sorular</string>
+    <string name="mistakes_empty_open">Şu an düzeltecek bir yanlışın yok. Derslerde ve tekrarlarda yaptığın yanlışlar burada görünür.</string>
+    <string name="mistakes_empty_fixed">Alıştırmalarda düzelttiğin yanlışlar burada görünür.</string>
+    <string name="mistakes_show_more">Daha fazla göster</string>
+    <string name="mistakes_more_failed">Yüklenemedi. Tekrar dene.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">Bilgi eksiği</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">Soruyu yanlış okudun</string>
+    <string name="mistakes_cause_trap">Tuzağa düştün</string>
+    <string name="mistakes_cause_time">Süren yetmedi</string>
+    <string name="mistakes_cause_guess">Tahmin ettin</string>
+    <string name="mistakes_cause_unsorted">Henüz sınıflandırılmadı</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · Düzeltildi</string>
+    <string name="mistakes_practice_tomorrow">Yarın tekrar çözebilirsin</string>
+    <string name="mistakes_practice_skill">Bu beceriyi pekiştir</string>
+    <string name="mistakes_open_lesson">Dersi aç</string>
+</resources>

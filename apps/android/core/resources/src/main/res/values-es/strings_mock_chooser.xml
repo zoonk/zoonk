@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_chooser_about": "1369049c779d1c11cdd164ee3a2d4cb16ddf0e51e0f75a045be6d3d3689350a3",
+  "mock_chooser_about_recommended": "a9e9c704bda8335dde941201c731b9ebebfa9a654ea9a639e7eeedb58c9200f8",
+  "mock_chooser_failed": "cd8fbb784bffdfdec4097019dec3349490c56ef3199af5e6a9579dc5242cf941",
+  "mock_chooser_full_day_number_without": "0e2779c225b06b2896a75c6816e75bf4dbfdf7a5f8d265220064ca2654b22477",
+  "mock_chooser_full_day_without": "b9eb148610d820c5fe7707990c6b57d13eb555f4c9ac67b68b6c68ef125642e7",
+  "mock_chooser_getting_ready": "a8416c0759a877dfd3fb8fcbf43ef852eb918ddeb8cf6550a5efe2e6da9ef3a8",
+  "mock_chooser_last_mock": "891cd274ee03dc3675921d13a62271cba3b7a16a9ed2b91f0545b89614b3db5c",
+  "mock_chooser_left_out_choice": "405f0df92e05543801cd1b4f2666a583e8400adfd96827c334b046d15d641f42",
+  "mock_chooser_left_out_listening": "32288c994ca0c0c0fc1df23c8a61fe8a0528fa8a1e3ee0116da61b6d14c839a1",
+  "mock_chooser_left_out_named": "39aca3747becd8802b1b58f5739eab94dcff5a09fe13f04f9371f6107a878af1",
+  "mock_chooser_left_out_numeric": "c5b77d9d47a6246725397889a57fb3945e1097339f4687f3fbe57cd4ea5880f1",
+  "mock_chooser_left_out_practical": "9417fb09e7fa4fdfa6074169d6df82fa12e0cf004a3e8f87c53b90aa85db5793",
+  "mock_chooser_left_out_practical_named": "807be116dee6fe5c5276e1e294482c3903863eff27d6dd1b36097c7e601a1474",
+  "mock_chooser_left_out_short_answer": "7967ee55698814e26fea81b698db06eb162dc461e51ba26229668009822092e4",
+  "mock_chooser_left_out_speaking": "aea78508ad381d9cb802dc4053f2444b213958547cf69bf7f9bec2b264247f9b",
+  "mock_chooser_left_out_written": "403129fba8eb61816cecdc3b508c380ef7dc24e7b4cae5755340b47e6c00f73c",
+  "mock_chooser_not_enough": "216d443233ce58d33f1cc2b4d014ddb8079546a7e97355fc348298a3596ffa50",
+  "mock_chooser_objective_only": "d42632efdd005afcec3f1d0d3a29a14b7cf32d02a1a6e895f6f24518da85b584",
+  "mock_chooser_one_subject": "7a32d5dafda1a1dae2d31075aab2e60e8066856c8f2faaab2336934bf80d7a81",
+  "mock_chooser_option_size": "cfe9e9351cad60537d7a984811f4934a0b0c3e77ca7c83d6f47df3942c10da09",
+  "mock_chooser_option_size_spoken": "b1446a29de2806414fbed0e5f8eb4cba73254e9090f41d4058dbe8b4862814dc",
+  "mock_chooser_parts": "3d8bb625cef0633af336890333a3a6b322eec544d008d9079a339d78c63e50ad",
+  "mock_chooser_pick_free": "3aeb83c4723b357af86926b02294cda28a73d137e485e50b7cfaab9c6753f0a3",
+  "mock_chooser_picked": "bbaf0b055058f9d094efe2b3fdb104dd535074e9a122a526fd2c0d6f3b9f4430",
+  "mock_chooser_placement_detail": "335ed41b7f70ab160794f93603f4a972c8879f6f9b894460afb14021fd58177b",
+  "mock_chooser_placement_long": "228a2a7d39bec538b9a72c8004ac20253c719ecc257d65cf4476b9b5110f2e70",
+  "mock_chooser_placement_medium": "96c602999344813a2ea18fdaf50d074449c76c97b02769d586dc290bc2cec770",
+  "mock_chooser_placement_note": "9018200c7ea0750ea60ee478d16f75f99c0fcee942117a5dfb3894ecf654c767",
+  "mock_chooser_placement_plus": "ca8006722725589dba8e00edcdb4df2bf8724fcd50e32fb3d928095833d26709",
+  "mock_chooser_placement_short": "b1135aa47958ad27f526c4937554e61720f090441718f7ec28586c51ecaba3d3",
+  "mock_chooser_placement_size": "90ee2e2069d885c8ee9f925b164758730c6e5887eaaf614290cbecea50be4fa7",
+  "mock_chooser_placement_size_spoken": "1e5aa46eeb5296381edf79332c9c5a1c9fea9ad6a7552f9fba1adbb94873883e",
+  "mock_chooser_placement_start": "df46bafa1426fc9f72133ff0268c50b3e4cb23a5bc64163217ef1b5d16768953",
+  "mock_chooser_placement_title": "2985aff402b30686b93d01da60a078b9d87c24e213a34316aa6d4a72f0b426fc",
+  "mock_chooser_placement_top_subject": "d7c42562adf4ce71e5e08081b750d2138e84590b22eb545247f6a9df80be2df9",
+  "mock_chooser_placement_top_subjects": "ef3393f4cf3e3c4bcf81c749f76e34cd2acb618bb210a1e74701c70082105a6b",
+  "mock_chooser_plus": "9a3822985d65eb180eabbadfeb41a1e9822fcd8c0a84674f772d8e3a33e7263c",
+  "mock_chooser_preparing": "943b09ceea5f5118209962a0d973cb410242ac1318203c0b4afdf7b97f56d89f",
+  "mock_chooser_preparing_detail": "14d255b8ee61e73c0f95b649d82de9fb8093ca7587302465f991fc071a4f56ba",
+  "mock_chooser_questions": "c5735793df69142bd86c6d9e76fe65821b6280b52a715b9656279694dc56a904",
+  "mock_chooser_rule": "89f2549716463fdbfc28532c5235b8db2a486524854352df8fd58bd9e0f3415a",
+  "mock_chooser_see_plus": "9bb3ee2442f7c13f824526e484974a0d7716c6beb3a5984b9f51cf812be9281d",
+  "mock_chooser_short": "1618cfbd53eed88aff6772eb4bec273602bb562855e1ff3fb67d452a140e1af3",
+  "mock_chooser_short_day": "d9493f487ba99b05982f686837842d788f2206c4465f60cc5b99eeda35b5df9e",
+  "mock_chooser_short_month": "551a5bbe0d9ff58977f9bdd2f407dd21b49e56a528e0e411747e7fa1d92fa49d",
+  "mock_chooser_short_none": "26d28d9250cc2141969959e576f9e5844287f3dfad8a54330919ce2cad2e99a6",
+  "mock_chooser_size_guide_formats": "589b694341f6a86b2e9913c0fdd9ee57709f40701365568815b7b548cf4d974c",
+  "mock_chooser_size_guide_past_edition": "ffe3322abaee5cf114afc139f51c359c2e9c03b78a2a2b01babd03c91ff8a126",
+  "mock_chooser_size_guide_questions": "6a36eec4b1c3379a4a3653276c9252700613560103f07cf798095ad1b27af39c",
+  "mock_chooser_size_guide_subjects": "15279eef62a97d7adfdd41536a431659f571dca91844ae626eff7cc3c2547d56",
+  "mock_chooser_size_guide_time": "b907460fdbeb9d1554ff2f21fb10c741821206d8ccb67d2384c9efd6dae06554",
+  "mock_chooser_size_latest_exam": "f0f34d285af8b9e02bed05a13fa73ff70c2f4ba7be8456ae9854397fb6461827",
+  "mock_chooser_size_material_formats": "aa4a56e282f4a01e7075930f2528f0a61040e7817eb2208eef1d2356714de921",
+  "mock_chooser_size_material_length": "6c385f5e248bf59911d7caf980e22b98cd9d7ab76cde2df7328d10c122b275ce",
+  "mock_chooser_size_notice_formats": "d663997325470e0085dd11aac3f2a4606f0df1e8f133ca11b3fcae66bfe6370b",
+  "mock_chooser_size_notice_past_edition": "5deb09b4fa41a1f08c2a7b915be2f1bef0570c7f79560102d5212bbfae72314f",
+  "mock_chooser_size_notice_questions": "323c134311312a49383488a8f1c843ea318f0419699878e21e25cb4910c85431",
+  "mock_chooser_size_notice_subjects": "b89d37bb30aa044f3f4d9be7b9c2f6e16fe04d934498d69e090a7fd73c75d01e",
+  "mock_chooser_size_notice_time": "5f58b6129f8316198f552acf6f17704965285dddda63199b0a152d1dda97f337",
+  "mock_chooser_size_past_edition": "e5407351a6cabd3431be35a43637a3fd314eab8967a3086622740acf2b2aa9c3",
+  "mock_chooser_start": "c1f87f1be888a3c40b1bd8ab7bf91c09639baa563d65041f7d854d1fdebd0ea7",
+  "mock_chooser_start_with": "04a1ff8e0da6723e99ffd869d34438eab02972a4b1e99c1953464ba931d1e7b6",
+  "mock_chooser_subjects": "886151259c20788e1d66a109c9b3281dc7829ffc16979ece06b13d3d3e3d1a90",
+  "mock_chooser_time_limit": "3449229c177ba6b97594d1833febaf1a1f94b8de3bfa33a50113fd0ba8bf1cdc",
+  "mock_chooser_title": "133464ce20d0a8f0db0eddbcdfa060f98145d58ae7ab9fd1e1efc0a7cec737cf",
+  "mock_chooser_usually_takes": "d49ed0a92c9d43ac60956ee03a46c62559899acf503f47a568bddf4edba638ce",
+  "mock_chooser_writing": "a1938809b79b023d1c65cd41c210ff67deba556c818874fdf96e36da411fcd87",
+  "mock_chooser_writing_questions": "8ee9439330dfda49aa36bc0b59448219facb524793f7a9667ac414f2e164fa9f",
+  "mock_chooser_writing_questions_line": "b0bcea8782c18fbf3bafe0bbd3c1f333b78b5ed51c0729b063d960339bc2b89c",
+  "mock_chooser_written": "7c46fd36a231e096f442a5ce6744a2103d145d5027d54e0a3d379cc99ae13d1c",
+  "mock_chooser_written_part": "96e7fe44639cc6e04fedeb31182c54e156694ea40ac4ddaa539c0ef968e57e42"
+}
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="mock_chooser_title">Hacer un simulacro</string>
+    <string name="mock_chooser_rule">Solo verás tu resultado al final, como el día del examen.</string>
+    <string name="mock_chooser_pick_free">Elige qué parte del examen quieres hacer ahora.</string>
+    <string name="mock_chooser_start">Empezar</string>
+    <string name="mock_chooser_getting_ready">Preparando…</string>
+    <plurals name="mock_chooser_start_with">
+        <item quantity="one">Empezar con %d pregunta</item>
+        <item quantity="many">Empezar con %d preguntas</item>
+        <item quantity="other">Empezar con %d preguntas</item>
+    </plurals>
+    <string name="mock_chooser_see_plus">Ver Plus</string>
+    <string name="mock_chooser_plus">Plus incluye simulacros: cuando quieras y cada semana en tu plan.</string>
+    <string name="mock_chooser_one_subject">Una materia</string>
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$s lists them, such as "Specialty knowledge (P3)". -->
+    <string name="mock_chooser_full_day_without">Un día de examen sin %1$s</string>
+    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
+    <!-- A full exam day's mock that leaves out tests the learner hasn't picked an option for yet. %1$d is the exam day's number; %2$s lists the tests, such as "Foreign language". -->
+    <string name="mock_chooser_full_day_number_without" tools:ignore="PluralsCandidate">Día %1$d del examen sin %2$s</string>
+    <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
+    <string name="mock_chooser_objective_only">solo la parte objetiva</string>
+    <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
+    <string name="mock_chooser_written">+ %1$s</string>
+    <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
+    <string name="mock_chooser_option_size">%1$d preguntas · ~%2$s</string>
+    <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
+    <plurals name="mock_chooser_option_size_spoken">
+        <item quantity="one">%1$d pregunta, aproximadamente %2$s</item>
+        <item quantity="many">%1$d preguntas, aproximadamente %2$s</item>
+        <item quantity="other">%1$d preguntas, aproximadamente %2$s</item>
+    </plurals>
+    <!-- A placement mock's questions in a row; "q" is short for questions. -->
+    <string name="mock_chooser_placement_size">%1$d preguntas</string>
+    <plurals name="mock_chooser_placement_size_spoken">
+        <item quantity="one">%d pregunta</item>
+        <item quantity="many">%d preguntas</item>
+        <item quantity="other">%d preguntas</item>
+    </plurals>
+    <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
+    <plurals name="mock_chooser_short">
+        <item quantity="one">%1$d de las %2$s preguntas ya está lista, así que este simulacro dura aproximadamente %3$s.</item>
+        <item quantity="many">%1$d de las %2$s preguntas ya están listas, así que este simulacro dura aproximadamente %3$s.</item>
+        <item quantity="other">%1$d de las %2$s preguntas ya están listas, así que este simulacro dura aproximadamente %3$s.</item>
+    </plurals>
+    <string name="mock_chooser_short_day">Mañana se podrán preparar más preguntas para tus simulacros.</string>
+    <string name="mock_chooser_short_month">El próximo mes se podrán preparar más preguntas para tus simulacros.</string>
+    <string name="mock_chooser_short_none">El banco de preguntas aún no tiene más preguntas nuevas para este simulacro.</string>
+    <string name="mock_chooser_not_enough">Aún no hay suficientes preguntas para este simulacro. Prueba con el examen completo o con otra materia.</string>
+    <string name="mock_chooser_failed">No pudimos iniciar el simulacro. Inténtalo de nuevo.</string>
+    <string name="mock_chooser_preparing">Preparando tu simulacro de examen</string>
+    <string name="mock_chooser_preparing_detail">Estamos preparando para ti preguntas como las del examen. El simulacro empieza aquí en cuanto estén listas.</string>
+    <string name="mock_chooser_writing">Preparando tu simulacro</string>
+    <string name="mock_chooser_writing_questions">Preparando preguntas como las del examen</string>
+    <string name="mock_chooser_writing_questions_line">Eligiendo qué preguntar en cada materia…</string>
+    <!-- The panel beside the options, about the one picked. -->
+    <string name="mock_chooser_picked">El simulacro elegido</string>
+    <string name="mock_chooser_questions">Preguntas</string>
+    <string name="mock_chooser_time_limit">Límite de tiempo</string>
+    <string name="mock_chooser_usually_takes">Suele durar</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="mock_chooser_about">Aproximadamente %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="mock_chooser_about_recommended">Aproximadamente %1$s (recomendado)</string>
+    <string name="mock_chooser_subjects">Materias</string>
+    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
+    <string name="mock_chooser_parts">Partes</string>
+    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
+    <string name="mock_chooser_written_part">Parte escrita</string>
+    <string name="mock_chooser_last_mock">Tu último simulacro de examen</string>
+    <string name="mock_chooser_placement_title">Un simulacro para conocer tu nivel</string>
+    <string name="mock_chooser_placement_detail">Con el formato del examen. Tu plan se basa en tus respuestas.</string>
+    <string name="mock_chooser_placement_start">Empezar el simulacro</string>
+    <string name="mock_chooser_placement_note">Puedes parar cuando quieras: tu plan se basa en las preguntas que respondiste. Verás tu resultado al final.</string>
+    <string name="mock_chooser_placement_plus">Los simulacros están incluidos en Plus. Sin Plus, las preguntas rápidas indican por dónde empezar.</string>
+    <string name="mock_chooser_placement_top_subject">La materia con más peso en el puntaje. En tus primeros días responderás preguntas sobre las demás.</string>
+    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
+    <plurals name="mock_chooser_placement_top_subjects">
+        <item quantity="one">Las %d materias con más peso en el puntaje. En tus primeros días responderás preguntas sobre las demás.</item>
+        <item quantity="many">Las %d materias con más peso en el puntaje. En tus primeros días responderás preguntas sobre las demás.</item>
+        <item quantity="other">Las %d materias con más peso en el puntaje. En tus primeros días responderás preguntas sobre las demás.</item>
+    </plurals>
+    <string name="mock_chooser_placement_short">Una prueba rápida. Tu nivel se ajusta los primeros días.</string>
+    <string name="mock_chooser_placement_medium">Todas las materias. Un buen punto de partida.</string>
+    <string name="mock_chooser_placement_long">El punto de partida más preciso.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_past_edition">Preguntas por materia en el %1$s, según el conteo de %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_latest_exam">Preguntas por materia en el examen más reciente, según el conteo de %1$s.</string>
+    <!-- %2$s is a duration, such as "1 hr 20 min". -->
+    <plurals name="mock_chooser_size_material_length">
+        <item quantity="one">Tu material no indica cuánto dura el examen. Este simulacro incluye %1$d pregunta para responder en %2$s.</item>
+        <item quantity="many">Tu material no indica cuánto dura el examen. Este simulacro incluye %1$d preguntas para responder en %2$s.</item>
+        <item quantity="other">Tu material no indica cuánto dura el examen. Este simulacro incluye %1$d preguntas para responder en %2$s.</item>
+    </plurals>
+    <string name="mock_chooser_size_material_formats">Tu material no indica cuántas preguntas hay de cada formato, así que se reparten por igual.</string>
+    <plurals name="mock_chooser_size_notice_questions">
+        <item quantity="one">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d pregunta.</item>
+        <item quantity="many">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas.</item>
+        <item quantity="other">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_questions">
+        <item quantity="one">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d pregunta.</item>
+        <item quantity="many">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas.</item>
+        <item quantity="other">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_notice_past_edition">
+        <item quantity="one">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d pregunta, como en una edición anterior.</item>
+        <item quantity="many">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas, como en una edición anterior.</item>
+        <item quantity="other">La convocatoria no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas, como en una edición anterior.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_past_edition">
+        <item quantity="one">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d pregunta, como en una edición anterior.</item>
+        <item quantity="many">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas, como en una edición anterior.</item>
+        <item quantity="other">La guía oficial no indica cuántas preguntas tiene el examen. Este simulacro incluye %d preguntas, como en una edición anterior.</item>
+    </plurals>
+    <string name="mock_chooser_size_notice_subjects">La convocatoria no indica cuántas preguntas tiene cada materia, así que se reparten por igual.</string>
+    <string name="mock_chooser_size_guide_subjects">La guía oficial no indica cuántas preguntas tiene cada parte, así que se reparten por igual.</string>
+    <string name="mock_chooser_size_notice_formats">La convocatoria no indica cuántas preguntas hay de cada formato, así que se reparten por igual.</string>
+    <string name="mock_chooser_size_guide_formats">La guía oficial no indica cuántas preguntas hay de cada formato, así que se reparten por igual.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_notice_time">La convocatoria no indica cuánto dura el examen. En este simulacro tienes %1$s.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_guide_time">La guía oficial no indica cuánto dura el examen. En este simulacro tienes %1$s.</string>
+    <!-- %1$s is the exam's name for a section, such as "Listening". -->
+    <string name="mock_chooser_left_out_named">%1$s aún no se incluye en los simulacros.</string>
+    <string name="mock_chooser_left_out_listening">Los simulacros aún no incluyen la parte de escucha.</string>
+    <string name="mock_chooser_left_out_speaking">Los simulacros aún no incluyen la parte de expresión oral.</string>
+    <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
+    <string name="mock_chooser_left_out_practical_named">%1$s no puede incluirse en un simulacro: es una prueba práctica.</string>
+    <string name="mock_chooser_left_out_practical">La prueba práctica del examen no puede incluirse en un simulacro.</string>
+    <string name="mock_chooser_left_out_numeric">Las preguntas con respuesta numérica se presentan en formato de opción múltiple.</string>
+    <string name="mock_chooser_left_out_short_answer">Las preguntas que se responden en pocas palabras se presentan en formato de opción múltiple.</string>
+    <!-- %1$s is the exam's name for a written part, such as "Essay". -->
+    <string name="mock_chooser_left_out_written">Aún no hay una redacción para %1$s, así que practicas esa parte en tus sesiones de redacción.</string>
+    <!-- %1$s is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet. -->
+    <string name="mock_chooser_left_out_choice">Omitimos %1$s hasta que elijas en tu plan qué opción vas a presentar.</string>
+</resources>

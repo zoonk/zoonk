@@ -1,12 +1,6 @@
 # @zoonk/testing
 
-Shared testing infrastructure for Zoonk apps.
-
-## Overview
-
-This package provides fixtures and utilities for testing across all Zoonk applications. It centralizes test setup to avoid code duplication and ensure consistent testing patterns.
-
-## Usage
+Prisma fixtures and shared browser diagnostics for Zoonk tests. Test boundaries and isolation rules live in the [testing skill](../../.agents/skills/zoonk-testing/SKILL.md).
 
 Add as a dev dependency in your app:
 
@@ -17,8 +11,7 @@ Add as a dev dependency in your app:
 Import fixtures in your tests:
 
 ```ts
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { userFixture, userAttrs } from "@zoonk/testing/fixtures/users";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 ```

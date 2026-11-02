@@ -16,7 +16,6 @@ export const leaderboardPeriodDescriptions: Record<LeaderboardPeriod, string> = 
 
 const leaderboardPeriodDays: Record<LeaderboardPeriod, number> = { "30d": 30, "7d": 7, today: 1 };
 
-/** Invalid or repeated URL values fall back to the default Today leaderboard. */
 export function parseLeaderboardPeriod(value: string | string[] | undefined): LeaderboardPeriod {
   const period = Array.isArray(value) ? value[0] : value;
 

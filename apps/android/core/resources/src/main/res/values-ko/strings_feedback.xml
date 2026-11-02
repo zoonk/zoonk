@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "737f320ae99fd0dac8ab1a690c6282baaf497d3558fca94a6d883652667ca5fe",
+  "feedback_failed": "502bd80720b5bddd2af09ae6b757e0cc924a2d3403ff6555f15112b2795aa533",
+  "feedback_follow_us": "3c691fff9ebb15c22564fafbcb1d4cdce2589e4810e257c401436e31e1364722",
+  "feedback_help_description": "db60809d681f30d411fae95c169a6ac4bd74ef13e5ca795929acb5cdedff4524",
+  "feedback_message": "d335cfbcf12b7627a8022c9fdb9b43fd79fa072d58e282afd0aba3ffc22cc391",
+  "feedback_message_placeholder": "a4cd5551f1321a14b26a29a419632d8838637d803d14cdcaf1c269f1186f18c5",
+  "feedback_more": "e8252bf917e4b8152acae35bc64f3fe2ad90c592f0ade114809ae686f63e4b7f",
+  "feedback_report_problem": "fc3b56f509f71619442405c125a002975834423f722658400b60b5ed867c8c76",
+  "feedback_screen_attached": "94e05ad103b52059393253f48cb8914b6f1969b686cab2cba8416afa4ddd79f2",
+  "feedback_send": "55bae4fe15c2253595668fc1b210b98060210c38f0b13f3809fe71a6c8d624cd",
+  "feedback_send_feedback": "9d8897bd41fc62f84ab76fc57cd829bcbf7ddddb82941f39e3df10f4d19f5d71",
+  "feedback_send_feedback_description": "5f4c9c364456ff4475ec712551ede6ab49c061631877c9087da8a992fbf66ba4",
+  "feedback_sent": "b18957ab966d9ad885d078a5f18dabe4b51effe1cd61b339f79d84df5aa36acc",
+  "feedback_thanks": "78a87c7182f31dba8beeee28ddb971481ce0a26f5dc2f7847805d92910f23943"
+}
+-->
+<resources>
+    <string name="feedback_help_description">궁금한 점이나 문제, 아이디어를 알려 주세요. 이메일로 답변해 드려요.</string>
+    <string name="feedback_message">메시지</string>
+    <string name="feedback_message_placeholder">무엇을 도와드릴까요?</string>
+    <string name="feedback_screen_attached">이 화면이 첨부되어 있어요</string>
+    <string name="feedback_email">답변을 받을 이메일 주소</string>
+    <string name="feedback_send">메시지 보내기</string>
+    <string name="feedback_sent">메시지를 보냈어요! 곧 답변드릴게요.</string>
+    <string name="feedback_failed">메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>
+    <string name="feedback_follow_us">팔로우하기</string>
+    <string name="feedback_report_problem">문제 신고하기</string>
+    <string name="feedback_send_feedback">의견 보내기</string>
+    <string name="feedback_send_feedback_description">문제를 발견했거나 아이디어가 있나요? 아래에 남기거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>
+    <string name="feedback_thanks">고마워요! 메시지를 받았어요.</string>
+    <string name="feedback_more">옵션 더 보기</string>
+</resources>

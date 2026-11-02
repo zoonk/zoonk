@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "planlink_about": "626e8bca14ceb25820bb9b9db7a8a2555dbd2de09b2ecc6ca5faa3e1a0d85ce8",
+  "planlink_eyebrow": "cc0473ea530706f02a6c3c1b749e9a1f3b28b453546c3ce63991345af684729e",
+  "planlink_facts": "3c3844e03cbf2d5519c25b2dead5d9551d3fa64f5c1311825d85c23f6385adec",
+  "planlink_failed": "1b1f9dc55472a37ea36ab17e0e5191e3613854a59bf5c47c7b670e280daac6c6",
+  "planlink_make_it_yours": "55e409ed6a0a6cca3481d629e7e154d3ca5e2afa2125f40c052f1e5508c9e308",
+  "planlink_minutes_label": "b9698d5ad60b9da08ba7bf26857879007ca5dd12066ab5b61912341adcc512ec",
+  "planlink_not_found": "eca94edc390d2dd0e1d4519081c6aa8e98be40f877eb39c75c3896b11763a396",
+  "planlink_not_found_description": "b36a23c7865a661d35290b30e48e2a7cfee6c91e89d6ea747b21cc13a6e5e8dd",
+  "planlink_phases": "5b3aae04333bbc62ceb26c71c9698ef0df4364d34267f0e684f63174819d16fa",
+  "planlink_refused": "85849db587530f4e2bcde0a7a271d2d57addc4e573e356dab4c9a243d973e73b",
+  "planlink_skills": "320f5182cace1db5cc635e18990c0cac8c1440675d5d6e9f6a0ca2bf58755845",
+  "planlink_start": "bb5c01dd025f55f0db1ce617cab8cc80b662ce7cde32125169776920f0a6a6f6",
+  "planlink_study_plan": "7835daa7a8d4f72f292e149d1ed6a209c61aee9f02180cb88eae6a6354747f46"
+}
+-->
+<resources>
+    <!-- Above a shared plan's subject. -->
+    <string name="planlink_eyebrow">누군가 공유해 준 학습 계획</string>
+    <!-- A shared plan without a subject, and the title over its phases. -->
+    <string name="planlink_study_plan">학습 계획</string>
+    <string name="planlink_minutes_label">하루에 얼마나 공부할까요?</string>
+    <!-- Starts the learner's own plan from a shared one. -->
+    <string name="planlink_start">이 계획으로 시작하기</string>
+    <string name="planlink_make_it_yours">같은 과목을 나만의 페이스로 공부할 수 있도록 계획을 만들어요. 몇 문제를 풀면 이미 아는 내용은 건너뛰어요.</string>
+    <string name="planlink_refused">지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 완료하거나 일시 중지하세요.</string>
+    <string name="planlink_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
+    <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
+    <string name="planlink_facts">약 %1$s 학습 · %2$s · %3$s</string>
+    <plurals name="planlink_phases">
+        <item quantity="other">%d단계</item>
+    </plurals>
+    <plurals name="planlink_skills">
+        <item quantity="other">스킬 %d개</item>
+    </plurals>
+    <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
+    <string name="planlink_about">약 %1$s</string>
+    <string name="planlink_not_found">이 계획을 이용할 수 없어요</string>
+    <string name="planlink_not_found_description">링크가 오래됐거나 계획을 만든 사람이 공유를 중단했을 수 있어요.</string>
+</resources>

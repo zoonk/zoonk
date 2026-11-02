@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_box_example_exam": "b9d2d2d55836ed7e7aa3a555a121f5aeb12f2743873771fc63adc8b1728a1818",
+  "goal_box_example_explanation": "78a5fb01f9cdb18eabcefe1ccf7d6938216c8055f2c203186957419a81fca487",
+  "goal_box_example_language": "35145916309b361bf5ef685241ce627fbfa16135b3bdf1c013f76bb392d540cc",
+  "goal_box_example_music": "5bfebdc8a81deae80b4fe65dc6ba7bba9f892af6b36a07e844ed75a8eeca81ca",
+  "goal_box_example_pick": "795169f15aec634aeac953d142b65c208937c4e045bfbec5e474ae54ae200664",
+  "goal_box_example_topic": "b46e3c59267757d423d56a3058650b25918a4ad13a639d58efd04443f3858486",
+  "goal_box_examples": "079f87f6c12ef8d9403fd78194e45752ecefe3336abdd096e04d1e4dd2979f7f",
+  "goal_box_kind_exam": "1bd08fd6dd4a5d778c6b31dc53ed756527abb3427b7c627501bc833fdd8fe740",
+  "goal_box_kind_language": "3741b167e657caeede180037ce0f0366baf01d6e9b39a485d6264594bc1d7796",
+  "goal_box_kind_music": "869a9b7c61ef5803c16760526ae1eb2a696a51806a8ca559335e76c4d78cf03a",
+  "goal_box_kind_quick_explanation": "b69a4ecdd771a36ec2291e3e36a9bece8b995f16ecf887dc0b15cd4ec4c50d94",
+  "goal_box_kind_topic": "a7982eb90cfeb99d85efe2fa95e3d4316f8315e4db5759e819be445d2028e126",
+  "goal_box_label": "36cb59b064dc962064b8be88d931adecfa165edfb84123554940e52a5dbcd6d0",
+  "goal_box_placeholder": "0271d0492fc996967146e36480a4e51114d14e304a010f243745fb791457933d",
+  "goal_box_submit": "f088f9cbd3bb1249fbabb770e254e779dc4ff052ee582e55f36b4de916117e81",
+  "goal_box_write_first": "71b62e9318844e3fca88154d5546c68affa2cea5804ae4175a119d1b00c86875"
+}
+-->
+<resources>
+    <string name="goal_box_label">Chcę</string>
+    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. %1$s is a language name. -->
+    <string name="goal_box_placeholder">zdać maturę, mówić w języku: %1$s…</string>
+    <string name="goal_box_submit">Ułóż mój plan</string>
+    <string name="goal_box_write_first">Najpierw wpisz w polu swój cel własnymi słowami.</string>
+    <string name="goal_box_examples">Przykłady</string>
+    <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
+    <string name="goal_box_example_pick">zacznij realizować ten cel</string>
+    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. -->
+    <string name="goal_box_example_exam">Zdaj maturę</string>
+    <!-- %1$s is a language name. -->
+    <string name="goal_box_example_language">Mów na rozmowie o pracę w języku: %1$s</string>
+    <string name="goal_box_example_topic">Zrozum fizykę kwantową</string>
+    <string name="goal_box_example_music">Poznaj muzykę od podstaw</string>
+    <string name="goal_box_example_explanation">Jak działa inflacja?</string>
+    <string name="goal_box_kind_exam">Egzamin</string>
+    <string name="goal_box_kind_language">Język</string>
+    <string name="goal_box_kind_topic">Poznaj temat</string>
+    <string name="goal_box_kind_music">Muzyka</string>
+    <!-- %1$s is a duration, like "5 min". -->
+    <string name="goal_box_kind_quick_explanation">Szybkie wyjaśnienie · %1$s</string>
+</resources>

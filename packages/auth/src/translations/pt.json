@@ -1,6 +1,27 @@
 {
+  "checkoutMonthlyRenewal": "O Plus é renovado automaticamente todo mês até você cancelar. Cancele quando quiser em Configurações › Assinatura.",
+  "checkoutYearlyRenewal": "O Plus é renovado automaticamente todo ano até você cancelar. Cancele quando quiser em Configurações › Assinatura.",
   "otpDisclaimer": "Se você não solicitou esse código, pode ignorar esta mensagem.",
   "otpExpiry": "Este código expira em 5 minutos.",
   "otpIntro": "Este é o seu código para entrar no Zoonk:",
-  "otpSubject": "Seu código OTP"
+  "otpSubject": "Seu código para entrar no Zoonk",
+  "plusAccountLabel": "Conta",
+  "plusAlreadyActiveSubject": "Você já tem o Zoonk Plus",
+  "plusEmailLegal": "Sua assinatura segue nossos {termsLink} e nossa {privacyLink}.",
+  "plusEmailPrivacy": "Política de Privacidade",
+  "plusEmailQuestions": "Dúvidas? É só responder a este e-mail.",
+  "plusEmailTerms": "Termos de Serviço",
+  "plusNoMoreCharges": "Você não será cobrado de novo.",
+  "plusPlanLabel": "Plano",
+  "plusPlanMonthly": "Zoonk Plus, mensal",
+  "plusPlanYearly": "Zoonk Plus, anual",
+  "plusRefundFull": "Reembolsamos o valor integral de {amount} na forma de pagamento que você usou.",
+  "plusRefundLabel": "Reembolso",
+  "plusRefundTiming": "Seu banco costuma mostrar o reembolso em 5 a 10 dias úteis.",
+  "plusTwiceCancelApple": "Para pagar só uma vez, cancele a nova assinatura na App Store: {manageLink}. Os reembolsos de compras feitas lá são com a Apple.",
+  "plusTwiceCancelGoogle": "Para pagar só uma vez, cancele a nova assinatura no Google Play: {manageLink}. Os reembolsos de compras feitas lá são com o Google.",
+  "plusTwiceIntro": "Você acabou de assinar o Zoonk Plus, mas sua conta já tinha o Plus, então agora você está pagando duas vezes.",
+  "plusTwiceSubject": "Você está pagando o Zoonk Plus duas vezes",
+  "plusWebEndedBesideApple": "Você já tem o Zoonk Plus pela App Store, então cancelamos o Plus que você comprou no nosso site.",
+  "plusWebEndedBesideGoogle": "Você já tem o Zoonk Plus pelo Google Play, então cancelamos o Plus que você comprou no nosso site."
 }

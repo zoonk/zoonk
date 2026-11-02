@@ -1,10 +1,9 @@
 import { z } from "zod";
 
-/** Identifies a valid email OTP that authenticated a different Zoonk user. */
-export class EmailAccountDeletionError extends Error {
+export class AccountDeletionEmailMismatchError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "EmailAccountDeletionError";
+    this.name = "AccountDeletionEmailMismatchError";
   }
 }
 

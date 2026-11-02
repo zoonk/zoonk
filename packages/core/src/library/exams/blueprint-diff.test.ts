@@ -1,0 +1,409 @@
+import { describe, expect, it } from "vitest";
+import { type BlueprintContent } from "./blueprint-contract";
+import { mergeBlueprintContent } from "./blueprint-diff";
+
+const OLD_CITATION = { passage: "A prova terá 50 questões.", sourceId: "source-1" };
+const NEW_CITATION = { passage: "A prova terá 60 questões.", sourceId: "source-2" };
+
+function content(overrides: Partial<BlueprintContent> = {}): BlueprintContent {
+  return {
+    edition: {
+      check: null,
+      citations: [],
+      dates: [
+        {
+          citation: OLD_CITATION,
+          date: "2026-11-08",
+          kind: "exam",
+          label: "Prova",
+          startTime: null,
+        },
+      ],
+      noticeUrl: "https://example.gov.br/edital.pdf",
+      questionCount: 50,
+      sourceHash: "hash-1",
+      timeZone: null,
+      year: 2026,
+    },
+    structure: {
+      formats: [
+        {
+          citation: OLD_CITATION,
+          description: "Certo ou errado",
+          kind: "trueFalse",
+          options: null,
+        },
+      ],
+      mock: null,
+      rules: [{ citation: OLD_CITATION, text: "Uma resposta errada anula uma certa." }],
+      subjects: [
+        { citation: OLD_CITATION, name: "Direito", questions: 50, topics: ["Leis"], weight: null },
+      ],
+    },
+    topicFrequency: [],
+    ...overrides,
+  };
+}
+
+function withTopics(name: string, topics: string[]) {
+  return { citation: OLD_CITATION, name, questions: null, topics, weight: null };
+}
+
+function ranked(name: string, topic: string) {
+  return {
+    basis: "questões de 2020 a 2025",
+    board: "Cebraspe",
+    name,
+    source: { title: null, url: "https://example.com/assuntos" },
+    topics: [{ appearances: 9, level: "high" as const, topic }],
+  };
+}
+
+describe(mergeBlueprintContent, () => {
+  it("reports nothing when only the passages differ", () => {
+    const current = content();
+
+    const next = content({
+      structure: {
+        ...current.structure,
+        subjects: [
+          {
+            citation: NEW_CITATION,
+            name: "Direito",
+            questions: 50,
+            topics: ["Leis"],
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    expect(mergeBlueprintContent({ current, next }).changes).toStrictEqual([]);
+  });
+
+  it("updates only what changed and lists it without citations", () => {
+    const current = content();
+
+    const next = content({
+      edition: { ...current.edition, questionCount: 60, sourceHash: "hash-2" },
+      structure: {
+        ...current.structure,
+        subjects: [
+          {
+            citation: NEW_CITATION,
+            name: "Direito",
+            questions: 60,
+            topics: ["Leis"],
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    const merged = mergeBlueprintContent({ current, next });
+
+    expect(merged.changes).toStrictEqual([
+      {
+        after: [{ name: "Direito", questions: 60, topics: ["Leis"], weight: null }],
+        before: [{ name: "Direito", questions: 50, topics: ["Leis"], weight: null }],
+        field: "subjects",
+      },
+      { after: 60, before: 50, field: "edition.questionCount" },
+    ]);
+
+    expect(merged.content.edition.questionCount).toBe(60);
+    expect(merged.content.edition.sourceHash).toBe("hash-2");
+    expect(merged.content.structure.rules).toBe(current.structure.rules);
+    expect(merged.content.structure.subjects[0]?.citation).toStrictEqual(NEW_CITATION);
+  });
+
+  it("keeps what the new reading left empty instead of deleting it", () => {
+    const current = content();
+
+    const next = content({
+      edition: { ...current.edition, dates: [], questionCount: null },
+      structure: { formats: [], mock: null, rules: [], subjects: [] },
+    });
+
+    const merged = mergeBlueprintContent({ current, next });
+
+    expect(merged.changes).toStrictEqual([]);
+    expect(merged.content.structure.subjects).toBe(current.structure.subjects);
+    expect(merged.content.edition.dates).toBe(current.edition.dates);
+    expect(merged.content.edition.questionCount).toBe(50);
+  });
+
+  it("stores the language a new reading says the exam tests, and keeps it when a later one misses it", () => {
+    const testedLanguage = { citation: NEW_CITATION, language: "en" };
+    const unread = content();
+    const read = content({ structure: { ...unread.structure, testedLanguage } });
+
+    const first = mergeBlueprintContent({ current: unread, next: read });
+    const again = mergeBlueprintContent({ current: first.content, next: unread });
+
+    expect([first.changes, again.changes]).toStrictEqual([[], []]);
+    expect(first.content.structure.testedLanguage).toStrictEqual(testedLanguage);
+    expect(again.content.structure.testedLanguage).toStrictEqual(testedLanguage);
+  });
+
+  it("takes a new reading's translations of the same pass mark, which aren't news for learners", () => {
+    const passMark = { citation: OLD_CITATION, kind: "passMark" as const, text: "Apto con 60." };
+    const unread = content({ structure: { ...content().structure, rules: [passMark] } });
+    const translations = { en: "Pass with 60.", pt: "Apto com 60." };
+
+    const read = content({
+      structure: {
+        ...unread.structure,
+        rules: [{ ...passMark, citation: NEW_CITATION, translations }],
+      },
+    });
+
+    const first = mergeBlueprintContent({ current: unread, next: read });
+    const again = mergeBlueprintContent({ current: first.content, next: unread });
+
+    expect([first.changes, again.changes]).toStrictEqual([[], []]);
+    expect(first.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
+    expect(again.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
+  });
+
+  it("asks again for the subjects' counts a lookup didn't give once a reading changes the subjects", () => {
+    const found = {
+      checkedAt: "2026-10-01T00:00:00.000Z",
+      edition: "47º Exame",
+      source: { title: null, url: "https://example.com/distribuicao" },
+      subjects: [{ name: "Direito", questions: 50 }],
+    };
+
+    const notFound = {
+      checkedAt: "2026-10-01T00:00:00.000Z",
+      edition: null,
+      source: null,
+      subjects: [],
+    };
+
+    const ethics = {
+      citation: NEW_CITATION,
+      name: "Ética Profissional",
+      questions: null,
+      topics: [],
+      weight: null,
+    };
+
+    const withLookup = (pastQuestions: typeof found | typeof notFound) =>
+      content({ structure: { ...content().structure, pastQuestions } });
+
+    const next = content({
+      structure: { ...content().structure, subjects: [...content().structure.subjects, ethics] },
+    });
+
+    expect(
+      mergeBlueprintContent({ current: withLookup(notFound), next }).content.structure
+        .pastQuestions,
+    ).toBeUndefined();
+
+    expect(
+      mergeBlueprintContent({ current: withLookup(found), next }).content.structure.pastQuestions,
+    ).toBeUndefined();
+
+    const everySubject = {
+      ...found,
+      subjects: [...found.subjects, { name: "Ética Profissional", questions: 8 }],
+    };
+
+    expect(
+      mergeBlueprintContent({ current: withLookup(everySubject), next }).content.structure
+        .pastQuestions,
+    ).toStrictEqual(everySubject);
+
+    expect(
+      mergeBlueprintContent({ current: withLookup(notFound), next: content() }).content.structure
+        .pastQuestions,
+    ).toStrictEqual(notFound);
+  });
+
+  it("forgets the past-paper research of a subject whose topics changed, keeping the others'", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        pastQuestions: {
+          board: "Cebraspe",
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          edition: "2024",
+          source: { title: null, url: "https://example.com/distribuicao" },
+          subjects: [
+            { name: "Direito", questions: 30 },
+            { name: "Ética", questions: 20 },
+          ],
+        },
+        pastTopicFrequency: {
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          subjects: [ranked("Direito", "Leis"), ranked("Ética", "Deveres")],
+        },
+        subjects: [withTopics("Direito", ["Leis"]), withTopics("Ética", ["Deveres"])],
+      },
+    });
+
+    const next = content({
+      structure: {
+        ...content().structure,
+        subjects: [withTopics("Direito", ["Leis", "Controle"]), withTopics("Ética", ["Deveres"])],
+      },
+    });
+
+    const merged = mergeBlueprintContent({ current, next }).content.structure;
+
+    expect(merged.pastQuestions).toBeUndefined();
+
+    expect(merged.pastTopicFrequency).toStrictEqual({
+      checkedAt: null,
+      subjects: [ranked("Ética", "Deveres")],
+    });
+  });
+
+  it("keeps a subject's past-paper research when a new reading lists the same topics in another order", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        pastTopicFrequency: {
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          subjects: [ranked("Direito", "Leis")],
+        },
+        subjects: [withTopics("Direito", ["1 Leis", "2 Controle"])],
+      },
+    });
+
+    const next = content({
+      structure: {
+        ...content().structure,
+        subjects: [withTopics("Direito", ["1 Controle", "2 Leis", "3 Leis"])],
+      },
+    });
+
+    expect(
+      mergeBlueprintContent({ current, next }).content.structure.pastTopicFrequency,
+    ).toStrictEqual(current.structure.pastTopicFrequency);
+  });
+
+  it("takes a new reading's subjects and formats as it states them, what it leaves out included", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        formats: [
+          { citation: OLD_CITATION, description: "Cinco", kind: "multipleChoice", options: 5 },
+        ],
+        subjects: [
+          {
+            citation: OLD_CITATION,
+            group: "Conhecimentos básicos (P1)",
+            name: "Linguagens",
+            questions: 45,
+            topics: ["Leis"],
+            weight: 0.25,
+          },
+          { citation: OLD_CITATION, name: "Redação", questions: null, topics: [], weight: null },
+        ],
+      },
+    });
+
+    const reading = {
+      formats: [
+        {
+          citation: NEW_CITATION,
+          description: "Objetivas",
+          kind: "multipleChoice" as const,
+          options: null,
+        },
+      ],
+      subjects: [
+        {
+          citation: NEW_CITATION,
+          group: null,
+          name: "Linguagens, Códigos e suas Tecnologias",
+          questions: null,
+          topics: ["Leis"],
+          weight: null,
+        },
+        { citation: NEW_CITATION, name: "Ética", questions: null, topics: [], weight: null },
+      ],
+    };
+
+    const merged = mergeBlueprintContent({
+      current,
+      next: content({ structure: { ...content().structure, ...reading } }),
+    });
+
+    expect(merged.content.structure).toMatchObject(reading);
+    expect(merged.changes.map((change) => change.field)).toStrictEqual(["subjects", "formats"]);
+  });
+
+  it("compares stored JSON regardless of key order", () => {
+    const current = content();
+
+    const reordered = current.structure.subjects.map(
+      (subject) => Object.fromEntries(Object.entries(subject).toReversed()) as typeof subject,
+    );
+
+    const merged = mergeBlueprintContent({
+      current: content({ structure: { ...current.structure, subjects: reordered } }),
+      next: current,
+    });
+
+    expect(merged.changes).toStrictEqual([]);
+  });
+
+  it("takes a new number of options, and the new reading's other formats", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        formats: [
+          { citation: OLD_CITATION, description: "Cinco", kind: "multipleChoice", options: 5 },
+        ],
+      },
+    });
+
+    const fourOptions = {
+      citation: NEW_CITATION,
+      description: "Quatro",
+      kind: "multipleChoice" as const,
+      options: 4,
+    };
+
+    const essay = {
+      citation: NEW_CITATION,
+      description: "Redação",
+      kind: "essay" as const,
+      options: null,
+    };
+
+    const merged = mergeBlueprintContent({
+      current,
+      next: content({ structure: { ...current.structure, formats: [fourOptions, essay] } }),
+    });
+
+    expect(merged.changes.map((change) => change.field)).toStrictEqual(["formats"]);
+    expect(merged.content.structure.formats).toStrictEqual([fourOptions, essay]);
+  });
+
+  it("moves an exam date", () => {
+    const current = content();
+
+    const next = content({
+      edition: {
+        ...current.edition,
+        dates: [
+          {
+            citation: NEW_CITATION,
+            date: "2026-11-15",
+            kind: "exam",
+            label: "Prova",
+            startTime: null,
+          },
+        ],
+      },
+    });
+
+    expect(
+      mergeBlueprintContent({ current, next }).changes.map((change) => change.field),
+    ).toStrictEqual(["edition.dates"]);
+  });
+});

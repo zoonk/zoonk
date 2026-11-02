@@ -8,11 +8,6 @@ type AuthorSocial = { icon: BrandIconComponent; label: string; url: string };
 
 type Author = { name: string; social: AuthorSocial[] };
 
-/**
- * Author registry for blog posts.
- * Each author has a name and a list of social profiles
- * that are displayed as icons alongside their posts.
- */
 const AUTHORS: Record<string, Author> = {
   will: {
     name: "Will Ceolin",
@@ -23,7 +18,6 @@ const AUTHORS: Record<string, Author> = {
   },
 };
 
-/** Look up an author by their ID. */
 export function getAuthor(authorId: string): Author | null {
   return AUTHORS[authorId] ?? null;
 }

@@ -1,213 +1,202 @@
 import SwiftUI
 
 struct CourseCatalogGrid: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(AppRouter.self) private var router
+  @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(CourseCatalogStore.self) private var catalog
+  @State private var space = PaneSpace(width: 0)
 
   let category: CourseCategory?
   let page: CourseCatalogPage
+  let isAtHinge: Bool
+
+  private static let minimumColumn = 240.0
+  private static let spacing = 24.0
 
   var body: some View {
-    LazyVGrid(columns: layout.columns, alignment: .leading, spacing: 14) {
-      ForEach(page.courses) { course in
-        courseItem(course)
+    Section {
+      if usesColumns, let hinge = hingeColumns {
+        // A list row per line of the grid: one row as tall as the whole grid draws nothing once
+        // the text grows.
+        ForEach(lines(of: hinge.count), id: \.lowerBound) { line in
+          grid(page.courses[line], columns: hinge)
+            .listRowInsets(.vertical, 0)
+            .padding(.top, line.lowerBound == 0 ? 8 : Self.spacing / 2)
+            .padding(.bottom, line.upperBound == page.courses.count ? 8 : Self.spacing / 2)
+        }
+        .listRowSeparator(.hidden)
+      } else if usesColumns {
+        grid(
+          page.courses[...],
+          columns: [
+            GridItem(.adaptive(minimum: Self.minimumColumn), spacing: Self.spacing, alignment: .top)
+          ]
+        )
+        .padding(.vertical, 8)
+      } else {
+        ForEach(page.courses) { course in
+          cell(course, isColumn: false)
+        }
       }
-    }
-
-    if page.canLoadMore {
-      CourseGridLoadMoreView(
-        failure: courseGridLoadMoreFailure(catalog.loadMoreFailure),
-        isLoading: catalog.isLoadingMore
-      ) {
-        await catalog.loadMoreCourses(category: category)
+    } footer: {
+      if page.canLoadMore {
+        CourseGridLoadMoreView(
+          failure: courseGridLoadMoreFailure(catalog.loadMoreFailure),
+          isLoading: catalog.isLoadingMore
+        ) {
+          await catalog.loadMoreCourses(category: category)
+        }
       }
     }
   }
 
-  private var layout: CourseGridLayout {
-    CourseGridLayout(
-      dynamicTypeSize: dynamicTypeSize,
-      horizontalSizeClass: horizontalSizeClass)
+  /// At a hinge each side's column is about a phone wide, so it keeps at any text size.
+  private var usesColumns: Bool {
+    horizontalSizeClass == .regular && (!isStacked || isAtHinge)
+  }
+
+  private var hingeColumns: [GridItem]? {
+    space.columnsAroundHinge(minimum: Self.minimumColumn, spacing: Self.spacing)?.map {
+      GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top)
+    }
+  }
+
+  private func lines(of columns: Int) -> [Range<Int>] {
+    stride(from: 0, to: page.courses.count, by: columns).map {
+      $0..<min($0 + columns, page.courses.count)
+    }
+  }
+
+  private func grid(_ courses: ArraySlice<CourseSummary>, columns: [GridItem]) -> some View {
+    LazyVGrid(columns: columns, alignment: .leading, spacing: Self.spacing) {
+      ForEach(courses) { course in
+        cell(course, isColumn: true)
+      }
+    }
+    .onGeometryChange(for: PaneSpace.self) {
+      PaneSpace($0)
+    } action: {
+      space = $0
+    }
   }
 
   @ViewBuilder
-  private func courseItem(_ course: CourseSummary) -> some View {
+  private func cell(_ course: CourseSummary, isColumn: Bool) -> some View {
     if page.canLoadMore, course.id == page.courses.last?.id {
-      CourseGridItem(
-        artworkSize: layout.artworkSize,
-        description: course.description,
-        destination: .course(CourseReference(course)),
-        imageURL: course.imageURL,
-        title: course.title
-      )
-      .task(
+      link(course, isColumn: isColumn).task(
         id: CourseCatalogPaginationTaskID(
           cursor: page.nextCursor,
-          isLoadingCourses: catalog.isLoadingCourses)
+          isRefreshing: catalog.courses(category: category).isRefreshing)
       ) {
-        guard !catalog.isLoadingCourses else {
+        guard !catalog.courses(category: category).isRefreshing else {
           return
         }
 
-        await catalog.loadMoreCourses(category: category, force: true)
+        await catalog.loadMoreCourses(category: category)
       }
     } else {
-      CourseGridItem(
-        artworkSize: layout.artworkSize,
-        description: course.description,
-        destination: .course(CourseReference(course)),
-        imageURL: course.imageURL,
-        title: course.title)
+      link(course, isColumn: isColumn)
+    }
+  }
+
+  @ViewBuilder
+  private func link(_ course: CourseSummary, isColumn: Bool) -> some View {
+    let destination = CourseDestination.course(CourseReference(course))
+    let cell = CourseCell(
+      course: course, isColumn: isColumn, showsSubject: course.subject != category)
+
+    // The grid is one list row, and a row fires its links together, so each cell is a plain
+    // button, which takes only its own taps.
+    if isColumn {
+      Button {
+        router.push(destination)
+      } label: {
+        cell
+      }
+      .buttonStyle(.plain)
+    } else {
+      NavigationLink(value: destination) { cell }
     }
   }
 }
 
 private struct CourseCatalogPaginationTaskID: Equatable {
   let cursor: String?
-  let isLoadingCourses: Bool
+  let isRefreshing: Bool
 }
 
-struct CourseCatalogLoadingGrid: View {
+private struct CourseCell: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+  let course: CourseSummary
+  let isColumn: Bool
+  let showsSubject: Bool
 
   var body: some View {
-    LazyVGrid(columns: layout.columns, alignment: .leading, spacing: 14) {
-      ForEach(0..<8, id: \.self) { _ in
-        CourseCatalogLoadingItem(artworkSize: layout.artworkSize)
+    let layout =
+      isColumn
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+      : AnyLayout(HStackLayout(alignment: .top, spacing: 12))
+
+    layout {
+      HStack(alignment: .top) {
+        CourseMark(course)
+
+        if isColumn {
+          Spacer(minLength: 8)
+          subjectLabel
+        }
       }
+
+      VStack(alignment: .leading, spacing: 4) {
+        if isColumn {
+          title
+        } else {
+          AccessibilityStack(alignment: .firstTextBaseline, spacing: 8, stackedSpacing: 4) {
+            title
+              .frame(maxWidth: .infinity, alignment: .leading)
+
+            subjectLabel
+          }
+        }
+
+        if let lead = firstSentence(course.description) {
+          Text(lead)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+        }
+
+        if let length = courseLengthText(
+          lessonCount: course.lessonCount, minutes: course.estimatedMinutes)
+        {
+          Text(length)
+            .font(.footnote.monospacedDigit())
+            .foregroundStyle(.secondary)
+            .padding(.top, 2)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "Loading courses",
-        tableName: "Courses",
-        comment: "Accessibility status while the course catalog loads."))
+    .contentShape(.rect)
+    .accessibilityElement(children: .combine)
   }
 
-  private var layout: CourseGridLayout {
-    CourseGridLayout(
-      dynamicTypeSize: dynamicTypeSize,
-      horizontalSizeClass: horizontalSizeClass)
+  private var title: some View {
+    Text(course.title)
+      .font(.body.weight(.semibold))
+      .foregroundStyle(.primary)
+      .fixedSize(horizontal: false, vertical: true)
+      // VoiceOver names the course before its flag and subject, which a column draws over it.
+      .accessibilitySortPriority(1)
   }
-}
-
-private struct CourseCatalogLoadingItem: View {
-  let artworkSize: CGFloat
-
-  var body: some View {
-    CourseGridRow(imageURL: nil, artworkSize: artworkSize) {
-      textContent
-    }
-    .redacted(reason: .placeholder)
-  }
-
-  private var textContent: some View {
-    VStack(alignment: .leading, spacing: 3) {
-      Text(verbatim: "A course title")
-        .font(.headline)
-      Text(verbatim: "A short description of this course")
-        .font(.subheadline)
-    }
-  }
-}
-
-struct CourseGridItem: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-  let artworkSize: CGFloat
-  let description: String?
-  let destination: CourseDestination?
-  let imageURL: URL?
-  let title: String
 
   @ViewBuilder
-  var body: some View {
-    if let destination {
-      NavigationLink(value: destination) {
-        row
-          .contentShape(Rectangle())
-      }
-      .buttonStyle(.plain)
-      .accessibilityHint(
-        Text(
-          "Opens the course",
-          tableName: "Courses",
-          comment: "Accessibility hint for a course in the catalog."))
-    } else {
-      row
-        .accessibilityElement(children: .combine)
+  private var subjectLabel: some View {
+    if showsSubject, let subject = course.subject {
+      CourseSubjectLabel(subject: subject)
     }
-  }
-
-  private var row: some View {
-    CourseGridRow(imageURL: imageURL, artworkSize: artworkSize) {
-      textContent
-    }
-  }
-
-  private var textContent: some View {
-    VStack(alignment: .leading, spacing: 3) {
-      Text(title)
-        .font(.headline)
-        .foregroundStyle(.primary)
-        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
-
-      if let description = catalogText(description) {
-        Text(description)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
-      }
-    }
-  }
-}
-
-struct CourseGridRow<Content: View>: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-  let imageURL: URL?
-  let artworkSize: CGFloat
-  @ViewBuilder let content: Content
-
-  var body: some View {
-    HStack(alignment: dynamicTypeSize.isAccessibilitySize ? .top : .center, spacing: 12) {
-      CourseArtwork(imageURL: imageURL)
-        .frame(width: artworkSize, height: artworkSize)
-
-      content
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    .padding(.top, usesBalancedRegularLayout ? 8 : 0)
-    .padding(.bottom, usesBalancedRegularLayout ? 8 : 14)
-    .overlay(alignment: .bottom) {
-      Color(uiColor: .separator)
-        .frame(height: 0.5)
-        .padding(.leading, artworkSize + 12)
-    }
-  }
-
-  private var usesBalancedRegularLayout: Bool {
-    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize
-  }
-}
-
-struct CourseGridLayout {
-  let dynamicTypeSize: DynamicTypeSize
-  let horizontalSizeClass: UserInterfaceSizeClass?
-
-  var artworkSize: CGFloat {
-    horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize ? 88 : 64
-  }
-
-  var columns: [GridItem] {
-    guard horizontalSizeClass == .regular, !dynamicTypeSize.isAccessibilitySize else {
-      return [GridItem(.flexible(), alignment: .top)]
-    }
-
-    return [GridItem(.adaptive(minimum: 300, maximum: 420), spacing: 24, alignment: .top)]
   }
 }
 
@@ -278,7 +267,7 @@ struct CourseGridLoadMoreView: View {
 }
 
 private func courseGridLoadMoreFailure(
-  _ failure: CourseCatalogFailure?
+  _ failure: APIError?
 ) -> CourseGridLoadMoreFailure? {
   guard let failure else {
     return nil

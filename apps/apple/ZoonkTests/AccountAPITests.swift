@@ -5,6 +5,37 @@ import XCTest
 @testable import Zoonk
 
 final class AccountAPITests: XCTestCase {
+  func testDeletionCodeDeliveryForwardsExistingBearer() async throws {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailCodeTransport(expectedToken: "existing-session")))
+    try await api.sendEmailCode(email: "learner@zoonk.test", token: "existing-session")
+  }
+
+  func testLoginCodeDeliveryRemainsAnonymous() async throws {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailCodeTransport(expectedToken: nil)))
+    try await api.sendEmailCode(email: "learner@zoonk.test")
+  }
+
+  func testProductionBotGuardIsTypedDeliveryError() async {
+    let api = AccountAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: EmailPolicyTransport(code: "BOT_DETECTED", status: .forbidden)))
+    do {
+      try await api.sendEmailCode(email: "learner@zoonk.test", token: "existing-session")
+      XCTFail("Expected the production guard to reject delivery")
+    } catch let error as AccountAPIError {
+      XCTAssertEqual(error, .botDetected)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
+  }
+
   func testDisposableEmailRejectionRemainsDistinctWhenRequestingCode() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -28,7 +59,8 @@ final class AccountAPITests: XCTestCase {
         transport: EmailPolicyTransport(code: "DISPOSABLE_EMAIL_NOT_ALLOWED")))
 
     do {
-      _ = try await api.signInWithEmailCode(email: "learner@mailinator.com", code: "123456")
+      _ = try await api.signInWithEmailCode(
+        email: "learner@mailinator.com", code: "123456", guestToken: nil)
       XCTFail("Expected a temporary inbox to be rejected")
     } catch let error as AccountAPIError {
       XCTAssertEqual(error, .disposableEmail)
@@ -53,17 +85,6 @@ final class AccountAPITests: XCTestCase {
     }
   }
 
-  func testCurrentAccountUsesSharedClientConfiguration() async throws {
-    let clients = APIClientFactory(
-      baseURL: URL(string: "https://api.zoonk.test")!,
-      transport: CurrentAccountTransport())
-    let api = AccountAPI(clients: clients)
-
-    let account = try await api.getCurrentAccount(token: "test-session")
-
-    XCTAssertEqual(account.user.email, "learner@zoonk.test")
-  }
-
   func testNativeSessionRateLimitRemainsActionable() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -71,7 +92,8 @@ final class AccountAPITests: XCTestCase {
         transport: RateLimitedTransport()))
 
     do {
-      _ = try await api.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+      _ = try await api.signInWithEmailCode(
+        email: "learner@zoonk.test", code: "123456", guestToken: nil)
       XCTFail("Expected the rate limit response to throw")
     } catch let error as AccountAPIError {
       XCTAssertEqual(error, .rateLimited)
@@ -151,6 +173,7 @@ private enum CurrentAccountTransportError: Error {
 
 private struct EmailPolicyTransport: ClientTransport {
   let code: String
+  var status: HTTPResponse.Status = .badRequest
 
   func send(
     _ request: HTTPRequest,
@@ -162,36 +185,8 @@ private struct EmailPolicyTransport: ClientTransport {
     headerFields[.contentType] = "application/json"
 
     return (
-      HTTPResponse(status: .badRequest, headerFields: headerFields),
+      HTTPResponse(status: status, headerFields: headerFields),
       HTTPBody(#"{"error":{"code":"\#(code)","message":"Email cannot be used"}}"#)
-    )
-  }
-}
-
-/// The generated client's cross-cutting configuration is observable only at the transport boundary, so this avoids depending on an external server.
-private struct CurrentAccountTransport: ClientTransport {
-  func send(
-    _ request: HTTPRequest,
-    body: HTTPBody?,
-    baseURL: URL,
-    operationID: String
-  ) async throws -> (HTTPResponse, HTTPBody?) {
-    guard
-      baseURL == URL(string: "https://api.zoonk.test/v1"),
-      request.headerFields[.authorization] == "Bearer test-session",
-      request.headerFields[.acceptLanguage] != nil
-    else {
-      throw CurrentAccountTransportError.invalidRequest
-    }
-
-    var headerFields = HTTPFields()
-    headerFields[.contentType] = "application/json"
-
-    return (
-      HTTPResponse(status: .ok, headerFields: headerFields),
-      HTTPBody(
-        #"{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":false,"subscription":null},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}}"#
-      )
     )
   }
 }
@@ -214,7 +209,6 @@ private struct RateLimitedTransport: ClientTransport {
   }
 }
 
-/// Verifies the hand-written account boundary uses the authenticated generated operation and exact signed-transaction request contract without a live server.
 private struct AppleSubscriptionTransport: ClientTransport {
   func send(
     _ request: HTTPRequest,
@@ -288,5 +282,22 @@ private struct CancelledURLTransport: ClientTransport {
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     throw URLError(.cancelled)
+  }
+}
+
+private struct EmailCodeTransport: ClientTransport {
+  let expectedToken: String?
+
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
+    async throws -> (HTTPResponse, HTTPBody?)
+  {
+    XCTAssertEqual(operationID, "createEmailSignInCode")
+    XCTAssertEqual(request.headerFields[.authorization], expectedToken.map { "Bearer \($0)" })
+    let body = try XCTUnwrap(body)
+    let payload = try await String(collecting: body, upTo: 1_024)
+    XCTAssertEqual(
+      try JSONSerialization.jsonObject(with: Data(payload.utf8)) as? [String: String],
+      ["email": "learner@zoonk.test"])
+    return (HTTPResponse(status: .noContent), nil)
   }
 }

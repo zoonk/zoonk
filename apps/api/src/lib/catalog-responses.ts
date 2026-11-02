@@ -1,161 +1,148 @@
+import { type getCatalogChapter } from "@zoonk/core/catalog/chapter";
+import { type listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-lessons";
+import { type listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapters";
 import { type searchCatalog } from "@zoonk/core/catalog/search";
-import { type getChapterById } from "@zoonk/core/chapters/get-by-id";
-import { type listCourseChapters } from "@zoonk/core/chapters/list-by-course";
-import { type getCourseById } from "@zoonk/core/courses/get-by-id";
-import { type listCompletedLanguageCourses } from "@zoonk/core/courses/language";
+import { type getCourseDetail } from "@zoonk/core/courses/get-detail";
+import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { type listCourses } from "@zoonk/core/courses/list";
-import { type getLessonById } from "@zoonk/core/lessons/get-by-id";
-import { type listChapterLessons } from "@zoonk/core/lessons/list-by-chapter";
+import { type getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
+import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
+import { toApiImageUrl } from "./file-urls";
 
 type CatalogSearch = Awaited<ReturnType<typeof searchCatalog>>;
-type ChapterResource = NonNullable<Awaited<ReturnType<typeof getChapterById>>>;
-type CourseChapter = Awaited<ReturnType<typeof listCourseChapters>>[number];
-type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseById>>>;
+type CatalogChapter = NonNullable<Awaited<ReturnType<typeof getCatalogChapter>>>;
+type CourseChapter = NonNullable<Awaited<ReturnType<typeof listCatalogCourseChapters>>>[number];
+type ChapterLessons = NonNullable<Awaited<ReturnType<typeof listCatalogChapterLessons>>>;
+type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseDetail>>>;
 type CourseSummary = Awaited<ReturnType<typeof listCourses>>[number];
-type LanguageCourse = Awaited<ReturnType<typeof listCompletedLanguageCourses>>[number];
-type LessonResource = NonNullable<Awaited<ReturnType<typeof getLessonById>>>;
-type ChapterLesson = Awaited<ReturnType<typeof listChapterLessons>>[number];
+type PublicLesson = NonNullable<Awaited<ReturnType<typeof getPublicLibraryLesson>>>;
 
-/**
- * Serializes one organization into the stable public subset shared by course
- * list, detail, and current-library responses. Billing and auth-provider fields
- * remain internal even when Core loaded the complete relation.
- */
-export function toOrganizationSummary(organization: CourseSummary["organization"]) {
+type ChapterFields = CatalogChapter["chapter"] | CourseChapter["chapter"];
+
+/** Billing and auth-provider fields stay internal even when Core loaded the whole relation. */
+function toCourseOrganization(organization: CourseSummary["organization"] | null) {
+  if (!organization) {
+    return null;
+  }
+
   return {
     id: organization.id,
-    logo: organization.logo,
+    logo: organization.logo && toApiImageUrl(organization.logo),
     name: organization.name,
     slug: organization.slug,
   };
 }
 
-/**
- * Serializes the compact course shape used in paginated catalog collections.
- */
-export function toCourseSummary(course: CourseSummary) {
+export function toCourseSummary(
+  course: Pick<CourseSummary, "description" | "id" | "imageUrl" | "language" | "slug" | "title"> & {
+    organization: CourseSummary["organization"] | null;
+  },
+) {
   return {
     description: course.description,
     id: course.id,
-    imageUrl: course.imageUrl,
+    imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
     language: course.language,
-    organization: toOrganizationSummary(course.organization),
+    organization: toCourseOrganization(course.organization),
     slug: course.slug,
     title: course.title,
   };
 }
 
-/**
- * Serializes the complete public course metadata resource while excluding
- * persistence-only fields and exposing only the first originating prompt ID.
- */
-export function toCourseResource(course: CourseResource) {
-  if (!course.organization) {
-    throw new Error("Published brand course is missing its organization");
-  }
+function toLanguageFlag(targetLanguage: string | null) {
+  return targetLanguage ? getLanguageFlagCode(targetLanguage) : null;
+}
 
+export function toCatalogCourse(course: CourseSummary) {
   return {
-    categories: course.categories.map((category) => category.category),
-    coursePromptId: course.prompts.at(0)?.id ?? null,
+    ...toCourseSummary(course),
+    estimatedMinutes: course.estimatedMinutes,
+    languageFlag: toLanguageFlag(course.targetLanguage),
+    lessonCount: course.lessonCount,
+    subject: course.categories[0]?.category ?? null,
+    targetLanguage: course.targetLanguage,
+  };
+}
+
+export function toCourseResource(course: CourseResource) {
+  return {
+    categories: course.categories
+      .toSorted((one, other) => one.createdAt.getTime() - other.createdAt.getTime())
+      .map((category) => category.category),
     description: course.description,
+    editions: course.editions.map(({ id, language, title }) => ({ id, language, title })),
+    exam: course.exam,
+    examplePlan: course.examplePlan,
     format: course.format,
-    generationId: course.generationRunId,
-    generationStatus: course.generationStatus,
+    generationId: course.outlineRunId,
+    generationStatus: course.outlineStatus ?? "pending",
     id: course.id,
-    imageUrl: course.imageUrl,
+    imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
+    landingPage: parseCourseLandingPageContent(course.landingPage),
     language: course.language,
-    organization: toOrganizationSummary(course.organization),
+    languageFlag: toLanguageFlag(course.targetLanguage),
+    levels: course.levels,
+    organization: toCourseOrganization(course.organization),
+    quickTestMinutes: course.quickTestMinutes,
     slug: course.slug,
     targetLanguage: course.targetLanguage,
     title: course.title,
   };
 }
 
-/**
- * Serializes a chapter returned inside a course collection and adds its
- * published lesson count without exposing Prisma's relation-count envelope.
- */
-export function toCourseChapter(chapter: CourseChapter) {
+function toChapterFields(chapter: ChapterFields) {
   return {
-    courseId: chapter.courseId,
     description: chapter.description,
-    generationId: chapter.generationRunId,
-    generationStatus: chapter.generationStatus,
+    generationId: chapter.outlineRunId,
+    generationStatus: chapter.outlineStatus,
     id: chapter.id,
-    imageUrl: chapter.imageUrl,
     language: chapter.language,
-    lessonCount: chapter._count.lessons,
-    position: chapter.position,
+    objectives: chapter.objectives,
     slug: chapter.slug,
     title: chapter.title,
   };
 }
 
-/**
- * Serializes the direct chapter resource and preserves its parent course ID.
- */
-export function toChapterResource(chapter: ChapterResource) {
+export function toChapterResource({
+  chapter,
+  courseId,
+  level,
+  position,
+}: Omit<CatalogChapter, "chapter"> & { chapter: ChapterFields }) {
+  return { ...toChapterFields(chapter), courseId, level, position };
+}
+
+export function toCourseChapter(placement: CourseChapter) {
+  const { lessons } = placement.chapter;
+
   return {
-    courseId: chapter.courseId,
-    description: chapter.description,
-    generationId: chapter.generationRunId,
-    generationStatus: chapter.generationStatus,
-    id: chapter.id,
-    imageUrl: chapter.imageUrl,
-    language: chapter.language,
-    position: chapter.position,
-    slug: chapter.slug,
-    title: chapter.title,
+    ...toChapterResource(placement),
+    lessonCount: lessons.length,
+    lessons: lessons.map((lesson) => ({
+      estimatedMinutes: lesson.estimatedMinutes,
+      id: lesson.id,
+      slug: lesson.slug,
+      title: lesson.title,
+    })),
   };
 }
 
-/**
- * Serializes a lesson shell from a chapter collection. The caller supplies the
- * already-known course ID so no additional relation query is needed.
- */
-export function toChapterLesson({ courseId, lesson }: { courseId: string; lesson: ChapterLesson }) {
-  return {
-    chapterId: lesson.chapterId,
+export function toChapterLessons({ chapterId, courseId, lessons }: ChapterLessons) {
+  return lessons.map((lesson) => ({
+    chapterId,
     courseId,
     description: lesson.description,
-    generationId: lesson.generationRunId,
-    generationStatus: lesson.generationStatus,
+    estimatedMinutes: lesson.estimatedMinutes,
+    generationId: lesson.contentRunId,
+    generationStatus: lesson.contentStatus,
     id: lesson.id,
-    imageUrl: lesson.imageUrl,
-    kind: lesson.kind,
     language: lesson.language,
     position: lesson.position,
     slug: lesson.slug,
     title: lesson.title,
-  };
+  }));
 }
 
-/**
- * Serializes the direct lesson shell with both parent resource IDs.
- */
-export function toLessonResource(lesson: LessonResource) {
-  return toChapterLesson({ courseId: lesson.chapter.courseId, lesson });
-}
-
-/**
- * Serializes the finite language-course picker resource without leaking the
- * nested Core tuple used to guarantee supported target-language values.
- */
-export function toLanguageCourse({ course, targetLanguage }: LanguageCourse) {
-  return {
-    id: course.id,
-    imageUrl: course.imageUrl,
-    language: course.language,
-    slug: course.slug,
-    targetLanguage,
-    title: course.title,
-  };
-}
-
-/**
- * Renames Core's route-neutral brand identity to the organization terminology
- * used by the public API while preserving the two bounded search collections.
- */
 export function toCatalogSearchResponse(results: CatalogSearch) {
   return {
     chapters: results.chapters.map((chapter) => ({
@@ -164,7 +151,6 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
       courseTitle: chapter.courseTitle,
       description: chapter.description,
       id: chapter.id,
-      imageUrl: chapter.imageUrl,
       language: chapter.language,
       organizationSlug: chapter.brandSlug,
       slug: chapter.slug,
@@ -173,11 +159,24 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
     courses: results.courses.map((course) => ({
       description: course.description,
       id: course.id,
-      imageUrl: course.imageUrl,
+      imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
       language: course.language,
       organizationSlug: course.brandSlug,
       slug: course.slug,
+      targetLanguage: course.targetLanguage,
       title: course.title,
     })),
+  };
+}
+
+export function toCatalogLesson(lesson: PublicLesson) {
+  return {
+    description: lesson.description,
+    estimatedMinutes: lesson.estimatedMinutes,
+    firstScreen: lesson.firstScreen,
+    id: lesson.id,
+    language: lesson.language,
+    summaryIdeas: lesson.summaryIdeas,
+    title: lesson.title,
   };
 }

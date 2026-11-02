@@ -1,0 +1,71 @@
+import { progressStep } from "@/workflows/_shared/stream-status";
+import {
+  listLevelTestPassagesToVoice,
+  voiceLevelTestPassage,
+} from "@zoonk/core/language/level-test/prepare-audio";
+import { writeLevelTestBank } from "@zoonk/core/language/level-test/write-bank";
+import { type LevelTestBankStepName } from "@zoonk/core/library/generation/steps";
+import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
+import { type ContentAnalytics } from "../../_shared/content-analytics";
+
+export type LevelTestBankStreamStep = LevelTestBankStepName | typeof WORKFLOW_ERROR_STEP;
+
+export type LanguagePair = { language: string; targetLanguage: string };
+
+type WriteStatus = Awaited<ReturnType<typeof writeLevelTestBank>>["status"];
+
+export const levelTestBankProgressStep = progressStep<LevelTestBankStreamStep>;
+
+export async function writeLevelTestBankStep({
+  analytics,
+  pair,
+  workflowRunId,
+}: {
+  analytics?: ContentAnalytics;
+  pair: LanguagePair;
+  workflowRunId: string;
+}): Promise<WriteStatus> {
+  "use step";
+
+  const { status } = await writeLevelTestBank({
+    analytics: {
+      distinctId: analytics?.distinctId,
+      goalId: analytics?.goalId,
+      traceId: workflowRunId,
+    },
+    pair,
+  });
+
+  return status;
+}
+
+export async function listLevelTestPassagesStep(pair: LanguagePair): Promise<string[]> {
+  "use step";
+
+  return listLevelTestPassagesToVoice(pair);
+}
+
+/** One clip per step, so a failed clip retries alone and never fails the test. */
+export async function voiceLevelTestPassageStep({
+  analytics,
+  language,
+  text,
+  workflowRunId,
+}: {
+  analytics?: ContentAnalytics;
+  language: string;
+  text: string;
+  workflowRunId: string;
+}): Promise<void> {
+  "use step";
+
+  await voiceLevelTestPassage({
+    analytics: {
+      distinctId: analytics?.distinctId,
+      goalId: analytics?.goalId,
+      traceId: workflowRunId,
+    },
+    language,
+    text,
+  });
+}
