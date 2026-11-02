@@ -1080,6 +1080,16 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "não entendi meu último erro, pode explicar?",
   }),
   goalCase({
+    context: {
+      ...CONCURSO_PLAN,
+      mistakes: CONCURSO_PLAN.mistakes.map((mistake) => ({ ...mistake, fixed: true as const })),
+    },
+    expectations:
+      "She already fixed her latest mistake in practice (`fixed`) and taps the suggestion to have it explained. Explains it like any mistake: the item is Errado because competence and form are always bound, even in a discretionary act, and what made Certo tempting; it may say she already fixed it. Saying she has no mistakes, or that there's nothing to explain because she fixed it, is a major error (cap 4.0). proposedChange is null.",
+    id: "pt-concurso-fixed-mistake",
+    question: "Explique meu último erro",
+  }),
+  goalCase({
     context: CONCURSO_PLAN,
     expectations:
       "A plan change: one hour a day. proposedChange asks for one hour (60 minutes) a day. The answer says it will apply after Apply.",

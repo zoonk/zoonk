@@ -1,7 +1,7 @@
 import "server-only";
 import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { type Goal, prisma } from "@zoonk/db";
-import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
+import { getMemberSkillIds, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { readMistakeSnapshot } from "../../../mistakes/mistake-snapshot";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -19,11 +19,7 @@ function shorten(text: string | null | undefined): string | null {
   return text ? text.slice(0, MAX_TEXT) : null;
 }
 
-async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal }) {
-  if (!area) {
-    return loadGoalSkillIds(goal.id);
-  }
-
+async function loadAreaSkillIds({ area, goal }: { area: string; goal: Goal }) {
   const plan = await prisma.plan.findUnique({
     select: { graph: true },
     where: { goalId: goal.id },
@@ -31,9 +27,22 @@ async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal })
 
   const graph = parsePlanGraph(plan?.graph ?? {});
 
-  return graph.skills
-    .filter((skill) => matchesArea({ area, names: [getSkillArea({ graph, skill })] }))
-    .map((skill) => skill.skillId);
+  return new Set(
+    graph.skills
+      .filter((skill) => matchesArea({ area, names: [getSkillArea({ graph, skill })] }))
+      .map((skill) => skill.skillId),
+  );
+}
+
+async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal }) {
+  const [plan, areaSkillIds] = await Promise.all([
+    loadGoalPlan(goal.id),
+    area ? loadAreaSkillIds({ area, goal }) : null,
+  ]);
+
+  return getMemberSkillIds(
+    areaSkillIds ? plan.skills.filter((skill) => areaSkillIds.has(skill.id)) : plan.skills,
+  );
 }
 
 /** Includes open and fixed mistakes newest first, using their recorded question and answers. */
