@@ -3948,7 +3948,7 @@ msgstr "Arquivar"
 #: src/journey/goal-actions.tsx
 msgctxt "xxnZz0"
 msgid "{goal} is paused"
-msgstr "{goal} está em pausa"
+msgstr "Objetivo em pausa: {goal}"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx

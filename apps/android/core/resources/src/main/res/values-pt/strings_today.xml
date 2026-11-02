@@ -102,7 +102,7 @@
   "today_past_date_exam": "ad191f5255b69867f22cb0b66a6dc27b4c831443920643a5c98c7be7c31e9ef3",
   "today_paused": "a38a169d2a6192b4e5001e0058ab525b68db93b311614e3c4c131e3a5b613ef4",
   "today_paused_detail": "6654edecaae3dd9d9b7dff22113dce26fecd5e49eaf66bf302a85b7fef123ee5",
-  "today_paused_goal": "3cdc5786489afeac0e8808a1a7cd67d0227ec0425781dec7cb3b787aa94bd95b",
+  "today_paused_goal": "ec1d3bea34db6cb8e5a25aef0db6519379ce0dfed995fa9d5ec9deb1cf44476c",
   "today_paused_this_goal": "f73ecb4c4c3516c3a6817b8c96591b08d03e26876068a529e6e6aebd68a17cce",
   "today_plan_apply": "aa41c326da2648f936f461df07e2e38b3c67d64bab7a1c98cb56d5142237a1a1",
   "today_plan_keep_mine": "2c7b807b75ce8d94171c02007dd945cafbf2c2200389ade617053c5f002f9ba6",
@@ -340,7 +340,7 @@
     <string name="today_finished_detail">Comece um novo objetivo ou escolha outro acima.</string>
     <string name="today_start_new_goal">Começar um novo objetivo</string>
     <string name="today_paused">Pausado</string>
-    <string name="today_paused_goal">%1$s está em pausa.</string>
+    <string name="today_paused_goal">Objetivo em pausa: %1$s.</string>
     <string name="today_paused_this_goal">Este objetivo está pausado.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">Nada fica planejado até você retomar o objetivo.</string>

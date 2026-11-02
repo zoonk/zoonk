@@ -302,7 +302,7 @@
   "plan_go_to_today": "abf2646e09fb844fc1de46656d22c60abc476e11b0797016ddfa6fb423ba59dd",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
   "plan_goal_limit_reached": "4fd3e62f75fb6175c1cc180430323b3e42ccc997c3285e35d556723df908cb37",
-  "plan_goal_paused": "fead6675cddd93de4f14e43d4689723d129c1ee5eabb7296539f60c58786a893",
+  "plan_goal_paused": "99542c7d01448c522c5572809a8674ec293b594e8600da7156dc1c5312811d46",
   "plan_going_deeper": "b0f8eb4a8769cc8021251fd56031685a48aeccf4c370a2e497fd718c0200e78d",
   "plan_how_is_it_going": "bc25967a18e3fe41f4895f68907465b3c6071174a85f8a33632852d1b8614b59",
   "plan_last_week_recap": "a5cdeea1733a9c00d2e62799b85a072df3a69aad905ff1f48cfd3c328aa539df",
@@ -1601,7 +1601,7 @@
     <string name="plan_suggestion_previous">Anterior</string>
     <string name="plan_suggestion_next">Próximo</string>
     <string name="plan_suggestion_position">%1$s de %2$s</string>
-    <string name="plan_goal_paused">%1$s está em pausa</string>
+    <string name="plan_goal_paused">Objetivo em pausa: %1$s</string>
     <string name="plan_no_longer_fits">Seu plano não cabe mais no tempo disponível</string>
     <string name="plan_catch_up">Um pouco para colocar em dia</string>
     <string name="plan_adjust">Ajustar</string>

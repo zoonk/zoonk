@@ -1204,7 +1204,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está em pausa."
+            "value" : "Objetivo em pausa: %@."
           }
         },
         "tr" : {
