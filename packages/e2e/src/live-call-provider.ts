@@ -37,6 +37,7 @@ export function isLiveCallAvailable() {
 
 /** @public Next E2E resolveAlias implements this compiler-owned provider interface. */
 export async function createLiveCallSession(input: {
+  greeting: string;
   sdp: string;
   instructions: string;
   voice: string;

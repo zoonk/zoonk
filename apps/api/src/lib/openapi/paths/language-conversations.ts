@@ -128,7 +128,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
+        "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original talk time, each with its own wrap-up. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
       operationId: "connectLanguageConversation",
       requestBody: {
         content: { "application/json": { schema: languageConversationConnectInputSchema } },
@@ -201,7 +201,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
+        "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
       operationId: "checkLanguageConversationObjectives",
       requestBody: {
         content: { "application/json": { schema: languageConversationObjectiveCheckInputSchema } },
@@ -209,7 +209,10 @@ export const languageConversationPaths = {
       },
       requestParams: { path: languageConversationPathParamsSchema },
       responses: {
-        "200": jsonResponse(languageConversationObjectiveCheckSchema, "Every goal met so far"),
+        "200": jsonResponse(
+          languageConversationObjectiveCheckSchema,
+          "Every goal met so far, the progress cue and whether the call ended with a goodbye",
+        ),
         "409": conflictResponse,
         ...readErrors,
       },

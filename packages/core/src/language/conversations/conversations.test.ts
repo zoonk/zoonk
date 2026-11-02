@@ -79,7 +79,10 @@ const DAY_MS = 86_400_000;
 
 function objectivesAnswer(labels: string[]) {
   return {
-    data: { met: labels.map((label) => ({ label, learnerWords: "It is available?" })) },
+    data: {
+      goodbye: false,
+      met: labels.map((label) => ({ label, learnerWords: "It is available?" })),
+    },
     provenance: PROVENANCE,
     systemPrompt: "",
     usage: undefined as never,
@@ -273,7 +276,13 @@ describe("language conversations", () => {
       status: "ready",
     });
 
+    expect(reserved.setup.script.cues.opening).toStrictEqual({
+      channel: "commentary",
+      text: expect.stringContaining(JSON.stringify(RENTING_SCENARIO.openingLine)),
+    });
+
     expect(createLiveCallSession).toHaveBeenCalledExactlyOnceWith({
+      greeting: reserved.setup.script.cues.opening.text,
       instructions: expect.stringContaining(RENTING_SCENARIO.character.name),
       sdp: "test-offer",
       voice: "marin",
@@ -442,7 +451,19 @@ describe("language conversations", () => {
 
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns } }),
-    ).resolves.toStrictEqual({ objectivesMet: ["Is it available?"], status: "ready" });
+    ).resolves.toStrictEqual({
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?"],
+        progress: {
+          channel: "thinking",
+          text: expect.stringContaining(
+            'achieved "Is it available?". Still to do: "Book a viewing", "Ask about the deposit".',
+          ),
+        },
+      },
+      status: "ready",
+    });
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Book a viewing"]),
@@ -451,7 +472,11 @@ describe("language conversations", () => {
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
     ).resolves.toStrictEqual({
-      objectivesMet: ["Is it available?", "Book a viewing"],
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?", "Book a viewing"],
+        progress: expect.objectContaining({ channel: "thinking" }),
+      },
       status: "ready",
     });
 
@@ -568,9 +593,9 @@ describe("language conversations", () => {
     writer.release();
     await writer.done;
 
-    await expect(Promise.all([first, second])).resolves.toStrictEqual([
-      { objectivesMet: ["Is it available?"], status: "ready" },
-      { objectivesMet: ["Is it available?"], status: "ready" },
+    await expect(Promise.all([first, second])).resolves.toMatchObject([
+      { check: { objectivesMet: ["Is it available?"] }, status: "ready" },
+      { check: { objectivesMet: ["Is it available?"] }, status: "ready" },
     ]);
 
     await expect(
@@ -590,7 +615,42 @@ describe("language conversations", () => {
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns: longer } }),
     ).resolves.toStrictEqual({
-      objectivesMet: ["Is it available?", "Book a viewing"],
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?", "Book a viewing"],
+        progress: null,
+      },
+      status: "ready",
+    });
+  });
+
+  it("says when the call ended with a goodbye, and sends no progress once every goal is met", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    const goodbye = [
+      ...TURNS,
+      { speaker: "learner" as const, text: "Thank you, bye!" },
+      { speaker: "character" as const, text: "Bye, see you Saturday!" },
+    ];
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
+      ...objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"]),
+      data: {
+        ...objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"]).data,
+        goodbye: true,
+      },
+    });
+
+    await expect(
+      checkLanguageConversationObjectives({ conversationId, input: { turns: goodbye } }),
+    ).resolves.toStrictEqual({
+      check: {
+        goodbye: true,
+        objectivesMet: ["Is it available?", "Book a viewing", "Ask about the deposit"],
+        progress: null,
+      },
       status: "ready",
     });
   });

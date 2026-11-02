@@ -43,7 +43,10 @@ export type CheckConversationObjectivesParams = {
 
 /** Labels come from our scenario, so the model can only answer with one of them. */
 function buildSchema(labels: [string, ...string[]]) {
-  return z.object({ met: z.array(z.object({ label: z.enum(labels), learnerWords: z.string() })) });
+  return z.object({
+    goodbye: z.boolean(),
+    met: z.array(z.object({ label: z.enum(labels), learnerWords: z.string() })),
+  });
 }
 
 export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildSchema>>;
@@ -74,7 +77,10 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
   `;
 }
 
-/** Only through the learner's own words, all of it, and understood rather than perfect. */
+/**
+ * Only through the learner's own words, all of it, and understood rather than perfect. The same
+ * read says whether the call's last exchange was a mutual goodbye, so the app can hang up.
+ */
 export async function checkConversationObjectives(params: CheckConversationObjectivesParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const [first, ...rest] = params.objectives.map((objective) => objective.label);

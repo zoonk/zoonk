@@ -86,6 +86,7 @@ describe("Plus challenge call quota", () => {
 
     vi.mocked(checkConversationObjectives).mockResolvedValue({
       data: {
+        goodbye: false,
         met: RENTING_SCENARIO.objectives.map(({ label }) => ({
           label,
           learnerWords: "Book a viewing",

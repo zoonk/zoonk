@@ -52,12 +52,16 @@ export type LiveCallSession = { sdp: string; sessionId: string };
 /**
  * Callers authorize and fence the reservation; browser configuration never enters this boundary.
  * Rejects with `LiveCallCreationRefusedError` only when OpenAI itself refused the request.
+ * `greeting` starts the session as developer input, so the character can speak first as soon as the
+ * app's commentary cue arrives.
  */
 export async function createLiveCallSession({
+  greeting,
   instructions,
   sdp,
   voice,
 }: {
+  greeting: string;
   instructions: string;
   sdp: string;
   voice: string;
@@ -73,6 +77,7 @@ export async function createLiveCallSession({
             dataChannel: {
               allowedClientEvents: [
                 "session.close",
+                "session.commentary.append",
                 "session.thinking.append",
                 "session.instructions.append",
                 "session.input_audio.mute",
@@ -85,6 +90,7 @@ export async function createLiveCallSession({
                 { type: "session.input_transcript.delta" },
                 { type: "session.output_transcript.delta" },
                 { type: "session.delegation.created" },
+                { type: "session.commentary.appended" },
                 { type: "session.thinking.appended" },
                 { type: "session.instructions.appended" },
                 { type: "session.input_audio.muted" },
@@ -94,6 +100,13 @@ export async function createLiveCallSession({
             },
           },
           delegation: { type: "client" },
+          input: [
+            {
+              content: [{ text: greeting, type: "input_text" }],
+              role: "developer",
+              type: "message",
+            },
+          ],
           store: false,
         },
       },

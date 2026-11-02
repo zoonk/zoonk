@@ -6415,7 +6415,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
+        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original talk time, each with its own wrap-up. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
         "operationId": "connectLanguageConversation",
         "summary": "Reserve a live conversation connection",
         "parameters": [
@@ -6831,7 +6831,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
+        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
         "operationId": "checkLanguageConversationObjectives",
         "summary": "Check a live conversation's goals",
         "parameters": [
@@ -6860,7 +6860,7 @@
         },
         "responses": {
           "200": {
-            "description": "Every goal met so far",
+            "description": "Every goal met so far, the progress cue and whether the call ended with a goodbye",
             "content": {
               "application/json": {
                 "schema": {
@@ -39322,15 +39322,25 @@
               "month"
             ]
           },
+          "script": {
+            "$ref": "#/components/schemas/LiveCallScript"
+          },
           "seconds": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "The call time left when the server answered: end the call this long after the answer arrived, whatever the device's clock says"
+            "description": "How long until the server hangs up, from when its answer arrived, whatever the device's clock says: the hard stop"
           },
           "sessionUrl": {
             "type": "string"
+          },
+          "talkSeconds": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The talk time left when the server answered: start ending the call this long after the answer arrived. `seconds` adds the wrap-up for the goodbye"
           },
           "voice": {
             "type": "string"
@@ -39340,9 +39350,155 @@
           "connectionId",
           "deadlineAt",
           "endsAtLimit",
+          "script",
           "seconds",
           "sessionUrl",
+          "talkSeconds",
           "voice"
+        ],
+        "additionalProperties": false
+      },
+      "LiveCallScript": {
+        "type": "object",
+        "properties": {
+          "cues": {
+            "$ref": "#/components/schemas/LiveCallCues"
+          },
+          "timing": {
+            "$ref": "#/components/schemas/LiveCallTiming"
+          }
+        },
+        "required": [
+          "cues",
+          "timing"
+        ],
+        "additionalProperties": false,
+        "description": "What the app tells the live session during the call, and when"
+      },
+      "LiveCallCues": {
+        "type": "object",
+        "properties": {
+          "checkIn": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "goodbye": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "goodbyeDone": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "noBackend": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "opening": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "typedReply": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          }
+        },
+        "required": [
+          "checkIn",
+          "goodbye",
+          "goodbyeDone",
+          "noBackend",
+          "opening",
+          "typedReply"
+        ],
+        "additionalProperties": false,
+        "description": "`opening` once the session starts, and once more when no character transcript arrives within `timing.openingRetryMs`. `goodbye` ends the call at its talk time or after a long silence, `goodbyeDone` once the objective check says every objective is met. `checkIn` once in a silence episode. `noBackend` answers every delegation, with its delegation id. `typedReply` sends a typed reply as its `text` followed by the reply as a JSON string literal (`text + JSON.stringify(reply)`)"
+      },
+      "LiveCallCue": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "commentary",
+              "instructions",
+              "thinking"
+            ],
+            "description": "The live session's context channel to append `text` on: `commentary` is said aloud, `thinking` and `instructions` steer without being spoken"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "LiveCallTiming": {
+        "type": "object",
+        "properties": {
+          "answerWaitMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Once the ending is armed and the character stopped, how long to wait for the learner before sending the goodbye anyway"
+          },
+          "characterQuietMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The character counts as talking until this long after its last transcript"
+          },
+          "checkInMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode `cues.checkIn` is sent"
+          },
+          "goodbyeQuietMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long"
+          },
+          "goodbyeRetryMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Send the goodbye once more when no character transcript arrived and nothing happened for this long after the learner gave up the floor"
+          },
+          "openingRetryMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Send `cues.opening` once more when the character stays silent this long"
+          },
+          "quietGoodbyeMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode the call ends with `cues.goodbye`"
+          },
+          "quietHintMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode the screen says the learner can take their time"
+          }
+        },
+        "required": [
+          "answerWaitMs",
+          "characterQuietMs",
+          "checkInMs",
+          "goodbyeQuietMs",
+          "goodbyeRetryMs",
+          "openingRetryMs",
+          "quietGoodbyeMs",
+          "quietHintMs"
         ],
         "additionalProperties": false
       },
@@ -39395,16 +39551,31 @@
       "LanguageConversationObjectiveCheck": {
         "type": "object",
         "properties": {
+          "goodbye": {
+            "type": "boolean",
+            "description": "The transcript sent ends with the learner and the character saying goodbye to each other: end the call without a goodbye cue, unless the learner spoke or typed after sending it"
+          },
           "objectivesMet": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "description": "Labels of every objective the learner has achieved so far"
+          },
+          "progress": {
+            "nullable": true,
+            "description": "Tell the character what the learner achieved: null when this check found nothing new or every objective is met",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LiveCallCue"
+              }
+            ]
           }
         },
         "required": [
-          "objectivesMet"
+          "goodbye",
+          "objectivesMet",
+          "progress"
         ],
         "additionalProperties": false
       },

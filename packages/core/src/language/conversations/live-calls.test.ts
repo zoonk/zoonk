@@ -77,7 +77,7 @@ function usage({ connectionId, userId }: { connectionId: string; userId: string 
 
 function noObjectivesMet() {
   vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
-    data: { met: [] },
+    data: { goodbye: false, met: [] },
     provenance: {
       generatedAt: new Date().toISOString(),
       latencyMs: 1,

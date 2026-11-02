@@ -15,7 +15,7 @@ import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewe
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { buildConversationInstructions } from "./_utils/conversation-view";
+import { buildLiveCall } from "./_utils/conversation-view";
 import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import { settleLiveCall } from "./_utils/settle-live-call";
@@ -45,6 +45,7 @@ type Prepared =
   | Refusal
   | {
       connection: OwnedLiveCallConnection;
+      greeting: string;
       instructions: string;
       status: "prepared";
       voice: string;
@@ -86,10 +87,7 @@ async function prepareCreation({
       transaction.liveCallConnection.findFirst({
         where: { conversationId, id: connectionId, userId },
       }),
-      transaction.languageConversation.findFirst({
-        include: { chapter: { select: { id: true, title: true } } },
-        where: { id: conversationId, userId },
-      }),
+      transaction.languageConversation.findFirst({ where: { id: conversationId, userId } }),
     ]);
 
     if (!connection || !conversation) {
@@ -97,9 +95,9 @@ async function prepareCreation({
     }
 
     const now = new Date();
-    const instructions = buildConversationInstructions(conversation);
+    const call = buildLiveCall(conversation);
 
-    if (!instructions || conversation.reviewRunId !== null) {
+    if (!call || conversation.reviewRunId !== null) {
       return unchanged({ status: "conversationEnded" as const });
     }
 
@@ -127,7 +125,8 @@ async function prepareCreation({
 
     return {
       connection: { ...starting, userId },
-      instructions,
+      greeting: call.script.cues.opening.text,
+      instructions: call.instructions,
       status: "prepared" as const,
       voice: getLiveConversationVoice(conversation.targetLanguage),
     };
@@ -239,6 +238,7 @@ export async function redeemLiveCallSdp({
 
   const created = await safeAsync(() =>
     createLiveCallSession({
+      greeting: prepared.greeting,
       instructions: prepared.instructions,
       sdp: input.sdp,
       voice: prepared.voice,
