@@ -4,6 +4,7 @@ import {
   LEVEL_TEST_MINUTES,
   type LanguageLevelTestView,
 } from "@zoonk/core/language/level-test/contract";
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -34,7 +35,6 @@ function InterfaceOffer({
 }) {
   const t = useExtracted();
   const locale = useAppLocale();
-  const name = new Intl.DisplayNames([language], { type: "language" }).of(language) ?? language;
 
   if (language === locale || !isValidLocale(language)) {
     return null;
@@ -42,7 +42,9 @@ function InterfaceOffer({
 
   return (
     <OnboardingSecondaryButton lang={language} onClick={() => onSwitch(language)} variant="ghost">
-      {t("Use the app in {language}", { language: name })}
+      {t("Use the app in {language}", {
+        language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
+      })}
     </OnboardingSecondaryButton>
   );
 }
@@ -67,13 +69,17 @@ export function TestIntro({
   const t = useExtracted();
   const locale = useAppLocale();
   const formatDuration = useFormatDuration();
-  const target = new Intl.DisplayNames([locale], { type: "language" }).of(goal.targetLanguage);
+
+  const target = getLanguageNameInSentence({
+    targetLanguage: goal.targetLanguage,
+    userLanguage: locale,
+  });
 
   return (
     <OnboardingColumn>
       <OnboardingHeading>
         <OnboardingTitle>
-          {t("Let's see your level in {language}", { language: target ?? goal.targetLanguage })}
+          {t("Let's see your level in {language}", { language: target })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(

@@ -5,7 +5,7 @@ import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { Activity, useRef, useState } from "react";
+import { Activity, useRef } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { getPlayerStepAudioUrl } from "../player-step";
 import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
@@ -71,7 +71,6 @@ function LessonHeader() {
 
 function LessonContent() {
   const { screen, state } = useLessonPlayer();
-  const [autoPlayAudio, setAutoPlayAudio] = useState(false);
   const turn = useScreenTurn(state);
   const shown = screen.step && getScreenRef(state, screen.step.id);
   const kept = useKeptScreens(state, shown);
@@ -95,11 +94,7 @@ function LessonContent() {
     return (
       step && (
         <Activity key={key} mode={isShown ? "visible" : "hidden"}>
-          <PlayerAudioProvider
-            audioUrl={getPromptAudioUrl(step)}
-            autoPlayAudio={autoPlayAudio}
-            onAutoPlayAudioEnabled={() => setAutoPlayAudio(true)}
-          >
+          <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
             <div className="flex flex-1 flex-col">
               <LessonStage isShown={isShown} step={step} turn={turn} />
             </div>

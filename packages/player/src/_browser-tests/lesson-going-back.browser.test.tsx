@@ -183,7 +183,7 @@ describe("going back to reread", () => {
     await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
   });
 
-  it("plays a screen's sound as on arrival when the learner comes back to it", async () => {
+  it("plays a screen's sound again when the learner comes back to it", async () => {
     const played: string[] = [];
 
     vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function play(
@@ -205,8 +205,7 @@ describe("going back to reread", () => {
     });
 
     await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { name: "Play pronunciation" }).click();
-    await expect.element(page.getByRole("button", { name: "Pause pronunciation" })).toBeVisible();
+    await expect.poll(() => played).toContain(LETTER_SOUND);
     const playedBefore = played.length;
 
     await goBackAndReturn();

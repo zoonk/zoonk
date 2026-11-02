@@ -15,6 +15,7 @@ A task is done when its pull request is ready for the user's review: no check fa
 
 - Pass the [verify skill](../verify/SKILL.md) and the root [PR verification gate](../../../AGENTS.md#pr-verification-gate) on the final tree first.
 - Push the task's branch and open the PR against `main`, with the title and body from [zoonk-commit](../zoonk-commit/SKILL.md). Open it ready for review, not as a draft: AI reviewers skip drafts.
+- Upload the body's screenshots and videos ([show the change](../zoonk-commit/SKILL.md#show-the-change)) with `gh` 2.99 or newer, from the repository root: link each local file in the body (`tmp/pr-media/media.md` already does), then pass every one with `--attach` (`pnpm pr:capture` prints the flags): `gh pr create --title <title> --body-file <body> --attach <file> --attach <file>`, or `gh pr edit <pr> --body-file <body> --attach <file>` on an open PR. `gh` uploads each to GitHub and puts its URL where the body linked it; a video alone in its paragraph plays inline. When an upload fails, `gh` still creates or updates the PR with the others and exits non-zero, so check that `gh pr view <pr> --json body` has no local path left, and attach what's missing with `gh pr edit`.
 - The root instructions approve opening the task's PR and answering reviews on it from the user's account, so neither needs [post-on-behalf](../zoonk-post-on-behalf/SKILL.md)'s note.
 
 ## 2. Watch it
@@ -72,8 +73,13 @@ Some reviewers post findings as PR comments (`gh pr view <pr> --comments`), whic
 
 ## 4. Hand back
 
-Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Then update the PR body when the fixes changed what a reviewer reads there ([zoonk-commit](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)), and hand back with:
+Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Then update the PR body when the fixes changed what a reviewer reads there ([zoonk-commit](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)).
+
+A bigger UX change that the user should try by hand (a new flow, a reworked screen, an interaction the screenshots and video can't settle) gets a Vercel preview as the very last step: once every check passes and every comment is resolved, since a later push leaves it behind. A small UI change, or one with nothing to see, gets none; its screenshots are enough. Start it with `pnpm preview`, which prints its run's URL, and wait for that run to deploy before you hand back: `gh run watch <run id> --exit-status` waits for it, and `gh run view <run id> --log | grep -E ' (main|api|admin): https://'` prints its URLs. A run listed by branch can be an earlier preview. A failed preview is investigated like a failing check.
+
+Hand back with:
 
 - the PR link and its head commit
+- the preview's URLs, when it has one
 - the check results
 - each review comment and what you did: fixed (with the commit), declined (with the reason) or left for the user to decide

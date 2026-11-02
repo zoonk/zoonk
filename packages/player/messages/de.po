@@ -2996,30 +2996,30 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Alle Paare zugeordnet. Drücke auf „Prüfen“, um fortzufahren."
 
-#: src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "Aussprache pausieren"
-
-#: src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "Aussprache abspielen"
-
-#: src/components/play-audio-button.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "Pausieren"
-
-#: src/components/play-audio-button.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "Abspielen"
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Antwortmöglichkeiten"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Aussprache pausieren"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Aussprache abspielen"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "Pausieren"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "Abspielen"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"

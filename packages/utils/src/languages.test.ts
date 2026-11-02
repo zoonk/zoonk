@@ -1,12 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getLanguageName,
+  getLanguageNameInSentence,
   getMaiVoiceLocale,
   isFlashLiteTTSLanguage,
   isTTSSupportedLanguage,
   toCanonicalLanguage,
   usesNonLatinScript,
 } from "./languages";
+import { SUPPORTED_LOCALES } from "./locale";
 
 describe(getMaiVoiceLocale, () => {
   it("returns the locale MAI-Voice speaks a language in", () => {
@@ -103,5 +105,44 @@ describe(getLanguageName, () => {
 
   it("returns native name for Japanese", () => {
     expect(getLanguageName({ targetLanguage: "ja" })).toBe("日本語");
+  });
+});
+
+describe(getLanguageNameInSentence, () => {
+  const targetLanguages = ["en", "es", "pt", "de", "ja", "ar", "zh-TW", "tpi"];
+
+  // Node gives CLDR's names, cased for the middle of a sentence ("inglês", "Englisch").
+  const cases = SUPPORTED_LOCALES.flatMap((userLanguage) =>
+    targetLanguages.map((targetLanguage) => ({
+      expected: new Intl.DisplayNames([userLanguage], { type: "language" }).of(targetLanguage),
+      targetLanguage,
+      userLanguage,
+    })),
+  );
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("keeps the casing a sentence needs in every app language", () => {
+    for (const { expected, targetLanguage, userLanguage } of cases) {
+      expect(getLanguageNameInSentence({ targetLanguage, userLanguage })).toBe(expected);
+    }
+  });
+
+  it("writes the same name when the browser capitalizes it, as Safari does", () => {
+    // Node can't run Safari's engine, which capitalizes names it gives on their own ("Inglês").
+    class SafariDisplayNames extends Intl.DisplayNames {
+      override of(code: string): string | undefined {
+        const name = super.of(code);
+        return name && name.charAt(0).toUpperCase() + name.slice(1);
+      }
+    }
+
+    vi.spyOn(Intl, "DisplayNames").mockImplementation(SafariDisplayNames);
+
+    for (const { expected, targetLanguage, userLanguage } of cases) {
+      expect(getLanguageNameInSentence({ targetLanguage, userLanguage })).toBe(expected);
+    }
   });
 });

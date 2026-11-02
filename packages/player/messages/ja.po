@@ -2996,30 +2996,30 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "すべてのペアができました。続けるには「答え合わせ」を押してください。"
 
-#: src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "発音を一時停止する"
-
-#: src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "発音を再生する"
-
-#: src/components/play-audio-button.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "一時停止"
-
-#: src/components/play-audio-button.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "再生する"
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "回答の選択肢"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "発音を一時停止する"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "発音を再生する"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "一時停止"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "再生する"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"

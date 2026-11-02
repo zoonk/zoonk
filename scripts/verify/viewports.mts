@@ -18,7 +18,21 @@ export const VIEWPORT_NAMES = [
 ] as const;
 
 export type ViewportName = (typeof VIEWPORT_NAMES)[number];
-export type Scheme = "dark" | "light";
+
+export const SCHEMES = ["light", "dark"] as const;
+export type Scheme = (typeof SCHEMES)[number];
+
+export function pick<T extends string>(list: string, allowed: readonly T[], name: string): T[] {
+  return list.split(",").map((item) => {
+    const match = allowed.find((candidate) => candidate === item.trim());
+
+    if (!match) {
+      throw new Error(`Unknown ${name} "${item}". Use ${allowed.join(", ")}.`);
+    }
+
+    return match;
+  });
+}
 
 export const VIEWPORTS: Record<ViewportName, BrowserContextOptions> = {
   desktop: { viewport: { height: 1080, width: 1920 } },

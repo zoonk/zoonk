@@ -48,12 +48,15 @@ final class SpeechPlayer {
     self.files = files
   }
 
-  /// A recording that won't play is read aloud instead when `fallback` text is given.
+  /// A recording that won't play is read aloud instead when `fallback` text is given. An autoplayed
+  /// sound, which the learner didn't ask for, is muted by Silent mode and plays over their music; a
+  /// sound they asked for plays through Silent mode and pauses their music.
   func play(
     _ sound: SpokenSound,
     rate: Float = 1,
     owner: AnyHashable,
-    fallback: (text: String, language: String)? = nil
+    fallback: (text: String, language: String)? = nil,
+    autoplay: Bool = false
   ) async {
     stopCurrent()
     run += 1
@@ -67,7 +70,7 @@ final class SpeechPlayer {
         return
       }
 
-      try await playFile(file, rate: rate, run: mine)
+      try await playFile(file, rate: rate, autoplay: autoplay, run: mine)
 
       if run == mine {
         current = nil
@@ -85,7 +88,8 @@ final class SpeechPlayer {
 
       if case .recording = sound, let fallback {
         await play(
-          .text(fallback.text, language: fallback.language), rate: rate, owner: owner)
+          .text(fallback.text, language: fallback.language), rate: rate, owner: owner,
+          autoplay: autoplay)
         return
       }
 
@@ -167,12 +171,24 @@ final class SpeechPlayer {
     }
   }
 
-  private func playFile(_ file: URL, rate: Float, run mine: Int) async throws {
-    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+  private func playFile(_ file: URL, rate: Float, autoplay: Bool, run mine: Int) async throws {
+    if autoplay {
+      try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+    } else {
+      try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+    }
+
     try SharedAudioSession.activate(for: self)
     let player = try AVAudioPlayer(contentsOf: file)
     player.enableRate = true
     player.rate = rate
+
+    defer {
+      if run == mine {
+        self.player = nil
+        self.delegate = nil
+      }
+    }
 
     try await withCheckedThrowingContinuation {
       (continuation: CheckedContinuation<Void, any Error>) in
@@ -188,11 +204,6 @@ final class SpeechPlayer {
 
       current = (current?.owner ?? AnyHashable(0), .playing)
     }
-
-    if run == mine {
-      self.player = nil
-      self.delegate = nil
-    }
   }
 }
 
@@ -202,13 +213,31 @@ private struct ClipKey: Hashable {
   let personal: Bool
 }
 
-/// `AVAudioPlayer` reports its end to an `NSObject` delegate; the continuation resumes once.
+/// `AVAudioPlayer` reports its end to an `NSObject` delegate, but never an interruption (a call,
+/// Siri, the app suspended), which ends the clip as a stop does; the continuation resumes once.
 @MainActor
 private final class PlayerDelegate: NSObject, AVAudioPlayerDelegate {
   private var continuation: CheckedContinuation<Void, any Error>?
+  private var interruption: (any NSObjectProtocol)?
 
   init(continuation: CheckedContinuation<Void, any Error>) {
     self.continuation = continuation
+    super.init()
+    interruption = NotificationCenter.default.addObserver(
+      forName: AVAudioSession.interruptionNotification,
+      object: AVAudioSession.sharedInstance(),
+      queue: .main
+    ) { [weak self] notification in
+      let type = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+
+      guard type == AVAudioSession.InterruptionType.began.rawValue else {
+        return
+      }
+
+      MainActor.assumeIsolated {
+        self?.finish()
+      }
+    }
   }
 
   func finish() {
@@ -221,6 +250,12 @@ private final class PlayerDelegate: NSObject, AVAudioPlayerDelegate {
     }
 
     self.continuation = nil
+
+    if let interruption {
+      NotificationCenter.default.removeObserver(interruption)
+    }
+
+    interruption = nil
 
     if let error {
       continuation.resume(throwing: error)
