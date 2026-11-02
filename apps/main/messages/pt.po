@@ -994,7 +994,7 @@ msgstr "Nada está planejado até você retomar o objetivo."
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "CSgdxh"
 msgid "{goal} is paused."
-msgstr "{goal} está em pausa."
+msgstr "Objetivo em pausa: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -4335,7 +4335,7 @@ msgstr "Conversas para praticar conversação, com limites menores que os do Plu
 #: src/components/pricing/free-plan.tsx
 msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
-msgstr "{goals, plural, one {# objetivo} other {# objetivos}} · {lessons, plural, one {# aula} other {# aulas}} por mês"
+msgstr "{goals, plural, one {# objetivo} other {# objetivos}} · {lessons, plural, one {# aula} other {# aulas}} por mês"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "ktRBJl"
@@ -4360,7 +4360,7 @@ msgstr "Limites maiores para conversas de prática"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
 msgid "Every goal · every lesson"
-msgstr "Todos os objetivos · todas as aulas"
+msgstr "Todos os objetivos · todas as aulas"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "0I_Rwu"
