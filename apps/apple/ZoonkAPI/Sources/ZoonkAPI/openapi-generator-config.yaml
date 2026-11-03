@@ -189,6 +189,7 @@ filter:
     - listCurrentUserMistakes
     - listEarlierQuestions
     - listGoalMindMaps
+    - listGoals
     - listInstrumentWaitlist
     - listMocks
     - listPronunciationReviews

@@ -7,6 +7,7 @@ protocol CertificatesAPIClient: Sendable {
   func markShown(token: String, code: String) async throws
   /// Nil while the goal's course isn't finished.
   func claim(token: String, goalID: String) async throws -> ClaimedCertificate?
+  func upNext(token: String) async throws -> [CertificateUpNext]
 }
 
 struct ClaimedCertificate: Equatable, Sendable {
@@ -64,6 +65,41 @@ struct CertificatesAPI: CertificatesAPIClient {
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
+    }
+  }
+
+  func upNext(token: String) async throws -> [CertificateUpNext] {
+    try await clients.perform(token: token) { client in
+      switch try await client.listGoals() {
+      case .ok(let response):
+        return makeCertificateUpNext(try response.body.json.goals)
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+}
+
+/// Main's rule: active course and exam goals whose plan has lessons, and active language goals.
+private func makeCertificateUpNext(_ goals: [Components.Schemas.Goal]) -> [CertificateUpNext] {
+  goals.compactMap { goal in
+    guard goal.status == .active else {
+      return nil
+    }
+
+    switch goal.kind {
+    case .language:
+      return CertificateUpNext(id: goal.id, title: goal.title, progress: nil)
+    case .learn, .exam:
+      guard let plan = goal.plan, plan.lessonsTotal > 0 else {
+        return nil
+      }
+
+      return CertificateUpNext(
+        id: goal.id, title: goal.title,
+        progress: Double(plan.lessonsDone) / Double(plan.lessonsTotal))
+    case .explain:
+      return nil
     }
   }
 }
