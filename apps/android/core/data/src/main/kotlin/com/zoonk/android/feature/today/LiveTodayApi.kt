@@ -7,7 +7,6 @@ import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsightAnswer
-import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
@@ -29,14 +28,14 @@ class LiveTodayApi(
     override suspend fun mistakes(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): MistakeListAvailability =
+    ): GoalMistakes =
         perform {
             api
                 .clients(
                     session,
                 ).mistakes
                 .listCurrentUserMistakes(goalId = goalId, limit = 1, status = MistakesApi.StatusListCurrentUserMistakes.OPEN)
-        }.availability
+        }.let { GoalMistakes(it.availability, total = it.counts.open + it.counts.fixed) }
 
     override suspend fun language(
         session: AuthenticatedSession,

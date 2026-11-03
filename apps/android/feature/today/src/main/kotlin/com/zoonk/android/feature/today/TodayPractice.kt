@@ -65,7 +65,7 @@ internal fun TodayPractice(
             null
         }
 
-    TodayPracticeRows(mistakes.value, mocks, speaking, navigate)
+    TodayPracticeRows(mistakes.value?.availability, mocks, speaking, navigate)
 }
 
 @Composable

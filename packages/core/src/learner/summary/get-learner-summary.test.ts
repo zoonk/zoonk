@@ -499,9 +499,10 @@ describe(getLearnerSummary, () => {
     expect(summary?.day).toStrictEqual({ goalId: goal.id, localDate: "2026-03-09" });
   });
 
-  it("leaves a free language plan's locked challenge out of the day and finds its speaking paper", async () => {
+  it("leaves a free language plan's locked challenge out of the day and finds the speaking paper of the exam it names", async () => {
     const { goal, user } = await learnerWithGoal({
       kind: "language",
+      prompt: "English for work, and the Cambridge B2 First next year",
       targetLanguage: "en",
       title: "English",
     });
@@ -576,6 +577,7 @@ describe(getLearnerSummary, () => {
   it("reads a language day with outside-session picks and its speaking paper within budget", async () => {
     const { goal, user } = await learnerWithGoal({
       kind: "language",
+      prompt: "English for work, and the Cambridge B2 First next year",
       targetLanguage: "en",
       title: "English",
     });
