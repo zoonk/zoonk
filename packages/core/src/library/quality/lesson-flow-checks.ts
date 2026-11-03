@@ -6,7 +6,7 @@ import { findWordyExplanations } from "./_utils/explanation-words";
 import { findGuessGiveaways } from "./_utils/guess-giveaways";
 import { findMixedMoneyFormats } from "./_utils/money-formats";
 import { findScreensWithNewTerms } from "./_utils/new-terms";
-import { findMissingPlannedVisual, findRepeatedTables } from "./_utils/planned-visuals";
+import { findMissingPlannedVisual, findRepeatedVisuals } from "./_utils/planned-visuals";
 
 export type LessonFlowCheckCode =
   | "basis"
@@ -14,7 +14,7 @@ export type LessonFlowCheckCode =
   | "moneyFormat"
   | "newTerms"
   | "plannedVisual"
-  | "repeatedTable"
+  | "repeatedVisual"
   | "screenWords";
 
 type LessonFlowProblem = { code: LessonFlowCheckCode; problem: string; screen: number };
@@ -75,10 +75,11 @@ function getVisualProblems({
     return problem ? [{ code: "plannedVisual" as const, problem, screen: index }] : [];
   });
 
-  const repeated = findRepeatedTables(lesson.screens).map((screen) => ({
-    code: "repeatedTable" as const,
-    problem:
-      "Shows the same table as the screen before. Change it to show this screen's idea (a new row, a value that moved) or show the idea another way.",
+  const repeated = findRepeatedVisuals(lesson.screens).map(({ screen, template }) => ({
+    code: "repeatedVisual" as const,
+    problem: template
+      ? `Shows the same ${template} as the screen before. Ask about something the learner works out with it, or show this screen's idea another way.`
+      : "Shows the same table as the screen before. Change it to show this screen's idea (a new row, a value that moved) or show the idea another way.",
     screen,
   }));
 

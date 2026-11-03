@@ -55,12 +55,33 @@ export function findMissingPlannedVisual(input: VisualInput): string | null {
   return `The plan shows a ${specScreen.visualKind} on this screen, but it shows none. Add it with the brief's data.`;
 }
 
-/** Screens whose table is the same one the screen before showed. */
-export function findRepeatedTables(screens: readonly WrittenScreen[]): number[] {
-  const tables = screens.map((screen) => readTables(screen));
+function readTemplate(screen: WrittenScreen): string | null {
+  if (screen.kind === "activity") {
+    return screen.template;
+  }
 
-  return screens.flatMap((_, index) => {
-    const previous = new Set(tables[index - 1]);
-    return tables[index]?.some((table) => previous.has(table)) ? [index] : [];
+  return screen.kind === "explanation" && screen.explore ? screen.explore.template : null;
+}
+
+/** The visuals a screen shows that a learner would see again on the next one. */
+function readVisuals(screen: WrittenScreen): string[] {
+  const template = readTemplate(screen);
+  return [...readTables(screen), ...(template ? [`template:${template}`] : [])];
+}
+
+type RepeatedVisual = { screen: number; template: string | null };
+
+/**
+ * Screens that show what the screen before showed: the same table, or the same template (an explore
+ * then an activity on one formula model counts), so the second screen adds nothing to see.
+ */
+export function findRepeatedVisuals(screens: readonly WrittenScreen[]): RepeatedVisual[] {
+  const visuals = screens.map((screen) => readVisuals(screen));
+
+  return screens.flatMap((screen, index) => {
+    const previous = new Set(visuals[index - 1]);
+    const repeated = visuals[index]?.find((visual) => previous.has(visual));
+
+    return repeated ? [{ screen: index, template: readTemplate(screen) }] : [];
   });
 }

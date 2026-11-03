@@ -42,7 +42,7 @@ const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
   "readingLevel",
   "repeatedExample",
   "repeatedQuestion",
-  "repeatedTable",
+  "repeatedVisual",
   "screenWords",
   "termOrder",
 ]);

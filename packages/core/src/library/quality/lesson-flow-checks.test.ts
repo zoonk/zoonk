@@ -32,7 +32,7 @@ function flowCodes(
     "moneyFormat",
     "newTerms",
     "plannedVisual",
-    "repeatedTable",
+    "repeatedVisual",
     "screenWords",
   ]);
 
@@ -220,6 +220,27 @@ describe("checkWrittenLesson's flow checks", () => {
       4: explanation(`Look again:\n\n${TABLE}`),
     });
 
-    expect(flowCodes(repeated)).toContainEqual([4, "repeatedTable"]);
+    expect(flowCodes(repeated)).toContainEqual([4, "repeatedVisual"]);
+  });
+
+  it("flags the same template on two screens in a row, an explore then its activity included", () => {
+    const activity = writtenTemperatureLesson().screens[5];
+
+    if (activity?.kind !== "activity") {
+      throw new Error("Screen 6 is an activity.");
+    }
+
+    const { fields } = JSON.parse(activity.content) as { fields: unknown };
+    const explore = { content: JSON.stringify({ fields }), template: "numberLine" };
+    const exploreSpec = planned({ 4: { activityTemplate: "numberLine", visualKind: "template" } });
+
+    expect(
+      flowCodes(
+        withScreens({ 4: { ...explanation("Move the dot up from −3 °C."), explore } }),
+        exploreSpec,
+      ),
+    ).toStrictEqual([[5, "repeatedVisual"]]);
+
+    expect(flowCodes(writtenTemperatureLesson())).toStrictEqual([]);
   });
 });
