@@ -81,7 +81,10 @@ function useLiveCallEvents({
   begin: (session: LiveCallSession, length: CallLength) => void;
   endAtDeadline: () => void;
   fail: (error: LiveCallError) => void;
-  objectives: { onCharacterTurn: () => void; onLearnerTurn: () => void };
+  objectives: {
+    onCharacterTurn: (startMs: number) => void;
+    onLearnerTurn: (startMs?: number) => void;
+  };
   report: CallReport;
 } & Pick<
   Parameters<typeof useCallEvents>[0],
@@ -106,8 +109,8 @@ function useLiveCallEvents({
     ),
     hangUp: endAtDeadline,
     onCharacterTurn: useCallback(
-      (at: number) => {
-        onCharacterTurn();
+      ({ at, startMs }: { at: number; startMs: number }) => {
+        onCharacterTurn(startMs);
         report.record({ at, type: "character" });
       },
       [onCharacterTurn, report],

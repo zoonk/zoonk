@@ -38,10 +38,10 @@ export function useCallEvents({
   begin: (session: LiveCallSession, length: CallLength) => void;
   dispatch: (event: CallEndingEvent) => void;
   hangUp: () => void;
-  onCharacterTurn: (at: number) => void;
+  onCharacterTurn: (fragment: { at: number; startMs: number }) => void;
   onClosedEarly: () => void;
   onDelegation: () => void;
-  onLearnerTurn: () => void;
+  onLearnerTurn: (startMs: number) => void;
   phaseRef: RefObject<LiveCallPhase>;
   sendWaitingReplies: (session: LiveCallSession, length: CallLength) => void;
   sessionRef: RefObject<LiveCallSession | null>;
@@ -70,10 +70,10 @@ export function useCallEvents({
         updateTurns(addTranscriptFragment(turnsRef.current, { delta, endMs, speaker, startMs }));
 
         if (speaker === "learner") {
-          onLearnerTurn();
+          onLearnerTurn(startMs);
           dispatch({ at, type: "learnerHeard" });
         } else {
-          onCharacterTurn(at);
+          onCharacterTurn({ at, startMs });
           dispatch({ at, startMs, type: "characterSpoke" });
         }
       }

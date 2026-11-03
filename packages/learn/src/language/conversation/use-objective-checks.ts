@@ -43,6 +43,7 @@ function useObjectiveChecks({
   const running = useRef(false);
   const again = useRef(false);
   const learnerSpoke = useRef(false);
+  const answerStartMs = useRef<number | null>(null);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const check = useCallback(async () => {
@@ -79,16 +80,7 @@ function useObjectiveChecks({
     }
   }, []);
 
-  const onLearnerTurn = useCallback(() => {
-    learnerSpoke.current = true;
-    clearSettle();
-  }, [clearSettle]);
-
-  const onCharacterTurn = useCallback(() => {
-    if (!learnerSpoke.current) {
-      return;
-    }
-
+  const settleExchange = useCallback(() => {
     clearSettle();
 
     settle.current = setTimeout(() => {
@@ -96,6 +88,37 @@ function useObjectiveChecks({
       void check();
     }, REPLY_SETTLED_MS);
   }, [check, clearSettle]);
+
+  /**
+   * `startMs` is where spoken words fall on the session's timeline. Their transcript comes back
+   * late, often after the character's answer: words said before it settle with that answer
+   * instead of waiting for another one.
+   */
+  const onLearnerTurn = useCallback(
+    (startMs?: number) => {
+      const answered = answerStartMs.current;
+
+      if (settle.current && startMs !== undefined && answered !== null && startMs < answered) {
+        settleExchange();
+        return;
+      }
+
+      learnerSpoke.current = true;
+      clearSettle();
+    },
+    [clearSettle, settleExchange],
+  );
+
+  const onCharacterTurn = useCallback(
+    (startMs: number) => {
+      answerStartMs.current = startMs;
+
+      if (learnerSpoke.current) {
+        settleExchange();
+      }
+    },
+    [settleExchange],
+  );
 
   useEffect(() => clearSettle, [clearSettle]);
 
