@@ -37,7 +37,6 @@
     "./math-answer": "./src/math-answer.ts",
     "./negative-money": "./src/negative-money.ts",
     "./money-marks": "./src/money-marks.ts",
-    "./money-notation": "./src/money-notation.ts",
     "./locale": "./src/locale.ts",
     "./locale-request": "./src/locale-request.ts",
     "./localized-number": "./src/localized-number.ts",

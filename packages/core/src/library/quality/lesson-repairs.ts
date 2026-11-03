@@ -1,42 +1,26 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { createMoneyNotationRepair } from "@zoonk/utils/money-notation";
 import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import {
-  getActivityProse,
-  getScreenTexts,
-  mapActivityProse,
-  mapScreenTexts,
-} from "./_utils/screen-texts";
+import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
-type TextRepair = (text: string) => string;
-
-function readLessonTexts(lesson: WrittenLesson): string[] {
-  return [
-    ...lesson.screens.flatMap((screen) =>
-      screen.kind === "activity"
-        ? getActivityProse(screen.content)
-        : getScreenTexts(screen).map(({ text }) => text),
-    ),
-    ...lesson.summary.ideas.map((idea) => idea.text),
-  ];
-}
-
-function repairScreenText(screen: WrittenScreen, repairMoney: TextRepair): WrittenScreen {
+function repairScreenText(screen: WrittenScreen): WrittenScreen {
   if (screen.kind === "activity") {
-    return { ...screen, content: mapActivityProse(screen.content, repairMoney) };
+    return {
+      ...screen,
+      content: mapActivityProse(screen.content, (text) => repairNegativeMoney({ text })),
+    };
   }
 
   return mapScreenTexts(screen, ({ layout, text }) =>
-    layout ? repairMoney(repairMarkdown({ layout, text })) : text,
+    layout ? repairNegativeMoney({ text: repairMarkdown({ layout, text }) }) : text,
   );
 }
 
 /** A quote must match its screen's repaired sentence character for character. */
-function repairBasisQuote(screen: WrittenScreen, repairMoney: TextRepair): WrittenScreen {
+function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
   if (screen.kind !== "check" && screen.kind !== "mathCheck" && screen.kind !== "typedAnswer") {
     return screen;
   }
@@ -46,7 +30,9 @@ function repairBasisQuote(screen: WrittenScreen, repairMoney: TextRepair): Writt
         ...screen,
         basis: {
           ...screen.basis,
-          quote: repairMoney(repairMarkdown({ layout: "inline", text: screen.basis.quote })),
+          quote: repairNegativeMoney({
+            text: repairMarkdown({ layout: "inline", text: screen.basis.quote }),
+          }),
         },
       }
     : screen;
@@ -88,22 +74,16 @@ export function repairWrittenLesson({
   language: string;
   lesson: WrittenLesson;
 }): WrittenLesson {
-  const repairNotation = createMoneyNotationRepair({ language, texts: readLessonTexts(lesson) });
-  const repairMoney = (text: string) => repairNotation(repairNegativeMoney({ text }));
-
   return {
     ...lesson,
     screens: lesson.screens.map((screen) =>
-      repairOptions({
-        language,
-        screen: repairBasisQuote(repairScreenText(screen, repairMoney), repairMoney),
-      }),
+      repairOptions({ language, screen: repairBasisQuote(repairScreenText(screen)) }),
     ),
     summary: {
       ...lesson.summary,
       ideas: lesson.summary.ideas.map((idea) => ({
         ...idea,
-        text: repairMoney(repairMarkdown({ layout: "inline", text: idea.text })),
+        text: repairNegativeMoney({ text: repairMarkdown({ layout: "inline", text: idea.text }) }),
       })),
     },
   };

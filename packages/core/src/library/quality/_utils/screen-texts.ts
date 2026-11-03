@@ -138,14 +138,3 @@ export function mapActivityProse(content: string, rewrite: TextRewrite): string 
   const written = JSON.stringify(prose);
   return written === JSON.stringify(parsed) ? content : written;
 }
-
-export function getActivityProse(content: string): string[] {
-  const texts: string[] = [];
-
-  mapActivityProse(content, (text) => {
-    texts.push(text);
-    return text;
-  });
-
-  return texts;
-}

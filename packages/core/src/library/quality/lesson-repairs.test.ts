@@ -15,18 +15,6 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
   };
 }
 
-function explanationOf(text: string): WrittenScreen {
-  return {
-    exampleLineIdea: null,
-    explore: null,
-    image: null,
-    kind: "explanation",
-    text,
-    title: "An idea",
-    visual: null,
-  };
-}
-
 describe(repairWrittenLesson, () => {
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
     const sentence = "The balance ends at $ -12,34 after the refund.";
@@ -81,109 +69,33 @@ describe(repairWrittenLesson, () => {
     );
   });
 
-  it("writes the lesson's money one way, grouping bare thousands and dropping zero cents only when every amount is whole", () => {
-    const sentence = "Otávio recebe R$ 3.000,00 brutos e R$ 2.700,00 líquidos.";
-
-    const explanation: WrittenScreen = {
-      exampleLineIdea: null,
-      explore: null,
-      image: null,
-      kind: "explanation",
-      text: `${sentence}\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3600 |`,
-      title: "Bruto e líquido",
-      visual: null,
-    };
-
-    const activity: WrittenScreen = {
-      content: JSON.stringify({ check: { explanation: "O líquido é R$ 2.400,00." } }),
-      kind: "activity",
-      template: "formulaModel",
-    };
-
-    const question: WrittenScreen = {
-      basis: { quote: sentence, screen: 0 },
-      context: "Um salário bruto de R$ 2400 tem R$ 200 de descontos.",
-      image: null,
-      kind: "check",
-      options: ["R$\u00A02.200", "R$ 2.600"].map((text, index) => ({
-        isCorrect: index === 0,
-        picture: null,
-        reason: "Bruto menos descontos.",
-        text,
-      })),
-      question: "Qual é o salário líquido?",
-      visual: null,
-    };
-
-    const lesson = {
-      screens: [explanation, activity, question],
-      summary: hubMap(["R$ 0,00 de desconto."]),
-    };
-
-    const repaired = repairWrittenLesson({ language: "pt", lesson });
-
-    expect(repaired.screens[0]).toMatchObject({
-      text: "Otávio recebe R$ 3.000 brutos e R$ 2.700 líquidos.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.600 |",
-    });
-
-    expect(repaired.screens[1]).toMatchObject({
-      content: expect.stringContaining('"O líquido é R$ 2.400."'),
-    });
-
-    expect(repaired.screens[2]).toMatchObject({
-      basis: { quote: "Otávio recebe R$ 3.000 brutos e R$ 2.700 líquidos." },
-      context: "Um salário bruto de R$ 2.400 tem R$ 200 de descontos.",
-      options: [{ text: "R$\u00A02.200" }, { text: "R$ 2.600" }],
-    });
-
-    expect(repaired.summary.ideas[0]?.text).toBe("R$ 0 de desconto.");
-
-    const withRealCents = repairWrittenLesson({
-      language: "pt",
-      lesson: { screens: [explanation], summary: hubMap(["Um café custa R$ 2,50."]) },
-    });
-
-    expect(withRealCents.screens[0]).toMatchObject({
-      text: `${sentence}\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.600 |`,
-    });
-  });
-
-  it("leaves an activity's program and expected output as written, repairing only its prose", () => {
+  it("moves a minus only in an activity's prose, leaving its program and expected output as written", () => {
     const fields = {
       editableLines: [2],
-      expectedOutput: "$2400.00",
+      expectedOutput: "$-2400.00",
       language: "python",
-      solution: 'price = 2400\nprint("$" + format(price, ".2f"))',
-      starterCode: "price = 2400\nprint(price)",
+      solution: 'balance = -2400\nprint("$" + format(balance, ".2f"))',
+      starterCode: "balance = -2400\nprint(balance)",
     };
 
     const exercise: WrittenScreen = {
       content: JSON.stringify({
-        check: {
-          explanation: "Rent is $2400 a month, so show it with two decimals.",
-          kind: "interaction",
-        },
+        check: { explanation: "After rent, the balance is $-2400.00.", kind: "interaction" },
         fields,
       }),
       kind: "activity",
       template: "codeRunner",
     };
 
-    const [, repaired] = repairWrittenLesson({
+    const [repaired] = repairWrittenLesson({
       language: "en",
-      lesson: {
-        screens: [explanationOf("The flat costs $3,000.00 a month."), exercise],
-        summary: hubMap(["Format money with two decimals."]),
-      },
+      lesson: { screens: [exercise], summary: hubMap(["Format money with two decimals."]) },
     }).screens;
 
     const content: unknown = JSON.parse(repaired?.kind === "activity" ? repaired.content : "{}");
 
     expect(content).toStrictEqual({
-      check: {
-        explanation: "Rent is $2,400 a month, so show it with two decimals.",
-        kind: "interaction",
-      },
+      check: { explanation: "After rent, the balance is -$2400.00.", kind: "interaction" },
       fields,
     });
   });
@@ -263,7 +175,7 @@ describe(repairWrittenLesson, () => {
 
     const repaired = repairWrittenLesson({
       language: "pt",
-      lesson: { screens: [twins, alone], summary: hubMap(["Um café custa R$ 2,50."]) },
+      lesson: { screens: [twins, alone], summary: hubMap(["Ideia."]) },
     });
 
     const texts = repaired.screens.map((screen) =>
