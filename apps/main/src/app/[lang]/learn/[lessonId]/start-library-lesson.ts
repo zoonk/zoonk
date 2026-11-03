@@ -28,6 +28,7 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
           hyperdrive: run.data.hyperdrive,
           optionalStepIds: run.data.optionalStepIds,
           reason: "started",
+          replay: run.data.replay,
           runId: run.data.runId,
           startedAt: run.data.startedAt,
         }

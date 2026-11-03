@@ -32,7 +32,7 @@ fun summary(
              "day":null,"goals":[],
              "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"$ANA"},
              "level":null,"missions":null,"nextChangeAt":$nextChangeAt,
-             "places":{"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},
+             "places":{"completedLessons":false,"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},
              "readAt":$readAt,"tier":"free","timeZone":null,"today":null,"waitingGoals":[]}}
             """.trimIndent(),
         ).summary

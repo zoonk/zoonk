@@ -1,7 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
-import { LearnLink } from "../learn-link";
+import { LearnLink, type LearnPrefetch } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
 
 /** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
@@ -67,7 +67,7 @@ export function ListRowLink({
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
-  prefetch?: boolean | "auto";
+  prefetch?: LearnPrefetch;
 }) {
   return (
     <LearnLink

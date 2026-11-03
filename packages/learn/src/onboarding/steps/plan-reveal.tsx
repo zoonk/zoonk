@@ -60,6 +60,7 @@ export function PlanReveal({
   libraryCourse,
   planActions,
   planLinkHref,
+  refreshPages,
   run,
   signUpHref,
   todayHref,
@@ -73,6 +74,7 @@ export function PlanReveal({
   libraryCourse: LibraryCourseLink | null;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
+  refreshPages: () => void;
   run: GenerationRun | null;
   signUpHref: string;
   todayHref: string;
@@ -93,18 +95,29 @@ export function PlanReveal({
     setRead(true);
   };
 
+  const readingNotice = plan?.notice === "reading";
+  const shown = Boolean(plan?.ready) && !readingNotice;
+  const refreshKeptPages = useEffectEvent(refreshPages);
+
+  // Start would open the Today the browser kept, read before this plan, maybe for the goal before it.
+  // First among the effects, so the refresh isn't queued behind an action they send: Start's
+  // navigation would jump Next's queue past it.
+  useEffect(() => {
+    if (shown) {
+      refreshKeptPages();
+    }
+  }, [shown]);
+
   // The page read the plan before placement's answers changed it, so the reveal reads it once more.
   const readAgain = useEffectEvent(() => {
-    void safeAsync(refresh);
+    if (initialPlan?.plan.ready) {
+      void safeAsync(refresh);
+    }
   });
 
   useEffect(() => {
-    if (initialPlan?.plan.ready) {
-      readAgain();
-    }
-  }, [initialPlan?.plan.ready]);
-
-  const readingNotice = plan?.notice === "reading";
+    readAgain();
+  }, []);
 
   const poll = usePoll({
     active: (!plan?.ready && !isRunStopped(run)) || readingNotice,
@@ -114,10 +127,7 @@ export function PlanReveal({
     timeoutMs: Infinity,
   });
 
-  usePlanWait({
-    isReady: Boolean(plan?.ready) && !readingNotice,
-    recordPlanWait: actions.recordPlanWait,
-  });
+  usePlanWait({ isReady: shown, recordPlanWait: actions.recordPlanWait });
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 

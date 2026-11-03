@@ -7,7 +7,7 @@ import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartBlock, StartLink } from "@/components/public/public-start";
 import { StartLessonButton } from "@/components/public/start-lesson-button";
 import { getAppLocale } from "@/i18n/locale";
-import { withCatalogOrigin } from "@/lib/public/public-hrefs";
+import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -59,7 +59,7 @@ export async function LessonFirstScreen({
 }) {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
-  const startHref = withCatalogOrigin(playerPath, origin);
+  const startHref = withOrigin(playerPath, origin);
 
   const note = (
     <>

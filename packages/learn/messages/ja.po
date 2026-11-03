@@ -103,6 +103,7 @@ msgstr "学習済み"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -2180,6 +2181,34 @@ msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "次回の学習でまた挑戦できます"
 
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "完了したレッスン"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "完了したレッスンをもう一度学べます"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "昨日"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "完了したレッスンはここに表示され、いつでももう一度学べます。"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "もっと見る"
+
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "hxbNj_"
@@ -4137,6 +4166,7 @@ msgstr "、現在地"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr "、完了"
@@ -7021,11 +7051,6 @@ msgstr "克服した問題"
 msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "間違えた問題"
-
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "もっと見る"
 
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
@@ -12819,11 +12844,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · 前のチャレンジの後"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr "、ミッションの達成にカウントされます"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr "、スキップ済み"
@@ -13177,6 +13197,11 @@ msgstr "{goal}に向けた学習計画を作成しています"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "通常1〜2分ほどかかります。準備ができ次第、初日の学習がここに表示されます。"
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr "、ミッションの達成にカウントされます"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

@@ -19,6 +19,7 @@
   "today_coming_stalled": "e0bb2a98ded92ba6a52c29109c979e9e27fc0c352982d7d0e296ace4c13e145e",
   "today_coming_title": "fc0c0a5ac89f0f1232bd3b1b11467af97b55bdd410e7afcbe646bbbcf85a8677",
   "today_coming_writing": "a296acde76c4cfa9bdaa9f15e68f8cfcba0440a23a569c1c88cf0500472bd95b",
+  "today_completed_lessons_detail": "ea8ec36294c9f7f9abae70abf11bfec074b075121004fb5f074b245b1c708da2",
   "today_connection_lost": "807ea361545d07d4329436570747cd93f73c5039e94ac188f0f1544e8c44f9e6",
   "today_connection_lost_detail": "fd4b8006c65266f5f3af348beb6ad2ba87363c93a8de83f217402a93f9c954d0",
   "today_continue_explanation": "e3c5b209073ff221dfc527bd42dfb79805436a49acf263dbc42ba48458c289b9",
@@ -404,6 +405,8 @@
     <string name="today_practice_anytime">Jederzeit üben</string>
     <string name="today_mistakes_notebook">Fehlerheft</string>
     <string name="today_mistakes_redo">Übe noch einmal, was du falsch beantwortet hast</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Mach eine abgeschlossene Lektion deiner Wahl noch einmal</string>
     <string name="today_mistakes_return_tomorrow">Deine heutigen Fehler kannst du morgen üben</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d zum Üben bereit</item>

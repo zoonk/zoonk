@@ -57,7 +57,7 @@ val everyPlace: LearnerSummary =
     summary(
         readAt = 0,
         nextChangeAt = 0,
-    ).copy(places = LearnerSummaryPlaces(exam = true, mindMaps = true, readyMistakes = 0, speaking = true))
+    ).copy(places = LearnerSummaryPlaces(completedLessons = true, exam = true, mindMaps = true, readyMistakes = 0, speaking = true))
 
 @Composable
 fun ShellTestHost(summary: LearnerSummary = everyPlace) {

@@ -228,6 +228,7 @@ test.describe("Library lessons API", () => {
         { isCorrect: false, stepId: stepId(steps, "check") },
         { isCorrect: true, stepId: stepId(steps, "typedAnswer") },
       ],
+      replay: false,
       runId,
     });
 
@@ -255,6 +256,16 @@ test.describe("Library lessons API", () => {
 
     expect(late.status()).toBe(409);
     await expect(late.json()).resolves.toMatchObject({ error: { code: "LESSON_RUN_ENDED" } });
+
+    const replay = await readBody({
+      response: await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
+        data: { timeZone: "America/Sao_Paulo" },
+      }),
+      schema: libraryLessonRunSchema,
+      status: 201,
+    });
+
+    expect(replay).toMatchObject({ answers: [], replay: true });
 
     const day = await prisma.dailyProgress.findFirstOrThrow({ where: { userId } });
     expect(day.lessonsCompleted).toBe(1);

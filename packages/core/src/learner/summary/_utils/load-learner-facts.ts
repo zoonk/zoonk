@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma, sql } from "@zoonk/db";
+import { completedLessonRuns } from "../../../completed-lessons/_utils/completed-lesson-runs";
 import {
   type MindMapChapterState,
   isListedMindMapChapter,
@@ -14,6 +15,7 @@ export type StudyDay = { date: string; timeSpentSeconds: number };
 export type LearnerFacts = {
   /** The blueprint each goal names, by goal id. */
   blueprintNames: Record<string, string>;
+  completedLessonGoalIds: string[];
   currentEnergy: number | null;
   lastActiveAt: Date | null;
   mindMapGoalIds: string[];
@@ -45,6 +47,12 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
         FROM goals g JOIN exam_blueprints b ON b.id = g.exam_blueprint_id
         WHERE g.user_id = u.id
       ) AS "blueprintNames",
+      (
+        SELECT coalesce(json_agg(g.id), '[]'::json)
+        FROM goals g
+        WHERE g.user_id = u.id AND g.status <> 'archived'
+          AND EXISTS (${completedLessonRuns({ goalId: sql`g.id`, userId: sql`u.id` })})
+      ) AS "completedLessonGoalIds",
       (
         SELECT coalesce(json_object_agg(l.language, l.score), '{}'::json)
         FROM language_skill_levels l WHERE l.user_id = u.id AND l.skill = 'speaking'

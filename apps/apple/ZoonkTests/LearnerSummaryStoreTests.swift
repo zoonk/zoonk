@@ -82,7 +82,8 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
       level: nil,
       nextChangeAt: nextChanges.removeFirst(),
-      places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
+      places: LearnerPlaces(
+        completedLessons: false, exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
       readAt: .now,
       tier: .free,
       timeZone: "America/Sao_Paulo",

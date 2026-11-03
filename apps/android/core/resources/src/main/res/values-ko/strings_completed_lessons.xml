@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "completed_lessons_empty_description": "be7f6ca80beba611827a51d9125750421e9ccffc80a599ba05457a823f48a960",
+  "completed_lessons_empty_title": "2feebdd2e1ff072b7c331e79440072a0518d598cd5c335678229fccdfd087347",
+  "completed_lessons_load_more_failed": "5cd06d3ca71281c503251320f1e5587564f455edd0db794dd685db2f97cc1065",
+  "completed_lessons_loading_more": "bb7952a098165370902902193a8304921700debc5b710a1ba19c3eaf379ff2bf",
+  "completed_lessons_today": "c9c96a5098e6ac194e02185ef9814e91123c6796332d9cd2c5f1200432c1f242",
+  "completed_lessons_yesterday": "294632d6ce99368af28672d16187ef95691d89814e3c1a4af91c80103e1e9ca1"
+}
+-->
+<resources>
+    <!-- A section title over the lessons the learner last finished today. -->
+    <string name="completed_lessons_today">오늘</string>
+    <!-- A section title over the lessons the learner last finished yesterday. -->
+    <string name="completed_lessons_yesterday">어제</string>
+    <string name="completed_lessons_empty_title">아직 완료한 레슨이 없어요</string>
+    <string name="completed_lessons_empty_description">완료한 레슨이 여기에 모여요. 언제든 다시 해 볼 수 있어요.</string>
+    <!-- Read aloud while the next lessons load at the end of the list. -->
+    <string name="completed_lessons_loading_more">레슨을 더 불러오고 있어요…</string>
+    <string name="completed_lessons_load_more_failed">불러오지 못했어요. 다시 시도해 보세요.</string>
+</resources>

@@ -31,7 +31,8 @@ final class UsageAnalyticsTests: XCTestCase {
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
       level: nil,
       nextChangeAt: .distantFuture,
-      places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
+      places: LearnerPlaces(
+        completedLessons: false, exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
       readAt: .now,
       tier: .plus,
       timeZone: nil,

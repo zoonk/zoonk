@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "completed_lessons_empty_description": "2ac8ef09ab23854e65c61fc32d3f913887178e8e77ea0f6fe1601b7082187c1d",
+  "completed_lessons_empty_title": "3feb7b830103fd9197e51573f7c8467e563137e1cc6bd2f767cf78bc54470fc0",
+  "completed_lessons_load_more_failed": "6dac605a702a34dd61c2fb2d6367c5f680c6422aa282860562b8ef62fb21c01e",
+  "completed_lessons_loading_more": "dc6a8fcea7d1178314718ed2813885978bca5542163bcec7882df4c4b8d84f6c",
+  "completed_lessons_today": "9267e3298a3443f6768a0dc69300868f6f2f53e7afb12d91579cff4523cabc0e",
+  "completed_lessons_yesterday": "c0b5d3952d2dce04e2bd47b6af5de9d90eccafd3637157d90d45c32d1be8ba40"
+}
+-->
+<resources>
+    <!-- A section title over the lessons the learner last finished today. -->
+    <string name="completed_lessons_today">Dziś</string>
+    <!-- A section title over the lessons the learner last finished yesterday. -->
+    <string name="completed_lessons_yesterday">Wczoraj</string>
+    <string name="completed_lessons_empty_title">Nie masz jeszcze ukończonych lekcji</string>
+    <string name="completed_lessons_empty_description">Ukończone lekcje znajdziesz tutaj. Możesz je powtarzać w każdej chwili.</string>
+    <!-- Read aloud while the next lessons load at the end of the list. -->
+    <string name="completed_lessons_loading_more">Wczytujemy kolejne lekcje…</string>
+    <string name="completed_lessons_load_more_failed">Nie udało się wczytać. Spróbuj ponownie.</string>
+</resources>

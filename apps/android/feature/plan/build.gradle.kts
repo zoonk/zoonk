@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":feature:conversation"))
 
     implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
     implementation(libs.coil.compose)
 

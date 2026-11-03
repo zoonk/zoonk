@@ -26,6 +26,7 @@ import {
   mockSession,
   mockSessionFailure,
 } from "../../_test-utils/mock-session";
+import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import { mistakeListInputSchema } from "../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
 import { lapsedDayFixture } from "../../sessions/_test-utils/entitlement-lapse";
@@ -176,7 +177,7 @@ describe(getLearnerSummary, () => {
       level: null,
       missions: null,
       nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
-      places: { exam: false, mindMaps: false, speaking: false },
+      places: { completedLessons: false, exam: false, mindMaps: false, speaking: false },
       readAt: NOW.getTime(),
       tier: "free",
       timeZone: null,
@@ -499,9 +500,10 @@ describe(getLearnerSummary, () => {
     expect(summary?.day).toStrictEqual({ goalId: goal.id, localDate: "2026-03-09" });
   });
 
-  it("leaves a free language plan's locked challenge out of the day and finds its speaking paper", async () => {
+  it("leaves a free language plan's locked challenge out of the day and finds the speaking paper of the exam it names", async () => {
     const { goal, user } = await learnerWithGoal({
       kind: "language",
+      prompt: "English for work, and the Cambridge B2 First next year",
       targetLanguage: "en",
       title: "English",
     });
@@ -548,11 +550,28 @@ describe(getLearnerSummary, () => {
     const summary = await getLearnerSummary();
 
     expect(summary?.places).toStrictEqual({
+      completedLessons: false,
       exam: true,
       mindMaps: true,
       readyMistakes: 0,
       speaking: false,
     });
+  });
+
+  it("lists completed lessons once the goal has a finished lesson", async () => {
+    const { goal, user } = await learnerWithGoal();
+    const lesson = await libraryLessonFixture();
+    await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] });
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    const unfinished = await getLearnerSummary();
+    await prisma.learningEvent.update({ data: { endedAt: NOW }, where: { id: run.id } });
+    const finished = await getLearnerSummary();
+
+    expect([unfinished?.places.completedLessons, finished?.places.completedLessons]).toStrictEqual([
+      false,
+      true,
+    ]);
   });
 
   it("lists mind maps only once a chapter is finished", async () => {
@@ -576,6 +595,7 @@ describe(getLearnerSummary, () => {
   it("reads a language day with outside-session picks and its speaking paper within budget", async () => {
     const { goal, user } = await learnerWithGoal({
       kind: "language",
+      prompt: "English for work, and the Cambridge B2 First next year",
       targetLanguage: "en",
       title: "English",
     });

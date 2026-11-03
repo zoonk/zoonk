@@ -82,6 +82,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -263,20 +264,7 @@ fun SpeakingPaperSection(
 
     Column(modifier) {
         Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    title ?: stringResource(R.string.speaking_section),
-                    Modifier.weight(1f).semantics {
-                        heading()
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                if (title ==
-                    null
-                ) {
-                    Text(paper.title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-                }
-            }
+            SectionHeader(title ?: stringResource(R.string.speaking_section), detail = if (title == null) paper.title else null)
             if (locked) PlusNotice(onSeePlus = { open(AppRoute.Subscription) }, description = stringResource(R.string.speaking_plus))
             if (paused || model.state == CallStartModel.State.Paused) CallsPaused()
         }

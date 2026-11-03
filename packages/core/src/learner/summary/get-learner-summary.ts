@@ -120,7 +120,13 @@ function getPlaces({
   readyMistakes: number;
 }): LearnerSummaryPlaces {
   if (!goal || !activeGoal) {
-    return { exam: false, mindMaps: false, readyMistakes: 0, speaking: false };
+    return {
+      completedLessons: false,
+      exam: false,
+      mindMaps: false,
+      readyMistakes: 0,
+      speaking: false,
+    };
   }
 
   const speakingScore = activeGoal.targetLanguage
@@ -128,6 +134,7 @@ function getPlaces({
     : null;
 
   return {
+    completedLessons: facts.completedLessonGoalIds.includes(goal.id),
     exam: goal.kind === "exam",
     mindMaps: facts.mindMapGoalIds.includes(goal.id),
     readyMistakes,

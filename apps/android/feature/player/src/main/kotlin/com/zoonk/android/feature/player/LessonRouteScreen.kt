@@ -159,7 +159,9 @@ internal fun PlayingLesson(
                 choices = app.todayChoices,
                 drafts = app.drafts,
                 sessionSteps = app.studyOpener,
-                isGuest = { (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true },
+                endsAsGuest = {
+                    route.fromCatalog && (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true
+                },
                 activeGoalId = {
                     app.learnerSummary.summary.state.value.value
                         ?.activeGoalId

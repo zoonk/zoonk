@@ -8,7 +8,13 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, GraduationCapIcon, LibraryIcon, NetworkIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  GraduationCapIcon,
+  HistoryIcon,
+  LibraryIcon,
+  NetworkIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import {
@@ -35,6 +41,8 @@ import { useRoadmapPhases } from "./use-roadmap";
 
 type MoreLinks = Pick<JourneyPathLinks, "exam"> & { mindMaps: string | null };
 
+type PathLinks = JourneyPathLinks & { completedLessons: string | null };
+
 function PathDetail() {
   const t = useExtracted();
   const { phases } = useRoadmapPhases();
@@ -54,23 +62,57 @@ function PathDetail() {
   );
 }
 
-function FullCourseRow({ href }: { href: string }) {
-  const t = useExtracted();
-
+function PathLinkRow({
+  children,
+  className,
+  href,
+  icon,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  href: string;
+  icon: React.ReactNode;
+}) {
   return (
     <LearnLink
       className={cn(
         PATH_ROW_CLASS,
         "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+        className,
       )}
       href={href}
     >
       <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS}>
-        <LibraryIcon className="size-4" />
+        {icon}
       </span>
-      <span className="min-w-0 flex-1">{t("See the full course")}</span>
+      <span className="min-w-0 flex-1">{children}</span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
     </LearnLink>
+  );
+}
+
+function FullCourseRow({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <PathLinkRow href={href} icon={<LibraryIcon className="size-4" />}>
+      {t("See the full course")}
+    </PathLinkRow>
+  );
+}
+
+/** From `lg` the sidebar holds the same way in. */
+export function CompletedLessonsPathRow({ href }: { href: string | null }) {
+  const t = useExtracted();
+
+  if (!href) {
+    return null;
+  }
+
+  return (
+    <PathLinkRow className="lg:hidden" href={href} icon={<HistoryIcon className="size-4" />}>
+      {t("Completed lessons")}
+    </PathLinkRow>
   );
 }
 
@@ -81,7 +123,7 @@ export function PathSection({
 }: {
   alphabet: { link: AlphabetLink; onSkip: () => Promise<boolean> } | null;
   courseHref: string | null;
-  links: JourneyPathLinks;
+  links: PathLinks;
 }) {
   const t = useExtracted();
 
@@ -92,6 +134,7 @@ export function PathSection({
         <PathDetail />
       </PageSectionHeader>
 
+      <CompletedLessonsPathRow href={links.completedLessons} />
       {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
 
       <JourneyPathList links={links} />

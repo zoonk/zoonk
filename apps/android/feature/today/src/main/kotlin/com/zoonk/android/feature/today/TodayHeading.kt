@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
@@ -20,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
@@ -35,6 +33,7 @@ import com.zoonk.android.feature.plan.shortFocusName
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -58,33 +57,11 @@ internal fun TodayPageHeader(
     state: String?,
     title: String,
     modifier: Modifier = Modifier,
-    trailing: @Composable () -> Unit = {},
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         val parts = listOfNotNull(date, state)
         if (parts.isNotEmpty()) Eyebrow(AnnotatedString(parts.factsLine()))
-        TitleRow(title, trailing)
-    }
-}
-
-/** What sits beside the title moves under it when both don't fit, as at large font sizes. */
-@Composable
-private fun TitleRow(
-    title: String,
-    trailing: @Composable () -> Unit,
-) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        itemVerticalAlignment = Alignment.Bottom,
-    ) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(end = 12.dp).semantics { heading() },
-            style = MaterialTheme.typography.headlineMedium,
-        )
-        trailing()
+        PageTitleRow(title)
     }
 }
 
@@ -98,7 +75,7 @@ internal fun TodayHeading(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Eyebrow(todayEyebrow(model))
 
-        TitleRow(stringResource(R.string.today_title)) {
+        PageTitleRow(stringResource(R.string.today_title)) {
             if (wide) {
                 action()
             } else {

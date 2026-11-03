@@ -36,6 +36,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
@@ -68,11 +69,12 @@ internal fun ExamMocksSection(
     val locked = exam.mocksLocked(mockOffered)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ExamSectionHeader(
+        SectionHeader(
             stringResource(R.string.exam_mocks_title),
-            exam.mocks.size
-                .takeIf { it > 0 }
-                ?.let { pluralStringResource(R.plurals.exam_mocks_taken, it, it) },
+            detail =
+                exam.mocks.size
+                    .takeIf { it > 0 }
+                    ?.let { pluralStringResource(R.plurals.exam_mocks_taken, it, it) },
         )
 
         val clocks = exam.runningMocks.map { runningMockClock(it.deadline) }

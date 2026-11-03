@@ -69,6 +69,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -263,18 +264,11 @@ private fun MindMapsHero(
 
 @Composable
 private fun GroupTitle(group: MindMapGroup) {
-    Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = group.name ?: stringResource(R.string.mindmaps_chapters_finished),
-            modifier = Modifier.weight(1f).semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            pluralStringResource(R.plurals.mindmaps_chapter_count, group.maps.size, group.maps.size),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    SectionHeader(
+        group.name ?: stringResource(R.string.mindmaps_chapters_finished),
+        Modifier.padding(top = 12.dp),
+        detail = pluralStringResource(R.plurals.mindmaps_chapter_count, group.maps.size, group.maps.size),
+    )
 }
 
 @Composable

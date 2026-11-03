@@ -24,11 +24,20 @@ function replaceDraftParam(draftId: string | null) {
 export function useOnboardingNavigation(): OnboardingNavigation {
   const router = useRouter();
 
+  // The goal whose steps open is the active one now, while the pages kept from before show the one
+  // before it. The refresh waits for the navigation, so it reads the steps page, not the one left.
   return {
-    replaceSteps: (goalId) => router.replace(`/start/${goalId}`),
+    refreshPages: () => router.refresh(),
+    replaceSteps: (goalId) => {
+      router.replace(`/start/${goalId}`);
+      router.refresh();
+    },
     showDraft: replaceDraftParam,
     toExplanation: (goalId) => router.push(`/explain/${goalId}`),
     toStart: () => router.push(`/start?${START_AGAIN_PARAM}=${Date.now()}`),
-    toSteps: (goalId) => router.push(`/start/${goalId}`),
+    toSteps: (goalId) => {
+      router.push(`/start/${goalId}`);
+      router.refresh();
+    },
   };
 }

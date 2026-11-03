@@ -16,7 +16,11 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { type LessonCompletionSlotProps, useLessonPlayerConfig } from "../lesson-player-context";
+import {
+  type LessonCompletionSlotProps,
+  useLessonPlayer,
+  useLessonPlayerConfig,
+} from "../lesson-player-context";
 
 function CompletionReadouts({
   answered,
@@ -58,13 +62,16 @@ function NextLabel({ nextLesson }: { nextLesson: boolean }) {
 
 function CompletionLinks({ pending }: { pending: boolean }) {
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+  const { state } = useLessonPlayer();
   const primaryRef = useEnterClick<HTMLAnchorElement>();
-  const nextLesson = Boolean(routes.nextLesson);
+  const replay = state.run.status === "started" && state.run.replay;
+  const nextLessonHref = replay ? null : routes.nextLesson;
+  const nextLesson = Boolean(nextLessonHref);
 
   return (
     <TaskActionBar>
       <TaskActions>
-        {routes.nextLesson && (
+        {nextLessonHref && (
           <LinkComponent
             className={buttonVariants({ size: "xl", variant: "outline" })}
             href={routes.exit}
@@ -81,7 +88,7 @@ function CompletionLinks({ pending }: { pending: boolean }) {
           <LinkComponent
             aria-keyshortcuts="Enter"
             className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-            href={routes.nextLesson ?? routes.exit}
+            href={nextLessonHref ?? routes.exit}
             ref={primaryRef}
           >
             <NextLabel nextLesson={nextLesson} />

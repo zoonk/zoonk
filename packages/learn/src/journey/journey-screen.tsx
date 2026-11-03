@@ -40,7 +40,7 @@ import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
-import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
+import { CompletedLessonsPathRow, MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
@@ -53,6 +53,7 @@ const IN_ASIDE_CLASS = "hidden min-[72rem]:flex";
 const IN_ASIDE_GRID_CLASS = "hidden min-[72rem]:grid";
 
 export type JourneyLinks = JourneyPathLinks & {
+  completedLessons: string | null;
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: string;
   logbook: string | null;
@@ -231,6 +232,7 @@ function JourneyBody({
 
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
+              <CompletedLessonsPathRow href={links.completedLessons} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
                 choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
