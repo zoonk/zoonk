@@ -2,7 +2,9 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 
 /**
  * The light theme's tokens in `packages/ui/src/styles/globals.css`, in sRGB because Satori and Pango
- * read no `oklch()`. A certificate is always light. `certificate-palette.test.ts` keeps them equal.
+ * read no `oklch()`: `edge` is `--border`, `hairline` is `--input` and `paper` is `--card`; only
+ * `shadow` is the share pictures' own. A certificate is always light. `certificate-palette.test.ts`
+ * keeps the opaque `oklch()` ones equal.
  */
 export const CERTIFICATE_COLORS = {
   edge: "rgba(0, 0, 0, 0.07)",
