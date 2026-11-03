@@ -1,31 +1,44 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { WAITING_RUN, getPlanWait, getRevealWait, hasWaitFailed } from "./wait-run";
+import { WAITING_RUN, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
 
-describe(hasWaitFailed, () => {
-  it.each<PollStatus>(["idle", "polling"])("keeps a healthy notice wait open while %s", (poll) => {
-    expect(hasWaitFailed({ poll, run: WAITING_RUN })).toBe(false);
-  });
+function restart() {
+  return null;
+}
 
-  it.each<PollStatus>(["failed", "timedOut"])("offers recovery when the poll is %s", (poll) => {
-    expect(hasWaitFailed({ poll, run: WAITING_RUN })).toBe(true);
-  });
+function retry() {
+  return null;
+}
 
-  it("offers recovery when the workflow failed even while polling continues", () => {
+describe(getNoticeStop, () => {
+  it.each<PollStatus>(["idle", "polling"])(
+    "keeps a healthy notice wait open while %s",
+    (status) => {
+      expect(getNoticeStop({ poll: { restart, status }, run: WAITING_RUN })).toBeNull();
+    },
+  );
+
+  it.each<PollStatus>(["failed", "timedOut"])(
+    "offers to reconnect when the poll is %s",
+    (status) => {
+      expect(getNoticeStop({ poll: { restart, status }, run: WAITING_RUN })).toStrictEqual({
+        failure: "connection",
+        retry: restart,
+      });
+    },
+  );
+
+  it("offers to try again when the run stopped, but not when only its updates did", () => {
+    const poll = { restart, status: "polling" as const };
+
     expect(
-      hasWaitFailed({
-        poll: "polling",
-        run: { failure: "connection", status: "failed", steps: {} },
-      }),
-    ).toBe(false);
+      getNoticeStop({ poll, run: { failure: "connection", status: "failed", steps: {} } }),
+    ).toBeNull();
 
     expect(
-      hasWaitFailed({
-        poll: "polling",
-        run: { failure: "generation", status: "failed", steps: {} },
-      }),
-    ).toBe(true);
+      getNoticeStop({ poll, run: { failure: "generation", retry, status: "failed", steps: {} } }),
+    ).toStrictEqual({ failure: "generation", retry });
   });
 });
 
@@ -68,9 +81,9 @@ describe(getPlanWait, () => {
     expect(getPlanWait({ gate, opened: ready, run: done })).toBe("notice");
   });
 
-  it("offers to try again when asking about the notice's reading stopped", () => {
+  it("stays on the notice's wait when asking about its reading stopped", () => {
     const gate = { last: reading, status: "failed" as const };
-    expect(getPlanWait({ gate, opened: reading, run: following })).toBe("building");
+    expect(getPlanWait({ gate, opened: reading, run: following })).toBe("notice");
   });
 });
 
@@ -79,12 +92,8 @@ describe(getRevealWait, () => {
   const reading = { notice: "reading" as const, ready: true };
 
   it("waits for the plan, then for its exam's notice, then shows it", () => {
-    expect(getRevealWait({ plan: null, poll: "polling", run: WAITING_RUN })).toBe("building");
-    expect(getRevealWait({ plan: reading, poll: "polling", run: WAITING_RUN })).toBe("notice");
-    expect(getRevealWait({ plan: read, poll: "idle", run: WAITING_RUN })).toBeNull();
-  });
-
-  it("offers to try again on the plan's wait when the notice's wait failed", () => {
-    expect(getRevealWait({ plan: reading, poll: "timedOut", run: WAITING_RUN })).toBe("building");
+    expect(getRevealWait(null)).toBe("building");
+    expect(getRevealWait(reading)).toBe("notice");
+    expect(getRevealWait(read)).toBeNull();
   });
 });

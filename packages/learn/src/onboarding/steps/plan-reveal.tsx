@@ -14,7 +14,14 @@ import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions
 import { PlanWait } from "./plan-wait";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
-import { WAITING_RUN, getRevealWait, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
+import {
+  WAITING_RUN,
+  getNoticeStop,
+  getRevealWait,
+  getWaitRun,
+  isPlanMade,
+  isRunStopped,
+} from "./wait-run";
 
 const POLL_MS = 3000;
 
@@ -68,7 +75,8 @@ export function PlanReveal({
   };
 
   const readingNotice = plan?.notice === "reading";
-  const shown = Boolean(plan?.ready) && !readingNotice;
+  const wait = getRevealWait(plan);
+  const shown = wait === null;
   const refreshKeptPages = useEffectEvent(refreshPages);
 
   // Start would open the Today the browser kept, read before this plan, maybe for the goal before it.
@@ -134,13 +142,17 @@ export function PlanReveal({
       next="plan"
       notice={
         plan
-          ? { document: plan.examDocument, lastNotice: plan.schedule.targetDateEstimated }
+          ? {
+              document: plan.examDocument,
+              lastNotice: plan.schedule.targetDateEstimated,
+              stopped: getNoticeStop({ poll, run }),
+            }
           : undefined
       }
       offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
       readWarmUp={actions.readWarmUp}
       run={waitRun}
-      wait={getRevealWait({ plan, poll: poll.status, run })}
+      wait={wait}
     >
       {plan && (
         <PlanScreenProvider

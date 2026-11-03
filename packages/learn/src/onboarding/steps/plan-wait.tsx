@@ -10,24 +10,21 @@ import { OnboardingColumn } from "../onboarding-frame";
 import { HeldFooter } from "./held-wait";
 import { NoticeReading } from "./notice-reading";
 import { PlanBuilding, type PlanNext } from "./plan-building";
-import { type PlanWaitScreen } from "./wait-run";
+import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 import { WaitWarmUp } from "./wait-warm-up";
 
 type PlanWaitProps = {
   children: React.ReactNode;
   next: PlanNext;
-  notice?: { document: ExamDocument; lastNotice: boolean };
+  notice?: { document: ExamDocument; lastNotice: boolean; stopped: WaitStop | null };
   /** Shown under the build wait's timeline, above the warm-up card. */
   offer?: React.ReactNode;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun;
 };
 
-/**
- * The notice's wait comes after the plan is built, so the build's wait shown after it is the
- * notice's wait that stopped: its hold, and the card, stay through the "Reconnect".
- */
-function useHoldScreen(wait: PlanWaitScreen | null): PlanWaitScreen {
+/** The notice's wait comes after the plan is built, so once it showed, it's the one that may hold. */
+function useWaitScreen(wait: PlanWaitScreen | null): PlanWaitScreen {
   const [noticeShown, setNoticeShown] = useState(wait === "notice");
 
   if (wait === "notice" && !noticeShown) {
@@ -83,7 +80,7 @@ function ScreenWait({
  * wait that comes after it.
  */
 export function PlanWait({ wait, ...props }: PlanWaitProps & { wait: PlanWaitScreen | null }) {
-  const held = useHoldScreen(wait);
+  const screen = useWaitScreen(wait);
 
-  return <ScreenWait key={held} {...props} ready={wait === null} screen={wait ?? held} />;
+  return <ScreenWait key={screen} {...props} ready={wait === null} screen={wait ?? screen} />;
 }
