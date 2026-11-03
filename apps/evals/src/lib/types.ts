@@ -50,9 +50,16 @@ export function getJudgeExpectations(testCase: TestCase): string {
   return testCase.expectations;
 }
 
-export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCases">): boolean {
+/**
+ * Battles need text the judges read and a judge's scores to compare: a task scored only by code
+ * can't battle, while one that runs code checks before its judged categories can.
+ */
+export function supportsJudgeMode(
+  task: Pick<RegisteredTask, "output" | "score" | "scoreCategories" | "testCases">,
+): boolean {
   return (
-    !task.score &&
+    !task.output &&
+    (!task.score || Boolean(task.scoreCategories)) &&
     task.testCases.length > 0 &&
     task.testCases.every((testCase) => Boolean(testCase.expectations))
   );
