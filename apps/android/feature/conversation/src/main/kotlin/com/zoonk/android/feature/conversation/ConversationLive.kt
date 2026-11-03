@@ -38,7 +38,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -52,7 +51,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -63,6 +66,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.livecall.EndingReason
@@ -140,10 +144,35 @@ internal fun ConversationLive(
                 .lastOrNull()
                 ?.text
                 ?.length
-    LaunchedEffect(said) { listState.followEnd(animate = ValueAnimator.areAnimatorsEnabled()) }
+    // The learner starts and stops following the newest words by scrolling; words arriving never
+    // change it, however far a growing turn reaches past the view.
+    var following by rememberSaveable { mutableStateOf(true) }
+    val scrolled =
+        remember(listState) {
+            object : NestedScrollConnection {
+                override fun onPostScroll(
+                    consumed: Offset,
+                    available: Offset,
+                    source: NestedScrollSource,
+                ): Offset {
+                    if (source == NestedScrollSource.UserInput) following = listState.isNearEnd()
+                    return Offset.Zero
+                }
+
+                override suspend fun onPostFling(
+                    consumed: Velocity,
+                    available: Velocity,
+                ): Velocity {
+                    following = listState.isNearEnd()
+                    return Velocity.Zero
+                }
+            }
+        }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(said) { if (following) listState.scrollToEnd(animate = ValueAnimator.areAnimatorsEnabled()) }
     // The keyboard opening shrinks the list: the line being answered stays in view.
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.viewportSize }.drop(1).collect { listState.followEnd(animate = false) }
+        snapshotFlow { listState.layoutInfo.viewportSize }.drop(1).collect { if (following) listState.scrollToEnd(animate = false) }
     }
 
     CallFrame(
@@ -152,7 +181,15 @@ internal fun ConversationLive(
         listState = listState,
         exitConfirmation = endFirst,
         header = { CallClock(call) },
-        floating = { ScrollToLatest(listState) },
+        floating = {
+            if (!following) {
+                ScrollToLatest {
+                    following = true
+                    scope.launch { listState.scrollToEnd(animate = ValueAnimator.areAnimatorsEnabled()) }
+                }
+            }
+        },
+        listModifier = Modifier.nestedScroll(scrolled),
         bottomBar = { LiveBar(conversation, call, actions, ended) },
         aside = {
             if (examTask == null) {
@@ -227,13 +264,10 @@ private fun CallClock(call: LiveCallState) {
 }
 
 @Composable
-private fun BoxScope.ScrollToLatest(listState: LazyListState) {
-    val away by remember(listState) { derivedStateOf { !listState.isNearEnd() } }
-    val scope = rememberCoroutineScope()
-    if (!away) return
+private fun BoxScope.ScrollToLatest(onClick: () -> Unit) {
     val label = stringResource(R.string.conversation_scroll_to_latest)
     SmallFloatingActionButton(
-        onClick = { scope.launch { listState.scrollToEnd(animate = ValueAnimator.areAnimatorsEnabled()) } },
+        onClick = onClick,
         modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
@@ -642,10 +676,6 @@ private fun LazyListState.isNearEnd(): Boolean {
     val last = info.visibleItemsInfo.lastOrNull() ?: return true
     if (last.index < info.totalItemsCount - TRANSCRIPT_TAIL) return false
     return last.offset + last.size - info.viewportEndOffset <= info.viewportSize.height / FOLLOW_SLACK
-}
-
-private suspend fun LazyListState.followEnd(animate: Boolean) {
-    if (isNearEnd()) scrollToEnd(animate)
 }
 
 private suspend fun LazyListState.scrollToEnd(animate: Boolean) {

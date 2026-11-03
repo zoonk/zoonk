@@ -81,6 +81,7 @@ internal fun CallFrame(
     exitConfirmation: TaskExitConfirmation? = null,
     header: (@Composable () -> Unit)? = null,
     floating: (@Composable BoxScope.() -> Unit)? = null,
+    listModifier: Modifier = Modifier,
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
@@ -110,7 +111,7 @@ internal fun CallFrame(
             Box(Modifier.weight(1f)) {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = listModifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
