@@ -84,6 +84,9 @@ class FakeLessonPlayerApi(
     val completions = mutableListOf<String>()
     var optionalStepIds = "[]"
     var runAnswers = "[]"
+
+    /** The lesson opening an older server sent with the run, which the player ignores. */
+    var support = "null"
     var startFailures = 0
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
@@ -115,7 +118,7 @@ class FakeLessonPlayerApi(
         return ApiJson.decodeFromString(
             """
             {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":null}
+             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
             """.trimIndent(),
         )
     }

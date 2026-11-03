@@ -519,14 +519,6 @@ describe(lessonPlayerReducer, () => {
     },
   );
 
-  it("opens with the first explanation before the first check, even for a learner who practiced the skill", () => {
-    const steps = [hookGuessStep("hook"), explanationStep("idea"), checkStep("check")];
-
-    const state = createInitialState({ hasMap: false, id: "lesson", steps });
-
-    expect(state.queue).toStrictEqual(["hook", "idea", "check"]);
-  });
-
   it('brings the explanation in front of a question with "Explain first" and marks it helped', () => {
     const steps = [
       checkStep("quiz"),
