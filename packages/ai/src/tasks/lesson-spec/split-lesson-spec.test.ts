@@ -134,6 +134,35 @@ describe(splitLessonSpec, () => {
     expect(getLessonSpecIssues({ level: "beginner", spec: second! })).toStrictEqual([]);
   });
 
+  it("opens a new learner's later lesson on a picture of its own hook scene", () => {
+    const planned = fourSkillSpec();
+
+    const [first, second] = splitLessonSpec({
+      language: "en",
+      level: "beginner",
+      novice: true,
+      spec: {
+        ...planned,
+        screens: planned.screens.map((item, index) =>
+          index === 0 ? { ...item, visual: "The original scene" } : item,
+        ),
+      },
+    });
+
+    expect(first?.screens[0]?.visual).toBe("The original scene");
+
+    expect(second?.screens[0]).toStrictEqual({
+      ...screen("hook", [0], "Mode at work"),
+      visual: "Mode at work",
+    });
+
+    expect(
+      getLessonSpecIssues({ level: "beginner", novice: true, spec: second! }).map(
+        (issue) => issue.code,
+      ),
+    ).not.toContain("hookPicture");
+  });
+
   it("recomputes minutes for each new lesson", () => {
     const lessons = splitLessonSpec({ language: "en", level: "beginner", spec: fourSkillSpec() });
 
