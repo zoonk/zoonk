@@ -245,6 +245,86 @@ const CALL_CASES: ExtractionCase[] = [
     ],
   }),
   callCase({
+    expected: {
+      facts: [],
+      forbidden: ["medic", "hospital", "london", "londres", "john", "smith", "hilton", "conferenc"],
+      maxFacts: 0,
+    },
+    id: "pt-call-border-role",
+    language: "pt",
+    objectives: ["Explicar por que você está no Canadá", "Dizer onde você vai morar"],
+    situation: "Você acabou de chegar em Toronto e o agente de imigração faz algumas perguntas.",
+    targetLanguage: "en",
+    turns: [
+      character("Good morning. What brings you to Canada?"),
+      learner("Good morning! My name is John Smith, I'm from London."),
+      character("Good morning, Mr. Smith. What brings you to Canada today?"),
+      learner("I'm here for a medical conference. I am a doctor, I work in a hospital in London."),
+      character("Okay. How long will you stay in Canada?"),
+      learner("Only three days. I stay at the Hilton hotel, downtown."),
+      character("Alright. Have a good day."),
+    ],
+  }),
+  callCase({
+    expected: {
+      facts: [{ categories: ["background"], keywords: ["enfermeir", "enfermag"] }],
+      forbidden: ["medic", "london", "londres", "john", "smith", "conferenc", "hotel"],
+      maxFacts: 1,
+    },
+    id: "pt-call-border-steps-out",
+    language: "pt",
+    objectives: ["Explicar por que você está no Canadá", "Dizer onde você vai morar"],
+    situation: "Você acabou de chegar em Toronto e o agente de imigração faz algumas perguntas.",
+    targetLanguage: "en",
+    turns: [
+      character("Good morning. What brings you to Canada?"),
+      learner(
+        "Good morning. My name is John Smith, I'm from London. I am doctor, for a conference.",
+      ),
+      character("A doctor from London. Which hospital do you work at?"),
+      learner(
+        "Haha, desculpa. Na verdade eu sou enfermeira mesmo. Ok... I stay in a hotel, three days.",
+      ),
+      character("Three days in a hotel. Enjoy your stay."),
+    ],
+  }),
+  callCase({
+    expected: {
+      facts: [
+        { categories: ["context"], keywords: ["cachorr", "cao", "thor"] },
+        {
+          categories: ["context", "goals", "routine"],
+          expiresOn: ["2026-10-02"],
+          keywords: ["2 de out", "2/10", "02/10"],
+        },
+      ],
+      forbidden: ["sexta", "friday", "sabado", "apartamento", "deposito"],
+      maxFacts: 2,
+    },
+    id: "pt-call-dated-interview",
+    language: "pt",
+    objectives: [
+      "Perguntar se o apartamento está disponível",
+      "Perguntar sobre o depósito",
+      "Marcar uma visita",
+    ],
+    situation: "Você liga para o dono de um apartamento para alugar em Toronto.",
+    targetLanguage: "en",
+    turns: [
+      character("Hi! Are you calling about the apartment on Queen Street?"),
+      learner("Hi! Yes, is the apartment still available?"),
+      character("Yes, it is still available."),
+      learner("How much is the deposit?"),
+      character("The deposit is first and last month's rent."),
+      learner("Are dogs OK? I have a small dog called Thor."),
+      character("Small dogs are OK."),
+      learner(
+        "Can I see it on Saturday? I can't on Friday because I have a job interview at a bank.",
+      ),
+      character("Yes, that's fine. I can show it Saturday at 10 a.m."),
+    ],
+  }),
+  callCase({
     expected: { facts: [], forbidden: ["pizza", "pepperoni", "ingles", "english"], maxFacts: 0 },
     id: "pt-call-nothing",
     language: "pt",
