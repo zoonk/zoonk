@@ -1,32 +1,11 @@
+import { afterPageLoad } from "@zoonk/utils/after-page-load";
 import { getPostHogConfig } from "@zoonk/utils/posthog";
 import { type PostHog } from "posthog-js";
 import { type SharedEventProperties } from "./shared-properties";
 
-const IDLE_TIMEOUT_MS = 2000;
-
 let postHog: Promise<PostHog | null> | null = null;
 let sharing = false;
 const decided = Promise.withResolvers<null>();
-
-function afterPageLoad(): Promise<void> {
-  return new Promise((resolve) => {
-    const whenIdle = () => {
-      if ("requestIdleCallback" in globalThis) {
-        requestIdleCallback(() => resolve(), { timeout: IDLE_TIMEOUT_MS });
-        return;
-      }
-
-      setTimeout(resolve, 0);
-    };
-
-    if (document.readyState === "complete") {
-      whenIdle();
-      return;
-    }
-
-    globalThis.addEventListener("load", whenIdle, { once: true });
-  });
-}
 
 /** Loaded once, after the page has, so its size never delays the first paint; a "no" before then cancels it. */
 function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
