@@ -118,3 +118,5 @@ export const processIconNames = [
 ] as const;
 
 export type ProcessIconName = (typeof processIconNames)[number];
+
+export const DEFAULT_PROCESS_ICON: ProcessIconName = "workflow";

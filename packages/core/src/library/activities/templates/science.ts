@@ -6,7 +6,7 @@ import {
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import { processIconNames } from "../process-icons";
+import { DEFAULT_PROCESS_ICON, processIconNames } from "../process-icons";
 import { countBonds, isKnownElement, parseMolecularFormula } from "./_utils/chemistry";
 import { isBuildableMolecule } from "./_utils/molecule-structure";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
@@ -19,7 +19,9 @@ const MAX_MOLECULE_ATOMS = 12;
 
 const processStepSchema = z
   .object({
-    icon: z.enum(processIconNames).optional(),
+    /** The player draws only these, so a made-up name shows the default instead of dropping the steps. */
+    // oxlint-disable-next-line unicorn/prefer-top-level-await -- Zod's catch, not a promise's.
+    icon: z.enum(processIconNames).catch(DEFAULT_PROCESS_ICON).optional(),
     id: idSchema,
     text: optionTextSchema,
     why: explanationSchema.optional(),
