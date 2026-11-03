@@ -213,10 +213,12 @@ export function GenerationFailureNotice({
 
 function useAnnouncement({
   copy,
+  doneLabel,
   progress,
   run,
 }: {
   copy: Record<string, PhaseCopy>;
+  doneLabel?: string;
   progress: PhaseProgress<string>;
   run: GenerationRun;
 }): string {
@@ -224,7 +226,7 @@ function useAnnouncement({
   const active = progress.phases.find((phase) => phase.status === "active");
 
   if (progress.progress === 100) {
-    return t("Done");
+    return doneLabel ?? t("Done");
   }
 
   return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
@@ -233,12 +235,15 @@ function useAnnouncement({
 export function GenerationWait({
   children,
   className,
+  doneLabel,
   kind,
   run,
   since,
 }: {
   children?: React.ReactNode;
   className?: string;
+  /** What the status line says once it's done, for a screen that stays then. */
+  doneLabel?: string;
   kind: GenerationKind;
   run: GenerationRun;
   /** When the wait began on this device, for a screen that takes over a wait another one showed. */
@@ -254,7 +259,7 @@ export function GenerationWait({
     stepTimes: run.stepTimes ?? {},
   });
 
-  const announcement = useAnnouncement({ copy: copy.phases, progress, run });
+  const announcement = useAnnouncement({ copy: copy.phases, doneLabel, progress, run });
   const failure = run.status === "failed" ? (run.failure ?? "generation") : null;
 
   return (

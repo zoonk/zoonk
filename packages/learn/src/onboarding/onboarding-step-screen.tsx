@@ -225,6 +225,7 @@ export function OnboardingStepScreen({
           onChangeDate={schedule.onChangeDate}
           onPlanReadyChange={onPlanReadyChange}
           planReadiness={view.planReadiness}
+          readWarmUp={actions.readWarmUp}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
           together={{

@@ -1,8 +1,8 @@
 "use client";
 
-import { type FeedbackTone, FeedbackVerdict } from "@zoonk/learn/feedback-panel";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { type FeedbackTone, FeedbackVerdict } from "./feedback-panel";
 
 export type Verdict =
   | "almost"
@@ -57,18 +57,5 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
     >
       {labels[verdict]}
     </FeedbackVerdict>
-  );
-}
-
-export function NotQuiteLead() {
-  const t = useExtracted();
-
-  return (
-    <span className="text-destructive-text font-semibold">
-      {t({
-        description: "Starts the explanation of why the learner's answer is wrong.",
-        message: "Not quite:",
-      })}
-    </span>
   );
 }

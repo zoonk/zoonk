@@ -4,9 +4,9 @@ import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schem
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
-import { VerdictLabel } from "../../components/verdict-label";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;

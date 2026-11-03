@@ -12,7 +12,7 @@ import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
 import { NoticeReading } from "./notice-reading";
-import { PlanBuilding } from "./plan-building";
+import { PlanBuilding, PlanWait } from "./plan-building";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
 import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
@@ -110,19 +110,13 @@ export function PlanReveal({
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 
-  if (!plan?.ready) {
-    return isLoading ? (
-      <StepLoading />
-    ) : (
-      <PlanBuilding run={waitRun}>
-        {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
-      </PlanBuilding>
-    );
+  if (isLoading) {
+    return <StepLoading />;
   }
 
-  if (readingNotice) {
+  if (plan?.ready && readingNotice) {
     return hasWaitFailed({ poll: poll.status, run }) ? (
-      <PlanBuilding run={waitRun} />
+      <PlanBuilding next="plan" run={waitRun} />
     ) : (
       <NoticeReading document={plan.examDocument} lastNotice={plan.schedule.targetDateEstimated} />
     );
@@ -145,23 +139,33 @@ export function PlanReveal({
   };
 
   return (
-    <PlanScreenProvider
-      value={{
-        actions: refreshingActions,
-        focusTestHref,
-        goal,
-        plan,
-        shareHref: planLinkHref(plan.planId),
-      }}
+    <PlanWait
+      next="plan"
+      offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
+      readWarmUp={actions.readWarmUp}
+      ready={shown}
+      run={waitRun}
     >
-      <PlanSheetHosts>
-        <RevealBody
-          isGuest={isGuest}
-          signUpHref={signUpHref}
-          syllabus={syllabus}
-          todayHref={todayHref}
-        />
-      </PlanSheetHosts>
-    </PlanScreenProvider>
+      {plan && (
+        <PlanScreenProvider
+          value={{
+            actions: refreshingActions,
+            focusTestHref,
+            goal,
+            plan,
+            shareHref: planLinkHref(plan.planId),
+          }}
+        >
+          <PlanSheetHosts>
+            <RevealBody
+              isGuest={isGuest}
+              signUpHref={signUpHref}
+              syllabus={syllabus}
+              todayHref={todayHref}
+            />
+          </PlanSheetHosts>
+        </PlanScreenProvider>
+      )}
+    </PlanWait>
   );
 }

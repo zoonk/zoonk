@@ -5,7 +5,7 @@ import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BalanceControls } from "./balance-controls";
