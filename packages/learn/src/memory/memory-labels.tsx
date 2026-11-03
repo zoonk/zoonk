@@ -46,6 +46,12 @@ function useFactSourceName(fact: MemoryFactView): string {
       return t("From onboarding");
     case "session":
       return t("From a study session");
+    case "call":
+      return t({
+        description:
+          "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.",
+        message: "From a call",
+      });
     default:
       return t("From a study session");
   }

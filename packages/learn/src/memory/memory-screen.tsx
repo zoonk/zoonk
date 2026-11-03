@@ -67,7 +67,7 @@ function MemorySwitchDescription({ enabled }: { enabled: boolean }) {
   const t = useExtracted();
 
   return enabled
-    ? t("Personal examples and plans that fit your week")
+    ? t("Personal examples, plans that fit your week and calls that remember your news")
     : t("Memory is off. Nothing new is learned, and these facts aren't used.");
 }
 

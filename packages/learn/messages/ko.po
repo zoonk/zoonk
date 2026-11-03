@@ -6350,10 +6350,16 @@ msgctxt "dppJZz"
 msgid "From a study session"
 msgstr "학습 중에 알려 주셨어요"
 
+#. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
+#: src/memory/memory-labels.tsx
+msgctxt "nxU2W7"
+msgid "From a call"
+msgstr "대화에서"
+
 #: src/memory/memory-screen.tsx
-msgctxt "Nqh1Tt"
-msgid "Personal examples and plans that fit your week"
-msgstr "내게 맞는 예시와 이번 주 일정에 맞는 계획"
+msgctxt "PRUyMZ"
+msgid "Personal examples, plans that fit your week and calls that remember your news"
+msgstr "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 대화"
 
 #: src/memory/memory-screen.tsx
 msgctxt "yp_BUN"
