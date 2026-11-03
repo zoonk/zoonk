@@ -5,6 +5,7 @@ import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certific
 import { getCertificateDisplayUrl, getCertificateLinks } from "@zoonk/utils/certificate-links";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getBaseUrl } from "@zoonk/utils/origin";
 import { getExtracted } from "next-intl/server";
 import {
   formatCertificateDate,
@@ -86,7 +87,7 @@ export function getCertificateFileTitle(facts: CertificateFacts): string {
 
 async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> {
   const t = await getExtracted({ locale });
-  const links = getCertificateLinks(facts);
+  const links = getCertificateLinks({ ...facts, origin: getBaseUrl() });
 
   const placeholder = t({
     description:
