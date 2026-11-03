@@ -7,7 +7,7 @@ import { daysBetweenIsoDays } from "@zoonk/utils/calendar-day";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
-  ListGroup,
+  LIST_GROUP_CLASS,
   ListRowContent,
   ListRowDescription,
   ListRowLink,
@@ -62,6 +62,17 @@ function useDayTitle(today: string) {
   };
 }
 
+function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) {
+  return (
+    <ListRowLink href={href} lessonWritten prefetch="intent">
+      <ListRowContent>
+        <ListRowTitle>{lesson.title}</ListRowTitle>
+        {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
+      </ListRowContent>
+    </ListRowLink>
+  );
+}
+
 function DaySection({
   day,
   hrefs,
@@ -81,18 +92,13 @@ function DaySection({
         <PageSectionTitle id={titleId}>{title}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ListGroup>
+      <ul className={LIST_GROUP_CLASS}>
         {lessons.map((lesson) => (
-          <ListRowLink href={hrefs.lesson(lesson.lessonId)} key={lesson.lessonId} lessonWritten>
-            <ListRowContent>
-              <ListRowTitle>{lesson.title}</ListRowTitle>
-              {lesson.chapterTitle && (
-                <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>
-              )}
-            </ListRowContent>
-          </ListRowLink>
+          <li key={lesson.lessonId}>
+            <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} />
+          </li>
         ))}
-      </ListGroup>
+      </ul>
     </PageSection>
   );
 }

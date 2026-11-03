@@ -19,6 +19,7 @@ export type LearnLinkComponentProps = {
   prefetch?: boolean | "auto";
   ref?: Ref<HTMLAnchorElement>;
   scroll?: boolean;
+  unstable_dynamicOnHover?: boolean;
 };
 
 type LearnLinkComponent = (props: LearnLinkComponentProps) => ReactNode;
