@@ -217,6 +217,7 @@
   "plan_continues_on": "fd7066361d8d855b5de8532381037fea80d6a84ed13b3fcf1cafc289c47f1d1c",
   "plan_continues_today": "df299a559b5826dd1482b30c4f036326edced4da95b83b5ba7d24eeda21a6e66",
   "plan_couldnt_check_changes": "0d17019de2d4c4fadd6692296edd67775ac9d2fd84a5233f28fafe37a8b35a29",
+  "plan_course_complete": "da4810818429a8b9782685c380a2413b91a24b3eace04933acefc9ff53f5f49e",
   "plan_coverage": "b3a36ef7a60a80af46db9111619bbbfebc519b3a11bcea2ac612140fc8ea9ada",
   "plan_coverage_caption": "7e426ff9581d4bbc097c98a33b86ea745cc79f9bc669b1bf997e5f10e4a2b5d3",
   "plan_covered_not_enough": "e35055a4d58f560aadfd0a7b686877d4c0bd793803717c5a3d03b3e3c9774a95",
@@ -1548,4 +1549,6 @@
     <string name="plan_finished_title">Du hast deinen Plan abgeschlossen</string>
     <string name="plan_study_next">Das kannst du als Nächstes lernen.</string>
     <string name="plan_continue_at">Weiter bei %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Kurs abgeschlossen</string>
 </resources>

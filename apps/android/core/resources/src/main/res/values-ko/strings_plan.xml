@@ -217,6 +217,7 @@
   "plan_continues_on": "15b42746888b01b7e5d704da24911cb10e3305878ed723e2863610ac11a81066",
   "plan_continues_today": "4912dad9d4ff3ba0183debce8703a7e0235c3b2bf09cd6744226c18a0bec7cf8",
   "plan_couldnt_check_changes": "22b78ac9b2b6a9e75ceae29f3718dae35245940c901db509c6bf3c963127cbf8",
+  "plan_course_complete": "37b09c86d5aeb82d2ca3564a77870b96e84b6c70f940fe7c1babf0baaf72dd22",
   "plan_coverage": "5f30170cd334b49c690613157f1a3335d0342abe732fe6b3bd5d59178b0f6e8f",
   "plan_coverage_caption": "4e922e184966360016996829f4d9842dfd517a805c9b5800f5abecfc5bed14c0",
   "plan_covered_not_enough": "7500ff8492cc87c6cfed1064265ef8d84a75ac8fafaaee1a1f14dc0c97684b2d",
@@ -1463,4 +1464,6 @@
     <string name="plan_finished_title">계획을 모두 마쳤어요</string>
     <string name="plan_study_next">다음으로 공부할 내용이에요.</string>
     <string name="plan_continue_at">%1$s 학습 이어가기</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">코스 완료</string>
 </resources>

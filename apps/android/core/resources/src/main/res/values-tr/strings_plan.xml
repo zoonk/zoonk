@@ -217,6 +217,7 @@
   "plan_continues_on": "f376225b799ab7affce3b0722a62d3baddddbd130056e41d1d7def14e23a38dd",
   "plan_continues_today": "23b43c8474131c2e1c956be278c7277f42bf11c8234528a888e9914e5d2274e6",
   "plan_couldnt_check_changes": "b80c51d21c7108cd3575fdf2efd4f3191fdf9580a5e861fee34ddf45a9089a54",
+  "plan_course_complete": "d294c11d5f831abd524fd34ba246294c6e9cbd19ac08263b7a1a2c1d2b393007",
   "plan_coverage": "f78fac204f3d06b6e39d20e0b07d06abbe6fc2e2528ef57b9983ea3a3db730d8",
   "plan_coverage_caption": "eb4a802f65e2788cea6b4a2f443c1cbe5325441d68bb39d678e480645d72ac19",
   "plan_covered_not_enough": "6d10d78e63882c770c583dbe6b88531f2faaf00ddd467b725ff745d71a6c6668",
@@ -1548,4 +1549,6 @@
     <string name="plan_finished_title">Planını tamamladın</string>
     <string name="plan_study_next">Bundan sonra bunlara çalışabilirsin.</string>
     <string name="plan_continue_at">Devam et: %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Kurs tamamlandı</string>
 </resources>

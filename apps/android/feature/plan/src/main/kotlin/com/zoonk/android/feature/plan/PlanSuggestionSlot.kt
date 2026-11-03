@@ -87,6 +87,10 @@ internal sealed interface SlotItem {
         override val key = "coverage"
     }
 
+    data object CourseComplete : SlotItem {
+        override val key = "courseComplete"
+    }
+
     data object Finished : SlotItem {
         override val key = "finished"
     }
@@ -103,11 +107,12 @@ internal sealed interface SlotItem {
     }
 }
 
-/** [finished] once what to study next is known; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while its certificate isn't written; [fix] is the pace's sentence. */
 internal fun slotItems(
     page: PlanPageState,
     fix: PaceFix?,
     finished: Boolean,
+    courseComplete: Boolean,
 ): List<SlotItem> {
     val plan = page.plan
     val pace = plan.status?.pace
@@ -120,6 +125,7 @@ internal fun slotItems(
         )
 
     return buildList {
+        if (!finished && courseComplete) add(SlotItem.CourseComplete)
         if (page.isPaused) add(SlotItem.Paused)
         plan.examChoices
             .filter { it.subjects.isEmpty() }
@@ -281,7 +287,8 @@ private fun slotItemsLeft(
         page.plan.status
             ?.pace
             ?.let { paceFix(it, page.isExam) }
-    return slotItems(page, fix, finished = host.next != null).filter { it.key !in state.dismissed }
+    val courseComplete = host.certificate != null && host.certificate.code == null
+    return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 
 /** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
@@ -409,6 +416,10 @@ private fun SlotSuggestion(
 
         SlotItem.Coverage -> {
             CoverageSuggestion(slot)
+        }
+
+        SlotItem.CourseComplete -> {
+            CourseCompleteSuggestion(slot)
         }
 
         SlotItem.Finished -> {

@@ -85,3 +85,29 @@ private fun levelName(level: StudyNextNextLevel.Level): String =
             StudyNextNextLevel.Level.ADVANCED -> R.string.catalog_level_advanced
         },
     )
+
+/** Main's `CourseCompleteSuggestion`: an exam's course can finish before its exam-day mocks, so its certificate comes before the plan's end. */
+@Composable
+internal fun CourseCompleteSuggestion(slot: Slot) {
+    val title = stringResource(R.string.plan_course_complete)
+    val host = slot.host
+    val claim =
+        @Composable {
+            SuggestionAction(onClick = host.onCertificate, enabled = !host.claimingCertificate) {
+                PendingLabel(host.claimingCertificate, stringResource(R.string.certificates_get))
+            }
+        }
+
+    Suggestion(
+        label = title,
+        summary = title,
+        layout = slot.layout,
+        mark = SuggestionMark.Done,
+        failed = host.claimFailed,
+        lineAction = claim,
+    ) {
+        SuggestionHeader(title)
+        SuggestionActions { claim() }
+        if (host.claimFailed) SuggestionSaveError()
+    }
+}

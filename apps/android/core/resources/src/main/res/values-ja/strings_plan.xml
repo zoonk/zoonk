@@ -217,6 +217,7 @@
   "plan_continues_on": "807b0ed31bf3295ed2c70457dc4dd5f0c859c9689fbfc4b25ee9b678de52c755",
   "plan_continues_today": "f7ecd2c41b5589824b20342b25a176eea06853c333bc384dc5201f1fe05128c5",
   "plan_couldnt_check_changes": "02911353e0032ee61fa6f97ad3dcffefca062efa169d72333b14ed98fe256950",
+  "plan_course_complete": "f87bae4e8e3801088b6420c5b67b3a63f8c003a8e6a69bd09d454f7e9f8cf591",
   "plan_coverage": "ef6358ca75573796bae5ea36f574fb24a4a6251e753ab45a4909d0f528442e5c",
   "plan_coverage_caption": "95402fdf06a28e35ea94a3ac4d864f61fae8ca7218d1cc77136a35fc4eac4bec",
   "plan_covered_not_enough": "dcd0bdb516bb674857fcc519819726883b6fb1d6cdf0fb784d3573c275199957",
@@ -1463,4 +1464,6 @@
     <string name="plan_finished_title">学習計画を完了しました</string>
     <string name="plan_study_next">次に学ぶ内容はこちらです。</string>
     <string name="plan_continue_at">%1$sで学習を続ける</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">コース修了</string>
 </resources>

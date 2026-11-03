@@ -312,6 +312,8 @@ class PlanScreenshots {
                     ),
             )
 
+        val unclaimed = com.zoonk.api.models.GoalCertificate(code = null)
+
         fun ready(
             operations: List<PlanOp>,
             plan: com.zoonk.api.models.Plan,
@@ -373,6 +375,9 @@ class PlanScreenshots {
                 "plan-slot-past-date-no-date" to Shot(pastDate, state = { SlotState().apply { dateSearch = DateSearch.NoDate } }),
                 "plan-slot-finished" to Shot(plan(), host = SlotHost(next = next)),
                 "plan-slot-finished-starting" to Shot(plan(), host = SlotHost(next = next, nextLevel = NextLevelStart.Starting)),
+                "plan-slot-course-complete" to Shot(plan(), summary = exam, host = SlotHost(certificate = unclaimed)),
+                "plan-slot-course-complete-failed" to
+                    Shot(plan(), summary = exam, host = SlotHost(certificate = unclaimed, claimFailed = true)),
             )
         var shown by mutableStateOf(shots.keys.first())
         compose.setContent {

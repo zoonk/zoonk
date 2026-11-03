@@ -174,9 +174,9 @@ internal fun PlanPage(
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
     val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
-    val finished =
-        if (page.plan.end != null) {
-            app.plans.finished[page.goal.id]
+    val end =
+        if (page.plan.end != null || page.isExam) {
+            app.plans.end[page.goal.id]
                 .collectShown()
                 .value.value
         } else {
@@ -255,15 +255,15 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
-                next = finished?.next,
+                next = end?.next,
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
-                certificate = finished?.certificate,
+                certificate = end?.certificate,
                 claimingCertificate = claim.claiming,
                 claimFailed = claim.failed,
                 onCertificate = {
                     val open = { code: String -> navigator.open(AppRoute.Certificate(code)) }
-                    finished?.certificate?.code?.let(open) ?: claim.claim(open)
+                    end?.certificate?.code?.let(open) ?: claim.claim(open)
                 },
             ),
         slotState = viewModel.slotState,
