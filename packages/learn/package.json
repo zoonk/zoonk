@@ -47,7 +47,6 @@
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",
     "./generation/run": "./src/generation/generation-run.ts",
-    "./guess-hint": "./src/_components/guess-hint.tsx",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
     "./goal-switcher": "./src/shell/goal-switcher.tsx",
     "./goal-mark": "./src/shell/goal-mark.tsx",
