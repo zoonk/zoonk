@@ -164,8 +164,11 @@ export function useCallEnding({
       const due = takeDueExamCue({ cues: examCues, elapsedSeconds: elapsed, sent });
       const cue = { channel: "instructions", text: due?.cue.say ?? "" } as const;
 
-      // A cue the session refused, as its connection was lost, stays due for the next connection.
-      if (due && !call.state.reason && sendLiveCallCue({ cue, session: call.session })) {
+      // Cues wait for the character's first words, so a continued call's overdue cue follows its
+      // resume line. One the session refused, as its connection was lost, stays due.
+      const open = call.state.characterAt !== null && !call.state.reason;
+
+      if (due && open && sendLiveCallCue({ cue, session: call.session })) {
         examCuesSent.current = due.sent;
         onCue();
       }
