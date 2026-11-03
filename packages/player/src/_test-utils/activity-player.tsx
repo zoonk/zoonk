@@ -100,6 +100,29 @@ export async function dragBy(from: Locator, offset: { x: number; y: number }) {
   });
 }
 
+export async function sortCard({ group, item }: { group: string; item: string }) {
+  await expect.element(page.getByText(item, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: group }).click();
+}
+
+export function sortedCard({ group, item }: { group: string; item: string }) {
+  return page.getByRole("region", { name: group }).getByRole("button", { name: item });
+}
+
 export async function expectCount(locator: Locator, count: number) {
   await expect.poll(() => locator.elements()).toHaveLength(count);
+}
+
+// Vitest's visibility matcher excludes MathML elements, so math needs a rendered-box check.
+export async function expectMathVisible(math: Locator) {
+  await expect.poll(() => hasVisibleBox(math.query())).toBe(true);
+}
+
+function hasVisibleBox(element: Element | null) {
+  if (!element?.checkVisibility({ visibilityProperty: true })) {
+    return false;
+  }
+
+  const box = element.getBoundingClientRect();
+  return box.width > 0 && box.height > 0;
 }

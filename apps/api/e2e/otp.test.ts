@@ -2,8 +2,9 @@ import { type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
+import { E2E_MAIN_APP_URL } from "./main-app-url";
 
-const REDIRECT_URL = "http://localhost:49152/test";
+const REDIRECT_URL = `${E2E_MAIN_APP_URL}/test`;
 
 async function holdRequests(page: Page, url: string) {
   const held: Route[] = [];

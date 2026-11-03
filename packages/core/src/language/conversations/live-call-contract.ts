@@ -17,7 +17,7 @@ export type LiveCallRefusal =
 
 export type LiveCallReservationResult =
   | LiveCallRefusal
-  | { connection: LiveCallConnection; endsAtLimit: "day" | "month" | null; status: "reserved" };
+  | { connection: LiveCallConnection; status: "reserved" };
 
 export type LiveCallDeadlineScheduler = (input: {
   connectionId: string;

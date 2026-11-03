@@ -1,8 +1,9 @@
 import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
-import { type Locator, page } from "vitest/browser";
+import { page } from "vitest/browser";
 import {
   checkActivity,
+  expectMathVisible,
   expectVerdict,
   focusOn,
   openActivity,
@@ -10,20 +11,6 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
-
-// Vitest's visibility matcher excludes MathML elements, so math needs a rendered-box check.
-async function expectMathVisible(math: Locator) {
-  await expect.poll(() => hasVisibleBox(math.query())).toBe(true);
-}
-
-function hasVisibleBox(element: Element | null) {
-  if (!element?.checkVisibility({ visibilityProperty: true })) {
-    return false;
-  }
-
-  const box = element.getBoundingClientRect();
-  return box.width > 0 && box.height > 0;
-}
 
 const cited = engineModeFixtures.guessReveal.cited;
 
@@ -81,7 +68,7 @@ describe("any-subject activities", () => {
 
     const prompt = page.getByRole("heading", { name: /How many Greenlands fit in/u });
 
-    await expectMathVisible(prompt.getByRole("math"));
+    await expectMathVisible(prompt.getByRole("math", { includeHidden: true }));
     await expect.element(prompt).not.toMatchTextContent("$");
 
     await valueInput().fill("14");

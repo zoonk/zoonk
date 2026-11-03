@@ -109,7 +109,10 @@ describe(conversationReviewWorkflow, () => {
     vi.mocked(checkConversationObjectives)
       .mockReset()
       .mockResolvedValue(
-        modelAnswer({ met: [{ label: "Is it available?", learnerWords: "It is available?" }] }),
+        modelAnswer({
+          goodbye: false,
+          met: [{ label: "Is it available?", learnerWords: "It is available?" }],
+        }),
       );
   });
 
@@ -249,7 +252,7 @@ describe(conversationReviewWorkflow, () => {
           }),
         ).resolves.toStrictEqual([{ startedAt: null, status: "ready" }]);
       },
-      { interval: 200, timeout: 30_000 },
+      { interval: 200, timeout: 10_000 },
     );
   });
 });

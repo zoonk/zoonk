@@ -76,6 +76,8 @@ model Goal {
   examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
   primaryCourseId       String?                @map("primary_course_id") @db.Uuid
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  warmUpId              String?                @map("warm_up_id") @db.Uuid
+  warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
   /// The goal this one took over, once: a finished learn goal continued at its course's next level,
   /// or a language goal moved to its exam. Learners can't write it, unlike `details`.
   replacesGoalId        String?                @unique @map("replaces_goal_id") @db.Uuid
@@ -107,6 +109,7 @@ model Goal {
   @@index([userId, status])
   @@index([examBlueprintId])
   @@index([primaryCourseId])
+  @@index([warmUpId])
   @@map("goals")
 }
 

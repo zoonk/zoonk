@@ -1,9 +1,13 @@
 import "server-only";
 import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/language/live-call-creation";
-import { hangUpLiveCallSession } from "@zoonk/ai/tasks/language/live-call-session";
+import {
+  type LiveCallHangup,
+  hangUpLiveCallSession,
+} from "@zoonk/ai/tasks/language/live-call-session";
 import { recordLiveConversationUsage } from "@zoonk/ai/tasks/language/live-conversation-usage";
 import { type LiveCallConnection, type LiveCallEndReason, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
@@ -14,6 +18,16 @@ import { settleLiveCall } from "./_utils/settle-live-call";
 const MS_PER_SECOND = 1000;
 
 const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
+
+/**
+ * OpenAI's hangup can answer 503 even for a session it already closed, so a hangup it doesn't
+ * confirm still ends the call: waiting for proof would block the learner's next call for good.
+ * Measured: a session whose app vanished closed itself about 28 s later (`connection_lost`), and
+ * the apps hang up at the hard stop on their own, so the cost counts this long past the attempt.
+ */
+const UNCONFIRMED_CLEANUP_SECONDS = 30;
+
+type HangUpAnswer = LiveCallHangup | "unconfirmed";
 
 export type EndLiveCallResult = { status: "ended" | "closing" | "notFound" };
 
@@ -79,12 +93,33 @@ async function endWithoutProvider({
   });
 }
 
-async function settleHungUp({
-  alreadyEnded,
+function getHangUpCharge({
+  answer,
+  connection,
+  now,
+}: {
+  answer: HangUpAnswer;
+  connection: LiveCallConnection;
+  now: Date;
+}) {
+  // OpenAI ended it on its own, so the app or page left mid-call: keep only the time it was used.
+  const liveUntil =
+    answer === "alreadyEnded" ? (connection.lastActiveAt ?? connection.startedAt ?? now) : now;
+
+  const billedUntil =
+    answer === "unconfirmed"
+      ? new Date(now.getTime() + UNCONFIRMED_CLEANUP_SECONDS * MS_PER_SECOND)
+      : now;
+
+  return { ...getEndingCharge({ connection, liveUntil, now: billedUntil }), billedUntil };
+}
+
+async function settleHangUp({
+  answer,
   connection,
   reason,
 }: {
-  alreadyEnded: boolean;
+  answer: HangUpAnswer;
   connection: LiveCallConnection;
   reason: LiveCallEndReason;
 }): Promise<void> {
@@ -96,14 +131,13 @@ async function settleHungUp({
     });
 
     const now = new Date();
-    // OpenAI ended it on its own, so the app or page left mid-call: keep only the time it was used.
-    const liveUntil = alreadyEnded ? (current.lastActiveAt ?? current.startedAt ?? now) : now;
-    const charge = getEndingCharge({ connection: current, liveUntil, now });
+    const { billedUntil, ...charge } = getHangUpCharge({ answer, connection: current, now });
 
     const ended = await settleLiveCall({
       connection: current,
       ...charge,
       endReason: reason,
+      endUnconfirmed: answer === "unconfirmed",
       now,
       transaction,
     });
@@ -111,7 +145,7 @@ async function settleHungUp({
     return ended && current.startedAt
       ? Math.max(
           LIVE_CALL_INITIALIZATION_SECONDS,
-          Math.ceil((now.getTime() - current.startedAt.getTime()) / MS_PER_SECOND),
+          Math.ceil((billedUntil.getTime() - current.startedAt.getTime()) / MS_PER_SECOND),
         )
       : null;
   });
@@ -155,10 +189,13 @@ export async function endLiveCall({
   const hungUp = await safeAsync(() => hangUpLiveCallSession(providerSessionId));
 
   if (hungUp.error) {
-    return { status: "closing" };
+    logError("[live-calls] OpenAI didn't confirm a hangup; the call ends unconfirmed:", {
+      connectionId,
+      error: hungUp.error,
+    });
   }
 
-  await settleHungUp({ alreadyEnded: hungUp.data === "alreadyEnded", connection, reason });
+  await settleHangUp({ answer: hungUp.error ? "unconfirmed" : hungUp.data, connection, reason });
 
   if (connection.userId) {
     revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);

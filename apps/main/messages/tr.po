@@ -2521,6 +2521,16 @@ msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
 msgstr "{count, plural, other {# kavramı tekrar et}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Dersin hazır"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aWuC4D"
+msgid "Your lesson is ready. Start it whenever you like."
+msgstr "Dersin hazır. İstediğin zaman başlayabilirsin."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"
 msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
 msgstr "Genellikle bir iki dakika sürer. Ders hazır olur olmaz burada açılır."

@@ -50,14 +50,12 @@ private struct MatchPairsCanvas: View {
 
       if let miss {
         Label {
-          Text(
-            "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").fontWeight(.semibold)) \(missText(miss))",
-            tableName: "Activities",
-            comment: "Why two picked cards don't match, after a bold 'Not quite:'")
+          missLine(miss, spoken: false)
         } icon: {
           Image(systemName: "xmark.circle")
             .foregroundStyle(.destructive)
         }
+        .accessibilityLabel(missLine(miss, spoken: true))
         .font(.subheadline)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -88,11 +86,17 @@ private struct MatchPairsCanvas: View {
       comment: "Pairs matched, then how many cards have no match")
   }
 
-  private func missText(_ miss: Miss) -> Text {
-    miss.explanation.map { Text(LessonRichText.attributed($0)) }
+  private func missLine(_ miss: Miss, spoken: Bool) -> Text {
+    let explanation =
+      miss.explanation.map { LessonRichText.typeset($0).quoted(spoken: spoken) }
       ?? Text(
         "Those two don't go together.", tableName: "Activities",
         comment: "Two picked cards don't match and there's no note on why")
+
+    return Text(
+      "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").fontWeight(.semibold)) \(explanation)",
+      tableName: "Activities",
+      comment: "Why two picked cards don't match, after a bold 'Not quite:'")
   }
 
   private func column(_ side: MatchPairs.Side, _ cards: [MatchCard], others: [MatchCard])
@@ -120,9 +124,9 @@ private struct MatchPairsCanvas: View {
     }
     .buttonStyle(MatchCardStyle(state: state))
     .disabled(isChecked || isDone)
-    .draggable("\(side.rawValue):\(card.id)")
-    .dropDestination(for: String.self) { payloads, _ in
-      guard !isChecked, !isDone, let payload = payloads.first,
+    .draggable(ActivityDragItem(id: "\(side.rawValue):\(card.id)"))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard !isChecked, !isDone, let payload = dropped.first?.id,
         payload.hasPrefix("\(other.rawValue):"),
         let dragged = others.first(where: { "\(other.rawValue):\($0.id)" == payload })
       else {
@@ -138,7 +142,7 @@ private struct MatchPairsCanvas: View {
   }
 
   private func label(_ card: MatchCard, state: MatchCardState) -> Text {
-    let text = LessonRichText.plain(card.text)
+    let text = LessonRichText.spoken(card.text)
 
     switch state {
     case .matched:
@@ -191,8 +195,8 @@ private struct MatchPairsCanvas: View {
     selection = [:]
     context.setAnswer(MatchPairs.answer(pairIds: pairIds, progress: next))
 
-    let leftText = LessonRichText.plain(left.text)
-    let rightText = LessonRichText.plain(right.text)
+    let leftText = LessonRichText.spoken(left.text)
+    let rightText = LessonRichText.spoken(right.text)
 
     if MatchPairs.isMatch(left, right) {
       miss = nil
@@ -207,7 +211,7 @@ private struct MatchPairsCanvas: View {
     let (reason, trap) = MatchPairs.mismatch(left: left, right: right)
     let trapNote = trap.map {
       String(
-        localized: "“\(LessonRichText.plain($0.text))” has no match.", table: "Activities",
+        localized: "“\($0.text)” has no match.", table: "Activities",
         comment: "Says that the trap card the learner picked has no match")
     }
     let explanation = [trapNote, reason].compactMap(\.self).joinedSentences()
@@ -219,7 +223,7 @@ private struct MatchPairsCanvas: View {
         String(
           localized: "\(leftText) and \(rightText) don't go together.", table: "Activities",
           comment: "VoiceOver, after two cards that don't match are picked"),
-        explanation.isEmpty ? nil : LessonRichText.plain(explanation),
+        explanation.isEmpty ? nil : LessonRichText.spoken(explanation),
       ].compactMap(\.self).joinedSentences())
   }
 

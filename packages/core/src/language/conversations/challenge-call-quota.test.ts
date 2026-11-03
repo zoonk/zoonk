@@ -86,6 +86,7 @@ describe("Plus challenge call quota", () => {
 
     vi.mocked(checkConversationObjectives).mockResolvedValue({
       data: {
+        goodbye: false,
         met: RENTING_SCENARIO.objectives.map(({ label }) => ({
           label,
           learnerWords: "Book a viewing",
@@ -109,13 +110,13 @@ describe("Plus challenge call quota", () => {
 
   afterEach(cleanupTestCalls);
 
-  it("bounds every reconnect by the challenge's original length, even below a practice call's minimum", async () => {
+  it("bounds every reconnect by the challenge's original length", async () => {
     const { conversationId } = await reachedChallenge();
     await connectTestCall(conversationId);
     vi.setSystemTime(new Date(Date.now() + 150_000));
 
     await expect(connectTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: null, seconds: 30 },
+      setup: { talkSeconds: 30 },
       status: "ready",
     });
 
@@ -240,7 +241,7 @@ describe("Plus challenge call quota", () => {
     const { conversationId, user } = await reachedChallenge();
 
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { seconds: 180 },
+      setup: { talkSeconds: 180 },
       status: "ready",
     });
 

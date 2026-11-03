@@ -22,6 +22,7 @@ struct ZoonkApp: App {
   @State private var today: TodayStore
   @State private var tutor: TutorStore
   @State private var voice: VoiceServices
+  @State private var warmUps: WarmUpStore
   private let cache: AppCache
   private let images: ImageLoader
   private let lessonPlayer: LessonPlayerDependencies
@@ -63,6 +64,7 @@ struct ZoonkApp: App {
     _today = State(initialValue: dependencies.todayStore)
     _tutor = State(initialValue: dependencies.tutorStore)
     _voice = State(initialValue: dependencies.voice)
+    _warmUps = State(initialValue: dependencies.warmUpStore)
   }
 
   var body: some Scene {
@@ -99,6 +101,7 @@ struct ZoonkApp: App {
         .environment(today)
         .environment(tutor)
         .environment(voice)
+        .environment(warmUps)
         .environment(\.imageLoader, images)
         .environment(\.lessonTutor, .buddy)
         .environment(

@@ -1,5 +1,8 @@
 import "server-only";
-import { buildLiveConversationInstructions } from "@zoonk/ai/tasks/language/live-conversation-instructions";
+import {
+  buildLiveConversationInstructions,
+  getLiveConversationLanguageName,
+} from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type Chapter, type LanguageConversation } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
 import { type ExamTaskSnapshot, type ExamTaskView } from "../../exam-speaking/speaking-contract";
@@ -22,6 +25,8 @@ import {
   getConversationStars,
   hasPassedConversation,
 } from "../conversation-rules";
+import { type LiveCallScript } from "../live-call-script-contract";
+import { buildLiveCallScript } from "./live-call-script";
 
 export type ConversationRow = LanguageConversation & {
   chapter: Pick<Chapter, "id" | "title"> | null;
@@ -155,7 +160,12 @@ function toResult({
   };
 }
 
-export function buildConversationInstructions(row: ConversationRow): string | null {
+export function buildLiveCall(
+  row: Pick<
+    LanguageConversation,
+    "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage"
+  >,
+): { instructions: string; script: LiveCallScript } | null {
   const data = readSavedScenario(row);
   const role = data ? toLiveRole(data) : null;
 
@@ -163,14 +173,24 @@ export function buildConversationInstructions(row: ConversationRow): string | nu
     return null;
   }
 
-  return buildLiveConversationInstructions({
+  const params = {
     ...role,
     learnerLanguage: row.language,
     level: row.level,
-    minutes: row.minutes,
     scenario: data,
     targetLanguage: row.targetLanguage,
-  });
+  };
+
+  return {
+    instructions: buildLiveConversationInstructions(params),
+    script: buildLiveCallScript({
+      character: data.character,
+      examiner:
+        role.kind === "examTask" ? role.examTask.task.role === "examiner" : role.kind !== "unit",
+      language: getLiveConversationLanguageName(params),
+      openingLine: data.openingLine,
+    }),
+  };
 }
 
 export function toConversationView({

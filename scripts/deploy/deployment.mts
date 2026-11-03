@@ -153,7 +153,8 @@ export async function assertPullRequestOpen(): Promise<void> {
   }
 }
 
-export async function cancelPreviews({ runId }: { runId?: string } = {}): Promise<void> {
+/** Stops the queued and building deployments this run started, or without a run, the PR's previews. */
+export async function cancelBuilds({ runId }: { runId?: string } = {}): Promise<void> {
   async function cancelProject(project: Project): Promise<void> {
     const query = { limit: "100", projectId: project.id, state: "QUEUED,INITIALIZING,BUILDING" };
 
@@ -165,8 +166,9 @@ export async function cancelPreviews({ runId }: { runId?: string } = {}): Promis
       const obsolete = deployments.filter(
         (deployment) =>
           deployment.target !== "production" &&
-          deployment.meta?.ciPreviewPr === requiredEnv("PR_NUMBER") &&
-          (!runId || deployment.meta.ciRunId === runId),
+          (runId
+            ? deployment.meta?.ciRunId === runId
+            : deployment.meta?.ciPreviewPr === requiredEnv("PR_NUMBER")),
       );
 
       await Promise.all(
@@ -183,7 +185,7 @@ export async function cancelPreviews({ runId }: { runId?: string } = {}): Promis
             }
           }
 
-          process.stdout.write(`Stopped superseded ${project.app} preview build\n`);
+          process.stdout.write(`Stopped a ${project.app} build\n`);
         }),
       );
 
@@ -222,7 +224,6 @@ async function deployApp({
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
-    ...(project.app === "api" ? { NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" } : {}),
     ...(project.app === "api" && mainAppUrl ? { MAIN_APP_URL: mainAppUrl } : {}),
     ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
     ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),

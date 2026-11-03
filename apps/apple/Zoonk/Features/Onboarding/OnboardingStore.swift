@@ -98,6 +98,22 @@ final class OnboardingStore {
     clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
   }
 
+  /// The warm-up deck a goal's run reported, read from its first event. Nil when it reported none
+  /// or its stream broke: the deck is optional.
+  func warmUpID(generationID: String) async -> String? {
+    do {
+      for try await event in events(generationID: generationID) {
+        if let id = event.warmUpID {
+          return id
+        }
+      }
+    } catch {
+      return nil
+    }
+
+    return nil
+  }
+
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,

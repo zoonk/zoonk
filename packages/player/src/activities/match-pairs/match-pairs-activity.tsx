@@ -1,10 +1,11 @@
 "use client";
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,
@@ -79,12 +80,15 @@ export function MatchPairsActivity({
   const [selection, setSelection] = useState<Selection>(NO_SELECTION);
   const [miss, setMiss] = useState<Miss | null>(null);
   const space = useSentenceSpace();
+  const spoken = useSpokenText();
   const [announcement, setAnnouncement] = useState("");
   const pairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const isComplete = progress.matched.length === pairIds.length;
 
   function tryPair(leftCard: MatchCard, rightCard: MatchCard) {
     const next = recordTry(progress, { left: leftCard, right: rightCard });
+    const leftText = spoken.inline(leftCard.text);
+    const rightText = spoken.inline(rightCard.text);
     setProgress(next);
     setSelection(NO_SELECTION);
     onAnswerChange(matchAnswer(pairIds, next));
@@ -96,9 +100,9 @@ export function MatchPairsActivity({
         t(
           "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
           {
-            left: leftCard.text,
+            left: leftText,
             matched: next.matched.length,
-            right: rightCard.text,
+            right: rightText,
             total: String(pairIds.length),
           },
         ),
@@ -115,8 +119,8 @@ export function MatchPairsActivity({
 
     setAnnouncement(
       [
-        t("{left} and {right} don't go together.", { left: leftCard.text, right: rightCard.text }),
-        explanation,
+        t("{left} and {right} don't go together.", { left: leftText, right: rightText }),
+        explanation && spoken.inline(explanation),
       ]
         .filter(Boolean)
         .join(space),
@@ -139,11 +143,13 @@ export function MatchPairsActivity({
   }
 
   function cardLabel(card: MatchCard, state: MatchCardState): string {
+    const text = spoken.inline(card.text);
+
     if (state === "matched") {
-      return t("{text}, matched", { text: card.text });
+      return t("{text}, matched", { text });
     }
 
-    return state === "noMatch" ? t("{text}, no match", { text: card.text }) : card.text;
+    return state === "noMatch" ? t("{text}, no match", { text }) : text;
   }
 
   function column(side: Side, cards: readonly MatchCard[]) {

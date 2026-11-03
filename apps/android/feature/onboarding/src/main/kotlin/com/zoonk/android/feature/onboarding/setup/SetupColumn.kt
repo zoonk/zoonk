@@ -16,9 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -26,12 +33,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
+import com.zoonk.android.feature.warmup.ReadyHold
+import com.zoonk.android.feature.warmup.watchTouches
+import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageFold
 
 /**
- * At least the window's height, so a step's actions can sit at its bottom on phones. Across an open book's [fold] it
+ * At least the page's height, so a step's actions can sit at its bottom on phones. Across an open book's [fold] it
  * is the page before the fold, with [aside] on the page after it; without an aside, a test's question takes both
- * pages ([QuestionPages]).
+ * pages ([QuestionPages]). A held wait's way on is pinned to the page's bottom ([PageHold]).
  */
 @Composable
 internal fun SetupColumn(
@@ -39,51 +49,49 @@ internal fun SetupColumn(
     aside: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        val windowHeight = maxHeight
+    Box(Modifier.fillMaxSize().imePadding()) {
         val scroll = rememberScrollState()
         val spread = fold?.takeIf { aside == null }
+        val waitSlot = remember { mutableStateOf<PageWait?>(null) }
+        val wait = waitSlot.value
 
-        CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, windowHeight - EDGE * 2)) {
-            Box(
-                when {
-                    spread != null -> {
-                        Modifier.fillMaxSize()
-                    }
+        Column(
+            when {
+                fold != null && aside != null -> Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }
+                else -> Modifier.fillMaxSize()
+            }.then(wait?.let { Modifier.watchTouches(it.hold) } ?: Modifier),
+        ) {
+            BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+                val height = maxHeight
 
-                    fold != null -> {
-                        Modifier
-                            .width(fold.start)
-                            .fillMaxHeight()
-                            .semantics { isTraversalGroup = true }
-                            .verticalScroll(scroll)
+                CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, height - EDGE * 2, waitSlot)) {
+                    Box(
+                        if (spread == null) Modifier.fillMaxSize().verticalScroll(scroll) else Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        Column(
+                            modifier =
+                                if (spread == null) {
+                                    Modifier
+                                        .widthIn(max = COLUMN_WIDTH)
+                                        .fillMaxWidth()
+                                        .heightIn(min = height)
+                                        .padding(horizontal = MARGIN, vertical = EDGE)
+                                } else {
+                                    Modifier.fillMaxSize()
+                                },
+                            verticalArrangement = Arrangement.spacedBy(GAP),
+                            content = content,
+                        )
                     }
-
-                    else -> {
-                        Modifier.fillMaxSize().verticalScroll(scroll)
-                    }
-                },
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                Column(
-                    modifier =
-                        if (spread == null) {
-                            Modifier
-                                .widthIn(max = 640.dp)
-                                .fillMaxWidth()
-                                .heightIn(min = windowHeight)
-                                .padding(horizontal = MARGIN, vertical = EDGE)
-                        } else {
-                            Modifier.fillMaxSize()
-                        },
-                    verticalArrangement = Arrangement.spacedBy(GAP),
-                    content = content,
-                )
+                }
             }
 
-            if (fold != null && aside != null) {
-                Box(Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true }) { aside() }
-            }
+            wait?.takeIf { it.hold.holding }?.let { HeldBar(it) }
+        }
+
+        if (fold != null && aside != null) {
+            Box(Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true }) { aside() }
         }
     }
 }
@@ -92,9 +100,42 @@ internal data class SetupPage(
     val fold: PageFold?,
     val scroll: ScrollState,
     val height: Dp,
+    val wait: MutableState<PageWait?>,
 )
 
 internal val LocalSetupPage = compositionLocalOf<SetupPage?> { null }
+
+/** A wait on the page that can hold once its work is ready, and its one way on then. */
+internal data class PageWait(
+    val hold: ReadyHold,
+    val action: String,
+)
+
+/**
+ * Puts a wait's [hold] on the setup's page: a touch anywhere on it starts the hold's quiet second, and while it holds,
+ * [action] is the only way on, pinned to the page's bottom so it's in reach under a long card (main's `HeldFooter`).
+ */
+@Composable
+internal fun PageHold(
+    hold: ReadyHold,
+    action: String,
+) {
+    val slot = LocalSetupPage.current?.wait ?: return
+    val wait = PageWait(hold, action)
+    SideEffect { slot.value = wait }
+    DisposableEffect(slot) { onDispose { slot.value = null } }
+}
+
+@Composable
+private fun HeldBar(wait: PageWait) {
+    DockedActionBar {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+            Box(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = MARGIN, vertical = EDGE)) {
+                Button(onClick = wait.hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
+            }
+        }
+    }
+}
 
 /**
  * A test's question: one column, or across an open book's fold a spread like practice's, with what to [read] on the
@@ -158,6 +199,7 @@ internal fun ColumnScope.QuestionPages(
     }
 }
 
+private val COLUMN_WIDTH = 640.dp
 private val MARGIN = 24.dp
 private val EDGE = 16.dp
 private val GAP = 24.dp

@@ -50,7 +50,17 @@ describe(getBaseUrl, () => {
     expect(getBaseUrl()).toBe("https://zoonk-abc123.vercel.app");
   });
 
-  it("throws when neither NEXT_PUBLIC_APP_DOMAIN nor VERCEL_URL is available", () => {
+  it("uses the local server's port when a local run sets no domain", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "development");
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "");
+    vi.stubEnv("PORTLESS_URL", "");
+    vi.stubEnv("PORT", "4000");
+    expect(getBaseUrl()).toBe("http://localhost:4000");
+  });
+
+  it("throws in a deployment without NEXT_PUBLIC_APP_DOMAIN or VERCEL_URL", () => {
+    vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "");
     vi.stubEnv("VERCEL_ENV", "");
     vi.stubEnv("VERCEL_URL", "");

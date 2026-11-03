@@ -42,6 +42,7 @@
     "./fixtures/usage": "./src/fixtures/usage.ts",
     "./fixtures/study-sessions": "./src/fixtures/study-sessions.ts",
     "./fixtures/users": "./src/fixtures/users.ts",
+    "./fixtures/warm-ups": "./src/fixtures/warm-ups.ts",
     "./fixtures/words": "./src/fixtures/words.ts"
   },
   "scripts": {

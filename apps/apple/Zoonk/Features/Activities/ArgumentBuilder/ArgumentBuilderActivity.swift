@@ -227,8 +227,8 @@ private struct ArgumentBuilderCanvas: View {
           style: StrokeStyle(lineWidth: 2, dash: filled == nil ? [5, 4] : []))
     }
     .accessibilityElement(children: .contain)
-    .dropDestination(for: String.self) { ids, _ in
-      guard isOpen, let id = ids.first else {
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard isOpen, let id = dropped.first?.id else {
         return false
       }
 
@@ -267,14 +267,14 @@ private struct ArgumentBuilderCanvas: View {
           content
         }
         .buttonStyle(ActivityTileStyle(mark: .plain))
-        .draggable(id)
+        .draggable(ActivityDragItem(id: id))
         .accessibilityLabel(
           part == .evidence
             ? Text(
-              "Use as evidence: \(LessonRichText.plain(text))", tableName: "Activities",
+              "Use as evidence: \(LessonRichText.spoken(text))", tableName: "Activities",
               comment: "VoiceOver: puts a quote in an argument's evidence part")
             : Text(
-              "Use as reasoning: \(LessonRichText.plain(text))", tableName: "Activities",
+              "Use as reasoning: \(LessonRichText.spoken(text))", tableName: "Activities",
               comment: "VoiceOver: puts a line in an argument's reasoning part"))
       }
     }
@@ -359,7 +359,7 @@ private struct QuoteText: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(LessonRichText.attributed("“\(text)”"))
+      Text(LessonRichText.typeset("“\(text)”"))
       Text(citation)
         .font(.caption)
         .foregroundStyle(.secondary)

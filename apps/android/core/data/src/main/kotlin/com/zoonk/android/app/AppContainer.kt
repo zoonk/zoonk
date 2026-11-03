@@ -120,6 +120,8 @@ import com.zoonk.android.feature.today.LiveTodayApi
 import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
 import com.zoonk.android.feature.tutor.TutorStore
+import com.zoonk.android.feature.warmup.LiveWarmUpApi
+import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -289,7 +291,7 @@ class AppContainer private constructor(
     val alphabet = AlphabetStore(LiveAlphabetApi(api), cache)
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
-        LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }
+        LiveCallTransports { microphone, signals -> WebRtcLiveCallTransport(context, microphone, signals) }
 
     val onboarding =
         OnboardingStore(
@@ -298,6 +300,7 @@ class AppContainer private constructor(
             sessions = sessions,
             startGuest = account::startAsGuest,
         )
+    val warmUps = WarmUpStore(LiveWarmUpApi(api), cache, sessions)
 
     // Practice and checks (lane L6).
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)

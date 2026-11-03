@@ -25,6 +25,7 @@ import com.zoonk.api.apis.SourcesApi
 import com.zoonk.api.apis.StudySessionsApi
 import com.zoonk.api.apis.SubscriptionsApi
 import com.zoonk.api.apis.UsersApi
+import com.zoonk.api.apis.WarmUpsApi
 import com.zoonk.api.apis.WorkflowsApi
 import com.zoonk.api.models.ContentWriting
 import kotlinx.serialization.SerializationException
@@ -84,6 +85,7 @@ class ApiServices(
     val studySessions: StudySessionsApi by lazy { retrofit.create() }
     val subscriptions: SubscriptionsApi by lazy { retrofit.create() }
     val users: UsersApi by lazy { retrofit.create() }
+    val warmUps: WarmUpsApi by lazy { retrofit.create() }
     val workflows: WorkflowsApi by lazy { retrofit.create() }
 }
 

@@ -39,6 +39,24 @@ final class GenerationEventsTests: XCTestCase {
       ])
   }
 
+  func testDecodesTheSkillNameAGraphJustWrote() throws {
+    let event = try JSONDecoder().decode(
+      GenerationEvent.self,
+      from: Data(#"{"skillName":"Variables","status":"started","step":"buildSkillGraph"}"#.utf8))
+
+    XCTAssertEqual(
+      event, GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
+  }
+
+  func testDecodesTheWarmUpDeckAGoalsRunReports() throws {
+    let event = try JSONDecoder().decode(
+      GenerationEvent.self,
+      from: Data(#"{"status":"completed","step":"warmUpReady","warmUpId":"deck-1"}"#.utf8))
+
+    XCTAssertEqual(
+      event, GenerationEvent(status: "completed", step: "warmUpReady", warmUpID: "deck-1"))
+  }
+
   func testMissingGenerationEndsTheStreamWithNotFound() async throws {
     let transport = GenerationEventsTransport(responses: [.notFound])
     let clients = APIClientFactory(

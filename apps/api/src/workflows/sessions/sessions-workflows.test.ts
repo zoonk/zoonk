@@ -430,7 +430,7 @@ describe(sessionPreparationWorkflow, () => {
     expect(JSON.stringify(vi.mocked(start).mock.calls)).not.toContain(later.id);
   });
 
-  it("outlines today's stand-in as the band the learner waits on, at the standard tier", async () => {
+  it("outlines today's stand-in as the band the learner waits on", async () => {
     const user = await userFixture();
     const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 

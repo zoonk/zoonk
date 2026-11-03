@@ -22,6 +22,7 @@ struct GenerationWait: Equatable, Sendable {
     let isOptional: Bool
     var state = PhaseState.waiting
     var isReported = false
+    var skillName: String?
   }
 
   let kind: Kind
@@ -69,6 +70,7 @@ struct GenerationWait: Equatable, Sendable {
 
       phases[index].isReported = true
       phases[index].state = event.status == "completed" ? .done : .working
+      phases[index].skillName = event.skillName ?? phases[index].skillName
 
       // Today builds the first day once the plan is saved, while the outlines go on.
       if event.status == "completed",
@@ -215,7 +217,11 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
   @ViewBuilder let trailing: () -> Trailing
 
   @Environment(OnboardingStore.self) private var onboarding
+  /// Only a wait that follows the hold rule deals the goal's warm-up cards.
+  @Environment(WarmUpVisit.self) private var warmUpVisit: WarmUpVisit?
   @State private var wait: GenerationWait?
+  /// Kept through reconnections, which read the run's events from the start again.
+  @State private var warmUpID: String?
   @State private var failure: GenerationFailure?
   @State private var followedID: String?
   /// Counts reconnections, so following the same run again opens its stream again.
@@ -229,6 +235,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   var body: some View {
     let runID = followedID ?? generationID
+    let deckID = self.deckID
 
     List {
       StepHeader(title: Text(title), description: Text(shownDescription))
@@ -255,6 +262,11 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
           } label: {
             Text(phase.label)
               .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
+
+            if phase.state == .working, failure == nil, let skillName = phase.skillName {
+              Text(skillName)
+                .lineLimit(1)
+            }
           }
         }
       }
@@ -266,7 +278,12 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
       }
 
       trailing()
+
+      if let deckID {
+        WarmUpSection(deckID: deckID)
+      }
     }
+    .warmUpDeck(deckID)
     .task(id: Following(id: runID, connection: connection)) {
       failure = nil
 
@@ -283,6 +300,10 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
         await readMissingID()
       }
     }
+  }
+
+  private var deckID: String? {
+    warmUpVisit == nil ? nil : warmUpID
   }
 
   private var shown: GenerationWait {
@@ -311,6 +332,10 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
     do {
       for try await event in onboarding.events(generationID: id) {
+        if let id = event.warmUpID {
+          warmUpID = id
+        }
+
         let wasDone = current.isDone
         current.apply(event)
         wait = current

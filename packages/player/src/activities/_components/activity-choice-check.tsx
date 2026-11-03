@@ -2,6 +2,7 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
@@ -21,6 +22,7 @@ export function ActivityChoiceCheck({
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: ActivityPhase;
 }) {
+  const spoken = useSpokenText();
   const selectedId = answer?.kind === "choice" ? answer.optionId : null;
   const isChecked = phase === "checked";
 
@@ -29,7 +31,7 @@ export function ActivityChoiceCheck({
       <ActivityCheckQuestion>{check.question}</ActivityCheckQuestion>
 
       <PlayerChoiceSceneOptions
-        ariaLabel={check.question}
+        ariaLabel={spoken.blocks(check.question)}
         isChecked={isChecked}
         onSelect={(id) =>
           onAnswerChange(id === selectedId ? null : { kind: "choice", optionId: id })

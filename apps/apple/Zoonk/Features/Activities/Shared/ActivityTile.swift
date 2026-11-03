@@ -108,27 +108,6 @@ struct ActivityTileStyle: ButtonStyle {
   }
 }
 
-struct ActivityDropPanel<Content: View>: View {
-  let isReady: Bool
-  let isTargeted: Bool
-  @ViewBuilder let content: Content
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      content
-    }
-    .padding(10)
-    .frame(maxWidth: .infinity, alignment: .topLeading)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
-    .overlay {
-      if isReady || isTargeted {
-        RoundedRectangle(cornerRadius: 16)
-          .strokeBorder(.primary.opacity(isTargeted ? 1 : 0.35), lineWidth: 2)
-      }
-    }
-  }
-}
-
 struct ActivityReasonList: View {
   struct Reason: Identifiable {
     let id: String

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { PROJECTS } from "./config.mts";
-import { assertPullRequestOpen, cancelPreviews, deploy, getAppUrl } from "./deployment.mts";
+import { assertPullRequestOpen, cancelBuilds, deploy, getAppUrl } from "./deployment.mts";
 
 type Call = { url: URL; body: Record<string, unknown>; method: string };
 
@@ -302,8 +302,9 @@ describe("preview course cache access", () => {
   );
 });
 
-describe(cancelPreviews, () => {
-  it("cancels only this run's PR builds, including later result pages", async () => {
+describe(cancelBuilds, () => {
+  it("cancels only this run's builds, including later result pages, with or without a PR", async () => {
+    vi.stubEnv("PR_NUMBER", "");
     const canceled: string[] = [];
 
     intercept((call) => {
@@ -314,25 +315,25 @@ describe(cancelPreviews, () => {
 
       if (call.url.searchParams.has("until")) {
         return {
-          deployments: [{ meta: { ciPreviewPr: "42", ciRunId: "100-1" }, uid: "old-page-2" }],
+          deployments: [{ meta: { ciRunId: "100-1" }, uid: "old-page-2" }],
           pagination: { next: null },
         };
       }
 
       return {
         deployments: [
-          { meta: { ciPreviewPr: "42", ciRunId: "100-1" }, uid: "old" },
-          { meta: { ciPreviewPr: "42", ciRunId: "101-1" }, uid: "new" },
-          { meta: { ciPreviewPr: "43", ciRunId: "100-1" }, uid: "other-pr" },
-          { meta: { ciPreviewPr: "42", ciRunId: "100-1" }, target: "production", uid: "prod" },
+          { meta: { ciRunId: "100-1" }, uid: "old" },
+          { meta: { ciPreviewPr: "42", ciRunId: "100-1" }, uid: "old-preview" },
+          { meta: { ciRunId: "101-1" }, uid: "new" },
+          { meta: { ciRunId: "100-1" }, target: "production", uid: "prod" },
         ],
         pagination: { next: 123 },
       };
     });
 
-    await cancelPreviews({ runId: "100-1" });
-    expect(canceled).toHaveLength(PROJECTS.length * 2);
-    expect(canceled.every((path) => /\/(?:old|old-page-2)\/cancel$/u.test(path))).toBe(true);
+    await cancelBuilds({ runId: "100-1" });
+    expect(canceled).toHaveLength(PROJECTS.length * 3);
+    expect(canceled.every((path) => /\/old(?:-preview|-page-2)?\/cancel$/u.test(path))).toBe(true);
   });
 });
 

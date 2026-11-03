@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import android.os.SystemClock
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
@@ -66,6 +68,8 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.warmup.ReadyHold
+import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
@@ -123,12 +127,14 @@ internal fun ColumnScope.PlacementStep(
     val options by mocks.options[UUID.fromString(goalId)].collectShown()
     val phase = vm.phase(placement, options)
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
+    val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
+    val shown = if (hold.over) phase else PlacementPhase.Waiting
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
-    val progress = (phase as? PlacementPhase.Question)?.spent?.toFloat()
+    val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
 
-    when (phase) {
+    when (shown) {
         PlacementPhase.Loading -> {
             StepLoading()
         }
@@ -137,7 +143,7 @@ internal fun ColumnScope.PlacementStep(
             PlacementIntro(
                 subject = subject,
                 areaCount = areaCount,
-                mock = phase.mock,
+                mock = shown.mock,
                 pending = vm.isSaving,
                 starting = vm.isStarting,
                 failed = vm.finishFailed,
@@ -151,6 +157,7 @@ internal fun ColumnScope.PlacementStep(
             PlacementWaiting(
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else onRetryRun,
+                hold = hold,
                 pending = vm.isSaving,
                 failed = vm.finishFailed,
                 onSkip = { finish(false) },
@@ -169,16 +176,16 @@ internal fun ColumnScope.PlacementStep(
         }
 
         is PlacementPhase.Question -> {
-            key(phase.item.itemId) {
+            key(shown.item.itemId) {
                 PlacementQuestion(
-                    item = phase.item,
-                    eyebrow = factsLine(subject.labelCase(), stringResource(R.string.onboarding_placement_question_number, phase.number)),
-                    labels = phase.labels,
-                    typedWords = rememberUnsentWords(goalId, typedDraftStep(phase.item.itemId), count = 1),
+                    item = shown.item,
+                    eyebrow = factsLine(subject.labelCase(), stringResource(R.string.onboarding_placement_question_number, shown.number)),
+                    labels = shown.labels,
+                    typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
                     pending = vm.isSaving,
                     answerFailed = vm.answerFailed,
                     finishFailed = vm.finishFailed,
-                    onAnswer = { answer, durationMs -> vm.answer(phase, answer, durationMs) },
+                    onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
                     onRetry = vm::retryAnswer,
                     onStop = { finish(false) },
                 )
@@ -189,13 +196,13 @@ internal fun ColumnScope.PlacementStep(
             PlacementMockRunning(
                 pending = vm.isSaving,
                 failed = vm.finishFailed,
-                onContinue = { navigator.open(AppRoute.Mock(phase.mockId)) },
-                onStop = { vm.finish(fromScratch = false, stopMockId = phase.mockId, onDone = onDone) },
+                onContinue = { navigator.open(AppRoute.Mock(shown.mockId)) },
+                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = onDone) },
             )
         }
 
         is PlacementPhase.Done -> {
-            PlacementDone(phase, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
+            PlacementDone(shown, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
         }
     }
 }
@@ -278,6 +285,7 @@ private fun MockOfferRow(
 private fun ColumnScope.PlacementWaiting(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
+    hold: ReadyHold,
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
@@ -288,21 +296,31 @@ private fun ColumnScope.PlacementWaiting(
         patient = true
     }
 
-    GenerationWait(kind = GenerationKind.Placement, run = run, onRetry = onRetry) {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_placement_waiting_title),
-            // The learner's own material is read in the `readExamNotice` step.
-            stringResource(
-                if (READS_MATERIAL_STEP in run.steps) {
-                    R.string.onboarding_placement_waiting_material
-                } else {
-                    R.string.onboarding_placement_waiting_skills
-                },
-            ),
-        )
-    }
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        GenerationWait(
+            kind = GenerationKind.Placement,
+            run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run,
+            onRetry = onRetry,
+        ) {
+            OnboardingHeading(
+                stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title),
+                stringResource(
+                    when {
+                        hold.holding -> R.string.warm_up_questions_ready_description
 
-    if (patient || run.status == GenerationRun.Status.Failed) {
+                        // The learner's own material is read in the `readExamNotice` step.
+                        READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
+
+                        else -> R.string.onboarding_placement_waiting_skills
+                    },
+                ),
+            )
+        }
+        SetupWarmUpCard(run.warmUpId, AnalyticsEvent.WarmUpSurface.PlacementWait, hold)
+    }
+    PageHold(hold, stringResource(R.string.onboarding_continue))
+
+    if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {
             FinishFailed(failed)
             TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {

@@ -9,7 +9,13 @@ typealias LanguageCheckpointCall = Components.Schemas.LanguageCheckpointCall
 extension LanguageConversation {
   var speakingTask: Components.Schemas.ExamSpeakingTask? { examTask?.value1 }
   var mockExam: Components.Schemas.SpeakingMockExam? { exam?.value1 }
+
+  /// An examiner isn't someone the learner calls: exams and speaking mocks just start.
+  var callsCharacter: Bool { speakingTask == nil && kind != .speakingMock }
 }
+
+typealias ObjectiveCheck = Components.Schemas.LanguageConversationObjectiveCheck
+typealias LiveCallScript = Components.Schemas.LiveCallScript
 
 /// `total`: a guest's plan has no call time.
 struct CallLimit: Equatable, Sendable {
@@ -224,7 +230,7 @@ struct LiveCallAPI: Sendable {
     conversationId: String,
     turns: [ConversationTurn],
     token: String
-  ) async throws -> [String]? {
+  ) async throws -> ObjectiveCheck? {
     try await clients.perform(token: token) { client in
       let output = try await client.checkLanguageConversationObjectives(
         path: .init(conversationId: conversationId), body: .json(.init(turns: turns)))
@@ -233,7 +239,7 @@ struct LiveCallAPI: Sendable {
         return nil
       }
 
-      return try response.body.json.objectivesMet
+      return try response.body.json
     }
   }
 

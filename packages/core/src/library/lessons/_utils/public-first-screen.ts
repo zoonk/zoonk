@@ -3,6 +3,7 @@ import { safeParseStepContent } from "../../steps/contract/step-contract";
 
 type PublicOption = { id: string; text: string };
 
+/** Every text is the lesson's rich text, as the player draws it. */
 export type PublicFirstScreen =
   | {
       context: string | null;
@@ -13,16 +14,6 @@ export type PublicFirstScreen =
     }
   | { kind: "start" }
   | { kind: "text"; text: string };
-
-const MARKDOWN_EMPHASIS = /(?<marker>\*\*|\*|`)(?<content>\S(?:.*?\S)?)\k<marker>/gu;
-const INLINE_MATH = /\$(?<math>[^$]+)\$/gu;
-
-function toPlainText(richText: string): string {
-  return richText
-    .replaceAll(MARKDOWN_EMPHASIS, "$<content>")
-    .replaceAll(INLINE_MATH, "$<math>")
-    .trim();
-}
 
 function toPublicOptions(options: readonly PublicOption[]): PublicOption[] {
   return options.map((option) => ({ id: option.id, text: option.text }));
@@ -36,7 +27,7 @@ function toHookScreen(content: unknown): PublicFirstScreen {
   }
 
   if (parsed.data.variant === "text") {
-    return { kind: "text", text: toPlainText(parsed.data.text) };
+    return { kind: "text", text: parsed.data.text };
   }
 
   return {
@@ -56,7 +47,7 @@ function toCheckScreen(content: unknown): PublicFirstScreen {
   }
 
   return {
-    context: parsed.data.context ? toPlainText(parsed.data.context) : null,
+    context: parsed.data.context || null,
     guess: false,
     kind: "choice",
     options: toPublicOptions(parsed.data.options),

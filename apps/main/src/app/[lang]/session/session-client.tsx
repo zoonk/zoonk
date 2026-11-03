@@ -22,6 +22,7 @@ import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-study-navigation";
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { useAppLocale } from "@zoonk/learn/locale";
@@ -141,6 +142,7 @@ export function SessionNextStopClient({
   step,
   stepRef,
   userId,
+  warmUp,
 }: {
   alternative: StudyBlock | null;
   day: StudyDay;
@@ -151,6 +153,7 @@ export function SessionNextStopClient({
   step: DayStep;
   stepRef: DayBlockRef | null;
   userId: string;
+  warmUp: WarmUpDeck | null;
 }) {
   const router = useRouter();
   const locale = useAppLocale();
@@ -204,6 +207,7 @@ export function SessionNextStopClient({
       notWritten={tapped ? null : notWritten}
       sessionBar={day.sessionBar}
       tap={tap}
+      warmUp={tapped ? null : warmUp}
     />
   );
 }

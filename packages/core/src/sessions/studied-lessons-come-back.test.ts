@@ -7,7 +7,7 @@ import {
 import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,9 +24,6 @@ import { startStudyBlock } from "./start-study-block";
 const TIME_ZONE = "UTC";
 const DAYS = 4;
 const FIRST_DAY = Date.UTC(2026, 8, 30);
-
-/** A life plays a lesson a day for `DAYS` days, slow under a broad run's load. */
-const LIFE_TIMEOUT_MS = 60_000;
 
 function noonOf(day: number): Date {
   return new Date(FIRST_DAY + day * MS_PER_DAY + 12 * 60 * 60 * 1000);
@@ -50,6 +47,24 @@ async function outlinedLibrary(lessonSkills: LessonSkills) {
 
   const planSkillOf = new Map(lessonSkillLinks.map((link) => [link.lessonId, link.skillId]));
 
+  const finerSkills =
+    lessonSkills === "finer"
+      ? await skillsFixture(library.lessons.map((lesson) => `Finer skill of ${lesson.id}`))
+      : [];
+
+  if (finerSkills.length > 0) {
+    await prisma.lessonSkill.deleteMany({
+      where: { lessonId: { in: library.lessons.map((lesson) => lesson.id) } },
+    });
+
+    await prisma.lessonSkill.createMany({
+      data: library.lessons.map((lesson, index) => ({
+        lessonId: lesson.id,
+        skillId: finerSkills[index]?.id ?? "",
+      })),
+    });
+  }
+
   await Promise.all(
     library.skills.map(async (skill, skillIndex) => {
       const chapter = await libraryChapterFixture({ title: `Chapter on ${skill.name}` });
@@ -72,9 +87,9 @@ async function outlinedLibrary(lessonSkills: LessonSkills) {
   );
 
   const checks = await Promise.all(
-    library.lessons.map(async (lesson) => {
+    library.lessons.map(async (lesson, index) => {
       const planSkillId = planSkillOf.get(lesson.id) ?? "";
-      const taughtSkillId = lessonSkills === "plan" ? planSkillId : await finerSkillOf(lesson.id);
+      const taughtSkillId = finerSkills[index]?.id ?? planSkillId;
 
       const step = await libraryStepFixture({
         content: playableStepContent.check,
@@ -94,12 +109,6 @@ async function outlinedLibrary(lessonSkills: LessonSkills) {
   });
 
   return { ...library, checks: new Map(checks) };
-}
-
-async function finerSkillOf(lessonId: string): Promise<string> {
-  const finer = await skillFixture({ name: `Finer skill of ${lessonId}` });
-  await prisma.lessonSkill.updateMany({ data: { skillId: finer.id }, where: { lessonId } });
-  return finer.id;
 }
 
 function getAskedSkillIds(block: Pick<StudySessionBlock, "id" | "payload">): string[] {
@@ -160,6 +169,10 @@ async function liveDays(lessonSkills: LessonSkills) {
     );
 
     asked.push(blocks.flatMap((block) => (block.kind === "learn" ? [] : getAskedSkillIds(block))));
+
+    if (day === DAYS - 1) {
+      break;
+    }
 
     for (const block of blocks.filter((entry) => entry.kind === "learn" && entry.lessonId)) {
       const check = library.checks.get(block.lessonId ?? "");
@@ -259,72 +272,60 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
     vi.useRealTimers();
   });
 
-  it(
-    "comes back in reviews and practice on the same days as one that teaches the plan's skill",
-    async () => {
-      const finer = await liveDaysOnce("finer");
-      const plan = await liveDaysOnce("plan");
+  it("comes back in reviews and practice on the same days as one that teaches the plan's skill", async () => {
+    const finer = await liveDaysOnce("finer");
+    const plan = await liveDaysOnce("plan");
 
-      expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3"]);
-      expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3"]);
+    expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3"]);
+    expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3"]);
 
-      expect(
-        new Set(
-          finer.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
-        ),
-      ).toStrictEqual(new Set([finer.library.skills[0]?.id]));
+    expect(
+      new Set(
+        finer.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
+      ),
+    ).toStrictEqual(new Set([finer.library.skills[0]?.id]));
 
-      expect(
-        new Set(
-          plan.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
-        ),
-      ).toStrictEqual(new Set([plan.library.skills[0]?.id]));
+    expect(
+      new Set(
+        plan.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
+      ),
+    ).toStrictEqual(new Set([plan.library.skills[0]?.id]));
 
-      expect(finer.days[1]?.[0]).toMatch(/^review\[G1\]$/u);
-      expect(finer.days.flat().some((block) => block.startsWith("practice[G"))).toBe(true);
-      expect(finer.days).toStrictEqual(plan.days);
-    },
-    LIFE_TIMEOUT_MS,
-  );
+    expect(finer.days[1]?.[0]).toMatch(/^review\[G1\]$/u);
+    expect(finer.days.flat().some((block) => block.startsWith("practice[G"))).toBe(true);
+    expect(finer.days).toStrictEqual(plan.days);
+  });
 
-  it(
-    "brings each finished lesson's topic back on the day its end screen and its check said",
-    async () => {
-      const { asked, finished } = await liveDaysOnce("finer");
-      const promised = finished.filter((lesson) => lesson.nextReviewDay !== null);
+  it("brings each finished lesson's topic back on the day its end screen and its check said", async () => {
+    const { asked, finished } = await liveDaysOnce("finer");
+    const promised = finished.filter((lesson) => lesson.nextReviewDay !== null);
 
-      expect(promised).toHaveLength(finished.length);
+    expect(promised).toHaveLength(finished.length);
 
-      expect(promised.map((lesson) => lesson.screenReviewDay)).toStrictEqual(
-        promised.map((lesson) => lesson.nextReviewDay),
-      );
+    expect(promised.map((lesson) => lesson.screenReviewDay)).toStrictEqual(
+      promised.map((lesson) => lesson.nextReviewDay),
+    );
 
-      const reached = promised.filter((lesson) => (lesson.nextReviewDay ?? DAYS) < DAYS);
+    const reached = promised.filter((lesson) => (lesson.nextReviewDay ?? DAYS) < DAYS);
 
-      expect(reached.length).toBeGreaterThan(0);
+    expect(reached.length).toBeGreaterThan(0);
 
-      expect(
-        reached.filter((lesson) => !asked[lesson.nextReviewDay ?? 0]?.includes(lesson.planSkillId)),
-      ).toStrictEqual([]);
-    },
-    LIFE_TIMEOUT_MS,
-  );
+    expect(
+      reached.filter((lesson) => !asked[lesson.nextReviewDay ?? 0]?.includes(lesson.planSkillId)),
+    ).toStrictEqual([]);
+  });
 
-  it(
-    "names a review after the lesson the learner finished for its topic",
-    async () => {
-      const finer = await liveDaysOnce("finer");
-      const studied = new Set(finer.finished.map((lesson) => lesson.lessonId));
+  it("names a review after the lesson the learner finished for its topic", async () => {
+    const finer = await liveDaysOnce("finer");
+    const studied = new Set(finer.finished.map((lesson) => lesson.lessonId));
 
-      const blocks = await prisma.studySessionBlock.findMany({
-        where: { kind: "review", session: { userId: finer.userId } },
-      });
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { kind: "review", session: { userId: finer.userId } },
+    });
 
-      const capsules = blocks.flatMap((block) => readBlockPayload(block).capsules);
+    const capsules = blocks.flatMap((block) => readBlockPayload(block).capsules);
 
-      expect(capsules.length).toBeGreaterThan(0);
-      expect(capsules.every((capsule) => studied.has(capsule.lessonId ?? ""))).toBe(true);
-    },
-    LIFE_TIMEOUT_MS,
-  );
+    expect(capsules.length).toBeGreaterThan(0);
+    expect(capsules.every((capsule) => studied.has(capsule.lessonId ?? ""))).toBe(true);
+  });
 });

@@ -6,7 +6,7 @@ export type ConversationObjectivesInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-export type ConversationObjectivesExpected = { met: string[] };
+export type ConversationObjectivesExpected = { goodbye: boolean; met: string[] };
 
 type Turn = CheckConversationObjectivesParams["turns"][number];
 
@@ -88,6 +88,16 @@ const TOEFL: Call = {
     "Um simulado curto da seção Speaking do TOEFL iBT: repita frases e depois responda a uma entrevista.",
 };
 
+const CAFE: Call = {
+  characterNotes:
+    "Camille, a barista at a small café in Lyon. A small coffee is 2 euros, a large one 3 euros. Milk is free. Card payments are fine.",
+  objectives: [
+    { description: "Order a coffee.", label: "Commander un café" },
+    { description: "Ask how much it costs.", label: "Demander le prix" },
+  ],
+  situation: "You're at a café in Lyon. Order a coffee from Camille, the barista.",
+};
+
 function openOnly(call: Call, labels: string[]): Call {
   return { ...call, objectives: call.objectives.filter((item) => labels.includes(item.label)) };
 }
@@ -102,17 +112,19 @@ function learner(text: string): Turn {
 
 function portugueseSpeaker({
   call = RENTING,
+  goodbye = false,
   id,
   met,
   turns,
 }: {
   call?: Call;
+  goodbye?: boolean;
   id: string;
   met: string[];
   turns: Turn[];
 }): TestCase<ConversationObjectivesExpected, ConversationObjectivesInput> {
   return {
-    expected: { met },
+    expected: { goodbye, met },
     id,
     userInput: { ...call, learnerLanguage: "pt", targetLanguage: "en", turns },
   };
@@ -120,19 +132,21 @@ function portugueseSpeaker({
 
 function englishSpeaker({
   call,
+  goodbye = false,
   id,
   met,
   targetLanguage,
   turns,
 }: {
   call: Call;
+  goodbye?: boolean;
   id: string;
   met: string[];
   targetLanguage: string;
   turns: Turn[];
 }): TestCase<ConversationObjectivesExpected, ConversationObjectivesInput> {
   return {
-    expected: { met },
+    expected: { goodbye, met },
     id,
     userInput: { ...call, learnerLanguage: "en", targetLanguage, turns },
   };
@@ -355,6 +369,55 @@ export const TEST_CASES: TestCase<ConversationObjectivesExpected, ConversationOb
       character("Thank you. Next question. Should universities give students free bus passes?"),
       learner("Yes, I think is good because students don't have much money."),
       character("Thank you. That's the end of the interview."),
+    ],
+  }),
+  portugueseSpeaker({
+    call: openOnly(RENTING, ["Is it available?", "Ask about the deposit"]),
+    goodbye: true,
+    id: "pt-renting-learner-says-goodbye-first",
+    met: ["Is it available?"],
+    turns: [
+      LANDLORD_OPENING,
+      learner("Yes. The apartment is still available?"),
+      character("Yes, it is."),
+      learner("Ok, great. Thank you, bye bye!"),
+      character("You're welcome. Bye!"),
+    ],
+  }),
+  englishSpeaker({
+    call: NEIGHBOR,
+    goodbye: true,
+    id: "en-neighbor-character-says-goodbye-first",
+    met: ["Explicar el problema"],
+    targetLanguage: "es",
+    turns: [
+      character("Hola, ¿qué pasa?"),
+      learner("Hola, Javier. La música es muy fuerte por la noche y no puedo dormir."),
+      character("Ah, perdona. Oye, lo siento, me tengo que ir. ¡Hasta luego!"),
+      learner("Vale, ¡adiós!"),
+    ],
+  }),
+  portugueseSpeaker({
+    call: openOnly(RENTING, ["Book a viewing", "Ask about the deposit"]),
+    id: "pt-renting-only-the-character-says-goodbye",
+    met: ["Book a viewing"],
+    turns: [
+      LANDLORD_OPENING,
+      learner("Yes. Can I see the apartment on Saturday at ten?"),
+      character("Yes, Saturday at ten is perfect. See you then, bye!"),
+    ],
+  }),
+  englishSpeaker({
+    call: CAFE,
+    id: "en-cafe-au-revoir-inside-a-question",
+    met: ["Commander un café"],
+    targetLanguage: "fr",
+    turns: [
+      character("Bonjour ! Vous désirez ?"),
+      learner("Bonjour. Un petit café, s'il vous plaît."),
+      character("Un petit café, d'accord."),
+      learner("Merci. Et quand je pars, je dis « au revoir » ou « salut » ?"),
+      character("Les deux, mais « au revoir » est plus poli. Autre chose ?"),
     ],
   }),
 ];

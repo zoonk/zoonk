@@ -570,7 +570,7 @@
   "plan_tools_without": "7a1af7ae07837fbe62c7519d0bbe6dd3e9d8c526526a320405e4b3ee302a01e0",
   "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
   "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
-  "plan_undo": "0bfc41ac13e8cdefc58ba156f78598a8c52268c4dbe84ec50a00fca2faff3d81",
+  "plan_undo": "be42799ef92682ad53c85bfa46bc297a08d2b5ec4bedeb909b46e6acbc7e62af",
   "plan_unit_lessons_being_written": "20ef4bcc1429a5c22d8942234eda9f3af85bfc848d877350831902e9a7f6be49",
   "plan_until": "09fef8ad3ce07cff3098905a25218765098dd91ba8bc7c79e58d08b2af88bd28",
   "plan_until_estimate": "d6a7a56b628d80645a1f3e37226ab9b0ec48b8656e077d35a5ebba061366ef73",
@@ -1236,7 +1236,7 @@
     <string name="plan_change_weekly_challenges_on">Wöchentliche Herausforderungen am %1$s</string>
     <string name="plan_editor_title">Plan anpassen</string>
     <string name="plan_editor_close">Schließen</string>
-    <string name="plan_undo">Rückgängig</string>
+    <string name="plan_undo">Rückgängig machen</string>
     <string name="plan_deadline">Zieldatum</string>
     <string name="plan_named_month_note">Vorerst %1$s. Wähle den Tag, sobald du ihn kennst.</string>
     <string name="plan_no_deadline_note">Ohne Zieldatum lernst du alles in deinem eigenen Tempo. Mit einem Zieldatum ist dein Plan so abgestimmt, dass du bis dahin das Wichtigste lernst.</string>

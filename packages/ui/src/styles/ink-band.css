@@ -1,0 +1,35 @@
+/* A page's last call: an ink band in light mode, a raised one in dark. */
+[data-slot="ink-band"] {
+  --background: oklch(0.185 0.004 286);
+  --foreground: oklch(0.975 0.002 286);
+  --card: oklch(0.22 0.005 286);
+  --card-foreground: var(--foreground);
+  --muted-foreground: oklch(0.74 0.012 286);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 18%);
+  --primary: oklch(0.985 0.001 106);
+  --primary-foreground: oklch(0.185 0.004 286);
+  --ring: var(--primary);
+  color-scheme: dark;
+
+  @variant dark {
+    --background: oklch(0.225 0.005 286);
+    --card: oklch(0.26 0.006 286);
+  }
+
+  @media (prefers-contrast: more) {
+    --background: var(--color-black);
+    --foreground: var(--color-white);
+    --card: var(--color-black);
+    --muted-foreground: var(--color-white);
+    --border: var(--color-white);
+    --input: var(--color-white);
+    --primary: var(--color-white);
+    --primary-foreground: var(--color-black);
+
+    @variant dark {
+      --background: var(--color-neutral-800);
+      --card: var(--color-neutral-800);
+    }
+  }
+}

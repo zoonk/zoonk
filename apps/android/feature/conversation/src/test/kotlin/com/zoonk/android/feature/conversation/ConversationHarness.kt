@@ -80,11 +80,11 @@ internal class ConversationHarness {
             ConversationViewModel(
                 conversationId = conversationId,
                 store = store,
-                newCall = { script ->
+                newCall = { task ->
                     LiveCall(
-                        script,
+                        task,
                         client,
-                        { microphone, onEvent, onLost -> FakeTransport(microphone, onEvent, onLost).also(transports::add) },
+                        { microphone, signals -> FakeTransport(microphone, signals).also(transports::add) },
                         scope,
                     )
                 },
@@ -121,7 +121,7 @@ internal class ConversationHarness {
     }
 
     fun goLive(compose: ComposeContentTestRule) {
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Call Lucía").performClick()
         compose.waitForIdle()
         transport.onEvent(LiveServerEvent.Started)
         compose.waitForIdle()

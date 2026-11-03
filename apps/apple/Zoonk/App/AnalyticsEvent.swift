@@ -23,8 +23,28 @@ enum AnalyticsEvent: Equatable {
     case chapter, course, lesson
   }
 
+  enum WarmUpSurface: String {
+    case planWait, placementWait, lessonWait
+  }
+
+  /// A reply gap runs from the learner's microphone going quiet to the next character transcript
+  /// arriving: a proxy for the wait the learner heard.
+  struct CallEnded: Equatable {
+    let conversationKind: LanguageConversation.KindPayload
+    let delegations: Int
+    let durationSeconds: Int
+    let learnerTurns: Int
+    let reason: LiveCall.EndReason
+    let replyGapMaxMs: Int?
+    let replyGapMedianMs: Int?
+    let slowReplies: Int
+    let talkSeconds: Int
+    let unansweredTurns: Int
+  }
+
   case activityAbandoned(lessonID: String, screen: Int, stepKind: String, wrongInARow: Int)
   case activityUsed(lessonID: String, template: String)
+  case callEnded(CallEnded)
   case ceremonyShown(Ceremony)
   case goalTyped(hasAttachment: Bool)
   case homeViewed
@@ -36,11 +56,15 @@ enum AnalyticsEvent: Equatable {
   case subscriptionCheckoutStarted(BillingPeriod)
   case subscriptionGateShown
   case todayViewed
+  /// `position` counts from 1, the deck's first card.
+  case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
+  case warmUpShown(surface: WarmUpSurface, cardCount: Int)
 
   var name: String {
     switch self {
     case .activityAbandoned: "Activity Abandoned"
     case .activityUsed: "Activity Used"
+    case .callEnded: "Call Ended"
     case .ceremonyShown: "Ceremony Shown"
     case .goalTyped: "Goal Typed"
     case .homeViewed: "Home Viewed"
@@ -52,6 +76,8 @@ enum AnalyticsEvent: Equatable {
     case .subscriptionCheckoutStarted: "Subscription Checkout Started"
     case .subscriptionGateShown: "Subscription Gate Shown"
     case .todayViewed: "Today Viewed"
+    case .warmUpAnswered: "Warm-Up Answered"
+    case .warmUpShown: "Warm-Up Shown"
     }
   }
 
@@ -64,6 +90,14 @@ enum AnalyticsEvent: Equatable {
       ]
     case .activityUsed(let lessonID, let template):
       ["lesson_id": lessonID, "template": template]
+    case .callEnded(let call):
+      [
+        "conversation_kind": call.conversationKind.analyticsName, "delegations": call.delegations,
+        "duration_seconds": call.durationSeconds, "learner_turns": call.learnerTurns,
+        "reason": call.reason.rawValue, "reply_gap_max_ms": orNull(call.replyGapMaxMs),
+        "reply_gap_median_ms": orNull(call.replyGapMedianMs), "slow_replies": call.slowReplies,
+        "talk_seconds": call.talkSeconds, "unanswered_turns": call.unansweredTurns,
+      ]
     case .ceremonyShown(let ceremony):
       ["ceremony": ceremony.rawValue]
     case .goalTyped(let hasAttachment):
@@ -78,6 +112,10 @@ enum AnalyticsEvent: Equatable {
       ["content_id": contentID, "page": page.rawValue]
     case .subscriptionCheckoutStarted(let billingPeriod):
       ["billingPeriod": billingPeriod.rawValue, "plan": "plus"]
+    case .warmUpAnswered(let surface, let cardID, let position, let correct):
+      ["card_id": cardID, "correct": correct, "position": position, "surface": surface.rawValue]
+    case .warmUpShown(let surface, let cardCount):
+      ["card_count": cardCount, "surface": surface.rawValue]
     case .homeViewed, .logbookViewed, .subscriptionGateShown, .todayViewed:
       [:]
     }
@@ -138,6 +176,18 @@ extension AnalyticsEvent.Insight {
     case .planChange: self = .planChange
     case .scheduleIdea: self = .schedule
     case .tip: self = .tip
+    }
+  }
+}
+
+extension LanguageConversation.KindPayload {
+  /// Core's `ConversationKind` in analytics.
+  fileprivate var analyticsName: String {
+    switch self {
+    case .practice: "practice"
+    case .checkpoint: "checkpoint"
+    case .speakingMock: "speaking_mock"
+    case .examSpeaking: "exam_speaking"
     }
   }
 }

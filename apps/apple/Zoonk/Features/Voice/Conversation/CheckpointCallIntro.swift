@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A checkpoint's call before it's made, read without writing anything. Start makes the call.
+/// A checkpoint's call before it's made, read without writing anything. Call makes the call.
 struct CheckpointCallIntro: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
@@ -12,7 +12,8 @@ struct CheckpointCallIntro: View {
 
   let call: Resource<LanguageCheckpointCall>
   let blockId: String
-  let onStarted: (_ conversationId: String) -> Void
+  /// `callsNow`: the learner tapped Call on the intro, rather than having the call written first.
+  let onStarted: (_ conversationId: String, _ callsNow: Bool) -> Void
 
   var body: some View {
     content
@@ -34,11 +35,11 @@ struct CheckpointCallIntro: View {
     case .loaded(.notStarted(let preview)):
       ConversationIntro(intro: CallIntro(preview.intro)) {
         if needsPlus {
-          CallStartFooter(isLocked: true) {}
+          CallStartFooter(isLocked: true, callee: nil) {}
         } else if preview.dailyLimitReached {
           StudyTimeUsedUp()
         } else {
-          startButton(writesFirst: false)
+          startButton(writesFirst: false, callee: preview.intro.character.name)
         }
       }
     case .loaded(.preparing(let preparing)):
@@ -50,7 +51,7 @@ struct CheckpointCallIntro: View {
           tableName: "Voice", comment: "A language checkpoint's call that isn't written yet")
       } actions: {
         if needsPlus {
-          CallStartFooter(isLocked: true) {}
+          CallStartFooter(isLocked: true, callee: nil) {}
         } else if isWriting {
           WritingWait(
             title: Text(
@@ -60,12 +61,12 @@ struct CheckpointCallIntro: View {
               "It opens here as soon as it's ready.", tableName: "Voice",
               comment: "A checkpoint's call opens by itself once it's written"))
         } else {
-          startButton(writesFirst: true)
+          startButton(writesFirst: true, callee: nil)
         }
       }
     case .loaded(.plusRequired):
       VStack(spacing: 12) {
-        CallStartFooter(isLocked: true) {}
+        CallStartFooter(isLocked: true, callee: nil) {}
       }
       .scenePadding()
       .frame(maxHeight: .infinity)
@@ -81,7 +82,8 @@ struct CheckpointCallIntro: View {
     }
   }
 
-  private func startButton(writesFirst: Bool) -> some View {
+  /// Writing the call first calls no one, so only the button that calls has the phone.
+  private func startButton(writesFirst: Bool, callee: String?) -> some View {
     VStack(spacing: 8) {
       if didFail {
         Text(
@@ -95,24 +97,27 @@ struct CheckpointCallIntro: View {
       Button {
         starting = Task { await start(writesFirst: writesFirst) }
       } label: {
-        Label {
-          if isStarting {
+        if isStarting {
+          Label {
             Text("Starting…", tableName: "Voice", comment: "A call is starting")
-          } else if writesFirst {
-            Text(
-              "Get the call ready", tableName: "Voice",
-              comment: "Writes a checkpoint's call, then opens it")
-          } else {
-            Text("Start the call", tableName: "Voice", comment: "Starts a live call")
-          }
-        } icon: {
-          if isStarting {
+          } icon: {
             ProgressView()
-          } else {
+          }
+          .frame(maxWidth: .infinity)
+        } else if writesFirst {
+          Text(
+            "Get the call ready", tableName: "Voice",
+            comment: "Writes a checkpoint's call, then opens it"
+          )
+          .frame(maxWidth: .infinity)
+        } else {
+          Label {
+            CallButtonTitle(callee: callee)
+          } icon: {
             Image(systemName: "phone.fill")
           }
+          .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
@@ -139,7 +144,7 @@ struct CheckpointCallIntro: View {
 
     switch started {
     case .done(.done(let conversationId)):
-      onStarted(conversationId)
+      onStarted(conversationId, !writesFirst)
     case .done(.refused(let refusal)) where refusal.isPlusRequired:
       needsPlus = true
     case .done(.refused(let refusal)) where Self.changes.contains(refusal.code):

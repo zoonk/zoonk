@@ -5,7 +5,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createSetUpGoalPlan } from "../../plans/_test-utils/set-up-plan";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { findPlanTimeToCover } from "../../plans/get-time-advice";
-import { endNoticeWait, startNoticeWait } from "../../plans/notice-wait";
+import { endNoticeWait } from "../../plans/notice-wait";
 import { runPlanSetupTask } from "../../plans/plan-setup";
 import { getOnboarding } from "./get-onboarding";
 
@@ -55,8 +55,7 @@ describe("the onboarding view's plan readiness", () => {
 
   it("says the plan waits while its exam's notice is read, as the time answers do", async () => {
     const { goal, library } = await setup();
-    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
-    await startNoticeWait({ goalId: goal.id });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph, waitsForNotice: true });
 
     await expect(readReadiness(goal.id)).resolves.toStrictEqual({
       time: READING_NOTICE,

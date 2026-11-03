@@ -1,5 +1,6 @@
 "use client";
 
+import { GuessHint } from "@zoonk/learn/guess-hint";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
@@ -66,11 +67,7 @@ function HookGuess({
         selectedId={selectedId}
       />
 
-      {!result && (
-        <p className="text-muted-foreground text-sm">
-          {t("Getting it wrong now helps you remember later.")}
-        </p>
-      )}
+      {!result && <GuessHint />}
     </PlayerChoiceScene>
   );
 }

@@ -16,7 +16,6 @@ type Event = {
   port?: number;
   provider?: string;
   api?: string;
-  auth?: string;
 };
 
 function assertApiLifecycle({
@@ -70,7 +69,7 @@ describe("Main CI performance hook in its service supervisor", () => {
         String.raw`
         import { appendFile } from 'node:fs/promises';
         export async function runForegroundCommand({args, command, environment}) {
-          await appendFile(process.env.TEST_LOG, JSON.stringify({args, command, provider:environment.LIVE_CALL_TEST_PROVIDER_URL, api:environment.E2E_API_URL, auth:environment.NEXT_PUBLIC_AUTH_BASE_PATH})+'\n');
+          await appendFile(process.env.TEST_LOG, JSON.stringify({args, command, provider:environment.LIVE_CALL_TEST_PROVIDER_URL, api:environment.E2E_API_URL})+'\n');
           const failed = process.env.TEST_FAIL === 'build' && command === '/usr/bin/time' || process.env.TEST_FAIL === 'gate' && args[0] === 'perf:check';
           return {code:failed ? 1 : 0, signal:null};
         }
@@ -142,7 +141,6 @@ describe("Main CI performance hook in its service supervisor", () => {
       assert.equal(builds[0]?.command, enabled === "true" ? "/usr/bin/time" : "pnpm");
       assert.match(builds[0]?.api ?? "", /^http:\/\/localhost:\d+$/u);
       assert.equal(builds[0]?.provider, "http://provider.zoonk.test");
-      assert.equal(events.find((entry) => entry.args?.includes("api"))?.auth, "/v1/auth");
       const gate = events.findIndex((entry) => entry.args?.[0] === "perf:check");
       const browser = events.findIndex((entry) => entry.args?.includes("e2e"));
       assert.equal(gate !== -1, enabled === "true" && failure !== "build");

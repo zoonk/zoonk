@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LiveGenerationSource
@@ -57,6 +58,10 @@ import com.zoonk.android.feature.player.LessonWritingProgress
 import com.zoonk.android.feature.player.LiveLessonWritingApi
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
+import com.zoonk.android.feature.warmup.WarmUpCard
+import com.zoonk.android.feature.warmup.WarmUpStore
+import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
@@ -141,6 +146,7 @@ fun SessionScreen(
                     refresh = null,
                     onStop = null,
                     navigator = navigator,
+                    warmUps = app.warmUps,
                 )
             }
         }
@@ -190,6 +196,7 @@ private fun SavedDay(
                     refresh = { app.studySessions.day[sessionId].refresh() },
                     onStop = if (session.sessionBar.completed > 0) ({ viewModel.stop(sessionId) }) else null,
                     navigator = navigator,
+                    warmUps = app.warmUps,
                 )
             }
         }
@@ -293,7 +300,8 @@ private fun SessionSummaryContent(
  * doing what "While you wait" offered. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
  * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
- * wait for; [onStop] once the session has work done.
+ * wait for; [onStop] once the session has work done. A goal's first lesson deals its guesses while
+ * it's written, and a learner who guessed finishes the card once Start shows.
  */
 @Composable
 internal fun NextStop(
@@ -307,6 +315,7 @@ internal fun NextStop(
     refresh: (suspend () -> Unit)?,
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
+    warmUps: WarmUpStore,
 ) {
     val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
     val unwritten = refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
@@ -333,6 +342,9 @@ internal fun NextStop(
         }
     val busy = viewModel.busy != null
     val ready = !waiting && refusal == null
+    val hold = rememberReadyHold(ready)
+    val warmUpId = viewModel.lesson?.takeIf { it.id == step.lessonId && refusal == null && !hold.over }?.warmUpId
+    val guessing = if (warmUpId != null) Modifier.watchTouches(hold) else Modifier
     val startsFor = goalId?.takeIf { ready }
     val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
     val startFocus = remember { FocusRequester() }
@@ -375,7 +387,7 @@ internal fun NextStop(
 
     TaskScaffold(
         onClose = navigator::closeTask,
-        modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus },
+        modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
         title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
         bottomBar =
             if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
@@ -481,6 +493,7 @@ internal fun NextStop(
                             }
                         }
                     }
+                    WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                 }
             }
         }

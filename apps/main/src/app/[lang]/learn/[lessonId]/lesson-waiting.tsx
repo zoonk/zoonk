@@ -5,14 +5,17 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationWait } from "@zoonk/learn/generation";
-import { type GenerationRun } from "@zoonk/learn/generation/run";
+import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
+import { WarmUpCard } from "@zoonk/learn/warm-up/card";
+import { useReadyHold } from "@zoonk/learn/warm-up/hold";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -83,19 +86,18 @@ function useIsLate() {
   return late;
 }
 
-function useOpenWhenReady(isReady: boolean) {
+/** The wait is measured until the lesson is ready; it opens once the learner moves on. */
+function useOpenWhenReady({ open, ready }: { open: boolean; ready: boolean }) {
   const router = useRouter();
   const locale = useAppLocale();
   const startedAt = useRef<number | null>(null);
 
-  const open = useEffectEvent(() => {
+  const recordWait = useEffectEvent(() => {
     void recordGenerationWaitAction({
       contentKind: "lesson",
       locale,
       milliseconds: Date.now() - (startedAt.current ?? Date.now()),
     });
-
-    router.refresh();
   });
 
   const readAgain = useEffectEvent(() => router.refresh());
@@ -105,21 +107,37 @@ function useOpenWhenReady(isReady: boolean) {
   }, []);
 
   useEffect(() => {
-    if (!isReady) {
+    if (ready) {
+      recordWait();
+    }
+  }, [ready]);
+
+  useEffect(() => {
+    if (!open) {
       return;
     }
 
-    open();
+    readAgain();
     const timer = setInterval(readAgain, OPEN_RETRY_MS);
     return () => clearInterval(timer);
-  }, [isReady]);
+  }, [open]);
 }
+
+type LessonFrame = { exitHref: string; lesson: LessonOutline };
 
 function WritingWait({
   alternative,
+  children,
+  footer,
+  frame,
+  warmUp,
   writing,
 }: {
   alternative: ReadyAlternative | null;
+  children?: React.ReactNode;
+  footer?: React.ReactNode;
+  frame: LessonFrame;
+  warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
   const t = useExtracted();
@@ -136,22 +154,41 @@ function WritingWait({
       ? { failure: "notStarted", retry: writing.retry, status: "failed", steps: {} }
       : followed;
 
-  useOpenWhenReady(run.status === "ready");
+  const ready = run.status === "ready";
+  const hold = useReadyHold(ready);
+  const holding = hold.status === "hold";
+
+  useOpenWhenReady({ open: hold.status === "go", ready });
 
   return (
-    <>
-      <GenerationWait kind="lesson" run={run} />
+    <LessonRouteFrame
+      {...frame}
+      footer={holding ? <StartLessonBar busy={false} onStart={hold.release} /> : footer}
+    >
+      {children}
+
+      <GenerationWait
+        doneLabel={holding ? t("Your lesson is ready") : undefined}
+        kind="lesson"
+        run={holding ? toHeldRun(run) : run}
+      />
 
       {run.status !== "failed" && (
         <p className="text-muted-foreground text-sm text-pretty">
-          {t("It usually takes a minute or two. The lesson opens here as soon as it's ready.")}
+          {holding
+            ? t("Your lesson is ready. Start it whenever you like.")
+            : t("It usually takes a minute or two. The lesson opens here as soon as it's ready.")}
         </p>
       )}
 
-      {(late || run.status === "failed") && alternative && (
+      {warmUp && (
+        <WarmUpCard deck={warmUp} holding={holding} onGuess={hold.onGuess} surface="lessonWait" />
+      )}
+
+      {!holding && (late || run.status === "failed") && alternative && (
         <Alternative alternative={alternative} />
       )}
-    </>
+    </LessonRouteFrame>
   );
 }
 
@@ -193,18 +230,21 @@ export function LessonWaiting({
   exitHref,
   initialRequest,
   lesson,
+  warmUp,
 }: {
   alternative: ReadyAlternative | null;
   exitHref: string;
   initialRequest: LessonRequest;
   lesson: LessonOutline;
+  warmUp: WarmUpDeck | null;
 }) {
   const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
   const [starting, setStarting] = useState(false);
   const signUpHref = useSignUpHref();
+  const frame = { exitHref, lesson };
 
-  useOpenWhenReady(request.status === "ready");
+  useOpenWhenReady({ open: request.status === "ready", ready: request.status === "ready" });
 
   const start = () => {
     setStarting(true);
@@ -213,18 +253,28 @@ export function LessonWaiting({
 
   const showsStart = request.status === "idle" || (starting && request.status === "requesting");
 
+  const footer = showsStart && (
+    <StartLessonBar busy={request.status === "requesting"} onStart={start} />
+  );
+
+  if (isWriting(request)) {
+    return (
+      <WritingWait
+        alternative={alternative}
+        footer={footer}
+        frame={frame}
+        key={writing.attempt}
+        warmUp={warmUp}
+        writing={writing}
+      >
+        {showsStart && <UnwrittenLessonNote />}
+      </WritingWait>
+    );
+  }
+
   return (
-    <LessonRouteFrame
-      exitHref={exitHref}
-      footer={
-        showsStart && <StartLessonBar busy={request.status === "requesting"} onStart={start} />
-      }
-      lesson={lesson}
-    >
+    <LessonRouteFrame {...frame} footer={footer}>
       {showsStart && <UnwrittenLessonNote />}
-      {isWriting(request) && (
-        <WritingWait alternative={alternative} key={writing.attempt} writing={writing} />
-      )}
 
       {(request.status === "refused" ||
         request.status === "plusRequired" ||

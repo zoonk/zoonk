@@ -47,6 +47,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -88,9 +89,16 @@ fun GoalSetupScreen(
         LocalSetupSpeech provides app.speech,
         LocalPlacementRow provides { placement -> PlacementRow(app, placement, isGuest = signedIn?.isGuest == true, navigator) },
     ) {
-        GoalSetupScreen(route, app.onboarding, app.plans, app.mocks, isGuest = signedIn?.isGuest == true, navigator, prepareToday = {
-            app.today.today.refresh()
-        })
+        GoalSetupScreen(
+            route,
+            app.onboarding,
+            app.plans,
+            app.mocks,
+            isGuest = signedIn?.isGuest == true,
+            navigator,
+            warmUps = app.warmUps,
+            prepareToday = { app.today.today.refresh() },
+        )
     }
 }
 
@@ -102,6 +110,7 @@ fun GoalSetupScreen(
     mocks: MockStore,
     isGuest: Boolean,
     navigator: AppNavigator,
+    warmUps: WarmUpStore? = null,
     prepareToday: suspend () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
@@ -209,6 +218,7 @@ fun GoalSetupScreen(
                                             navigator,
                                             route,
                                             asideBeside || fold != null,
+                                            warmUps,
                                             prepareToday,
                                         )
                                     }
@@ -244,6 +254,7 @@ private fun ColumnScope.SetupStep(
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
     asideBeside: Boolean,
+    warmUps: WarmUpStore?,
     prepareToday: suspend () -> Unit,
 ) {
     val subject = view.subject()
@@ -253,7 +264,10 @@ private fun ColumnScope.SetupStep(
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
-    CompositionLocalProvider(LocalPlanStart provides planStart) {
+    CompositionLocalProvider(
+        LocalPlanStart provides planStart,
+        LocalSetupWarmUp provides warmUps,
+    ) {
         QuestionStep(
             step,
             view,

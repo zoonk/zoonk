@@ -13,6 +13,10 @@ export const lessonPathParamsSchema = z
   .object({ lessonId: z.uuid().meta({ description: "Lesson ID" }) })
   .meta({ id: "LessonPathParams" });
 
+export const warmUpPathParamsSchema = z
+  .object({ warmUpId: z.uuid().meta({ description: "Warm-up deck ID" }) })
+  .meta({ id: "WarmUpPathParams" });
+
 export const lessonQuestionPathParamsSchema = z
   .object({ questionId: z.uuid().meta({ description: "Lesson question ID" }) })
   .meta({ id: "LessonQuestionPathParams" });

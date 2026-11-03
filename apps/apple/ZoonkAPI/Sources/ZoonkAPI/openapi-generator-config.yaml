@@ -175,6 +175,7 @@ filter:
     - getSubjectQuestionThread
     - getToday
     - getUsernameAvailability
+    - getWarmUp
     - getWeeklyChallenge
     - gradeMockEssays
     - joinInstrumentWaitlist

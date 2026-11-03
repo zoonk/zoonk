@@ -2,10 +2,11 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -68,6 +69,13 @@ function StepWork({ maxValue, step }: { maxValue: number; step: SolverStep }) {
   );
 }
 
+function FirstPick({ text }: { text: string }) {
+  const t = useExtracted();
+  const choice = () => <LessonRichText text={text} />;
+
+  return t.rich("Your first pick: <choice></choice>", { choice });
+}
+
 export function StepSolverStep({
   index,
   isChecked,
@@ -86,6 +94,7 @@ export function StepSolverStep({
   step: SolverStep;
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const correct = step.choices.find((choice) => choice.isCorrect);
 
   const wrongPicks = step.choices.filter(
@@ -94,6 +103,7 @@ export function StepSolverStep({
 
   const lastWrong = wrongPicks.at(-1);
   const isFirstPickWrong = picks[0] !== undefined && picks[0] !== correct?.id;
+  const firstWrongPick = isFirstPickWrong ? wrongPicks[0] : undefined;
 
   return (
     <li className="relative flex gap-3" data-slot="step-solver-step">
@@ -118,7 +128,7 @@ export function StepSolverStep({
         )}
 
         {status === "current" && !isChecked && (
-          <ActivitySelectGrid label={step.prompt}>
+          <ActivitySelectGrid label={spoken.blocks(step.prompt)}>
             {step.choices.map((choice) => (
               <ActivitySelectGridItem
                 disabled={picks.includes(choice.id)}
@@ -135,7 +145,7 @@ export function StepSolverStep({
 
         {status === "current" && lastWrong && (
           <p aria-live="polite" className="text-sm leading-snug">
-            <NotQuiteLead /> {lastWrong.reason}
+            <NotQuiteLead /> <LessonRichText text={lastWrong.reason} />
           </p>
         )}
 
@@ -144,14 +154,14 @@ export function StepSolverStep({
             <StepWork maxValue={maxValue} step={step} />
             <p className="text-sm leading-snug">
               <span className="text-success-text font-semibold">{t("Right:")}</span>{" "}
-              {correct.reason}
+              <LessonRichText text={correct.reason} />
             </p>
           </>
         )}
 
-        {isChecked && isFirstPickWrong && wrongPicks[0] && (
+        {isChecked && firstWrongPick && (
           <p className="text-muted-foreground text-sm">
-            {t("Your first pick: {choice}", { choice: wrongPicks[0].text })}
+            <FirstPick text={firstWrongPick.text} />
           </p>
         )}
       </div>

@@ -10,11 +10,9 @@ import { getSpeakingTask } from "../speaking-formats";
 import {
   type ExamSpeakingSetup,
   findExamSpeakingSetup,
-  findShortCallTime,
+  findUsedUpCallTime,
   hasSpeakingAccess,
 } from "./exam-speaking-setup";
-
-const SECONDS_PER_MINUTE = 60;
 
 export type StartExamTaskResult =
   | PreparingCall
@@ -91,10 +89,10 @@ export async function startExamTask({
     return { status: "callsPaused" };
   }
 
-  const short = await findShortCallTime(taskFormat.minutes.min * SECONDS_PER_MINUTE);
+  const usedUp = await findUsedUpCallTime();
 
-  if (short) {
-    return { limit: short, status: "limitReached" };
+  if (usedUp) {
+    return { limit: usedUp, status: "limitReached" };
   }
 
   const waiting = await findWaitingExamTask({ ...setup, task: taskFormat });

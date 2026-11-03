@@ -121,7 +121,10 @@ describe("a completed call's review", () => {
     vi.mocked(checkConversationObjectives)
       .mockClear()
       .mockResolvedValue(
-        modelAnswer({ met: [{ label: "Is it available?", learnerWords: "It is available?" }] }),
+        modelAnswer({
+          goodbye: false,
+          met: [{ label: "Is it available?", learnerWords: "It is available?" }],
+        }),
       );
 
     vi.mocked(writeConversationFeedback).mockClear().mockResolvedValue(modelAnswer(FEEDBACK));

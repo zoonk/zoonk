@@ -28,7 +28,7 @@
   "activities_math_balance_steps": "31a2b6cb3fa4fc1b577e7f0eec118241686a634a066a6c4f21c44b46521e5655",
   "activities_math_balance_take_left": "d23fcebae758175b1f99ddce74d67ba62b2aef7e064a92abc7b52bbd36c23bc6",
   "activities_math_balance_take_right": "f9ec2d103ac191cadf1229707c094cae4ceab42c6f8b72fdd8557385421b47fd",
-  "activities_math_balance_undo": "b891221296f4ed0acb536abe0a34763d121a45aedc1043989977a07bd459149d",
+  "activities_math_balance_undo": "34b2e8a57159ebed4dff98900c981b13aa78e0f7711535aa5c00e646892f2619",
   "activities_math_chance_description": "0fea01fd1c287cf5880c5e72b078ae3b5872e25f9390ceabf6fd400ed9c91876",
   "activities_math_chance_no": "3396729331c40d833f9755361a311295f44701e9c2b43845a9bcb27e68ddb714",
   "activities_math_chance_pick_first": "61eb0d306c8b93fff1aa1c86d430dc2bbb0a7d0ef79f5d071760ec71f3aafa51",
@@ -185,7 +185,7 @@
     <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
     <string name="activities_math_balance_split">Teil beide Seiten in %1$s gleich große Gruppen</string>
     <!-- A button that takes back the last move on the balance. -->
-    <string name="activities_math_balance_undo">Rückgängig</string>
+    <string name="activities_math_balance_undo">Rückgängig machen</string>
     <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
     <string name="activities_math_balance_steps">Lösungsschritte</string>
     <!-- Before a worked step the learner has reached, for TalkBack. -->

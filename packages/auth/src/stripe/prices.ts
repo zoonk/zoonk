@@ -1,5 +1,5 @@
 import { type PriceInfo } from "@zoonk/utils/currency";
-import { getEnvironment } from "@zoonk/utils/environment";
+import { getEnvironment, isLocalhostSupported } from "@zoonk/utils/environment";
 import { stripeClient } from "./client";
 import type Stripe from "stripe";
 
@@ -29,11 +29,19 @@ function getPricesByCurrency(price: Stripe.Price, currencies: readonly string[])
   );
 }
 
+/** E2E and local runs without a Stripe key show plans without prices; a deployment without one fails. */
+function canListPrices(): boolean {
+  return (
+    getEnvironment() !== "e2e" &&
+    (Boolean(process.env.STRIPE_SECRET_KEY) || !isLocalhostSupported())
+  );
+}
+
 export async function getStripePriceTable(
   lookupKeys: string[],
   currencies: readonly string[],
 ): Promise<StripePriceTable> {
-  if (lookupKeys.length === 0 || getEnvironment() === "e2e") {
+  if (lookupKeys.length === 0 || !canListPrices()) {
     return {};
   }
 

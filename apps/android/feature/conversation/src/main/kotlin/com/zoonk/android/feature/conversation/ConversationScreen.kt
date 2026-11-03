@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -111,7 +113,9 @@ internal fun ConversationEntry(
             ConversationViewModel(
                 conversationId = id,
                 store = app.conversations,
-                newCall = { script -> LiveCall(script, LiveConversationCalls(id, app.api, app.cache), app.callTransports, app.scope) },
+                newCall = { task ->
+                    LiveCall(task, LiveConversationCalls(id, app.api, app.cache), app.callTransports, app.scope, app.analytics)
+                },
                 ongoing = app.calls,
                 timeZone = { TimeZone.getDefault().id },
                 prep = DraftPrepTimes(app.drafts, app.sessions),
@@ -207,7 +211,9 @@ private fun Conversation(
     val intro = remember(conversation) { conversation.recode<LanguageConversation, LanguageConversationIntro>() }
     val result = conversation.result
     val title = conversationTitle(conversation)
-    val startCall = rememberCallStart { microphone, takeover -> model.start(conversation, microphone, takeover) }
+    // A microphone refused from a problem screen goes back to the intro, where the learner can type instead.
+    val launcher =
+        rememberCallLauncher(onBlocked = model::showIntro) { microphone, takeover -> model.start(conversation, microphone, takeover) }
     val onSeePlus = { exits.open(AppRoute.Subscription) }
     LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
@@ -294,8 +300,8 @@ private fun Conversation(
     val problemActions =
         CallProblemActions(
             onClose = exits::close,
-            onRetry = { startCall(false) },
-            onTakeover = { startCall(true) },
+            onRetry = { launcher.start(false) },
+            onTakeover = { launcher.start(true) },
             onEnd = { call?.hangUp() },
             onCreateAccount = { exits.open(AppRoute.Login) },
             onSeePlus = onSeePlus,
@@ -303,18 +309,18 @@ private fun Conversation(
 
     when {
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
-            CallIntro(intro, CallIntroStart.PlusRequired, onStart = {}, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSeePlus = onSeePlus, onClose = exits::close)
         }
 
         callState == null && examTask != null -> {
             val prepStartedAt by model.prepStartedAt.collectAsStateWithLifecycle(null)
             ExamTaskIntro(conversation, examTask, prepStartedAt, model::startPrep, exits::close) {
-                StartCallButton(starting = false, onClick = { startCall(false) }, modifier = Modifier.barAction())
+                CallStartActions(launcher, conversation.character.name)
             }
         }
 
         callState == null -> {
-            CallIntro(intro, CallIntroStart.Idle, onStart = { startCall(false) }, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.Idle, launcher, onSeePlus = onSeePlus, onClose = exits::close)
         }
 
         save == CallSave.Ended || save == CallSave.TakenOver -> {
@@ -322,21 +328,18 @@ private fun Conversation(
             CallProblem(kind, title, problemActions)
         }
 
-        save != null || callState.phase == LiveCallPhase.Ended -> {
-            SavingCall(
-                save ?: CallSave.Saving,
-                grading = conversation.grades,
-                title = title,
-                onRetry = model::saveAgain,
-                onClose = exits::close,
-            )
-        }
-
-        callState.phase == LiveCallPhase.Failed -> {
+        callState.phase == LiveCallPhase.Failed && save == null -> {
             CallProblem(CallProblemKind.Failed(callState.failure ?: LiveCallFailure.Connect, callState.limit), title, problemActions)
         }
 
+        // One screen from the call to its save, so the transcript keeps its place when the call ends.
         else -> {
+            val ended =
+                if (save != null || callState.phase == LiveCallPhase.Ended) {
+                    EndedCall(save ?: CallSave.Saving, grading = conversation.grades, onRetry = model::saveAgain, onClose = exits::close)
+                } else {
+                    null
+                }
             ConversationLive(
                 conversation = conversation,
                 call = callState,
@@ -348,7 +351,9 @@ private fun Conversation(
                         onHelp = model::help,
                         onMute = call::toggleMute,
                         onSend = call::sendText,
+                        onTyping = call::typed,
                     ),
+                ended = ended,
             )
         }
     }
@@ -361,26 +366,52 @@ private val LanguageConversation.grades: Boolean
     get() = kind == LanguageConversation.Kind.SPEAKING_MOCK || examTask != null
 
 /**
- * Asks for the microphone, then starts: the call is reserved only once the learner answered, since
- * its time starts then. Without the microphone the call runs on typed replies.
+ * A call's start from the learner's tap. The microphone is asked for first, and the call is reserved
+ * only once the learner answered, since its time starts then. A refused microphone reserves nothing:
+ * the learner can type instead, or allow it in the settings, which clears the refusal on return.
  */
+@Stable
+internal class CallLauncher(
+    val micBlocked: Boolean,
+    val start: (takeover: Boolean) -> Unit,
+    val typeInstead: () -> Unit,
+)
+
 @Composable
-internal fun rememberCallStart(start: (microphone: Boolean, takeover: Boolean) -> Unit): (takeover: Boolean) -> Unit {
+internal fun rememberCallLauncher(
+    onBlocked: () -> Unit = {},
+    start: (microphone: Boolean, takeover: Boolean) -> Unit,
+): CallLauncher {
     val context = LocalContext.current
     val currentStart by rememberUpdatedState(start)
+    val currentOnBlocked by rememberUpdatedState(onBlocked)
     var takeover by rememberSaveable { mutableStateOf(false) }
+    var blocked by rememberSaveable { mutableStateOf(false) }
+    val allowed = { ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED }
     val permission =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> currentStart(granted, takeover) }
-    return remember(context, permission) {
-        { asked: Boolean ->
-            takeover = asked
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                currentStart(true, asked)
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                currentStart(true, takeover)
             } else {
-                permission.launch(Manifest.permission.RECORD_AUDIO)
+                blocked = true
+                currentOnBlocked()
             }
         }
+    LifecycleResumeEffect(Unit) {
+        if (allowed()) blocked = false
+        onPauseOrDispose {}
     }
+    return CallLauncher(
+        micBlocked = blocked,
+        start = { asked ->
+            takeover = asked
+            if (allowed()) currentStart(true, asked) else permission.launch(Manifest.permission.RECORD_AUDIO)
+        },
+        typeInstead = {
+            blocked = false
+            currentStart(false, takeover)
+        },
+    )
 }
 
 @Composable

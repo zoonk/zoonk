@@ -18,6 +18,7 @@ import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-l
 import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
 import { getLessonSupport } from "@zoonk/core/lesson-player/support";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
+import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
@@ -27,6 +28,7 @@ import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -82,10 +84,19 @@ async function getLessonChallengeTeam(played: { lesson: PlayableLibraryLesson } 
   return outcome.status === "ready" ? outcome.team : null;
 }
 
-async function loadWaitingState(result: PlayableLibraryLessonResult | null) {
-  return result?.status === "notGenerated"
-    ? getLessonWaitingState({ lessonId: result.lesson.id })
-    : null;
+/** The goal's first lesson's warm-up deck is read with the page, so its card paints with it. */
+async function loadWaiting(result: PlayableLibraryLessonResult | null) {
+  const waiting =
+    result?.status === "notGenerated"
+      ? await getLessonWaitingState({ lessonId: result.lesson.id })
+      : null;
+
+  const warmUpId = waiting?.status === "ready" ? waiting.state.warmUpId : null;
+
+  // The card is optional: a deck that can't be read leaves the wait without it.
+  const { data: warmUp } = warmUpId ? await safeAsync(() => getWarmUp(warmUpId)) : { data: null };
+
+  return { waiting, warmUp: warmUp?.status === "ready" ? warmUp.deck : null };
 }
 
 function LessonWithoutScreens({
@@ -99,7 +110,7 @@ function LessonWithoutScreens({
   initialRequest: LessonRequest;
   origin: LessonOrigin | null;
   result: Exclude<PlayableLibraryLessonResult, { status: "ready" }>;
-  waiting: Awaited<ReturnType<typeof loadWaitingState>>;
+  waiting: Awaited<ReturnType<typeof loadWaiting>>;
 }) {
   if (result.status === "sessionRequired") {
     return <LessonGuestGate exitHref={origin?.path ?? "/"} lesson={result.lesson} />;
@@ -111,7 +122,8 @@ function LessonWithoutScreens({
       initialRequest={initialRequest}
       lesson={result.lesson}
       origin={origin?.path ?? null}
-      waiting={waiting}
+      waiting={waiting.waiting}
+      warmUp={waiting.warmUp}
     />
   );
 }
@@ -184,7 +196,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     return Promise.all([
       getLessonChallengeTeam(lesson && { lesson }),
       lesson ? wordTutorSuggestions(lesson.language) : [],
-      loadWaitingState(lessonResult),
+      loadWaiting(lessonResult),
     ]);
   });
 

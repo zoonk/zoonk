@@ -1,11 +1,21 @@
-import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { parseEnv } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   copyEnvironment,
   ownDevelopmentDatabaseUrl,
   worktreeDatabaseName,
+  writeEnvironment,
 } from "./environment.mts";
 
 function checkout(root: string, name: string): string {
@@ -85,5 +95,41 @@ describe(ownDevelopmentDatabaseUrl, () => {
 
   it("ignores a checkout without a database environment", () => {
     expect(ownDevelopmentDatabaseUrl(databaseCheckout())).toBeNull();
+  });
+});
+
+function app({
+  dependencies,
+  name,
+  worktree,
+}: {
+  dependencies: object;
+  name: string;
+  worktree: string;
+}): string {
+  const directory = join(worktree, "apps", name);
+  mkdirSync(directory, { recursive: true });
+  writeFileSync(join(directory, "package.json"), JSON.stringify({ dependencies }));
+  return join(directory, ".env");
+}
+
+function readUrl(path: string): string | undefined {
+  return existsSync(path) ? parseEnv(readFileSync(path, "utf8")).DATABASE_URL : undefined;
+}
+
+describe(writeEnvironment, () => {
+  it("points an app that reads the database at the worktree's copy even when it has no .env", () => {
+    const worktree = databaseCheckout();
+    const reader = app({ dependencies: { "@zoonk/db": "workspace:*" }, name: "main", worktree });
+    const other = app({ dependencies: {}, name: "blog", worktree });
+    const name = worktreeDatabaseName({ mode: "dev", worktree });
+
+    writeEnvironment({
+      source: new URL("postgres://postgres:postgres@localhost:5432/zoonk"),
+      worktree,
+    });
+
+    expect(readUrl(reader)).toBe(`postgres://postgres:postgres@localhost:5432/${name}`);
+    expect(existsSync(other)).toBe(false);
   });
 });

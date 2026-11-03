@@ -12,6 +12,7 @@ export const LESSON_READY_STEP: LessonContentStepName = "lessonReady";
 const GOAL_CONTENT_STEPS = [
   "joinRunningGoal",
   "understandGoal",
+  "warmUpReady",
   "readExamNotice",
   "buildSkillGraph",
   "saveSkills",

@@ -4,51 +4,28 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
-import { NoticeReading } from "./notice-reading";
-import { PlanBuilding } from "./plan-building";
+import { PlanWait } from "./plan-wait";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
-import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
+import {
+  WAITING_RUN,
+  getNoticeStop,
+  getRevealWait,
+  getWaitRun,
+  isPlanMade,
+  isRunStopped,
+} from "./wait-run";
 
 const POLL_MS = 3000;
 
 type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
-
-function usePlanWait({
-  isReady,
-  recordPlanWait,
-}: {
-  isReady: boolean;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
-}) {
-  const startedAt = useRef<number | null>(null);
-
-  const record = useEffectEvent((milliseconds: number) => {
-    void recordPlanWait(milliseconds);
-  });
-
-  useEffect(() => {
-    if (!isReady) {
-      startedAt.current ??= Date.now();
-      return;
-    }
-
-    if (startedAt.current === null) {
-      return;
-    }
-
-    const milliseconds = Date.now() - startedAt.current;
-    startedAt.current = null;
-    record(milliseconds);
-  }, [isReady]);
-}
 
 export function PlanReveal({
   actions,
@@ -58,6 +35,7 @@ export function PlanReveal({
   initialPlan,
   isGuest,
   libraryCourse,
+  onPlanReadyChange,
   planActions,
   planLinkHref,
   refreshPages,
@@ -72,6 +50,7 @@ export function PlanReveal({
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   libraryCourse: LibraryCourseLink | null;
+  onPlanReadyChange: (isReady: boolean) => void;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
   refreshPages: () => void;
@@ -96,7 +75,8 @@ export function PlanReveal({
   };
 
   const readingNotice = plan?.notice === "reading";
-  const shown = Boolean(plan?.ready) && !readingNotice;
+  const wait = getRevealWait(plan);
+  const shown = wait === null;
   const refreshKeptPages = useEffectEvent(refreshPages);
 
   // Start would open the Today the browser kept, read before this plan, maybe for the goal before it.
@@ -127,26 +107,18 @@ export function PlanReveal({
     timeoutMs: Infinity,
   });
 
-  usePlanWait({ isReady: shown, recordPlanWait: actions.recordPlanWait });
+  const isLoading = !read && poll.status === "polling";
+
+  useEffect(() => {
+    if (!isLoading) {
+      onPlanReadyChange(shown);
+    }
+  }, [isLoading, onPlanReadyChange, shown]);
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 
-  if (!plan?.ready) {
-    return !read && poll.status === "polling" ? (
-      <StepLoading />
-    ) : (
-      <PlanBuilding run={waitRun}>
-        {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
-      </PlanBuilding>
-    );
-  }
-
-  if (readingNotice) {
-    return hasWaitFailed({ poll: poll.status, run }) ? (
-      <PlanBuilding run={waitRun} />
-    ) : (
-      <NoticeReading document={plan.examDocument} lastNotice={plan.schedule.targetDateEstimated} />
-    );
+  if (isLoading) {
+    return <StepLoading />;
   }
 
   async function refreshAfter<T>(change: Promise<T>): Promise<T> {
@@ -166,23 +138,42 @@ export function PlanReveal({
   };
 
   return (
-    <PlanScreenProvider
-      value={{
-        actions: refreshingActions,
-        focusTestHref,
-        goal,
-        plan,
-        shareHref: planLinkHref(plan.planId),
-      }}
+    <PlanWait
+      next="plan"
+      notice={
+        plan
+          ? {
+              document: plan.examDocument,
+              lastNotice: plan.schedule.targetDateEstimated,
+              stopped: getNoticeStop({ poll, run }),
+            }
+          : undefined
+      }
+      offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
+      readWarmUp={actions.readWarmUp}
+      run={waitRun}
+      wait={wait}
     >
-      <PlanSheetHosts>
-        <RevealBody
-          isGuest={isGuest}
-          signUpHref={signUpHref}
-          syllabus={syllabus}
-          todayHref={todayHref}
-        />
-      </PlanSheetHosts>
-    </PlanScreenProvider>
+      {plan && (
+        <PlanScreenProvider
+          value={{
+            actions: refreshingActions,
+            focusTestHref,
+            goal,
+            plan,
+            shareHref: planLinkHref(plan.planId),
+          }}
+        >
+          <PlanSheetHosts>
+            <RevealBody
+              isGuest={isGuest}
+              signUpHref={signUpHref}
+              syllabus={syllabus}
+              todayHref={todayHref}
+            />
+          </PlanSheetHosts>
+        </PlanScreenProvider>
+      )}
+    </PlanWait>
   );
 }

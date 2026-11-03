@@ -75,7 +75,7 @@ describe(liveCallDeadlineWorkflow, () => {
     ).resolves.toMatchObject({ seconds: expect.any(Number) });
   });
 
-  it("[1] retries a hangup OpenAI didn't confirm in the same run", async () => {
+  it("[1] ends a call whose hangup OpenAI didn't confirm without trying again", async () => {
     const connection = await liveConnection();
     vi.mocked(hangUpLiveCallSession).mockRejectedValueOnce(new Error("OpenAI is unavailable"));
 
@@ -86,10 +86,10 @@ describe(liveCallDeadlineWorkflow, () => {
     await getRun(run.runId).wakeUp({ correlationIds: [await waitForSleep(run)] });
     await run.returnValue;
 
-    expect(hangUpLiveCallSession).toHaveBeenCalledTimes(2);
+    expect(hangUpLiveCallSession).toHaveBeenCalledOnce();
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: connection.id } }),
-    ).resolves.toMatchObject({ state: "ended" });
+    ).resolves.toMatchObject({ endReason: "deadline", endUnconfirmed: true, state: "ended" });
   });
 });

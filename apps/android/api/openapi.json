@@ -2580,7 +2580,7 @@
         }
       },
       "post": {
-        "description": "Starts a goal's curriculum (skill graph, plan and course outlines) or, for an explain question, its quick explanation again, such as after a start failed. A run already going is joined, and only what is missing is written. POST /goals starts it the first time. Stream GET /generations/{generationId}/events for live steps: a curriculum reports `understandGoal`, `readExamNotice` (only while research reads a class test's own material before its skill graph), `buildSkillGraph`, `saveSkills`, `preparePlacement` (placement's questions start being written, by a run of their own that this stream doesn't follow: GET /goals/{goalId}/placement asks each once it's written), `createPlan`, `outlineCourses`, `prepareFirstLessons`, then `goalReady`, or `workflowError` when the plan couldn't be built; an explanation `classifyQuestion`, `findExplanation`, `writeExplanation` (completed once the explanation can be read), then `explanationReady` once its course to go further is linked. A run that finds another run already writing the goal reports `joinRunningGoal` or `joinRunningExplanation` with that run's id as `entityId`: follow that run's events instead. Starting a goal whose plan is already built again with a newer `researchId` reconciles the plan with that research, which counts as small AI help: a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` (403 asks a guest to sign up, 402 a free learner to upgrade or come back, 429 Plus to slow down).",
+        "description": "Starts a goal's curriculum (skill graph, plan and course outlines) or, for an explain question, its quick explanation again, such as after a start failed. A run already going is joined, and only what is missing is written. POST /goals starts it the first time. Stream GET /generations/{generationId}/events for live steps: a curriculum reports `understandGoal`, `readExamNotice` (only while research reads a class test's own material before its skill graph), `buildSkillGraph` (with a `started` event carrying `skillName` for each skill as it's written), `saveSkills`, `preparePlacement` (placement's questions start being written, by a run of their own that this stream doesn't follow: GET /goals/{goalId}/placement asks each once it's written), `createPlan`, `outlineCourses`, `prepareFirstLessons`, then `goalReady`, or `workflowError` when the plan couldn't be built. A run that builds the plan (a first build or a retry before the plan exists) also reports `warmUpReady` with `status: completed` and `warmUpId` once the goal's warm-up deck is ready, independently of the plan's progress; a run on an existing plan does not send it. The events stream documents that payload. An explanation reports `classifyQuestion`, `findExplanation`, `writeExplanation` (completed once the explanation can be read), then `explanationReady` once its course to go further is linked. A run that finds another run already writing the goal reports `joinRunningGoal` or `joinRunningExplanation` with that run's id as `entityId`: follow that run's events instead. Starting a goal whose plan is already built again with a newer `researchId` reconciles the plan with that research, which counts as small AI help: a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` (403 asks a guest to sign up, 402 a free learner to upgrade or come back, 429 Plus to slow down).",
         "operationId": "createGoalGeneration",
         "security": [
           {
@@ -4373,7 +4373,7 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\" and \"at\" (when the step reported it, in milliseconds since the epoch).",
+                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again) and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. A run that builds the plan (a first build or a retry before the plan exists) reports the deck once, including a reused or already linked deck. A run on an existing plan does not send this event. This event is never sent when the goal has no deck.",
                   "example": "data: {\"at\":1760000000000,\"status\":\"started\",\"step\":\"writeLesson\"}\n\n"
                 }
               }
@@ -6806,7 +6806,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
+        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created answers PREVIOUS_CONNECTION_CLOSING; a hangup OpenAI doesn't confirm still ends the old connection. A call starts at its full length while any of the learner's call time today and this month, their daily AI budget and their monthly call budget is left; all of it counts, so the next call is refused once one is used up. Connecting again a call that already connected keeps what's left of its talk time, each connection with its own wrap-up, even when no call time or budget is left; once that talk time is over, a checkpoint has ended and other calls start over under the limits. The daily connection cap also applies.",
         "operationId": "connectLanguageConversation",
         "summary": "Reserve a live conversation connection",
         "parameters": [
@@ -6865,7 +6865,7 @@
             }
           },
           "402": {
-            "description": "The checkpoint call or exam speaking task requires Plus, including after lapse. Error code: PLUS_REQUIRED. No reservation or provider session is created.",
+            "description": "The checkpoint call, exam speaking task or practice length past the free plan's requires Plus, including after lapse. Error code: PLUS_REQUIRED. No reservation or provider session is created.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6960,7 +6960,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Hangs up the owned connection's session and settles the call at that moment: the learner keeps only the time it ran. Stop microphone and playback immediately; the peer closes once the session ends. No feedback or reward is written here. Repeating it is safe. A hangup OpenAI didn't confirm, or a session still being created, returns PREVIOUS_CONNECTION_CLOSING: ask again; the deadline run also ends it.",
+        "description": "Hangs up the owned connection's session and settles the call at that moment: the learner keeps only the time it ran. Stop microphone and playback immediately; the peer closes once the session ends. No feedback or reward is written here. Repeating it is safe. A hangup OpenAI doesn't confirm still ends the call. A session still being created returns PREVIOUS_CONNECTION_CLOSING: ask again; the deadline run also ends it.",
         "operationId": "endLanguageConversationConnection",
         "summary": "End a live conversation connection",
         "parameters": [
@@ -7222,7 +7222,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
+        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
         "operationId": "checkLanguageConversationObjectives",
         "summary": "Check a live conversation's goals",
         "parameters": [
@@ -7251,7 +7251,7 @@
         },
         "responses": {
           "200": {
-            "description": "Every goal met so far",
+            "description": "Every goal met so far, the progress cue and whether the call ended with a goodbye",
             "content": {
               "application/json": {
                 "schema": {
@@ -24091,6 +24091,90 @@
           }
         }
       }
+    },
+    "/warm-ups/{warmUpId}": {
+      "get": {
+        "description": "A shared deck of quick guessing cards for a signed-in learner or guest. Includes the answers and reveals so every card works without another request. Only ready decks are served; a missing deck or one still being written or failed returns 404.",
+        "operationId": "getWarmUp",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a warm-up deck",
+        "tags": [
+          "Warm-ups"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "warmUpId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Warm-up deck ID"
+            },
+            "required": true,
+            "description": "Warm-up deck ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ready warm-up deck",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarmUpDeck"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The deck is missing or not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -29956,7 +30040,7 @@
             "items": {
               "type": "string"
             },
-            "description": "What the lesson teaches, each idea in one sentence; empty until it's written"
+            "description": "What the lesson teaches, each idea in one sentence; empty until it's written. Rich text: the lesson Markdown subset and `$…$` math"
           },
           "title": {
             "type": "string"
@@ -29978,7 +30062,7 @@
         "properties": {
           "context": {
             "nullable": true,
-            "description": "Plain text the question follows; null when it stands alone",
+            "description": "What the question follows; null when it stands alone. Rich text: the lesson Markdown subset and `$…$` math",
             "type": "string"
           },
           "guess": {
@@ -30000,7 +30084,8 @@
                   "type": "string"
                 },
                 "text": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Rich text: the lesson Markdown subset and `$…$` math"
                 }
               },
               "required": [
@@ -30036,7 +30121,7 @@
           },
           "text": {
             "type": "string",
-            "description": "Plain text"
+            "description": "Rich text: the lesson Markdown subset and `$…$` math"
           }
         },
         "required": [
@@ -34804,13 +34889,21 @@
               "failed"
             ],
             "description": "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now"
+          },
+          "warmUpId": {
+            "nullable": true,
+            "description": "The goal's ready warm-up deck for its first lesson's wait, or null when none applies. Read it with GET /warm-ups/{warmUpId}",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           }
         },
         "required": [
           "alternative",
           "generationId",
           "setAside",
-          "status"
+          "status",
+          "warmUpId"
         ],
         "additionalProperties": false
       },
@@ -38722,7 +38815,7 @@
           },
           "limit": {
             "nullable": true,
-            "description": "When no length fits: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
+            "description": "When no call time is left: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
             "type": "object",
             "properties": {
               "period": {
@@ -38755,7 +38848,7 @@
               "minimum": -9007199254740991,
               "maximum": 9007199254740991
             },
-            "description": "The lengths that fit what's left of the learner's call time"
+            "description": "Every length the learner's plan allows, while any of their call time is left. A call runs its whole length; the time it uses can pass what's left, and then the next call waits"
           },
           "paused": {
             "type": "boolean",
@@ -40431,23 +40524,25 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
             "description": "When the server hangs the call up"
           },
-          "endsAtLimit": {
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "day",
-              "month"
-            ]
+          "script": {
+            "$ref": "#/components/schemas/LiveCallScript"
           },
           "seconds": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "The call time left when the server answered: end the call this long after the answer arrived, whatever the device's clock says"
+            "description": "How long until the server hangs up, from when its answer arrived, whatever the device's clock says: the hard stop"
           },
           "sessionUrl": {
             "type": "string"
+          },
+          "talkSeconds": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The talk time left when the server answered: start ending the call this long after the answer arrived. `seconds` adds the wrap-up for the goodbye"
           },
           "voice": {
             "type": "string"
@@ -40456,10 +40551,155 @@
         "required": [
           "connectionId",
           "deadlineAt",
-          "endsAtLimit",
+          "script",
           "seconds",
           "sessionUrl",
+          "talkSeconds",
           "voice"
+        ],
+        "additionalProperties": false
+      },
+      "LiveCallScript": {
+        "type": "object",
+        "properties": {
+          "cues": {
+            "$ref": "#/components/schemas/LiveCallCues"
+          },
+          "timing": {
+            "$ref": "#/components/schemas/LiveCallTiming"
+          }
+        },
+        "required": [
+          "cues",
+          "timing"
+        ],
+        "additionalProperties": false,
+        "description": "What the app tells the live session during the call, and when"
+      },
+      "LiveCallCues": {
+        "type": "object",
+        "properties": {
+          "checkIn": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "goodbye": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "goodbyeDone": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "noBackend": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "opening": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          },
+          "typedReply": {
+            "$ref": "#/components/schemas/LiveCallCue"
+          }
+        },
+        "required": [
+          "checkIn",
+          "goodbye",
+          "goodbyeDone",
+          "noBackend",
+          "opening",
+          "typedReply"
+        ],
+        "additionalProperties": false,
+        "description": "`opening` once the session starts, and once more when no character transcript arrives within `timing.openingRetryMs`. `goodbye` ends the call at its talk time or after a long silence, `goodbyeDone` once the objective check says every objective is met. `checkIn` once in a silence episode. `noBackend` answers every delegation, with its delegation id. `typedReply` sends a typed reply as its `text` followed by the reply as a JSON string literal (`text + JSON.stringify(reply)`)"
+      },
+      "LiveCallCue": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "commentary",
+              "instructions",
+              "thinking"
+            ],
+            "description": "The live session's context channel to append `text` on: `commentary` is said aloud, `thinking` and `instructions` steer without being spoken"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "LiveCallTiming": {
+        "type": "object",
+        "properties": {
+          "answerWaitMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Once the ending is armed and the character stopped, how long to wait for the learner before sending the goodbye anyway"
+          },
+          "characterQuietMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The character counts as talking until this long after its last transcript"
+          },
+          "checkInMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode `cues.checkIn` is sent"
+          },
+          "goodbyeQuietMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long, or once no words (a character or learner transcript, typing or a sent reply) came for `answerWaitMs`, so a noisy microphone can't hold the call open"
+          },
+          "goodbyeRetryMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Send the goodbye once more when no character transcript arrived and nothing happened for this long after the learner gave up the floor"
+          },
+          "openingRetryMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Send `cues.opening` once more when the character stays silent this long"
+          },
+          "quietGoodbyeMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode the call ends with `cues.goodbye`"
+          },
+          "quietHintMs": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "How far into a silence episode the screen says the learner can take their time"
+          }
+        },
+        "required": [
+          "answerWaitMs",
+          "characterQuietMs",
+          "checkInMs",
+          "goodbyeQuietMs",
+          "goodbyeRetryMs",
+          "openingRetryMs",
+          "quietGoodbyeMs",
+          "quietHintMs"
         ],
         "additionalProperties": false
       },
@@ -40512,16 +40752,31 @@
       "LanguageConversationObjectiveCheck": {
         "type": "object",
         "properties": {
+          "goodbye": {
+            "type": "boolean",
+            "description": "This check read the transcript sent and found it ending with the learner and the character saying goodbye to each other: end the call without a goodbye cue, unless the learner spoke or typed after sending it. False when it found none or read nothing new"
+          },
           "objectivesMet": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "description": "Labels of every objective the learner has achieved so far"
+          },
+          "progress": {
+            "nullable": true,
+            "description": "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LiveCallCue"
+              }
+            ]
           }
         },
         "required": [
-          "objectivesMet"
+          "goodbye",
+          "objectivesMet",
+          "progress"
         ],
         "additionalProperties": false
       },
@@ -92052,6 +92307,72 @@
           "catchUp",
           "missions",
           "status"
+        ],
+        "additionalProperties": false
+      },
+      "WarmUpDeck": {
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "correct": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "correct",
+                      "id",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "question": {
+                  "type": "string"
+                },
+                "reveal": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "options",
+                "question",
+                "reveal"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "language": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cards",
+          "id",
+          "language"
         ],
         "additionalProperties": false
       },

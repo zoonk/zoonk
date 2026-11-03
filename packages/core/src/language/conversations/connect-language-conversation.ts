@@ -1,14 +1,16 @@
 import "server-only";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
-import { prisma } from "@zoonk/db";
+import { type LiveCallConnection, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { claimLiveCallUsageForViewer } from "../../entitlements/_utils/claim-usage-for-viewer";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
+import { buildLiveCall } from "./_utils/conversation-view";
 import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
+import { getTalkEndsAt } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import {
   type LanguageConversationConnectInput,
@@ -19,6 +21,18 @@ import { findOwnedConversation } from "./get-language-conversation";
 import { type LiveCallDeadlineScheduler, type LiveCallRefusal } from "./live-call-contract";
 
 const MS_PER_SECOND = 1000;
+
+function getCallTimes(
+  connection: Pick<LiveCallConnection, "createdAt" | "deadlineAt" | "heldSeconds">,
+): Pick<LanguageConversationSetup, "seconds" | "talkSeconds"> {
+  const now = Date.now();
+  const secondsUntil = (at: number) => Math.max(1, Math.floor((at - now) / MS_PER_SECOND));
+
+  return {
+    seconds: secondsUntil(connection.deadlineAt.getTime()),
+    talkSeconds: secondsUntil(getTalkEndsAt(connection)),
+  };
+}
 
 export type ConnectLanguageConversationResult =
   | LiveCallRefusal
@@ -69,11 +83,13 @@ export async function connectLanguageConversation({
     return { status: "notFound" };
   }
 
-  if (owned.row.status !== "ready" || owned.row.reviewRunId !== null) {
+  const call = buildLiveCall(owned.row);
+
+  if (!call || owned.row.reviewRunId !== null) {
     return { status: "conversationEnded" };
   }
 
-  if (isPlusOnlyLiveCall(owned.row.kind) && viewer.tier !== "plus") {
+  if (isPlusOnlyLiveCall(owned.row) && viewer.tier !== "plus") {
     return { status: "plusRequired" };
   }
 
@@ -117,14 +133,12 @@ export async function connectLanguageConversation({
     return { status: "retryable" };
   }
 
-  const seconds = Math.floor((connection.deadlineAt.getTime() - Date.now()) / MS_PER_SECOND);
-
   return {
     setup: {
+      ...getCallTimes(connection),
       connectionId: connection.id,
       deadlineAt: connection.deadlineAt.toISOString(),
-      endsAtLimit: result.endsAtLimit,
-      seconds: Math.max(1, seconds),
+      script: call.script,
       sessionUrl: `/v1/language-conversations/${conversationId}/connections/${connection.id}/sdp`,
       voice: getLiveConversationVoice(owned.row.targetLanguage),
     },

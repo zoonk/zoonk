@@ -182,6 +182,7 @@ internal fun ActivityView(
             actions.cantListen,
             actions::setCantListen,
             content.baseMap,
+            actions::takeNumberKeys,
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays

@@ -20,6 +20,18 @@ type MasteryState = "learning" | "mastered" | "new" | "solid";
 type MistakeCause = "gap" | "guess" | "misread" | "time" | "trap";
 type MemoryCategory = "background" | "context" | "goals" | "learning" | "preferences" | "routine";
 type InsightKind = "plan_change" | "schedule" | "tip";
+type ConversationKind = "checkpoint" | "exam_speaking" | "practice" | "speaking_mock";
+
+type CallEndReason =
+  | "done"
+  | "dropped"
+  | "failed"
+  | "goodbye"
+  | "hard_stop"
+  | "learner_ended"
+  | "quiet"
+  | "time";
+export type WarmUpSurface = "lessonWait" | "placementWait" | "planWait";
 
 /** Keep these property names so existing lesson dashboards continue to work. */
 type LessonEventProperties = { goal_id: string | null; lessonKind: string; lesson_id: string };
@@ -47,6 +59,14 @@ type OnboardingEvents = {
     goal_id: string;
     phases: number;
   };
+  /** `position` is the card's place in the deck, from 1. Both carry `goal_kind` as a shared property. */
+  "Warm-Up Answered": {
+    card_id: string;
+    correct: boolean;
+    position: number;
+    surface: WarmUpSurface;
+  };
+  "Warm-Up Shown": { card_count: number; surface: WarmUpSurface };
 };
 
 type DailyEvents = {
@@ -87,8 +107,27 @@ type LearningEvents = {
     questions: number;
   };
   "Pronunciation Tip Shown": { skill_id: string | null; target_language: string };
+  /**
+   * Sent by the app once per connection, best effort, however it ended. A reply gap runs from the
+   * learner's microphone going quiet to the next character transcript arriving: a proxy for the
+   * wait the learner heard, not audible latency. Gaps after an app cue are left out, and
+   * `unanswered_turns` counts the learner turns no character transcript followed.
+   */
+  "Call Ended": {
+    conversation_kind: ConversationKind;
+    delegations: number;
+    duration_seconds: number;
+    learner_turns: number;
+    reason: CallEndReason;
+    reply_gap_max_ms: number | null;
+    reply_gap_median_ms: number | null;
+    /** Reply gaps over 3 seconds. */
+    slow_replies: number;
+    talk_seconds: number;
+    unanswered_turns: number;
+  };
   "Conversation Finished": {
-    conversation_kind: "checkpoint" | "exam_speaking" | "practice" | "speaking_mock";
+    conversation_kind: ConversationKind;
     objectives: number;
     objectives_met: number;
     spoken_seconds: number;

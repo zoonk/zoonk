@@ -96,6 +96,37 @@ sealed class AnalyticsEvent(
             ),
         )
 
+    /**
+     * Once per connection, however it ended. A reply gap with nothing to measure is left out where main
+     * sends it null: PostHog reads a missing property as null, and its capture takes no null values.
+     */
+    data class CallEnded(
+        val reason: String,
+        val conversationKind: String,
+        val talkSeconds: Long,
+        val durationSeconds: Long,
+        val learnerTurns: Int,
+        val unansweredTurns: Int,
+        val replyGapMedianMs: Long?,
+        val replyGapMaxMs: Long?,
+        val slowReplies: Int,
+        val delegations: Int,
+    ) : AnalyticsEvent(
+            "Call Ended",
+            listOfNotNull(
+                "reason" to reason,
+                "conversation_kind" to conversationKind,
+                "talk_seconds" to talkSeconds,
+                "duration_seconds" to durationSeconds,
+                "learner_turns" to learnerTurns,
+                "unanswered_turns" to unansweredTurns,
+                replyGapMedianMs?.let { "reply_gap_median_ms" to it },
+                replyGapMaxMs?.let { "reply_gap_max_ms" to it },
+                "slow_replies" to slowReplies,
+                "delegations" to delegations,
+            ).toMap(),
+        )
+
     data object SubscriptionGateShown : AnalyticsEvent("Subscription Gate Shown")
 
     data class SubscriptionCheckoutStarted(
@@ -111,6 +142,30 @@ sealed class AnalyticsEvent(
                 "plan" to "plus",
             ),
         )
+
+    data class WarmUpShown(
+        val surface: WarmUpSurface,
+        val cardCount: Int,
+    ) : AnalyticsEvent("Warm-Up Shown", mapOf("surface" to surface.value, "card_count" to cardCount))
+
+    /** [position] counts from 1 in the deck. */
+    data class WarmUpAnswered(
+        val surface: WarmUpSurface,
+        val cardId: String,
+        val position: Int,
+        val correct: Boolean,
+    ) : AnalyticsEvent(
+            "Warm-Up Answered",
+            mapOf("surface" to surface.value, "card_id" to cardId, "position" to position, "correct" to correct),
+        )
+
+    enum class WarmUpSurface(
+        val value: String,
+    ) {
+        PlanWait("planWait"),
+        PlacementWait("placementWait"),
+        LessonWait("lessonWait"),
+    }
 
     enum class PublicPage(
         val value: String,

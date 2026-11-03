@@ -82,10 +82,9 @@ async function runMain() {
   process.env.MAIN_APP_URL = `http://localhost:${mainPort}`;
 
   const [apiBuilt, mainBuilt] = await Promise.all([
-    run({
-      args: ["--filter", "api", "build:e2e"],
-      environment: { ...process.env, NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
-    }).then(async (built) => markBuilt({ app: "api", built })),
+    run({ args: ["--filter", "api", "build:e2e"] }).then(async (built) =>
+      markBuilt({ app: "api", built }),
+    ),
     buildMain().then(async (built) => markBuilt({ app: "main", built })),
   ]);
 
@@ -112,8 +111,17 @@ async function buildMain(): Promise<boolean> {
 
   const metrics = resolve(repository, "apps/main/.next-e2e-build-time.txt");
 
+  // macOS ships BSD time: -l reports elapsed seconds and maximum RSS in bytes.
   const built = await run({
-    args: ["-v", "-o", metrics, "pnpm", "--filter", "main", "build:e2e"],
+    args: [
+      process.platform === "darwin" ? "-l" : "-v",
+      "-o",
+      metrics,
+      "pnpm",
+      "--filter",
+      "main",
+      "build:e2e",
+    ],
     command: "/usr/bin/time",
   });
 

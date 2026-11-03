@@ -21,9 +21,9 @@ test.describe("Language unit page", () => {
       await expect(page).toHaveURL(/\/content\/units\/[\da-f-]{36}$/u);
       await page.getByRole("button", { name: "Practice a conversation" }).click();
       const call = page.getByRole("dialog", { name: "Practice a conversation" });
-      await call.getByRole("button", { name: "Start the call" }).click();
+      await call.getByRole("button", { name: "Continue" }).click();
       await expect(page).toHaveURL(/\/conversation\/[\da-f-]{36}$/u);
-      await page.getByRole("button", { name: "Start the call" }).click();
+      await page.getByRole("button", { name: /^Call /u }).click();
 
       await expect(
         page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling"),

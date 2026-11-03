@@ -159,25 +159,20 @@ private struct NextStopView: View {
   @State private var lessonStatus: String?
   /// The block whose lesson this screen showed being written.
   @State private var waitedFor: String?
+  /// The goal's warm-up deck, while the lesson written is its first.
+  @State private var warmUp: FirstLessonWarmUp?
   @AccessibilityFocusState private var isStartFocused: Bool
 
   private var next: StudyBlock? { day.nextBlock }
 
   var body: some View {
-    PaneSplit {
-      List {
-        daySoFar
-      }
-    } secondary: {
-      List {
-        upNext
-        actions
-      }
-    } single: {
-      List {
-        daySoFar
-        upNext
-        actions
+    // The session never opens the lesson on its own: moving on only takes the card away. It says
+    // the lesson is ready itself.
+    WarmUpHold(surface: .lessonWait, isReady: !isLessonWorkRunning, announcement: nil) { stage in
+      stop(stage)
+    } onMoveOn: {
+      if isWrittenWhileWaiting {
+        isStartFocused = true
       }
     }
     .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
@@ -196,6 +191,70 @@ private struct NextStopView: View {
     .onDisappear {
       action?.cancel()
     }
+  }
+
+  private func stop(_ stage: WarmUpStage) -> some View {
+    let held: WarmUpHolding? =
+      switch stage {
+      case .waiting(let holding?) where isWrittenWhileWaiting:
+        WarmUpHolding {
+          holding.moveOn()
+
+          if let next {
+            open(next)
+          }
+        }
+      default: nil
+      }
+    let deckID: String? =
+      switch stage {
+      case .waiting: warmUpDeckID
+      case .ready: nil
+      }
+    let startLabel = Text(
+      "Start this lesson", tableName: "Player",
+      comment: "Opens a goal's first lesson, written while the learner guessed on its wait")
+
+    return PaneSplit {
+      List {
+        daySoFar
+      }
+    } secondary: {
+      List {
+        upNext
+        warmUpCard(deckID)
+        actions(isHeld: held != nil)
+      }
+      .warmUpDeck(deckID)
+      .warmUpHoldBar(held, label: startLabel)
+    } single: {
+      List {
+        daySoFar
+        upNext
+        warmUpCard(deckID)
+        actions(isHeld: held != nil)
+      }
+      .warmUpDeck(deckID)
+      .warmUpHoldBar(held, label: startLabel)
+    }
+  }
+
+  @ViewBuilder
+  private func warmUpCard(_ deckID: String?) -> some View {
+    if let deckID {
+      WarmUpSection(deckID: deckID)
+    }
+  }
+
+  /// Only for the lesson being written, never one that failed or can't be written.
+  private var warmUpDeckID: String? {
+    guard let warmUp, warmUp.lessonID == next?.lessonId, !isLessonUnavailable,
+      writing != .failed, lessonStatus != "failed"
+    else {
+      return nil
+    }
+
+    return warmUp.deckID
   }
 
   @ViewBuilder
@@ -262,12 +321,13 @@ private struct NextStopView: View {
     }
   }
 
-  private var actions: some View {
+  /// A held wait pins its own way to the lesson instead of the main button.
+  private func actions(isHeld: Bool) -> some View {
     Section {
       VStack(spacing: 12) {
         if let alternative, isLessonWorkRunning || isLessonUnavailable {
           mainButton(alternativeTitle(alternative), block: alternative)
-        } else if let next, !isLessonUnavailable {
+        } else if let next, !isLessonUnavailable, !isHeld {
           mainButton(continueTitle, block: next)
             .disabled(isLessonWorkRunning)
             .accessibilityFocused($isStartFocused)
@@ -441,7 +501,8 @@ private struct NextStopView: View {
     }
   }
 
-  /// VoiceOver says it however busy it is, and lands on Start.
+  /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner
+  /// still on the card can't open the lesson with a tap meant for an answer.
   private func offerWrittenLesson() {
     var announcement = AttributedString(
       String(
@@ -449,7 +510,6 @@ private struct NextStopView: View {
         comment: "A lesson written while the learner waited, offered with Start"))
     announcement.accessibilitySpeechAnnouncementPriority = .high
     AccessibilityNotification.Announcement(announcement).post()
-    isStartFocused = true
   }
 
   private func stop() {
@@ -477,7 +537,13 @@ private struct NextStopView: View {
 
     for _ in 0..<60 {
       if let lessonID = next.lessonId {
-        lessonStatus = await store.lessonReadiness(lessonID: lessonID)?.status.rawValue
+        let readiness = await store.lessonReadiness(lessonID: lessonID)
+        lessonStatus = readiness?.status.rawValue
+
+        // Read only while the lesson isn't written, so it's kept for a learner still guessing.
+        if let deckID = readiness?.warmUpId {
+          warmUp = FirstLessonWarmUp(lessonID: lessonID, deckID: deckID)
+        }
 
         if lessonStatus == "generating" || (writing?.run != nil && lessonStatus != "ready") {
           lessonStatus = "generating"
@@ -515,6 +581,11 @@ private struct FollowedLesson: Equatable {
   let lessonID: String?
   let writing: LessonWriting?
   let waits: Int
+}
+
+private struct FirstLessonWarmUp {
+  let lessonID: String
+  let deckID: String
 }
 
 private struct MomentSummary: View {

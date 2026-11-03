@@ -4,7 +4,7 @@ import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-li
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { type ProgramRun } from "../_sandbox/run-program";
 

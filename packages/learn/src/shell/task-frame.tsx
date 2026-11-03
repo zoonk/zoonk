@@ -131,6 +131,11 @@ export type TaskFrameAside = {
   width?: TaskAsideWidth;
 };
 
+const FIT_CLASS = {
+  always: { body: "min-h-0", root: "h-dvh overflow-hidden" },
+  lg: { body: "lg:min-h-0 lg:overflow-y-auto", root: "lg:h-dvh lg:overflow-hidden" },
+} as const;
+
 export function TaskFrame({
   aside,
   beforeExit,
@@ -139,7 +144,7 @@ export function TaskFrame({
   confirmExit = null,
   exitHref,
   exitToApp = false,
-  fit = false,
+  fit,
   footer,
   headerEnd,
   headerTitle,
@@ -157,7 +162,11 @@ export function TaskFrame({
   /** Null while leaving would lose work, such as a call being saved. */
   exitHref: string | null;
   exitToApp?: boolean;
-  fit?: boolean;
+  /**
+   * `lg` keeps the frame to the window's height from `lg`, so the body scrolls between the header
+   * and the bar. `always` does it at every width for a body that scrolls itself, unpadded.
+   */
+  fit?: "always" | "lg";
   footer?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
@@ -172,7 +181,7 @@ export function TaskFrame({
     <div
       className={cn(
         "bg-background text-foreground flex min-h-dvh flex-col",
-        fit && "lg:h-dvh lg:overflow-hidden",
+        fit && FIT_CLASS[fit].root,
         asideRoot?.className,
       )}
       data-aside={asideRoot?.["data-aside"]}
@@ -211,10 +220,10 @@ export function TaskFrame({
       </TaskHeader>
 
       <main
-        className={cn("flex flex-1 flex-col", fit && "lg:min-h-0 lg:overflow-y-auto")}
+        className={cn("flex flex-1 flex-col", fit && FIT_CLASS[fit].body)}
         data-slot="task-frame-body"
       >
-        <TaskBody>{children}</TaskBody>
+        {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
 
       {footer && <TaskActionBar>{footer}</TaskActionBar>}

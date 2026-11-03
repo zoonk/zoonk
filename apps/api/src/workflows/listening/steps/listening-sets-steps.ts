@@ -15,10 +15,6 @@ type PartStepInput = Pick<PartsToPrepare, "exam"> & {
   workflowRunId: string;
 };
 
-function getServiceTier(wait: CallWait) {
-  return chooseServiceTier({ reuse: "bounded", wait });
-}
-
 function toAnalytics({ analytics, workflowRunId }: Omit<PartStepInput, "exam" | "part" | "wait">) {
   return toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId });
 }
@@ -45,7 +41,7 @@ export async function preparePartSetStep(input: PartStepInput): Promise<string |
     analytics: toAnalytics(input),
     exam: input.exam,
     part: input.part,
-    serviceTier: getServiceTier(input.wait),
+    serviceTier: chooseServiceTier({ wait: input.wait }),
   });
 }
 
@@ -57,7 +53,7 @@ export async function voiceListeningSetStep({
 
   const recording = await voiceListeningSet({
     analytics: toAnalytics(input),
-    serviceTier: getServiceTier(input.wait),
+    serviceTier: chooseServiceTier({ wait: input.wait }),
     setId,
   });
 

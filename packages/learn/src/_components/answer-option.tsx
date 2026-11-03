@@ -4,6 +4,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { SpokenMath } from "../rich-text/spoken-math";
 import {
   ANSWER_OPTION_CLASS,
   ANSWER_TAG_CLASS,
@@ -111,7 +112,9 @@ export function AnswerOption({
         <Kbd className="[&_svg]:size-3">{marker}</Kbd>
       </LineMarker>
 
-      <span className="flex min-w-0 flex-1 flex-col">{children}</span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <SpokenMath>{children}</SpokenMath>
+      </span>
 
       {shownTag && <LineMarker>{shownTag}</LineMarker>}
     </button>

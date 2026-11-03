@@ -1,23 +1,25 @@
+import { type LiveCallCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
 
 /** A cue sent while the call is closing is dropped. */
 export function sendLiveCallCue({
-  channel = "instructions",
-  content,
+  cue,
   delegationId = null,
+  eventId,
   session,
 }: {
-  channel?: "instructions" | "thinking";
-  content: string;
+  cue: LiveCallCue;
   delegationId?: string | null;
+  eventId?: string;
   session: LiveCallSession;
 }) {
   try {
     void session
       .sendEvent({
-        content,
+        content: cue.text,
         delegationId,
-        providerOptions: { openai: { channel } },
+        eventId,
+        providerOptions: { openai: { channel: cue.channel } },
         type: "context-append",
       })
       .catch(() => null);

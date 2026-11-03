@@ -16,6 +16,7 @@ import {
 } from "../../mistakes/drill/drill-types";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { ItemSupport } from "../../questions/item-text";
+import { useSpokenText } from "../../rich-text/use-spoken-text";
 import {
   type StudyAnswerFeedback,
   type StudyBlockDetail,
@@ -214,6 +215,7 @@ export function BlockQuestion({
   question: StudyQuestion;
   run: Run;
 }) {
+  const spoken = useSpokenText();
   const { phase } = run.state;
   const { drill, stage } = blockDrill;
 
@@ -240,7 +242,11 @@ export function BlockQuestion({
 
       <BlockRecording detail={detail} phase={phase} question={question} />
 
-      <section aria-label={question.question} className="flex flex-col gap-4" key={question.itemId}>
+      <section
+        aria-label={spoken.blocks(question.question)}
+        className="flex flex-col gap-4"
+        key={question.itemId}
+      >
         {stage === "reading" ? (
           <>
             <QuotedSource question={question} />
