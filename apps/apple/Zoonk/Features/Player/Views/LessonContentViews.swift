@@ -133,13 +133,15 @@ struct LessonPictureView: View {
   /// The opening guess's picture comes before its question, so in one column it gives up its height
   /// for the question and options, down to a floor where it still reads. On a spread they face it.
   var opens = false
+  /// The shape pictures of this kind are drawn at, held while one draws.
+  var drawnAspectRatio = LessonPicturePlaceholder.screenAspectRatio
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
       picture(url: url, image: image)
     } else if let alt, isPending {
       LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
-        .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight)
+        .pictureFrame(aspectRatio: drawnAspectRatio, maxHeight: maxHeight)
     } else if let alt, asks {
       Label {
         Text(alt)
@@ -182,9 +184,7 @@ struct LessonPictureView: View {
         }
       }
     }
-    .pictureFrame(
-      aspectRatio: aspectRatio ?? LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight
-    )
+    .pictureFrame(aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight)
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
     .accessibilityAddTraits(.isImage)
@@ -194,8 +194,10 @@ struct LessonPictureView: View {
 /// Holds a picture's place until it's drawn and loaded, so nothing moves when it comes. Its
 /// description says what the question needs meanwhile; only the fill pulses, so it stays readable.
 struct LessonPicturePlaceholder: View {
-  /// Pictures are drawn at 1024 by 1280, as main's default.
-  static let aspectRatio: CGFloat = 4 / 5
+  /// New screen pictures are drawn at 1536 by 1024 and option pictures at 1024 by 1024; a stored
+  /// picture keeps the size it says it has.
+  static let screenAspectRatio: CGFloat = 3 / 2
+  static let optionAspectRatio: CGFloat = 1
 
   let alt: String?
   var saysItIsDrawing = false
