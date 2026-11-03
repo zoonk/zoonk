@@ -19,11 +19,14 @@ struct LiveCallClient {
 }
 
 /// What "Call again" hands the next connection on the same screen: the call so far.
+/// `connectionId` is what completion must name, the latest connection the screen saw, once one went
+/// live: until then there's no call to save.
 struct CallSoFar {
   var turns: [TranscriptTurn] = []
   var metLabels: [String]
   var usedHelp = false
   var examCuesSent = 0
+  var connectionId: String?
 
   static func newCall(_ conversation: LanguageConversation) -> Self {
     .init(metLabels: conversation.objectives.filter(\.met).map(\.label))
@@ -93,6 +96,9 @@ final class LiveCall {
   /// this one rang stays.
   private var helpedEarlier = false
   private var helped = false
+  /// The dropped call's connection this one continues, which completion names if it never goes
+  /// live: nil for a new call.
+  private var droppedConnectionId: String?
 
   @ObservationIgnored private let conversation: LanguageConversation
   @ObservationIgnored private let client: LiveCallClient
@@ -122,6 +128,7 @@ final class LiveCall {
   @ObservationIgnored private var checkTiming = ObjectiveCheckTiming()
   /// Its own task, so words that arrive while it runs don't cancel it and lose its answer.
   @ObservationIgnored private var runningCheck: Task<Void, Never>?
+  @ObservationIgnored private var reserving: Task<CallReservation?, Never>?
 
   init(conversation: LanguageConversation, client: LiveCallClient, soFar: CallSoFar? = nil) {
     self.conversation = conversation
@@ -138,8 +145,20 @@ final class LiveCall {
     helpedEarlier || helped
   }
 
+  /// There's a dropped call to save, whatever happens to this reconnect.
+  var continuing: Bool {
+    droppedConnectionId != nil
+  }
+
+  /// A reconnect's own reservation is the latest connection even if it never goes live.
   var soFar: CallSoFar {
-    .init(turns: turns, metLabels: metLabels, usedHelp: usedHelp, examCuesSent: examCuesSent)
+    .init(
+      turns: turns, metLabels: metLabels, usedHelp: usedHelp, examCuesSent: examCuesSent,
+      connectionId: liveSince != nil || continuing ? connectionId ?? droppedConnectionId : nil)
+  }
+
+  var dropped: DroppedCall? {
+    DroppedCall(continuing: continuing, phase: phase, failure: failure, micBlocked: micBlocked)
   }
 
   /// The whole call's talk time, whichever connection this is.
@@ -219,7 +238,10 @@ final class LiveCall {
 
     phase = .connecting
 
-    let reservation = await reserve(takeover: takesOver, isCurrent: { self.attempt == mine })
+    let takeover = takesOver
+    let reserving = Task { await reserve(takeover: takeover, isCurrent: { self.attempt == mine }) }
+    self.reserving = reserving
+    let reservation = await reserving.value
 
     guard attempt == mine, let reservation else {
       return
@@ -354,10 +376,17 @@ final class LiveCall {
     transport?.send(.mute(muted))
   }
 
+  /// Once a reservation still on its way has answered, so its connection is known.
+  func settled() async {
+    _ = await reserving?.value
+  }
+
   /// Returns what it saves whether or not the hangup went through: completing hangs it up too before
-  /// anything is reviewed. Nil only for a call that never got a connection.
+  /// anything is reviewed. Nil when no connection went live, as there's no call to save.
   func finish() async -> Components.Schemas.LanguageConversationCompletionInput? {
-    guard let connectionId else {
+    await settled()
+
+    guard let connectionId = soFar.connectionId else {
       return nil
     }
 
@@ -415,15 +444,17 @@ final class LiveCall {
       return answer
     }
 
-    // A start cancelled meanwhile never connects: its reservation is ended at once.
-    guard isCurrent() else {
-      Task { [client] in _ = await client.end(setup.connectionId) }
-      return nil
-    }
-
+    // Kept even when the start was cancelled meanwhile: completion must name the latest connection.
     connectionId = setup.connectionId
     closeConfirmed = false
     endedAtDeadline = false
+
+    // A start cancelled meanwhile never connects: its reservation is ended at once.
+    guard isCurrent() else {
+      Task { _ = await release() }
+      return nil
+    }
+
     return answer
   }
 
@@ -777,6 +808,7 @@ final class LiveCall {
     metLabels = soFar.metLabels
     helpedEarlier = soFar.usedHelp
     examCuesSent = soFar.examCuesSent
+    droppedConnectionId = soFar.connectionId
   }
 
   private func closeTransport() {

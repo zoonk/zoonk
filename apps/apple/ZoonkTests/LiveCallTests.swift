@@ -371,23 +371,10 @@ final class LiveCallTests: XCTestCase {
   }
 
   func testCallingAgainCarriesOnTheCallSoFar() async {
-    let dropped = FakeTransport()
-    let first = LiveCall(conversation: .fixture(), client: FakeServer().client(dropped))
-
-    await first.start()
-    dropped.onEvent?(.started)
-    dropped.onEvent?(.transcript(speaker: .character, delta: "Hi!", startMs: 0, endMs: 500))
-    dropped.onEvent?(.transcript(speaker: .learner, delta: "Hello", startMs: 1000, endMs: 3000))
-    dropped.onEvent?(
-      .transcript(speaker: .character, delta: " How are you?", startMs: 3500, endMs: 4000))
+    let first = await droppedCall()
     first.useHelp()
-    dropped.onLost?()
-    await settle { first.phase == .failed }
 
-    let earlier: [ConversationTurn] = [
-      .init(speaker: .character, text: "Hi!"), .init(speaker: .learner, text: "Hello"),
-      .init(speaker: .character, text: "How are you?"),
-    ]
+    let earlier = Self.droppedTurns
     let transport = FakeTransport()
     let server = FakeServer(talkSeconds: 90, continuesCall: true)
     let call = LiveCall(
@@ -423,9 +410,11 @@ final class LiveCallTests: XCTestCase {
     soFar.turns = [.init(speaker: .learner, text: "Hello", startMs: 0, endMs: 1000)]
     soFar.metLabels = ["Is it free?"]
     soFar.usedHelp = true
+    soFar.connectionId = "dropped"
     let server = FakeServer(continuesCall: false)
     let call = LiveCall(
       conversation: .fixture(), client: server.client(FakeTransport()), soFar: soFar)
+    XCTAssertTrue(call.continuing)
 
     await call.start()
 
@@ -433,6 +422,137 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(call.turns.isEmpty)
     XCTAssertEqual(call.metLabels, ["Is it free?"])
     XCTAssertFalse(call.usedHelp)
+    // Nothing to save until it goes live, and a failure is its own.
+    XCTAssertFalse(call.continuing)
+    XCTAssertNil(call.soFar.connectionId)
+  }
+
+  func testAReconnectThatDoesntGoLiveStillSavesTheWholeCallUnderTheLatestConnection() async {
+    let first = await droppedCall()
+
+    let refused = LiveCall(
+      conversation: .fixture(),
+      client: FakeServer(reservations: [.limit(CallLimit(period: .day, tier: .free))])
+        .client(FakeTransport()),
+      soFar: first.soFar)
+    await refused.start()
+    XCTAssertEqual(refused.dropped, .init(reason: .limit, retry: nil))
+
+    let unreserved = await refused.finish()
+    XCTAssertEqual(unreserved?.connectionId, "connection-1")
+    XCTAssertEqual(unreserved?.turns, Self.droppedTurns)
+
+    // Its own reservation is the latest, even though it never went live.
+    let transport = FakeTransport()
+    let unanswered = LiveCall(
+      conversation: .fixture(),
+      client: FakeServer(reservations: [
+        .ready(.fixture(connectionId: "reconnect", continuesCall: true))
+      ]).client(transport),
+      soFar: first.soFar)
+    await unanswered.start()
+    transport.onEvent?(.closed)
+    XCTAssertEqual(unanswered.dropped, .init(reason: nil, retry: .callAgain))
+
+    let reserved = await unanswered.finish()
+    XCTAssertEqual(reserved?.connectionId, "reconnect")
+    XCTAssertEqual(reserved?.turns, Self.droppedTurns)
+    XCTAssertEqual(reserved?.spokenSeconds, 2)
+  }
+
+  func testCancellingAReconnectWhileItRingsLeavesTheCallDropped() async {
+    let first = await droppedCall()
+    let reconnect = LiveCall(
+      conversation: .fixture(), client: FakeServer(continuesCall: true).client(FakeTransport()),
+      soFar: first.soFar)
+
+    await reconnect.start()
+    reconnect.cancel()
+
+    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+
+    // A new call has nothing to save: the screen takes it back to its intro.
+    let new = LiveCall(conversation: .fixture(), client: FakeServer().client(FakeTransport()))
+
+    await new.start()
+    new.cancel()
+
+    XCTAssertNil(new.dropped)
+    XCTAssertNil(new.soFar.connectionId)
+  }
+
+  func testAReservationAnsweringAfterTheCancelIsTheConnectionTheCallSavesUnder() async {
+    let first = await droppedCall()
+    // Even one that would have opened a new call: it never went live, so the call stays dropped.
+    let server = FakeServer(
+      reservations: [.ready(.fixture(connectionId: "late", continuesCall: false))],
+      holdsConnects: true)
+    let reconnect = LiveCall(
+      conversation: .fixture(), client: server.client(FakeTransport()), soFar: first.soFar)
+
+    Task { await reconnect.start() }
+    await settle { server.isHoldingConnect }
+    reconnect.cancel()
+    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+
+    let finishing = Task { await reconnect.finish() }
+    try? await Task.sleep(for: .milliseconds(50))
+    server.answerConnect()
+    let summary = await finishing.value
+
+    XCTAssertEqual(summary?.connectionId, "late")
+    XCTAssertEqual(summary?.turns, Self.droppedTurns)
+    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    XCTAssertEqual(server.ended, ["late"])
+
+    // Called again and refused: the call still saves under the late connection.
+    let refused = LiveCall(
+      conversation: .fixture(),
+      client: FakeServer(reservations: [.callsPaused]).client(FakeTransport()),
+      soFar: reconnect.soFar)
+    await refused.start()
+
+    let saved = await refused.finish()
+    XCTAssertEqual(saved?.connectionId, "late")
+    XCTAssertEqual(saved?.turns, Self.droppedTurns)
+  }
+
+  func testADroppedCallSaysWhyItsReconnectCantGoOnAndHowToGetBackIn() {
+    let shown: [(LiveCall.Failure, DroppedCall)] = [
+      // Also a reconnect the learner cancelled while it rang.
+      (.connect, .init(reason: nil, retry: .callAgain)),
+      (.dropped, .init(reason: nil, retry: .callAgain)),
+      (.callsPaused, .init(reason: .callsPaused, retry: .callAgain)),
+      (.callInProgress, .init(reason: .callInProgress, retry: .takeover)),
+      (.limit, .init(reason: .limit, retry: nil)),
+      (.plusRequired, .init(reason: .plusRequired, retry: nil)),
+      (.ended, .init(reason: .ended, retry: nil)),
+    ]
+
+    for (failure, dropped) in shown {
+      XCTAssertEqual(
+        DroppedCall(continuing: true, phase: .failed, failure: failure, micBlocked: false),
+        dropped, "\(failure)")
+    }
+
+    XCTAssertEqual(
+      DroppedCall(continuing: true, phase: .idle, failure: nil, micBlocked: true),
+      .init(reason: .microphone, retry: .microphone))
+    // Typing instead keeps the microphone blocked: what stopped the typed reconnect is why.
+    XCTAssertEqual(
+      DroppedCall(continuing: true, phase: .failed, failure: .limit, micBlocked: true),
+      .init(reason: .limit, retry: nil))
+  }
+
+  func testWithoutADroppedCallToSaveOnlyACallThatWentLiveShowsAsDropped() {
+    XCTAssertEqual(
+      DroppedCall(continuing: false, phase: .failed, failure: .dropped, micBlocked: false),
+      .init(reason: nil, retry: .callAgain))
+    XCTAssertNil(
+      DroppedCall(continuing: false, phase: .failed, failure: .connect, micBlocked: false))
+    XCTAssertNil(DroppedCall(continuing: false, phase: .idle, failure: nil, micBlocked: true))
+    // A reconnect still on its way isn't stopped.
+    XCTAssertNil(DroppedCall(continuing: true, phase: .connecting, failure: nil, micBlocked: true))
   }
 
   func testHelpUsedBeforeTheSetupCountsForTheNewCall() async {
@@ -954,6 +1074,28 @@ final class LiveCallTests: XCTestCase {
     CallReservation(refusal: refusal(status, code, details))
   }
 
+  private static let droppedTurns: [ConversationTurn] = [
+    .init(speaker: .character, text: "Hi!"), .init(speaker: .learner, text: "Hello"),
+    .init(speaker: .character, text: "How are you?"),
+  ]
+
+  /// Went live on connection-1, said `droppedTurns`, then lost its connection.
+  private func droppedCall() async -> LiveCall {
+    let transport = FakeTransport()
+    let call = LiveCall(conversation: .fixture(), client: FakeServer().client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    transport.onEvent?(.transcript(speaker: .character, delta: "Hi!", startMs: 0, endMs: 500))
+    transport.onEvent?(.transcript(speaker: .learner, delta: "Hello", startMs: 1000, endMs: 3000))
+    transport.onEvent?(
+      .transcript(speaker: .character, delta: " How are you?", startMs: 3500, endMs: 4000))
+    transport.onLost?()
+    await settle { call.phase == .failed }
+
+    return call
+  }
+
   private func settle(until condition: () -> Bool) async {
     for _ in 0..<100 where !condition() {
       await Task.yield()
@@ -1049,6 +1191,8 @@ private final class FakeServer {
   private(set) var checks = 0
   private let holdsChecks: Bool
   private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
+  private let holdsConnects: Bool
+  private var pendingConnect: CheckedContinuation<Void, Never>?
   private(set) var microphoneRequests = 0
   private(set) var redeemed: [String] = []
   /// The earlier turns each redeem sent.
@@ -1058,10 +1202,11 @@ private final class FakeServer {
   init(
     reservations: [CallReservation?] = [], endedAtDeadline: Bool = false,
     confirmsHangup: Bool = true, microphone: Bool = true, talkSeconds: Int = 120,
-    continuesCall: Bool = false, holdsChecks: Bool = false
+    continuesCall: Bool = false, holdsChecks: Bool = false, holdsConnects: Bool = false
   ) {
     self.continuesCall = continuesCall
     self.holdsChecks = holdsChecks
+    self.holdsConnects = holdsConnects
     self.reservations = reservations
     self.endedAtDeadline = endedAtDeadline
     self.confirmsHangup = confirmsHangup
@@ -1075,11 +1220,26 @@ private final class FakeServer {
     pendingCheck = nil
   }
 
+  var isHoldingConnect: Bool {
+    pendingConnect != nil
+  }
+
+  /// `holdsConnects`: the reservation on its way answers now.
+  func answerConnect() {
+    pendingConnect?.resume()
+    pendingConnect = nil
+  }
+
   func client(_ transport: FakeTransport) -> LiveCallClient {
     LiveCallClient(
       connect: { takeover in
         self.connects += 1
         self.takeovers.append(takeover)
+
+        if self.holdsConnects {
+          await withCheckedContinuation { self.pendingConnect = $0 }
+        }
+
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
         return next
           ?? .ready(

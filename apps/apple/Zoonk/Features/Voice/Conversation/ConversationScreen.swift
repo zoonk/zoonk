@@ -213,6 +213,7 @@ private struct LiveCallRun: View {
   @Environment(\.dismiss) private var dismiss
   @State private var call: LiveCall?
   @State private var saving: LiveCallSaveState?
+  @State private var restarting: Task<Void, Never>?
   let conversation: LanguageConversation
   @Binding var isInCall: Bool
   @State var callsRightAway: Bool
@@ -229,6 +230,7 @@ private struct LiveCallRun: View {
     }
     .onAppear { makeCall() }
     .onDisappear {
+      restarting?.cancel()
       call?.leave()
       isInCall = false
     }
@@ -256,27 +258,61 @@ private struct LiveCallRun: View {
     }
   }
 
-  /// The call so far goes on, as calling someone back does; the server says when it's a new call.
+  /// The call so far goes on, as calling someone back does; the server says when it's a new call. A
+  /// dropped call's reconnect may still be reserving: the next run must name its connection.
   private func restart(takeover: Bool = false, callNow: Bool = true) {
-    let soFar = call?.soFar
-    call?.leave()
-    saving = nil
-    callsRightAway = callNow && !takeover
-    call = nil
-    makeCall(soFar: soFar)
+    guard let previous = call else {
+      return
+    }
 
-    if takeover, let call {
-      Task { await call.start(takeover: true) }
+    func replace() {
+      let soFar = previous.soFar
+      previous.leave()
+      saving = nil
+      callsRightAway = callNow && !takeover
+      call = nil
+      makeCall(soFar: soFar)
+
+      if takeover, let call {
+        Task { await call.start(takeover: true) }
+      }
+    }
+
+    guard previous.continuing else {
+      replace()
+      return
+    }
+
+    restarting?.cancel()
+    restarting = Task {
+      await previous.settled()
+
+      // Ended while it waited: the save has the call.
+      if !Task.isCancelled, saving == nil {
+        replace()
+      }
     }
   }
 
+  /// Once the call is being saved, the transcript stays with the save's status.
   @ViewBuilder
   private func runView(_ call: LiveCall) -> some View {
-    if conversation.locked || call.failure == .plusRequired {
+    if saving == .ended || saving == .takenOver {
+      CallProblemView(problem: .saveEnded(takenOver: saving == .takenOver)) { action in
+        handle(action, call: call)
+      }
+    } else if saving != nil {
+      liveView(call)
+    } else if let dropped = call.dropped {
+      DroppedCallView(dropped: dropped, limit: call.limit, name: conversation.character.name) {
+        action in
+        handle(action, call: call)
+      }
+    } else if conversation.locked || call.failure == .plusRequired {
       ConversationIntro(intro: CallIntro(conversation)) {
         CallStartFooter(isLocked: true, callee: nil) {}
       }
-    } else if call.phase == .idle {
+    } else if call.phase == .idle, !call.continuing {
       ConversationIntro(intro: CallIntro(conversation)) {
         if call.micBlocked {
           CallMicrophoneOff(name: conversation.character.name) {
@@ -288,43 +324,48 @@ private struct LiveCallRun: View {
           }
         }
       }
-    } else if saving == .ended || saving == .takenOver {
-      CallProblemView(problem: .saveEnded(takenOver: saving == .takenOver)) { action in
-        handle(action, call: call)
-      }
-    } else if call.phase == .failed, saving == nil, let failure = call.failure {
+    } else if call.phase == .failed, let failure = call.failure {
       CallProblemView(problem: .call(failure, call.limit)) { action in
         handle(action, call: call)
       }
     } else {
-      ConversationLiveView(
-        call: call, conversation: conversation, saving: saving,
-        onEnd: {
-          // A call that hasn't connected yet has nothing to save: cancelling it goes back to the
-          // intro.
-          if call.phase == .connecting {
-            call.cancel()
-            restart(callNow: false)
-          } else {
-            call.hangUp()
-          }
-        },
-        onRetrySave: {
-          Task { await save() }
-        })
+      liveView(call)
     }
+  }
+
+  private func liveView(_ call: LiveCall) -> some View {
+    ConversationLiveView(
+      call: call, conversation: conversation, saving: saving,
+      onEnd: {
+        if call.phase == .connecting {
+          call.cancel()
+
+          // A dropped call stays dropped, to end or call again; a new one, with nothing to save,
+          // goes back to its intro.
+          if !call.continuing {
+            restart(callNow: false)
+          }
+        } else {
+          call.hangUp()
+        }
+      },
+      onRetrySave: {
+        Task { await save() }
+      })
   }
 
   private var callee: String? {
     conversation.callsCharacter ? conversation.character.name : nil
   }
 
-  private func handle(_ action: CallProblemView.Action, call: LiveCall) {
+  private func handle(_ action: CallProblemAction, call: LiveCall) {
     switch action {
     case .retry:
       restart()
     case .takeover:
       restart(takeover: true)
+    case .type:
+      Task { await call.startTyping() }
     case .end:
       Task { await save() }
     case .back:
