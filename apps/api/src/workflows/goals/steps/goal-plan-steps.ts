@@ -58,13 +58,14 @@ function toGraphPlan({
   };
 }
 
-export async function createGoalPlanStep(
-  input: GraphPlanInput,
-): Promise<PlanStepOutcome<PlanSetupTask[]>> {
+export async function createGoalPlanStep({
+  waitsForNotice,
+  ...input
+}: GraphPlanInput & { waitsForNotice: boolean }): Promise<PlanStepOutcome<PlanSetupTask[]>> {
   "use step";
 
   return catchPlanConflict(async () => {
-    const { setupTasks } = await createGoalPlan(toGraphPlan(input));
+    const { setupTasks } = await createGoalPlan({ ...toGraphPlan(input), waitsForNotice });
     return setupTasks;
   });
 }

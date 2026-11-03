@@ -32,7 +32,6 @@ import {
 } from "./steps/goal-lookahead-steps";
 import { createGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
-import { startNoticeWaitStep } from "./steps/notice-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
@@ -138,6 +137,7 @@ async function createPlanAndOutlines({
     idsByKey,
     platform: context.analytics.platform ?? null,
     provenance,
+    waitsForNotice,
   });
 
   if (!reused) {
@@ -145,11 +145,6 @@ async function createPlanAndOutlines({
   }
 
   await setUpPlan({ goalId, tasks: setupTasks });
-
-  // The wait only shapes the reveal: once its step's retries run out, the plan goes on without it.
-  if (waitsForNotice) {
-    await startNoticeWaitStep(goalId).catch(() => null);
-  }
 
   await goalProgressStep({ entityId: goalId, status: "completed", step: "createPlan" });
 

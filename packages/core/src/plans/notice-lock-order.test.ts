@@ -4,15 +4,15 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { recordGoalGeneration } from "../goals/record-goal-generation";
 import { markPlanWrite } from "./_utils/mark-plan-write";
-import { startNoticeWait } from "./notice-wait";
+import { claimNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
 
 const NOW = new Date("2026-10-15T12:00:00Z");
-const WAIT_MS = 360_000;
+const LANDING_MS = 300_000;
 
 async function setup() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
-  const plan = await planFixture({ goalId: goal.id });
+  const plan = await planFixture({ goalId: goal.id, noticeWaitUntil: getNoticeWaitEnd(NOW) });
   return { goal, plan, user };
 }
 
@@ -52,7 +52,7 @@ describe("notice writes that keep plan inputs, with the planner", () => {
       });
 
       const holderPid = await held.promise;
-      const notice = startNoticeWait({ goalId: goal.id, now: NOW });
+      const notice = claimNoticeLanding({ goalId: goal.id, now: NOW });
       const settled = Promise.allSettled([planning, notice]);
 
       try {
@@ -70,11 +70,11 @@ describe("notice writes that keep plan inputs, with the planner", () => {
       ).resolves.toMatchObject({
         estimateHours: 42,
         inputVersion: plan.inputVersion + 1,
-        noticeWaitUntil: new Date(NOW.getTime() + WAIT_MS),
+        noticeWaitUntil: new Date(NOW.getTime() + LANDING_MS),
         version: plan.version + 1,
       });
 
-      await startNoticeWait({ goalId: goal.id, now: NOW });
+      await claimNoticeLanding({ goalId: goal.id, now: NOW });
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -97,7 +97,7 @@ describe("notice writes that keep plan inputs, with the planner", () => {
       });
 
       const holderPid = await held.promise;
-      const notice = startNoticeWait({ goalId: goal.id, now: NOW });
+      const notice = claimNoticeLanding({ goalId: goal.id, now: NOW });
 
       try {
         await waitForBlockedBy(holderPid);
@@ -126,7 +126,7 @@ describe("notice writes that keep plan inputs, with the planner", () => {
       ).resolves.toMatchObject({
         estimateHours: 42,
         inputVersion: plan.inputVersion + 1,
-        noticeWaitUntil: new Date(NOW.getTime() + WAIT_MS),
+        noticeWaitUntil: new Date(NOW.getTime() + LANDING_MS),
         version: plan.version + 1,
       });
     },
@@ -147,7 +147,7 @@ describe("notice writes that keep plan inputs, with the planner", () => {
     });
 
     const holderPid = await held.promise;
-    const notice = startNoticeWait({ goalId: goal.id, now: NOW });
+    const notice = claimNoticeLanding({ goalId: goal.id, now: NOW });
     const settled = Promise.allSettled([holder, notice]);
 
     try {
