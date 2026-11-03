@@ -17,6 +17,7 @@ import { useCompletionProps } from "./completion/use-completion-props";
 import { LessonActionBar } from "./lesson-action-bar";
 import { LessonAside } from "./lesson-aside";
 import { LessonLeaveProvider } from "./lesson-leave";
+import { LessonMapScreen } from "./lesson-map-screen";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { LessonPlayerHeader } from "./lesson-player-header";
 import { type PlayableLibraryStep } from "./lesson-player-types";
@@ -81,6 +82,10 @@ function LessonContent() {
 
   if (state.phase === "completed") {
     return <LessonCompletion />;
+  }
+
+  if (state.phase === "map") {
+    return <LessonMapScreen />;
   }
 
   if (!shown) {

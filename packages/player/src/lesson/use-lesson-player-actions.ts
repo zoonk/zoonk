@@ -11,7 +11,7 @@ import {
   type LessonPlayerState,
   getCurrentStep,
 } from "./lesson-player-state";
-import { type LessonPlayerAdapters } from "./lesson-player-types";
+import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
@@ -34,6 +34,25 @@ function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | n
   }
 
   return null;
+}
+
+/** A guess's "I don't know yet" shows the answer here and is never sent: it counts as nothing. */
+function revealWithoutGuess({
+  dispatch,
+  step,
+}: {
+  dispatch: Dispatch<LessonPlayerAction>;
+  step: PlayableLibraryStep | undefined;
+}): boolean {
+  const revealed = step?.kind === "hook" ? revealGuess({ optionId: null, step }) : null;
+
+  if (!step || !revealed) {
+    return false;
+  }
+
+  dispatch({ answer: null, stepId: step.id, type: "selectAnswer" });
+  dispatch({ counts: false, result: revealed, stepId: step.id, type: "checkResolved" });
+  return true;
 }
 
 export function useLessonPlayerActions({
@@ -179,7 +198,14 @@ export function useLessonPlayerActions({
         writeExampleLines();
         dispatch({ type: "continue" });
       },
-      dontKnow: (stepId) => dispatch({ stepId, type: "skipWriting" }),
+      dontKnow: (stepId) => {
+        if (revealWithoutGuess({ dispatch, step: state.steps[stepId] })) {
+          void ensureRun();
+          return;
+        }
+
+        dispatch({ stepId, type: "skipWriting" });
+      },
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();
@@ -200,6 +226,6 @@ export function useLessonPlayerActions({
       },
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, submitSpokenAnswer, writeExampleLines],
+    [check, dispatch, ensureRun, state.steps, submitSpokenAnswer, writeExampleLines],
   );
 }

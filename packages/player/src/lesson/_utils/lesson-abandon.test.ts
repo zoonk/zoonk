@@ -32,10 +32,10 @@ function answer(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
   ];
 }
 
-function play(actions: LessonPlayerAction[], steps = STEPS) {
+function play(actions: LessonPlayerAction[], steps = STEPS, hasMap = false) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps }),
+    createInitialState({ hasMap, id: "lesson", steps }),
   );
 }
 
@@ -54,6 +54,21 @@ describe(getAbandonEvent, () => {
     expect(getAbandonEvent(state)).toStrictEqual({
       name: "Activity Abandoned",
       properties: { lesson_id: "lesson", screen: 4, step_kind: "check", wrong_in_a_row: 3 },
+    });
+  });
+
+  it("names the lesson map, not the last question, when the learner leaves on it", () => {
+    const state = play(
+      [STARTED, ...answer("q1", true), { type: "continue" }],
+      [checkStep("q1")],
+      true,
+    );
+
+    expect(state.phase).toBe("map");
+
+    expect(getAbandonEvent(state)).toStrictEqual({
+      name: "Activity Abandoned",
+      properties: { lesson_id: "lesson", screen: 2, step_kind: "map", wrong_in_a_row: 0 },
     });
   });
 

@@ -12,15 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, NotebookTextIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { EllipsisIcon, NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { getLessonFocusTarget } from "./_utils/lesson-focus";
-import { SummarySheet } from "./controls/summary-sheet";
+import { LessonMapSheet } from "./controls/lesson-map-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 
-function useSummarySheet(isDone: boolean) {
+function useMapSheet(isDone: boolean) {
   const { setPaused } = useLessonInteraction();
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -55,15 +55,15 @@ export function LessonScreenMenu() {
   const { lesson, slots } = useLessonPlayerConfig();
   const { actions, screen, state } = useLessonPlayer();
   const isDone = state.phase === "completed";
-  const summary = useSummarySheet(isDone);
+  const mapSheet = useMapSheet(isDone);
 
-  if (!screen.step && !isDone) {
+  if (!screen.step && !isDone && state.phase !== "map") {
     return null;
   }
 
   return (
     <>
-      <DropdownMenu onOpenChange={summary.onMenuOpenChange}>
+      <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
         <DropdownMenuTrigger
           render={
             <Button
@@ -95,9 +95,9 @@ export function LessonScreenMenu() {
           )}
 
           {isDone && lesson.summary && (
-            <DropdownMenuItem onClick={() => summary.change(true)}>
-              <NotebookTextIcon aria-hidden="true" />
-              {t("Lesson summary")}
+            <DropdownMenuItem onClick={() => mapSheet.change(true)}>
+              <NetworkIcon aria-hidden="true" />
+              {t("Lesson map")}
             </DropdownMenuItem>
           )}
 
@@ -106,11 +106,14 @@ export function LessonScreenMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <SummarySheet
-        ideas={lesson.summary?.ideas.map((idea) => idea.text) ?? []}
-        onOpenChange={summary.change}
-        open={summary.open}
-      />
+      {lesson.summary && (
+        <LessonMapSheet
+          map={lesson.summary}
+          onOpenChange={mapSheet.change}
+          open={mapSheet.open}
+          title={lesson.title}
+        />
+      )}
     </>
   );
 }

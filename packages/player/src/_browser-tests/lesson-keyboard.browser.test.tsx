@@ -150,17 +150,23 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
       await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+      await press("ArrowLeft");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+      await press("Enter");
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
-      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson map" });
       await press("End");
       await expect.element(summaryItem).toHaveFocus();
       await press("Enter");
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      const summary = page.getByRole("dialog", { name: "Lesson map" });
       await expect.element(summary.getByText(SUMMARY_IDEA)).toBeVisible();
       await press("Escape");
       await expect.element(summary).not.toBeInTheDocument();

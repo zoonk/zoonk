@@ -13,10 +13,14 @@ const DEFAULT_HEIGHT = 1280;
 
 export type LessonPictureFrame = "hero" | "inline" | "question";
 
+/**
+ * On a phone a picture gives up height first, down to 140px, so the screen's words, a question's
+ * options and its feedback stay in view on a 375 × 667 screen.
+ */
 export const PICTURE_FRAME_CLASS: Record<LessonPictureFrame, string> = {
-  hero: "max-h-[55dvh]",
-  inline: "max-h-[45dvh]",
-  question: "max-h-[40dvh]",
+  hero: "max-h-[55dvh] max-sm:max-h-[clamp(8.75rem,calc(100dvh_-_21rem),55dvh)]",
+  inline: "max-h-[45dvh] max-sm:max-h-[clamp(8.75rem,calc(100dvh_-_30rem),45dvh)]",
+  question: "max-h-[40dvh] max-sm:max-h-[clamp(8.75rem,calc(100dvh_-_36rem),40dvh)]",
 };
 
 export function LessonStepImage({

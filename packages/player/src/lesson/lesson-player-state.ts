@@ -13,7 +13,8 @@ import {
   type PlayableLibraryStep,
 } from "./lesson-player-types";
 
-type LessonPlayerPhase = "checking" | "completed" | "feedback" | "playing";
+/** `map`: every screen is done and the lesson map shows, before the lesson is saved. */
+type LessonPlayerPhase = "checking" | "completed" | "feedback" | "map" | "playing";
 
 type CheckIssue = HelpLimit | { status: "noSpeech" };
 
@@ -34,6 +35,7 @@ export type LessonPlayerState = {
     | { result: null; status: "ready"; testedOut: boolean }
     | null;
   firstVerdicts: Record<string, boolean>;
+  hasMap: boolean;
   helped: string[];
   lessonId: string;
   misses: { skillId: string | null; stepId: string }[];
@@ -97,7 +99,7 @@ export type LessonPlayerAction =
   | { type: "writingRestored" };
 
 export function createInitialState(
-  lesson: Pick<LessonPlayerLesson, "id" | "steps">,
+  lesson: Pick<LessonPlayerLesson, "id" | "steps"> & { hasMap: boolean },
   support: LessonSupport | null = null,
 ): LessonPlayerState {
   const now = Date.now();
@@ -110,6 +112,7 @@ export function createInitialState(
     checkIssue: null,
     completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
     firstVerdicts: {},
+    hasMap: lesson.hasMap,
     helped: [],
     lessonId: lesson.id,
     misses: [],

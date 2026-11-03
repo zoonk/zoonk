@@ -125,7 +125,7 @@ const TURN_CLASS: Record<ScreenTurn, string> = {
     "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-base motion-safe:ease-out",
 };
 
-function LessonScreenFrame({
+export function LessonScreenFrame({
   children,
   turn,
 }: {

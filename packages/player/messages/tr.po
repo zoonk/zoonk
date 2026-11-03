@@ -3095,6 +3095,12 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "Materyalinde yok"
 
+#. Read by screen readers before a diagram of boxes inside boxes, the smallest first.
+#: src/lesson/_components/lesson-map.tsx
+msgctxt "pHv5DW"
+msgid "Each level sits inside the next one."
+msgstr "Her katman bir sonrakinin içinde yer alır."
+
 #: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
@@ -3268,14 +3274,16 @@ msgctxt "cd_q95"
 msgid "Explain first"
 msgstr "Önce açıklamayı gör"
 
-#: src/lesson/controls/summary-sheet.tsx
+#. A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.
+#: src/lesson/controls/lesson-map-sheet.tsx
 #: src/lesson/lesson-aside.tsx
+#: src/lesson/lesson-map-screen.tsx
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7Zy67"
-msgid "Lesson summary"
-msgstr "Ders özeti"
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "Ders haritası"
 
-#: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/controls/lesson-map-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Anladım"
@@ -3666,16 +3674,17 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Senin örneğin"
 
-#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
+#. Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
-msgctxt "p6MDZm"
-msgid "Guess first"
-msgstr "Önce tahmin et"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "Sadece bir tahmin, puanlanmaz"
 
 #: src/lesson/steps/hook-step.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Henüz bilmiyorum"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3754,11 +3763,6 @@ msgstr "Şu an yazamıyorum"
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "Kendi cümlelerinle"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Henüz bilmiyorum"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

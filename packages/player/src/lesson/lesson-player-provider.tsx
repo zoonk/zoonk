@@ -77,11 +77,13 @@ function createStartingState({
   const first = lesson.steps[0];
   const answer = first && firstAnswer ? toFirstAnswer({ first, firstAnswer }) : null;
 
+  const initial = { ...lesson, hasMap: lesson.summary !== null };
+
   if (!first || !answer) {
-    return resumeLesson(createInitialState(lesson, support), resume);
+    return resumeLesson(createInitialState(initial, support), resume);
   }
 
-  const state = createInitialState(lesson);
+  const state = createInitialState(initial);
 
   return lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
 }

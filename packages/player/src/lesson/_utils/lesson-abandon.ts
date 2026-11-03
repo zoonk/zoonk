@@ -21,13 +21,14 @@ export function getAbandonEvent(state: LessonPlayerState): AnalyticsEvent | null
 
   const stepId = state.queue[state.position];
   const step = stepId ? state.steps[stepId] : undefined;
+  const isOnMap = state.phase === "map";
 
   return {
     name: "Activity Abandoned",
     properties: {
       lesson_id: state.lessonId,
-      screen: state.position + 1,
-      step_kind: step?.kind ?? "unknown",
+      screen: isOnMap ? state.queue.length + 1 : state.position + 1,
+      step_kind: isOnMap ? "map" : (step?.kind ?? "unknown"),
       wrong_in_a_row: countWrongInARow(state),
     },
   };

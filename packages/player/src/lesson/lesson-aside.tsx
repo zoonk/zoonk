@@ -19,6 +19,7 @@ import { CheckIcon, CircleHelpIcon, TextQuoteIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerContentFrame } from "../components/step-layouts";
 import { TutorConversationLink, TutorDock } from "../questions/tutor-dock";
+import { LessonMap } from "./_components/lesson-map";
 import { LessonRichText } from "./_components/lesson-rich-text";
 import {
   type RecapStep,
@@ -237,34 +238,14 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
 function CompletionAside() {
   const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
-  const ideas = lesson.summary?.ideas.map((idea) => idea.text) ?? [];
+
+  if (!lesson.summary) {
+    return <TaskAside label={t("Help with this screen")} />;
+  }
 
   return (
-    <TaskAside
-      label={t("Lesson summary")}
-      title={ideas.length > 0 ? t("Lesson summary") : undefined}
-    >
-      {ideas.length > 0 && (
-        <ol className="divide-border flex flex-col divide-y">
-          {ideas.map((idea, index) => {
-            const key = `idea-${index}`;
-
-            return (
-              <li className="flex gap-3 py-3 text-sm leading-relaxed first:pt-0" key={key}>
-                <span
-                  aria-hidden="true"
-                  className="text-faint w-4 shrink-0 font-mono text-xs leading-6 tabular-nums"
-                >
-                  {index + 1}
-                </span>
-                <span className="min-w-0">
-                  <LessonRichText text={idea} />
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-      )}
+    <TaskAside label={t("Lesson map")} title={t("Lesson map")}>
+      <LessonMap map={lesson.summary} title={lesson.title} />
     </TaskAside>
   );
 }
@@ -273,6 +254,14 @@ export function LessonAside() {
   const t = useExtracted();
   const { slots } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
+
+  if (state.phase === "map") {
+    return (
+      <TaskAside label={t("Help with this screen")}>
+        <TutorDock />
+      </TaskAside>
+    );
+  }
 
   if (state.phase === "completed") {
     return slots.completion ? (

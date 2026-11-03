@@ -28,7 +28,7 @@ function answer(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
 function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps }),
+    createInitialState({ hasMap: false, id: "lesson", steps }),
   );
 }
 

@@ -3095,6 +3095,12 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "내 자료에 없는 내용"
 
+#. Read by screen readers before a diagram of boxes inside boxes, the smallest first.
+#: src/lesson/_components/lesson-map.tsx
+msgctxt "pHv5DW"
+msgid "Each level sits inside the next one."
+msgstr "각 단계는 다음 단계 안에 들어 있어요."
+
 #: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
@@ -3268,14 +3274,16 @@ msgctxt "cd_q95"
 msgid "Explain first"
 msgstr "설명 먼저 보기"
 
-#: src/lesson/controls/summary-sheet.tsx
+#. A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.
+#: src/lesson/controls/lesson-map-sheet.tsx
 #: src/lesson/lesson-aside.tsx
+#: src/lesson/lesson-map-screen.tsx
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7Zy67"
-msgid "Lesson summary"
-msgstr "레슨 요약"
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "레슨 개념도"
 
-#: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/controls/lesson-map-sheet.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "확인"
@@ -3666,16 +3674,17 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "내 예시"
 
-#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
+#. Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
-msgctxt "p6MDZm"
-msgid "Guess first"
-msgstr "먼저 예상해 보기"
+msgctxt "AlhfZ4"
+msgid "Just a guess, it doesn't count"
+msgstr "예상일 뿐, 점수에는 반영되지 않아요"
 
 #: src/lesson/steps/hook-step.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "아직 모르겠어요"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3754,11 +3763,6 @@ msgstr "지금은 쓸 수 없어요"
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "내 말로 설명하기"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "아직 모르겠어요"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

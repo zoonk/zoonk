@@ -1,5 +1,6 @@
 "use client";
 
+import { type LessonMap as LessonMapData } from "@zoonk/core/library/lessons/map";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
@@ -8,19 +9,21 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { NotebookTextIcon } from "lucide-react";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonSummaryIdeas } from "../_components/lesson-summary-ideas";
+import { LessonMap } from "../_components/lesson-map";
 import { getLessonFocusTarget } from "../_utils/lesson-focus";
 
-export function SummarySheet({
-  ideas,
+export function LessonMapSheet({
+  map,
   onOpenChange,
   open,
+  title,
 }: {
-  ideas: string[];
+  map: LessonMapData;
   onOpenChange: (open: boolean) => void;
   open: boolean;
+  title: string;
 }) {
   const t = useExtracted();
 
@@ -29,13 +32,13 @@ export function SummarySheet({
       <DrawerPopup finalFocus={getLessonFocusTarget}>
         <DrawerHeader>
           <DrawerTitle className="flex items-center gap-2 text-lg font-semibold">
-            <NotebookTextIcon aria-hidden="true" className="size-5" />
-            {t("Lesson summary")}
+            <NetworkIcon aria-hidden="true" className="size-5" />
+            {t("Lesson map")}
           </DrawerTitle>
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-6">
-          <LessonSummaryIdeas ideas={ideas} />
+          <LessonMap map={map} title={title} />
           <Button className="w-full" onClick={() => onOpenChange(false)} size="lg">
             {t("Got it")}
           </Button>

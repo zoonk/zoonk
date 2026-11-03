@@ -61,11 +61,12 @@ export function fromSpokenGrade({
   };
 }
 
+/** `optionId` null reveals the answer without a guess ("I don't know yet"). */
 export function revealGuess({
   optionId,
   step,
 }: {
-  optionId: string;
+  optionId: string | null;
   step: PlayableLibraryStep;
 }): LessonStepResult | null {
   if (step.kind !== "hook" || step.content.variant !== "guess") {
@@ -75,19 +76,19 @@ export function revealGuess({
   const picked = step.content.options.find((option) => option.id === optionId);
   const right = step.content.options.find((option) => option.isCorrect);
 
-  if (!picked) {
+  if (optionId !== null && !picked) {
     return null;
   }
 
   return {
-    answerText: picked.text,
+    answerText: picked?.text ?? null,
     checked: true,
-    correctAnswer: picked.isCorrect ? null : (right?.text ?? null),
+    correctAnswer: picked?.isCorrect ? null : (right?.text ?? null),
     corrections: [],
     expected: null,
     feedback: step.content.reveal,
     heard: null,
-    isCorrect: picked.isCorrect,
+    isCorrect: picked?.isCorrect ?? false,
     keyPoints: null,
     nextReviewAt: null,
     savedMistake: false,

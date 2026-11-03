@@ -89,7 +89,10 @@ describe(orderLessonOpening, () => {
       withSkill(explanationStep("next"), "skill-b"),
     ];
 
-    const start = createInitialState({ id: "lesson", steps: lesson }, "questionFirst");
+    const start = createInitialState(
+      { hasMap: false, id: "lesson", steps: lesson },
+      "questionFirst",
+    );
 
     const resumed = lessonPlayerReducer(start, {
       answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "missing" }],
