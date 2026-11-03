@@ -75,7 +75,7 @@ Each check asks something new. Apart from that practice after a worked example, 
 Only on screens planned as an activity, with the template the plan names. `template`: that id. `content`: the activity as a JSON object in a string, `{ "prompt", "fields", "check", "data", "image" }`, exactly following the template's JSON schema in `ACTIVITY_TEMPLATES` (omit optional fields you don't need, including `data` when the template shows no data and `image` unless the screen's plan has a `Visual`). An activity's `image` is the picture its template description asks for, such as the case a decision tree names, with `prompt` and `alt` as for any screen.
 
 - The learner moves, predicts, orders or builds something, and the check asks about what they did or saw: something they read or work out from it, never a number the activity just printed for them. Ask only about what the activity actually shows: if the fields draw an energy curve, don't ask about a wave shape it doesn't draw.
-- `prompt`: the instruction at the top, one short sentence.
+- `prompt`: the instruction at the top, one short sentence that says what to do with the content, never how to work the screen: no drag, tap or click, even when the brief says so.
 - Use only the check kinds the template supports:
   - `interaction`: the end state of what the learner does is the answer, and code computes it from the fields. Give an `explanation` of why that's the answer.
   - `numeric`: the learner produces a number. `answer` must be exactly what code computes from the fields, with `inputs` putting the sliders where the question asks and `output` naming what to read, plus a `tolerance` and an `explanation`.
