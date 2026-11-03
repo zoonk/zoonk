@@ -1,9 +1,16 @@
-import { getAppLocale } from "@/i18n/locale";
+import { getAuthPageLocale } from "@/i18n/page-locale";
+import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
 import "@zoonk/ui/globals.css";
+
+/** Apps open these pages in a new document, so the CDN must answer before any function runs. */
+export const ensureStatic = "shell";
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((supported) => ({ locale: supported }));
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -11,16 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Sign in to Zoonk") };
 }
 
-/** Only the background shows while the request's language is read, so no loading screen flashes. */
-function AuthBackground() {
-  return <div aria-hidden="true" className="bg-background fixed inset-0" />;
-}
-
-async function AuthDocument({ children }: LayoutProps<"/auth">) {
-  const locale = await getAppLocale();
+export default async function AuthLayout({ children }: LayoutProps<"/auth/[locale]">) {
+  const appLocale = await getAuthPageLocale();
 
   return (
-    <html lang={locale}>
+    <html lang={appLocale}>
       <body className="bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <main className="relative flex min-h-dvh w-full flex-col items-center justify-center px-4 py-16">
@@ -29,13 +31,5 @@ async function AuthDocument({ children }: LayoutProps<"/auth">) {
         </NextIntlClientProvider>
       </body>
     </html>
-  );
-}
-
-export default function AuthLayout(props: LayoutProps<"/auth">) {
-  return (
-    <Suspense fallback={<AuthBackground />}>
-      <AuthDocument {...props} />
-    </Suspense>
   );
 }

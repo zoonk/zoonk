@@ -8,15 +8,18 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { sendVerificationOTPAction } from "./actions";
+import { readPageRedirectTo } from "./page-url";
 
 const emailErrorId = "login-email-error";
 const initialEmailLoginState = { status: "idle" as const };
 
-export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
+export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const t = useExtracted();
+  const redirectToRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
   const hasError = state.status !== "idle";
 
@@ -31,8 +34,17 @@ export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
   }[state.status];
 
   return (
-    <LoginForm action={formAction}>
-      <input name="redirectTo" type="hidden" value={redirectTo ?? ""} />
+    <LoginForm
+      action={formAction}
+      // React reads the form's data after this runs, so it carries the address the form is on.
+      onSubmit={() => {
+        if (redirectToRef.current) {
+          redirectToRef.current.value = readPageRedirectTo() ?? "";
+        }
+      }}
+    >
+      <input name="locale" type="hidden" value={locale} />
+      <input name="redirectTo" ref={redirectToRef} type="hidden" />
 
       <LoginField>
         <LoginEmailLabel>{t("Email")}</LoginEmailLabel>

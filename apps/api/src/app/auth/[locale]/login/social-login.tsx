@@ -5,7 +5,8 @@ import { authClient } from "@zoonk/auth/client";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { getCallbackHref } from "../_utils/auth-redirect";
+import { getCallbackHref } from "../../_utils/auth-redirect";
+import { readPageRedirectTo } from "./page-url";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 
@@ -13,7 +14,7 @@ function getLoadingState(provider: "google" | "apple"): SocialState {
   return provider === "google" ? "loadingGoogle" : "loadingApple";
 }
 
-export function SocialLogin({ redirectTo }: { redirectTo: string | null }) {
+export function SocialLogin() {
   const [state, setState] = useState<SocialState>("initial");
   const t = useExtracted();
 
@@ -21,7 +22,7 @@ export function SocialLogin({ redirectTo }: { redirectTo: string | null }) {
     setState(getLoadingState(provider));
 
     const { error } = await authClient.signIn.social({
-      callbackURL: getCallbackHref(redirectTo),
+      callbackURL: getCallbackHref(readPageRedirectTo()),
       provider,
     });
 

@@ -5,16 +5,15 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getLoginHref } from "../_utils/auth-redirect";
+import { type getLoginHref } from "../../_utils/auth-redirect";
 
 export function ChangeEmailLink({
   children,
-  redirectTo,
+  href,
 }: {
   children: React.ReactNode;
-  redirectTo: string | null;
+  href: ReturnType<typeof getLoginHref>;
 }) {
-  const href = getLoginHref(redirectTo);
   const router = useRouter();
 
   useKeyboardCallback("Escape", () => router.push(href), { mode: "none" });

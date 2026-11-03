@@ -2,6 +2,7 @@
 - Add public API endpoints to `src/lib/openapi/document.ts`.
 - `src/app` and `src/lib` only deliver: the rules a route needs, interactive model calls included, live in core, and the route returns or streams the result.
 - A run that writes missing content claims the content's key with `claimRunToken`, so a second request follows the run already writing it.
+- Apps open the auth pages (`src/app/auth/[locale]`) in a new document, so the CDN serves them, prerendered per locale, before any function runs (`ensureStatic = "shell"`). What depends on the request streams in Suspense holes; a decision that must come before the page (a browser that's already signed in, a visit that names no locale) is a `next.config.ts` rewrite to `/auth/open`. next-intl reads the locale from root params, so route handlers and Server Actions pass one (`getBrowserLocale`).
 - Workflow files containing `"use workflow"` cannot call Node APIs directly; put those calls in `"use step"` functions. Prefer linear waves of independent work with `Promise.allSettled`. Installed workflow docs are in `apps/api/node_modules/workflow/docs/`.
 
 <!-- BEGIN:nextjs-agent-rules -->
