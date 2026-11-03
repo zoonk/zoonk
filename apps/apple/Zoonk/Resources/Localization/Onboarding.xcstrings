@@ -3412,7 +3412,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um curso da Biblioteca combina com sua meta"
+            "value" : "Um curso da Biblioteca combina com seu objetivo"
           }
         },
         "tr" : {
@@ -5953,13 +5953,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg meta"
+                      "value" : "%arg objetivo"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg metas"
+                      "value" : "%arg objetivos"
                     }
                   }
                 }
@@ -6848,7 +6848,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo da sua meta até %2$@, começando pelo que mais importa."
+            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo do seu objetivo até %2$@, começando pelo que mais importa."
           }
         },
         "tr" : {
@@ -6913,7 +6913,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo da sua meta até o início de %2$@, começando pelo que mais importa."
+            "value" : "Dá para estudar a fundo cerca de %1$@ do conteúdo do seu objetivo até o início de %2$@, começando pelo que mais importa."
           }
         },
         "tr" : {
@@ -7090,7 +7090,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você estuda todo o conteúdo da sua meta até %@."
+            "value" : "Você estuda todo o conteúdo do seu objetivo até %@."
           }
         },
         "tr" : {
@@ -7149,7 +7149,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você estuda todo o conteúdo da sua meta até o início de %@."
+            "value" : "Você estuda todo o conteúdo do seu objetivo até o início de %@."
           }
         },
         "tr" : {
@@ -7267,7 +7267,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie uma conta grátis para adicionar um PDF, uma foto das suas anotações ou qualquer texto à sua meta."
+            "value" : "Crie uma conta grátis para adicionar um PDF, uma foto das suas anotações ou qualquer texto ao seu objetivo."
           }
         },
         "tr" : {
@@ -7326,7 +7326,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie uma conta grátis para começar outra meta"
+            "value" : "Crie uma conta grátis para começar outro objetivo"
           }
         },
         "tr" : {
@@ -9332,7 +9332,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você pode seguir mais de uma meta por vez. Até lá, essas metas ficam na sua lista de metas."
+            "value" : "Com o Plus, você pode seguir mais de um objetivo por vez. Até lá, esses objetivos ficam na sua lista de objetivos."
           }
         },
         "tr" : {
@@ -9391,7 +9391,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você pode seguir mais de uma meta por vez. Até lá, essa meta fica na sua lista de metas."
+            "value" : "Com o Plus, você pode seguir mais de um objetivo por vez. Até lá, esse objetivo fica na sua lista de objetivos."
           }
         },
         "tr" : {
@@ -10164,7 +10164,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meta"
+            "value" : "Objetivo"
           }
         },
         "tr" : {
@@ -12111,7 +12111,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais metas ao mesmo tempo com o Plus"
+            "value" : "Mais objetivos ao mesmo tempo com o Plus"
           }
         },
         "tr" : {
@@ -15362,7 +15362,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lendo sua meta"
+            "value" : "Lendo seu objetivo"
           }
         },
         "tr" : {
@@ -15893,7 +15893,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvando sua meta…"
+            "value" : "Salvando seu objetivo…"
           }
         },
         "tr" : {
@@ -17209,7 +17209,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma meta"
+            "value" : "Começar um objetivo"
           }
         },
         "tr" : {
@@ -17510,7 +17510,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece pela sua meta"
+            "value" : "Comece pelo seu objetivo"
           }
         },
         "tr" : {
@@ -19580,7 +19580,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No plano Grátis, você acompanha uma meta por vez. Para começar outra, pause sua meta atual pelo menu do seu plano. As perguntas rápidas estão sempre disponíveis."
+            "value" : "No plano Grátis, você acompanha um objetivo por vez. Para começar outro, pause seu objetivo atual pelo menu do seu plano. As perguntas rápidas estão sempre disponíveis."
           }
         },
         "tr" : {
@@ -19639,7 +19639,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No plano Grátis, você acompanha uma meta por vez. Para começar esta, pause sua meta atual pelo menu do seu plano ou assine o Plus."
+            "value" : "No plano Grátis, você acompanha um objetivo por vez. Para começar este, pause seu objetivo atual pelo menu do seu plano ou assine o Plus."
           }
         },
         "tr" : {
@@ -20170,7 +20170,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essas metas dividem seu tempo diário. Você pode mudar tudo isso depois."
+            "value" : "Esses objetivos dividem seu tempo diário. Você pode mudar tudo isso depois."
           }
         },
         "tr" : {
@@ -20229,7 +20229,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elas são criadas a partir das habilidades que sua meta exige. Isso costuma levar um ou dois minutos."
+            "value" : "Elas são criadas a partir das habilidades que seu objetivo exige. Isso costuma levar um ou dois minutos."
           }
         },
         "tr" : {
@@ -20471,7 +20471,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa meta fica com %1$@ por dia e a outra meta com %2$@."
+            "value" : "Esse objetivo fica com %1$@ por dia e o outro objetivo com %2$@."
           }
         },
         "tr" : {
@@ -20536,7 +20536,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa meta fica com %1$@ por dia e as outras metas com %2$@ no total."
+            "value" : "Esse objetivo fica com %1$@ por dia e os outros objetivos com %2$@ no total."
           }
         },
         "tr" : {
@@ -21008,7 +21008,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar outra meta"
+            "value" : "Tentar outro objetivo"
           }
         },
         "tr" : {
@@ -21303,7 +21303,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entendendo sua meta"
+            "value" : "Entendendo seu objetivo"
           }
         },
         "tr" : {
@@ -22129,7 +22129,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não pode ajudar com esta meta"
+            "value" : "A gente não pode ajudar com este objetivo"
           }
         },
         "tr" : {
@@ -22424,7 +22424,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos carregar sua meta"
+            "value" : "Não conseguimos carregar seu objetivo"
           }
         },
         "tr" : {
@@ -22483,7 +22483,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos preparar perguntas para esta meta. Suas primeiras sessões vão ajudar a encontrar seu ponto de partida."
+            "value" : "Não conseguimos preparar perguntas para este objetivo. Suas primeiras sessões vão ajudar a encontrar seu ponto de partida."
           }
         },
         "tr" : {
@@ -22542,7 +22542,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível ler sua meta. Tente de novo em instantes."
+            "value" : "Não foi possível ler seu objetivo. Tente de novo em instantes."
           }
         },
         "tr" : {
@@ -22601,7 +22601,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar sua meta. Tente de novo em instantes."
+            "value" : "Não foi possível salvar seu objetivo. Tente de novo em instantes."
           }
         },
         "tr" : {
@@ -22660,7 +22660,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu calcular quanto tempo sua meta precisa."
+            "value" : "A gente não conseguiu calcular quanto tempo seu objetivo precisa."
           }
         },
         "tr" : {
@@ -23663,7 +23663,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo necessário para estudar todo o conteúdo da sua meta até %@."
+            "value" : "O tempo necessário para estudar todo o conteúdo do seu objetivo até %@."
           }
         },
         "tr" : {
@@ -23722,7 +23722,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo necessário para estudar todo o conteúdo da sua meta até o início de %@."
+            "value" : "O tempo necessário para estudar todo o conteúdo do seu objetivo até o início de %@."
           }
         },
         "tr" : {
@@ -24790,7 +24790,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem uma conta, você pode acompanhar uma meta. Crie uma conta grátis para continuar."
+            "value" : "Sem uma conta, você pode acompanhar um objetivo. Crie uma conta grátis para continuar."
           }
         },
         "tr" : {
@@ -24849,7 +24849,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem uma conta, você pode acompanhar uma meta. Seu plano e seu progresso vão com você."
+            "value" : "Sem uma conta, você pode acompanhar um objetivo. Seu plano e seu progresso vão com você."
           }
         },
         "tr" : {
@@ -24908,7 +24908,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem uma conta, você pode enviar algumas metas novas por dia. Crie uma conta grátis para continuar."
+            "value" : "Sem uma conta, você pode enviar alguns objetivos novos por dia. Crie uma conta grátis para continuar."
           }
         },
         "tr" : {
@@ -24967,7 +24967,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Calculando quanto tempo sua meta precisa…"
+            "value" : "Calculando quanto tempo seu objetivo precisa…"
           }
         },
         "tr" : {
@@ -25144,7 +25144,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escrever minha meta de novo"
+            "value" : "Escrever meu objetivo de novo"
           }
         },
         "tr" : {
@@ -25911,7 +25911,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você está começando metas muito rápido. Tente de novo em alguns minutos."
+            "value" : "Você está começando objetivos muito rápido. Tente de novo em alguns minutos."
           }
         },
         "tr" : {
@@ -26442,7 +26442,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novos objetivos enviados do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
           }
         },
         "tr" : {
@@ -26501,7 +26501,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novos objetivos enviados do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
           }
         },
         "tr" : {
@@ -26560,7 +26560,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas do seu plano para hoje. Tente de novo amanhã."
+            "value" : "Você atingiu o limite de novos objetivos enviados do seu plano para hoje. Tente de novo amanhã."
           }
         },
         "tr" : {
@@ -26619,7 +26619,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas que pode começar no plano Grátis este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novos objetivos que pode começar no plano Grátis este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
           }
         },
         "tr" : {
@@ -26678,7 +26678,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas que pode começar no seu plano hoje. Tente de novo amanhã."
+            "value" : "Você atingiu o limite de novos objetivos que pode começar no seu plano hoje. Tente de novo amanhã."
           }
         },
         "tr" : {
@@ -26914,7 +26914,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas para esta meta são apagadas e você escreve uma meta de novo."
+            "value" : "Suas respostas para este objetivo são apagadas e você escreve um objetivo de novo."
           }
         },
         "tr" : {
@@ -27032,7 +27032,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data da sua meta é hoje, então não há mais dias para planejar."
+            "value" : "A data do seu objetivo é hoje, então não há mais dias para planejar."
           }
         },
         "tr" : {
@@ -27091,7 +27091,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data da sua meta, %@, já passou."
+            "value" : "A data do seu objetivo, %@, já passou."
           }
         },
         "tr" : {
@@ -27923,7 +27923,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano cobre todas as partes da sua meta. Para terminar antes, aumente o tempo diário ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
+            "value" : "Seu plano cobre todas as partes do seu objetivo. Para terminar antes, aumente o tempo diário ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
           }
         },
         "tr" : {
@@ -28395,7 +28395,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assim, seu plano cobre todo o conteúdo da sua meta e aprofunda o que mais importa. Isso dá cerca de %@ do conteúdo estudado a fundo."
+            "value" : "Assim, seu plano cobre todo o conteúdo do seu objetivo e aprofunda o que mais importa. Isso dá cerca de %@ do conteúdo estudado a fundo."
           }
         },
         "tr" : {
@@ -28454,7 +28454,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assim, seu plano começa pelo que mais importa, com cerca de %@ do conteúdo da sua meta estudado a fundo. O resto pode ficar de fora."
+            "value" : "Assim, seu plano começa pelo que mais importa, com cerca de %@ do conteúdo do seu objetivo estudado a fundo. O resto pode ficar de fora."
           }
         },
         "tr" : {

@@ -100,7 +100,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         >
           {t({
             description:
-              "The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”",
+              "The landing's subhead. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”",
             message:
               "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time.",
           })}

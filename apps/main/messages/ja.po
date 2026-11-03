@@ -3372,6 +3372,7 @@ msgid "<line>Stop deciding what to study.</line> <line>Just study.</line>"
 msgstr "<line>何を学ぶか、もう迷いません。</line> <line>あとは学ぶだけです。</line>"
 
 #. The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
+#. The landing's subhead. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "WtT1Bl"
