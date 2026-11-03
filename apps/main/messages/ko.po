@@ -244,6 +244,7 @@ msgstr "시험"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "말하기"
@@ -574,9 +575,11 @@ msgctxt "rEPdIs"
 msgid "Course outline"
 msgstr "코스 목차"
 
+#. How many chapters a finished course's plan held.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+#: src/lib/certificates/certificate-view.ts
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {챕터 #개}}"
@@ -1836,7 +1839,9 @@ msgctxt "WDXXIC"
 msgid "In the last 90 days"
 msgstr "최근 90일간"
 
+#. A placement result's fact: how many of the test's questions they answered.
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/lib/certificates/certificate-view.ts
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "답변 수"
@@ -3428,6 +3433,147 @@ msgstr "{category} 코스"
 msgctxt "BBu_dn"
 msgid "Courses in {category}"
 msgstr "{category} 분야 코스"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "듣기"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "MOK_yK"
+msgid "Reading"
+msgstr "읽기"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "GoReDj"
+msgid "Writing"
+msgstr "쓰기"
+
+#. A certificate's fact: the day the learner finished the course or level.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "수료일"
+
+#. A certificate's fact: how many of the plan's lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "학습한 레슨"
+
+#. A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "테스트로 통과한 레슨"
+
+#. A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "학습 시간"
+
+#. A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "약 {duration}"
+
+#. Under a big number on a certificate's social post: how many lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "hYLeZv"
+msgid "{count, plural, =0 {lessons studied} one {lesson studied} other {lessons studied}}"
+msgstr "{count, plural, =0 {학습한 레슨 없음} other {학습한 레슨}}"
+
+#. Under a big number of hours on a certificate's social post, such as “~41 h” over “of study”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "6SwZ60"
+msgid "of study"
+msgstr "학습 시간"
+
+#. Shown on a certificate where the learner's name goes, until they add one to their profile.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "vlKhIl"
+msgid "Your name"
+msgstr "이름"
+
+#. The kind of document, above the learner's name: the level Zoonk's level test measured.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "WSC4bY"
+msgid "Placement result"
+msgstr "레벨 테스트 결과"
+
+#. The kind of document, above the learner's name on a certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "수료증"
+
+#. Above a certificate's link and QR code, which open the page that proves it's real.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "5FXh-Z"
+msgid "Verify this certificate"
+msgstr "수료증 진위 확인"
+
+#. A placement result's fact: the day the learner took the level test.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "avtgF2"
+msgid "Taken"
+msgstr "응시일"
+
+#. The fine print on a placement result.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "I7kswm"
+msgid "{count, plural, one {Estimated from # answer.} other {Estimated from # answers.}} This is not an official exam result."
+msgstr "{count, plural, other {답변 #개를 바탕으로 추정했어요.}} 공식 시험 결과가 아니에요."
+
+#. How a placement result was measured. The level follows the CEFR scale, without claiming official recognition.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "fPhAJC"
+msgid "Measured by Zoonk's placement test · aligned with the CEFR"
+msgstr "Zoonk 레벨 테스트로 측정 · CEFR 기준"
+
+#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "yA8QN_"
+msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
+msgstr "Zoonk에서 연습한 모든 언어 능력이 답변을 바탕으로 한 평가에서 {level}에 도달했을 때 발급해요. 공식 시험 결과가 아니에요."
+
+#. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "PrhNZj"
+msgid "Level completed · aligned with the CEFR"
+msgstr "레벨 완료 · CEFR 기준"
+
+#. A course certificate's span when the plan held one level, such as “Beginner level”.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "XmHKKJ"
+msgid "{level} level"
+msgstr "{level} 레벨"
+
+#. A course certificate's span of levels, such as “Beginner to Advanced”.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "tXYVJd"
+msgid "{from} to {to}"
+msgstr "{from}부터 {to}까지"
+
+#. After “Topics covered” when the certificate lists only the first six topics.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "oDI_Rp"
+msgid "and {count} more"
+msgstr "외 {count}개"
+
+#. Above the topics a finished course covered, on its certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "학습한 주제"
+
+#. The fine print on a course certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "fDd8ap"
+msgid "Awarded for finishing every lesson and challenge of this course on Zoonk."
+msgstr "Zoonk에서 이 코스의 모든 레슨과 챌린지를 마쳐 받은 수료증이에요."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"
