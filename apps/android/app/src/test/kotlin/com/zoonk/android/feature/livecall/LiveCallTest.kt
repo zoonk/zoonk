@@ -106,11 +106,18 @@ class LiveCallTest {
 
     private val FakeTransport.checkIns get() = commentary.count { it.content == cues.checkIn.text }
 
-    /** The session took the latest goodbye cue now: the character's words from here on are its goodbye. */
-    private fun TestScope.goodbyeTaken() {
-        transport.onEvent(LiveServerEvent.CommentaryTaken(requireNotNull(transport.goodbyes.last().eventId), currentTime.toDouble()))
+    /** The session took the latest goodbye cue at [atMs] on its timeline, now by default. */
+    private fun TestScope.goodbyeTaken(atMs: Double = currentTime.toDouble()) {
+        transport.onEvent(LiveServerEvent.CommentaryTaken(requireNotNull(transport.goodbyes.last().eventId), atMs))
         runCurrent()
     }
+
+    private fun TestScope.openingTaken() {
+        transport.onEvent(LiveServerEvent.CommentaryTaken(requireNotNull(transport.openings.last().eventId), currentTime.toDouble()))
+        runCurrent()
+    }
+
+    private val FakeTransport.openings get() = commentary.filter { it.content == cues.opening.text }
 
     private val LiveCall.phase get() = state.value.phase
 
@@ -135,7 +142,8 @@ class LiveCallTest {
 
             assertEquals(LiveCallPhase.Live, call.phase)
             assertEquals(300L, call.state.value.talkSeconds)
-            assertEquals(listOf(cues.opening.command()), transport.sent)
+            assertEquals(listOf(cues.opening.text), transport.commentary.map { it.content })
+            assertEquals(1, transport.sent.size)
         }
 
     @Test
@@ -175,18 +183,38 @@ class LiveCallTest {
         }
 
     @Test
-    fun theOpeningIsSentOnceMoreOnlyWhileTheCharacterStaysSilent() =
+    fun theOpeningIsSentOnceMoreOnlyWhileTheCharacterStaysSilentAfterTakingIt() =
         runTest(dispatcher) {
             val quiet = live()
-            wait(5.seconds)
-            assertEquals(2, transport.commentary.count { it.content == cues.opening.text })
+            wait(2.seconds)
+            openingTaken()
+            wait(4.8.seconds)
+            assertEquals(1, transport.openings.size)
+            wait(0.2.seconds)
+            assertEquals("5 s after the session took it", 2, transport.openings.size)
+            wait(10.seconds)
+            assertEquals(2, transport.openings.size)
             quiet.hangUp()
 
             transports.clear()
             live()
+            openingTaken()
             transport.onEvent(characterSays("Hola"))
             wait(10.seconds)
-            assertEquals(1, transport.commentary.count { it.content == cues.opening.text })
+            assertEquals(1, transport.openings.size)
+        }
+
+    @Test
+    fun aSlowStartIsNotGreetedTwice() =
+        runTest(dispatcher) {
+            live()
+
+            wait(6.7.seconds)
+            assertEquals("Not taken yet: the first opening is still on its way", 1, transport.openings.size)
+            openingTaken()
+            transport.onEvent(characterSays("Hola"))
+            wait(10.seconds)
+            assertEquals(1, transport.openings.size)
         }
 
     @Test
@@ -311,11 +339,13 @@ class LiveCallTest {
     fun atTheTalkTimeAnIdleLearnerIsGivenEightSecondsToAnswerAndNotCheckedOn() =
         runTest(dispatcher) {
             greeted()
+            waitUntil(17.seconds)
+            characterTalks(until = 19.seconds)
 
-            waitUntil(27.8.seconds)
+            waitUntil(28.2.seconds)
             assertTrue(transport.goodbyes.isEmpty())
             wait(0.2.seconds)
-            assertEquals(1, transport.goodbyes.size)
+            assertEquals("8 s after the character stopped, at 20.3 s", 1, transport.goodbyes.size)
 
             wait(30.seconds)
             assertEquals("No check-in once the ending started", 0, transport.checkIns)
@@ -493,10 +523,114 @@ class LiveCallTest {
 
             waitUntil(20.seconds)
             call.typed()
-            waitUntil(46.4.seconds)
+            waitUntil(44.8.seconds)
             assertEquals(0, transport.checkIns)
             wait(0.2.seconds)
             assertEquals(1, transport.checkIns)
+        }
+
+    @Test
+    fun theLearnersTranscriptStartsTheSilenceAgainFromItsArrival() =
+        runTest(dispatcher) {
+            live()
+            characterTalks(until = 1.seconds)
+
+            waitUntil(10.seconds)
+            transport.onEvent(learnerSays("Sí", 8200.0, 8600.0))
+            runCurrent()
+            waitUntil(34.8.seconds)
+            assertEquals(0, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals(1, transport.checkIns)
+        }
+
+    @Test
+    fun aReplyTypedAfterTheTalkTimeIsAnsweredBeforeTheGoodbye() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(18.seconds)
+            characterTalks(until = 19.5.seconds)
+            while (currentTime < 22_000) {
+                call.typed()
+                wait(0.4.seconds)
+            }
+            call.sendText("¿Abren el sábado?")
+            wait(1.seconds)
+            assertTrue("The reply goes alone", transport.goodbyes.isEmpty())
+
+            characterTalks(until = 24.5.seconds)
+            waitUntil(25.6.seconds)
+            assertTrue("Not while the character answers it", transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals("Once its answer stopped, its last words at 24.2 s", 1, transport.goodbyes.size)
+            assertEquals(
+                "They typed: \"¿Abren el sábado?\"",
+                transport.commentary
+                    .dropLast(1)
+                    .last()
+                    .content,
+            )
+        }
+
+    @Test
+    fun aReplyBeingTypedHoldsTheGoodbye() =
+        runTest(dispatcher) {
+            val call = greeted()
+
+            waitUntil(19.8.seconds)
+            while (currentTime <= 34_800) {
+                call.typed()
+                wait(1.seconds)
+            }
+            assertTrue(transport.goodbyes.isEmpty())
+            waitUntil(42.6.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals("8 s after the last keystroke, at 34.8 s", 1, transport.goodbyes.size)
+        }
+
+    @Test
+    fun theLearnersTranscriptCountsAsSpeakingWhenTheMicrophoneHearsNothing() =
+        runTest(dispatcher) {
+            greeted()
+            waitUntil(17.seconds)
+            characterTalks(until = 19.5.seconds)
+
+            waitUntil(21.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            transport.onEvent(learnerSays("Gracias", 19800.0, 20300.0))
+            runCurrent()
+            assertEquals(1, transport.goodbyes.size)
+        }
+
+    @Test
+    fun wordsThatArriveBeforeTheGoodbyesAcknowledgmentCountWhenTheyStartNearIt() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 21.seconds)
+            transport.onEvent(characterSays("Lo siento, ", 20800.0, 21100.0))
+            runCurrent()
+            assertFalse(call.state.value.sayingGoodbye)
+
+            goodbyeTaken(atMs = 21_000.0)
+            assertTrue("It started 200 ms before the cue's place", call.state.value.sayingGoodbye)
+        }
+
+    @Test
+    fun wordsFromBeforeTheGoodbyeCueAreNotItsGoodbye() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 21.seconds)
+            transport.onEvent(characterSays("y además", 20000.0, 20400.0))
+            runCurrent()
+            goodbyeTaken(atMs = 21_000.0)
+            assertFalse(call.state.value.sayingGoodbye)
+
+            transport.onEvent(characterSays("Adiós", 21300.0, 21800.0))
+            runCurrent()
+            assertTrue(call.state.value.sayingGoodbye)
         }
 
     @Test

@@ -44,6 +44,10 @@ class LiveCallEventsTest {
         assertNull(LiveServerEvent.parse("""{"type":"session.input_transcript.delta","delta":"x","start_ms":5,"end_ms":4}"""))
         assertNull(LiveServerEvent.parse("""{"type":"session.output_transcript.delta","delta":"x","start_ms":"5","end_ms":6}"""))
         assertNull(LiveServerEvent.parse("""{"type":"session.commentary.appended","event_id":"e2","start_ms":5200,"end_ms":5400}"""))
+        assertEquals(
+            LiveServerEvent.CommentaryTaken("bye-1", null),
+            LiveServerEvent.parse("""{"type":"session.commentary.appended","event_id":"e2","client_event_id":"bye-1"}"""),
+        )
         assertNull(LiveServerEvent.parse("not json"))
     }
 
@@ -97,6 +101,18 @@ class LiveCallEventsTest {
             turns,
         )
         assertEquals(2L, turns.spokenSeconds)
+    }
+
+    @Test
+    fun wordsSaidAfterAPauseGetTheSpaceTheirFirstFragmentLacks() {
+        val turns =
+            emptyList<TranscriptTurn>()
+                .adding(characterSays("Sí, está disponible.", 0.0, 1200.0))
+                .adding(characterSays("¿Quiere", 2400.0, 2700.0))
+                .adding(characterSays(" verlo?", 2700.0, 3100.0))
+                .adding(characterSays("Bien", 3200.0, 3400.0))
+
+        assertEquals("Sí, está disponible. ¿Quiere verlo?Bien", turns.single().text)
     }
 
     @Test

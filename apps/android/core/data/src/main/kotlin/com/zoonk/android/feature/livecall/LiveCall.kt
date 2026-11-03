@@ -105,6 +105,7 @@ class LiveCall(
     private var ending: LiveCallEnding? = null
     private var gaps = ReplyGaps()
     private var reported = false
+    private val openingEvents = mutableSetOf<String>()
     private val goodbyeEvents = mutableSetOf<String>()
     private val waitingReplies = mutableListOf<String>()
     private val timers = mutableListOf<Job>()
@@ -157,13 +158,14 @@ class LiveCall(
         val cue = setup?.script?.cues?.typedReply
         if (phase == LiveCallPhase.Live && cue != null) {
             send(typedReply(cue, trimmed))
-            typed()
+            now()?.let { ending?.learnerSent(it) }
+            advance()
         } else {
             waitingReplies += trimmed
         }
     }
 
-    /** Typing a reply keeps the floor, as speaking does. */
+    /** A reply being typed holds the goodbye until it's sent. */
     fun typed() {
         val now = now() ?: return
         ending?.learnerTyped(now)
@@ -316,6 +318,7 @@ class LiveCall(
                 if (event.speaker == Speaker.LEARNER) {
                     learnerTurn = true
                     settle?.cancel()
+                    ending?.learnerHeard(now)
                     mutableState.update { it.copy(learnerSpoke = true) }
                 } else {
                     ending?.characterSaid(now, event.startMs)
@@ -335,7 +338,11 @@ class LiveCall(
             }
 
             is LiveServerEvent.CommentaryTaken -> {
-                if (event.clientEventId in goodbyeEvents) ending?.goodbyeAcknowledged(event.startMs)
+                when (event.clientEventId) {
+                    in openingEvents -> ending?.openingTaken(now)
+                    in goodbyeEvents -> ending?.goodbyeTaken(event.startMs)
+                }
+                advance()
             }
         }
     }
@@ -369,12 +376,9 @@ class LiveCall(
             )
         }
 
-        send(
-            setup.script.cues.opening
-                .command(),
-        )
+        sendOpening(setup.script.cues.opening)
         waitingReplies.forEach { send(typedReply(setup.script.cues.typedReply, it)) }
-        if (waitingReplies.isNotEmpty()) ending?.learnerTyped(now)
+        if (waitingReplies.isNotEmpty()) ending?.learnerSent(now)
         waitingReplies.clear()
         startClock(liveAt = now)
     }
@@ -411,7 +415,7 @@ class LiveCall(
         while (true) {
             when (val step = machine.next(now) ?: break) {
                 LiveCallEnding.Step.RetryOpening -> {
-                    send(script.cues.opening.command())
+                    sendOpening(script.cues.opening)
                 }
 
                 LiveCallEnding.Step.CheckIn -> {
@@ -420,9 +424,7 @@ class LiveCall(
 
                 is LiveCallEnding.Step.SayGoodbye -> {
                     val cue = if (step.reason == EndingReason.Done) script.cues.goodbyeDone else script.cues.goodbye
-                    val id = UUID.randomUUID().toString()
-                    goodbyeEvents += id
-                    send(cue.command(eventId = id))
+                    send(cue.command(eventId = UUID.randomUUID().toString().also(goodbyeEvents::add)))
                 }
 
                 is LiveCallEnding.Step.HangUp -> {
@@ -442,6 +444,9 @@ class LiveCall(
             )
         }
     }
+
+    /** Its acknowledgment starts the wait for a character who stays silent: a slow start isn't greeted twice. */
+    private fun sendOpening(cue: LiveCallCue) = send(cue.command(eventId = UUID.randomUUID().toString().also(openingEvents::add)))
 
     private fun send(command: LiveClientCommand) {
         gaps.cueSent()

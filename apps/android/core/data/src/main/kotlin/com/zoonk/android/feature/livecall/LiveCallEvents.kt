@@ -29,10 +29,10 @@ sealed interface LiveServerEvent {
         val id: String,
     ) : LiveServerEvent
 
-    /** The session took the commentary sent with [clientEventId]; [startMs] is where on its timeline. */
+    /** The session took the commentary sent with [clientEventId]; [startMs] is where on its timeline, when it says. */
     data class CommentaryTaken(
         val clientEventId: String,
-        val startMs: Double,
+        val startMs: Double?,
     ) : LiveServerEvent
 
     companion object {
@@ -61,8 +61,7 @@ sealed interface LiveServerEvent {
                 }
 
                 "session.commentary.appended" -> {
-                    val id = event.string("client_event_id") ?: return null
-                    event.number("start_ms")?.let { CommentaryTaken(id, it) }
+                    event.string("client_event_id")?.let { CommentaryTaken(it, event.number("start_ms")) }
                 }
 
                 else -> {
