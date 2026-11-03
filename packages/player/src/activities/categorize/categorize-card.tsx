@@ -19,7 +19,9 @@ export function CategorizeCard({
           )}
           key={item.id}
         >
-          <LessonRichText text={item.text} />
+          <span className="min-w-0">
+            <LessonRichText text={item.text} />
+          </span>
         </p>
       ))}
     </div>

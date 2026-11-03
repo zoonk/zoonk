@@ -17,6 +17,37 @@ type Group = { id: string; label: string };
 
 const ROW_CLASS = "flex min-h-11 w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm";
 
+function CategorizeMoveMenu({
+  onMove,
+  otherGroups,
+}: {
+  onMove: (groupId: string) => void;
+  otherGroups: readonly Group[];
+}) {
+  const t = useExtracted();
+
+  return (
+    <DropdownMenuContent align="end" className="w-auto">
+      <DropdownMenuGroup>
+        <DropdownMenuLabel>
+          {t({
+            description: "Title of the menu that moves a sorted card to another group.",
+            message: "Move to",
+          })}
+        </DropdownMenuLabel>
+
+        {otherGroups.map((group) => (
+          <DropdownMenuItem key={group.id} onClick={() => onMove(group.id)}>
+            <span className="min-w-0">
+              <LessonRichText text={group.label} />
+            </span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
+  );
+}
+
 export function CategorizeMoveRow({
   id,
   onMove,
@@ -28,8 +59,6 @@ export function CategorizeMoveRow({
   otherGroups: readonly Group[];
   text: string;
 }) {
-  const t = useExtracted();
-
   return (
     <li>
       <DropdownMenu>
@@ -47,22 +76,7 @@ export function CategorizeMoveRow({
           <ChevronsUpDown aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-auto">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              {t({
-                description: "Title of the menu that moves a sorted card to another group.",
-                message: "Move to",
-              })}
-            </DropdownMenuLabel>
-
-            {otherGroups.map((group) => (
-              <DropdownMenuItem key={group.id} onClick={() => onMove(group.id)}>
-                <LessonRichText text={group.label} />
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
+        <CategorizeMoveMenu onMove={onMove} otherGroups={otherGroups} />
       </DropdownMenu>
     </li>
   );

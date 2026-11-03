@@ -10,7 +10,15 @@ import {
   press,
   pressOnPage,
 } from "../_test-utils/activity-player";
-import { inlineImage } from "../preview/preview-steps";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep, inlineImage } from "../preview/preview-steps";
+
+const NUMBERED_BEAKERS = {
+  alt: "Two beakers side by side, numbered 1 and 2",
+  parts: ["left beaker", "right beaker"],
+  prompt: "Two beakers on a lab bench",
+};
 
 const LEAF = {
   alt: "A long, thin needle growing in a bundle of two from the twig",
@@ -277,6 +285,33 @@ describe("reasoning activities", () => {
 });
 
 describe("reasoning activities with only a keyboard", () => {
+  it("categorize: number keys sort nothing while its numbered picture is drawn", async () => {
+    const step = activityStep({
+      content: { ...activityContentFixtures.categorize, image: NUMBERED_BEAKERS },
+      image: null,
+      imagePending: true,
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([step]) });
+    await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await pressOnPage("1");
+    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).not.toBeInTheDocument();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: sorting the last card while Undo has focus moves focus to the status", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await focusOn(page.getByRole("button", { name: "Undo" }));
+    await press("Enter");
+    await expect.element(page.getByRole("button", { name: "Undo" })).toHaveFocus();
+    await press("1");
+    await press("1");
+    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toHaveFocus();
+  });
+
   it("categorize: number keys sort each card in turn, then Enter checks", async () => {
     openActivity({ template: "categorize" });
     await focusOn(page.getByRole("button", { name: "New substance" }));

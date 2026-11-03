@@ -82,7 +82,9 @@ export function CategorizeActivity({
       return;
     }
 
-    const hadFocus = groupsRef.current?.contains(document.activeElement) ?? false;
+    const hadFocus =
+      document.activeElement === undoRef.current ||
+      (groupsRef.current?.contains(document.activeElement) ?? false);
 
     flushSync(() =>
       commit(next, t("{item} is in {group}.", { group: group.label, item: card.text })),

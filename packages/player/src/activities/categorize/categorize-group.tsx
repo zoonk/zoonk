@@ -12,19 +12,26 @@ type Group = { id: string; label: string; rule: string };
 
 const RULE_CLASS = "text-muted-foreground text-[0.8125rem] leading-snug font-normal";
 
-function CategorizePreview({ latest, others }: { latest: string; others: number }) {
+/** Reserved before any card lands, so a group never grows under the learner's thumb. */
+function CategorizePreview({ latest, others }: { latest: string | null; others: number }) {
   const t = useExtracted();
 
   return (
-    <span aria-hidden="true" className="mt-2 flex min-w-0 gap-1.5" data-slot="categorize-preview">
-      <span
-        className={cn(
-          CHIP_CLASS,
-          "bg-background text-foreground block min-w-0 shrink truncate text-xs leading-5.5 font-normal",
-        )}
-      >
-        <LessonRichText text={latest} />
-      </span>
+    <span
+      aria-hidden="true"
+      className="mt-2 flex h-5.5 min-w-0 gap-1.5"
+      data-slot="categorize-preview"
+    >
+      {latest && (
+        <span
+          className={cn(
+            CHIP_CLASS,
+            "bg-background text-foreground block min-w-0 shrink truncate text-xs leading-5.5 font-normal",
+          )}
+        >
+          <LessonRichText text={latest} />
+        </span>
+      )}
 
       {others > 0 && (
         <span className={cn(CHIP_CLASS, "bg-background font-mono text-xs tabular-nums")}>
@@ -71,7 +78,7 @@ export function CategorizeGroupOption({
         <LessonRichText text={group.rule} />
       </span>
 
-      {latest && <CategorizePreview latest={latest} others={others} />}
+      <CategorizePreview latest={latest} others={others} />
     </AnswerOption>
   );
 }

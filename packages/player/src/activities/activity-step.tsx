@@ -5,6 +5,7 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { Suspense, useId } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
+import { PlayerInteractionContext, usePlayerInteractionState } from "../player-context";
 import { ActivityBadge } from "./_components/activity-badge";
 import { ActivityCanvasSkeleton } from "./_components/activity-canvas";
 import { ActivityChoiceCheck } from "./_components/activity-choice-check";
@@ -58,6 +59,7 @@ export function ActivityStep({
 }: ActivityStepProps) {
   const labelId = useId();
   const isMounted = useIsMounted();
+  const interactionState = usePlayerInteractionState();
   const { badge, Canvas, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const isCheckFirst = checkFirst(content);
@@ -83,20 +85,23 @@ export function ActivityStep({
       {isCheckFirst && checkArea}
 
       <fieldset className="flex min-w-0 flex-col gap-2" disabled={isLocked} inert={isLocked}>
-        {isMounted ? (
-          <Suspense fallback={<ActivityCanvasSkeleton />}>
-            <Canvas
-              answer={answer}
-              content={content}
-              expected={expected}
-              labelId={labelId}
-              onAnswerChange={onAnswerChange}
-              phase={phase}
-            />
-          </Suspense>
-        ) : (
-          <ActivityCanvasSkeleton />
-        )}
+        {/* `inert` stops clicks but not the window-level keys a canvas listens to. */}
+        <PlayerInteractionContext value={isLocked ? "paused" : interactionState}>
+          {isMounted ? (
+            <Suspense fallback={<ActivityCanvasSkeleton />}>
+              <Canvas
+                answer={answer}
+                content={content}
+                expected={expected}
+                labelId={labelId}
+                onAnswerChange={onAnswerChange}
+                phase={phase}
+              />
+            </Suspense>
+          ) : (
+            <ActivityCanvasSkeleton />
+          )}
+        </PlayerInteractionContext>
 
         <ActivityDataNote content={content} />
       </fieldset>
