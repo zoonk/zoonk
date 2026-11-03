@@ -11,6 +11,20 @@ function getCellClass(align: MarkdownTableAlign | undefined) {
   );
 }
 
+function ColumnHeader({
+  align,
+  children,
+}: {
+  align: MarkdownTableAlign | undefined;
+  children: React.ReactNode;
+}) {
+  return (
+    <th className={cn(getCellClass(align), "font-semibold hyphens-auto")} scope="col">
+      <SpokenMath>{children}</SpokenMath>
+    </th>
+  );
+}
+
 export function RichTable<TCell>({
   align,
   className,
@@ -48,13 +62,9 @@ export function RichTable<TCell>({
                 const key = `head-${index}`;
 
                 return (
-                  <th
-                    className={cn(getCellClass(align[index]), "font-semibold hyphens-auto")}
-                    key={key}
-                    scope="col"
-                  >
-                    <SpokenMath>{renderCell(cell)}</SpokenMath>
-                  </th>
+                  <ColumnHeader align={align[index]} key={key}>
+                    {renderCell(cell)}
+                  </ColumnHeader>
                 );
               })}
             </tr>
