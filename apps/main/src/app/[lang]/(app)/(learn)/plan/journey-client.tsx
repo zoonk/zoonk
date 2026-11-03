@@ -58,6 +58,7 @@ function getJourneyLinks({
     challenge: (planItemId) => `/challenge/${planItemId}`,
     chapter: (chapterId) =>
       goalKind === "language" ? `/content/units/${chapterId}` : `/content/chapters/${chapterId}`,
+    completedLessons: null,
     course: getCourseHref,
     exam: goalKind === "exam" ? "/exam" : null,
     focusTest: "/focus-test",

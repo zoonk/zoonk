@@ -182,6 +182,7 @@ export function TodayClient({
           return outcome?.change ?? null;
         },
         chooseFocusHref: "/plan?focus=choose",
+        completedLessonsHref: "/completed-lessons",
         continueHref: call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null,
         continueSession: () => {
           const next = stepAt(today.session.nextPosition);

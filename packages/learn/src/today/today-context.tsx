@@ -35,6 +35,7 @@ export type TodayActions = {
   }) => Promise<PlanChangeView | null>;
   adjustTimeHref: string;
   chooseFocusHref: string;
+  completedLessonsHref: string;
   studyEverythingHref: string;
   /**
    * A link for a step whose page opens it without writing (a language call); null for every other

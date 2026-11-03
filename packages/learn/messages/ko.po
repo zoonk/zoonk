@@ -103,6 +103,7 @@ msgstr "학습함"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -2179,6 +2180,34 @@ msgstr "내일 다시 도전"
 msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "다음 학습에서 다시 도전"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "완료한 레슨"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "완료한 레슨을 언제든 다시 해 보세요"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "어제"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "레슨을 완료하면 여기에 표시돼요. 언제든 다시 해 볼 수 있어요."
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "더 보기"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -7021,11 +7050,6 @@ msgstr "고친 문제"
 msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "틀린 문제"
-
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "더 보기"
 
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
@@ -12819,11 +12843,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · 앞선 챌린지를 마친 뒤"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", 미션 달성에 반영돼요"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", 건너뜀"
@@ -13177,6 +13196,11 @@ msgstr "{goal} 목표에 맞춰 계획을 만들고 있어요"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", 미션 달성에 반영돼요"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
