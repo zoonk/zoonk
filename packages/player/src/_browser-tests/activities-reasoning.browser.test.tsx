@@ -9,6 +9,8 @@ import {
   openActivity,
   press,
   pressOnPage,
+  sortCard,
+  sortedCard,
 } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
@@ -24,15 +26,6 @@ const LEAF = {
   alt: "A long, thin needle growing in a bundle of two from the twig",
   prompt: "Two long pine needles joined at the base on a twig",
 };
-
-async function sortCard({ group, item }: { group: string; item: string }) {
-  await expect.element(page.getByText(item, { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: group }).click();
-}
-
-function sortedCard({ group, item }: { group: string; item: string }) {
-  return page.getByRole("region", { name: group }).getByRole("button", { name: item });
-}
 
 async function matchCards(left: string, right: string) {
   await page.getByRole("button", { exact: true, name: left }).click();

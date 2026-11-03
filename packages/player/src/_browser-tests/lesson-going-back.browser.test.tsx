@@ -8,6 +8,7 @@ import {
   checkActivity,
   expectVerdict,
   pressOnSlider,
+  sortCard,
   valueInput,
 } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -77,11 +78,6 @@ function playLesson(steps: Parameters<typeof buildLesson>[0]) {
 
 function activity(content: ActivityContent = activityContentFixtures.categorize) {
   return activityStep({ content });
-}
-
-async function sortCard({ group, item }: { group: string; item: string }) {
-  await expect.element(page.getByText(item, { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: group }).click();
 }
 
 async function goBackAndReturn() {
