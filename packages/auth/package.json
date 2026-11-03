@@ -18,6 +18,7 @@
     "./errors": "./src/errors.ts",
     "./google-service-account": "./src/google/service-account.ts",
     "./next": "./src/next.ts",
+    "./name-rules": "./src/name-rules.ts",
     "./native-apple": "./src/native-apple.ts",
     "./native-apple-contract": "./src/native-apple-contract.ts",
     "./native-sessions": "./src/native-sessions.ts",

@@ -209,6 +209,11 @@ msgid "Name"
 msgstr "Nome"
 
 #: src/app/auth/[locale]/setup/setup-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Usa al massimo 150 caratteri."
+
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Nome utente"

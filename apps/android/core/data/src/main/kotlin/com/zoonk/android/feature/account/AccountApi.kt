@@ -35,9 +35,10 @@ interface AccountApi {
 
     suspend fun isUsernameAvailable(username: String): Boolean
 
+    /** A null [name] leaves the saved one, which may predate the name's length limit. */
     suspend fun updateProfile(
         session: AuthenticatedSession,
-        name: String,
+        name: String?,
         username: String,
     ): MeResponse
 
@@ -127,7 +128,7 @@ class LiveAccountApi(
 
     override suspend fun updateProfile(
         session: AuthenticatedSession,
-        name: String,
+        name: String?,
         username: String,
     ): MeResponse = perform { api.clients(session).account.updateCurrentUser(MeUpdate(name = name, username = username)) }
 

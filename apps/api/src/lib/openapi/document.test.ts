@@ -1,3 +1,4 @@
+import { NAME_MAX_LENGTH } from "@zoonk/auth/name-rules";
 import {
   USERNAME_ALLOWED_CHARACTERS,
   USERNAME_MAX_LENGTH,
@@ -457,6 +458,7 @@ describe("OpenAPI document", () => {
       additionalProperties: false,
       minProperties: 1,
       properties: {
+        name: { maxLength: NAME_MAX_LENGTH, minLength: 1 },
         username: {
           maxLength: USERNAME_MAX_LENGTH,
           minLength: USERNAME_MIN_LENGTH,
