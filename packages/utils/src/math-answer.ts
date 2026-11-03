@@ -69,7 +69,7 @@ export function formatMoney({
     maximumFractionDigits: Math.max(digits, minimum),
     minimumFractionDigits: minimum,
     notation: compact ? "compact" : "standard",
-    signDisplay: signed ? "exceptZero" : "auto",
+    ...(signed && { signDisplay: "exceptZero" }),
     style: "currency",
   }).format(value);
 

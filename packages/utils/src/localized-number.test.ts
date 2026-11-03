@@ -22,6 +22,13 @@ describe(formatLocalizedNumber, () => {
     expect(formatLocalizedNumber({ grouping: false, locale: "en", value: 1960 })).toBe("1960");
     expect(formatLocalizedNumber({ compact: true, locale: "en", value: 1_200_000 })).toBe("1.2M");
   });
+
+  it("writes a number that reads as zero without a minus sign", () => {
+    expect(formatLocalizedNumber({ locale: "en", value: -0 })).toBe("0");
+    expect(formatLocalizedNumber({ locale: "en", value: -0.0001 })).toBe("0");
+    expect(formatLocalizedNumber({ compact: true, locale: "en", value: -0 })).toBe("0");
+    expect(formatLocalizedNumber({ locale: "en", value: -0.5 })).toBe("−0.5");
+  });
 });
 
 describe(fractionDigitsFor, () => {
