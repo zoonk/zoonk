@@ -51,6 +51,7 @@
   "load_failed_try_again": "b2fb2fb6f246e570782d8e78c5d54a370ad40c10e896581b53ca646acaf96077",
   "navigation_back": "fc505d03120503d5e190f98ec4ce47fe4e3142c3f81b679073fa054882640c3d",
   "navigation_buddy": "d6f73fe9cff4dea7479297a79eff1ad3f5886c09f29ccebbab12ae4c4c0cc058",
+  "navigation_completed_lessons": "ebd2b08ab51e0e5ed62aedea97f3c832ba40662576de8046d0a4c60daf396886",
   "navigation_exam": "fe70271f18e1025d49efde37541709fafbbf61a7f8b8bed7203736eee91b30c1",
   "navigation_mind_maps": "bdb40969d75a325fc729f1cea3eaa84a3193cb95bda1ba12107e00153e39900c",
   "navigation_mistakes": "42bb12d00c6862511d6111a582de786b92968a455c8c79e9fedf7690d2dbf898",
@@ -78,6 +79,8 @@
     <string name="navigation_buddy">Parceiro</string>
     <string name="navigation_study">Estudo</string>
     <string name="navigation_mistakes">Caderno de erros</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">Aulas concluídas</string>
     <string name="navigation_exam">Prova</string>
     <string name="navigation_speaking">Conversação</string>
     <string name="navigation_mind_maps">Mapas mentais</string>

@@ -51,6 +51,7 @@
   "load_failed_try_again": "66c55caebd82532c7b8ac874b156c93fa6f73401887624769384c590c0ba5cce",
   "navigation_back": "991c560fdb8edd1501e082cdc5e49c3efa7cf513e1700404512bf8cfec77c65f",
   "navigation_buddy": "ba1cd1244098c498a98569ba446cb636f9c6bbc3bd0e69445b0077ccbd8a8043",
+  "navigation_completed_lessons": "90906344d4a6abdda7bc69acd55049cf635341e07a0300aad75d039bc07509c0",
   "navigation_exam": "35d7ed00834fa898e73553396ef524e9e22201935c86da04f6e4d0c78491b322",
   "navigation_mind_maps": "0f6332d21ef00b88cc190534244ab1c578c29ec9aee6a7dca8d9fcf12ed15a4a",
   "navigation_mistakes": "da691f07e02cf61d491b6e2103b32de83d1bf3e4026629cb0893eb6e767ea23f",
@@ -78,6 +79,8 @@
     <string name="navigation_buddy">Kumpel</string>
     <string name="navigation_study">Lernen</string>
     <string name="navigation_mistakes">Fehlerheft</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">Abgeschlossene Lektionen</string>
     <string name="navigation_exam">Prüfung</string>
     <string name="navigation_speaking">Sprechen</string>
     <string name="navigation_mind_maps">Mindmaps</string>

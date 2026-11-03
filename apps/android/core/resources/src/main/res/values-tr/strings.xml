@@ -51,6 +51,7 @@
   "load_failed_try_again": "ee4752d7b95fc1845d1b95fac736eaa8b60ffaea0b3c8ef80665d627a45c9323",
   "navigation_back": "e38116a47026b664007414dac152ba7f61de9cfe97035f6a5d374e57d910fc3c",
   "navigation_buddy": "48aa10c09f3ddc7f0747d2d2a02651f38e344cc267b1621eae29fa92ad5b9d17",
+  "navigation_completed_lessons": "3895afbf2fe3d5a2e29182abfc35acf2d9f005620da26cefe7577d496c50387e",
   "navigation_exam": "d8bcda53dfbb6754e6f14f72349cf3097fa687f30e61a54992cbe0644809e923",
   "navigation_mind_maps": "e4844f2b2b3bade305fd95c3cdd2638d3d66964f39aa199f215bbb30d393429d",
   "navigation_mistakes": "5a73fbd5fb16fd8e67067e20d8ab90721659a22811b07bfe5427ff6635af91ee",
@@ -78,6 +79,8 @@
     <string name="navigation_buddy">Arkadaş</string>
     <string name="navigation_study">Çalış</string>
     <string name="navigation_mistakes">Yanlış defteri</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">Tamamlanan dersler</string>
     <string name="navigation_exam">Sınav</string>
     <string name="navigation_speaking">Konuşma</string>
     <string name="navigation_mind_maps">Zihin haritaları</string>

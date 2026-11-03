@@ -56,6 +56,9 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Mistakes : AppRoute
 
+    @Serializable
+    data object CompletedLessons : AppRoute
+
     /** [task] opens that task's row, as main's `?task=` does. */
     @Serializable
     data class Speaking(
@@ -339,7 +342,7 @@ val AppRoute.presentation: Presentation
             is AppRoute.Buddy -> Presentation.Tab(AppTab.Buddy)
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
-            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, is AppRoute.Speaking,
+            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking,
             AppRoute.EarlierQuestions,
             -> Presentation.Push
 
@@ -374,7 +377,7 @@ val AppRoute.requirement: Requirement
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
             AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap,
-            AppRoute.Mistakes, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
+            AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
             is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,

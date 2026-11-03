@@ -593,9 +593,10 @@ private fun AppTab.title(summary: LearnerSummary?): String {
     return buddyName(buddy?.kind?.let { BuddyKind.of(it.value) } ?: BuddyKind.Zu, buddy?.name)
 }
 
-/** Exam, Speaking and Mind maps are listed only for a goal that has them. */
+/** Exam, Speaking, Mind maps and Completed lessons are listed only for a goal that has them. */
 private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =
     when (this) {
+        StudyPlace.CompletedLessons -> places?.completedLessons == true
         StudyPlace.Exam -> places?.exam == true
         StudyPlace.Speaking -> places?.speaking == true
         StudyPlace.MindMaps -> places?.mindMaps == true
