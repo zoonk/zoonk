@@ -108,10 +108,11 @@ struct PlacementStep: View {
     } else {
       WarmUpHold(
         surface: .placementWait, isReady: !phase.isWaiting, announcement: Self.questionsReady
-      ) { holding in
-        waiting(holding: holding)
-      } ready: {
-        ready
+      ) { stage in
+        switch stage {
+        case .waiting(let holding): waiting(holding: holding)
+        case .ready: ready
+        }
       }
     }
   }

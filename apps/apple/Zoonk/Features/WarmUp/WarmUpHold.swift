@@ -62,16 +62,24 @@ struct WarmUpHolding {
   let moveOn: () -> Void
 }
 
+enum WarmUpStage {
+  /// The wait, with its cards; `holding` once ready while the learner who guessed on it stays.
+  case waiting(holding: WarmUpHolding?)
+  /// What the wait was for.
+  case ready
+}
+
 /// The owner's rule for every wait that deals warm-up cards: once what it waits for is ready, a
 /// learner who hasn't guessed on it moves on after one second without a touch (a guess in that
 /// second counts), and one who has stays with a main button, so nobody is pulled away mid-card.
-struct WarmUpHold<Wait: View, Ready: View>: View {
+struct WarmUpHold<Content: View>: View {
   let isReady: Bool
-  /// Said when the wait starts holding: its title changes, and focus stays where it is.
-  let announcement: LocalizedStringResource
+  /// Said when the wait starts holding: its title changes, and focus stays where it is. Nil for a
+  /// screen that says it's ready itself.
+  let announcement: LocalizedStringResource?
   let onMoveOn: () -> Void
-  @ViewBuilder let wait: (WarmUpHolding?) -> Wait
-  @ViewBuilder let ready: () -> Ready
+  /// One view for every stage keeps a screen that stays (the session) from being rebuilt.
+  @ViewBuilder let content: (WarmUpStage) -> Content
 
   @State private var visit: WarmUpVisit
   @State private var stage: Stage
@@ -87,53 +95,53 @@ struct WarmUpHold<Wait: View, Ready: View>: View {
   init(
     surface: AnalyticsEvent.WarmUpSurface,
     isReady: Bool,
-    announcement: LocalizedStringResource,
-    @ViewBuilder wait: @escaping (WarmUpHolding?) -> Wait,
-    @ViewBuilder ready: @escaping () -> Ready,
+    announcement: LocalizedStringResource?,
+    @ViewBuilder content: @escaping (WarmUpStage) -> Content,
     onMoveOn: @escaping () -> Void = {}
   ) {
     self.isReady = isReady
     self.announcement = announcement
     self.onMoveOn = onMoveOn
-    self.wait = wait
-    self.ready = ready
+    self.content = content
     _visit = State(initialValue: WarmUpVisit(surface: surface))
     _stage = State(initialValue: isReady ? .done : .waiting)
   }
 
   var body: some View {
-    Group {
-      // Ready shows only once it is: a wait that comes back shows at once.
-      if stage == .done, isReady {
-        ready()
-      } else {
-        // One branch for waiting and holding, so the wait keeps following its run.
-        wait(stage == .holding ? WarmUpHolding(moveOn: moveOn) : nil)
-          .environment(visit)
-          .gesture(
-            TouchReader { isTouched in
-              visit.isTouched = isTouched
-              visit.stirredAt = .now
-            })
+    content(shown)
+      .environment(visit)
+      .gesture(
+        TouchReader { isTouched in
+          visit.isTouched = isTouched
+          visit.stirredAt = .now
+        }
+      )
+      .onChange(of: isReady) { _, isReady in
+        if isReady {
+          end()
+        } else {
+          stage = .waiting
+          visit.isHolding = false
+        }
       }
-    }
-    .onChange(of: isReady) { _, isReady in
-      if isReady {
-        end()
-      } else {
-        stage = .waiting
-        visit.isHolding = false
+      .onChange(of: visit.guessed) { _, guessed in
+        if guessed, stage == .settling {
+          hold()
+        }
       }
-    }
-    .onChange(of: visit.guessed) { _, guessed in
-      if guessed, stage == .settling {
-        hold()
+      .task(id: stage) {
+        if stage == .settling {
+          await settle()
+        }
       }
-    }
-    .task(id: stage) {
-      if stage == .settling {
-        await settle()
-      }
+  }
+
+  private var shown: WarmUpStage {
+    switch stage {
+    // Ready shows only once it is: a wait that comes back shows at once.
+    case .done where isReady: .ready
+    case .holding: .waiting(holding: WarmUpHolding(moveOn: moveOn))
+    case .waiting, .settling, .done: .waiting(holding: nil)
     }
   }
 
@@ -173,7 +181,10 @@ struct WarmUpHold<Wait: View, Ready: View>: View {
   private func hold() {
     stage = .holding
     visit.isHolding = true
-    AccessibilityNotification.Announcement(String(localized: announcement)).post()
+
+    if let announcement {
+      AccessibilityNotification.Announcement(String(localized: announcement)).post()
+    }
   }
 
   private func moveOn() {

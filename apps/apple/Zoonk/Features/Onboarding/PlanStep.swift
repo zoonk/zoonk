@@ -13,48 +13,61 @@ struct PlanStep: View {
 
   var body: some View {
     let plan = plans.plan(goalId: view.goal.id)
+    let read = plan.value?.plan
+    let wait = Self.wait(read)
 
-    Group {
-      // Only the plan's reveal waits for a learner still guessing, as on main: the notice's
-      // reading is another wait, which the plan isn't ready before.
-      if let reading = plan.value?.plan, reading.ready, reading.notice == .reading {
+    PlanWaits(wait: wait) { holding in
+      switch (plan.state, isWaiting) {
+      case (.idle, false), (.loading, false):
+        StepLoading()
+      default:
+        PlanBuilding(view: view, holding: holding, readResult: { await readUntilReady(plan) }) {
+          if let course = view.libraryCourse {
+            LibraryCourseOffer(
+              courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+          }
+        }
+        .onboardingColumn()
+        .onAppear { isWaiting = true }
+      }
+    } notice: { holding in
+      if let read {
         NoticeReadingView(
-          document: reading.examDocument, lastEdition: reading.schedule.targetDateEstimated
+          document: read.examDocument, lastEdition: read.schedule.targetDateEstimated,
+          generationID: view.generationId, next: .reveal, holding: holding
         )
         .onboardingColumn()
-        .task {
-          while !Task.isCancelled {
-            try? await Task.sleep(for: Self.noticeCheck)
-            await plan.refresh()
-          }
+      }
+    } ready: {
+      if let read {
+        PlanReveal(view: view, plan: read)
+      }
+    }
+    .task(id: wait) {
+      guard wait == .readingNotice else {
+        return
+      }
+
+      while true {
+        do {
+          try await Task.sleep(for: Self.noticeCheck)
+        } catch {
+          return
         }
-      } else {
-        WarmUpHold(
-          surface: .planWait, isReady: plan.value?.plan.ready == true, announcement: .planReady
-        ) { holding in
-          switch (plan.state, isWaiting) {
-          case (.idle, false), (.loading, false):
-            StepLoading()
-          default:
-            PlanBuilding(
-              view: view, holding: holding, readResult: { await readUntilReady(plan) }
-            ) {
-              if let course = view.libraryCourse {
-                LibraryCourseOffer(
-                  courseID: course.courseId, title: course.title, chapters: course.chapterCount)
-              }
-            }
-            .onboardingColumn()
-            .onAppear { isWaiting = true }
-          }
-        } ready: {
-          if let ready = plan.value?.plan {
-            PlanReveal(view: view, plan: ready)
-          }
-        }
+
+        await plan.refresh()
       }
     }
     .loads(plan, refreshable: false)
+  }
+
+  /// Main's plan wait on the reveal: the build, then an exam's notice being read.
+  private static func wait(_ plan: GoalPlan?) -> ScheduleTime.Wait? {
+    guard let plan, plan.ready else {
+      return .building
+    }
+
+    return plan.notice == .reading ? .readingNotice : nil
   }
 
   private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
@@ -76,16 +89,82 @@ struct PlanStep: View {
   }
 }
 
+/// The plan's two waits: its build, then, for an exam, its notice being read. Each counts only the
+/// guesses made on it, so a guess while the plan is built never says it's ready right before the
+/// reading starts.
+struct PlanWaits<Building: View, Notice: View, Ready: View>: View {
+  let wait: ScheduleTime.Wait?
+  @ViewBuilder let building: (WarmUpHolding?) -> Building
+  @ViewBuilder let notice: (WarmUpHolding?) -> Notice
+  @ViewBuilder let ready: () -> Ready
+
+  /// The notice's wait stays once the reading ends, for a learner still guessing on it.
+  @State private var readsNotice = false
+
+  var body: some View {
+    // A Group would give each wait its own `onChange`.
+    ZStack {
+      if wait == .readingNotice || (wait == nil && readsNotice) {
+        hold(notice)
+      } else {
+        hold(building)
+      }
+    }
+    .onChange(of: wait, initial: true) { _, wait in
+      if let wait {
+        readsNotice = wait == .readingNotice
+      }
+    }
+  }
+
+  private func hold<Wait: View>(_ wait: @escaping (WarmUpHolding?) -> Wait) -> some View {
+    WarmUpHold(surface: .planWait, isReady: self.wait == nil, announcement: .planReady) { stage in
+      switch stage {
+      case .waiting(let holding): wait(holding)
+      case .ready: ready()
+      }
+    }
+  }
+}
+
+/// Where the plan's waits lead.
+enum PlanNext {
+  case reveal
+  case timeQuestion
+
+  /// Under "Your plan is ready" while a learner still guessing stays.
+  var readyDescription: LocalizedStringResource {
+    switch self {
+    case .reveal:
+      LocalizedStringResource(
+        "See it whenever you're ready.", table: "Onboarding",
+        comment: "Under \"Your plan is ready\" when the plan shows next")
+    case .timeQuestion:
+      LocalizedStringResource(
+        "One last question, then you'll see it.", table: "Onboarding",
+        comment: "Under \"Your plan is ready\" when the time question comes before the plan")
+    }
+  }
+
+  var holdLabel: Text {
+    switch self {
+    case .reveal:
+      Text(
+        "See your plan", tableName: "Onboarding",
+        comment: "Leaves the plan's wait, once the plan is ready, for the plan")
+    case .timeQuestion:
+      Text(
+        "Continue", tableName: "Onboarding",
+        comment: "Leaves the plan's wait, once the plan is ready, for the time question")
+    }
+  }
+}
+
 /// Main's `PlanBuilding`: the goal's run while its plan is built, which both the reveal and the time
 /// question wait for.
 struct PlanBuilding<Trailing: View>: View {
-  enum Next {
-    case reveal
-    case timeQuestion
-  }
-
   let view: GoalOnboarding
-  var next = Next.reveal
+  var next = PlanNext.reveal
   var holding: WarmUpHolding?
   let readResult: () async -> Bool
   var onRunEnd: (() -> Void)?
@@ -116,37 +195,17 @@ struct PlanBuilding<Trailing: View>: View {
       leading: { EmptyView() },
       trailing: trailing
     )
-    .warmUpHoldBar(holding, label: holdLabel)
+    .warmUpHoldBar(holding, label: next.holdLabel)
   }
 
   private var description: LocalizedStringResource {
-    switch (holding, next) {
-    case (nil, _):
-      LocalizedStringResource(
-        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-        table: "Onboarding", comment: "Shown while a goal's plan is built")
-    case (_?, .reveal):
-      LocalizedStringResource(
-        "See it whenever you're ready.", table: "Onboarding",
-        comment: "Under \"Your plan is ready\" when the plan shows next")
-    case (_?, .timeQuestion):
-      LocalizedStringResource(
-        "One last question, then you'll see it.", table: "Onboarding",
-        comment: "Under \"Your plan is ready\" when the time question comes before the plan")
+    guard holding == nil else {
+      return next.readyDescription
     }
-  }
 
-  private var holdLabel: Text {
-    switch next {
-    case .reveal:
-      Text(
-        "See your plan", tableName: "Onboarding",
-        comment: "Leaves the plan's wait, once the plan is ready, for the plan")
-    case .timeQuestion:
-      Text(
-        "Continue", tableName: "Onboarding",
-        comment: "Leaves the plan's wait, once the plan is ready, for the time question")
-    }
+    return LocalizedStringResource(
+      "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+      table: "Onboarding", comment: "Shown while a goal's plan is built")
   }
 }
 
@@ -311,8 +370,15 @@ private struct RevealExamChoices: View {
 struct NoticeReadingView: View {
   let document: ExamDocument
   let lastEdition: Bool
+  /// The goal's run, which reports its warm-up deck.
+  let generationID: String?
+  let next: PlanNext
+  let holding: WarmUpHolding?
   /// Set once asking the plan failed: shows that, with the way to ask again.
   var reconnect: (() -> Void)?
+
+  @Environment(OnboardingStore.self) private var onboarding
+  @State private var warmUpID: String?
 
   var body: some View {
     List {
@@ -320,11 +386,7 @@ struct NoticeReadingView: View {
 
       Section {
         LabeledContent {
-          Image(systemName: "checkmark")
-            .fontWeight(.semibold)
-            .foregroundStyle(.success)
-            .accessibilityLabel(
-              Text("Done", tableName: "Onboarding", comment: "A finished step of a wait"))
+          done
         } label: {
           Text(
             "Your plan, from what you told us", tableName: "Onboarding",
@@ -332,7 +394,11 @@ struct NoticeReadingView: View {
         }
 
         LabeledContent {
-          ProgressView()
+          if holding == nil {
+            ProgressView()
+          } else {
+            done
+          }
         } label: {
           Text(
             "Reading the official documents", tableName: "Onboarding",
@@ -343,11 +409,34 @@ struct NoticeReadingView: View {
       if let reconnect {
         GenerationFailureSection(failure: .connection, act: reconnect)
       }
+
+      if let warmUpID {
+        WarmUpSection(deckID: warmUpID)
+      }
+    }
+    .warmUpDeck(warmUpID)
+    .warmUpHoldBar(holding, label: next.holdLabel)
+    .task(id: generationID) {
+      if let generationID, let id = await onboarding.warmUpID(generationID: generationID) {
+        warmUpID = id
+      }
     }
   }
 
+  private var done: some View {
+    Image(systemName: "checkmark")
+      .fontWeight(.semibold)
+      .foregroundStyle(.success)
+      .accessibilityLabel(
+        Text("Done", tableName: "Onboarding", comment: "A finished step of a wait"))
+  }
+
   private var title: Text {
-    lastEdition
+    guard holding == nil else {
+      return Text(.planReady)
+    }
+
+    return lastEdition
       ? Text(
         "Reading the last edition's official documents", tableName: "Onboarding",
         comment: "Title while the last edition of an exam's official documents is read")
@@ -357,6 +446,10 @@ struct NoticeReadingView: View {
   }
 
   private var description: Text {
+    if holding != nil {
+      return Text(next.readyDescription)
+    }
+
     if lastEdition {
       return Text(
         "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
