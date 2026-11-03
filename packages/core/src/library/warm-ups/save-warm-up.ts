@@ -20,9 +20,11 @@ export async function saveWarmUp({
 }): Promise<string | null> {
   const kept = new Set(checked.verdicts.filter(({ keep }) => keep).map(({ id: cardId }) => cardId));
 
+  // Every app reports a guess by its card's id alone, so the saved id names the deck too.
   const cards = written.cards
     .filter(({ id: cardId }) => kept.has(cardId))
-    .slice(0, WARM_UP_DECK_SIZE.max);
+    .slice(0, WARM_UP_DECK_SIZE.max)
+    .map((card) => ({ ...card, id: `${id}:${card.id}` }));
 
   await prisma.warmUp.updateMany({
     data: {

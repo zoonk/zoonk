@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { checkWarmUp } from "./check-warm-up";
 import { type WarmUpClaim, claimWarmUp, failWarmUp, readWarmUpStatus } from "./claim-warm-up";
 import { saveWarmUp } from "./save-warm-up";
+import { warmUpDeckSchema } from "./warm-up-contract";
 import { getWarmUpKey } from "./warm-up-key";
 import { writeWarmUp } from "./write-warm-up";
 
@@ -241,7 +242,12 @@ describe("shared warm-up writing", () => {
 
     const id = await writeDeck({ ...request, claim: await claimWarmUp(request) });
     const stored = await prisma.warmUp.findUniqueOrThrow({ where: { id: id! } });
-    const expected = vi.mocked(checkWarmUpCards).mock.calls[0]![0].cards.slice(2, 10);
+
+    const expected = vi
+      .mocked(checkWarmUpCards)
+      .mock.calls[0]![0].cards.slice(2, 10)
+      .map((card) => ({ ...card, id: `${id}:${card.id}` }));
+
     expect(stored.cards).toStrictEqual(expected);
 
     expect(stored).toMatchObject({
@@ -250,6 +256,22 @@ describe("shared warm-up writing", () => {
       status: "ready",
       writerModel: "openai/gpt-6-luna",
     });
+  });
+
+  it("gives every saved card an id no other deck's card has", async () => {
+    const [first, second] = await Promise.all([newGoals(), newGoals()]);
+
+    const decks = await Promise.all(
+      [first, second].map(async ({ goals, scope }) => {
+        const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+        const id = await writeDeck({ ...request, claim: await claimWarmUp(request) });
+        const stored = await prisma.warmUp.findUniqueOrThrow({ where: { id: id! } });
+        return warmUpDeckSchema.parse(stored).cards.map((card) => card.id);
+      }),
+    );
+
+    const ids = decks.flat();
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("records failed content and never pays for the key again", async () => {

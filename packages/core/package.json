@@ -421,6 +421,7 @@
     "./lookahead/item-set-targets": "./src/lookahead/item-set-targets.ts",
     "./lookahead/learner-lookahead": "./src/lookahead/learner-lookahead.ts",
     "./lookahead/lessons-ask": "./src/lookahead/lessons-ask.ts",
+    "./lookahead/first-lesson-warm-up": "./src/lookahead/get-first-lesson-warm-up.ts",
     "./lookahead/lesson-waiting-state": "./src/lookahead/get-lesson-waiting-state.ts",
     "./lookahead/outline-ahead": "./src/lookahead/outline-ahead.ts",
     "./lookahead/placement-item-skills": "./src/lookahead/placement-item-skills.ts",
