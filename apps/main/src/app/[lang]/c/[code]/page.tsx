@@ -9,6 +9,7 @@ import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
 import { getSession } from "@zoonk/core/users/session";
+import { CertificateVerified } from "@zoonk/learn/certificates/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getCertificateLinks } from "@zoonk/utils/certificate-links";
@@ -102,11 +103,12 @@ async function CertificateBody({ params }: Props) {
   );
 }
 
+/** As tall as the screen, so the footer under it doesn't jump when the certificate arrives. */
 function CertificateSkeleton() {
   return (
-    <div aria-busy="true" className="bg-ground">
+    <div aria-busy="true" className="bg-ground min-h-dvh">
       <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-6 pb-16")}>
-        <Skeleton className="h-4 w-56" />
+        <CertificateVerified />
         <Skeleton className="mt-4 h-10 w-full max-w-2xl" />
         <Skeleton className="mt-2 h-10 w-2/3 max-w-xl" />
         <Skeleton className="mt-4 h-5 w-80 max-w-full" />

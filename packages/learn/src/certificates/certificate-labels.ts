@@ -89,9 +89,11 @@ export function useCourseLevels() {
     }
 
     return t({
-      description: 'The course levels a certificate covers, such as "Beginner to Advanced".',
-      message: "{from} to {to}",
-      values: { from: levelName(first), to: levelName(last) },
+      description:
+        "The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.",
+      message:
+        "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}",
+      values: { from: first, to: last },
     });
   };
 }

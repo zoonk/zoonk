@@ -1554,11 +1554,11 @@ msgctxt "8QINPM"
 msgid "about {duration}"
 msgstr "environ {duration}"
 
-#. The course levels a certificate covers, such as "Beginner to Advanced".
+#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
 #: src/certificates/certificate-labels.ts
-msgctxt "tXYVJd"
-msgid "{from} to {to}"
-msgstr "De {from} à {to}"
+msgctxt "LZF2Ia"
+msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
+msgstr "{from, select, overview {De la vue d’ensemble} beginner {Du niveau débutant} intermediate {Du niveau intermédiaire} other {Du niveau avancé}} {to, select, overview {à la vue d’ensemble} beginner {au niveau débutant} intermediate {au niveau intermédiaire} other {au niveau avancé}}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "u9fD-O"

@@ -203,7 +203,7 @@ async function getCourseMeta({
   zones,
 }: {
   locale: string;
-  zones: { chapters: number; label: string }[];
+  zones: { chapters: number; label: string; level: string }[];
 }): Promise<string> {
   const t = await getExtracted({ locale });
   const [first] = zones;
@@ -223,9 +223,11 @@ async function getCourseMeta({
     first &&
     last &&
     t({
-      description: "A course certificate's span of levels, such as “Beginner to Advanced”.",
-      message: "{from} to {to}",
-      values: { from: first.label, to: last.label },
+      description:
+        "The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.",
+      message:
+        "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}",
+      values: { from: first.level, to: last.level },
     });
 
   const chapterCount =
@@ -246,6 +248,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
     facts.courseLevels.map((courseLevel) => ({
       chapters: courseLevel.chapters,
       label: levelLabels[courseLevel.level],
+      level: courseLevel.level,
     })),
   );
 

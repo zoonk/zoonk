@@ -56,6 +56,17 @@ export function CertificateFootnote() {
   );
 }
 
+export function CertificateVerified() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground inline-flex items-center gap-1.5 text-[0.8125rem]">
+      <BadgeCheckIcon aria-hidden="true" className="text-success size-4" />
+      {t("Verified certificate · issued by Zoonk")}
+    </p>
+  );
+}
+
 export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
@@ -64,10 +75,7 @@ export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
 
   return (
     <div className="flex flex-col">
-      <p className="text-muted-foreground inline-flex items-center gap-1.5 text-[0.8125rem]">
-        <BadgeCheckIcon aria-hidden="true" className="text-success size-4" />
-        {t("Verified certificate · issued by Zoonk")}
-      </p>
+      <CertificateVerified />
       <h1 className="text-headline mt-3.5 max-w-4xl">{sentence(facts)}</h1>
       <p className="text-lead mt-2.5">
         {facts.kind === "placement"
