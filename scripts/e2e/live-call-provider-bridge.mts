@@ -25,7 +25,11 @@ type Sessions = Map<string, Session>;
 
 async function bodyOf(
   request: IncomingMessage,
-): Promise<{ closeMode: Session["closeMode"] | null; sdp: string | null }> {
+): Promise<{
+  closeMode: Session["closeMode"] | null;
+  greeting: string | null;
+  sdp: string | null;
+}> {
   const body: unknown = JSON.parse(await text(request));
 
   if (!body || typeof body !== "object") {
@@ -38,6 +42,7 @@ async function bodyOf(
       (body.closeMode === "confirm" || body.closeMode === "hold" || body.closeMode === "reject")
         ? body.closeMode
         : null,
+    greeting: "greeting" in body && typeof body.greeting === "string" ? body.greeting : null,
     sdp: "sdp" in body && typeof body.sdp === "string" ? body.sdp : null,
   };
 }
@@ -84,8 +89,10 @@ async function createSession({
 
   sessions.set(id, session);
 
+  // The browser's fake peer hears the startup greeting through its answer, as OpenAI hears it.
   if (!realPeer) {
-    json(response, { sdp: TEST_LIVE_SDP_ANSWER, sessionId: id });
+    const greeting = body.greeting ? `a=x-e2e-greeting:${JSON.stringify(body.greeting)}\r\n` : "";
+    json(response, { sdp: `${TEST_LIVE_SDP_ANSWER}${greeting}`, sessionId: id });
   }
 }
 

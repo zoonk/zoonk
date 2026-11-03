@@ -7,15 +7,7 @@ import { LearnLink } from "../../learn-link";
 import { CallOffMessage } from "./conversation-parts";
 
 /** Never says how much call time a plan has. */
-export function CallLimitMessage({
-  className,
-  limit,
-  title,
-}: {
-  className?: string;
-  limit: CallLimit;
-  title?: string;
-}) {
+export function CallLimitMessage({ className, limit }: { className?: string; limit: CallLimit }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
 
@@ -26,7 +18,7 @@ export function CallLimitMessage({
   };
 
   return (
-    <CallOffMessage className={className} title={title ?? titles[limit.period]}>
+    <CallOffMessage className={className} title={titles[limit.period]}>
       <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallOffMessage>
   );

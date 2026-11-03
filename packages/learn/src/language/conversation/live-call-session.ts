@@ -82,17 +82,19 @@ export function createLiveCallSession({
 
 /**
  * A hangup at the call's deadline closes the channel without `session.closed`, so a lost connection
- * asks our server how it ended.
+ * asks our server how it ended. `onClosed` runs at once, so nothing ends the call meanwhile.
  */
 export function watchConnection({
   endedByServer,
   isOpen,
+  onClosed,
   onEnded,
   onLost,
   session,
 }: {
   endedByServer: () => Promise<boolean>;
   isOpen: () => boolean;
+  onClosed: () => void;
   onEnded: () => void;
   onLost: () => void;
   session: LiveCallSession;
@@ -108,6 +110,7 @@ export function watchConnection({
     }
 
     lost.asked = true;
+    onClosed();
 
     void endedByServer().then(
       (ended) => (ended ? onEnded() : onLost()),

@@ -1,11 +1,15 @@
 import { z } from "zod";
 
+export const LESSON_RICH_TEXT = "Rich text: the lesson Markdown subset and `$…$` math";
+
 export const firstQuestionSchema = z
   .object({
     context: z
       .string()
       .nullable()
-      .meta({ description: "Plain text the question follows; null when it stands alone" }),
+      .meta({
+        description: `What the question follows; null when it stands alone. ${LESSON_RICH_TEXT}`,
+      }),
     guess: z
       .boolean()
       .meta({
@@ -14,14 +18,12 @@ export const firstQuestionSchema = z
       }),
     kind: z.literal("choice"),
     options: z
-      .array(z.object({ id: z.string(), text: z.string() }))
+      .array(z.object({ id: z.string(), text: z.string().meta({ description: LESSON_RICH_TEXT }) }))
       .meta({
         description:
           "Without which is right: the lesson checks the answer the learner opens it with",
       }),
-    question: z
-      .string()
-      .meta({ description: "Rich text: the lesson Markdown subset and `$…$` math" }),
+    question: z.string().meta({ description: LESSON_RICH_TEXT }),
   })
   .meta({ id: "CatalogFirstQuestion" });
 

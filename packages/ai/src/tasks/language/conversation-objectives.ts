@@ -16,8 +16,8 @@ import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * GPT-Live reaches us through AI Gateway with client delegation only, so the voice model can't call
- * a tool to mark objectives and a text model reads the transcript. Luna got 18 of 19 on its eval
- * without ticking a goal early (27 Sep 2026).
+ * a tool to mark objectives and a text model reads the transcript. Luna got 22 of 23 on its eval
+ * without ticking a goal early or hearing a goodbye that wasn't said (2 Nov 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
@@ -43,7 +43,10 @@ export type CheckConversationObjectivesParams = {
 
 /** Labels come from our scenario, so the model can only answer with one of them. */
 function buildSchema(labels: [string, ...string[]]) {
-  return z.object({ met: z.array(z.object({ label: z.enum(labels), learnerWords: z.string() })) });
+  return z.object({
+    goodbye: z.boolean(),
+    met: z.array(z.object({ label: z.enum(labels), learnerWords: z.string() })),
+  });
 }
 
 export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildSchema>>;
@@ -74,7 +77,10 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
   `;
 }
 
-/** Only through the learner's own words, all of it, and understood rather than perfect. */
+/**
+ * Only through the learner's own words, all of it, and understood rather than perfect. The same
+ * read says whether the call's last exchange was a mutual goodbye, so the app can hang up.
+ */
 export async function checkConversationObjectives(params: CheckConversationObjectivesParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const [first, ...rest] = params.objectives.map((objective) => objective.label);

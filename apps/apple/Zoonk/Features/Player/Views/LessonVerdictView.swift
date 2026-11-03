@@ -198,10 +198,10 @@ private struct LessonKeyPointsView: View {
         .accessibilityLabel(
           point.met
             ? Text(
-              "Stated: \(LessonRichText.plain(point.text))", tableName: "Player",
+              "Stated: \(LessonRichText.spoken(point.text))", tableName: "Player",
               comment: "A key point the answer stated")
             : Text(
-              "Missing: \(LessonRichText.plain(point.text))", tableName: "Player",
+              "Missing: \(LessonRichText.spoken(point.text))", tableName: "Player",
               comment: "A key point the answer missed"))
       }
     }

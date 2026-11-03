@@ -109,7 +109,10 @@ describe(conversationReviewWorkflow, () => {
     vi.mocked(checkConversationObjectives)
       .mockReset()
       .mockResolvedValue(
-        modelAnswer({ met: [{ label: "Is it available?", learnerWords: "It is available?" }] }),
+        modelAnswer({
+          goodbye: false,
+          met: [{ label: "Is it available?", learnerWords: "It is available?" }],
+        }),
       );
   });
 

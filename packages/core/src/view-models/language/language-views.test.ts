@@ -274,22 +274,22 @@ describe("language view models", () => {
     });
   });
 
-  it("offers only the call lengths left today, and says when calls come back once none fits", async () => {
+  it("offers every call length the plan allows while any of today's call time is left, and says when calls come back once none is", async () => {
     freezeClock();
 
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 50, userId: user.id });
-    const oneLeft = await getLanguageUnitView({ chapterId: renting.id });
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 110, userId: user.id });
+    const someLeft = await getLanguageUnitView({ chapterId: renting.id });
 
-    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 10, userId: user.id });
     const noneLeft = await getLanguageUnitView({ chapterId: renting.id });
 
-    expect(oneLeft.status === "ready" && oneLeft.unit.conversation).toMatchObject({
-      defaultMinutes: 1,
+    expect(someLeft.status === "ready" && someLeft.unit.conversation).toMatchObject({
+      defaultMinutes: 2,
       limit: null,
-      minutes: [1],
+      minutes: [1, 2],
       plusMinutes: [3, 5],
     });
 

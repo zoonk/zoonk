@@ -3,6 +3,7 @@ import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type Goal, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
 import { getSpeakingLevel, toSpeakingLevel } from "../../conversations/_utils/conversation-goal";
@@ -123,7 +124,8 @@ export async function hasSpeakingAccess(): Promise<boolean> {
   return allowance?.examPrep.includesMockExams ?? false;
 }
 
-export async function findShortCallTime(seconds: number): Promise<AllowanceLimit | null> {
+/** A task starts whole while any call time is left, like every call. */
+export async function findUsedUpCallTime(): Promise<AllowanceLimit | null> {
   const allowance = await getAllowance();
 
   if (!allowance) {
@@ -132,16 +134,14 @@ export async function findShortCallTime(seconds: number): Promise<AllowanceLimit
 
   const { callTime, tier } = allowance;
 
-  const periods = [
-    { left: callTime.limitSeconds, period: "day", used: callTime.usedSeconds },
-    { left: callTime.monthLimitSeconds, period: "month", used: callTime.usedSecondsThisMonth },
-  ] as const;
+  const left = getCallTimeLeft({
+    kind: "conversation",
+    tier,
+    usedThisMonth: callTime.usedSecondsThisMonth,
+    usedToday: callTime.usedSeconds,
+  });
 
-  const short = periods.find(({ left, used }) => left !== null && left - used < seconds);
-
-  if (!short || short.left === null) {
-    return null;
-  }
-
-  return { limit: short.left, period: short.period, resource: "callSeconds", tier };
+  return left && left.seconds <= 0
+    ? { limit: left.limit, period: left.period, resource: "callSeconds", tier }
+    : null;
 }

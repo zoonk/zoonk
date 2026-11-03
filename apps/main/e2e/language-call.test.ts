@@ -6,7 +6,13 @@ import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
-import { answerLiveCalls } from "./live-peer";
+import {
+  CHARACTER_CHECK_IN,
+  CHARACTER_GOODBYE,
+  CHARACTER_REPLY,
+  answerLiveCalls,
+  blockMicrophone,
+} from "./live-peer";
 import { openAs } from "./study-day";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
@@ -18,10 +24,12 @@ const BANK_WRITTEN_AT = new Date("2026-01-01T00:00:00.000Z");
 function createCall({
   chapterId,
   goalId,
+  minutes = 2,
   userId,
 }: {
   chapterId: string;
   goalId: string;
+  minutes?: number;
   userId: string;
 }) {
   return prisma.languageConversation.create({
@@ -32,7 +40,7 @@ function createCall({
       language: "pt",
       level: "A2",
       liveModel: "openai/gpt-live-1",
-      minutes: 2,
+      minutes,
       scenario: RENTING_SCENARIO,
       targetLanguage: "en",
       titleSnapshot: RENTING_SCENARIO.title,
@@ -144,7 +152,9 @@ async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } 
 }
 
 test.describe("Language calls", () => {
-  test("a silent call ends automatically and saves its completion", async ({ browser }) => {
+  test("a quiet learner is checked on, then the call says goodbye, hangs up and saves", async ({
+    browser,
+  }) => {
     const { goal, renting, user } = await createLanguageLearner();
     const call = await createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id });
     const page = await openAs(browser, user);
@@ -152,20 +162,155 @@ test.describe("Language calls", () => {
     await answerLiveCalls(page, "answers");
     await page.clock.install();
     await page.goto(`/conversation/${call.id}`);
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Call Linda" }).click();
 
     const transcript = page.getByRole("log", { name: "Conversation" });
     await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
 
-    await page.clock.fastForward("00:21");
+    await page.clock.fastForward("00:30");
+    await expect(transcript.getByText(CHARACTER_CHECK_IN)).toBeVisible();
+    await expect(transcript.getByText(CHARACTER_GOODBYE)).toBeHidden();
 
     await page.clock.fastForward("00:25");
+    await expect(transcript.getByText(CHARACTER_GOODBYE)).toBeVisible();
+    await expect(page.getByText("Linda is saying goodbye")).toBeVisible();
+
+    await page.clock.fastForward("00:04");
     await expect(page.getByRole("img", { name: "2 of 3 stars" })).toBeVisible();
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.id } }),
     ).resolves.toMatchObject({ status: "completed" });
 
+    await page.context().close();
+  });
+
+  test("past its talk time, the call says goodbye after the learner's typed answer and hangs up only once the goodbye had time to play", async ({
+    browser,
+  }) => {
+    const { goal, renting, user } = await createLanguageLearner();
+
+    const call = await createCall({
+      chapterId: renting.id,
+      goalId: goal.id,
+      minutes: 1,
+      userId: user.id,
+    });
+
+    const page = await openAs(browser, user);
+    await answerLiveCalls(page, "answers");
+    await page.clock.install();
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Call Linda" }).click();
+
+    const transcript = page.getByRole("log", { name: "Conversation" });
+    const reply = page.getByRole("textbox", { name: "Type your reply" });
+
+    const wrapUp = page
+      .locator('[data-slot="call-turn"]')
+      .getByText("Almost time. Linda will say goodbye after your answer.");
+
+    await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+    // Held from here, the call's clock moves only with the test, however slow the machine is.
+    await page.clock.pauseAt(new Date(Date.now() + 1000));
+
+    const answerAfter20Seconds = async (text: string) => {
+      await page.clock.runFor("00:20");
+      await reply.fill(text);
+      await page.keyboard.press("Enter");
+    };
+
+    // A reply every 20 s keeps the call's check-in away until its minute is nearly up.
+    await answerAfter20Seconds("Yes, is it free?");
+    await answerAfter20Seconds("How much is it?");
+    await page.clock.runFor("00:10");
+    await reply.fill("Can I see it on Saturday?");
+
+    // Still typing as the minute ends: the goodbye waits for the reply.
+    await expect(async () => {
+      await page.keyboard.type(" ");
+      await page.clock.runFor(1000);
+      await expect(wrapUp).toBeVisible({ timeout: 100 });
+    }).toPass();
+
+    await expect(transcript.getByText(CHARACTER_GOODBYE)).toBeHidden();
+    await page.keyboard.press("Enter");
+    await page.clock.runFor("00:01");
+    await expect(transcript.getByText("Can I see it on Saturday?")).toBeVisible();
+    await expect(transcript.getByText(CHARACTER_REPLY)).toHaveCount(3);
+    await expect(transcript.getByText(CHARACTER_GOODBYE)).toBeHidden();
+
+    // Linda answers the reply first, then says goodbye once she stopped.
+    await page.clock.runFor("00:02");
+    await expect(transcript.getByText(CHARACTER_GOODBYE)).toBeVisible();
+    await expect(page.getByText("Linda is saying goodbye")).toBeVisible();
+
+    await page.clock.runFor("00:02");
+    await expect(page.getByRole("button", { exact: true, name: "End" })).toBeVisible();
+
+    await page.clock.runFor(1500);
+    await expect(page.getByRole("img", { name: "2 of 3 stars" })).toBeVisible();
+
+    await page.context().close();
+  });
+
+  test("a blocked microphone offers to type instead, before anything is reserved", async ({
+    browser,
+  }) => {
+    const { goal, renting, user } = await createLanguageLearner();
+    const call = await createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id });
+    const page = await openAs(browser, user);
+
+    await blockMicrophone(page);
+    await answerLiveCalls(page, "answers");
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Call Linda" }).click();
+
+    await expect(page.getByText("Your microphone is off")).toBeVisible();
+
+    await expect(
+      page.getByRole("status").filter({ hasText: "Your microphone is off" }),
+    ).toBeFocused();
+
+    await expect(
+      prisma.liveCallConnection.count({ where: { conversationId: call.id } }),
+    ).resolves.toBe(0);
+
+    await page.getByRole("button", { name: "Type instead" }).click();
+    await expect(page.getByRole("textbox", { name: "Type your reply" })).toBeFocused();
+
+    await expect(
+      page
+        .getByRole("log", { name: "Conversation" })
+        .getByText("Hi! Are you calling about the apartment?"),
+    ).toBeVisible();
+
+    await expect(page.getByText("Type your reply below.")).toBeVisible();
+    await page.context().close();
+  });
+
+  test("calling again with a blocked microphone asks first instead of reserving a typed call", async ({
+    browser,
+  }) => {
+    const { goal, renting, user } = await createLanguageLearner();
+    const call = await createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id });
+    const page = await openAs(browser, user);
+
+    const connections = () =>
+      prisma.liveCallConnection.count({ where: { conversationId: call.id } });
+
+    await blockMicrophone(page);
+    const gateway = await answerLiveCalls(page, "silent");
+    await page.clock.install();
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Call Linda" }).click();
+    await page.getByRole("button", { name: "Type instead" }).click();
+    await gateway.asked;
+    await page.clock.fastForward("00:16");
+    await page.getByRole("button", { name: "Try again" }).click();
+
+    await expect(page.getByText("Your microphone is off")).toBeVisible();
+    await expect.poll(connections).toBe(1);
     await page.context().close();
   });
 
@@ -179,8 +324,8 @@ test.describe("Language calls", () => {
     const gateway = await answerLiveCalls(page, "silent");
     await page.clock.install();
     await page.goto(`/conversation/${call.id}`);
-    await page.getByRole("button", { name: "Start the call" }).click();
-    await expect(page.getByText("Calling…")).toBeVisible();
+    await page.getByRole("button", { name: "Call Linda" }).click();
+    await expect(page.getByText("Calling Linda…")).toBeVisible();
 
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Hello?");
     await page.keyboard.press("Enter");
@@ -194,10 +339,10 @@ test.describe("Language calls", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Try again" }).click();
-    await expect(page.getByText("Calling…")).toBeVisible();
+    await expect(page.getByText("Calling Linda…")).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "End" }).click();
-    await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+    await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.id } }),

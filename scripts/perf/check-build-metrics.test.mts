@@ -36,6 +36,20 @@ describe("performance gates", () => {
 
       assert.match(slow.stdout, /warning title=Main build time/u);
       assert.match(slow.stdout, /warning title=Main build RSS/u);
+
+      const mac = await check(
+        "       59.99 real        10.00 user         2.00 sys\n          6442450944  maximum resident set size\n",
+      );
+
+      assert.match(mac.stdout, /Main build: 59.99 s; maximum RSS 6144 MiB/u);
+      assert.doesNotMatch(mac.stdout, /::warning/u);
+
+      const macOverBudget = await check(
+        "       61.01 real        10.00 user         2.00 sys\n          6442451968  maximum resident set size\n",
+      );
+
+      assert.match(macOverBudget.stdout, /warning title=Main build time/u);
+      assert.match(macOverBudget.stdout, /warning title=Main build RSS/u);
       const missing = await check("missing fields");
       assert.match(missing.stdout, /warning title=Main build metrics/u);
     } finally {

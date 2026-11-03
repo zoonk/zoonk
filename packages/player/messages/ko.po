@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "{total, plural, other {카드 #장}}을 한 장씩 {groups} 그룹으로 분류하세요."
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item} 카드는 {group} 그룹에 있어요. 다음은 {next} 카드예요."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item} 카드는 {group} 그룹에 있어요."
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "{item} 카드를 되돌렸어요."
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "카드가 없어요"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "<item></item>은(는) <group></group>에 속해요."
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "올바르게 분류한 항목 {right}/{total}개"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "{item}은(는) {group}에 속해요."
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "{sorted}/{total}개 분류 완료"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "어느 그룹에 들어갈까요?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} 카드는 {group} 그룹에 있어요."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} 카드는 {group} 그룹에 있어요. 다음은 {next} 카드예요."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "{item} 카드를 되돌렸어요."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"

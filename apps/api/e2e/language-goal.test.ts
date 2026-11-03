@@ -333,7 +333,7 @@ test.describe("Language goal API", () => {
     await Promise.all([apiContext.dispose(), stranger.dispose()]);
   });
 
-  test("connects again a call from an earlier day against today's time, and stops at the free plan's daily call time", async () => {
+  test("connects again a call from an earlier day against today's time, starts a whole call with any of the free plan's daily call time left, and stops once it's used", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "language-call-limit",
@@ -368,17 +368,14 @@ test.describe("Language goal API", () => {
 
     const nextCall = await start();
 
-    const shortened = await apiContext.post(
-      `/v1/language-conversations/${await start()}/connections`,
-    );
+    const whole = await apiContext.post(`/v1/language-conversations/${await start()}/connections`);
 
-    expect(shortened.status()).toBe(201);
-    const setup = languageConversationSetupSchema.parse(await shortened.json());
-    expect(setup.endsAtLimit).toBe("day");
+    expect(whole.status()).toBe(201);
+    const setup = languageConversationSetupSchema.parse(await whole.json());
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-    ).resolves.toMatchObject({ heldSeconds: 90 });
+    ).resolves.toMatchObject({ heldSeconds: FREE_CALL_SECONDS });
 
     const replacing = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
     expect(replacing.status()).toBe(201);

@@ -24,7 +24,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Is it available?", "Ask about the deposit"] },
+        "expected": { "goodbye": false, "met": ["Is it available?", "Ask about the deposit"] },
         "id": "pt-renting-two-questions-1",
         "userInput": {
           "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
@@ -53,6 +53,42 @@
       }
     },
     {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "Expected none; marked none.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected none; marked none.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected none; marked none.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": false, "met": [] },
+        "id": "pt-renting-viewing-not-agreed-1",
+        "userInput": {
+          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
+          "objectives": [
+            {
+              "description": "Marque um dia e horário para ver o apartamento.",
+              "label": "Book a viewing"
+            }
+          ],
+          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
+            { "speaker": "learner", "text": "Yes. Can I see the apartment?" },
+            {
+              "speaker": "character",
+              "text": "Sure! Saturday at 10 or at 2, which is better for you?"
+            }
+          ]
+        }
+      }
+    },
+    {
       "classification": { "expected": "Book a viewing", "predicted": "Book a viewing" },
       "steps": [
         {
@@ -72,7 +108,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Book a viewing"] },
+        "expected": { "goodbye": false, "met": ["Book a viewing"] },
         "id": "pt-renting-viewing-with-mistakes-1",
         "userInput": {
           "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
@@ -107,7 +143,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "pt-renting-character-offers-1",
         "userInput": {
           "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
@@ -145,7 +181,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "pt-renting-own-language-1",
         "userInput": {
           "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
@@ -183,7 +219,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Is it available?"] },
+        "expected": { "goodbye": false, "met": ["Is it available?"] },
         "id": "pt-renting-misheard-1",
         "userInput": {
           "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
@@ -228,7 +264,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Explain your visit"] },
+        "expected": { "goodbye": false, "met": ["Explain your visit"] },
         "id": "pt-arriving-visit-only-1",
         "userInput": {
           "characterNotes": "A calm immigration officer at Toronto Pearson. Asks the purpose of the visit and where the traveler will live.",
@@ -253,6 +289,57 @@
       }
     },
     {
+      "classification": { "expected": "Part 1", "predicted": "Part 1" },
+      "steps": [
+        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected Part 1; marked Part 1.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": false, "met": ["Part 1"] },
+        "id": "pt-ielts-part-one-done-1",
+        "userInput": {
+          "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
+          "exam": "ielts",
+          "objectives": [
+            {
+              "description": "Answer short questions about yourself and your routine.",
+              "label": "Part 1"
+            },
+            {
+              "description": "Talk for about a minute about the cue card topic.",
+              "label": "Part 2"
+            }
+          ],
+          "situation": "A short practice of the IELTS Speaking test, with its three parts in about five minutes.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Can you tell me your full name, please?" },
+            { "speaker": "learner", "text": "My name is Ana Paula Souza." },
+            { "speaker": "character", "text": "Where are you from, and what do you do?" },
+            {
+              "speaker": "learner",
+              "text": "I am from Recife. I work as a nurse in a public hospital."
+            },
+            { "speaker": "character", "text": "What do you like to do in your free time?" },
+            {
+              "speaker": "learner",
+              "text": "I like to go to the beach with my family and read books."
+            },
+            {
+              "speaker": "character",
+              "text": "Thank you. Now I'm going to give you a topic: describe a place you like to visit in your city."
+            }
+          ]
+        }
+      }
+    },
+    {
       "classification": { "expected": "Apresentar-se", "predicted": "Apresentar-se" },
       "steps": [
         {
@@ -272,7 +359,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Apresentar-se"] },
+        "expected": { "goodbye": false, "met": ["Apresentar-se"] },
         "id": "en-work-lunch-invited-1",
         "userInput": {
           "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
@@ -309,6 +396,50 @@
       }
     },
     {
+      "classification": { "expected": "Combinar um almoço", "predicted": "Combinar um almoço" },
+      "steps": [
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": false, "met": ["Combinar um almoço"] },
+        "id": "en-work-lunch-agreed-1",
+        "userInput": {
+          "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
+          "objectives": [
+            {
+              "description": "Invite Mariana to lunch and agree on a time.",
+              "label": "Combinar um almoço"
+            }
+          ],
+          "situation": "It's your first day at a design studio in São Paulo. Meet Mariana, your team manager.",
+          "learnerLanguage": "en",
+          "targetLanguage": "pt",
+          "turns": [
+            { "speaker": "learner", "text": "Você quer almoçar comigo hoje?" },
+            {
+              "speaker": "character",
+              "text": "Adoraria! Mas tenho uma reunião ao meio-dia e meia. Pode ser à uma?"
+            },
+            { "speaker": "learner", "text": "Claro, uma hora está ótimo pra mim." }
+          ]
+        }
+      }
+    },
+    {
       "classification": { "expected": "Explicar el problema", "predicted": "Explicar el problema" },
       "steps": [
         {
@@ -328,10 +459,10 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Explicar el problema"] },
+        "expected": { "goodbye": false, "met": ["Explicar el problema"] },
         "id": "en-neighbor-problem-then-proposal-1",
         "userInput": {
-          "characterNotes": "Javier, upstairs neighbor in Madrid, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
+          "characterNotes": "Javier, upstairs neighbor in Guadalajara, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
           "objectives": [
             {
               "description": "Explain the noise problem politely but clearly.",
@@ -370,7 +501,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "en-work-mark-everything-1",
         "userInput": {
           "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
@@ -412,7 +543,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "en-work-invitation-no-answer-yet-1",
         "userInput": {
           "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
@@ -447,10 +578,10 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "en-neighbor-proposal-no-answer-yet-1",
         "userInput": {
-          "characterNotes": "Javier, upstairs neighbor in Madrid, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
+          "characterNotes": "Javier, upstairs neighbor in Guadalajara, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
           "objectives": [
             {
               "description": "Agree on times or measures that work for both of you.",
@@ -490,10 +621,10 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Llegar a un acuerdo"] },
+        "expected": { "goodbye": false, "met": ["Llegar a un acuerdo"] },
         "id": "en-neighbor-proposal-accepted-1",
         "userInput": {
-          "characterNotes": "Javier, upstairs neighbor in Madrid, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
+          "characterNotes": "Javier, upstairs neighbor in Guadalajara, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
           "objectives": [
             {
               "description": "Agree on times or measures that work for both of you.",
@@ -528,138 +659,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
-        "id": "pt-renting-viewing-not-agreed-1",
-        "userInput": {
-          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
-          "objectives": [
-            {
-              "description": "Marque um dia e horário para ver o apartamento.",
-              "label": "Book a viewing"
-            }
-          ],
-          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
-          "learnerLanguage": "pt",
-          "targetLanguage": "en",
-          "turns": [
-            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
-            { "speaker": "learner", "text": "Yes. Can I see the apartment?" },
-            {
-              "speaker": "character",
-              "text": "Sure! Saturday at 10 or at 2, which is better for you?"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "classification": { "expected": "Part 1", "predicted": "Part 1" },
-      "steps": [
-        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Expected Part 1; marked Part 1.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": ["Part 1"] },
-        "id": "pt-ielts-part-one-done-1",
-        "userInput": {
-          "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
-          "exam": "ielts",
-          "objectives": [
-            {
-              "description": "Answer short questions about yourself and your routine.",
-              "label": "Part 1"
-            },
-            {
-              "description": "Talk for about a minute about the cue card topic.",
-              "label": "Part 2"
-            }
-          ],
-          "situation": "A short practice of the IELTS Speaking test, with its three parts in about five minutes.",
-          "learnerLanguage": "pt",
-          "targetLanguage": "en",
-          "turns": [
-            { "speaker": "character", "text": "Can you tell me your full name, please?" },
-            { "speaker": "learner", "text": "My name is Ana Paula Souza." },
-            { "speaker": "character", "text": "Where are you from, and what do you do?" },
-            {
-              "speaker": "learner",
-              "text": "I am from Recife. I work as a nurse in a public hospital."
-            },
-            { "speaker": "character", "text": "What do you like to do in your free time?" },
-            {
-              "speaker": "learner",
-              "text": "I like to go to the beach with my family and read books."
-            },
-            {
-              "speaker": "character",
-              "text": "Thank you. Now I'm going to give you a topic: describe a place you like to visit in your city."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "classification": { "expected": "Combinar um almoço", "predicted": "Combinar um almoço" },
-      "steps": [
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": ["Combinar um almoço"] },
-        "id": "en-work-lunch-agreed-1",
-        "userInput": {
-          "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
-          "objectives": [
-            {
-              "description": "Invite Mariana to lunch and agree on a time.",
-              "label": "Combinar um almoço"
-            }
-          ],
-          "situation": "It's your first day at a design studio in São Paulo. Meet Mariana, your team manager.",
-          "learnerLanguage": "en",
-          "targetLanguage": "pt",
-          "turns": [
-            { "speaker": "learner", "text": "Você quer almoçar comigo hoje?" },
-            {
-              "speaker": "character",
-              "text": "Adoraria! Mas tenho uma reunião ao meio-dia e meia. Pode ser à uma?"
-            },
-            { "speaker": "learner", "text": "Claro, uma hora está ótimo pra mim." }
-          ]
-        }
-      }
-    },
-    {
-      "classification": { "expected": "none", "predicted": "none" },
-      "steps": [
-        { "conclusion": "Expected none; marked none.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected none; marked none.", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Expected none; marked none.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "pt-ielts-name-only-1",
         "userInput": {
           "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
@@ -700,7 +700,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": [] },
+        "expected": { "goodbye": false, "met": [] },
         "id": "pt-toefl-first-repetition-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
@@ -746,7 +746,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Listen and Repeat"] },
+        "expected": { "goodbye": false, "met": ["Listen and Repeat"] },
         "id": "pt-toefl-repetitions-done-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
@@ -799,7 +799,7 @@
         }
       ],
       "testCase": {
-        "expected": { "met": ["Take an Interview"] },
+        "expected": { "goodbye": false, "met": ["Take an Interview"] },
         "id": "pt-toefl-interview-done-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
@@ -822,6 +822,200 @@
               "text": "Yes, I think is good because students don't have much money."
             },
             { "speaker": "character", "text": "Thank you. That's the end of the interview." }
+          ]
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "Is it available? (goodbye)",
+        "predicted": "Is it available? (goodbye)"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected Is it available? (goodbye); marked Is it available? (goodbye).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Is it available? (goodbye); marked Is it available? (goodbye).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Is it available? (goodbye); marked Is it available? (goodbye).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": true, "met": ["Is it available?"] },
+        "id": "pt-renting-learner-says-goodbye-first-1",
+        "userInput": {
+          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
+          "objectives": [
+            {
+              "description": "Pergunte se o apartamento ainda está disponível.",
+              "label": "Is it available?"
+            },
+            { "description": "Pergunte quanto é a caução.", "label": "Ask about the deposit" }
+          ],
+          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
+            { "speaker": "learner", "text": "Yes. The apartment is still available?" },
+            { "speaker": "character", "text": "Yes, it is." },
+            { "speaker": "learner", "text": "Ok, great. Thank you, bye bye!" },
+            { "speaker": "character", "text": "You're welcome. Bye!" }
+          ]
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "Explicar el problema (goodbye)",
+        "predicted": "Explicar el problema (goodbye)"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected Explicar el problema (goodbye); marked Explicar el problema (goodbye).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Explicar el problema (goodbye); marked Explicar el problema (goodbye).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Explicar el problema (goodbye); marked Explicar el problema (goodbye).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": true, "met": ["Explicar el problema"] },
+        "id": "en-neighbor-character-says-goodbye-first-1",
+        "userInput": {
+          "characterNotes": "Javier, upstairs neighbor in Guadalajara, rehearses with his band on weeknights. Defensive at first, then reasonable: he can stop by 10pm on weeknights and put a rug down; Fridays stay his band's night.",
+          "objectives": [
+            {
+              "description": "Explain the noise problem politely but clearly.",
+              "label": "Explicar el problema"
+            },
+            {
+              "description": "Agree on times or measures that work for both of you.",
+              "label": "Llegar a un acuerdo"
+            }
+          ],
+          "situation": "Your upstairs neighbor plays music late on weeknights. Sort it out without falling out.",
+          "learnerLanguage": "en",
+          "targetLanguage": "es",
+          "turns": [
+            { "speaker": "character", "text": "Hola, ¿qué pasa?" },
+            {
+              "speaker": "learner",
+              "text": "Hola, Javier. La música es muy fuerte por la noche y no puedo dormir."
+            },
+            {
+              "speaker": "character",
+              "text": "Ah, perdona. Oye, lo siento, me tengo que ir. ¡Hasta luego!"
+            },
+            { "speaker": "learner", "text": "Vale, ¡adiós!" }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "Book a viewing", "predicted": "Book a viewing" },
+      "steps": [
+        {
+          "conclusion": "Expected Book a viewing; marked Book a viewing.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Book a viewing; marked Book a viewing.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Book a viewing; marked Book a viewing.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": false, "met": ["Book a viewing"] },
+        "id": "pt-renting-only-the-character-says-goodbye-1",
+        "userInput": {
+          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
+          "objectives": [
+            { "description": "Pergunte quanto é a caução.", "label": "Ask about the deposit" },
+            {
+              "description": "Marque um dia e horário para ver o apartamento.",
+              "label": "Book a viewing"
+            }
+          ],
+          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
+            { "speaker": "learner", "text": "Yes. Can I see the apartment on Saturday at ten?" },
+            {
+              "speaker": "character",
+              "text": "Yes, Saturday at ten is perfect. See you then, bye!"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "Commander un café", "predicted": "Commander un café" },
+      "steps": [
+        {
+          "conclusion": "Expected Commander un café; marked Commander un café.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Commander un café; marked Commander un café.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Commander un café; marked Commander un café.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "goodbye": false, "met": ["Commander un café"] },
+        "id": "en-cafe-au-revoir-inside-a-question-1",
+        "userInput": {
+          "characterNotes": "Camille, a barista at a small café in Lyon. A small coffee is 2 euros, a large one 3 euros. Milk is free. Card payments are fine.",
+          "objectives": [
+            { "description": "Order a coffee.", "label": "Commander un café" },
+            { "description": "Ask how much it costs.", "label": "Demander le prix" }
+          ],
+          "situation": "You're at a café in Lyon. Order a coffee from Camille, the barista.",
+          "learnerLanguage": "en",
+          "targetLanguage": "fr",
+          "turns": [
+            { "speaker": "character", "text": "Bonjour ! Vous désirez ?" },
+            { "speaker": "learner", "text": "Bonjour. Un petit café, s'il vous plaît." },
+            { "speaker": "character", "text": "Un petit café, d'accord." },
+            {
+              "speaker": "learner",
+              "text": "Merci. Et quand je pars, je dis « au revoir » ou « salut » ?"
+            },
+            {
+              "speaker": "character",
+              "text": "Les deux, mais « au revoir » est plus poli. Autre chose ?"
+            }
           ]
         }
       }

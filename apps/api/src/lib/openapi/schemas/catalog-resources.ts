@@ -3,7 +3,11 @@ import { coursePlanExampleSchema } from "@zoonk/core/catalog/course-plan-example
 import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
-import { catalogTryLessonSchema, firstQuestionSchema } from "./catalog-try-lesson";
+import {
+  LESSON_RICH_TEXT,
+  catalogTryLessonSchema,
+  firstQuestionSchema,
+} from "./catalog-try-lesson";
 import { lessonMapResponseSchema } from "./lesson-map";
 
 const generationStatusSchema = z.enum(["completed", "failed", "pending", "running"]);
@@ -266,7 +270,10 @@ export const catalogLessonSchema = z
       .discriminatedUnion("kind", [
         firstQuestionSchema,
         z
-          .object({ kind: z.literal("text"), text: z.string().meta({ description: "Plain text" }) })
+          .object({
+            kind: z.literal("text"),
+            text: z.string().meta({ description: LESSON_RICH_TEXT }),
+          })
           .meta({ id: "CatalogFirstText" }),
         z
           .object({ kind: z.literal("start") })
@@ -281,7 +288,9 @@ export const catalogLessonSchema = z
     language: z.string(),
     summary: lessonMapResponseSchema
       .nullable()
-      .meta({ description: "What the lesson teaches; null until it's written" }),
+      .meta({
+        description: `What the lesson teaches; null until it's written. Each idea's \`text\` is ${LESSON_RICH_TEXT}`,
+      }),
     title: z.string(),
   })
   .meta({ id: "CatalogLesson" });

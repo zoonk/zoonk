@@ -183,7 +183,8 @@ async function sitSpeakingPaper(goal: { id: string; userId: string }) {
 }
 
 async function connect(conversationId: string) {
-  await connectTestCall(conversationId);
+  const { setup } = await connectTestCall(conversationId);
+  return setup;
 }
 
 async function readView(conversationId: string) {
@@ -285,7 +286,14 @@ describe("exam speaking tasks", () => {
     ]);
 
     expect(view.examTask?.cues.map((cue) => cue.atSeconds)).toStrictEqual([240]);
-    await connect(conversationId);
+    const { script } = await connect(conversationId);
+
+    expect(script.cues.goodbye).toStrictEqual({
+      channel: "commentary",
+      text: expect.stringContaining("as the examiner"),
+    });
+
+    expect(script.cues.goodbyeDone).toStrictEqual(script.cues.goodbye);
 
     expect(createLiveCallSession).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -347,22 +355,24 @@ describe("exam speaking tasks", () => {
     );
   });
 
-  it("waits, unwritten, when the call time left today can't fit the task's official length", async () => {
+  it("starts a task with any of today's call time left, and waits, unwritten, once none is", async () => {
     freezeClock();
 
     const { goal, user } = await deleLearner();
 
-    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 900, userId: user.id });
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 1199, userId: user.id });
 
-    await expect(
-      startLanguageConversation({ goalId: goal.id, kind: "examSpeaking", task: "t1" }),
-    ).resolves.toMatchObject({ limit: { period: "day", tier: "plus" }, status: "limitReached" });
-
-    expect(generateExamSpeakingCard).not.toHaveBeenCalled();
-
-    await expect(startTask({ goalId: goal.id, task: "t3" })).resolves.toStrictEqual(
+    await expect(startTask({ goalId: goal.id, task: "t1" })).resolves.toStrictEqual(
       expect.any(String),
     );
+
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 1, userId: user.id });
+
+    await expect(
+      startLanguageConversation({ goalId: goal.id, kind: "examSpeaking", task: "t3" }),
+    ).resolves.toMatchObject({ limit: { period: "day", tier: "plus" }, status: "limitReached" });
+
+    expect(generateExamSpeakingCard).toHaveBeenCalledOnce();
   });
 
   it("asks for a task's next card once a try the learner spoke in ends, so only a first try waits", async () => {

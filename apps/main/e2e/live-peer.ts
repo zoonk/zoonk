@@ -2,7 +2,11 @@ import { type Page } from "@playwright/test";
 import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 
 export const CHARACTER_REPLY = "Yes, it's still available.";
-const CHARACTER_CHECK_IN = "Hello? Are you still there?";
+export const CHARACTER_CHECK_IN = "Hello? Are you still there?";
+export const CHARACTER_GOODBYE = "Sorry, I have to go. Bye!";
+
+/** GPT-Live answers a cue 0.6 to 1.1 s after it's sent (measured). */
+const ANSWER_MS = 600;
 
 /** Its session name marks the fake peer, which the lane's provider bridge answers at once. */
 const FAKE_PEER_OFFER = LIVE_CALL_SDP_OFFER.replace("\r\ns=-\r\n", "\r\ns=e2e-browser-peer\r\n");
@@ -12,21 +16,27 @@ type PeerMode = "answers" | "silent";
 type TestChannel = {
   close: () => void;
   emit: (event: object) => void;
+  greeting: string | null;
   onopen: (() => void) | null;
   readyState: string;
 };
 
+type PeerLines = { checkIn: string; goodbye: string; reply: string };
+
 function installChannelFactory({
+  answerMs,
+  lines,
   mode,
-  reply,
-  checkIn,
 }: {
+  answerMs: number;
+  lines: PeerLines;
   mode: PeerMode;
-  reply: string;
-  checkIn: string;
 }) {
   function createChannel() {
     const channel = {
+      answer(event: object) {
+        setTimeout(() => channel.emit(event), answerMs);
+      },
       bufferedAmount: 0,
       close() {
         channel.readyState = "closed";
@@ -35,6 +45,21 @@ function installChannelFactory({
       emit(event: object) {
         channel.onmessage?.({ data: JSON.stringify(event) });
       },
+      /**
+       * GPT-Live greets once it has both the server's startup greeting and the app's opening cue
+       * (the measured recipe), with the line the server's greeting quotes.
+       */
+      greet() {
+        const quoted = /opening line, (?<line>"(?:[^"\\]|\\.)*")/u.exec(channel.greeting ?? "")
+          ?.groups?.line;
+
+        if (quoted && !channel.greeted) {
+          channel.greeted = true;
+          channel.say(String(JSON.parse(quoted)));
+        }
+      },
+      greeted: false,
+      greeting: null as string | null,
       onclose: null as (() => void) | null,
       onerror: null as (() => void) | null,
       onmessage: null as ((event: { data: string }) => void) | null,
@@ -44,7 +69,7 @@ function installChannelFactory({
         const start = channel.elapsedMs;
         channel.elapsedMs += 800;
 
-        channel.emit({
+        channel.answer({
           delta: ` ${text}`,
           end_ms: channel.elapsedMs,
           start_ms: start,
@@ -61,17 +86,29 @@ function installChannelFactory({
         const content =
           "content" in event && typeof event.content === "string" ? event.content : "";
 
-        if (event.type === "session.instructions.append") {
+        if (event.type === "session.commentary.append") {
+          channel.answer({
+            client_event_id:
+              "event_id" in event && typeof event.event_id === "string" ? event.event_id : null,
+            end_ms: channel.elapsedMs,
+            start_ms: channel.elapsedMs,
+            type: "session.commentary.appended",
+          });
+
           if (content.includes("opening line")) {
-            channel.say("Hi! Are you calling about the apartment?");
+            channel.greet();
           }
 
-          if (content.includes("quiet")) {
-            channel.say(checkIn);
+          if (content.includes("still there")) {
+            channel.say(lines.checkIn);
           }
 
           if (content.includes("typed")) {
-            channel.say(reply);
+            channel.say(lines.reply);
+          }
+
+          if (content.includes("goodbye") || content.includes("is over")) {
+            channel.say(lines.goodbye);
           }
         }
 
@@ -154,7 +191,7 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
       return Promise.resolve();
     }
 
-    setRemoteDescription() {
+    setRemoteDescription(answer: RTCSessionDescriptionInit) {
       const observer: unknown = Reflect.get(globalThis, "e2eLiveAsked");
 
       if (!FakePeer.isObserver(observer)) {
@@ -167,6 +204,9 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
       this.channel.readyState = "open";
       this.onconnectionstatechange?.();
       this.channel.onopen?.();
+
+      const greeting = /^a=x-e2e-greeting:(?<json>.+)$/mu.exec(answer.sdp ?? "")?.groups?.json;
+      this.channel.greeting = greeting ? String(JSON.parse(greeting)) : null;
 
       queueMicrotask(() => {
         if (mode !== "silent") {
@@ -187,14 +227,49 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
   Object.defineProperty(globalThis, "RTCPeerConnection", { configurable: true, value: FakePeer });
 }
 
+/** A quiet microphone, unless the test installed its own (an own property, in any order). */
+function installMicrophone() {
+  if (Object.hasOwn(navigator.mediaDevices, "getUserMedia")) {
+    return;
+  }
+
+  Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+    configurable: true,
+    value: () => {
+      const context = new AudioContext();
+      const silence = context.createConstantSource();
+      const output = context.createMediaStreamDestination();
+      silence.offset.value = 0;
+      silence.connect(output);
+      silence.start();
+      return Promise.resolve(output.stream);
+    },
+  });
+}
+
+export async function quietMicrophone(page: Page) {
+  await page.addInitScript(installMicrophone);
+}
+
+/** The browser refuses the microphone, as when the learner blocked it for the site. */
+export async function blockMicrophone(page: Page) {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+      configurable: true,
+      value: () => Promise.reject(new DOMException("Permission denied", "NotAllowedError")),
+    });
+  });
+}
+
 export async function answerLiveCalls(page: Page, behavior: PeerMode) {
   const asked = Promise.withResolvers<null>();
   await page.exposeFunction("e2eLiveAsked", () => asked.resolve(null));
+  await quietMicrophone(page);
 
   await page.addInitScript(installChannelFactory, {
-    checkIn: CHARACTER_CHECK_IN,
+    answerMs: ANSWER_MS,
+    lines: { checkIn: CHARACTER_CHECK_IN, goodbye: CHARACTER_GOODBYE, reply: CHARACTER_REPLY },
     mode: behavior,
-    reply: CHARACTER_REPLY,
   });
 
   await page.addInitScript(installPeer, { mode: behavior, sdp: FAKE_PEER_OFFER });

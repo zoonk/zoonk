@@ -16,11 +16,20 @@ data class TranscriptTurn(
 private const val MAX_TURN_LENGTH = 2000
 private const val MAX_TURNS = 300
 
-/** Fragments are appended exactly as received, since they carry their own spaces. */
+/** A pause this long between two fragments starts a new sentence. */
+private const val UTTERANCE_PAUSE_MS = 1000
+
+/**
+ * Fragments carry their own spaces, so they're appended as received, except the first of words said
+ * after a pause, which comes without one.
+ */
 fun List<TranscriptTurn>.adding(fragment: LiveServerEvent.Transcript): List<TranscriptTurn> {
     val last = lastOrNull()
     if (last != null && last.speaker == fragment.speaker && last.startMs != null) {
-        return dropLast(1) + last.copy(text = last.text + fragment.delta, endMs = fragment.endMs)
+        val paused = last.endMs != null && fragment.startMs - last.endMs >= UTTERANCE_PAUSE_MS
+        val spaced = last.text.lastOrNull()?.isWhitespace() == true || fragment.delta.firstOrNull()?.isWhitespace() == true
+        val text = last.text + (if (paused && !spaced) " " else "") + fragment.delta
+        return dropLast(1) + last.copy(text = text, endMs = fragment.endMs)
     }
     return this + TranscriptTurn(fragment.speaker, fragment.delta, fragment.startMs, fragment.endMs)
 }

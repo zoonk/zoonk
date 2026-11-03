@@ -4,6 +4,7 @@ import { page } from "vitest/browser";
 import {
   checkActivity,
   expectCount,
+  expectMathVisible,
   expectVerdict,
   focusOn,
   openActivity,
@@ -26,6 +27,10 @@ const LEAF = {
   alt: "A long, thin needle growing in a bundle of two from the twig",
   prompt: "Two long pine needles joined at the base on a twig",
 };
+
+async function expectHeard(text: string) {
+  await expect.element(page.getByText(text, { exact: true })).toBeInTheDocument();
+}
 
 async function matchCards(left: string, right: string) {
   await page.getByRole("button", { exact: true, name: left }).click();
@@ -100,6 +105,53 @@ describe("reasoning activities", () => {
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Burning wood belongs in New substance.")).toBeVisible();
     await expect.element(page.getByText("Ash and gas form.")).toBeVisible();
+  });
+
+  it("categorize: math cards and groups are heard in words and drawn as math, never LaTeX", async () => {
+    openActivity({
+      content: {
+        ...activityContentFixtures.categorize,
+        fields: {
+          groups: [
+            { id: "half", label: String.raw`Equals $\frac{1}{2}$`, rule: "Half of one." },
+            { id: "two", label: "Equals $2$", rule: "Twice one." },
+          ],
+          items: [
+            { groupId: "half", id: "i1", text: String.raw`$\frac{2}{4}$`, why: "Two of four." },
+            { groupId: "two", id: "i2", text: String.raw`$\sqrt{4}$`, why: "Two times two." },
+            { groupId: "two", id: "i3", text: String.raw`$\frac{4}{2}$`, why: "Four split." },
+          ],
+        },
+        prompt: "Sort each expression by its value.",
+      },
+      template: "categorize",
+    });
+
+    await expectHeard("Sort 3 cards into Equals 1 over 2, Equals 2, one at a time.");
+
+    await pressOnPage("1");
+    await expectHeard("square root of 4 is in Equals 1 over 2. Next: 4 over 2.");
+    await page.getByRole("button", { name: "Undo" }).click();
+    await expectHeard("Took back square root of 4.");
+    await pressOnPage("1");
+    await pressOnPage("2");
+    await pressOnPage("2");
+    await expectHeard("2 over 4 is in Equals 2.");
+    const firstGroup = page.getByRole("region", { name: /^Equals/u }).first();
+    await firstGroup.getByRole("button").click();
+    await page.getByRole("menuitem").click();
+    await expectHeard("square root of 4 is in Equals 2.");
+    await checkActivity();
+    await expectVerdict("Not quite");
+
+    const reason = page.getByRole("listitem").filter({ hasText: /belongs in/u });
+
+    const formulas = reason.getByRole("math");
+
+    await expectCount(formulas, 2);
+    await expectMathVisible(formulas.first());
+    await expectMathVisible(formulas.last());
+    await expect.element(reason).not.toMatchTextContent("$");
   });
 
   it("match pairs: matching each pair on the first try is right", async () => {

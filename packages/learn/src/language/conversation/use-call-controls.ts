@@ -1,9 +1,9 @@
 "use client";
 
 import { type LanguageConversationCompletionInput } from "@zoonk/core/language/conversations/contract";
-import { formatTypedReplyCue } from "@zoonk/core/language/conversations/live-call-cues";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { sendLiveCallCue, setLiveCallMuted } from "./live-call-commands";
+import { type LiveCallScript, toTypedReplyCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
 import {
   type TranscriptTurn,
@@ -40,45 +40,50 @@ export function useCallTranscript() {
   return { getTurns, savedTurns, turnsRef, updateTurns };
 }
 
+/** Replies typed while the call rings go out once it's live. */
 export function useTypedReplies({
   isConnecting,
-  liveSession,
-  onLearnerTurn,
+  live,
+  onSent,
   turnsRef,
   updateTurns,
 }: {
   isConnecting: boolean;
-  liveSession: LiveCallSession | null;
-  onLearnerTurn: () => void;
+  live: { script: LiveCallScript; session: LiveCallSession } | null;
+  onSent: () => void;
   turnsRef: RefObject<TranscriptTurn[]>;
   updateTurns: (next: TranscriptTurn[]) => void;
 }) {
   const waiting = useRef<string[]>([]);
 
-  const sendWaitingReplies = useCallback((session: LiveCallSession) => {
-    for (const text of waiting.current) {
-      sendLiveCallCue({ content: formatTypedReplyCue(text), session });
-    }
+  const sendWaitingReplies = useCallback(
+    (session: LiveCallSession, { script }: { script: LiveCallScript }) => {
+      for (const text of waiting.current) {
+        sendLiveCallCue({ cue: toTypedReplyCue(script, text), session });
+      }
 
-    waiting.current = [];
-  }, []);
+      waiting.current = [];
+    },
+    [],
+  );
 
   const sendText = useCallback(
     (text: string) => {
-      if (!liveSession && !isConnecting) {
+      if (!live && !isConnecting) {
         return;
       }
 
       updateTurns(addTypedReply(turnsRef.current, text));
-      onLearnerTurn();
 
-      if (liveSession) {
-        sendLiveCallCue({ content: formatTypedReplyCue(text), session: liveSession });
+      if (live) {
+        sendLiveCallCue({ cue: toTypedReplyCue(live.script, text), session: live.session });
       } else {
         waiting.current = [...waiting.current, text];
       }
+
+      onSent();
     },
-    [isConnecting, liveSession, onLearnerTurn, turnsRef, updateTurns],
+    [isConnecting, live, onSent, turnsRef, updateTurns],
   );
 
   return { sendText, sendWaitingReplies };
@@ -86,17 +91,19 @@ export function useTypedReplies({
 
 export function useCallMute(liveSession: LiveCallSession | null) {
   const [muted, setMuted] = useState(false);
+  const mutedRef = useRef(false);
 
   const toggleMute = useCallback(() => {
     if (!liveSession) {
       return;
     }
 
-    setLiveCallMuted({ muted: !muted, session: liveSession });
-    setMuted(!muted);
-  }, [liveSession, muted]);
+    setLiveCallMuted({ muted: !mutedRef.current, session: liveSession });
+    mutedRef.current = !mutedRef.current;
+    setMuted(mutedRef.current);
+  }, [liveSession]);
 
-  return { muted, toggleMute };
+  return { muted, mutedRef, toggleMute };
 }
 
 type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;

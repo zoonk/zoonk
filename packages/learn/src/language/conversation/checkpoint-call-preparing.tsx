@@ -4,7 +4,6 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TaskActions } from "../../_components/task-layout";
 import { WritingWait } from "../../generation/writing-wait";
@@ -44,7 +43,6 @@ export function CheckpointCallPreparing({
       footer={
         <TaskActions>
           <TaskMainButton busy={call.isStarting} onClick={call.start}>
-            <PhoneIcon aria-hidden="true" />
             {t("Get the call ready")}
           </TaskMainButton>
         </TaskActions>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "conversation_almost_up_day": "b68e1637a6b25a8053389a794804ef79fb84b1e4763f275f5d0bbaf8fea686c8",
-  "conversation_almost_up_month": "1ea9b9480aa64746f325e3c0aed82ed6b7db46650696c055f587f0ea61964050",
+  "conversation_answer_out_loud": "c5d22777d8d145f68e206c11ba725e5ee2e2b959af0569271c525389b28b2a19",
+  "conversation_answers_first": "ed687f7c18f890053b0ba1e70b868dd4d7de6d1d2ad9021701a9610d9c35223e",
   "conversation_at_level": "494c45910ade52ba8e42c46409edb656fd01c2ae7771226e30e1d4dff1888088",
   "conversation_back_to_today": "e797c9e523a8a76d03923a320e454b1f7ebf661a29bc4599ff090b4b0b48309e",
   "conversation_band": "3ec46cbb211fee55f3f03d14f473284dda53117f97d3cd8ecee3c5955bbbab19",
@@ -12,15 +12,18 @@
   "conversation_brain_power": "e19f0c63c1ccbccbd32932cd78312911e9b723f021e3ebd5bb466a0979da13f3",
   "conversation_brief_note": "ad9286fa90c6a4af731b0751347473c58e88da63638978956b5988c4cd0156b4",
   "conversation_by_criterion": "27bfea7c64369b0cd0f3772166d6eb9e1fa27554822ecce41eb83b7d32d189c7",
+  "conversation_call": "113bbbc390adb61204a0a83d0dad905be87605137b5feb1a986b43b6b8201d81",
   "conversation_call_again": "09c72620130c261b0f420089e23476a64d59935c8fdc601d0c6122cf1b93c1ed",
+  "conversation_call_ended": "10f8af126fd5502f2cf19b3e48e14f4ba915b8e2314660ab97c8da44ec931ed4",
   "conversation_call_length": "e7cb8381baaabf1bb0508f286be1caacf55ae95b8bc95fd568cccc62c1cbd450",
-  "conversation_calling": "164cdb1f94a7ea6513be0d0f98de409975c967dcf8c3c32fa51780569337a96c",
+  "conversation_call_time": "f3c5c0c6474e94c16206006058c5489f2d5b7a5a70edf8315edf3cd661370cb2",
+  "conversation_calling": "e46dba5a725687fbc3046a95a1bc3b60685acd44aaa3dc20c01955e4bdf701c6",
   "conversation_calls_need_account": "f6ceb25c666371dc6e518901964cd707034722f77d85e8604030dada652cdddd",
+  "conversation_cancel": "2c8e85aefc10b01d5542d51c8b6bcc28078105c5f7a941d85a68119b96eaaae5",
   "conversation_challenge_passed": "f6565855d92f44dc08cc5493d70509823b8fdb1fe5bc7d5c66cbbb559abe84e4",
   "conversation_challenge_plus": "e5f9f45c24c59e268ce33a3b251b00bf92b99047adf71a011e41c93ac10f93f9",
   "conversation_character_detail": "9e456cf68aa5fea3c3280b350ae2a4537b785e690e3942ef42e7aff64727fb5b",
   "conversation_character_said": "c2e4ccc9e9719aa6fb82d5f73ca5c62cf6ef6bda0c6eb3c8a5515e2ddda7c393",
-  "conversation_clock": "73a7899a59fb6ed4ea61bfafc88548beac420a72986156f7782833586d247a8c",
   "conversation_criterion_accuracy": "d8ddf8a7ac8379a27d00136ec8ebec57738a1c7eb99857ddbaec1e5fcf7d4b43",
   "conversation_criterion_coherence": "c2a231a09f8d25ee5b9ed6f3cf6eff059e4a2c54a38d42649c053b768bde74bf",
   "conversation_criterion_discourse": "724140ca95e79e3d2c1d019cd1a01c252d7eac7ccde21b65f80e5ae9acd42d1e",
@@ -46,6 +49,7 @@
   "conversation_end_title": "f7c08c9ded1c97ec3cde798c8dc307ef1a6107458dd445578ad388546e5ab4ab",
   "conversation_ended": "e55f0d684f5b5207c62f88b191819d44f24ed0dd76950feda281a33bb7eefbce",
   "conversation_ended_title": "2aa741da3a200310fed868fc43fae542ce7a43160c7af170723294f1a6bd75c5",
+  "conversation_ends_after": "251e90d4b35e92abaf00b023f6f2d438ab5b336bb0ecda46ec39559985b4abc2",
   "conversation_estimate": "b7dc0525b4ce9af5de614b657610ffbb92e61f8860501eff1a839040c4ae55e5",
   "conversation_estimate_sound": "8927fb5e992fba9e82ce61bc37c17327ef4df4dee4c716f094610efadd89b213",
   "conversation_every_criterion": "a484b19a5c37822f4f74e44bfb099804a0c91c1cc3372291cb08ecf53d709daf",
@@ -62,17 +66,21 @@
   "conversation_goals_met": "ebe1b5ba2b553d00100e82f775ff73412c420b8e14a66643c323525997c03937",
   "conversation_goals_tile": "0aef7fc3cb8c3726a24e96145211f8034b0eda61f467e93e4a38cdb937fc4515",
   "conversation_help": "1ec6df061b78bf870f72f6bead4b98bcb44490d48d5b19f584e7f87e502fd028",
+  "conversation_how_answers_first": "a85bf3390a15034d005f12f5f32c654324d4719567447b78ab50274acd264f78",
+  "conversation_how_it_ends": "a96da08c8617d26dfcdcbef646537ea626a14d51199a6be0a2544534841fcfa2",
+  "conversation_how_it_works": "17e9a96ddd260e60310caec70fd848c0a547f711d7b10f86b9e2c301cf31eaa9",
+  "conversation_how_your_turn": "62ca4cb66a2c6147d10cf4524c6cb344e27c9dcf3bc4e17edac73da1bf04ae8e",
   "conversation_ielts_mock": "d80684fe17e2eb2f4f125619d554de2f06e93215e32cd3448d01b86bb36b1bf2",
   "conversation_in_progress": "9d446d4a12b784ae52800e095bd4dcac7323a9926c32bd144bab6b02deba810c",
   "conversation_in_progress_title": "95ddd65399c063ed8390a2eda722489fddfb04a31a2dd0a7e497628c396f0d19",
-  "conversation_intro_meta": "ea94fbdcdc7eff74a17f26797cf8c31ea944bb54a23c2f87760eda6733d41cdc",
+  "conversation_intro_meta": "39b6dcb636676e5ecdd169f3500fef6efbcbb16ef46b39543b1409431b183213",
   "conversation_keep_talking": "fcd4efb2d5c632d4a4cd4ec70a2219617035cfbdc4092c4250bce8ea01c34647",
   "conversation_level_line": "f4b8a07f7921e88436526f706636919768d161c20890fe0ef118865f48db88d2",
+  "conversation_listen_then_answer": "4662faef592b1e770b2a175b0eb89419084010a3042ef01cdb80514e5587e852",
   "conversation_listen_to": "081cb58167dfdf2aa3f1059b4145f2644d9d645d4cd57c4a5931b3191b464a4c",
   "conversation_listening": "97162e11a93f28a3c72ef247be380f05e7eac1f656c8290f39b0faa55d81dd29",
   "conversation_longer_calls_plus": "8e0413ecacaa69470f1fefa7f2babd009522a9ec0bc2188afe4dab98864fd493",
-  "conversation_mic_note": "4d31befe40cced95c38ac052c8b2a528ad712e0ef05086bc4a2cb74982b95e34",
-  "conversation_microphone_off": "81027918bee3d2528287d46d6d1f71c006970757398f7e85019d4a404b1c2ba6",
+  "conversation_mic_off": "6ec25e1933f38b66260439d2dab5bdf2015f5310ed3e0ee5db48ef8ad3cb00c2",
   "conversation_minutes_range": "6f3162ef5773a224646f06f3924022b25063bc06590cc698182ded5f49e33957",
   "conversation_mock_band_ielts": "e07782e151e5e0cb13c65aa7e622721149dd670b378ba33043dbcb611ec7a467",
   "conversation_mock_band_toefl": "7722b7f626ad5f2e9021c2f35eee16487a227bf4f9ddd09bc711a3a51a6ad962",
@@ -83,6 +91,7 @@
   "conversation_mock_repetition": "8c59a26036965be039991d03b3b47d5d2afdb21496b1332945bc524481f2370c",
   "conversation_mute": "2a233499f884a6f6fc4349abf77a38ebbaa80bf1572fb1823bbb2dddc6a5a152",
   "conversation_muted": "b0889577ba94af5b75b4a0da0d78bfeb7ea41cec6da103f769ee4bc385fef749",
+  "conversation_muted_detail": "0478422df3ed68675b4b35db9ade783712de8d26efa4bdde7054a0317826c847",
   "conversation_near_level": "646ffde87d873d323ebb3577f9c8e03ca0383daad60dd083caf71e4615fc7c19",
   "conversation_no_calls_month": "e7ff5a70a0ae7b079f667b1280729a9a49831397d60ac78427896b3cb3a90b45",
   "conversation_no_calls_today": "450d7004d8047e4258f448daef88b9337999434738a0da2210fd1ae5c8470d28",
@@ -121,7 +130,10 @@
   "conversation_role_partner_label": "fc9701d1c0f7c2c9fd65706f7a4850ae9c3cf7ea2c01ab88baa90c694b199b59",
   "conversation_said_well": "a46c812a6641d65c1b107b4e8e850f2361886525c1c3c4497b7aab2f4db103d1",
   "conversation_save_failed": "ff969ae109c4d7562b34584a7814081af305aa0870534712c27dafe9559bf60e",
+  "conversation_saying_goodbye": "191aa76c78049b316abd127ca9264830d75d829f184786cfcf9a0606bcf89d0c",
+  "conversation_scroll_to_latest": "d8fbe5854fb036b7e24856e47c34b072eb026c31ac1ac7f239ea6fd810d00236",
   "conversation_send": "2d9b0375ad8b0792d0bae1af290b8252e8b40f0479dd98abb7ac5797751c06e7",
+  "conversation_sound_note": "b36d521d42b755be00e755bf4af0b460bb6d5e33da0ba351e3a7331d2652fe1a",
   "conversation_speak_answers": "d20be0c15a017eb1a8f429da3edd02505306d55007fd1f12e796a8e07079ddb7",
   "conversation_stand_in_examiner": "9d61fb54e41c7b0b39f2b845a22bb5a8dd51ee98332b79230bc9d538fc4dd5d6",
   "conversation_stand_in_partner": "4c9a166cda66903b96930d465ed9a816bda7b41307b9fc3351c361f9afa24eef",
@@ -135,8 +147,9 @@
   "conversation_still_to_get_across": "b98fe5c26c8208c1576dd7dece0064585a2ba16e164a3b28b3d23fda47f9c136",
   "conversation_study_time_used_up": "f57aa12f975d515d85bfa53c44c581169d4c086a47fa336f25565bd21453c0a5",
   "conversation_take_over": "81a769dff4c9a436a998ae7964a3c7f4def9f5a8dbd4c84da6e15bfe0b0093f6",
+  "conversation_take_your_time": "01c3e6641dce80c2f584c88f4c643e6f8d8e029506bc6435d41a24f78c2fa8da",
   "conversation_taken_over": "d1aad89f61ab8168f28365184ba22e29f616828aa34f9d686038faefa4091513",
-  "conversation_talking": "699414887212d105fa31022733ec93896d6422e2be8ecec5c3cca19eb2c06110",
+  "conversation_talking": "b533904749173cc3e82a9c5c164353a6383023be33aff2d2f8dd1147d7a59511",
   "conversation_tip": "5952bf2dbe034de2363cee13ed48628c42174ae9860c97fa7116a3aaee6d5dea",
   "conversation_to_improve": "742aa076ebf44a770d963836c74d2bce64298f035e53877be33db40e7de4142a",
   "conversation_toefl_mock": "853d009b2f6d95bb6d134816aa859388e16e92ab886687fc34241c706a86ecd3",
@@ -144,6 +157,8 @@
   "conversation_try_again_later": "e124b4cef5e5ae691e3db62eca8579e20b75ca93fa79aaa7762512a4ebcd4c03",
   "conversation_try_another_mock": "93f781f819125bfab54a049ab9111d6d8a0c0037baf39ab1f7fc522fc6b7a473",
   "conversation_try_new_card": "35e0936192ba747c0dd7108fd87674d88ef0fc84fbc4ee553fbf2560a878f372",
+  "conversation_type_below": "02aeba37493e7fa0b9cca12abbabe796fbee67b8302dcdae0cdd15b2337dee7d",
+  "conversation_type_instead": "43e418265a2bdb1761c186d867807cacc85a43f43ff387b0656188bef40da447",
   "conversation_type_reply": "d617957cc190baf90b348d82cef00ecbb771f658324a1e1c8482f1ebf1ad9d2e",
   "conversation_type_reply_hint": "7dc0c58d35d1ed1bdd333953fc20afdc01d20b13e89399496ae60617067bd41f",
   "conversation_typed_note": "e29d32b5ab947689ec1feeacba4431bb0ef05510891a843045d13ef0c66fe943",
@@ -151,6 +166,8 @@
   "conversation_went_well": "56da984bc19fed21c326e9944074014a9dbb7b8ee335a83f018da3b16dc3b90e",
   "conversation_words_to_practice": "04be99f03f517566ce0f543daeaeadcf6626eca6d404cbe1d0ad281da4c65732",
   "conversation_work_on_first": "464cb4db3fc6989b402672b3b741038b4734dfbca365cfe9394f616009370879",
+  "conversation_wrap_up_done": "03b78c43ad2b7d6f226cc77e98a63f9fd6bd528c55fb64f35adf6b87003e0350",
+  "conversation_wrap_up_time": "844a154ea91d2154b6194a7be2ce2882876d89ea6391e547fc81c3aec21e8f0b",
   "conversation_writing_call": "ff0e1a88f59569f46d062aa6c46ad9a4dc3938add12f717c4fd9e49c83419014",
   "conversation_writing_call_line_1": "f6d8bbf8c04c2006a1d88c28e6621bd105d2dfadc31021457b9a912680c2fd51",
   "conversation_writing_call_line_2": "31761d3704b36118f81a83919aed090256f8ef2801e606a2c42745be2265c8d3",
@@ -167,7 +184,8 @@
   "conversation_writing_task_phase": "a9c1c236943146ab784183f139f767c654e9ee07aad7b9a512fa252d5d65f0c1",
   "conversation_you_said": "82757f608ec19e14ffd6a39fd29f3f6d33b505fc07f97911389cdc893ea20bfa",
   "conversation_you_said_label": "44c004928196f07b4cbef722db8d1c8dc7981200f3ed5b368ee67b638d837e6a",
-  "conversation_your_card": "e5d1558938f70d3411fa9ec49047bd6cc528669c4c731e3c829a65927f00d532"
+  "conversation_your_card": "e5d1558938f70d3411fa9ec49047bd6cc528669c4c731e3c829a65927f00d532",
+  "conversation_your_turn": "af052e90012c028d0261d74ad9bb5a3a8a8b1f8e80cf747e05b1aaa33d17561a"
 }
 -->
 <resources>
@@ -176,16 +194,30 @@
     <string name="conversation_unit_challenge">Wyzwanie działu</string>
     <string name="conversation_ielts_mock">Próbny egzamin ustny IELTS</string>
     <string name="conversation_toefl_mock">Próbny egzamin ustny TOEFL</string>
-    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
-    <string name="conversation_intro_meta">%1$s · Poziom %2$s</string>
+    <!-- About how long the call lasts and its language level, such as "About 5 min · Level A2". -->
+    <string name="conversation_intro_meta">Około %1$s · Poziom %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
     <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">Co przekazać</string>
-    <string name="conversation_mic_note">Mów lub pisz. Z mikrofonu korzystamy tylko podczas rozmowy.</string>
+    <string name="conversation_how_it_works">Jak przebiega rozmowa</string>
+    <!-- The first step of how the call works; the character's name. -->
+    <string name="conversation_how_answers_first">%1$s odbiera i zaczyna rozmowę.</string>
+    <string name="conversation_how_your_turn">Potem twoja kolej: odpowiedz na głos lub napisz, jeśli nie możesz mówić.</string>
+    <!-- The last step of how the call works: about how long it lasts (such as "2 min"), then the character's name. -->
+    <string name="conversation_how_it_ends">Gdy zrobisz już wszystko lub minie około %1$s, %2$s pożegna się i rozmowa się zakończy.</string>
+    <string name="conversation_sound_note">Włącz dźwięk. Mikrofon jest włączony tylko podczas rozmowy.</string>
+    <!-- About how long an exam's call lasts before it ends by itself, such as "2 min". -->
+    <string name="conversation_ends_after">Po około %1$s rozmowa zakończy się automatycznie.</string>
+    <!-- Starts a phone call with the character, whose name follows. -->
+    <string name="conversation_call">Zadzwoń do: %1$s</string>
     <string name="conversation_start">Rozpocznij rozmowę</string>
     <string name="conversation_starting">Rozpoczynamy…</string>
     <string name="conversation_start_failed">Nie udało się rozpocząć rozmowy. Spróbuj ponownie za chwilę.</string>
     <string name="conversation_challenge_plus">Rozmowy w ramach wyzwań są dostępne w pakiecie Plus. Bez nich nadal możesz uczyć się zgodnie z planem.</string>
+    <!-- The microphone permission was denied; the character's name. -->
+    <string name="conversation_mic_off">Zezwól na dostęp do mikrofonu w Ustawieniach, by porozmawiać. Odpowie %1$s. Możesz też pisać.</string>
+    <!-- Starts the call without the microphone, answering by typing. -->
+    <string name="conversation_type_instead">Odpowiadaj pisemnie</string>
     <string name="conversation_not_found_title">Nie udało nam się znaleźć tej rozmowy</string>
     <string name="conversation_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
     <!-- Read before what the learner said in the call's transcript. -->
@@ -196,23 +228,39 @@
     <string name="conversation_type_reply_hint">Lub wpisz odpowiedź</string>
     <string name="conversation_send">Wyślij</string>
     <string name="conversation_phrases">Zwroty, których możesz użyć</string>
-    <string name="conversation_almost_up_month">Zostało ci niewiele czasu na rozmowy w tym miesiącu.</string>
-    <string name="conversation_almost_up_day">Na dziś zostało ci już niewiele czasu na rozmowy.</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">Wskazówka: %1$s</string>
-    <!-- The call's clock: time talked, then the call's length, such as "1:05 / 5:00". -->
-    <string name="conversation_clock">%1$s / %2$s</string>
+    <!-- Names the bar under the call's clock, which fills toward the call's length. -->
+    <string name="conversation_call_time">Czas rozmowy</string>
+    <string name="conversation_scroll_to_latest">Przewiń do najnowszej wiadomości</string>
     <string name="conversation_goals">Cele rozmowy</string>
     <!-- How many of the call's goals the learner has met, such as "1 of 3". -->
     <string name="conversation_goals_met">%1$s z %2$s</string>
     <string name="conversation_goal_done">Zrealizowany</string>
     <string name="conversation_goal_not_yet">Jeszcze nie</string>
     <string name="conversation_reconnecting">Łączymy ponownie…</string>
-    <string name="conversation_calling">Dzwonimy…</string>
-    <string name="conversation_microphone_off">Mikrofon wyłączony</string>
+    <!-- The call is connecting; the character's name. -->
+    <string name="conversation_calling">Dzwonimy do: %1$s…</string>
+    <string name="conversation_answers_first">%1$s zaczyna rozmowę.</string>
+    <!-- Ends a call that hasn't connected yet. -->
+    <string name="conversation_cancel">Anuluj</string>
     <string name="conversation_muted">Mikrofon wyciszony</string>
-    <string name="conversation_talking">%1$s mówi…</string>
+    <string name="conversation_muted_detail">Włącz mikrofon, aby odpowiedzieć na głos, lub odpowiedz pisemnie.</string>
+    <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->
+    <string name="conversation_talking">%1$s mówi</string>
+    <string name="conversation_listen_then_answer">Posłuchaj, a potem odpowiedz.</string>
+    <string name="conversation_saying_goodbye">%1$s się żegna</string>
+    <!-- The learner is speaking and the app hears them. -->
     <string name="conversation_listening">Słuchamy…</string>
+    <string name="conversation_your_turn">Twoja kolej</string>
+    <string name="conversation_type_below">Napisz odpowiedź poniżej.</string>
+    <string name="conversation_take_your_time">Nie spiesz się.</string>
+    <string name="conversation_answer_out_loud">Odpowiedz na głos. %1$s słucha.</string>
+    <!-- The call reached its length: the character says goodbye once the learner answers. -->
+    <string name="conversation_wrap_up_time">Prawie koniec rozmowy. %1$s pożegna się po twojej odpowiedzi.</string>
+    <!-- The learner did every goal of the call: the character ends the call once they answer. -->
+    <string name="conversation_wrap_up_done">Wszystkie cele osiągnięte. %1$s zakończy rozmowę po twojej odpowiedzi.</string>
+    <string name="conversation_call_ended">Rozmowa zakończona</string>
     <string name="conversation_help">Pomoc</string>
     <!-- Asked when the learner goes back or closes the screen during a call. -->
     <string name="conversation_end_title">Zakończyć rozmowę?</string>

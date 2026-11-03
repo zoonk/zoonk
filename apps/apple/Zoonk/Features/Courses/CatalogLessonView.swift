@@ -61,7 +61,7 @@ private struct CatalogLessonList: View {
           }
 
           if case .text(let text) = value.firstScreen {
-            Text(text)
+            LessonTextBlocks(text)
               .font(.title3)
           }
         }
@@ -146,7 +146,7 @@ private struct CatalogLessonList: View {
       if let ideas = value.summary?.ideas.map(\.text) {
         Section {
           DisclosureGroup {
-            ForEach(ideas, id: \.self) { CheckLine(text: $0) }
+            ForEach(ideas, id: \.self) { idea in CheckLine { LessonRichText(idea) } }
           } label: {
             LabeledContent {
               Text(
