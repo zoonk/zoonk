@@ -633,67 +633,132 @@
         }
       }
     },
-    "%@ is in %@. %lld of %lld sorted." : {
-      "comment" : "VoiceOver, after an item is sorted into a group",
+    "%@ is in %@." : {
+      "comment" : "VoiceOver, after the last card is sorted or a card is moved",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ist in %2$@. %3$lld von %4$lld zugeordnet."
+            "value" : "%1$@ ist in %2$@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ is in %2$@. %3$lld of %4$lld sorted."
+            "value" : "%1$@ is in %2$@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ está en %2$@. %3$lld de %4$lld clasificados."
+            "value" : "%1$@ está en %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ est dans %2$@. %3$lld éléments sur %4$lld triés."
+            "value" : "%1$@ est dans %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ è in %2$@. %3$lld su %4$lld raggruppati."
+            "value" : "%1$@ è in %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@を%2$@に分類しました。%3$lld／%4$lld個を分類済みです。"
+            "value" : "%1$@は%2$@に入っています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 항목을 %2$@에 넣었어요. %3$lld개를 분류했어요. 전체 %4$lld개예요."
+            "value" : "%1$@ 카드가 %2$@에 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ jest w grupie: %2$@. Posortowano %3$lld z %4$lld."
+            "value" : "Karta „%1$@” jest w grupie „%2$@”."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ está em %2$@. %3$lld de %4$lld itens agrupados."
+            "value" : "%1$@ está em %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, %2$@ grubunda. %3$lld / %4$lld gruplandı."
+            "value" : "%1$@, %2$@ grubunda."
+          }
+        }
+      }
+    },
+    "%@ is in %@. Next: %@." : {
+      "comment" : "VoiceOver, after a card is sorted, with the next card",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ ist in %2$@. Als Nächstes: %3$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ is in %2$@. Next: %3$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ está en %2$@. Siguiente: %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ est dans %2$@. Carte suivante : %3$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ è in %2$@. Prossima carta: %3$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@は%2$@に入っています。次は%3$@です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 카드가 %2$@에 있어요. 다음 카드: %3$@."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karta „%1$@” jest w grupie „%2$@”. Następna karta: %3$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ está em %2$@. Próximo: %3$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@ grubunda. Sıradaki: %3$@."
           }
         }
       }
@@ -3704,6 +3769,65 @@
         }
       }
     },
+    "+%lld" : {
+      "comment" : "On a group: how many more cards are in it besides the one shown",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        }
+      }
+    },
     "A Punnett square for %@: %@ (%@) down the side, %@ (%@) across the top." : {
       "comment" : "VoiceOver: what a Punnett square shows",
       "localizations" : {
@@ -4060,61 +4184,61 @@
         }
       }
     },
-    "All sorted. Check when you're ready." : {
-      "comment" : "Every item of a sorting activity has a group",
+    "All sorted. Tap a card to move it." : {
+      "comment" : "Every card of a sorting activity has a group; a tap on a card moves it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles zugeordnet. Prüfe deine Zuordnung, wenn du bereit bist."
+            "value" : "Alles einsortiert. Tippe auf eine Karte, um sie zu verschieben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo está clasificado. Comprueba cuando quieras."
+            "value" : "Todo clasificado. Toca una tarjeta para moverla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout est classé. Vérifie quand tu es prêt."
+            "value" : "Tout est classé. Appuie sur une carte pour la déplacer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai raggruppato tutto. Controlla quando vuoi."
+            "value" : "Hai sistemato tutte le carte. Tocca una carta per spostarla."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべて分類できました。準備ができたら答え合わせをしてください。"
+            "value" : "すべて振り分けました。カードをタップすると移動できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모두 분류했어요. 준비되면 정답을 확인해 보세요."
+            "value" : "모두 분류했어요. 카드를 옮기려면 탭하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystko posortowane. Sprawdź, kiedy zechcesz."
+            "value" : "Wszystko posortowane. Stuknij kartę, aby ją przenieść."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo classificado. Confira quando estiver pronto."
+            "value" : "Tudo organizado. Toque no cartão que quiser mover."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hepsi gruplandı. Hazır olduğunda kontrol et."
+            "value" : "Hepsi gruplandı. Taşımak için bir karta dokun."
           }
         }
       }
@@ -6314,6 +6438,65 @@
         }
       }
     },
+    "Move to" : {
+      "comment" : "Title of the menu that moves a sorted card into another group",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschieben in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer vers"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移動先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "옮길 그룹"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover para"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gruba taşı"
+          }
+        }
+      }
+    },
     "Move up" : {
       "comment" : "VoiceOver action on a step to order",
       "localizations" : {
@@ -6428,6 +6611,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sırada: alıntının iddiayı nasıl kanıtladığını açıkla"
+          }
+        }
+      }
+    },
+    "No cards here" : {
+      "comment" : "A group of a sorting activity that no card was sorted into",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier sind keine Karten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay tarjetas aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune carte ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna carta qui"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードがありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "카드가 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ma tu kart"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum cartão aqui"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada kart yok"
           }
         }
       }
@@ -6723,65 +6965,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tam olmadı:"
-          }
-        }
-      }
-    },
-    "Nothing here yet" : {
-      "comment" : "An empty group",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hier ist noch nichts"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay nada aquí"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien ici pour l’instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qui non c’è ancora nulla"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まだ何もありません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 아무것도 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu jeszcze nic nie ma"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada aqui ainda"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Burada henüz bir şey yok"
           }
         }
       }
@@ -7258,65 +7441,6 @@
         }
       }
     },
-    "Pick it, then pick its group." : {
-      "comment" : "VoiceOver hint on an item to sort",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähle es aus und dann seine Gruppe."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige el elemento y luego su grupo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionne cet élément, puis son groupe."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selezionalo, poi scegli il suo gruppo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これを選んでから、入れるグループを選んでください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "항목을 고른 뒤 해당하는 그룹을 고르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz element, a potem jego grupę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha este item e depois escolha o grupo dele."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce bunu, sonra grubunu seç."
-          }
-        }
-      }
-    },
     "Pick the quote that best supports the claim" : {
       "comment" : "An argument's empty evidence part",
       "localizations" : {
@@ -7495,7 +7619,7 @@
       }
     },
     "Put %@ in %@" : {
-      "comment" : "VoiceOver: places the picked item in this group",
+      "comment" : "VoiceOver: sorts the card in hand into this group",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7620,124 +7744,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ adını %2$@ numaralı noktaya yerleştir"
-          }
-        }
-      }
-    },
-    "Put in %@" : {
-      "comment" : "VoiceOver action that sorts an item into a group",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In %@ einordnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocar en %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Placer dans %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metti in %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@に入れる"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 넣기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umieść w grupie: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocar em %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ grubuna koy"
-          }
-        }
-      }
-    },
-    "Put it here" : {
-      "comment" : "An empty group, with an item picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hier einordnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocar aquí"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place-le ici"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mettilo qui"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここに入れる"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "여기에 넣기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umieść tutaj"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coloque aqui"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buraya koy"
           }
         }
       }
@@ -10274,61 +10280,61 @@
         }
       }
     },
-    "To sort" : {
-      "comment" : "Above the items left to sort",
+    "Took back %@." : {
+      "comment" : "VoiceOver, after Undo puts the last card sorted back in hand",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einzuordnen"
+            "value" : "%@ zurückgenommen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ordenar"
+            "value" : "Recuperaste %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À trier"
+            "value" : "Tu as repris %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da classificare"
+            "value" : "Hai ripreso %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未分類"
+            "value" : "%@を手元に戻しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "분류할 항목"
+            "value" : "%@ 카드를 다시 가져왔어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Do posortowania"
+            "value" : "Przywrócono kartę „%@”."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para organizar"
+            "value" : "Você pegou %@ de volta."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınıflandırılacaklar"
+            "value" : "%@ geri alındı."
           }
         }
       }
@@ -10452,7 +10458,7 @@
       }
     },
     "Undo" : {
-      "comment" : "Steps back one answer in a decision tree",
+      "comment" : "Takes back a decision tree's last answer or the last card sorted",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11037,6 +11043,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld numaralı kareye hangi genotip gelmeli?"
+          }
+        }
+      }
+    },
+    "Which group does it belong in?" : {
+      "comment" : "Under the card to sort, above the groups it can go in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In welche Gruppe gehört die Karte?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿A qué grupo pertenece?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans quel groupe va cette carte ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In quale gruppo va?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのグループに入りますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어느 그룹에 속할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do której grupy należy?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em qual grupo ele fica?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hangi gruba ait?"
           }
         }
       }
