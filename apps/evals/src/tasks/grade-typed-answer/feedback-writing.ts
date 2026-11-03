@@ -1,18 +1,26 @@
 const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
 
-const QUOTED = /"[^"]*"|“[^”]*”|'[^']*'|‘[^’]*’|«[^»]*»/gu;
+/** A single quote between two letters is an apostrophe ("I've"), never where a quote opens or closes. */
+const QUOTED =
+  /"[^"]*"|“[^”]*”|«[^»]*»|(?<!\p{L})'(?:[^']|(?<=\p{L})'(?=\p{L}))*'(?!\p{L})|‘(?:[^’]|(?<=\p{L})’(?=\p{L}))*’/gu;
 
 const ACCENTED_WORDS = new Set([
   "alem",
   "apos",
   "ate",
+  "ciencia",
+  "competencia",
+  "consequencia",
   "entao",
   "estao",
+  "frequencia",
+  "importancia",
   "ja",
   "nao",
   "numero",
   "porem",
   "possivel",
+  "resistencia",
   "sao",
   "tambem",
   "tres",
@@ -20,7 +28,7 @@ const ACCENTED_WORDS = new Set([
   "voces",
 ]);
 
-const UNACCENTED_ENDING = /(?:cao|coes|encia|ancia)$/u;
+const UNACCENTED_ENDING = /(?:cao|coes)$/u;
 
 const DIAERESIS = /[äëïöü]/iu;
 
