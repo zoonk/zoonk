@@ -286,11 +286,21 @@ export function toLevelLabels(scores: LevelTestScores): Partial<Record<LanguageS
 export type LevelTestMeasure = {
   /** Questions answered, skipped ones left out, and the spoken sentence once graded. */
   answered: number;
-  /** A skill with no answer keeps its starting estimate, a prior rather than a measurement. */
+  /**
+   * The skills the learner answered, each no higher than half a step above its hardest right answer:
+   * the rest of a score comes from the starting level the learner typed, a prior, not a measurement.
+   */
   measured: { score: number; skill: LanguageSkill }[];
   /** Every reading and listening question was asked: the learner didn't finish early. */
   ranToEnd: boolean;
 };
+
+function getRightAnswerCeiling(answers: ScoredAnswer[]): number {
+  return Math.max(
+    0,
+    ...answers.filter(({ correct }) => correct).map(({ band }) => band + HALF_STEP),
+  );
+}
 
 export function getLevelTestMeasure({
   bank,
@@ -301,16 +311,20 @@ export function getLevelTestMeasure({
   progress: TestAnswers;
   scores: LevelTestScores;
 }): LevelTestMeasure {
-  const answeredSkills = QUESTION_SKILLS.filter(
-    (skill) => scoreAnswers({ bank, progress, skill }).length > 0,
-  );
+  const answeredSkills = QUESTION_SKILLS.flatMap((skill) => {
+    const answers = scoreAnswers({ bank, progress, skill });
+
+    return answers.length === 0
+      ? []
+      : [{ score: Math.min(scores[skill], getRightAnswerCeiling(answers)), skill }];
+  });
 
   const spoken =
     scores.speaking === undefined ? [] : [{ score: scores.speaking, skill: "speaking" as const }];
 
   return {
     answered: progress.answers.filter((answer) => !answer.skipped).length + spoken.length,
-    measured: [...answeredSkills.map((skill) => ({ score: scores[skill], skill })), ...spoken],
+    measured: [...answeredSkills, ...spoken],
     ranToEnd: QUESTION_SKILLS.every(
       (skill) => countAsked({ bank, progress, skill }) >= QUESTIONS_PER_SKILL,
     ),

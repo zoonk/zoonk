@@ -211,12 +211,18 @@ describe("placement certificates", () => {
       certificate: {
         answered: 6,
         kind: "placement",
+        level: "B1",
+        measuredLevel: "B1+",
         skillLevels: [
-          { label: expect.any(String), skill: "reading" },
-          { label: expect.any(String), skill: "listening" },
+          { label: "B1+", skill: "reading" },
+          { label: "B1+", skill: "listening" },
         ],
         targetLanguage: "en",
       },
+      levels: [
+        { label: "B1+", skill: "reading" },
+        { label: "B1+", skill: "listening" },
+      ],
       status: "ready",
     });
 
@@ -260,6 +266,20 @@ describe("placement certificates", () => {
     ],
   ])("certifies nothing for %s", async (_case, levelAnswers) => {
     const { goal } = await testTaker(levelAnswers);
+
+    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      certificate: null,
+      status: "ready",
+    });
+  });
+
+  it("certifies nothing a typed level suggests when no answer was right", async () => {
+    const { goal } = await testTaker([
+      ...answers({ answerIndex: null, levels: ["C1", "B2", "B1"], skill: "reading" }),
+      ...answers({ answerIndex: null, levels: ["C1", "B2", "B1"], skill: "listening" }),
+    ]);
+
+    await updateGoal({ goalId: goal.id, input: { details: { level: "C2" } } });
 
     await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
       certificate: null,
