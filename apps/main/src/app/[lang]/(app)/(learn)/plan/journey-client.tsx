@@ -48,9 +48,11 @@ export function JourneyBuildingClient({
 type JourneyScreenProps = React.ComponentProps<typeof JourneyScreen>;
 
 function getJourneyLinks({
+  completedLessons,
   goalKind,
   hasMindMaps,
 }: {
+  completedLessons: boolean;
   goalKind: JourneyScreenProps["goal"]["kind"];
   hasMindMaps: boolean;
 }): JourneyLinks {
@@ -58,7 +60,7 @@ function getJourneyLinks({
     challenge: (planItemId) => `/challenge/${planItemId}`,
     chapter: (chapterId) =>
       goalKind === "language" ? `/content/units/${chapterId}` : `/content/chapters/${chapterId}`,
-    completedLessons: null,
+    completedLessons: completedLessons ? "/completed-lessons" : null,
     course: getCourseHref,
     exam: goalKind === "exam" ? "/exam" : null,
     focusTest: "/focus-test",
@@ -109,6 +111,7 @@ type JourneyClientProps = Omit<
   "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  completedLessons: boolean;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
   hasMindMaps: boolean;
@@ -149,6 +152,7 @@ function useGoalStatus({
 export function JourneyClient({
   actions,
   buddy,
+  completedLessons,
   goalId,
   goalStatus,
   hasMindMaps,
@@ -195,7 +199,7 @@ export function JourneyClient({
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
         }}
         goalStatus={status}
-        links={getJourneyLinks({ goalKind: props.goal.kind, hasMindMaps })}
+        links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
         next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}

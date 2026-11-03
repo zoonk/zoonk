@@ -234,6 +234,13 @@ msgstr "오답 노트"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "완료한 레슨"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "시험"
@@ -852,6 +859,11 @@ msgstr "짝꿍이 질문에 답하고 계획을 조정해 줘요."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "내 하루"
+
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "1ZQwwl"
+msgid "The lessons you've finished, ready to do again anytime."
+msgstr "완료한 레슨을 언제든 다시 학습할 수 있어요."
 
 #: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
 msgctxt "dOgCSN"

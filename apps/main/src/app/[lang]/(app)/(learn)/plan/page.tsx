@@ -1,5 +1,6 @@
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
+import { hasCompletedLessons } from "@/lib/learn/has-completed-lessons";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
@@ -136,9 +137,10 @@ async function JourneyContent() {
 
   const goalStatus = getGoalStatus(activeGoal);
 
-  const [next, resume] = await Promise.all([
+  const [next, resume, completedLessons] = await Promise.all([
     loadStudyNext({ goalId: goal.id, over: plan.end !== null }),
     loadResumePreview({ goalId: goal.id, paused: goalStatus === "paused" }),
+    hasCompletedLessons(goal.id),
   ]);
 
   const standing = progress.status === "ready" ? progress.progress : null;
@@ -165,6 +167,7 @@ async function JourneyContent() {
         }
       }
       buddy={buddy}
+      completedLessons={completedLessons}
       goal={{ kind: goal.kind, title: goal.title }}
       goalId={goal.id}
       goalStatus={goalStatus}

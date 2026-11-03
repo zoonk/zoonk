@@ -234,6 +234,13 @@ msgstr "Caderno de erros"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Aulas concluídas"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prova"
@@ -852,6 +859,11 @@ msgstr "Seu Parceiro responde às suas perguntas e ajusta seu plano."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "Seu dia"
+
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "1ZQwwl"
+msgid "The lessons you've finished, ready to do again anytime."
+msgstr "As aulas que você concluiu, prontas para você fazer de novo quando quiser."
 
 #: src/app/[lang]/(app)/(learn)/content/chapters/[chapterId]/page.tsx
 msgctxt "dOgCSN"

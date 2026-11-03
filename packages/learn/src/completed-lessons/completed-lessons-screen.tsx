@@ -1,5 +1,6 @@
 "use client";
 
+import { type CompletedLesson } from "@zoonk/core/completed-lessons/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { daysBetweenIsoDays } from "@zoonk/utils/calendar-day";
@@ -22,18 +23,7 @@ import {
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 
-export type CompletedLesson = {
-  chapterTitle: string | null;
-  finishedOn: string;
-  lessonId: string;
-  title: string;
-};
-
-export type CompletedLessonsHrefs = {
-  back: string;
-  lesson: (lessonId: string) => string;
-  more: string | null;
-};
+export type CompletedLessonsHrefs = { back: string; lesson: (lessonId: string) => string };
 
 function groupByDay(lessons: readonly CompletedLesson[]) {
   return [...Map.groupBy(lessons, (lesson) => lesson.finishedOn).entries()];
@@ -111,11 +101,13 @@ export function CompletedLessonsScreen({
   goalTitle,
   hrefs,
   lessons,
+  moreHref,
   today,
 }: {
   goalTitle: string;
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
+  moreHref: string | null;
   today: string;
 }) {
   const t = useExtracted();
@@ -151,10 +143,10 @@ export function CompletedLessonsScreen({
           />
         ))}
 
-        {hrefs.more && (
+        {moreHref && (
           <LearnLink
             className={buttonVariants({ className: "self-start", variant: "outline" })}
-            href={hrefs.more}
+            href={moreHref}
             scroll={false}
           >
             {t("Show more")}
