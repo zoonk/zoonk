@@ -46292,6 +46292,7 @@
                               "type": "object",
                               "properties": {
                                 "icon": {
+                                  "default": "workflow",
                                   "type": "string",
                                   "enum": [
                                     "activity",
@@ -58867,6 +58868,7 @@
                                   "type": "object",
                                   "properties": {
                                     "icon": {
+                                      "default": "workflow",
                                       "type": "string",
                                       "enum": [
                                         "activity",

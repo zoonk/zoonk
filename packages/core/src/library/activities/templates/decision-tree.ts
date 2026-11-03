@@ -120,7 +120,7 @@ function splitSharedOutcomes(fields: DecisionTreeFields): DecisionTreeFields {
     : repaired;
 }
 
-const decisionTreeFields = decisionTreeShape.transform((fields) => splitSharedOutcomes(fields));
+const decisionTreeFields = decisionTreeShape.overwrite((fields) => splitSharedOutcomes(fields));
 
 function reachable(fields: DecisionTreeFields, visited: ReadonlySet<string>): ReadonlySet<string> {
   const next = fields.nodes
