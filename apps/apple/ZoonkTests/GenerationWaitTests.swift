@@ -34,6 +34,19 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testTheSkillsStepKeepsTheNewestSkillTheGraphWrote() {
+    var wait = GenerationWait(kind: .curriculum)
+
+    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
+    wait.apply(GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
+    wait.apply(GenerationEvent(skillName: "Loops", status: "started", step: "buildSkillGraph"))
+    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
+
+    let skills = wait.visiblePhases.first { $0.id == "skills" }
+    XCTAssertEqual(skills?.skillName, "Loops")
+    XCTAssertEqual(skills?.state, .working)
+  }
+
   func testAnExplanationCanBeReadOnceItIsWritten() {
     var wait = GenerationWait(kind: .explanation)
 

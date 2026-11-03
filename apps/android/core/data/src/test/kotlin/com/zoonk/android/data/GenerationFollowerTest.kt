@@ -42,12 +42,38 @@ class GenerationFollowerTest {
 
     private fun TestScope.follower(
         source: FakeSource,
+        kind: GenerationKind = GenerationKind.Understanding,
         readGenerationId: (suspend () -> String?)? = null,
         restart: (suspend () -> String?)? = null,
     ): GenerationFollower {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return GenerationFollower(GenerationKind.Understanding, scope, source, readGenerationId, restart, now = { 10_000 })
+        return GenerationFollower(kind, scope, source, readGenerationId, restart, now = { 10_000 })
     }
+
+    @Test
+    fun aRunKeepsTheNewestSkillItsGraphWrote() =
+        runTest {
+            val source = FakeSource()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(event("buildSkillGraph", "started"))
+                        emit(GenerationEvent(skillName = "Variables", status = "started", step = "buildSkillGraph"))
+                        emit(GenerationEvent(skillName = "Loops", status = "started", step = "buildSkillGraph"))
+                        emit(event("buildSkillGraph"))
+                        MutableSharedFlow<Unit>().collect {}
+                    },
+                )
+            val follower = follower(source, kind = GenerationKind.Curriculum)
+
+            follower.follow("a")
+            runCurrent()
+
+            val run = follower.run.value
+            assertEquals("Loops", run.skillName)
+            assertEquals(StepState.Completed, run.steps["buildSkillGraph"])
+            follower.stop()
+        }
 
     @Test
     fun aRunIsReadyOnceItsDoneStepArrives() =

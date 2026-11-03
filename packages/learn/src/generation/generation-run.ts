@@ -11,6 +11,8 @@ export type GenerationRun = {
   clockOffsetMs?: number;
   failure: GenerationFailure | null;
   retry?: () => void;
+  /** The newest skill the run's skill graph wrote, while it writes them. */
+  skillName?: string;
   status: "failed" | "following" | "ready" | "waiting";
   stepTimes?: Partial<Record<string, GenerationStepTimes>>;
   steps: Partial<Record<string, GenerationStepState>>;

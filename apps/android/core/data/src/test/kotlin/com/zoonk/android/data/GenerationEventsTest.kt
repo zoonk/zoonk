@@ -67,6 +67,17 @@ class GenerationEventsTest {
         }
 
     @Test
+    fun eventsCarryTheSkillNameAGraphJustWrote() =
+        runTest {
+            streams =
+                mapOf("0" to events("""data: {"skillName":"Variables","status":"started","step":"buildSkillGraph"}""" + "\n\n"))
+
+            val received = api.generationEvents("gen-1", ana).toList()
+
+            assertEquals(listOf(GenerationEvent(skillName = "Variables", status = "started", step = "buildSkillGraph")), received)
+        }
+
+    @Test
     fun eventsGiveUpAfterThreeDropsWithoutAnEvent() =
         runTest {
             streams = mapOf("0" to events(drop = true))

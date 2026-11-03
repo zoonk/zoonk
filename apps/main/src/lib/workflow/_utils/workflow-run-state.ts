@@ -33,6 +33,7 @@ export type WorkflowRunState = {
   ready: boolean;
   reconnectIn: number | null;
   replaced: string[];
+  skillName: string | null;
   steps: Partial<Record<string, GenerationStepState>>;
   stepTimes: Partial<Record<string, GenerationStepTimes>>;
 };
@@ -58,6 +59,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   ready: false,
   reconnectIn: null,
   replaced: [],
+  skillName: null,
   stepTimes: {},
   steps: {},
 };
@@ -98,6 +100,7 @@ function recordStep(
 
   return {
     ...state,
+    skillName: message.skillName ?? state.skillName,
     stepTimes: recordStepTime(state, message),
     steps: { ...state.steps, [message.step]: status },
   };

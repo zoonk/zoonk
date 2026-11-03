@@ -5,6 +5,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   let at: Date?
   let entityID: String?
   let reason: String?
+  let skillName: String?
   let status: String
   let step: String
 
@@ -12,16 +13,19 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     case at
     case entityID = "entityId"
     case reason
+    case skillName
     case status
     case step
   }
 
   init(
-    at: Date? = nil, entityID: String? = nil, reason: String? = nil, status: String, step: String
+    at: Date? = nil, entityID: String? = nil, reason: String? = nil, skillName: String? = nil,
+    status: String, step: String
   ) {
     self.at = at
     self.entityID = entityID
     self.reason = reason
+    self.skillName = skillName
     self.status = status
     self.step = step
   }
@@ -31,6 +35,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     at = try container.decodeIfPresent(Int.self, forKey: .at).map(dateFromEpochMilliseconds)
     entityID = try container.decodeIfPresent(String.self, forKey: .entityID)
     reason = try container.decodeIfPresent(String.self, forKey: .reason)
+    skillName = try container.decodeIfPresent(String.self, forKey: .skillName)
     status = try container.decode(String.self, forKey: .status)
     step = try container.decode(String.self, forKey: .step)
   }

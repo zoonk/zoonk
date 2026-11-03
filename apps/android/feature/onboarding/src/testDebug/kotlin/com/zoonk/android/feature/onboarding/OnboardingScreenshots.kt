@@ -391,6 +391,18 @@ class OnboardingScreenshots {
                             ),
                     )
                 },
+                "reveal-mapping" to {
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = planOf(ready = false) },
+                        run =
+                            GenerationRun(
+                                status = GenerationRun.Status.Following,
+                                steps = mapOf("understandGoal" to StepState.Completed, "buildSkillGraph" to StepState.Started),
+                                stepTimes = mapOf("understandGoal" to StepTimes(started = 0, completed = 8_000)),
+                                skillName = "Prepare colonies for winter",
+                            ),
+                    )
+                },
                 "reveal-reading" to {
                     Reveal(setupPlanApi().apply { shownPlan = planOf(notice = "reading") })
                 },

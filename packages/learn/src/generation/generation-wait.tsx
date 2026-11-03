@@ -72,9 +72,23 @@ function WaitProgress({
   );
 }
 
-function ActiveDetail({ copy, phase }: { copy: PhaseCopy; phase: string }) {
+function ActiveDetail({
+  copy,
+  phase,
+  skillName,
+}: {
+  copy: PhaseCopy;
+  phase: string;
+  skillName?: string;
+}) {
   const tick = useTickCount({ resetKey: phase });
   const line = getDetailLine({ lines: copy.lines, numbered: copy.numbered, tick });
+
+  if (skillName) {
+    return (
+      <GenerationTimelineStepDetail className="truncate">{skillName}</GenerationTimelineStepDetail>
+    );
+  }
 
   return line ? (
     <GenerationTimelineStepDetail key={line}>{line}</GenerationTimelineStepDetail>
@@ -277,7 +291,13 @@ export function GenerationWait({
                 time={times[index]}
               />
               {phase.status === "active" && isFollowing(run) && phaseText && (
-                <ActiveDetail copy={phaseText} phase={phase.id} />
+                <ActiveDetail
+                  copy={phaseText}
+                  phase={phase.id}
+                  skillName={
+                    phase.id === definition.steps.buildSkillGraph ? run.skillName : undefined
+                  }
+                />
               )}
             </GenerationTimelineStep>
           );

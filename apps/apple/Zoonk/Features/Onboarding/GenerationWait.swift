@@ -22,6 +22,7 @@ struct GenerationWait: Equatable, Sendable {
     let isOptional: Bool
     var state = PhaseState.waiting
     var isReported = false
+    var skillName: String?
   }
 
   let kind: Kind
@@ -69,6 +70,7 @@ struct GenerationWait: Equatable, Sendable {
 
       phases[index].isReported = true
       phases[index].state = event.status == "completed" ? .done : .working
+      phases[index].skillName = event.skillName ?? phases[index].skillName
 
       // Today builds the first day once the plan is saved, while the outlines go on.
       if event.status == "completed",
@@ -255,6 +257,11 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
           } label: {
             Text(phase.label)
               .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
+
+            if phase.state == .working, failure == nil, let skillName = phase.skillName {
+              Text(skillName)
+                .lineLimit(1)
+            }
           }
         }
       }
