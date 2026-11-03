@@ -11,6 +11,7 @@ import {
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
+import { type GenerationStepTimes } from "./generation-run";
 
 type StepPlace<TPhase extends string> = TPhase | "done" | "join";
 
@@ -24,7 +25,8 @@ type PhaseDefinition<TPhase extends string> = {
 type StepStates<TStep extends string> = Partial<Record<TStep, "completed" | "started">>;
 
 export type GenerationKindDefinition<TStep extends string, TPhase extends string> = {
-  isDone?: (steps: StepStates<TStep>) => boolean;
+  /** Done once this step completes, before the run's own end: the screen needs only what it wrote. */
+  doneOnCompleted?: TStep;
   phases: readonly PhaseDefinition<TPhase>[];
   steps: Record<TStep, StepPlace<TPhase>>;
 };
@@ -56,7 +58,7 @@ const understanding = {
 } as const satisfies GenerationKindDefinition<GoalUnderstandingStepName, "dates" | "read">;
 
 const curriculum = {
-  isDone: (steps) => steps.createPlan === "completed",
+  doneOnCompleted: "createPlan",
   phases: [...GOAL_PHASES, { id: "plan", seconds: 15 }],
   steps: {
     ...GOAL_STEPS,
@@ -89,7 +91,7 @@ const placement = {
 >;
 
 const firstLesson = {
-  isDone: (steps) => steps.createPlan === "completed",
+  doneOnCompleted: "createPlan",
   phases: [...GOAL_PHASES, { id: "day", seconds: 15 }],
   steps: {
     ...GOAL_STEPS,
@@ -163,7 +165,7 @@ const challengeQuestions = {
 } as const satisfies GenerationKindDefinition<ChallengeQuestionsStepName, "questions">;
 
 const explanation = {
-  isDone: (steps) => steps.writeExplanation === "completed",
+  doneOnCompleted: "writeExplanation",
   phases: [
     { id: "read", seconds: 2 },
     { id: "find", seconds: 2 },
@@ -263,6 +265,12 @@ export function getStepMeaning({
   return getGenerationKind(kind).steps[step] === "join" ? "join" : "progress";
 }
 
+function getDoneSteps(definition: GenerationKindDefinition<string, string>): string[] {
+  return Object.entries(definition.steps).flatMap(([step, place]) =>
+    place === "done" ? [step] : [],
+  );
+}
+
 export function isGenerationDone({
   definition,
   steps,
@@ -270,9 +278,28 @@ export function isGenerationDone({
   definition: GenerationKindDefinition<string, string>;
   steps: StepStates<string>;
 }): boolean {
-  const reportedDone = Object.entries(definition.steps).some(
-    ([step, place]) => place === "done" && steps[step] !== undefined,
-  );
+  const { doneOnCompleted } = definition;
+  const reportedDone = getDoneSteps(definition).some((step) => steps[step] !== undefined);
 
-  return reportedDone || (definition.isDone?.(steps) ?? false);
+  return reportedDone || (doneOnCompleted !== undefined && steps[doneOnCompleted] === "completed");
+}
+
+/** When the run reported what `isGenerationDone` ends the wait on, on the server's clock. */
+export function getGenerationDoneAt({
+  definition,
+  stepTimes,
+}: {
+  definition: GenerationKindDefinition<string, string>;
+  stepTimes: Partial<Record<string, GenerationStepTimes>>;
+}): number | null {
+  const { doneOnCompleted } = definition;
+
+  const times = [
+    ...getDoneSteps(definition).map(
+      (step) => stepTimes[step]?.started ?? stepTimes[step]?.completed,
+    ),
+    doneOnCompleted === undefined ? undefined : stepTimes[doneOnCompleted]?.completed,
+  ].filter((time) => time !== undefined);
+
+  return times.length > 0 ? Math.min(...times) : null;
 }
