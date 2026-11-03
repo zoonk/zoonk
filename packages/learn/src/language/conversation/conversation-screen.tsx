@@ -131,13 +131,13 @@ function LiveCallRun({
 
   const locked = conversation.locked || call.error === "plusRequired";
 
-  if (locked || (call.phase === "idle" && (startWith === "intro" || call.microphoneRefused))) {
+  if (locked || (call.phase === "idle" && (startWith === "intro" || call.microphoneProblem))) {
     return (
       <ConversationIntro
         conversation={conversation}
         exitHref={hrefs.exit}
         locked={locked}
-        microphoneBlocked={call.microphoneRefused}
+        microphoneProblem={call.microphoneProblem}
         onStart={(audio) => void start({ audio, takeover: startWith === "takeover" })}
       />
     );

@@ -4858,9 +4858,19 @@ msgid "Type instead"
 msgstr "글로 대화하기"
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "마이크를 사용할 수 없어요"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "lLV_X_"
 msgid "Your microphone is off"
 msgstr "마이크가 꺼져 있어요"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "마이크가 연결되어 있고 다른 앱에서 사용 중이지 않은지 확인해 보세요. 글을 입력해 대화할 수도 있어요."
 
 #: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"

@@ -19,8 +19,8 @@ export type LiveCallError =
 
 /**
  * The microphone opens before the call is reserved, since the server's deadline starts then and a
- * permission prompt would take its time. Null when the start was cancelled meanwhile, `blocked`
- * when the microphone is: only the learner chooses a typed call.
+ * permission prompt would take its time. Null when the start was cancelled meanwhile, the problem
+ * when the microphone can't be used: only the learner chooses a typed call.
  */
 export async function openCall({
   audio,
@@ -34,8 +34,8 @@ export async function openCall({
   const live = loadLiveCallSession();
   const opened = audio ?? (await openCallAudio());
 
-  if (!opened) {
-    return isCurrent() ? ("blocked" as const) : null;
+  if (typeof opened === "string") {
+    return isCurrent() ? opened : null;
   }
 
   if (!isCurrent()) {

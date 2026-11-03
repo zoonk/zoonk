@@ -4858,9 +4858,19 @@ msgid "Type instead"
 msgstr "文字で会話する"
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "マイクを使用できません"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "lLV_X_"
 msgid "Your microphone is off"
 msgstr "マイクがオフになっています"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "マイクが接続されているか、ほかのアプリで使われていないか確認してください。文字入力でも会話できます。"
 
 #: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"

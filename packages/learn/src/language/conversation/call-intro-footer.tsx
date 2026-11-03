@@ -11,7 +11,12 @@ import { TaskActions } from "../../_components/task-layout";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
 import { TaskMainButton } from "../../shell/task-frame";
 import { loadLiveCallSession } from "./load-live-call-session";
-import { type CallAudio, openCallAudio, openTypedCallAudio } from "./use-call-microphone";
+import {
+  type CallAudio,
+  type MicrophoneProblem,
+  openCallAudio,
+  openTypedCallAudio,
+} from "./use-call-microphone";
 
 export type CallIntroFooterState =
   | "dailyLimitReached"
@@ -37,13 +42,13 @@ function preloadLiveCall() {
  * tap, and a call the learner can't speak in shouldn't start on its own.
  */
 function useMicrophoneAsk({
-  blocked,
   onAudio,
+  problem,
 }: {
-  blocked: boolean;
   onAudio: (audio: CallAudio) => void;
+  problem: MicrophoneProblem | null;
 }) {
-  const [ask, setAsk] = useState<"asking" | "blocked" | "idle">(blocked ? "blocked" : "idle");
+  const [ask, setAsk] = useState<"asking" | "idle" | MicrophoneProblem>(problem ?? "idle");
   const attempt = useRef(0);
   const prompting = useTakingLong({ active: ask === "asking", afterMs: PROMPT_SHOWN_MS });
 
@@ -61,17 +66,23 @@ function useMicrophoneAsk({
     attempt.current = mine;
     setAsk("asking");
     const audio = await openCallAudio();
+    const current = mine === attempt.current;
 
-    if (mine !== attempt.current) {
-      audio?.stop();
+    if (typeof audio === "string") {
+      if (current) {
+        setAsk(audio);
+      }
+
       return;
     }
 
-    setAsk(audio ? "idle" : "blocked");
-
-    if (audio) {
-      onAudio(audio);
+    if (!current) {
+      audio.stop();
+      return;
     }
+
+    setAsk("idle");
+    onAudio(audio);
   };
 
   const typeInstead = () => {
@@ -82,8 +93,8 @@ function useMicrophoneAsk({
 
   return {
     asking: ask === "asking",
-    blocked: ask === "blocked",
     call: () => void call(),
+    problem: ask === "asking" || ask === "idle" ? null : ask,
     prompting,
     typeInstead,
   };
@@ -94,26 +105,26 @@ function useMicrophoneAsk({
  */
 export function CallIntroFooter({
   conversation,
-  microphoneBlocked = false,
+  microphoneProblem = null,
   onStart,
   start,
 }: {
   conversation: Pick<LanguageConversationIntro, "character" | "examTask" | "kind">;
-  microphoneBlocked?: boolean;
+  microphoneProblem?: MicrophoneProblem | null;
   onStart: (audio: CallAudio) => void;
   start: CallIntroFooterState;
 }) {
   const t = useExtracted();
-  const microphone = useMicrophoneAsk({ blocked: microphoneBlocked, onAudio: onStart });
+  const microphone = useMicrophoneAsk({ onAudio: onStart, problem: microphoneProblem });
   const { name } = conversation.character;
   const status = useRef<HTMLDivElement>(null);
 
   // The message replaces the button the learner pressed: keep their place there, not at the top.
   useEffect(() => {
-    if (microphone.blocked && document.activeElement === document.body) {
+    if (microphone.problem && document.activeElement === document.body) {
       status.current?.focus();
     }
-  }, [microphone.blocked]);
+  }, [microphone.problem]);
 
   return (
     <>
@@ -135,7 +146,7 @@ export function CallIntroFooter({
           </StudyTimeUsedUpNote>
         )}
 
-        {microphone.blocked && <MicrophoneOff name={name} />}
+        {microphone.problem && <MicrophoneOff name={name} problem={microphone.problem} />}
 
         {microphone.prompting && (
           <p className="text-muted-foreground text-sm text-pretty">
@@ -144,7 +155,7 @@ export function CallIntroFooter({
         )}
       </div>
 
-      {microphone.blocked && start !== "dailyLimitReached" && start !== "plusRequired" ? (
+      {microphone.problem && start !== "dailyLimitReached" && start !== "plusRequired" ? (
         <TaskActions>
           <Button
             className="shrink-0"
@@ -169,17 +180,24 @@ export function CallIntroFooter({
   );
 }
 
-function MicrophoneOff({ name }: { name: string }) {
+function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
   const t = useExtracted();
+  const unavailable = problem === "unavailable";
 
   return (
     <div className="flex flex-col gap-1 pb-1">
-      <p className="font-medium">{t("Your microphone is off")}</p>
+      <p className="font-medium">
+        {unavailable ? t("We can't use your microphone") : t("Your microphone is off")}
+      </p>
       <p className="text-muted-foreground text-sm text-pretty">
-        {t(
-          "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing.",
-          { name },
-        )}
+        {unavailable
+          ? t(
+              "Check that a microphone is connected and no other app is using it, or do this call by typing.",
+            )
+          : t(
+              "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing.",
+              { name },
+            )}
       </p>
     </div>
   );

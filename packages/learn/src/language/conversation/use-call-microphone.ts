@@ -16,6 +16,9 @@ function closeContext(context: AudioContext) {
   }
 }
 
+/** `blocked`: the learner or the browser refused it. `unavailable`: there's none, or another app holds it. */
+export type MicrophoneProblem = "blocked" | "unavailable";
+
 export type CallAudio = {
   blocked: boolean;
   /** Reports whether the learner is speaking until the audio stops. */
@@ -25,10 +28,10 @@ export type CallAudio = {
 };
 
 /**
- * Null when the microphone is blocked. Call it in a tap: Safari on iOS asks for the microphone,
- * and starts the context that hears the learner, only during one.
+ * Call it in a tap: Safari on iOS asks for the microphone, and starts the context that hears the
+ * learner, only during one.
  */
-export async function openCallAudio(): Promise<CallAudio | null> {
+export async function openCallAudio(): Promise<CallAudio | MicrophoneProblem> {
   const context = new AudioContext();
   void context.resume().catch(() => null);
 
@@ -51,9 +54,10 @@ export async function openCallAudio(): Promise<CallAudio | null> {
       },
       stream,
     };
-  } catch {
+  } catch (error) {
     closeContext(context);
-    return null;
+    const refused = error instanceof DOMException && error.name === "NotAllowedError";
+    return refused ? "blocked" : "unavailable";
   }
 }
 

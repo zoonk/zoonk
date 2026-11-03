@@ -13,7 +13,12 @@ import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { CallIntroFooter, type CallIntroFooterState, callsCharacter } from "./call-intro-footer";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
-import { type CallAudio, type TappedCallAudio, holdCallAudio } from "./use-call-microphone";
+import {
+  type CallAudio,
+  type MicrophoneProblem,
+  type TappedCallAudio,
+  holdCallAudio,
+} from "./use-call-microphone";
 
 type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
 
@@ -94,13 +99,13 @@ export function ConversationIntro({
   conversation,
   exitHref,
   locked = false,
-  microphoneBlocked = false,
+  microphoneProblem = null,
   onStart,
 }: {
   conversation: LanguageConversationView;
   exitHref: string;
   locked?: boolean;
-  microphoneBlocked?: boolean;
+  microphoneProblem?: MicrophoneProblem | null;
   onStart: (audio: CallAudio) => void;
 }) {
   const { examTask } = conversation;
@@ -108,7 +113,7 @@ export function ConversationIntro({
   const footer = (
     <CallIntroFooter
       conversation={conversation}
-      microphoneBlocked={microphoneBlocked}
+      microphoneProblem={microphoneProblem}
       onStart={onStart}
       start={locked ? "plusRequired" : "idle"}
     />

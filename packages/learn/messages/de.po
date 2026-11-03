@@ -4858,9 +4858,19 @@ msgid "Type instead"
 msgstr "Stattdessen schreiben"
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "Wir können dein Mikrofon nicht nutzen"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "lLV_X_"
 msgid "Your microphone is off"
 msgstr "Dein Mikrofon ist aus"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "Prüf, ob ein Mikrofon angeschlossen ist und keine andere App es nutzt, oder führ dieses Gespräch schriftlich."
 
 #: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"

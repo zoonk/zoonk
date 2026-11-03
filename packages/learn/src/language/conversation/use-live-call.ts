@@ -27,7 +27,11 @@ import {
 } from "./use-call-controls";
 import { type CallLength, useCallEnding } from "./use-call-ending";
 import { useCallEvents } from "./use-call-events";
-import { type TappedCallAudio, useCallMicrophone } from "./use-call-microphone";
+import {
+  type MicrophoneProblem,
+  type TappedCallAudio,
+  useCallMicrophone,
+} from "./use-call-microphone";
 import { type CallEndReason, type CallReport, useCallReport } from "./use-call-report";
 import { useConnectCall } from "./use-connect-call";
 import { useCallObjectives } from "./use-objective-checks";
@@ -232,12 +236,7 @@ export function useLiveCall({
     updateTurns,
   });
 
-  const [microphoneRefused, setMicrophoneRefused] = useState(false);
-
-  const onMicrophoneBlocked = useCallback(() => {
-    setPhase("idle");
-    setMicrophoneRefused(true);
-  }, [setPhase]);
+  const [microphoneProblem, setMicrophoneProblem] = useState<MicrophoneProblem | null>(null);
 
   const { cancelStart, start } = useConnectCall({
     endAtDeadline,
@@ -247,7 +246,7 @@ export function useLiveCall({
     hear: input.hear,
     keepAudio: microphone.keep,
     keepSession,
-    onMicrophoneBlocked,
+    onMicrophoneProblem: setMicrophoneProblem,
     onReserved: report.reserved,
     phaseRef,
     reserve: connection.reserve,
@@ -285,8 +284,8 @@ export function useLiveCall({
     limit: problem.limit,
     metLabels: objectives.metLabels,
     micBlocked: microphone.blocked,
-    /** A call started again without the intro found the microphone blocked: ask the learner. */
-    microphoneRefused,
+    /** A call started again without the intro couldn't use the microphone: ask the learner. */
+    microphoneProblem,
     muted,
     onTyping: input.onTyping,
     phase,

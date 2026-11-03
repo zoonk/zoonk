@@ -4858,9 +4858,19 @@ msgid "Type instead"
 msgstr "Yazarak devam et"
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "Mikrofonunu kullanamıyoruz"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "lLV_X_"
 msgid "Your microphone is off"
 msgstr "Mikrofonun kapalı"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "Mikrofonunun bağlı olduğunu ve başka bir uygulamada kullanılmadığını kontrol et ya da yazarak sohbet et."
 
 #: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"

@@ -9,7 +9,11 @@ import { type SpeechSample } from "./speech-activity";
 import { type useCallConnection } from "./use-call-connection";
 import { type LiveCallPhase } from "./use-call-controls";
 import { type CallLength } from "./use-call-ending";
-import { type CallAudio, type TappedCallAudio } from "./use-call-microphone";
+import {
+  type CallAudio,
+  type MicrophoneProblem,
+  type TappedCallAudio,
+} from "./use-call-microphone";
 
 const MS_PER_SECOND = 1000;
 
@@ -24,7 +28,7 @@ export function useConnectCall({
   hear,
   keepAudio,
   keepSession,
-  onMicrophoneBlocked,
+  onMicrophoneProblem,
   onReserved,
   phaseRef,
   reserve,
@@ -39,7 +43,7 @@ export function useConnectCall({
   hear: (sample: SpeechSample) => void;
   keepAudio: (audio: CallAudio) => boolean;
   keepSession: (session: LiveCallSession) => void;
-  onMicrophoneBlocked: () => void;
+  onMicrophoneProblem: (problem: MicrophoneProblem) => void;
   onReserved: (talkSeconds: number) => void;
   phaseRef: RefObject<LiveCallPhase>;
   reserve: Connection["reserve"];
@@ -69,8 +73,9 @@ export function useConnectCall({
         return;
       }
 
-      if (opened === "blocked") {
-        onMicrophoneBlocked();
+      if (typeof opened === "string") {
+        setPhase("idle");
+        onMicrophoneProblem(opened);
         return;
       }
 
@@ -130,7 +135,7 @@ export function useConnectCall({
       hear,
       keepAudio,
       keepSession,
-      onMicrophoneBlocked,
+      onMicrophoneProblem,
       onReserved,
       phaseRef,
       reserve,
