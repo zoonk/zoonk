@@ -232,6 +232,21 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(twice))).toStrictEqual(["guess"]);
   });
 
+  it("counts teaching on both sides of the guess as one run", () => {
+    const run = [
+      screen("hook", []),
+      screen("explanation"),
+      screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ];
+
+    expect(getCodes(spec(run))).toStrictEqual(["checkGap"]);
+  });
+
   it("checks the support mode against the screen after the hook", () => {
     const questionFirst = [
       screen("hook", []),

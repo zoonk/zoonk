@@ -2,6 +2,7 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type VisualFloor } from "@zoonk/ai/tasks/visual-floor";
 
 export type PlannedPicture = {
   lesson: number;
@@ -16,13 +17,19 @@ export type PlannedPicture = {
 export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & { teaches: boolean };
 
 /**
- * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does the
- * hook's picture: every lesson opens on its story's moment.
+ * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does a
+ * shared lesson's hook picture: it opens on its story's moment.
  */
-export function listPlannedPictures(specs: readonly LessonSpec[]): PlannedPicture[] {
+export function listPlannedPictures({
+  specs,
+  visualFloor,
+}: {
+  specs: readonly LessonSpec[];
+  visualFloor: VisualFloor;
+}): PlannedPicture[] {
   return specs.flatMap((spec, lesson) =>
     spec.screens.flatMap((screen, index) =>
-      screen.visual && screen.kind !== "hook"
+      screen.visual && !(visualFloor === "pictures" && screen.kind === "hook")
         ? [
             {
               brief: screen.brief,

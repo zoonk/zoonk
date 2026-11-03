@@ -147,9 +147,14 @@ export function getSupportModeFromScreens(screens: readonly LessonScreen[]): Sup
   return first && isPracticeScreen(first.kind) ? "questionFirst" : "explanationFirst";
 }
 
+/** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
     (state, screen) => {
+      if (screen.kind === "guess") {
+        return state;
+      }
+
       const current = isTeachingScreen(screen.kind) ? state.current + 1 : 0;
       return { current, longest: Math.max(state.longest, current) };
     },
@@ -221,19 +226,14 @@ function getVisualFloorIssues({
   ].filter((issue) => issue !== false);
 }
 
-/** The guess needs the story's first idea before it, and the application stays last. */
+/** The guess needs the story's first idea before it. */
 function getGuessIssue(screens: readonly LessonScreen[]) {
-  const guesses = screens.flatMap((screen, index) => (screen.kind === "guess" ? [index] : []));
-  const at = guesses[0];
-
-  if (at === undefined) {
-    return false;
-  }
-
-  const taughtBefore = screens.slice(0, at).some((screen) => isTeachingScreen(screen.kind));
+  const guesses = screens.filter((screen) => screen.kind === "guess").length;
+  const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
+  const at = screens.findIndex((screen) => screen.kind === "guess");
 
   return (
-    (guesses.length > 1 || !taughtBefore) && {
+    (guesses > 1 || (at !== -1 && (firstTeaching === -1 || at < firstTeaching))) && {
       code: "guess" as const,
       detail: "A lesson has at most one guess, after at least one explanation or worked example.",
     }

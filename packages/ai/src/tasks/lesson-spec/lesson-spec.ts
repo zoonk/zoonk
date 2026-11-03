@@ -110,7 +110,7 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       experienced: !novice,
       material: Boolean(params.material),
       novice,
-      private: Boolean(params.isPrivate),
+      private: getVisualFloor(params) === "drawn",
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -184,8 +184,8 @@ async function planLesson(params: LessonSpecParams) {
         splitLessonSpec({
           language: params.language,
           level: params.level,
-          novice: readsNoviceRules(params),
           spec,
+          visualFloor: getVisualFloor(params),
         }),
       );
 

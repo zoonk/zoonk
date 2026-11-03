@@ -1,3 +1,4 @@
+import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SIZE,
@@ -140,20 +141,20 @@ function createFrameScreen({
 }
 
 /**
- * The first lesson keeps the original hook and the last the original application. A new learner's
- * lesson always opens on a picture, so a new hook shows its own scene.
+ * The first lesson keeps the original hook and the last the original application. A shared lesson
+ * always opens on a picture, so a new hook shows its own scene.
  */
 function getFrame({
   isFirst,
   isLast,
-  novice,
   remap,
   skills,
   spec,
+  visualFloor,
 }: {
   isFirst: boolean;
   isLast: boolean;
-  novice: boolean;
+  visualFloor: VisualFloor;
   remap: ReadonlyMap<number, number>;
   skills: readonly LessonSpecSkill[];
   spec: LessonSpec;
@@ -179,7 +180,7 @@ function getFrame({
           brief: skills[0]?.useCase ?? "",
           kind: "hook",
           skills: [0],
-          visual: novice ? skills[0]?.useCase : null,
+          visual: visualFloor === "pictures" ? skills[0]?.useCase : null,
         }),
   };
 }
@@ -188,20 +189,31 @@ function formatTopics({ language, topics }: { language: string; topics: string[]
   return new Intl.ListFormat(language, { style: "long", type: "conjunction" }).format(topics);
 }
 
+/** A guess needs something taught before it, so a part where its skill comes first drops it. */
+function withoutEarlyGuess(screens: readonly LessonScreen[]): LessonScreen[] {
+  const firstTeaching = screens.findIndex(
+    (screen) => screen.kind === "explanation" || screen.kind === "workedExample",
+  );
+
+  return screens.filter(
+    (screen, index) => screen.kind !== "guess" || (firstTeaching !== -1 && index > firstTeaching),
+  );
+}
+
 function buildPart({
   group,
   index,
   language,
-  novice,
   spec,
   total,
+  visualFloor,
 }: {
   group: readonly SkillSegment[];
   index: number;
   language: string;
-  novice: boolean;
   spec: LessonSpec;
   total: number;
+  visualFloor: VisualFloor;
 }): LessonSpec {
   const originalIndexes = group.map((segment) => segment.skill);
   const remap = new Map(originalIndexes.map((original, position) => [original, position]));
@@ -210,14 +222,16 @@ function buildPart({
   const frame = getFrame({
     isFirst: index === 0,
     isLast: index === total - 1,
-    novice,
     remap,
     skills,
     spec,
+    visualFloor,
   });
 
-  const body = group.flatMap((segment) =>
-    segment.screens.map((screen) => remapScreen({ fallback: [0], remap, screen })),
+  const body = withoutEarlyGuess(
+    group.flatMap((segment) =>
+      segment.screens.map((screen) => remapScreen({ fallback: [0], remap, screen })),
+    ),
   );
 
   const screens = [frame.hook, ...body, frame.application];
@@ -241,13 +255,13 @@ function buildPart({
 export function splitLessonSpec({
   language,
   level,
-  novice = false,
   spec,
+  visualFloor = "none",
 }: {
   language: string;
   level: CourseLevel;
-  novice?: boolean;
   spec: LessonSpec;
+  visualFloor?: VisualFloor;
 }): LessonSpec[] {
   if (spec.skills.length <= 1 || fitsLesson({ level, spec })) {
     return [spec];
@@ -260,6 +274,6 @@ export function splitLessonSpec({
   }
 
   return groups.map((group, index) =>
-    buildPart({ group, index, language, novice, spec, total: groups.length }),
+    buildPart({ group, index, language, spec, total: groups.length, visualFloor }),
   );
 }
