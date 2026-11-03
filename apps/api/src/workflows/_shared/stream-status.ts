@@ -36,8 +36,8 @@ export function createStepStream<T extends string>(): StepStream<T> {
 /**
  * Workflow code can't touch streams, so events the workflow itself decides on go through this step.
  * `last` ends the run's stream with this event, which the SDK doesn't do when the run ends
- * (vercel/workflow#964): nothing can write to it after, and every way a run ends, a step that gives
- * up included, needs one or its readers wait out the function's time limit.
+ * (vercel/workflow#964): nothing can write to it after. Runs with parallel work use `closeStepStream`
+ * after it settles. Every way a run ends needs a close or readers wait out the function's time limit.
  */
 export async function progressStep<T extends string>(
   message: StepStreamMessage<T>,
@@ -51,4 +51,11 @@ export async function progressStep<T extends string>(
   if (last) {
     await stream.close();
   }
+}
+
+export async function closeStepStream(): Promise<void> {
+  "use step";
+
+  await using stream = createStepStream();
+  await stream.close();
 }
