@@ -10,8 +10,9 @@ import instructions from "./picture-need.prompt.md";
 const fallbackModel = "openai/gpt-6-luna";
 
 /**
- * A missing teaching picture costs the learner more than one picture too many. On the eval this
- * caught 11 of 16 decorative pictures and dropped 2 of 36 that teach; 0.5 dropped 4.
+ * A missing teaching picture costs the learner more than one picture too many. On the eval (3 Nov
+ * 2026) this caught 13 or 14 of 16 decorative pictures and dropped none of 36 that teach; 0.5
+ * caught 15 and dropped 1 or 2.
  */
 const TEACHES_AT = 0.45;
 
@@ -19,8 +20,8 @@ export const pictureNeedClassifier = {
   question: {
     criteria: {
       false:
-        "The words already say everything the picture shows, or it repeats numbers or text, shows something everyone knows, repeats the picture before or gives the answer away.",
-      true: "A learner who only read the words would have to imagine what the picture shows, or the question is about the picture itself.",
+        "The words let anyone picture it correctly, or it repeats numbers or text, shows something everyone knows, repeats the picture before or shows the answer to work out.",
+      true: "A learner who only read the words would have to imagine how something looks, is built or is arranged, or answers by looking at the picture.",
     },
     instructions,
     type: "boolean",

@@ -244,14 +244,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -460,14 +460,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -598,14 +598,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -770,14 +770,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -960,14 +960,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1260,14 +1268,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1419,7 +1435,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
           "picture": "Danilo standing at a door, holding a closed red umbrella; no rain.",
@@ -1432,20 +1448,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-5-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
           "picture": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
