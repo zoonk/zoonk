@@ -14,7 +14,7 @@ const CODE_GROUP = 4;
 
 const VERSION_RADIX = 36;
 
-export const CERTIFICATE_IMAGE_VARIANTS = ["print", "link", "post"] as const;
+export const CERTIFICATE_IMAGE_VARIANTS = ["print", "screen", "link", "post"] as const;
 
 export type CertificateImageVariant = (typeof CERTIFICATE_IMAGE_VARIANTS)[number];
 
@@ -91,7 +91,12 @@ export function getCertificateLinks({
     new URL(`/${locale}${path}/image/${variant}.png?v=${version}`, origin).toString();
 
   return {
-    imageUrls: { link: imageUrl("link"), post: imageUrl("post"), print: imageUrl("print") },
+    imageUrls: {
+      link: imageUrl("link"),
+      post: imageUrl("post"),
+      print: imageUrl("print"),
+      screen: imageUrl("screen"),
+    },
     linkedInUrl: getLinkedInUrl({ input, url }),
     path,
     url,
