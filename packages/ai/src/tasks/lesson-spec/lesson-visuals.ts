@@ -110,3 +110,13 @@ export function findSharedPicture(screens: readonly LessonScreen[], index: numbe
 
   return findSharedPicture(screens, index - 1) ?? index - 1;
 }
+
+/**
+ * Every lesson opens on a scene the learner sees: one planned or saved with nothing shows its
+ * moment in a picture of its brief.
+ */
+export function withSceneVisual(screen: LessonScreen): LessonScreen {
+  return screen.kind === "hook" && screen.visualKind === "none"
+    ? { ...screen, activityTemplate: null, visual: screen.brief, visualKind: "picture" }
+    : screen;
+}

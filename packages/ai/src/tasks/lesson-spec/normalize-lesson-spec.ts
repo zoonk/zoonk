@@ -6,7 +6,7 @@ import {
   type LessonSpecSkill,
   estimateLessonMinutes,
 } from "./lesson-spec-rules";
-import { type LessonVisualKind } from "./lesson-visuals";
+import { type LessonVisualKind, withSceneVisual } from "./lesson-visuals";
 
 /** Skills are numbered from 1 in the order the lesson lists them. */
 type RawLessonScreen = {
@@ -126,21 +126,6 @@ function toVisual({
   return preferred.find((visual) => visual !== null) ?? nothing;
 }
 
-/** Every lesson opens on a scene the learner sees: one planned with nothing shows its moment. */
-function withSceneVisual({
-  brief,
-  kind,
-  visual,
-}: {
-  brief: string;
-  kind: LessonScreenKind;
-  visual: ScreenVisual;
-}): ScreenVisual {
-  return kind === "hook" && visual.visualKind === "none"
-    ? { activityTemplate: null, visual: brief, visualKind: "picture" }
-    : visual;
-}
-
 function normalizeScreen({
   exploreIds,
   screen,
@@ -148,21 +133,18 @@ function normalizeScreen({
   templateIds,
 }: TemplateSets & { screen: RawLessonScreen; skillCount: number }): LessonScreen {
   const activity = normalizeActivity({ exploreIds, screen, templateIds });
-  const brief = screen.brief.trim();
 
-  const visual = toVisual({
-    activityTemplate: activity.activityTemplate,
-    kind: activity.kind,
-    picture: screen.visual?.trim() ?? "",
-    visualKind: screen.visualKind,
-  });
-
-  return {
+  return withSceneVisual({
     ...activity,
-    ...withSceneVisual({ brief, kind: activity.kind, visual }),
-    brief,
+    ...toVisual({
+      activityTemplate: activity.activityTemplate,
+      kind: activity.kind,
+      picture: screen.visual?.trim() ?? "",
+      visualKind: screen.visualKind,
+    }),
+    brief: screen.brief.trim(),
     skills: toSkillIndexes({ kind: screen.kind, numbers: screen.skills, skillCount }),
-  };
+  });
 }
 
 export function normalizeLessonSpec({

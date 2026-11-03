@@ -3,7 +3,7 @@ import {
   type LessonScreen,
   type LessonSpec,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { LESSON_VISUAL_KINDS } from "@zoonk/ai/tasks/lesson-spec/visuals";
+import { LESSON_VISUAL_KINDS, withSceneVisual } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { z } from "zod";
 
 /** Plans saved before screens named their visual's kind show a picture or a template, or nothing. */
@@ -35,10 +35,9 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
           visual: z.string().nullable(),
           visualKind: z.enum(LESSON_VISUAL_KINDS).optional(),
         })
-        .transform(({ visualKind, ...screen }) => ({
-          ...screen,
-          visualKind: visualKind ?? savedVisualKind(screen),
-        })),
+        .transform(({ visualKind, ...screen }) =>
+          withSceneVisual({ ...screen, visualKind: visualKind ?? savedVisualKind(screen) }),
+        ),
     )
     .min(1),
   skills: z
