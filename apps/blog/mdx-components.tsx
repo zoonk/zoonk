@@ -1,3 +1,4 @@
+import { COVER_SIZES, CoverFrame } from "@/components/cover";
 import { type MDXComponents } from "mdx/types";
 import Image from "next/image";
 
@@ -7,16 +8,16 @@ function MDXImage({ src, alt }: { src?: string; alt?: string }) {
   }
 
   return (
-    <span className="not-prose relative my-6 block aspect-video w-full overflow-hidden rounded-lg">
+    <CoverFrame>
       <Image
         src={src}
         alt={alt ?? ""}
         fill
         loading="eager"
         className="object-cover"
-        sizes="(max-width: 672px) 100vw, 672px"
+        sizes={COVER_SIZES}
       />
-    </span>
+    </CoverFrame>
   );
 }
 
