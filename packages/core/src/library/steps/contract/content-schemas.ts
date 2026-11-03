@@ -1,7 +1,7 @@
 import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
 import { z } from "zod";
 
-const STEP_TEXT_LIMITS = {
+export const STEP_TEXT_LIMITS = {
   explanation: 400,
   id: 40,
   label: 40,
