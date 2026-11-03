@@ -12,6 +12,7 @@ import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
+import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { useDayTaps } from "@/lib/session/use-day-taps";
@@ -189,6 +190,7 @@ export function TodayClient({
         dailyLimitHref: "/settings/appearance",
         decidePlanChange,
         examHref: "/exam",
+        lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
         missionLinks,
         mistakesHref: "/mistakes",
         openBlock: (block: DayStep) => {
