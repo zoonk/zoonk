@@ -54,7 +54,7 @@ function getWordBankButtonStateClass({
 }
 
 export const WORD_CHIP_CLASS = cn(
-  "focus-visible:outline-ring flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg px-3.5 py-2 text-center text-[0.9375rem] leading-6 font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid",
+  "focus-visible:outline-ring flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg px-3.5 py-2 text-center text-[0.9375rem] leading-6 font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid",
   ANSWER_TONE.idle,
 );
 

@@ -23,6 +23,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/turbopack": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

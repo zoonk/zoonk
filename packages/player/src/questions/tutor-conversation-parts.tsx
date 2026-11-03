@@ -21,7 +21,7 @@ export function Suggestions({
       {suggestions.map((suggestion) => (
         <li className="min-w-0" key={suggestion.id}>
           <button
-            className="text-muted-foreground ring-input hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area bg-background relative flex h-6.5 max-w-full items-center rounded-[0.375rem] px-2.5 text-xs font-medium ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
+            className="text-muted-foreground ring-input hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area bg-background relative flex h-6.5 max-w-full items-center rounded-[0.375rem] px-2.5 text-xs font-medium ring-1 transition-colors outline-none select-none ring-inset focus-visible:ring-[3px]"
             onClick={() => onSend(suggestion.label)}
             type="button"
           >

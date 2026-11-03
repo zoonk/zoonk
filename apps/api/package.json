@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@scalar/nextjs-api-reference": "0.12.15",
+    "@tailwindcss/turbopack": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

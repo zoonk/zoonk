@@ -40,7 +40,7 @@ function NameChip({
         isDisabled ? name : t("Put {name} on spot {number}", { name, number: String(activeNumber) })
       }
       className={cn(
-        "focus-visible:ring-ring/50 touch-manipulation rounded-full outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 touch-manipulation rounded-full outline-none select-none focus-visible:ring-[3px]",
         isDisabled ? "opacity-60" : "hover:[&>span]:bg-accent cursor-grab active:cursor-grabbing",
         isDragging && "relative z-10",
       )}

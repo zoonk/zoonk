@@ -63,7 +63,7 @@ function FindErrorStep({
       aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       aria-label={t("Step {number}: {text}", { number: String(index + 1), text })}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none focus-visible:ring-[3px] sm:text-base",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none select-none focus-visible:ring-[3px] sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
         !isChecked && isPicked && "border-primary ring-primary/15 ring-[3px]",
         verdict === "error" && "border-success bg-success/10 border-2",

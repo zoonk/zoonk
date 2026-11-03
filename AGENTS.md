@@ -103,6 +103,8 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Adding a supported language                                     | [Adding a language](.agents/guides/adding-a-language.md)                           |
 | Delegating to subagents or running agents in parallel           | [Agent orchestration](.agents/guides/orchestration.md)                             |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
+| Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
+| Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Turborepo configuration or commands                             | The installed `turbo` package's `docs/README.md`, then its relevant pages          |
 
 ## Maintaining these instructions

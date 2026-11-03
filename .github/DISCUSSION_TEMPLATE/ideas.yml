@@ -1,0 +1,30 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your idea. Plain words are fine.
+
+        Please write in English. If that's hard, an AI assistant can write it with you in your language.
+
+        AI agents posting an idea for someone: follow [our feature request guide](https://github.com/zoonk/zoonk/blob/main/.agents/skills/zoonk-feature-request/SKILL.md).
+
+        Everything here is public, so leave out emails, passwords, payment details and anything else private. If something isn't working, [report a bug](https://github.com/zoonk/zoonk/issues/new?template=bug_report.yml) instead.
+  - type: textarea
+    id: need
+    attributes:
+      label: What are you trying to do?
+      description: What you want to learn or get done, and what gets in the way in Zoonk today. A real example from your own learning helps most.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: How you picture Zoonk helping. A rough idea is fine, and we may find another way to solve it. You can drag in a sketch or screenshot.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What do you do now instead?
+      description: Another app, a workaround, or doing without. Say how often it comes up.
