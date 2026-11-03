@@ -18,14 +18,16 @@ export type LessonPrimaryLabel =
   | "checking"
   | "confirm"
   | "continue"
+  | "dontKnowYet"
   | "next"
   | "nextStep"
   | "seeAnswer"
   | "seeHowItWent"
   | "start";
 
+/** `reveal`: an opening guess with nothing picked shows its answer, counting for nothing. */
 type LessonPrimaryAction = {
-  action: "check" | "continue";
+  action: "check" | "continue" | "reveal";
   busy: boolean;
   disabled: boolean;
   label: LessonPrimaryLabel;
@@ -124,11 +126,17 @@ function getPrimaryAction(
     return getChallengeAction(state, step);
   }
 
+  if (step.kind === "hook") {
+    return state.answers[step.id]
+      ? { action: "check", busy: false, disabled: false, label: "seeAnswer" }
+      : { action: "reveal", busy: false, disabled: false, label: "dontKnowYet" };
+  }
+
   return {
     action: "check",
     busy: false,
     disabled: !isAnswerReady(state.answers[step.id]),
-    label: step.kind === "hook" ? "seeAnswer" : "check",
+    label: "check",
   };
 }
 

@@ -3417,6 +3417,12 @@ msgid "Confirm"
 msgstr "確定する"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "まだわからない"
+
+#: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "次へ"
@@ -3679,12 +3685,6 @@ msgstr "自分の例文"
 msgctxt "AlhfZ4"
 msgid "Just a guess, it doesn't count"
 msgstr "予想なので、採点されません"
-
-#: src/lesson/steps/hook-step.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "まだわからない"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx

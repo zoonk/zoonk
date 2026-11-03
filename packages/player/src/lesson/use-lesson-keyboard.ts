@@ -2,6 +2,7 @@
 
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { useTutorBuddy } from "../questions/tutor-buddy";
+import { runPrimary } from "./lesson-action-bar";
 import { useLeaveLesson } from "./lesson-leave";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
@@ -21,18 +22,11 @@ export function useLessonKeyboard() {
       return false;
     }
 
-    const { primary } = screen;
-
-    if (!primary || primary.disabled) {
+    if (!screen.primary || screen.primary.disabled) {
       return false;
     }
 
-    if (primary.action === "check") {
-      actions.check();
-      return;
-    }
-
-    actions.continue();
+    runPrimary({ actions, screen });
   });
 
   // A held Enter presses a focused button once, as it acts once on the screen.

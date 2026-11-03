@@ -1,13 +1,11 @@
 "use client";
 
 import { LessonVisual } from "@zoonk/learn/visual";
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HelpCircleIcon, SparklesIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/player-choice-scene";
 import { PlayerReadScene } from "../../components/player-read-scene";
-import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { LessonChoiceOptions } from "../_components/lesson-choice-options";
 import {
   LessonStepPicture,
@@ -22,8 +20,6 @@ import {
 } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
-import { focusLessonAfterTurn } from "../_utils/lesson-focus";
-import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 function HookGuess({
@@ -34,7 +30,6 @@ function HookGuess({
   step,
 }: LessonStepViewProps<StepOf<"hook">>) {
   const t = useExtracted();
-  const { actions } = useLessonPlayer();
   const isRequiredPictureDrawing = useIsRequiredPictureDrawing(step);
 
   if (step.content.variant !== "guess") {
@@ -43,7 +38,6 @@ function HookGuess({
 
   const selectedId = answer?.kind === "hook" ? answer.optionId : null;
   const { data, question } = splitQuestionData(step.content.question);
-  const areOptionsLocked = isLocked || isRequiredPictureDrawing;
 
   return (
     <PlayerChoiceScene>
@@ -66,27 +60,11 @@ function HookGuess({
       <LessonChoiceOptions
         isChecked={Boolean(result)}
         isGuess
-        isLocked={areOptionsLocked}
+        isLocked={isLocked || isRequiredPictureDrawing}
         onSelect={(optionId) => onAnswer(optionId ? { kind: "hook", optionId } : null)}
         options={step.content.options}
         selectedId={selectedId}
       />
-
-      {!result && (
-        <Button
-          className={COLUMN_GHOST_ACTION_CLASS}
-          disabled={areOptionsLocked}
-          onClick={() => {
-            actions.dontKnow(step.id);
-            focusLessonAfterTurn();
-          }}
-          size="sm"
-          variant="ghost"
-        >
-          <HelpCircleIcon aria-hidden="true" />
-          {t("I don't know yet")}
-        </Button>
-      )}
     </PlayerChoiceScene>
   );
 }

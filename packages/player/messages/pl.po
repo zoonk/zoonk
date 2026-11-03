@@ -3417,6 +3417,12 @@ msgid "Confirm"
 msgstr "Potwierdź"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Jeszcze nie wiem"
+
+#: src/lesson/lesson-action-bar.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Dalej"
@@ -3679,12 +3685,6 @@ msgstr "Twój przykład"
 msgctxt "AlhfZ4"
 msgid "Just a guess, it doesn't count"
 msgstr "To tylko strzał, nie wpływa na wynik"
-
-#: src/lesson/steps/hook-step.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Jeszcze nie wiem"
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx

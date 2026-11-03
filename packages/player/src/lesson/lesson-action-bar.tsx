@@ -17,8 +17,26 @@ import { usePromptAudio } from "../player-audio-context";
 import { TutorAskButton } from "../questions/tutor-dock";
 import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
-import { useLessonPlayer } from "./lesson-player-context";
-import { type LessonPrimaryLabel } from "./lesson-player-screen";
+import { type LessonPlayerActions, useLessonPlayer } from "./lesson-player-context";
+import { type LessonPrimaryLabel, type LessonScreen } from "./lesson-player-screen";
+
+export function runPrimary({
+  actions,
+  screen,
+}: {
+  actions: LessonPlayerActions;
+  screen: LessonScreen;
+}): void {
+  const { primary, step } = screen;
+
+  if (primary?.action === "check") {
+    actions.check();
+  } else if (primary?.action === "reveal" && step) {
+    actions.dontKnow(step.id);
+  } else {
+    actions.continue();
+  }
+}
 
 function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
   const t = useExtracted();
@@ -28,6 +46,7 @@ function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
     checking: t("Checking your answer"),
     confirm: t("Confirm"),
     continue: t("Continue"),
+    dontKnowYet: t("I don't know yet"),
     next: t("Next"),
     nextStep: t("Show the next step"),
     seeAnswer: t("See the answer"),
@@ -58,7 +77,7 @@ export function LessonActionBar() {
     return null;
   }
 
-  const runPrimary = primary.action === "check" ? actions.check : actions.continue;
+  const isReveal = primary.action === "reveal";
 
   return (
     <TaskActionBar data-slot="lesson-action-bar">
@@ -83,12 +102,13 @@ export function LessonActionBar() {
           className={cn(TASK_MAIN_ACTION_CLASS, primary.busy && "disabled:opacity-100")}
           disabled={primary.disabled}
           id={LESSON_PRIMARY_ID}
-          onClick={runPrimary}
+          onClick={() => runPrimary({ actions, screen })}
           size="xl"
+          variant={isReveal ? "outline" : "default"}
         >
           {primary.busy && <Spinner aria-hidden="true" />}
           <PrimaryLabel label={primary.label} />
-          {!primary.busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
+          {!primary.busy && <ShortcutKbd tone={isReveal ? undefined : "inverse"}>⏎</ShortcutKbd>}
         </Button>
 
         <TutorAskButton quiet={Boolean(screen.struggleOffer)} />
