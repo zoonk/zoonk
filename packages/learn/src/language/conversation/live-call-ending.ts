@@ -111,16 +111,16 @@ function canSendGoodbye(state: CallEndingState, at: number) {
     return false;
   }
 
-  if (state.reason === "quiet" || isLearnerSpeaking(state, at)) {
-    return true;
-  }
-
   const { armedAt, characterAt, sentAt } = state;
 
   // Measured: a goodbye sent with a typed reply was answered as part of the reply and never said,
-  // so it goes once the character answered the learner's last word.
+  // so it goes once the character answered the learner's last word, whatever else they did.
   if (sentAt !== null && armedAt !== null && sentAt >= armedAt) {
     return (characterAt !== null && characterAt > sentAt) || at - sentAt >= answerWaitMs;
+  }
+
+  if (state.reason === "quiet" || isLearnerSpeaking(state, at)) {
+    return true;
   }
 
   const characterStopped = characterAt === null ? state.liveAt : characterAt + characterQuietMs;

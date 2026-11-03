@@ -142,6 +142,31 @@ describe("the call's ending at its talk time", () => {
     expect(unanswered.goodbyes.map((entry) => entry.at)).toStrictEqual([20_500]);
   });
 
+  it("holds the goodbye for a typed reply even when earlier speech comes back right after it", () => {
+    const typed = [
+      ...GREETING,
+      ...characterTalks(16_000, 2000),
+      ...learnerTypes(19_500, 1500),
+      { at: 21_100, type: "sent" } as const,
+    ];
+
+    const heard = play({
+      events: [...typed, { at: 21_400, type: "learnerHeard" }],
+      talkSeconds: 20,
+      until: 31_000,
+    });
+
+    const residue = play({
+      events: [...typed, ...learnerTalks(21_200, 300)],
+      talkSeconds: 20,
+      until: 31_000,
+    });
+
+    // Unanswered, the typed reply waits 8 s from when it was sent.
+    expect(heard.goodbyes.map((entry) => entry.at)).toStrictEqual([29_250]);
+    expect(residue.goodbyes.map((entry) => entry.at)).toStrictEqual([29_250]);
+  });
+
   it("doesn't send the goodbye again while the learner gives a long answer", () => {
     const { goodbyes, hangUp } = play({
       events: [
