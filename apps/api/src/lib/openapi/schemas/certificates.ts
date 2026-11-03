@@ -9,6 +9,12 @@ const certificateLinksShape = {
       print: z
         .url()
         .meta({ description: "The certificate itself, landscape, for print and saving" }),
+      screen: z
+        .url()
+        .meta({
+          description:
+            "The same certificate at screen size (2246 × 1588), for every on-screen display; print and saving use print",
+        }),
     })
     .meta({
       description:

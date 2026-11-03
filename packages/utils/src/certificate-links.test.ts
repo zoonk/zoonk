@@ -33,6 +33,7 @@ describe(getCertificateLinks, () => {
     expect(links.path).toBe("/c/K7QF2M9XHD4P");
     expect(new URL(links.url).pathname).toBe("/c/K7QF2M9XHD4P");
     expect(new URL(links.imageUrls.print).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/print.png");
+    expect(new URL(links.imageUrls.screen).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/screen.png");
     expect(new URL(links.imageUrls.link).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/link.png");
     expect(new URL(links.imageUrls.post).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/post.png");
   });
