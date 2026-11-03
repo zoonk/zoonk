@@ -4,23 +4,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -238,23 +238,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "teaches"
+        "predicted": "decorative"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -277,23 +277,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -589,23 +589,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "teaches"
+        "predicted": "decorative"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -862,23 +862,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "teaches"
+        "predicted": "decorative"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -979,23 +979,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1135,23 +1135,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1213,23 +1213,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1330,23 +1330,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1408,23 +1408,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "teaches"
+        "predicted": "decorative"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1525,23 +1525,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1642,23 +1642,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1798,23 +1798,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1915,23 +1915,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -2071,23 +2071,23 @@
     {
       "classification": {
         "expected": "teaches",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -2110,23 +2110,23 @@
     {
       "classification": {
         "expected": "decorative",
-        "predicted": "decorative"
+        "predicted": "teaches"
       },
       "steps": [
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {

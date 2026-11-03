@@ -1048,21 +1048,21 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "An explicitly adult man receives an envelope from a coworker with his repair toolbox beside him. This concretely depicts the requested salary-receipt moment without introducing a separate repair scene or contradicting the screen text.",
+          "reasoning": "The single scene clearly depicts an adult receiving his pay envelope at work, with a repair toolbox beside him. It conveys the intended salary-receipt moment without inventing a second repair scene or contradicting the screen.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The result keeps one scene and one central action, but adds a wooden desk and visible individual tools that the alt does not name. These violate the task-specific restriction to the named scene elements.",
-          "score": 6,
+          "reasoning": "The result retains one scene and one main action, but the desk, chair, and two visible tools introduce unnecessary objects beyond the requested envelope and toolbox. Removing these additions would satisfy the strict scene inventory and reduce visual clutter.",
+          "score": 7,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The empty labels array correctly avoids unnecessary labels or captions.",
+          "reasoning": "The labels array is empty, appropriately avoiding unnecessary text or captions.",
           "score": 10,
           "label": "Labels",
           "weight": 25
@@ -1087,21 +1087,21 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1368,
-          "outputTokens": 596,
-          "reasoningTokens": 245
+          "inputTokens": 1361,
+          "outputTokens": 632,
+          "reasoningTokens": 268
         }
       },
       "steps": [
         {
-          "conclusion": "The wooden desk is not named in the alt or request, violating the explicit restriction against adding unnamed scene elements. The protruding wrench and screwdriver also introduce unnecessary objects beyond the specified toolbox.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The desk, chair, and visible wrench and screwdriver add objects beyond the specified scene. These details are unnecessary under the explicit restriction against unnamed additions; Igor receiving the envelope with the toolbox beside him is sufficient.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 7
         },
         {
           "conclusion": "None",
@@ -1130,21 +1130,21 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The adult man receiving a pay envelope at an office depicts Igor's work income, matching the alt text and the income he can expect again. The calendar supports the monthly-payment idea. Nothing contradicts the screen.",
+          "reasoning": "The scene clearly depicts an adult receiving payment at work, matching the selected scene and alt text. It appropriately excludes the bike sale rather than combining both situations, and nothing contradicts the screen.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The result correctly reduces the requested two scenes to one workplace-payment scene. The payment exchange is the focal action, with only one listed supporting object, a calendar. It does not include the bike sale.",
-          "score": 10,
+          "reasoning": "There is one coherent payment scene, but the desk, monitor, and pen holder exceed the two-supporting-object limit. Removing the monitor and pen holder would preserve the workplace setting while making the payment more prominent.",
+          "score": 7,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The labels array is empty, appropriately matching the expectation that no labels are needed. No unnecessary caption, price, or numerical claim is supplied.",
+          "reasoning": "No labels are included, as appropriate for this concrete scene and the explicit expectation that labels are unnecessary.",
           "score": 10,
           "label": "Labels",
           "weight": 25
@@ -1169,9 +1169,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1357,
-          "outputTokens": 630,
-          "reasoningTokens": 295
+          "inputTokens": 1356,
+          "outputTokens": 653,
+          "reasoningTokens": 291
         }
       },
       "steps": [
@@ -1181,9 +1181,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The scene includes more supporting objects than allowed: the desk, computer monitor, and pen holder are three distinct props even though grouped into one array entry. The monitor and pen holder add unnecessary clutter.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
           "conclusion": "None",
@@ -1204,6 +1204,88 @@
           "language": "pt",
           "request": "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
           "screenText": "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The two scenes correctly contrast putting a book into a red box with taking it out. Directional arrows make the actions distinguishable, and describing the same woman in both scenes satisfies the adult-character requirement.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The comparison contains only the required woman, book, and red box in each scene, plus arrows that clarify the single contrast. No unrelated objects or ideas are added.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Only the explicitly required scene labels 1 and 2 appear. They correctly identify the corresponding actions and add no captions or other text.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each label target explicitly places its number above the appropriate scene.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1466,
+          "outputTokens": 400,
+          "reasoningTokens": 71
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
+        "expected": {
+          "labels": "some",
+          "layout": "comparison"
+        },
+        "id": "two-scenes-to-compare-pt-1",
+        "userInput": {
+          "alt": "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
+          "context": "Língua Portuguesa › Interpretação de imagens › Imagens e legendas",
+          "language": "pt",
+          "request": "Duas cenas lado a lado, rotuladas 1 e 2: em 1 Nayara coloca um livro numa caixa vermelha; em 2 ela tira um livro da mesma caixa.",
+          "screenText": "Qual cena, 1 ou 2, combina com a legenda: Nayara coloca um livro na caixa vermelha?",
           "textAllowed": true
         }
       }
