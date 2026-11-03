@@ -5,28 +5,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The house and front-lawn real-estate sign with a key icon provide a concrete, drawable representation of a home available to rent, without contradicting the screen text.",
+          "reasoning": "The jacket's original and discounted price tags show the required $80-to-$60 change. The connecting arrow and -25% label make the discount readable at a glance, and the calculation is correct.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "There is one focal house and one supporting signpost, keeping the scene focused on a single idea.",
+          "reasoning": "The scene centers on a price tag with one supporting price tag. The jacket provides concrete context, while the arrow and sale badge reinforce the same before-and-after discount idea without introducing unrelated content.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The labels array is empty, and the sign displays only a key icon, satisfying the prohibition on labels and written words.",
+          "reasoning": "The price labels are exactly $80 and $60, as required. The short -25% label communicates the discount connecting them. All labels are useful, concise, and consistent with the screen rather than redundant captions.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. No labels require placement targets, and the sign's position in front of the house is explicit.",
+          "reasoning": "All descriptive fields are in English. Each label has an explicit placement: on the first tag, above the connecting arrow, or on the second tag.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -43,631 +43,10 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1223,
-          "inputTokens": 1226,
-          "outputTokens": 362,
-          "reasoningTokens": 48
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
-        "expected": { "labels": "none" },
-        "id": "language-house-1",
-        "userInput": {
-          "context": "Spanish for Brazilians › Finding a place to live",
-          "format": "step",
-          "language": "pt",
-          "request": "Uma casa para alugar com uma placa na frente",
-          "screenText": "Se alquila: a casa está disponível para alugar.",
-          "textAllowed": false
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "A green leaf receiving sunlight is an explicitly suitable representation of photosynthesis for this cover. The water droplet is relevant, and nothing contradicts the requested idea.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The leaf is a clear focal object and the scene is uncomplicated, but the two specified supporting elements exceed the task-specific allowance of one small supporting object.",
-          "score": 8,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The labels array is empty, correctly satisfying the prohibition on labels for covers and the user's textAllowed setting.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1200,
-          "inputTokens": 1203,
-          "outputTokens": 575,
-          "reasoningTokens": 222
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The result specifies two supporting elements—a sunbeam and a water droplet—where the cover expectations allow only one small supporting object. Removing the droplet would preserve the leaf-in-sunlight concept and meet the stricter cover requirement.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "A chapter cover: one object that stands for photosynthesis, such as a leaf in sunlight. No labels. Nothing more than a small supporting object.",
-        "expected": { "labels": "none" },
-        "id": "cover-photosynthesis-1",
-        "userInput": {
-          "context": "Biology",
-          "format": "cover",
-          "language": "en",
-          "request": "Photosynthesis. How plants turn light, water and carbon dioxide into sugar.",
-          "textAllowed": false
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The side-by-side rice sacks show a larger quantity costing proportionally more. The labels exactly match 2 kg for R$ 10 and 3 kg for R$ 15.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "One focal sack and one supporting sack communicate a single comparison without unnecessary objects or diagram elements.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Both labels are necessary to communicate the quantities and prices, stay within four words each, and use the exact required numbers and Brazilian currency notation. Neither is a redundant caption.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and each label target explicitly places it below the corresponding sack.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1295,
-          "inputTokens": 1298,
-          "outputTokens": 410,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1350,
+          "outputTokens": 453,
           "reasoningTokens": 92
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
-        "expected": { "labels": "some" },
-        "id": "rule-of-three-pt-1",
-        "userInput": {
-          "context": "Matemática básica › Proporções › Regra de três",
-          "format": "step",
-          "language": "pt",
-          "request": "Mostrar que mais quilos custam proporcionalmente mais",
-          "screenText": "Se 2 kg de arroz custam R$ 10, 3 kg custam R$ 15.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "One recognizable press, a tall stack of identical books, and an arrow connecting them clearly communicate one press producing many copies. Showing the stack actively growing would strengthen the visual explanation.",
-          "score": 9,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The scene has one focal press and one supporting stack, with a single clear relationship and no unnecessary comparison or multipart diagram.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The three-word English label 'Hundreds of copies' matches the screen's quantity and adds a scale that the stack alone cannot communicate precisely. It is not merely naming the visible books.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All fields are in English, and the label target explicitly places it above the stack of books.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1264,
-          "inputTokens": 1267,
-          "outputTokens": 769,
-          "reasoningTokens": 421
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Show identical copies accumulating in the stack, rather than relying only on a directional arrow, to make repeated production more immediately visible.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
-        "expected": { "labels": "any" },
-        "id": "printing-press-en-1",
-        "userInput": {
-          "context": "World history › The Renaissance › The printing press",
-          "format": "step",
-          "language": "en",
-          "request": "One press making many copies of the same book",
-          "screenText": "Before the press, one scribe took months to copy a book. A press could print hundreds of copies in the same time.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The dots are densest near a small central nucleus and become sparser outward, directly conveying the requested electron cloud. No orbital path is drawn, and nothing contradicts the screen text.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "There is one focal cloud and one small supporting nucleus, presenting a single idea without a multipart diagram.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Both labels are correctly spelled Portuguese and short, but the additional “nuvem eletrônica” label captions the already depicted cloud rather than adding necessary information. The redundant-caption cap of 6 applies, and two labels exceed the task-specific allowance.",
-          "score": 6,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All non-label prose is in English. Each label target clearly identifies the object to which it should point.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1296,
-          "inputTokens": 1299,
-          "outputTokens": 524,
-          "reasoningTokens": 155
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The result includes two labels despite the expectation allowing at most one short label. “nuvem eletrônica” unnecessarily captions the cloud; retain only “núcleo”.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
-        "expected": { "labels": "any" },
-        "id": "electron-cloud-pt-1",
-        "userInput": {
-          "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
-          "language": "pt",
-          "request": "A nuvem eletrônica, mais densa perto do núcleo",
-          "screenText": "O elétron não gira como um planeta. Ele se espalha numa nuvem de possibilidades: um mapa de onde ele pode estar.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The large pale central region makes B identifiable as the vacuole, while A and C correctly target the thick wall and a green chloroplast. However, the explicitly required nucleus is not included.",
-          "score": 8,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "There is one focal plant cell with three necessary pointer arrows and no unrelated supporting objects or excessive detail. The diagram remains focused on the identification question.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The only label texts are A, B, and C, exactly as requested. They are necessary to answer the question and do not reveal any structure names or add captions.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each label target specifies placement at the base of the arrow pointing to its corresponding cell structure.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1387,
-          "inputTokens": 1390,
-          "outputTokens": 520,
-          "reasoningTokens": 146
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The nucleus is missing from the diagram description, although the expectations explicitly require it alongside the cell wall, central vacuole, and chloroplasts. The three requested arrow targets are otherwise correct.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": { "labels": "some" },
-        "id": "question-cell-diagram-pt-1",
-        "userInput": {
-          "context": "Biologia › Célula › Organelas da célula vegetal",
-          "language": "pt",
-          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
-          "screenText": "Na figura, qual letra indica o vacúolo?",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The ocean, sun shining down, and upward dashed arrows clearly illustrate solar heating and water rising into the air. The arrows serve as diagrammatic indicators of invisible vapor rather than depicting visible steam.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The scene contains one focal ocean surface and one supporting sun. It correctly drops condensation, precipitation, collection, runoff, and groundwater from the overloaded request and teaches only evaporation.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The single, correctly spelled English label identifies the process represented by the arrows. It is one word, helps interpret the diagram, and is neither an object-obvious label nor a sentence-like caption.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and the label target explicitly places the text along the upward dashed vapor lines.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1333,
-          "outputTokens": 463,
-          "reasoningTokens": 120
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
-        "expected": { "labels": "any" },
-        "id": "overloaded-water-cycle-1",
-        "userInput": {
-          "context": "Earth science › The water cycle › Evaporation",
-          "language": "en",
-          "request": "A diagram of the whole water cycle with evaporation, condensation, precipitation, collection, runoff and groundwater, all labeled",
-          "screenText": "The sun heats the ocean, and water rises into the air as invisible vapor. This is evaporation.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The drawable tree correctly places S above NP and VP, with 'the cat' under NP and 'slept' under VP. It matches the screen and teaches the hierarchy at a glance. Specifying thin connecting lines would complete the requested visual detail.",
-          "score": 9,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "One tree presents one idea, with no supporting objects or additional grammatical categories beyond those requested.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "All five labels are necessary to read this syntax diagram, match the screen exactly, and contain at most two words. This is a linguistics lesson rather than a language-learning exercise; the requested node and phrase labels are appropriate.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and every label target specifies its position at or beneath the appropriate node.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1396,
-          "outputTokens": 534,
-          "reasoningTokens": 169
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Explicitly specify thin connecting lines, as requested; the result describes the correct connections but leaves their visual weight unspecified.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "A syntax tree for 'the cat slept': S at the top splitting into NP and VP, NP over 'the cat' and VP over 'slept', each node a short label joined by thin lines. Labels match the screen exactly.",
-        "expected": { "labels": "some" },
-        "id": "syntax-tree-en-1",
-        "userInput": {
-          "context": "Introduction to linguistics › Syntax › Syntax trees",
-          "language": "en",
-          "request": "A tree for 'the cat slept': S splits into NP 'the cat' and VP 'slept'",
-          "screenText": "Every simple sentence (S) splits into a noun phrase (NP), here 'the cat', and a verb phrase (VP), here 'slept'.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The short load arm, long effort arm, triangular fulcrum, and opposing motion arrows correctly illustrate how a lever lifts a heavy rock. However, the explicitly requested pushing hand is replaced by an arrow, making the applied effort less concrete.",
-          "score": 8,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The scene presents one lever assembly and a single mechanical idea. The rock, fulcrum, and thin directional arrows provide necessary context without unrelated objects or clutter.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Load, Fulcrum, and Effort are the three requested instructional labels. Each is correctly spelled in English, consists of one word, and identifies a relevant mechanical role rather than serving as a caption.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All non-label fields are in English. Each label target specifies its placement relative to the boulder, wedge, or far end of the plank.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1409,
-          "outputTokens": 580,
-          "reasoningTokens": 189
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The requested hand pushing down on the long side is missing. A downward arrow communicates the force direction, but does not fully provide the concrete action specified in the expectations.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "A lever: a long bar on a triangular fulcrum near one end, a heavy rock on the short side and a hand pushing down on the long side, with labels for the fulcrum, the load and the effort.",
-        "expected": { "labels": "some" },
-        "id": "lever-en-1",
-        "userInput": {
-          "context": "Physics › Simple machines › How a lever multiplies force",
-          "language": "en",
-          "request": "A lever lifting a heavy rock with the fulcrum close to the rock",
-          "screenText": "Put the fulcrum close to the load and push on the far end: a small effort lifts a heavy rock.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The jacket's tag clearly contrasts the crossed-out $80 original price with the prominent $60 discounted price. The -25% badge connects them accurately: 75% of $80 is $60.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "One focal price tag attached to a jacket communicates one discount example, without unrelated objects or detail.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The exact required prices, $80 and $60, are present. All three labels are short and useful for reading the discount, rather than redundant captions.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each label specifies its placement: the upper tag area, a badge between the prices, or the bottom of the tag.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1331,
-          "outputTokens": 380,
-          "reasoningTokens": 49
         }
       },
       "steps": [
@@ -692,28 +71,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The wave–molecule relation and double-headed curved arrows clearly communicate microwave-driven back-and-forth rotation. However, the isolated molecule does not establish that this happens inside food or show the resulting heating. A food cutaway with a simple warming cue would complete the causal explanation.",
-          "score": 7,
+          "reasoning": "The dense central dots fade outward around a tiny nucleus, directly illustrating the requested electron cloud. No orbital path or planetary motion is depicted.",
+          "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "There is one focal molecule and one supporting wave element, organized around a single interaction. The atom components belong to the molecule rather than adding unrelated objects.",
+          "reasoning": "There is one focal cloud and one small supporting nucleus, with no unrelated objects or competing ideas.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "Both labels are short, correctly spelled English identifiers that help readers interpret otherwise ambiguous scientific representations. Neither acts as a caption or merely repeats an obvious everyday object, so the caption/redundancy cap does not apply.",
-          "score": 10,
+          "reasoning": "Both labels are short and correctly spelled in Portuguese, but the extra “nuvem eletrônica” label repeats the obvious focal object, triggering the cap of 6. Two labels also exceed the task-specific allowance of at most one short label.",
+          "score": 6,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All non-label fields are in English. Each label target specifies its placement relative to the corresponding visual element: above the waves or below the molecule.",
+          "reasoning": "All descriptive fields outside label texts are in English. Both label targets explicitly specify placement on or next to the relevant object.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -731,19 +110,93 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1330,
-          "outputTokens": 577,
-          "reasoningTokens": 178
+          "inputTokens": 1352,
+          "outputTokens": 547,
+          "reasoningTokens": 181
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The result includes two labels despite the expectation of at most one short label. “nuvem eletrônica” redundantly names the focal cloud; remove it and retain only “núcleo”.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
+        "expected": { "labels": "any" },
+        "id": "electron-cloud-pt-1",
+        "userInput": {
+          "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
+          "language": "pt",
+          "request": "A nuvem eletrônica, mais densa perto do núcleo",
+          "screenText": "O elétron não gira como um planeta. Ele se espalha numa nuvem de possibilidades: um mapa de onde ele pode estar.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The recognizable water molecule, incoming wave, and double-headed curved arrows clearly convey back-and-forth rotation. However, neither food nor warming appears, so the picture does not teach the screen's central connection between that motion and heat at a glance.",
+          "score": 7,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "There is one focal molecule and one supporting wave, expressing a single uncluttered interaction. The molecule's constituent circles are parts of the focal object, not extraneous supporting objects.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Both labels are short, correctly spelled English identifiers that help interpret otherwise ambiguous schematic shapes. Neither acts as a caption, and the screen does not require labels for oxygen or hydrogen.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All non-label fields are in English, and both label targets specify concrete placement relative to their objects: above the wave and below the molecule.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1335,
+          "outputTokens": 603,
+          "reasoningTokens": 170
         }
       },
       "steps": [
         {
-          "conclusion": "The scene stops at waves causing a water molecule to rotate. It shows neither food nor a visible heating outcome, leaving the requested connection between molecular motion and food heating incomplete.",
+          "conclusion": "The scene shows microwaves driving a water molecule's back-and-forth rotation, but omits food and any visible heating effect. It therefore illustrates only the first part of the requested cause-and-effect chain, not how molecular motion heats food.",
           "kind": "majorErrors",
           "score": 7
         },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Connect the rotating molecule to a small food cutaway and a visible warming cue, preserving the simple composition while completing the wave → molecular motion → heating relationship.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating food, linked to water molecules spinning. Uses a sequence layout or a clear relation; motion shows spinning.",
@@ -762,28 +215,304 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The side-profile brain shows all four named lobes in appropriate anatomical locations. Distinct color-coded regions make the screen's idea readable at a glance.",
+          "reasoning": "The small house and front-yard sign bearing a key symbol match the requested rental scene. All depicted elements are concrete and drawable, and the sign contains no words.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "There is one focal brain, no supporting objects, and only the four named regions. Nothing introduces an additional idea or unnamed part.",
+          "reasoning": "The house is the single focal object, with just one supporting object: the signpost. The scene stays focused on the requested idea.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "Each named lobe has a necessary, correctly spelled English label of two words. There are no redundant captions or unnecessary labels.",
+          "reasoning": "The labels array is empty, and the sign uses a symbol rather than text, satisfying the prohibition on labels and written words.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All textual fields are in English, and every target specifies a clear location. However, the targets place labels on the sections rather than next to the lobes as the task-specific expectation requests.",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets, and the sign's position relative to the house is clearly specified.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1268,
+          "outputTokens": 364,
+          "reasoningTokens": 42
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
+        "expected": { "labels": "none" },
+        "id": "language-house-1",
+        "userInput": {
+          "context": "Spanish for Brazilians › Finding a place to live",
+          "language": "pt",
+          "request": "Uma casa para alugar com uma placa na frente",
+          "screenText": "Se alquila: a casa está disponível para alugar.",
+          "textAllowed": false
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-by-side groups of identical rice bags concretely show increasing quantity alongside proportionally increasing cost. Both examples match the screen, with the same price of R$ 5 per kilogram.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "There is only one idea, but the requested five bags exceed the explicit allowance of one focal object and at most two small supporting objects. The comparison can be conveyed using two bags representing the two total weights.",
+          "score": 6,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "All four labels are necessary to communicate the quantities and prices, are short, and use exactly the required values: 2 kg, R$ 10, 3 kg, and R$ 15. Their notation is appropriate for Brazilian Portuguese, and none is a redundant caption.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All non-label prose is in English. Every label target explicitly places it above or below the relevant group of bags.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1384,
+          "outputTokens": 714,
+          "reasoningTokens": 277
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The scene requires five individual rice bags: two on the left and three on the right. Grouping them in the description does not meet the limit of one focal object and at most two small supporting objects. One bag labeled 2 kg / R$ 10 beside one labeled 3 kg / R$ 15 would preserve the comparison with fewer objects.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
+        "expected": { "labels": "some" },
+        "id": "rule-of-three-pt-1",
+        "userInput": {
+          "context": "Matemática básica › Proporções › Regra de três",
+          "language": "pt",
+          "request": "Mostrar que mais quilos custam proporcionalmente mais",
+          "screenText": "Se 2 kg de arroz custam R$ 10, 3 kg custam R$ 15.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The concrete Renaissance press and tall stack of identical books communicate mass production without contradicting the screen. However, the explicitly requested sequence or motion is absent: the stack is neither growing nor visibly flowing from the press.",
+          "score": 7,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One focal press and one supporting stack keep the scene focused on a single idea without unnecessary comparison scenes or extra objects.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "No labels are included, and none are needed to identify the press or communicate many identical copies. No caption or redundant-label cap applies.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1272,
+          "outputTokens": 524,
+          "reasoningTokens": 151
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required sequence or motion showing many copies coming from one press is missing. With motion set to null, the static stack suggests quantity but does not show copies accumulating or emerging from the press.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Give the books a matching, visible cover design so viewers can immediately recognize them as copies of the same book.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
+        "expected": { "labels": "any" },
+        "id": "printing-press-en-1",
+        "userInput": {
+          "context": "World history › The Renaissance › The printing press",
+          "language": "en",
+          "request": "One press making many copies of the same book",
+          "screenText": "Before the press, one scribe took months to copy a book. A press could print hundreds of copies in the same time.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The diagram includes the thick cell wall, large pale central vacuole, small green chloroplasts, and nucleus. A, B, and C point to the requested structures, making B the correct answer without revealing any structure names in labels.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One plant cell is the sole focal object, with its relevant internal structures and no separate supporting objects or unrelated content.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Only the necessary letters A, B, and C appear as labels. They match the requested arrow assignments and preserve the question by avoiding structure names or captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each label target identifies an arrow and the specific cell structure it points to, providing clear placement.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1402,
+          "outputTokens": 389,
+          "reasoningTokens": 50
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
+        "expected": { "labels": "some" },
+        "id": "question-cell-diagram-pt-1",
+        "userInput": {
+          "context": "Biologia › Célula › Organelas da célula vegetal",
+          "language": "pt",
+          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
+          "screenText": "Na figura, qual letra indica o vacúolo?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-profile brain shows all four named lobes. Their specified positions correctly match the screen text for a brain facing left.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "There is one focal object with exactly the four requested parts and no additional objects or named anatomy.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "All four lobes have necessary, correctly spelled English labels of two words each. There are no redundant captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All prose fields are in English. However, the targets describe where labels point without explicitly stating that the label text sits next to the corresponding lobe.",
           "score": 8,
           "label": "English fields and placement",
           "weight": 15
@@ -801,15 +530,15 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1426,
-          "outputTokens": 509,
-          "reasoningTokens": 142
+          "inputTokens": 1397,
+          "outputTokens": 535,
+          "reasoningTokens": 203
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "All four labels are placed on their brain sections, whereas the task-specific expectation requests labels next to their respective lobes. This is a small placement mismatch; the labels and anatomical regions are otherwise correct.",
+          "conclusion": "The label targets identify the correct regions, but “pointing to” does not explicitly place each label next to its lobe as requested.",
           "kind": "minorErrors",
           "score": 8
         },
@@ -832,21 +561,21 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The side-by-side paintings clearly contrast calm symmetry and soft light with twisting diagonal movement and intense light against deep shadow. These visual cues support identifying the Baroque painting without revealing the answer through written style names.",
+          "reasoning": "The side-by-side paintings express the intended contrast: calm symmetry and soft, even lighting in painting 1 versus dynamic figures, a dramatic diagonal, and intense light against deep shadows in painting 2. Nothing reveals the answer through titles, artists, or style labels.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The result contains exactly the two paintings needed for the comparison. Their internal figures and lighting establish the contrast without adding unrelated objects or ideas.",
+          "reasoning": "One focal painting and one supporting painting serve a single comparison. The figures, arch, and lighting are concrete compositional details that communicate the distinction without adding unrelated elements.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "Only the required identifiers, 1 and 2, are supplied as labels. They match the requested numbering and introduce no titles, artists, style names, or redundant captions.",
+          "reasoning": "Only the necessary identifiers 1 and 2 appear as labels, matching the requested numbering and allowing the learner to select a painting without giving away its style.",
           "score": 10,
           "label": "Labels",
           "weight": 25
@@ -871,9 +600,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1393,
-          "outputTokens": 381,
-          "reasoningTokens": 48
+          "inputTokens": 1386,
+          "outputTokens": 402,
+          "reasoningTokens": 55
         }
       },
       "steps": [
@@ -898,28 +627,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "An adult man receives an envelope from a colleague with his toolbox beside him, conveying the intended salary-receipt scene. There is no separate repair scene or contradiction of the screen text.",
-          "score": 10,
+          "reasoning": "The diagram accurately places S above NP and VP, with 'the cat' below NP and 'slept' below VP. It directly illustrates the screen's explanation. The only rendering detail omitted is that connecting lines should be thin.",
+          "score": 9,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The layout explicitly uses one scene and one central action. However, the visible wrench and screwdriver introduce two additional objects beyond the requested envelope and toolbox, violating the restriction against unnamed additions.",
-          "score": 8,
+          "reasoning": "One syntax tree presents one idea, with only the named parts and no supporting objects or unrelated content.",
+          "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The labels array is empty, appropriately avoiding unnecessary text or captions.",
+          "reasoning": "All five labels are necessary to read the syntax tree, match the screen exactly, and stay within four words. This is a linguistics lesson about syntactic structure, rather than a language-learning exercise; the labels are also expressly required by the task.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
+          "reasoning": "All descriptive fields are in English. Every label has a clear placement target identifying its node or its position below that node.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -927,7 +656,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -937,30 +666,29 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1364,
-          "outputTokens": 583,
-          "reasoningTokens": 241
+          "inputTokens": 1390,
+          "outputTokens": 560,
+          "reasoningTokens": 197
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The visible wrench and screwdriver add objects not named in the alt, contrary to the explicit scope restriction. Showing the toolbox closed would preserve the intended scene without those extras.",
+          "conclusion": "The description specifies branching but does not specify thin connecting lines, as requested.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
-        "expected": { "labels": "any", "layout": "single" },
-        "id": "one-place-not-two-pt-1",
+        "expectations": "A syntax tree for 'the cat slept': S at the top splitting into NP and VP, NP over 'the cat' and VP over 'slept', each node a short label joined by thin lines. Labels match the screen exactly.",
+        "expected": { "labels": "some" },
+        "id": "syntax-tree-en-1",
         "userInput": {
-          "alt": "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
-          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
-          "language": "pt",
-          "request": "Igor no trabalho recebe um envelope de salário de outra pessoa. Ao lado de Igor está sua caixa de ferramentas de conserto. Cena cotidiana, sem texto.",
-          "screenText": "Igor recebe seu salário no trabalho. Fora dali, às vezes ele conserta aparelhos e recebe por esses serviços.",
+          "context": "Introduction to linguistics › Syntax › Syntax trees",
+          "language": "en",
+          "request": "A tree for 'the cat slept': S splits into NP 'the cat' and VP 'slept'",
+          "screenText": "Every simple sentence (S) splits into a noun phrase (NP), here 'the cat', and a verb phrase (VP), here 'slept'.",
           "textAllowed": true
         }
       }
@@ -969,28 +697,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The scene clearly depicts an adult receiving payment at work, matching the supplied alt text and the relevant part of the screen. It correctly omits the separate bicycle-sale scene and introduces no contradiction.",
+          "reasoning": "The triangular fulcrum is near the rock on the short arm, and a hand pushes down at the far end of the long arm. The arrows correctly show downward effort lifting the load, directly illustrating the screen's explanation.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "There is one coherent scene and one idea, but the focal description bundles Igor with another person, a desk, an envelope, and banknotes. This exceeds the intended one focal object and at most two small supporting objects.",
-          "score": 8,
+          "reasoning": "One lever assembly is the focus, with only the two necessary supporting objects: the rock and the hand. The scene stays on the single idea of lifting a heavy load using a longer effort arm.",
+          "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "No labels are included, as appropriate for this concrete payment scene. There are no redundant captions or unnecessary numbers.",
+          "reasoning": "Load, Fulcrum, and Effort identify the three expected mechanical roles rather than captioning the scene. Each is correctly spelled, in English, and within the four-word limit.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. With no labels, label-target placement is not applicable.",
+          "reasoning": "All fields are in English, and each label has an explicit placement relative to its object: above the boulder, below the wedge, or above the hand.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -998,7 +726,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1008,34 +736,25 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1327,
-          "outputTokens": 631,
-          "reasoningTokens": 230
+          "inputTokens": 1410,
+          "outputTokens": 441,
+          "reasoningTokens": 78
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The composition is busier than the requested object budget: alongside Igor, it includes a manager, desk, payment envelope, and banknotes. Putting these inside focalObject does not make them a single visual object.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Simplify to adult Igor receiving a payment envelope from an off-frame hand, with one small workplace cue. This preserves the intended scene while reducing competing elements.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
-        "expected": { "labels": "any", "layout": "single" },
-        "id": "two-moments-become-one-pt-1",
+        "expectations": "A lever: a long bar on a triangular fulcrum near one end, a heavy rock on the short side and a hand pushing down on the long side, with labels for the fulcrum, the load and the effort.",
+        "expected": { "labels": "some" },
+        "id": "lever-en-1",
         "userInput": {
-          "alt": "Igor recebe o pagamento combinado no trabalho.",
-          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
-          "language": "pt",
-          "request": "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
-          "screenText": "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+          "context": "Physics › Simple machines › How a lever multiplies force",
+          "language": "en",
+          "request": "A lever lifting a heavy rock with the fulcrum close to the rock",
+          "screenText": "Put the fulcrum close to the load and push on the far end: a small effort lifts a heavy rock.",
           "textAllowed": true
         }
       }
@@ -1044,21 +763,21 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Both required actions are preserved side by side: handing a product to a customer at the shop counter and recording the sale in a notebook at night. However, adulthood and the home setting are not specified, and daytime does not specifically establish morning.",
+          "reasoning": "The envelope handoff at a workplace, with Igor's toolbox beside him, clearly conveys the intended salary scene. There is no second scene or conflicting activity. However, Igor's required adult age is left unspecified.",
           "score": 8,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The two-scene comparison is explicitly required by the task-specific expectations. The result keeps that comparison focused, with concrete props supporting the sale and recording actions rather than adding unrelated content.",
-          "score": 10,
+          "reasoning": "The result preserves one scene and one central action, but the separate wrench and screwdriver handle are unnecessary, unnamed additions. Packaging them in the toolbox's supportingObjects entry does not eliminate the extra drawable objects.",
+          "score": 7,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "No labels are included, as appropriate for these readily drawable actions and the explicit expectation that labels are unnecessary.",
+          "reasoning": "The labels array is empty, correctly avoiding unnecessary labels or captions.",
           "score": 10,
           "label": "Labels",
           "weight": 25
@@ -1083,30 +802,34 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1383,
-          "outputTokens": 562,
-          "reasoningTokens": 190
+          "inputTokens": 1365,
+          "outputTokens": 697,
+          "reasoningTokens": 327
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The scene descriptions do not explicitly establish that Fábio is an adult or that the nighttime writing happens at home. The sale is described as daytime rather than specifically morning. These omissions leave some required visual details ambiguous.",
-          "kind": "minorErrors",
+          "conclusion": "The result adds a wrench and a screwdriver handle beside the toolbox, although the expectations explicitly restrict the scene to the named content. These should be removed rather than shown as additional objects.",
+          "kind": "majorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Explicitly describe Igor as an adult so that the illustration reliably satisfies the age requirement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
-        "expectations": "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
-        "expected": { "labels": "any", "layout": "comparison" },
-        "id": "alt-names-two-moments-pt-1",
+        "expectations": "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
+        "expected": { "labels": "any", "layout": "single" },
+        "id": "one-place-not-two-pt-1",
         "userInput": {
-          "alt": "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
-          "context": "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+          "alt": "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
+          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
           "language": "pt",
-          "request": "Fábio vende um produto de manhã e anota a venda à noite.",
-          "screenText": "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
+          "request": "Igor no trabalho recebe um envelope de salário de outra pessoa. Ao lado de Igor está sua caixa de ferramentas de conserto. Cena cotidiana, sem texto.",
+          "screenText": "Igor recebe seu salário no trabalho. Fora dali, às vezes ele conserta aparelhos e recebe por esses serviços.",
           "textAllowed": true
         }
       }
@@ -1115,28 +838,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The comparison depicts an adult woman lowering a book into a red box in scene 1 and lifting it out in scene 2. Opposite directional arrows make the distinction immediately readable and support the caption-matching question.",
-          "score": 10,
+          "reasoning": "The adult man receiving money from a manager at work clearly depicts Igor's pay, the scene prioritized by the provided alt text. It correctly excludes the bicycle sale. The calendar supports the monthly-payment idea, although its recurring mark could be specified more concretely.",
+          "score": 8,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "Both scenes focus on the requested woman, book, and red box. The table provides unobtrusive support, and the arrows clarify the single contrast without introducing another idea.",
+          "reasoning": "There is one coherent focal event—the payment exchange—and one small supporting calendar. The result appropriately reduces the requested side-by-side scenes to the work-payment scene.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The only text is the explicitly required scene numbers 1 and 2. They match the question exactly and identify the alternatives without adding captions.",
+          "reasoning": "No labels are included, as appropriate for this scene. There are no unnecessary captions, prices, or other text.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each label has an explicit placement above its corresponding scene.",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -1154,9 +877,80 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1464,
-          "outputTokens": 489,
-          "reasoningTokens": 156
+          "inputTokens": 1355,
+          "outputTokens": 692,
+          "reasoningTokens": 337
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The calendar could show the same day checked across two small month pages, making the monthly recurrence more visually explicit than a single checked date.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
+        "expected": { "labels": "any", "layout": "single" },
+        "id": "two-moments-become-one-pt-1",
+        "userInput": {
+          "alt": "Igor recebe o pagamento combinado no trabalho.",
+          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+          "language": "pt",
+          "request": "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
+          "screenText": "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-by-side scenes correctly contrast putting a book into the red box with taking it out. Opposing arrows make the actions clear, and describing Nayara as a young woman satisfies the adult requirement.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The comparison contains only the woman, book, red box, and useful directional arrows. Both scenes are necessary to answer the screen's question, with no unrelated content.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The only text is the explicitly required scene identifiers 1 and 2. They match the screen exactly and do not add captions or reveal the answer.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and each label has an explicit placement above its corresponding scene.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1458,
+          "outputTokens": 428,
+          "reasoningTokens": 96
         }
       },
       "steps": [
@@ -1174,6 +968,147 @@
           "language": "pt",
           "request": "Duas cenas lado a lado, rotuladas 1 e 2: em 1 Nayara coloca um livro numa caixa vermelha; em 2 ela tira um livro da mesma caixa.",
           "screenText": "Qual cena, 1 ou 2, combina com a legenda: Nayara coloca um livro na caixa vermelha?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The ocean, sunlight, and upward dashed arrows directly illustrate the screen's explanation of evaporation. The arrows represent invisible vapor movement without depicting vapor as visible clouds or droplets.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The scene focuses on the ocean with one supporting object, the sun. It correctly omits condensation, precipitation, collection, runoff, and groundwater despite the broader request.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The single label, “Evaporation,” identifies the process represented by the arrows rather than captioning the scene or naming an obvious object. It is correctly spelled, in the lesson's language, and within the word limit.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and the label target explicitly places the label beside the rising dashed arrows.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1319,
+          "outputTokens": 428,
+          "reasoningTokens": 86
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
+        "expected": { "labels": "any" },
+        "id": "overloaded-water-cycle-1",
+        "userInput": {
+          "context": "Earth science › The water cycle › Evaporation",
+          "language": "en",
+          "request": "A diagram of the whole water cycle with evaporation, condensation, precipitation, collection, runoff and groundwater, all labeled",
+          "screenText": "The sun heats the ocean, and water rises into the air as invisible vapor. This is evaporation.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The comparison clearly shows an adult selling a product and later recording the sale, using concrete, drawable elements. However, the required home setting is not established, and daytime is less specific than the morning described in the ALT.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The two required moments remain together in a clear left-right arrangement. Most props support those actions, but the added banknote-payment action introduces avoidable visual activity beyond the product handoff.",
+          "score": 8,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The empty label list correctly avoids unnecessary labels or captions; neither scene needs text to communicate its action.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1379,
+          "outputTokens": 620,
+          "reasoningTokens": 224
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Both moments are preserved side by side, with the same adult man, but the nighttime desk scene does not establish that he is at home. The daytime scene also leaves the specified morning timing implicit.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Specify a morning shop-counter scene and a nighttime home setting with a notebook. Remove the customer's banknote-payment action to keep attention on handing over the product and recording the sale.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
+        "expected": { "labels": "any", "layout": "comparison" },
+        "id": "alt-names-two-moments-pt-1",
+        "userInput": {
+          "alt": "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
+          "context": "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+          "language": "pt",
+          "request": "Fábio vende um produto de manhã e anota a venda à noite.",
+          "screenText": "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
           "textAllowed": true
         }
       }

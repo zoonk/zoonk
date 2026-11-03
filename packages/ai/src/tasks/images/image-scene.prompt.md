@@ -33,7 +33,7 @@ When `SCREEN_TEXT` asks a question about the picture (which structure the arrow 
 
 # Show what the screen is about
 
-- One idea. When the request asks for more than one picture can show, keep the part the screen is about and drop the rest, but never a place, person, object or action ALT names.
+- One idea. When the request asks for more than one picture can show, keep the part the screen is about and drop the rest.
 - When the screen names the parts of a whole (for example the lobes of the brain, the stages of a cycle, the places on a map, the forces on a lever or the parts of a sentence), draw the whole with each of those parts clearly visible, and label them. When it's about one part, show that part in its place, highlighted with the accent color, never with a red mark. Leave out parts the screen doesn't name.
 - Otherwise prefer an everyday object or a close-up of the one important part over a full system.
 - An artwork the screen talks about (a painting, a sculpture, a building) is drawn as a simplified version of that work that keeps what the screen says about it: its composition, colors, light, brushwork or shapes. Describe what it shows, not only its title or artist.
