@@ -25,6 +25,7 @@ private struct CategorizeCanvas: View {
   @ActivityState private var sorting: CategorizeSorting
   @FocusState private var focus: Focus?
   @AccessibilityFocusState private var voiceOverFocus: Focus?
+  @State private var targetedGroupId: String?
 
   init(fields: CategorizeFields, context: ActivityCanvasContext) {
     self.fields = fields
@@ -110,15 +111,22 @@ private struct CategorizeCanvas: View {
   /// Every card is stacked in the box, so it is as tall as the tallest one and the groups under it
   /// never move while dealing.
   private func dealtCard(_ card: CategorizeFields.Item) -> some View {
-    ZStack(alignment: .leading) {
-      ForEach(items) { item in
-        LessonRichText(item.text)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .opacity(item.id == card.id ? 1 : 0)
-          .accessibilityHidden(item.id != card.id)
+    HStack(spacing: 12) {
+      Image(systemName: "line.3.horizontal")
+        .font(.body)
+        .foregroundStyle(.secondary)
+        .accessibilityHidden(true)
+
+      ZStack(alignment: .leading) {
+        ForEach(items) { item in
+          LessonRichText(item.text)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .opacity(item.id == card.id ? 1 : 0)
+            .accessibilityHidden(item.id != card.id)
+        }
       }
+      .font(.title3.weight(.medium))
     }
-    .font(.title3.weight(.medium))
     .multilineTextAlignment(.leading)
     .padding()
     .background(Color(.systemBackground), in: .rect(cornerRadius: 16))
@@ -126,6 +134,7 @@ private struct CategorizeCanvas: View {
       RoundedRectangle(cornerRadius: 16)
         .strokeBorder(.separator)
     }
+    .draggable(ActivityDragItem(id: card.id))
   }
 
   private var question: some View {
@@ -176,8 +185,23 @@ private struct CategorizeCanvas: View {
         preview(group)
       }
     }
-    .buttonStyle(LessonOptionStyle(mark: .plain))
+    .buttonStyle(LessonOptionStyle(mark: targetedGroupId == group.id ? .selected : .plain))
     .modifier(ActivityNumberKey(index: index))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      // A number key may have sorted the dragged card already; never sort the next one.
+      guard let inHand = sorting.cardInHand(from: items), dropped.first?.id == inHand.id else {
+        return false
+      }
+
+      sort(inHand, into: group)
+      return true
+    } isTargeted: { isTargeted in
+      if isTargeted {
+        targetedGroupId = group.id
+      } else if targetedGroupId == group.id {
+        targetedGroupId = nil
+      }
+    }
     .focused($focus, equals: .group(group.id))
     .accessibilityFocused($voiceOverFocus, equals: .group(group.id))
     // Named by what it shows, so Voice Control's "Tap <label>" finds it.
