@@ -22,7 +22,7 @@ const EM_WIDTH = { narrow: 0.56, wide: 1 };
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
 /** A rough line count for text Satori wraps, used only to decide what fits. */
-export function estimateLines({
+function estimateLines({
   fontSize,
   text,
   width,
