@@ -8,8 +8,13 @@ import { type PlayableStepImage } from "../lesson-player-types";
 
 const LESSON_IMAGE_SIZES = "(max-width: 640px) 100vw, 560px";
 
-const DEFAULT_WIDTH = 1024;
-const DEFAULT_HEIGHT = 1280;
+/** The size new pictures are drawn at, for a picture whose payload lacks its own (stored ones carry it). */
+const DRAWN_SIZE = {
+  option: { height: 1024, width: 1024 },
+  scene: { height: 1024, width: 1536 },
+} as const;
+
+export type LessonPictureKind = keyof typeof DRAWN_SIZE;
 
 export type LessonPictureFrame = "hero" | "inline" | "question";
 
@@ -27,12 +32,14 @@ export function LessonStepImage({
   className,
   frame = "inline",
   image,
+  kind = "scene",
   loading,
   priority = false,
 }: {
   className?: string;
   frame?: LessonPictureFrame;
   image: PlayableStepImage;
+  kind?: LessonPictureKind;
   loading?: "eager";
   priority?: boolean;
 }) {
@@ -54,14 +61,14 @@ export function LessonStepImage({
         className,
       )}
       data-frame={frame}
-      height={image.height ?? DEFAULT_HEIGHT}
+      height={image.height ?? DRAWN_SIZE[kind].height}
       loading={loading}
       onError={() => setFailedUrl(image.url)}
       preload={priority}
       sizes={LESSON_IMAGE_SIZES}
       src={toOwnFileUrl({ baseUrl: OWN_FILES_WEB_PATH, url: image.url })}
       unoptimized={isPrivate}
-      width={image.width ?? DEFAULT_WIDTH}
+      width={image.width ?? DRAWN_SIZE[kind].width}
     />
   );
 }

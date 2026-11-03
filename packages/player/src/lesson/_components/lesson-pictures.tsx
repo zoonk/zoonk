@@ -164,7 +164,7 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
 
   return (
     <MediaPending
-      className={cn("aspect-4/5 w-full", PICTURE_FRAME_CLASS[frame])}
+      className={cn("aspect-3/2 w-full", PICTURE_FRAME_CLASS[frame])}
       icon={<ImageIcon aria-hidden="true" className="size-6" />}
     >
       <p role="status">{t("Drawing the picture…")}</p>

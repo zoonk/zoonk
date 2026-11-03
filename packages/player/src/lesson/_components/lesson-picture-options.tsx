@@ -33,12 +33,12 @@ function PictureOptionContent({
 
   function picture() {
     if (image) {
-      return <LessonStepImage className="w-full" frame="question" image={image} />;
+      return <LessonStepImage className="w-full" frame="question" image={image} kind="option" />;
     }
 
     if (pending) {
       return (
-        <div className="text-muted-foreground relative flex aspect-4/5 w-full items-center justify-center overflow-hidden rounded-lg">
+        <div className="text-muted-foreground relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg">
           <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
           <div className="relative flex items-center">
             <ImageIcon aria-hidden="true" className="size-5" />
@@ -52,7 +52,7 @@ function PictureOptionContent({
     }
 
     return (
-      <p className="bg-muted/50 text-muted-foreground flex aspect-4/5 w-full items-center rounded-lg p-3 text-sm leading-snug">
+      <p className="bg-muted/50 text-muted-foreground flex aspect-square w-full items-center rounded-lg p-3 text-sm leading-snug">
         {alt}
       </p>
     );
