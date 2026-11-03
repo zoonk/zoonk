@@ -37,10 +37,12 @@
     "next": "catalog:",
     "next-intl": "catalog:",
     "nuqs": "catalog:",
+    "qr": "0.7.2",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "catalog:",
     "server-only": "catalog:",
+    "sharp": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
