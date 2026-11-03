@@ -121,7 +121,6 @@ function getWordingProblems({
   return [...guesses, ...bold, ...money, ...wordy];
 }
 
-/** How the lesson's screens work together: their visuals, the guess, the checks' bases and wording. */
 export function checkLessonFlow(input: {
   lesson: WrittenLesson;
   /** `readsNoviceRules` for the lesson, which sets its words per explanation. */

@@ -2,9 +2,8 @@ import { type VisualFloor } from "../_utils/visual-floor";
 import { type LessonScreen, type LessonScreenKind } from "./lesson-spec-rules";
 
 /**
- * What a screen shows beside its words. A picture is described in `visual`; a table, a chart or a
- * timeline is drawn by the app from the brief's data; a template is the explanation's
- * `activityTemplate`.
+ * A picture is described in `visual`; a table, a chart or a timeline is drawn by the app from the
+ * brief's data; a template is the explanation's `activityTemplate`.
  */
 export const LESSON_VISUAL_KINDS = [
   "picture",
@@ -17,7 +16,6 @@ export const LESSON_VISUAL_KINDS = [
 
 export type LessonVisualKind = (typeof LESSON_VISUAL_KINDS)[number];
 
-/** What the app draws itself, the only visuals a private lesson's floor counts. */
 const DRAWN_VISUAL_KINDS: ReadonlySet<LessonVisualKind> = new Set([
   "table",
   "chart",
@@ -25,7 +23,6 @@ const DRAWN_VISUAL_KINDS: ReadonlySet<LessonVisualKind> = new Set([
   "template",
 ]);
 
-/** Explanations and worked examples, the screens the visual floor counts. */
 export function isTeachingScreen(kind: LessonScreenKind): boolean {
   return kind === "explanation" || kind === "workedExample";
 }
@@ -44,7 +41,6 @@ function countsTowardFloor({
     : screen.visualKind !== "none";
 }
 
-/** How many more explanations or worked examples need a visual to reach the floor. */
 export function getTeachingVisualShortfall({
   screens,
   visualFloor,

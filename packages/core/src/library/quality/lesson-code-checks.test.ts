@@ -30,7 +30,6 @@ function check(lesson: WrittenLesson, options: CheckOptions = {}) {
 
 const INTERMEDIATE: CheckOptions = { level: "intermediate" };
 
-/** The guess's planned screen, right after the first explanation. */
 const GUESS_AT = 2;
 
 function guessPlanned(): CheckOptions {
@@ -46,7 +45,6 @@ function guessPlanned(): CheckOptions {
   return { spec: { ...spec, screens: spec.screens.toSpliced(GUESS_AT, 0, guess) } };
 }
 
-/** The written lesson with a guess on its planned screen, each later basis moved along. */
 function withGuess(guess: WrittenScreen): WrittenLesson {
   const lesson = writtenTemperatureLesson();
 

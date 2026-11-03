@@ -200,10 +200,6 @@ function getEarlyCheckIssue({
   );
 }
 
-/**
- * Every lesson tries before it's taught: one guess right after the first explanation or worked
- * example, about what the screen after it explains.
- */
 function getGuessIssue({ laterPart, screens }: LessonSpec) {
   const guesses = screens.filter((screen) => screen.kind === "guess").length;
   const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
@@ -312,10 +308,7 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/**
- * An empty list means the spec passes. `novice` is `readsNoviceRules` for the lesson, and
- * `visualFloor` is `getVisualFloor`.
- */
+/** `novice` is `readsNoviceRules` for the lesson, and `visualFloor` is `getVisualFloor`. */
 export function getLessonSpecIssues({
   level,
   novice = false,

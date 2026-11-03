@@ -142,7 +142,6 @@ function createFrameScreen({
   return { activityTemplate: null, brief, kind, skills, visual, visualKind };
 }
 
-/** A new hook shows its scene: a shared lesson's in a picture, a private one's in a table. */
 function createHook({
   brief,
   visualFloor,

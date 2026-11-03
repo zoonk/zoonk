@@ -4,7 +4,6 @@ import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-w
 type Recorded = { lesson: WrittenLesson; spec: LessonSpec };
 
 type SceneFirstPlan = {
-  /** The hook's brief for the scene. */
   brief: string;
   picture: string | null;
   /** The recorded plan's screens, in the lesson's new order after the scene. */

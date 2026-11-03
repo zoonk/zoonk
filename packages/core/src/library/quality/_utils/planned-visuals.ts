@@ -40,7 +40,6 @@ const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => b
   timeline: showsDrawing,
 };
 
-/** The plan chose each screen's visual to teach its idea, so a written screen without it loses it. */
 export function findMissingPlannedVisual(input: VisualInput): string | null {
   const { specScreen } = input;
 
@@ -63,7 +62,6 @@ function readTemplate(screen: WrittenScreen): string | null {
   return screen.kind === "explanation" && screen.explore ? screen.explore.template : null;
 }
 
-/** The visuals a screen shows that a learner would see again on the next one. */
 function readVisuals(screen: WrittenScreen): string[] {
   const template = readTemplate(screen);
   return [...readTables(screen), ...(template ? [`template:${template}`] : [])];
@@ -71,10 +69,7 @@ function readVisuals(screen: WrittenScreen): string[] {
 
 type RepeatedVisual = { screen: number; template: string | null };
 
-/**
- * Screens that show what the screen before showed: the same table, or the same template (an explore
- * then an activity on one formula model counts), so the second screen adds nothing to see.
- */
+/** The same template counts as repeated whatever its model, an explore then an activity included. */
 export function findRepeatedVisuals(screens: readonly WrittenScreen[]): RepeatedVisual[] {
   const visuals = screens.map((screen) => readVisuals(screen));
 
