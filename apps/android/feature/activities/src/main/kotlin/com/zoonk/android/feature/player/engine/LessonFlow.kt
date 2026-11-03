@@ -133,7 +133,16 @@ fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 }
 
 val LessonPlayerState.canGoBack: Boolean
-    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused && !comesBackLater(position - 1)
+    get() =
+        phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused &&
+            !comesBackLater(position - 1) && !isUnplayedBeforeMap()
+
+/** A run resumed on the map has no results this sitting, so its last question would show unanswered. */
+private fun LessonPlayerState.isUnplayedBeforeMap(): Boolean {
+    if (currentStep?.kind != StepKind.LessonMap) return false
+    val previousId = queue[position - 1]
+    return previousId !in results && steps[previousId]?.isReadStep != true
+}
 
 /** A question that comes back plays its attempt there, so its earlier copy, with no result, isn't played again. */
 private fun LessonPlayerState.comesBackLater(index: Int): Boolean {

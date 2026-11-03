@@ -122,6 +122,8 @@ class LessonPlayerReducerTest {
 
         assertEquals(LESSON_MAP_STEP_ID to LessonPhase.Playing, resumed.currentId to resumed.phase)
         assertNull(resumed.completion)
+        assertFalse(resumed.screen().canGoBack)
+        assertSame(resumed, resumed.then(LessonAction.GoBack))
 
         val done = resumed.then(LessonAction.Continue)
         assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
