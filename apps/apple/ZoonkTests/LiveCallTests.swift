@@ -152,6 +152,81 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(transport.sent.contains(.append(typedReply.quoting("I'm here"))))
   }
 
+  func testAGoodbyeWhileTheLearnerTalksGoesAsQuietContext() async {
+    let transport = FakeTransport()
+    transport.speaking = true
+    let call = LiveCall(
+      conversation: .fixture(), client: FakeServer(talkSeconds: 1).client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    await waitUpTo(5) { !transport.cues("goodbye").isEmpty }
+
+    // Measured: said aloud at once, it made the character talk over a learner who paused.
+    XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
+  }
+
+  func testALateLearnerTranscriptStillGetsTheExchangeChecked() async {
+    let transport = FakeTransport()
+    let server = FakeServer()
+    let call = LiveCall(conversation: .fixture(), client: server.client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    transport.onEvent?(.transcript(speaker: .character, delta: "Hi!", startMs: 0, endMs: 500))
+    transport.onEvent?(.transcript(speaker: .learner, delta: "Hello", startMs: 1000, endMs: 1500))
+    transport.onEvent?(
+      .transcript(speaker: .character, delta: " Great.", startMs: 3000, endMs: 3500))
+    // The learner's last words come back after the answer they came before.
+    transport.onEvent?(
+      .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
+
+    // The transcript settles 2 s after its last fragment, longer than the learner's words lag.
+    try? await Task.sleep(for: .milliseconds(1700))
+    XCTAssertEqual(server.checks, 0)
+    await waitUpTo(5) { server.checks > 0 }
+    try? await Task.sleep(for: .seconds(2.5))
+
+    XCTAssertEqual(server.checks, 1)
+  }
+
+  func testWordsArrivingDuringACheckDontLoseItsAnswer() async {
+    let transport = FakeTransport()
+    let server = FakeServer(holdsChecks: true)
+    let call = LiveCall(conversation: .fixture(), client: server.client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    transport.onEvent?(.transcript(speaker: .character, delta: "Hi!", startMs: 0, endMs: 500))
+    transport.onEvent?(
+      .transcript(speaker: .learner, delta: "Is it free?", startMs: 1000, endMs: 1500))
+    transport.onEvent?(.transcript(speaker: .character, delta: " Yes.", startMs: 3000, endMs: 3500))
+    await waitUpTo(5) { server.checks > 0 }
+
+    transport.onEvent?(
+      .transcript(speaker: .character, delta: " It is.", startMs: 3500, endMs: 4000))
+    server.answerCheck(.init(goodbye: false, objectivesMet: ["Is it free?"], progress: nil))
+    await waitUpTo(2) { call.metLabels == ["Is it free?"] }
+
+    XCTAssertEqual(call.metLabels, ["Is it free?"])
+  }
+
+  func testTheOpeningRetryHasItsOwnEventId() async {
+    let transport = FakeTransport()
+    let call = LiveCall(conversation: .fixture(), client: FakeServer().client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    transport.onEvent?(.acknowledged(id: "opening-1", startMs: 0))
+    await waitUpTo(8) { transport.cues("opening").count > 1 }
+
+    let ids = transport.sent.compactMap { command -> String? in
+      guard case .append(_, _, let eventId?) = command else { return nil }
+      return eventId
+    }
+    XCTAssertEqual(ids.filter { $0.hasPrefix("opening") }, ["opening-1", "opening-2"])
+  }
+
   func testABlockedMicrophoneReservesNothingUntilTheLearnerTypesInstead() async {
     let server = FakeServer(microphone: false)
     let call = LiveCall(conversation: .fixture(), client: server.client(FakeTransport()))
@@ -257,6 +332,42 @@ final class LiveCallTests: XCTestCase {
     run.wait(until: 130)
 
     assertTimes(run.times(of: .goodbye), [120], accuracy: 0.11)
+  }
+
+  func testOnlyAGoodbyeWhileTheLearnerTalksGoesAsQuietContext() {
+    var talking = EndingRun()
+    talking.chat(until: 110)
+    talking.learnerTalks(from: 115, to: 125)
+    talking.wait(until: 126)
+
+    var idle = EndingRun()
+    idle.chat(until: 110)
+    idle.characterTalks(from: 117, to: 120)
+    idle.wait(until: 135)
+
+    XCTAssertEqual(talking.goodbyesWhileLearnerSpeaks, [true])
+    XCTAssertEqual(idle.goodbyesWhileLearnerSpeaks, [false])
+  }
+
+  func testACheckWaitsForTheCharacterToAnswerTheLearner() {
+    var timing = ObjectiveCheckTiming()
+    timing.hear(.character, startMs: 0)
+    XCTAssertFalse(timing.isDue)
+
+    timing.hear(.learner, startMs: 1000)
+    XCTAssertFalse(timing.isDue)
+
+    timing.hear(.character, startMs: 3000)
+    // Their late words started before the answer: the character still spoke last.
+    timing.hear(.learner, startMs: 2500)
+    XCTAssertTrue(timing.isDue)
+
+    timing.read()
+    XCTAssertFalse(timing.isDue)
+
+    // A typed reply has no session time: it's the latest words.
+    timing.hear(.learner, startMs: nil)
+    XCTAssertFalse(timing.isDue)
   }
 
   func testAtTheTalkTimeTheCharacterFinishesFirst() {
@@ -419,6 +530,28 @@ final class LiveCallTests: XCTestCase {
     assertTimes(run.times(of: .goodbye), [54.5], accuracy: 0.11)
   }
 
+  func testWordsOverTheCharactersReplyDontEndTheStretchBeforeItStarts() {
+    var finishing = EndingRun()
+    finishing.characterTalks(from: 1, to: 3)
+    finishing.learnerTalks(from: 4, to: 6.4)
+    finishing.characterTalks(from: 6.5, to: 7.5)
+    // The learner finishes over the reply: the stretch starts once the character stops, at 9 s.
+    finishing.learnerTalks(from: 7.6, to: 7.8)
+    finishing.wait(until: 40)
+
+    assertTimes(finishing.times(of: .checkIn), [34], accuracy: 0.11)
+
+    var heard = EndingRun()
+    heard.characterTalks(from: 1, to: 3)
+    heard.learnerTalks(from: 4, to: 6.4)
+    heard.characterTalks(from: 6.5, to: 7.5)
+    // Their transcript comes back during the reply: the stretch still starts at 9 s.
+    heard.learnerHeard(at: 8.2)
+    heard.wait(until: 40)
+
+    assertTimes(heard.times(of: .checkIn), [34], accuracy: 0.11)
+  }
+
   func testTypingEndsAQuietStretch() {
     var run = EndingRun()
     run.characterTalks(from: 1, to: 3)
@@ -497,10 +630,11 @@ final class LiveCallTests: XCTestCase {
     run.characterTalks(from: 1, to: 3)
     run.learnerTalks(from: 5, to: 6)
     run.characterTalks(from: 6.5, to: 7)
-    run.learnerHeard(at: 7.5)
+    // After the character stopped, at 8.5 s: the stretch that had started begins again.
+    run.learnerHeard(at: 9)
     run.wait(until: 40)
 
-    assertTimes(run.times(of: .checkIn), [32.5], accuracy: 0.11)
+    assertTimes(run.times(of: .checkIn), [34], accuracy: 0.11)
   }
 
   func testTheLearnersTranscriptCountsAsSpeakingWhenTheMicrophoneMissedIt() {
@@ -618,6 +752,15 @@ final class LiveCallTests: XCTestCase {
       try? await Task.sleep(for: .milliseconds(5))
     }
   }
+
+  /// For the call's own clocks, which run on real time.
+  private func waitUpTo(_ seconds: Double, until condition: () -> Bool) async {
+    let end = Date.now.addingTimeInterval(seconds)
+
+    while !condition(), Date.now < end {
+      try? await Task.sleep(for: .milliseconds(50))
+    }
+  }
 }
 
 @MainActor
@@ -628,6 +771,8 @@ private final class FakeTransport: LiveCallTransport {
   private(set) var sent: [LiveClientCommand] = []
   private(set) var isSilenced = false
   private(set) var isClosed = false
+  /// What the microphone hears at every reading.
+  var speaking = false
   private let holdsOffer: Bool
   private var offerWait: CheckedContinuation<Void, any Error>?
 
@@ -657,7 +802,18 @@ private final class FakeTransport: LiveCallTransport {
   }
 
   func hearsSpeech() async -> Bool {
-    false
+    speaking
+  }
+
+  /// Every cue sent with this event id prefix.
+  func cues(_ prefix: String) -> [LiveCallCue] {
+    sent.compactMap { command in
+      guard case .append(let cue, _, let eventId?) = command, eventId.hasPrefix(prefix) else {
+        return nil
+      }
+
+      return cue
+    }
   }
 
   func silence() {
@@ -677,19 +833,32 @@ private final class FakeServer {
   private let endedAtDeadline: Bool
   private let confirmsHangup: Bool
   private let microphone: Bool
+  private let talkSeconds: Int
   private(set) var connects = 0
+  private(set) var checks = 0
+  private let holdsChecks: Bool
+  private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
   private(set) var microphoneRequests = 0
   private(set) var redeemed: [String] = []
   private(set) var ended: [String] = []
 
   init(
     reservations: [CallReservation?] = [], endedAtDeadline: Bool = false,
-    confirmsHangup: Bool = true, microphone: Bool = true
+    confirmsHangup: Bool = true, microphone: Bool = true, talkSeconds: Int = 120,
+    holdsChecks: Bool = false
   ) {
+    self.holdsChecks = holdsChecks
     self.reservations = reservations
     self.endedAtDeadline = endedAtDeadline
     self.confirmsHangup = confirmsHangup
     self.microphone = microphone
+    self.talkSeconds = talkSeconds
+  }
+
+  /// `holdsChecks`: the check running answers now.
+  func answerCheck(_ check: ObjectiveCheck) {
+    pendingCheck?.resume(returning: check)
+    pendingCheck = nil
   }
 
   func client(_ transport: FakeTransport) -> LiveCallClient {
@@ -697,7 +866,9 @@ private final class FakeServer {
       connect: { _ in
         self.connects += 1
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
-        return next ?? .ready(.fixture(connectionId: "connection-\(self.connects)"))
+        return next
+          ?? .ready(
+            .fixture(connectionId: "connection-\(self.connects)", talkSeconds: self.talkSeconds))
       },
       redeem: { connectionId, _ in
         self.redeemed.append(connectionId)
@@ -707,7 +878,17 @@ private final class FakeServer {
         self.ended.append(connectionId)
         return self.confirmsHangup ? self.endedAtDeadline : nil
       },
-      checkObjectives: { _ in nil },
+      checkObjectives: { _ in
+        self.checks += 1
+
+        guard self.holdsChecks else {
+          return nil
+        }
+
+        let check = await withCheckedContinuation { self.pendingCheck = $0 }
+        // As the app's cache does: a write whose task was cancelled has no answer.
+        return Task.isCancelled ? nil : check
+      },
       makeTransport: { transport },
       requestMicrophone: {
         self.microphoneRequests += 1
@@ -717,7 +898,7 @@ private final class FakeServer {
 }
 
 extension Components.Schemas.LanguageConversationSetup {
-  fileprivate static func fixture(connectionId: String) -> Self {
+  fileprivate static func fixture(connectionId: String, talkSeconds: Int = 120) -> Self {
     func cue(_ channel: LiveCallCue.ChannelPayload, _ text: String) -> LiveCallCue {
       .init(channel: channel, text: text)
     }
@@ -732,7 +913,7 @@ extension Components.Schemas.LanguageConversationSetup {
           noBackend: cue(.thinking, "Answer yourself."), opening: cue(.commentary, "Greet them."),
           typedReply: cue(.commentary, "They typed: ")),
         timing: .fixture),
-      seconds: 165, sessionUrl: "/sdp", talkSeconds: 120, voice: "marin")
+      seconds: talkSeconds + 45, sessionUrl: "/sdp", talkSeconds: talkSeconds, voice: "marin")
   }
 }
 
@@ -784,8 +965,19 @@ private struct EndingRun {
     return nil
   }
 
+  /// Whether each goodbye went while the learner was talking.
+  var goodbyesWhileLearnerSpeaks: [Bool] {
+    log.compactMap { entry in
+      guard case .send(.goodbye, let whileLearnerSpeaks) = entry.action else { return nil }
+      return whileLearnerSpeaks
+    }
+  }
+
   func times(of cue: LiveCallEnding.Cue) -> [TimeInterval] {
-    log.compactMap { $0.action == .send(cue) ? $0.at : nil }
+    log.compactMap { entry in
+      guard case .send(cue, _) = entry.action else { return nil }
+      return entry.at
+    }
   }
 
   mutating func wait(until seconds: TimeInterval) {

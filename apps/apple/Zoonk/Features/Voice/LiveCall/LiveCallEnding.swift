@@ -28,7 +28,9 @@ struct LiveCallEnding {
   }
 
   enum Action: Equatable {
-    case send(Cue)
+    /// `whileLearnerSpeaks`: measured, a goodbye said aloud at once (commentary) made the character
+    /// talk over a learner who paused mid-answer; as quiet context (thinking) it waited for them.
+    case send(Cue, whileLearnerSpeaks: Bool = false)
     /// Nil: the hard stop.
     case hangUp(Reason?)
   }
@@ -117,29 +119,29 @@ struct LiveCallEnding {
   /// A microphone sample above the speech threshold.
   mutating func learnerSpoke(at now: Date) {
     lastMicAt = now
-    learnerActed()
+    learnerActed(at: now)
   }
 
   /// The learner's words came back as a transcript: they spoke, even when the microphone's level
   /// missed a soft voice. It arrives late, often after a short answer, so the quiet starts again
-  /// from it.
+  /// from it, or from the character's stop if that's still ahead.
   mutating func learnerHeard(at now: Date) {
     lastHeardAt = now
-    learnerActed()
-    silenceFrom = now
+    learnerActed(at: now)
+    silenceFrom = silenceFrom ?? now
   }
 
   /// A key typed in the reply field.
   mutating func learnerTyped(at now: Date) {
     lastTypedAt = now
-    learnerActed()
+    learnerActed(at: now)
   }
 
   /// A typed reply went out.
   mutating func learnerSent(at now: Date) {
     lastSentAt = now
     lastTypedAt = nil
-    learnerActed()
+    learnerActed(at: now)
   }
 
   mutating func openingAcknowledged(at now: Date) {
@@ -224,7 +226,7 @@ struct LiveCallEnding {
     }
 
     if let cue = goodbyeToSend(at: now) {
-      actions.append(.send(cue))
+      actions.append(.send(cue, whileLearnerSpeaks: isLearnerTalking(at: now)))
     }
 
     if isGoodbyeSaid, now.timeIntervalSince(lastActivity) >= seconds(timing.goodbyeQuietMs) {
@@ -246,9 +248,20 @@ struct LiveCallEnding {
     return true
   }
 
-  private mutating func learnerActed() {
-    silenceFrom = nil
+  /// Only what the learner does once the character stopped answers it: talking over its last words
+  /// doesn't end a stretch that hasn't started.
+  private mutating func learnerActed(at now: Date) {
+    if let silenceFrom, silenceFrom <= now {
+      self.silenceFrom = nil
+    }
+
     checkedIn = false
+  }
+
+  /// The microphone hears them, or their words just came back as a transcript.
+  private func isLearnerTalking(at now: Date) -> Bool {
+    isLearnerSpeaking(at: now)
+      || isRecent(lastHeardAt, at: now, within: seconds(timing.characterQuietMs))
   }
 
   /// The opening goes out as the call goes live (`LiveCall` sends it). Measured: a slow session
@@ -311,9 +324,7 @@ struct LiveCallEnding {
         || now.timeIntervalSince(lastSentAt) >= answerWait
     }
 
-    if armed == .quiet || isLearnerSpeaking(at: now)
-      || isRecent(lastHeardAt, at: now, within: characterQuiet)
-    {
+    if armed == .quiet || isLearnerTalking(at: now) {
       return true
     }
 

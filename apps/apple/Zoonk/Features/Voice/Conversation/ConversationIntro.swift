@@ -210,6 +210,7 @@ struct CallButtonTitle: View {
 /// it in Settings.
 struct CallMicrophoneOff: View {
   @Environment(\.openURL) private var openURL
+  @AccessibilityFocusState private var isMessageFocused: Bool
 
   let name: String
   let onType: () -> Void
@@ -230,6 +231,11 @@ struct CallMicrophoneOff: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .accessibilityElement(children: .combine)
+    // It replaces the Call button VoiceOver was on.
+    .accessibilityFocused($isMessageFocused)
+    .onAppear {
+      isMessageFocused = true
+    }
 
     Button(action: onType) {
       Label {

@@ -2393,65 +2393,6 @@
         }
       }
     },
-    "Call ended. Writing your feedback…" : {
-      "comment" : "VoiceOver: the call hung up and its feedback is being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gespräch beendet. Wir erstellen dein Feedback…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Llamada terminada. Preparando comentarios para ti…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appel terminé. Préparation de ton bilan…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conversazione terminata. Stiamo preparando i commenti…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話が終了しました。フィードバックを作成しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화가 끝났어요. 피드백을 만들고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozmowa zakończona. Przygotowujemy informację zwrotną…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conversa encerrada. Criando seu feedback…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sohbet bitti. Geri bildirimini hazırlıyoruz…"
-          }
-        }
-      }
-    },
     "Call time" : {
       "comment" : "VoiceOver: the call's clock",
       "localizations" : {

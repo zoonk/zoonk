@@ -52,8 +52,6 @@ final class LiveCall {
 
   /// A session that hasn't started after this isn't going to.
   static let connectTimeout = Duration.seconds(15)
-  /// The character's answer has settled once its transcript stays quiet this long.
-  static let replySettled = Duration.milliseconds(1500)
   /// How often the microphone is read and the ending rules run.
   static let tick = Duration.milliseconds(200)
 
@@ -95,9 +93,9 @@ final class LiveCall {
   @ObservationIgnored private var openingCues = 0
   @ObservationIgnored private var goodbyeCues = 0
   @ObservationIgnored private var examCuesSent = 0
-  @ObservationIgnored private var learnerSpokeSinceCheck = false
-  @ObservationIgnored private var checking = false
-  @ObservationIgnored private var checkAgain = false
+  @ObservationIgnored private var checkTiming = ObjectiveCheckTiming()
+  /// Its own task, so words that arrive while it runs don't cancel it and lose its answer.
+  @ObservationIgnored private var runningCheck: Task<Void, Never>?
 
   init(conversation: LanguageConversation, client: LiveCallClient) {
     self.conversation = conversation
@@ -225,8 +223,7 @@ final class LiveCall {
     }
 
     turns = turns.addingTypedReply(trimmed)
-    learnerSpokeSinceCheck = true
-    settle?.cancel()
+    heard(.learner, startMs: nil)
 
     guard phase == .live, let script else {
       waitingReplies.append(trimmed)
@@ -376,13 +373,12 @@ final class LiveCall {
 
       if speaker == .learner {
         ending?.learnerHeard(at: now)
-        learnerSpokeSinceCheck = true
-        settle?.cancel()
       } else {
         ending?.characterSpoke(at: now, startMs: startMs)
         replyGaps.characterSpoke(at: now)
-        characterTurn()
       }
+
+      heard(speaker, startMs: startMs)
     case .delegation(let id):
       delegations += 1
       send(script.cues.noBackend, delegationId: id)
@@ -469,14 +465,14 @@ final class LiveCall {
 
     for action in ending?.advance(to: now) ?? [] {
       switch action {
-      case .send(.opening):
+      case .send(.opening, _):
         sendOpening(script.cues.opening)
-      case .send(.checkIn):
+      case .send(.checkIn, _):
         send(script.cues.checkIn)
-      case .send(.goodbye):
-        sendGoodbye(script.cues.goodbye)
-      case .send(.goodbyeDone):
-        sendGoodbye(script.cues.goodbyeDone)
+      case .send(.goodbye, let whileLearnerSpeaks):
+        sendGoodbye(script.cues.goodbye, whileLearnerSpeaks: whileLearnerSpeaks)
+      case .send(.goodbyeDone, let whileLearnerSpeaks):
+        sendGoodbye(script.cues.goodbyeDone, whileLearnerSpeaks: whileLearnerSpeaks)
       case .hangUp(let reason):
         end(reason.map { EndReason($0) } ?? .hardStop)
         return
@@ -509,9 +505,12 @@ final class LiveCall {
   }
 
   /// Its acknowledgment says where on the session's timeline the goodbye starts.
-  private func sendGoodbye(_ cue: LiveCallCue) {
+  private func sendGoodbye(_ cue: LiveCallCue, whileLearnerSpeaks: Bool) {
     goodbyeCues += 1
-    send(cue, eventId: "\(Self.goodbyeEventPrefix)\(goodbyeCues)")
+    let channel = whileLearnerSpeaks ? .thinking : cue.channel
+    send(
+      LiveCallCue(channel: channel, text: cue.text),
+      eventId: "\(Self.goodbyeEventPrefix)\(goodbyeCues)")
   }
 
   /// The character's next words answer the cue, not the learner: they aren't a reply gap.
@@ -523,62 +522,63 @@ final class LiveCall {
     }
   }
 
-  private func characterTurn() {
-    // An exam task's one goal is the task itself, graded when the call ends.
-    guard learnerSpokeSinceCheck, conversation.speakingTask == nil else {
+  /// Every transcript fragment waits for the transcript to settle again. An exam task's one goal
+  /// is the task itself, graded when the call ends.
+  private func heard(_ speaker: ConversationSpeaker, startMs: Double?) {
+    guard conversation.speakingTask == nil else {
       return
     }
 
+    checkTiming.hear(speaker, startMs: startMs)
+    checkOnceSettled()
+  }
+
+  /// A check still running holds the next until it's done.
+  private func checkOnceSettled() {
     settle?.cancel()
     settle = Task { [weak self] in
-      try? await Task.sleep(for: Self.replySettled)
+      try? await Task.sleep(for: ObjectiveCheckTiming.settle)
 
       guard !Task.isCancelled, let self else {
         return
       }
 
-      self.learnerSpokeSinceCheck = false
-      await self.checkObjectives()
+      if self.runningCheck != nil {
+        self.checkOnceSettled()
+      } else if self.phase == .live, self.checkTiming.isDue {
+        self.runningCheck = Task { [weak self] in
+          await self?.checkObjectives()
+          self?.runningCheck = nil
+        }
+      }
     }
   }
 
-  /// One check at a time; a turn that ends meanwhile is checked right after it.
   private func checkObjectives() async {
-    guard !checking else {
-      checkAgain = true
+    let sentAt = Date.now
+    checkTiming.read()
+    let found = await client.checkObjectives(turns.conversationTurns)
+
+    guard phase == .live, let check = found else {
       return
     }
 
-    checking = true
+    if check.objectivesMet.count > metLabels.count {
+      metLabels = check.objectivesMet
+    }
 
-    repeat {
-      checkAgain = false
-      let sentAt = Date.now
-      let check = await client.checkObjectives(turns.conversationTurns)
+    let now = Date.now
+    let allGoalsMet = conversation.objectives.allSatisfy {
+      check.objectivesMet.contains($0.label)
+    }
+    let sendsProgress = ending?.checked(
+      at: now, snapshotAt: sentAt, goodbye: check.goodbye, allGoalsMet: allGoalsMet)
 
-      guard phase == .live, let check else {
-        continue
-      }
+    if sendsProgress == true, let progress = check.progress?.value1 {
+      send(progress)
+    }
 
-      if check.objectivesMet.count > metLabels.count {
-        metLabels = check.objectivesMet
-      }
-
-      let now = Date.now
-      let allGoalsMet = conversation.objectives.allSatisfy {
-        check.objectivesMet.contains($0.label)
-      }
-      let sendsProgress = ending?.checked(
-        at: now, snapshotAt: sentAt, goodbye: check.goodbye, allGoalsMet: allGoalsMet)
-
-      if sendsProgress == true, let progress = check.progress?.value1 {
-        send(progress)
-      }
-
-      advance(now)
-    } while checkAgain
-
-    checking = false
+    advance(now)
   }
 
   /// The connection went away without GPT-Live saying the session closed: our server hanging it up
@@ -655,6 +655,7 @@ final class LiveCall {
 
     timers = []
     settle?.cancel()
+    runningCheck?.cancel()
     // The bar stays full once the ending started.
     signals = Signals(wrapUp: signals.wrapUp)
     transport?.silence()

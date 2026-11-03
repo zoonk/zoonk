@@ -224,11 +224,11 @@ struct CallAnnouncements: ViewModifier {
     content
       .onChange(of: call.signals.wrapUp) { _, wrapUp in
         if let line = wrapUpLine(wrapUp, endsAtLimit: call.endsAtLimit, name: name) {
-          announce(line)
+          announcePolitely(line)
         }
       }
       .onChange(of: call.muted) { _, muted in
-        announce(
+        announcePolitely(
           muted
             ? String(localized: "Muted", table: "Voice", comment: "The learner muted themselves")
             : String(
@@ -237,24 +237,16 @@ struct CallAnnouncements: ViewModifier {
       }
       .onChange(of: call.reconnecting) { _, reconnecting in
         if reconnecting {
-          announce(
+          announcePolitely(
             String(localized: "Reconnecting…", table: "Voice", comment: "The call reconnects"))
         }
       }
-      .onChange(of: call.phase) { _, phase in
-        if phase == .ended {
-          announce(
-            String(
-              localized: "Call ended. Writing your feedback…", table: "Voice",
-              comment: "VoiceOver: the call hung up and its feedback is being written"))
-        }
-      }
   }
+}
 
-  /// Queued after what VoiceOver is reading, not over it.
-  private func announce(_ text: String) {
-    var announcement = AttributedString(text)
-    announcement.accessibilitySpeechAnnouncementPriority = .low
-    AccessibilityNotification.Announcement(announcement).post()
-  }
+/// Queued after what VoiceOver is reading, not over it.
+func announcePolitely(_ text: String) {
+  var announcement = AttributedString(text)
+  announcement.accessibilitySpeechAnnouncementPriority = .low
+  AccessibilityNotification.Announcement(announcement).post()
 }

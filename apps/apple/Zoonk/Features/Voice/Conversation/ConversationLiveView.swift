@@ -7,6 +7,8 @@ struct ConversationLiveView: View {
   @State private var isShowingPhrases = false
   /// Above the panes: folding or resizing recreates them, and the draft stays.
   @State private var reply = ""
+  /// Once: a resize recreating the field mustn't bring the keyboard back.
+  @State private var focusesReply = true
 
   let call: LiveCall
   let conversation: LanguageConversation
@@ -86,7 +88,7 @@ struct ConversationLiveView: View {
               onRetry: onRetrySave)
           } else {
             CallTurnRow(call: call, conversation: conversation)
-            CallReply(call: call, reply: $reply)
+            CallReply(call: call, reply: $reply, focusesReply: $focusesReply)
             controls(besideAside: besideAside)
           }
         }
@@ -219,8 +221,11 @@ private struct CallTranscript: View {
 /// What's sent while the call connects goes out once it does. The field never takes focus by
 /// itself: speaking is the main way to answer, and the keyboard would cover the conversation.
 private struct CallReply: View {
+  @FocusState private var isFocused: Bool
+
   let call: LiveCall
   @Binding var reply: String
+  @Binding var focusesReply: Bool
 
   var body: some View {
     HStack(spacing: 8) {
@@ -230,6 +235,15 @@ private struct CallReply: View {
         text: $reply
       )
       .textFieldStyle(.roundedBorder)
+      .focused($isFocused)
+      // The learner chose to type: the field takes the place of "Type instead", focus included.
+      .onAppear {
+        if focusesReply, call.micBlocked {
+          isFocused = true
+        }
+
+        focusesReply = false
+      }
       .submitLabel(.send)
       .onSubmit(send)
       .onChange(of: reply) { _, text in
@@ -382,11 +396,14 @@ private struct CallEndedStatus: View {
     VStack(alignment: .leading, spacing: 12) {
       Label {
         VStack(alignment: .leading, spacing: 2) {
-          title
+          Text(verbatim: title)
             .font(.headline)
-          detail
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+
+          if let detail {
+            Text(verbatim: detail)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
         }
       } icon: {
         if state == .saving {
@@ -397,6 +414,12 @@ private struct CallEndedStatus: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .accessibilityElement(children: .combine)
+      // VoiceOver hears what the screen says the call is doing, an exam's grading included.
+      .onAppear {
+        if state == .saving {
+          announcePolitely([title, detail].compactMap(\.self).joinedSentences())
+        }
+      }
 
       if state == .closing || state == .failed {
         Button(action: onRetry) {
@@ -419,39 +442,44 @@ private struct CallEndedStatus: View {
     }
   }
 
-  private var title: Text {
+  private var title: String {
     switch state {
     case .closing:
-      Text(
-        "The call is still closing. Try again in a moment.", tableName: "Voice",
+      String(
+        localized: "The call is still closing. Try again in a moment.", table: "Voice",
         comment: "The server hasn't confirmed the call ended")
     case .failed:
-      Text("We couldn't save the call.", tableName: "Voice", comment: "Saving a call failed")
+      String(
+        localized: "We couldn't save the call.", table: "Voice", comment: "Saving a call failed")
     default:
-      Text("Call ended", tableName: "Voice", comment: "The call hung up and is being saved")
+      String(
+        localized: "Call ended", table: "Voice", comment: "The call hung up and is being saved")
     }
   }
 
-  private var detail: Text {
-    if state != .saving {
-      return Text(verbatim: "")
+  private var detail: String? {
+    guard state == .saving else {
+      return nil
     }
 
     if isGrading {
       return isSlow
-        ? Text(
-          "Still rating your speaking. This is taking longer than usual.", tableName: "Voice",
-          comment: "An exam task's grade takes long")
-        : Text(
-          "Rating your speaking on the exam's criteria. It usually takes about half a minute.",
-          tableName: "Voice", comment: "An exam task is graded")
+        ? String(
+          localized: "Still rating your speaking. This is taking longer than usual.",
+          table: "Voice", comment: "An exam task's grade takes long")
+        : String(
+          localized:
+            "Rating your speaking on the exam's criteria. It usually takes about half a minute.",
+          table: "Voice", comment: "An exam task is graded")
     }
 
     return isSlow
-      ? Text(
-        "Still writing your feedback. This is taking longer than usual.", tableName: "Voice",
-        comment: "A call's feedback takes long")
-      : Text("Writing your feedback…", tableName: "Voice", comment: "A call's feedback is written")
+      ? String(
+        localized: "Still writing your feedback. This is taking longer than usual.",
+        table: "Voice", comment: "A call's feedback takes long")
+      : String(
+        localized: "Writing your feedback…", table: "Voice",
+        comment: "A call's feedback is written")
   }
 }
 
