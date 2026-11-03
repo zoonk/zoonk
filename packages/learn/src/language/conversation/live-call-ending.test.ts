@@ -445,16 +445,50 @@ describe("a quiet learner", () => {
     expect(cueTimes(log)).toStrictEqual([0, 34_500]);
   });
 
-  it("isn't checked on after typing", () => {
+  it("starts the quiet over after a cough that never becomes words, and is checked on once more", () => {
+    const { goodbyes, log, state } = play({
+      events: [...GREETING, ...characterTalks(30_000, 1500), ...learnerTalks(35_000, 300)],
+      talkSeconds: 120,
+      until: 90_000,
+    });
+
+    // The microphone last heard them, its hangover included, at 36.2 s.
+    expect(getCallEndingView(state, 48_100).quietHint).toBe(false);
+    expect(getCallEndingView(state, 48_200).quietHint).toBe(true);
+    expect(cueTimes(log)).toStrictEqual([0, 29_000, 61_250]);
+    expect(goodbyes.map((entry) => entry.at)).toStrictEqual([86_250]);
+  });
+
+  it("is told nothing while the microphone hears them", () => {
+    const { log, state } = play({
+      events: [...GREETING, ...learnerTalks(20_000, 10_000)],
+      talkSeconds: 120,
+      until: 40_000,
+    });
+
+    expect(getCallEndingView(state, 30_000).quietHint).toBe(false);
+    expect(cueTimes(log)).toStrictEqual([0]);
+  });
+
+  it("is checked on 25 s after their last keystroke", () => {
     const { log } = play({
-      events: [...GREETING, { at: 20_000, type: "typing" }],
+      events: [...GREETING, ...learnerTypes(20_000, 2000)],
       talkSeconds: 120,
       until: 60_000,
     });
 
-    expect(log.filter((entry) => entry.type === "cue").map((entry) => entry.cue)).toStrictEqual([
-      "opening",
-    ]);
+    expect(cueTimes(log)).toStrictEqual([0, 46_500]);
+  });
+
+  it("isn't handled as quiet when steady noise keeps the microphone busy, so the call ends at its talk time", () => {
+    const { goodbyes, log } = play({
+      events: [...GREETING, ...learnerTalks(4000, 130_000)],
+      talkSeconds: 60,
+      until: 70_000,
+    });
+
+    expect(cueTimes(log)).toStrictEqual([0]);
+    expect(goodbyes).toMatchObject([{ at: 60_000, cue: "goodbye", whileLearnerSpeaks: true }]);
   });
 
   it("isn't checked on once the call is ending", () => {

@@ -68,8 +68,6 @@ export type CallEndingState = {
   characterAt: number | null;
   checkedIn: boolean;
   ended: boolean;
-  /** When the current unanswered stretch started; null once the learner answered. */
-  episodeFrom: number | null;
   goodbye: GoodbyeRequest | null;
   hardStopAt: number;
   heardAt: number | null;
@@ -79,6 +77,8 @@ export type CallEndingState = {
   /** When the opening cue was acknowledged; a retry before that would greet twice (measured). */
   openingAckAt: number | null;
   openingRetried: boolean;
+  /** When the quiet stretch started: the end of the latest sound or keystroke from anyone. */
+  quietFrom: number;
   reason: CallEndingReason | null;
   saidGoodbye: boolean;
   sentAt: number | null;
@@ -135,7 +135,7 @@ function arm(state: CallEndingState, reason: CallEndingReason, at: number): Call
 }
 
 function quietFor(state: CallEndingState, at: number) {
-  return state.episodeFrom === null ? null : at - state.episodeFrom;
+  return state.learnerSpeaking ? null : at - state.quietFrom;
 }
 
 function stepSilence(state: CallEndingState, at: number): Step {
@@ -220,16 +220,13 @@ function evaluate(state: CallEndingState, at: number): Step {
   return { commands, state: next };
 }
 
-/** Only what they do once the character stopped answers it: talking over its last words doesn't. */
 function markLearner(state: CallEndingState, at: number): CallEndingState {
-  const { episodeFrom } = state;
-
   return {
     ...state,
     activityAt: Math.max(state.activityAt, at),
     checkedIn: false,
-    episodeFrom: episodeFrom !== null && episodeFrom > at ? episodeFrom : null,
     learnerAt: at,
+    quietFrom: Math.max(state.quietFrom, at),
   };
 }
 
@@ -240,9 +237,11 @@ function hearCharacter(state: CallEndingState, at: number, startMs: number): Cal
     ...state,
     activityAt: Math.max(state.activityAt, at),
     characterAt: at,
-    // The character's answer to its own check-in doesn't restart the stretch it checks in on.
-    episodeFrom: state.checkedIn ? state.episodeFrom : at + state.timing.characterQuietMs,
     goodbye: heard?.goodbye ?? null,
+    // The character's answer to its own check-in doesn't restart the stretch it checks in on.
+    quietFrom: state.checkedIn
+      ? state.quietFrom
+      : Math.max(state.quietFrom, at + state.timing.characterQuietMs),
     saidGoodbye: state.saidGoodbye || Boolean(heard?.said),
   };
 }
@@ -311,11 +310,8 @@ function reduce(
       : { ...state, learnerSpeaking: false };
   }
 
-  // Their words come back 1.3 to 1.8 s late, often after a short answer: the quiet starts again
-  // from them rather than waiting for words the character already said.
   if (event.type === "learnerHeard") {
-    const marked = markLearner(state, at);
-    return { ...marked, episodeFrom: marked.episodeFrom ?? at, heardAt: at, spokeOutLoud: true };
+    return { ...markLearner(state, at), heardAt: at, spokeOutLoud: true };
   }
 
   if (event.type === "typing") {
@@ -344,7 +340,6 @@ export function startCallEnding({
       characterAt: null,
       checkedIn: false,
       ended: false,
-      episodeFrom: at,
       goodbye: null,
       hardStopAt,
       heardAt: null,
@@ -353,6 +348,7 @@ export function startCallEnding({
       liveAt: at,
       openingAckAt: null,
       openingRetried: false,
+      quietFrom: at,
       reason: null,
       saidGoodbye: false,
       sentAt: null,
