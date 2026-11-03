@@ -36,7 +36,13 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   explanations: [],
   goals: [],
   onSwitchGoal: switchGoal,
-  places: { exam: false, mindMaps: false, readyMistakes: 0, speaking: false },
+  places: {
+    completedLessons: false,
+    exam: false,
+    mindMaps: false,
+    readyMistakes: 0,
+    speaking: false,
+  },
   today: null,
 };
 

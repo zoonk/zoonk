@@ -119,6 +119,12 @@ const learnerSummarySchema = z
     }),
     places: z
       .object({
+        completedLessons: z
+          .boolean()
+          .meta({
+            description:
+              "The active goal has a completed lesson to list (`GET /me/completed-lessons`)",
+          }),
         exam: z.boolean(),
         mindMaps: z.boolean(),
         readyMistakes: z

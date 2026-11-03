@@ -2105,6 +2105,109 @@
         }
       }
     },
+    "/me/completed-lessons": {
+      "get": {
+        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. Group the rows by `finishedOn`. A replay can shift later pages by one: skip a lesson already shown.",
+        "operationId": "listCurrentUserCompletedLessons",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List the current learner's completed lessons",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The goal whose completed lessons to list"
+            },
+            "required": true,
+            "description": "The goal whose completed lessons to list"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "description": "Opaque cursor returned in nextCursor",
+              "type": "string"
+            },
+            "description": "Opaque cursor returned in nextCursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of completed lessons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompletedLessonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/generations": {
       "get": {
         "description": "The run writing a goal's curriculum or, for an explain question, its explanation, for a wait that opened without it (its start failed, or its answer was lost): ask again every few seconds until `generationId` is there, then stream it. Only reads: it never starts a run. Uncached.",
@@ -33773,6 +33876,57 @@
         ],
         "additionalProperties": false
       },
+      "CompletedLessonList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompletedLesson"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "additionalProperties": false
+      },
+      "CompletedLesson": {
+        "type": "object",
+        "properties": {
+          "chapterTitle": {
+            "nullable": true,
+            "description": "The title of the lesson's chapter (a unit, for a language goal), or null",
+            "type": "string"
+          },
+          "finishedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day the learner last finished the lesson, as `YYYY-MM-DD`: a replay moves the lesson to its day"
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "description": "The lesson's current title"
+          }
+        },
+        "required": [
+          "chapterTitle",
+          "finishedOn",
+          "lessonId",
+          "title"
+        ],
+        "additionalProperties": false
+      },
       "GoalGenerationRun": {
         "type": "object",
         "properties": {
@@ -40161,6 +40315,10 @@
           "places": {
             "type": "object",
             "properties": {
+              "completedLessons": {
+                "type": "boolean",
+                "description": "The active goal has a completed lesson to list (`GET /me/completed-lessons`)"
+              },
               "exam": {
                 "type": "boolean"
               },
@@ -40178,6 +40336,7 @@
               }
             },
             "required": [
+              "completedLessons",
               "exam",
               "mindMaps",
               "readyMistakes",
