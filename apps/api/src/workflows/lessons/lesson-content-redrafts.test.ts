@@ -24,7 +24,7 @@ const recordedSpec = recordedOutput<RecordedSpec>("lesson-spec");
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
 const SOL = "openai/gpt-6-sol";
-const OPUS = "anthropic/claude-opus-5.5";
+const SONNET = "anthropic/claude-sonnet-5.5";
 
 const heldBack: RecordedDraft = {
   ...recordedDraft,
@@ -123,7 +123,7 @@ describe("lesson content redrafts", () => {
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
       undefined,
       undefined,
-      OPUS,
+      SONNET,
     ]);
 
     const [stored, planItem] = await Promise.all([
@@ -176,7 +176,7 @@ describe("lesson content redrafts", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
       undefined,
-      OPUS,
+      SONNET,
     ]);
   });
 
