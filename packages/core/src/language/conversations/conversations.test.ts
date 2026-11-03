@@ -243,7 +243,6 @@ describe("language conversations", () => {
       setup: {
         connectionId: expect.any(String),
         deadlineAt: expect.any(String),
-        endsAtLimit: null,
         seconds: PRACTICE_SECONDS + LIVE_CALL_WRAP_UP_SECONDS,
         talkSeconds: PRACTICE_SECONDS,
         voice: "marin",
@@ -324,10 +323,7 @@ describe("language conversations", () => {
 
     const second = await reserveTestCall(conversationId);
 
-    expect(second).toMatchObject({
-      setup: { endsAtLimit: null, talkSeconds: 60 },
-      status: "ready",
-    });
+    expect(second).toMatchObject({ setup: { talkSeconds: 60 }, status: "ready" });
 
     const records = await prisma.usageRecord.findMany({
       orderBy: { createdAt: "asc" },
@@ -361,24 +357,6 @@ describe("language conversations", () => {
     ).resolves.toMatchObject({ createdAt: new Date(), seconds: PRACTICE_SECONDS });
   });
 
-  it("ends a call early at the day's call time, and says so", async () => {
-    const { renting, user } = await languageGoalFixture();
-    mockSession(user.id);
-    const conversationId = await startPractice(renting.id);
-
-    await usageRecordsFixture({
-      count: 1,
-      kind: "conversation",
-      seconds: FREE_CALL_SECONDS - 90,
-      userId: user.id,
-    });
-
-    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: "day", talkSeconds: 90 },
-      status: "ready",
-    });
-  });
-
   it("stops at the free plan's daily call time without creating a provider session", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
@@ -387,7 +365,7 @@ describe("language conversations", () => {
     await usageRecordsFixture({
       count: 1,
       kind: "conversation",
-      seconds: FREE_CALL_SECONDS - 30,
+      seconds: FREE_CALL_SECONDS,
       userId: user.id,
     });
 

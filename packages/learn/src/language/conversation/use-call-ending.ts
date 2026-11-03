@@ -1,6 +1,5 @@
 "use client";
 
-import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { sendLiveCallCue } from "./live-call-commands";
 import {
@@ -29,7 +28,7 @@ export type CallLength = {
   script: LiveCallScript;
   talkEndsAt: number;
   talkSeconds: number;
-} & Pick<LanguageConversationSetup, "endsAtLimit">;
+};
 
 type TimedCue = { atSeconds: number; say: string };
 

@@ -106,11 +106,14 @@ export const practiceCallSchema = z
       .nullable()
       .meta({
         description:
-          "When no length fits: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
+          "When no call time is left: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
       }),
     minutes: z
       .array(z.int())
-      .meta({ description: "The lengths that fit what's left of the learner's call time" }),
+      .meta({
+        description:
+          "Every length the learner's plan allows, while any of their call time is left. A call runs its whole length; the time it uses can pass what's left, and then the next call waits",
+      }),
     paused: z
       .boolean()
       .meta({

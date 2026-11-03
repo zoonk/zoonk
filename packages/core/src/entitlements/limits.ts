@@ -69,8 +69,6 @@ export function getLiveCallReservationMicros(talkSeconds: number): number {
   );
 }
 
-export const MIN_CALL_SECONDS = SECONDS_PER_MINUTE;
-
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
     assist: { day: 100, month: 500 },
@@ -174,6 +172,11 @@ export const GUEST_DAILY_SPEND_BUDGET_MICROS = 150_000_000;
 
 export function getUsageRule({ kind, tier }: { kind: UsageKind; tier: EntitlementTier }) {
   return USAGE_RULES[tier][kind];
+}
+
+/** A plan's call lengths fit in one day of its call time; longer ones come with Plus. */
+export function getLongestCallSeconds(tier: EntitlementTier): number {
+  return getUsageRule({ kind: "conversation", tier }).daySeconds ?? 0;
 }
 
 export function getActiveGoalLimit(tier: EntitlementTier): number | null {

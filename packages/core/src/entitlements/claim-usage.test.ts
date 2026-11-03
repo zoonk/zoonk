@@ -144,7 +144,7 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId }),
-    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
 
     await expect(
       prisma.usageRecord.findUniqueOrThrow({
@@ -153,7 +153,7 @@ describe(claimUsage, () => {
     ).resolves.toMatchObject({ costMicros: getLiveCallReservationMicros(120), seconds: 120 });
   });
 
-  it("gives Plus 20 minutes of calls a day: the last call runs what's left, then calls wait for tomorrow", async () => {
+  it("gives Plus 20 minutes of calls a day: a call starts whole while any of it is left, then calls wait for tomorrow", async () => {
     const user = await useLearner({ plus: true });
 
     await usageRecordsFixture({
@@ -166,7 +166,7 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ heldSeconds: 60, shortenedBy: "day", status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
@@ -179,10 +179,10 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
   });
 
-  it("caps a month of Plus's calls too: the last call runs what's left, then calls wait for next month", async () => {
+  it("caps a month of Plus's calls too: a call starts whole while any of it is left, then calls wait for next month", async () => {
     const user = await useLearner({ plus: true });
 
     await usageRecordsFixture({
@@ -195,7 +195,7 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ heldSeconds: 120, shortenedBy: "month", status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
 
     vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
 
@@ -216,10 +216,10 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
   });
 
-  it("gives the free plan a much smaller month of calls than Plus", async () => {
+  it("gives the free plan a much smaller month of calls than Plus, the last one whole", async () => {
     const user = await useLearner();
 
     await usageRecordsFixture({
@@ -232,7 +232,7 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
-    ).resolves.toStrictEqual({ heldSeconds: 60, shortenedBy: "month", status: "allowed" });
+    ).resolves.toStrictEqual({ status: "allowed" });
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 60, targetId: randomUUID() }),

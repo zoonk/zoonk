@@ -218,7 +218,6 @@ export const languageConversationSetupSchema = z
   .object({
     connectionId: z.uuid(),
     deadlineAt: z.iso.datetime().meta({ description: "When the server hangs the call up" }),
-    endsAtLimit: z.enum(["day", "month"]).nullable(),
     script: liveCallScriptSchema,
     seconds: z
       .int()

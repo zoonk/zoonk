@@ -2,7 +2,7 @@ import { type TransactionClient, type UsageKind } from "@zoonk/db";
 import { type UsageDecision } from "../contract";
 import { getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
-import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
+import { evaluateUsage } from "./evaluate-usage";
 import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
 
@@ -35,21 +35,7 @@ export async function claimUsageInTransaction({
 
   const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });
 
-  const hold =
-    seconds === undefined
-      ? null
-      : getCallHold({
-          left: getCallTimeLeft({
-            kind,
-            tier: viewer.tier,
-            usedThisMonth: counts.secondsThisMonth,
-            usedToday: counts.secondsToday,
-          }),
-          seconds,
-        });
-
-  const held = hold?.heldSeconds ?? 0;
-  const costMicros = getEstimatedCostMicros({ generated, kind, seconds: held });
+  const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
   const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
 
   if (decision.status !== "allowed") {
@@ -68,20 +54,11 @@ export async function claimUsageInTransaction({
       createdAt: now,
       generated,
       kind,
-      seconds: held,
+      seconds: seconds ?? 0,
       targetId,
       userId: viewer.userId,
     },
   });
 
-  if (!hold) {
-    return { decision, recorded: true };
-  }
-
-  return {
-    decision: hold.shortenedBy
-      ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
-      : { ...decision, heldSeconds: held },
-    recorded: true,
-  };
+  return { decision, recorded: true };
 }

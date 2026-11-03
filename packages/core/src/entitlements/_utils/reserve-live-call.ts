@@ -99,14 +99,12 @@ async function clearOpenConnection({
     : { status: "previousConnectionClosing" };
 }
 
-async function fitsMonthlyBudget({
+async function hasMonthlyBudgetLeft({
   now,
-  reservedMicros,
   transaction,
   viewer,
 }: {
   now: Date;
-  reservedMicros: number;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<boolean> {
@@ -122,7 +120,7 @@ async function fitsMonthlyBudget({
     0,
   );
 
-  return exposure + reservedMicros <= getCallMonthlyBudgetMicros(viewer.tier);
+  return exposure < getCallMonthlyBudgetMicros(viewer.tier);
 }
 
 async function newConnectionId(transaction: TransactionClient): Promise<string> {
@@ -159,7 +157,7 @@ export async function reserveLiveCall({
     return { status: "conversationEnded" };
   }
 
-  if (isPlusOnlyLiveCall(conversation.kind) && viewer.tier !== "plus") {
+  if (isPlusOnlyLiveCall(conversation) && viewer.tier !== "plus") {
     return { status: "plusRequired" };
   }
 
@@ -220,15 +218,7 @@ async function holdCallTime({
     return decision;
   }
 
-  const heldSeconds = decision.heldSeconds ?? seconds;
-
-  if (heldSeconds === 0) {
-    throw new LiveCallReservationRefusedError({ status: "conversationEnded" });
-  }
-
-  const costMicros = getLiveCallReservationMicros(heldSeconds);
-
-  if (!(await fitsMonthlyBudget({ now, reservedMicros: costMicros, transaction, viewer }))) {
+  if (!(await hasMonthlyBudgetLeft({ now, transaction, viewer }))) {
     throw new LiveCallReservationRefusedError({
       limit: {
         limit: getCallMonthlyBudgetMicros(viewer.tier),
@@ -243,16 +233,14 @@ async function holdCallTime({
   const connection = await transaction.liveCallConnection.create({
     data: {
       conversationId: conversation.id,
-      costMicros,
+      costMicros: getLiveCallReservationMicros(seconds),
       createdAt: now,
-      deadlineAt: new Date(
-        now.getTime() + (heldSeconds + LIVE_CALL_WRAP_UP_SECONDS) * MS_PER_SECOND,
-      ),
-      heldSeconds,
+      deadlineAt: new Date(now.getTime() + (seconds + LIVE_CALL_WRAP_UP_SECONDS) * MS_PER_SECOND),
+      heldSeconds: seconds,
       id,
       userId: viewer.userId,
     },
   });
 
-  return { connection, endsAtLimit: decision.shortenedBy ?? null, status: "reserved" };
+  return { connection, status: "reserved" };
 }
