@@ -118,11 +118,13 @@ Generation runs at most four calls at a time so a model's own requests don't slo
 
 ## Language Coverage
 
-`eval:languages` lists every task's cases per language and how many came from production samples. It fails when a task has no English or no Portuguese case, or a case whose language can't be told:
+`eval:languages` lists every task's cases per language and how many came from production samples. It fails when a task has no English or no Portuguese case, or a case whose language can't be told. Code Quality runs it on every pull request:
 
 ```bash
 pnpm --filter evals eval:languages
 ```
+
+A task that never runs in one of them says why in `skippedLanguages`, as `word-ipa` does for English: language audio asks for IPA only for words of other languages. The check prints the reason instead of failing.
 
 ## Quality Floor
 

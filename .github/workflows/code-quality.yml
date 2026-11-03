@@ -65,6 +65,9 @@ jobs:
       - name: Check for i18n errors
         run: pnpm i18n:lint
 
+      - name: Check eval language coverage
+        run: pnpm --filter evals eval:languages
+
       - name: Run type check
         run: pnpm typecheck
 

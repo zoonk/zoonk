@@ -99,4 +99,26 @@ export const TEST_CASES: FindSubjectQuestionsCase[] = [
       total: 170,
     },
   },
+  {
+    expected: { counts: { 1: 25, 2: 25, 3: 25 }, status: "found" },
+    id: "en-jee-main-paper-1",
+    userInput: {
+      board: "NTA",
+      exam: "JEE Main, Paper 1 (B.E./B.Tech.)",
+      subjects: ["Physics", "Chemistry", "Mathematics"],
+      today: TODAY,
+      total: 75,
+    },
+  },
+  {
+    expected: { counts: { 1: 45, 2: 45, 3: 90 }, status: "found" },
+    id: "en-neet-ug",
+    userInput: {
+      board: "NTA",
+      exam: "NEET (UG)",
+      subjects: ["Physics", "Chemistry", "Biology (Botany and Zoology)"],
+      today: TODAY,
+      total: 180,
+    },
+  },
 ];
