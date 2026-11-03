@@ -45,7 +45,12 @@ export function CategorizeSorted({
           const cards = items.filter((item) => placements[item.id] === group.id);
 
           return (
-            <CategorizeGroupList group={group} isEmpty={cards.length === 0} key={group.id}>
+            <CategorizeGroupList
+              group={group}
+              isChecked={checkedPairs !== null}
+              isEmpty={cards.length === 0}
+              key={group.id}
+            >
               {cards.map((item) =>
                 checkedPairs ? (
                   <CategorizeResultRow

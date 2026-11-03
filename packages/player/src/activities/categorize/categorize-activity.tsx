@@ -54,6 +54,7 @@ export function CategorizeActivity({
   const interactionState = usePlayerInteractionState();
   const { groups } = content.fields;
   const isChecked = phase === "checked";
+  const isInteractive = !isChecked && interactionState !== "paused";
 
   const items = seededShuffle(
     content.fields.items,
@@ -158,17 +159,17 @@ export function CategorizeActivity({
     document.querySelector<HTMLElement>(`#${CSS.escape(rowId(itemId))}`)?.focus();
   }
 
-  function drop(itemId: string, groupId: string) {
-    if (!card) {
+  function drop(itemId: string, groupId: string, from: string | undefined) {
+    if (from) {
       move(itemId, groupId);
-    } else if (itemId === card.id) {
+    } else if (itemId === card?.id) {
       sort(groupId);
     }
   }
 
   useNumberKeys({
     count: groups.length,
-    enabled: card !== null && interactionState !== "paused",
+    enabled: card !== null && isInteractive,
     onPick: (index) => {
       const group = groups[index];
 
@@ -182,7 +183,7 @@ export function CategorizeActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <ActivityDragDrop onDrop={drop} underPointerOnly>
+      <ActivityDragDrop disabled={!isInteractive} onDrop={drop} underPointerOnly>
         {card ? (
           <CategorizeSorting
             card={card}

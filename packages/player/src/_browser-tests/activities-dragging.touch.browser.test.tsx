@@ -1,9 +1,24 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { openActivity } from "../_test-utils/activity-player";
+import {
+  expectVerdict,
+  openActivity,
+  press,
+  pressOnPage,
+  sortCard,
+  sortedCard,
+} from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { holdAndDrag, swipeFrom, swipeUpFrom, tap } from "../_test-utils/touch-screen";
+import {
+  holdAndDrag,
+  holdFinger,
+  liftFinger,
+  slideFinger,
+  swipeFrom,
+  swipeUpFrom,
+  tap,
+} from "../_test-utils/touch-screen";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
@@ -125,5 +140,55 @@ describe("dragging activity items with a finger", () => {
 
     await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "Undo" })).not.toBeInTheDocument();
+  });
+
+  it("categorize: holding a Move to choice moves the card instead of lifting its row", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "Same substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+    await tap(sortedCard({ group: "Same substance", item: "Rusting iron" }));
+    await holdFinger(page.getByRole("menuitem", { name: "New substance" }));
+    await liftFinger();
+
+    await expect
+      .element(sortedCard({ group: "New substance", item: "Rusting iron" }))
+      .toBeVisible();
+  });
+
+  it("categorize: a row still held when Check is pressed leaves the checked groups alone", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "Same substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+
+    const finger = await holdFinger(sortedCard({ group: "Same substance", item: "Rusting iron" }));
+    await slideFinger(finger, page.getByRole("region", { name: "New substance" }));
+    await press("Enter");
+    await expectVerdict("Not quite");
+    await liftFinger();
+
+    await expect.element(page.getByText("2 of 3 in the right group")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("region", { name: "Same substance" }).getByText("Rusting iron"))
+      .toBeVisible();
+  });
+
+  it("categorize: a number key that sorts the lifted last card wins over its drop", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+
+    const finger = await holdFinger(page.getByText("Burning wood", { exact: true }));
+    const over = await slideFinger(finger, page.getByRole("button", { name: "Same substance" }));
+    await pressOnPage("1");
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toBeVisible();
+    await slideFinger(over, page.getByRole("region", { name: "Same substance" }));
+    await liftFinger();
+
+    await expect
+      .element(sortedCard({ group: "New substance", item: "Burning wood" }))
+      .toBeVisible();
   });
 });

@@ -70,15 +70,16 @@ export function CategorizeMoveRow({
   });
 
   return (
-    <li
-      {...dragProps}
-      className={cn(
-        "first:*:rounded-t-lg last:*:rounded-b-lg",
-        isDragging &&
-          "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1",
-      )}
-    >
-      <DropdownMenu>
+    // The menu holds the row rather than sitting inside it: presses on its portaled items bubble to their React parents, and the row's drag listeners must not get them.
+    <DropdownMenu>
+      <li
+        {...dragProps}
+        className={cn(
+          "first:*:rounded-t-lg last:*:rounded-b-lg",
+          isDragging &&
+            "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1",
+        )}
+      >
         {/* Base UI opens a menu on press; the row opens it on click, so a press that moves can lift the row. */}
         <DropdownMenuTrigger
           className={cn(
@@ -101,10 +102,10 @@ export function CategorizeMoveRow({
 
           <ChevronsUpDown aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
+      </li>
 
-        <CategorizeMoveMenu onMove={onMove} otherGroups={otherGroups} />
-      </DropdownMenu>
-    </li>
+      <CategorizeMoveMenu onMove={onMove} otherGroups={otherGroups} />
+    </DropdownMenu>
   );
 }
 

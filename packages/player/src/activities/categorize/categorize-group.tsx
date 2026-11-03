@@ -91,15 +91,17 @@ export function CategorizeGroupOption({
 export function CategorizeGroupList({
   children,
   group,
+  isChecked,
   isEmpty,
 }: {
   children: React.ReactNode;
   group: Group;
+  isChecked: boolean;
   isEmpty: boolean;
 }) {
   const t = useExtracted();
   const headingId = useId();
-  const { dropRef, isOver } = useActivityDropTarget({ id: group.id });
+  const { dropRef, isOver } = useActivityDropTarget({ disabled: isChecked, id: group.id });
 
   return (
     <section
