@@ -10,7 +10,6 @@ import {
   CertificateStart,
 } from "@zoonk/learn/certificates/meaning";
 import {
-  CertificateFootnote,
   CertificateIntro,
   type CertificateOwner,
   CertificateOwnerActions,
@@ -39,7 +38,7 @@ export function CertificateView({
   return (
     <>
       <section className="bg-ground">
-        <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-6 pb-14 sm:pb-16")}>
+        <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
           {ownerActions && <CertificatesBackLink href="/certificates" />}
           <CertificateIntro facts={facts} />
 
@@ -70,10 +69,6 @@ export function CertificateView({
           </div>
         </section>
       )}
-
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "py-6")}>
-        <CertificateFootnote />
-      </div>
 
       <CertificatePrint src={links.imageUrls.print} />
     </>

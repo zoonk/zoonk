@@ -1814,11 +1814,6 @@ msgid "Your certificates"
 msgstr "Sertifikalarına dön"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "qqmDMo"
-msgid "Every Zoonk certificate has its own link."
-msgstr "Her Zoonk sertifikasının kendine ait bir bağlantısı vardır."
-
-#: src/certificates/certificate-page.tsx
 msgctxt "QXN1kN"
 msgid "Verified certificate · issued by Zoonk"
 msgstr "Doğrulanmış sertifika · Zoonk tarafından verildi"

@@ -25,7 +25,7 @@ export function PlacementRow({ account, facts, links }: LevelTestPlacement) {
 
   return (
     <a
-      className="bg-muted hover:bg-muted/70 press focus-visible:ring-ring/50 -mx-3 flex items-center gap-3.5 rounded-xl p-3 text-left outline-none [--press-scale:0.99] focus-visible:ring-[3px]"
+      className="bg-muted hover:bg-muted/70 press focus-visible:ring-ring/50 -mx-2 flex items-center gap-3.5 rounded-xl p-3 text-left outline-none [--press-scale:0.99] focus-visible:ring-[3px] sm:-mx-3"
       data-slot="placement-row"
       href={links.url}
       rel="noopener"

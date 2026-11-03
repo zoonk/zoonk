@@ -107,7 +107,7 @@ async function CertificateBody({ params }: Props) {
 function CertificateSkeleton() {
   return (
     <div aria-busy="true" className="bg-ground min-h-dvh">
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-6 pb-16")}>
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-16 sm:pt-12")}>
         <CertificateVerified />
         <Skeleton className="mt-4 h-10 w-full max-w-2xl" />
         <Skeleton className="mt-2 h-10 w-2/3 max-w-xl" />

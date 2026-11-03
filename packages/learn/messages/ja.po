@@ -1814,11 +1814,6 @@ msgid "Your certificates"
 msgstr "証明書"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "qqmDMo"
-msgid "Every Zoonk certificate has its own link."
-msgstr "Zoonkの証明書には、それぞれ専用のリンクがあります。"
-
-#: src/certificates/certificate-page.tsx
 msgctxt "QXN1kN"
 msgid "Verified certificate · issued by Zoonk"
 msgstr "認証済みの証明書・Zoonk発行"
@@ -1889,12 +1884,12 @@ msgstr "文章をコピーしました。Facebookの投稿に貼り付けてく�
 #: src/certificates/certificate-share.tsx
 msgctxt "tXB0F9"
 msgid "Share your certificate"
-msgstr "認定証をシェアする"
+msgstr "証明書をシェアする"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "Mpsug3"
 msgid "Your post shows this picture and links to your certificate's page."
-msgstr "投稿には、この画像と認定証のページへのリンクが表示されます。"
+msgstr "投稿にはこの画像と証明書のページへのリンクが表示されます。"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "tfBQnN"
@@ -1929,7 +1924,7 @@ msgstr "LinkedInに追加する"
 #: src/certificates/certificates-screen.tsx
 msgctxt "lX2csU"
 msgid "Certificates"
-msgstr "認定証"
+msgstr "証明書"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "Ek6qb7"
@@ -1939,17 +1934,17 @@ msgstr "練習しているすべてのスキルが次のレベルに進むと取
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
 msgid "Your certificate comes when you finish the plan"
-msgstr "学習計画を終えると認定証を取得できます"
+msgstr "学習計画を終えると証明書がもらえます"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
 msgid "No certificates yet"
-msgstr "認定証はまだありません"
+msgstr "まだ証明書はありません"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "コースや語学のレベルを修了すると、認定証がここに表示されます。無料で印刷やシェアができます。レベル判定テストの結果もここに表示されます。"
+msgstr "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル判定テストの結果もここに表示されます。"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -1959,12 +1954,12 @@ msgstr "学習を続ける"
 #: src/certificates/certificates-screen.tsx
 msgctxt "7yoAJi"
 msgid "{count, plural, one {# certificate} other {# certificates}}"
-msgstr "{count, plural, other {#枚の認定証}}"
+msgstr "{count, plural, other {#枚の証明書}}"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "svDFL8"
 msgid "Print, download or share your certificates anytime."
-msgstr "認定証はいつでも印刷、ダウンロード、シェアできます。"
+msgstr "証明書はいつでも印刷、ダウンロード、共有できます。"
 
 #: src/certificates/placement-row.tsx
 msgctxt "BnNTsQ"
@@ -1974,7 +1969,7 @@ msgstr "無料アカウントを作成すると、この結果を保存してシ
 #: src/certificates/placement-row.tsx
 msgctxt "DcP7sL"
 msgid "Saved in your certificates. Share it anytime."
-msgstr "認定証の一覧に保存しました。いつでもシェアできます。"
+msgstr "「証明書」に保存しました。いつでも共有できます。"
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -5211,12 +5206,12 @@ msgstr "<date></date> · 試験"
 #: src/journey/study-next.tsx
 msgctxt "koWpue"
 msgid "View certificate"
-msgstr "認定証を見る"
+msgstr "証明書を見る"
 
 #: src/journey/study-next.tsx
 msgctxt "n-Px0T"
 msgid "Get your certificate"
-msgstr "認定証を取得する"
+msgstr "証明書を受け取る"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"

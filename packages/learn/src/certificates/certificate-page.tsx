@@ -48,14 +48,6 @@ export function CertificatesBackLink({ href }: { href: string }) {
   );
 }
 
-export function CertificateFootnote() {
-  const t = useExtracted();
-
-  return (
-    <p className="text-faint text-[0.8125rem]">{t("Every Zoonk certificate has its own link.")}</p>
-  );
-}
-
 export function CertificateVerified() {
   const t = useExtracted();
 

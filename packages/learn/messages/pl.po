@@ -1814,11 +1814,6 @@ msgid "Your certificates"
 msgstr "Wróć do swoich certyfikatów"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "qqmDMo"
-msgid "Every Zoonk certificate has its own link."
-msgstr "Każdy certyfikat Zoonka ma własny link."
-
-#: src/certificates/certificate-page.tsx
 msgctxt "QXN1kN"
 msgid "Verified certificate · issued by Zoonk"
 msgstr "Zweryfikowany certyfikat · wystawca: Zoonk"
