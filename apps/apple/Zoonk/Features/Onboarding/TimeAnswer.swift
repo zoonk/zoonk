@@ -53,6 +53,7 @@ struct TimeAnswer: View {
           onUseOffer(offer.minutes)
         } label: {
           Self.offerLabel(offer)
+            .multilineTextAlignment(.leading)
         }
         .font(.subheadline.weight(.semibold))
       }
@@ -268,14 +269,14 @@ struct TimeAnswer: View {
         month
           ? String(
             localized:
-              "Your date, the start of \(date), has passed. You can choose a new one on the next screen.",
+              "Your date, the start of \(date), has passed.",
             table: "Onboarding",
             comment:
               "The goal's date has passed; the argument is the month the learner named, like 'May 2027'"
           )
           : String(
             localized:
-              "Your date, \(date), has passed. You can choose a new one on the next screen.",
+              "Your date, \(date), has passed.",
             table: "Onboarding",
             comment: "The goal's date has passed; the argument is a date like 'May 5, 2027'")
       }

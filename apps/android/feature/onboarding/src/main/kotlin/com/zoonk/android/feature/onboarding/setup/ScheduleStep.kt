@@ -5,23 +5,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -78,14 +85,51 @@ internal fun ColumnScope.ScheduleStep(
     pending: Boolean,
     factsBeside: Boolean,
 ) {
+    var choice by rememberSaveable(stateSaver = jsonSaver(ScheduleChoice.serializer())) {
+        mutableStateOf(ScheduleChoice(startingDays(goal.studyDays.map(Long::toInt))))
+    }
+    // What the learner set is theirs, so a new date keeps it; what it covers starts over for the date.
+    ForDate(goal.targetDate) {
+        ScheduleTime(goal, recommendedMinutes, timeChoices, planReadiness, run, store, vm, pending, factsBeside, choice) { choice = it }
+    }
+}
+
+/** A new date starts its content over, and what was kept for the date before is dropped. */
+@Composable
+private fun ForDate(
+    date: LocalDate?,
+    content: @Composable () -> Unit,
+) {
+    val dates = rememberSaveableStateHolder()
+    val key = date?.toString().orEmpty()
+    var shown by rememberSaveable { mutableStateOf(key) }
+    dates.SaveableStateProvider(key, content)
+    LaunchedEffect(key) {
+        if (shown != key) dates.removeState(shown)
+        shown = key
+    }
+}
+
+@Composable
+private fun ColumnScope.ScheduleTime(
+    goal: Goal,
+    recommendedMinutes: Int,
+    timeChoices: List<OnboardingTimeChoicesInner>,
+    planReadiness: OnboardingPlanReadiness,
+    run: GenerationRun,
+    store: OnboardingStore,
+    vm: GoalSetupViewModel,
+    pending: Boolean,
+    factsBeside: Boolean,
+    choice: ScheduleChoice,
+    onChoiceChange: (ScheduleChoice) -> Unit,
+) {
     val exam = goal.kind == Goal.Kind.EXAM
-    var picked by rememberSaveable { mutableStateOf<Int?>(null) }
+    val picked = choice.picked
     var pickedSplit by rememberSaveable(stateSaver = DaySplitSaver) { mutableStateOf<DaySplit?>(null) }
-    var fullCourse by rememberSaveable { mutableStateOf(false) }
-    var days by rememberSaveable { mutableStateOf(startingDays(goal.studyDays.map(Long::toInt))) }
-    var weekendOn by rememberSaveable { mutableStateOf(false) }
-    var weekendPicked by rememberSaveable { mutableStateOf<Int?>(null) }
-    val weekend = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
+    val fullCourse = choice.fullCourse
+    val days = choice.days
+    val weekend = choice.weekend
     val hasDays = days.isNotEmpty()
     val paused = run.isStopped
 
@@ -159,7 +203,7 @@ internal fun ColumnScope.ScheduleStep(
     val answers = listOf(covering.answer, covering.last, covering.first)
     val choose = { next: Int, followed: PlanTimeToCover? ->
         pickedSplit = daySplit(next, timeChoices, answers) ?: pickedSplit.takeIf { next == picked }
-        picked = pickedMinutes(first, followed, next)
+        onChoiceChange(choice.copy(picked = pickedMinutes(first, followed, next)))
     }
     val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
@@ -189,17 +233,14 @@ internal fun ColumnScope.ScheduleStep(
 
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            WeekdayToggles(days, onChange = { days = it })
+            WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
             if (days.any(::isWeekend)) {
                 WeekendTime(
                     times = timeChoices.map { it.minutes },
-                    checked = weekendOn,
-                    minutes = weekendPicked ?: minutes ?: recommendedMinutes,
-                    onCheckedChange = {
-                        weekendOn = it
-                        weekendPicked = null
-                    },
-                    onChange = { weekendPicked = it },
+                    checked = choice.weekendOn,
+                    minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
+                    onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
+                    onChange = { onChoiceChange(choice.copy(weekendPicked = it)) },
                 )
             }
         }
@@ -235,14 +276,28 @@ internal fun ColumnScope.ScheduleStep(
                         ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
                     ).takeIf { hasDays },
                 updating = shown.updating,
+                action = { DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate) },
             )
         }
 
         val short = shown.line is TimeLine.Share || shown.line is TimeLine.Focus
         if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
             val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { fullCourse = it })
+            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
+    }
+}
+
+/** Under the time's answer, its words lined up with the answer's. */
+@Composable
+private fun DateLink(
+    dated: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val inset = ButtonDefaults.TextButtonContentPadding.calculateStartPadding(LocalLayoutDirection.current)
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset), enabled = enabled) {
+        Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }
 

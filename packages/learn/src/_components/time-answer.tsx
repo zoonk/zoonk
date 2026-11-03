@@ -113,6 +113,7 @@ function NoteWords({
 }
 
 export function TimeAnswer({
+  action,
   date,
   exam,
   line,
@@ -126,6 +127,7 @@ export function TimeAnswer({
   split = null,
   updating = false,
 }: {
+  action?: React.ReactNode;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
@@ -146,53 +148,57 @@ export function TimeAnswer({
   const offered = offer && !failed ? offer : null;
 
   return (
-    <div
-      aria-busy={updating || isBusyLine(line) || noteStatus === "finding"}
-      aria-live="polite"
-      className={cn(
-        "text-muted-foreground flex min-h-12 flex-col gap-2 text-sm leading-6 text-pretty transition-opacity sm:min-h-0",
-        updating && "opacity-50",
-      )}
-    >
-      <NoteWords date={date} note={note} noteStatus={noteStatus} />
-
-      <p>
-        <LineWords date={date} exam={exam} line={line} minutes={minutes} />
-
-        {note?.kind === "tooLong" && (
-          <>
-            {space}
-            {texts.tooLong}
-          </>
+    <div className="flex min-h-12 flex-col gap-2 sm:min-h-0">
+      <div
+        aria-busy={updating || isBusyLine(line) || noteStatus === "finding"}
+        aria-live="polite"
+        className={cn(
+          "text-muted-foreground flex flex-col gap-2 text-sm leading-6 text-pretty transition-opacity",
+          updating && "opacity-50",
         )}
+      >
+        <NoteWords date={date} note={note} noteStatus={noteStatus} />
 
-        {split && (
-          <>
-            {space}
-            <DaySplitWords split={split} />
-          </>
+        <p>
+          <LineWords date={date} exam={exam} line={line} minutes={minutes} />
+
+          {note?.kind === "tooLong" && (
+            <>
+              {space}
+              {texts.tooLong}
+            </>
+          )}
+
+          {split && (
+            <>
+              {space}
+              <DaySplitWords split={split} />
+            </>
+          )}
+
+          {failed && (
+            <>
+              {space}
+              <Button onClick={onRetry} variant="link">
+                {t("Try again")}
+              </Button>
+            </>
+          )}
+
+          {offered && offerAs === "link" && (
+            <>
+              {space}
+              <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
+            </>
+          )}
+        </p>
+
+        {offered && offerAs === "button" && (
+          <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
         )}
+      </div>
 
-        {failed && (
-          <>
-            {space}
-            <Button onClick={onRetry} variant="link">
-              {t("Try again")}
-            </Button>
-          </>
-        )}
-
-        {offered && offerAs === "link" && (
-          <>
-            {space}
-            <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
-          </>
-        )}
-      </p>
-
-      {offered && offerAs === "button" && (
-        <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
-      )}
+      {action}
     </div>
   );
 }

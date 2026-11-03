@@ -13,7 +13,7 @@ import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
-import { type FlowState, applyAnswer } from "./_utils/answered-step";
+import { type FlowState, applyAnswer, openStep } from "./_utils/answered-step";
 import { getSetupProgress } from "./_utils/setup-progress";
 import {
   type AnswerOutcome,
@@ -30,6 +30,7 @@ import { OnboardingStepScreen } from "./onboarding-step-screen";
 import { PlanReceipt } from "./plan-receipt";
 import { StartOverMenu } from "./start-over-menu";
 import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
+import { type ScheduleDraft } from "./steps/use-schedule";
 
 const STEP_SCREENS = new Set<string>([
   "purpose",
@@ -89,6 +90,7 @@ export function StepsFlow({
 }) {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState<Failed | null>(null);
+  const [scheduleDraft, setScheduleDraft] = useState<ScheduleDraft | null>(null);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -147,12 +149,23 @@ export function StepsFlow({
     });
   };
 
-  const back = () =>
+  const back = () => {
+    // What the time screen kept for a date change is stale once the learner leaves it by Back.
+    if (state.current === "schedule") {
+      setScheduleDraft(null);
+    }
+
     setState((previous) => ({
       ...previous,
       current: previous.history.at(-1) ?? previous.current,
       history: previous.history.slice(0, -1),
     }));
+  };
+
+  const changeDate = (draft: ScheduleDraft) => {
+    setScheduleDraft(draft);
+    setState((previous) => openStep({ state: previous, step: "targetDate" }));
+  };
 
   const startOver = () => {
     setSending({ open: true, step: state.current });
@@ -207,6 +220,7 @@ export function StepsFlow({
               refreshPages={navigation.refreshPages}
               routes={routes}
               run={generation}
+              schedule={{ draft: scheduleDraft, onChangeDate: changeDate }}
               step={state.current}
               view={state.view}
             />

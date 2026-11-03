@@ -21,6 +21,8 @@
   "onboarding_buddy_description": "d3ac9c346f65e6e2942e33495b26d0679b530579906f9980f14fdb448d597532",
   "onboarding_buddy_title": "2d5e1bf6ed8dd22c05938f0beb99a58f7443a131471591781f716a89abae4785",
   "onboarding_cancel": "549581de061f9a4fc500bbd51f25348aad3ba8d3e68146aa2fcd8c968bda8634",
+  "onboarding_change_date": "4efbe0e10feede8619f1ca6f0f229312debdcad02e60618bc2b2db857efef38b",
+  "onboarding_choose_date": "9757cb69d2f7234a564b6e75a670d82f8655224fb01ad1a9ccdd018d84f4e660",
   "onboarding_continue": "c2eb49cc176f22d161eafb034252df622cd409ad39257f066d8a76b0f64274d6",
   "onboarding_course_build": "a771d8bcf0479148630cd30f5c0c515b11b14bd4cc60785399fe7c4170563e84",
   "onboarding_course_chapter_description": "4393acf3b3527d157877c5361d938efa90be263465a3bc0ee47cc5a37b583982",
@@ -1026,6 +1028,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Tempo di studio diverso nel fine settimana</string>
     <string name="onboarding_schedule_time_label">Tempo giornaliero</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">Scegli una data</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">Cambia data</string>
     <string name="onboarding_study_days">Giorni di studio</string>
     <string name="onboarding_weekend_time_label">Tempo nel fine settimana</string>
     <string name="onboarding_answers_saved">Abbiamo salvato le tue risposte.</string>

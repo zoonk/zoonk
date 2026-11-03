@@ -513,8 +513,8 @@
   "plan_time_none": "fadc3a1a1e104d89d2110a398d0ecb4ba27fd38affb96db4f26e9e5018451348",
   "plan_time_none_month": "92c47882b838e280276ffff6000703619aca1e2623f418a4b916ec3721b96acb",
   "plan_time_on_weekends": "448512f3ce9b605b17865484f8825f31363e5983bdff225828912c2f627af56f",
-  "plan_time_past_date": "a5f4b51894ba7c0b3e6a25699ddeef499bfbdd955d6c65c6a31594270a0df974",
-  "plan_time_past_date_month": "28cf392142248c0d5dc46d2c521ac393e7e296950449db9c3b146e546a174817",
+  "plan_time_past_date": "ddd26c1a6e39d35b1856f5ef7a9667897fca85268c28cd1bdf13882e1fd801b2",
+  "plan_time_past_date_month": "3f26500d75fb68243a5565fe2baeaccc347634765f4a8048e7573368668bb3ed",
   "plan_time_share_exam": "b5cab8a8e616c27e1ed5f4724c4d34ef993a0ffd953f5db1e60c046488807911",
   "plan_time_share_exam_month": "3ef74d852c886b0ca7e779ea62c4c36b83ba4553937e5514daf4398e4f1a940c",
   "plan_time_share_goal": "50671e0ee0907bed508522cb50a3297cdbc5750bbefa91ba71653c42230e48a9",
@@ -1523,9 +1523,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Cubre todo el contenido de tu objetivo para %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">La fecha que elegiste, el %1$s, ya pasó. Puedes elegir otra en la siguiente pantalla.</string>
+    <string name="plan_time_past_date">Tu fecha, %1$s, ya pasó.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">La fecha que elegiste, %1$s, ya pasó. Puedes elegir otra en la siguiente pantalla.</string>
+    <string name="plan_time_past_date_month">Tu fecha, %1$s, ya pasó.</string>
     <string name="plan_time_finish_unknown">No podemos estimar cuándo terminarías con este horario. Prueba con más tiempo o más días de estudio.</string>
     <string name="plan_time_finish_failed">No pudimos calcular cuándo terminarías.</string>
     <string name="plan_time_no_days">Elige al menos un día de estudio.</string>

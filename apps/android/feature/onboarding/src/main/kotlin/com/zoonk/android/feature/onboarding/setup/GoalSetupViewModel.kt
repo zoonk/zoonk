@@ -43,14 +43,20 @@ internal data class SetupProgress(
     val total: Int,
 )
 
-/** Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots. */
+/**
+ * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots.
+ * Each question counts once, where the learner meets it: an earlier one opened again from a later
+ * screen keeps its place, and the screen it was opened from is still ahead.
+ */
 internal fun setupProgress(
     flow: SetupFlow,
     steps: List<OnboardingStep>,
 ): SetupProgress? {
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
-    val answered = flow.history.count(::countsAsQuestion)
-    return SetupProgress(answered, answered + 1 + steps.count { it != current && countsAsQuestion(it) })
+    val ahead = steps.filter(::countsAsQuestion)
+    val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }
+    val order = (behind + current + ahead).distinct()
+    return SetupProgress(order.indexOf(current), order.size)
 }
 
 private fun countsAsQuestion(step: OnboardingStep) = step in QUESTION_SCREENS && step != OnboardingStep.PLACEMENT
@@ -61,6 +67,23 @@ data class SetupFlow(
     val current: OnboardingStep? = null,
     val history: List<OnboardingStep> = emptyList(),
 )
+
+/** [step] opens from the screen shown, which its Back returns to. */
+internal fun SetupFlow.opening(step: OnboardingStep): SetupFlow = current?.let { copy(current = step, history = history + it) } ?: this
+
+/**
+ * After [answered] saves, [next] shows. Arriving at a screen already behind the learner cuts the
+ * history back to before it, so a screen opened from it and answered adds nothing to Back.
+ */
+internal fun SetupFlow.arriving(
+    goalId: String,
+    answered: OnboardingStep,
+    next: OnboardingStep,
+): SetupFlow {
+    val trail = history + answered
+    val seen = trail.indexOf(next)
+    return SetupFlow(goalId, next, if (seen < 0) trail else trail.take(seen))
+}
 
 /** Each answer is a POST from the learner's tap; its reply is the goal's whole new setup. */
 internal class GoalSetupViewModel(
@@ -127,8 +150,7 @@ internal class GoalSetupViewModel(
         val step = from ?: return
         if (isSaving) return
         isSaving = true
-        saveFailed = false
-        dayTooShort = null
+        clearFailure()
         val answeredGoal = goalId
         viewModelScope.launch {
             when (val outcome = store.answer(goalId, input)) {
@@ -140,8 +162,11 @@ internal class GoalSetupViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    saveFailed = true
-                    dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
+                    // Only the screen that saved shows its failure: the learner may have gone Back while it saved.
+                    if (flow.current == step) {
+                        saveFailed = true
+                        dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
+                    }
                 }
             }
             isSaving = false
@@ -150,7 +175,15 @@ internal class GoalSetupViewModel(
 
     fun back() {
         val previous = flow.history.lastOrNull() ?: return
+        clearFailure()
         update(flow.copy(current = previous, history = flow.history.dropLast(1)))
+    }
+
+    /** The time question's link to the date question: its Back returns to the time unchanged. */
+    fun changeDate() {
+        if (isSaving) return
+        clearFailure()
+        update(flow.opening(OnboardingStep.TARGET_DATE))
     }
 
     fun startOver(
@@ -174,7 +207,7 @@ internal class GoalSetupViewModel(
         val movedGoal = goalId != flow.goalId
         update(
             if (flow.current == step) {
-                SetupFlow(goalId, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN, flow.history + step)
+                flow.arriving(goalId, step, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN)
             } else {
                 flow.copy(goalId = goalId)
             },
@@ -188,6 +221,11 @@ internal class GoalSetupViewModel(
 
     fun reload() {
         viewModelScope.launch { store.onboardings[goalId].refresh() }
+    }
+
+    private fun clearFailure() {
+        saveFailed = false
+        dayTooShort = null
     }
 
     private fun update(next: SetupFlow) {

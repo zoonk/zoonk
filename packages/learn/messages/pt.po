@@ -583,9 +583,9 @@ msgstr "{dateKind, select, month {Cobre todo o conteúdo do seu objetivo até {d
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {Sua data, {date}, já passou. Você pode escolher outra na próxima tela.} other {Sua data, {date}, já passou. Você pode escolher outra na próxima tela.}}"
+msgctxt "2IAd52"
+msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
+msgstr "{dateKind, select, month {O mês que você escolheu, {date}, já passou.} other {A data que você escolheu, {date}, já passou.}}"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
@@ -9633,6 +9633,18 @@ msgstr "Para que você vai usar"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Ex.: relatórios, testes A/B"
+
+#. A link under the daily study time that opens the question about the goal's date, to change it.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "Alterar data"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "Escolher uma data"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
