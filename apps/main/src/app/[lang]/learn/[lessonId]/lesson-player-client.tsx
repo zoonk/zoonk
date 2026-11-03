@@ -32,7 +32,7 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { type RefObject, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
 
@@ -52,51 +52,17 @@ function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots
   };
 }
 
-/**
- * Next keeps a page's state while it's hidden and shows it again on the next visit, so a finished
- * lesson left and opened again starts over instead of showing its last end.
- */
-function useFreshAfterFinish() {
-  const finished = useRef(false);
-  const [visit, setVisit] = useState(0);
-
-  useLayoutEffect(
-    () => () => {
-      if (finished.current) {
-        finished.current = false;
-        setVisit((count) => count + 1);
-      }
-    },
-    [],
-  );
-
-  return { finished, visit };
-}
-
 function createAdapters({
-  finished,
   lessonId,
   studySessionId,
 }: {
-  finished: RefObject<boolean>;
   lessonId: string;
   studySessionId: string | null;
 }): LessonPlayerAdapters {
   return {
     checkStep: checkLessonStep,
-    completeLesson: async (input) => {
-      const outcome = await completeLibraryLessonAction({
-        ...input,
-        lessonId,
-        timeZone: getLocalTimeZone(),
-      });
-
-      if (outcome.status === "completed") {
-        finished.current = true;
-      }
-
-      return outcome;
-    },
+    completeLesson: (input) =>
+      completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
     explainAnswer: requestAnswerExplanation,
     getExampleLine,
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
@@ -106,22 +72,7 @@ function createAdapters({
   };
 }
 
-export function LessonPlayerClient({
-  challengeTeam = null,
-  endingSlots,
-  firstAnswer,
-  hasSession,
-  lesson,
-  outline = false,
-  resume,
-  routing = DEFAULT_ROUTING,
-  sessionContext = null,
-  soundsEnabled,
-  studySessionId,
-  support = null,
-  tutor: tutorViewer,
-  tutorSuggestions,
-}: {
+type LessonPlayerClientProps = {
   challengeTeam?: ChallengeTeam | null;
   endingSlots?: Pick<
     NonNullable<LessonPlayerProviderProps["slots"]>,
@@ -139,7 +90,24 @@ export function LessonPlayerClient({
   support?: LessonSupport | null;
   tutor: TutorViewer;
   tutorSuggestions?: readonly LessonTutorSuggestion[];
-}) {
+};
+
+function LessonPlayerVisit({
+  challengeTeam = null,
+  endingSlots,
+  firstAnswer,
+  hasSession,
+  lesson,
+  outline = false,
+  resume,
+  routing = DEFAULT_ROUTING,
+  sessionContext = null,
+  soundsEnabled,
+  studySessionId,
+  support = null,
+  tutor: tutorViewer,
+  tutorSuggestions,
+}: LessonPlayerClientProps) {
   const router = useRouter();
   const locale = useAppLocale();
 
@@ -154,11 +122,9 @@ export function LessonPlayerClient({
 
   void setReopenedBlockId;
 
-  const { finished, visit } = useFreshAfterFinish();
-
   const adapters = useMemo(
-    () => createAdapters({ finished, lessonId: lesson.id, studySessionId }),
-    [finished, lesson.id, studySessionId],
+    () => createAdapters({ lessonId: lesson.id, studySessionId }),
+    [lesson.id, studySessionId],
   );
 
   const { buddy, canAsk, goalId } = tutorViewer;
@@ -192,7 +158,6 @@ export function LessonPlayerClient({
   return (
     <LessonPlayerProvider
       adapters={adapters}
-      key={visit}
       challengeTeam={challengeTeam}
       firstAnswer={firstAnswer}
       lesson={lesson}
@@ -211,4 +176,13 @@ export function LessonPlayerClient({
       <LessonPlayerShell />
     </LessonPlayerProvider>
   );
+}
+
+/**
+ * A link or redirect opens the lesson as the server has it now, so a finished lesson starts over;
+ * Back and forward keep the screen as it was.
+ */
+export function LessonPlayerClient(props: LessonPlayerClientProps) {
+  const { bfcacheId } = useRouter();
+  return <LessonPlayerVisit key={bfcacheId} {...props} />;
 }
