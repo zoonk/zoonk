@@ -1,12 +1,14 @@
-import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
 import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
 import { type MemoryInsightOutput } from "@zoonk/ai/tasks/memory/insight-rules";
+import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { type SessionPattern, findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { type LanguageConversationKind, prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -406,5 +408,112 @@ describe(proposeCallMemory, () => {
 
     expect(proposals).toStrictEqual([null, null]);
     expect(extractMemoryFacts).not.toHaveBeenCalled();
+  });
+});
+
+function mockReconcileReplacing(statement: string) {
+  vi.mocked(reconcileMemoryFact).mockImplementation(async ({ existing }) => {
+    const index = existing.findIndex((fact) => fact.statement === statement);
+
+    if (index === -1) {
+      throw new Error(`Expected "${statement}" among the related facts`);
+    }
+
+    return { decision: { action: "replace", index } } as Awaited<
+      ReturnType<typeof reconcileMemoryFact>
+    >;
+  });
+}
+
+function rememberFromCall({
+  call,
+  intent = "remember",
+  statement,
+}: {
+  call: Awaited<ReturnType<typeof practiceCall>>;
+  intent?: ExtractedMemoryFact["intent"];
+  statement: string;
+}) {
+  return rememberMemoryCandidate({
+    candidate: {
+      category: "background",
+      confidence: 0.9,
+      evidence: statement,
+      expiresAt: null,
+      intent,
+      origin: "said",
+      statement,
+    },
+    context: {
+      language: "pt",
+      now: new Date(),
+      provenance: null,
+      source: { id: call.conversationId, kind: "call" },
+      userId: call.userId,
+    },
+    gate: { sensitive: false },
+  });
+}
+
+describe("what a call may change", () => {
+  it("keeps what the learner said outside a call when a call would replace it, and saves nothing", async () => {
+    const call = await practiceCall();
+
+    const job = await memoryFactFixture({
+      category: "background",
+      sourceRef: { id: null, kind: "onboarding" },
+      statement: "Trabalha com TI",
+      userId: call.userId,
+    });
+
+    mockReconcileReplacing("Trabalha com TI");
+
+    await expect(
+      rememberFromCall({ call, statement: "É médico num hospital em Londres" }),
+    ).resolves.toBeNull();
+
+    const facts = await prisma.memoryFact.findMany({ where: { userId: call.userId } });
+    expect(facts).toMatchObject([{ id: job.id, statement: "Trabalha com TI", status: "active" }]);
+  });
+
+  it("keeps a call's fact the learner corrected when a later call would remove it", async () => {
+    const call = await practiceCall();
+
+    const corrected = await memoryFactFixture({
+      category: "background",
+      confidence: 1,
+      sourceRef: { id: crypto.randomUUID(), kind: "call" },
+      statement: "Fala espanhol",
+      userId: call.userId,
+    });
+
+    await expect(
+      rememberFromCall({ call, intent: "forget", statement: "Fala espanhol" }),
+    ).resolves.toBeNull();
+
+    const kept = await prisma.memoryFact.findUniqueOrThrow({ where: { id: corrected.id } });
+    expect(kept.status).toBe("active");
+  });
+
+  it("updates what an earlier call said", async () => {
+    const call = await practiceCall();
+
+    const earlier = await memoryFactFixture({
+      category: "background",
+      confidence: 0.9,
+      sourceRef: { id: crypto.randomUUID(), kind: "call" },
+      statement: "Estuda engenharia",
+      userId: call.userId,
+    });
+
+    mockReconcileReplacing("Estuda engenharia");
+
+    await expect(
+      rememberFromCall({ call, statement: "Estuda engenharia civil" }),
+    ).resolves.toMatchObject({
+      action: "replaced",
+      fact: { statement: "Estuda engenharia civil" },
+      previous: { id: earlier.id },
+    });
   });
 });

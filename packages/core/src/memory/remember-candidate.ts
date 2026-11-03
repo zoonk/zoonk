@@ -3,7 +3,11 @@ import { type MemoryReconcileAction } from "@zoonk/ai/tasks/memory/decisions";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { type MemoryFact } from "@zoonk/db";
-import { type MemoryCandidate, isSameStatement } from "./_utils/memory-candidates";
+import {
+  LEARNER_CONFIDENCE,
+  type MemoryCandidate,
+  isSameStatement,
+} from "./_utils/memory-candidates";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import {
   type NewMemoryFact,
@@ -58,6 +62,19 @@ async function decide({
   return candidate.intent === "forget" ? { action: "ignore" } : { action: "add" };
 }
 
+/**
+ * In a call the learner may be playing a part, so a call never overrides their word elsewhere: it
+ * replaces or removes only what another call said and they haven't corrected.
+ */
+function canChange({ fact, target }: { fact: NewMemoryFact; target: MemoryFact }): boolean {
+  if (fact.source?.kind !== "call") {
+    return true;
+  }
+
+  const { confidence, source } = toMemoryFactView(target);
+  return source?.kind === "call" && confidence !== LEARNER_CONFIDENCE;
+}
+
 async function applyDecision({
   action,
   fact,
@@ -76,7 +93,7 @@ async function applyDecision({
 
   const target = action.action === "ignore" ? undefined : related[action.index];
 
-  if (!target) {
+  if (!target || !canChange({ fact, target })) {
     return null;
   }
 
