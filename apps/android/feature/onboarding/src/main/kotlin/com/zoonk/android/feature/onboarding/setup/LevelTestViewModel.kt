@@ -129,7 +129,7 @@ internal class LevelTestViewModel(
     }
 
     suspend fun speak(recording: VoiceRecording): GradeOutcome<LanguageLevelTestSpokenResult> =
-        store.speakLevelTest(goalId, recording).also { finishIfEnded() }
+        store.speakLevelTest(goalId, recording).also { if (it is GradeOutcome.Graded) finishIfEnded() }
 
     /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
     fun retryAnswer() {
