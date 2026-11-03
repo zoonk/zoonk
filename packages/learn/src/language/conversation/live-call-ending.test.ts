@@ -234,6 +234,33 @@ describe("hanging up after the goodbye", () => {
     expect(hangUp?.at).toBe(30_500);
   });
 
+  it("hangs up once 8 s pass without words, while the microphone hears a noisy room", () => {
+    const { hangUp } = play({
+      events: [...GREETING, ...learnerSays(9000, 70_000), ...goodbye],
+      talkSeconds: 5,
+      until: 60_000,
+    });
+
+    // The goodbye's last words came at 15 s; only noise followed them.
+    expect(hangUp).toStrictEqual({ at: 23_000, reason: "time", type: "hangUp" });
+  });
+
+  it("waits while the learner's words keep coming back after the goodbye", () => {
+    const words = range(17_000, 31_000, 1000).map((at): CallEndingEvent => ({
+      at,
+      type: "learnerHeard",
+    }));
+
+    const { hangUp } = play({
+      events: [...GREETING, ...goodbye, ...learnerSays(15_500, 30_000), ...words],
+      talkSeconds: 5,
+      until: 60_000,
+    });
+
+    // Their last words came back at 30 s; the microphone went quiet at 31 s.
+    expect(hangUp?.at).toBe(34_000);
+  });
+
   it("restarts its quiet window when the learner answers the goodbye and the character replies", () => {
     const { hangUp } = play({
       events: [

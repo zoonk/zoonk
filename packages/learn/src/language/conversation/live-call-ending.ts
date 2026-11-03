@@ -4,6 +4,7 @@ import {
   hearGoodbye,
   requestGoodbye,
 } from "./live-call-goodbye";
+import { type LiveCallScript } from "./live-call-script";
 
 /**
  * How a live call ends, as one pure function of the clock and what happened: GPT-Live has no
@@ -11,16 +12,7 @@ import {
  * when it hangs up. The same rules and test timelines run on Apple and Android.
  */
 
-export type LiveCallTiming = {
-  answerWaitMs: number;
-  characterQuietMs: number;
-  checkInMs: number;
-  goodbyeQuietMs: number;
-  goodbyeRetryMs: number;
-  openingRetryMs: number;
-  quietGoodbyeMs: number;
-  quietHintMs: number;
-};
+export type LiveCallTiming = LiveCallScript["timing"];
 
 /** `goodbye`: the learner and the character already said goodbye, so no cue goes out. */
 type CallEndingReason = "done" | "goodbye" | "quiet" | "time";
@@ -183,6 +175,20 @@ function stepGoodbye(state: CallEndingState, at: number): Step {
   };
 }
 
+function lastWordsAt(state: CallEndingState) {
+  const words = [state.characterAt, state.heardAt, state.typingAt, state.sentAt];
+  return Math.max(state.liveAt, ...words.filter((at) => at !== null));
+}
+
+/**
+ * Measured: a noisy room keeps the microphone above the speech level, so after the goodbye its
+ * sound holds the call only as long as a learner gets to answer unless it comes back as words.
+ */
+function isGoodbyeOver(state: CallEndingState, at: number) {
+  const { answerWaitMs, goodbyeQuietMs } = state.timing;
+  return at - state.activityAt >= goodbyeQuietMs || at - lastWordsAt(state) >= answerWaitMs;
+}
+
 function hangUp(state: CallEndingState, reason: CallHangUpReason): Step {
   return { commands: [{ reason, type: "hangUp" }], state: { ...state, ended: true } };
 }
@@ -212,7 +218,7 @@ function evaluate(state: CallEndingState, at: number): Step {
     next = stepped.state;
   }
 
-  if (next.saidGoodbye && next.reason && at - next.activityAt >= next.timing.goodbyeQuietMs) {
+  if (next.saidGoodbye && next.reason && isGoodbyeOver(next, at)) {
     const ended = hangUp(next, next.reason);
     return { commands: [...commands, ...ended.commands], state: ended.state };
   }

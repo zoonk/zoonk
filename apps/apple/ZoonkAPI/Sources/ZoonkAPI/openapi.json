@@ -39450,7 +39450,7 @@
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long"
+            "description": "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long, or once no words (a character or learner transcript, typing) came for `answerWaitMs`, so a noisy microphone can't hold the call open"
           },
           "goodbyeRetryMs": {
             "type": "integer",
