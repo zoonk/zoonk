@@ -80,8 +80,8 @@ model PronunciationReview {
   @@map("pronunciation_reviews")
 }
 
-/// Neither the audio nor the transcript is stored: the transcript only reaches the model that
-/// writes `feedback`. The tasks of one exam speaking paper share a `sectionId`.
+/// Neither the audio nor the transcript is saved here: the transcript only travels as the input of
+/// the runs that read the call. The tasks of one exam speaking paper share a `sectionId`.
 model LanguageConversation {
   id                  String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId              String                     @map("user_id") @db.Uuid
