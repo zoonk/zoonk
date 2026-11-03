@@ -15,7 +15,8 @@ struct LiveCallClient {
   let checkObjectives:
     @MainActor (_ connectionId: String, _ turns: [ConversationTurn]) async -> ObjectiveCheck?
   let makeTransport: @MainActor () -> any LiveCallTransport
-  /// Asks for the microphone; false when the learner said no.
+  /// Asks for the microphone; false when the learner said no. Once they answered, it reads what
+  /// they set in Settings without asking again.
   let requestMicrophone: @MainActor () async -> Bool
 }
 
@@ -300,6 +301,21 @@ final class LiveCall {
       if attempt == mine, phase == .connecting {
         fail(.connect)
       }
+    }
+  }
+
+  /// Back from Settings, where the learner may have allowed the microphone: they can then call
+  /// by voice.
+  func recheckMicrophone() async {
+    guard phase == .idle, micBlocked else {
+      return
+    }
+
+    let granted = await client.requestMicrophone()
+
+    // Typing instead meanwhile keeps it blocked.
+    if granted, phase == .idle {
+      micBlocked = false
     }
   }
 

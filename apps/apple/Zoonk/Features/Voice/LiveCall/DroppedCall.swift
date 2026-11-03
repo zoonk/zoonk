@@ -14,12 +14,17 @@ struct DroppedCall: Equatable {
 }
 
 extension DroppedCall {
-  /// Nil when the screen isn't a dropped call. A call that dropped stays dropped whatever stops its
-  /// reconnect (`continuing`), so it can still be ended and saved. The microphone counts only while
-  /// the reconnect waits on it: typing instead keeps it blocked.
+  /// Nil when the screen isn't a dropped call. A call that dropped stays dropped until its reconnect
+  /// calls and whatever stops it (`continuing`), so it can still be ended and saved. The microphone
+  /// counts only while the reconnect waits on it: typing instead keeps it blocked.
   init?(continuing: Bool, phase: LiveCall.Phase, failure: LiveCall.Failure?, micBlocked: Bool) {
-    if continuing, phase == .idle, micBlocked {
-      self.init(reason: .microphone, retry: .microphone)
+    if continuing, phase == .idle {
+      if micBlocked {
+        self.init(reason: .microphone, retry: .microphone)
+      } else {
+        self.init(reason: nil, retry: .callAgain)
+      }
+
       return
     }
 

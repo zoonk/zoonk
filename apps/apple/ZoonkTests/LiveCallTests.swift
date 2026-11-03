@@ -270,6 +270,23 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(server.microphoneRequests, 1)
   }
 
+  func testAllowingTheMicrophoneInSettingsLetsADroppedCallBeCalledAgainByVoice() async {
+    let first = await droppedCall()
+    let server = FakeServer(microphone: false)
+    let reconnect = LiveCall(
+      conversation: .fixture(), client: server.client(FakeTransport()), soFar: first.soFar)
+
+    await reconnect.start()
+    await reconnect.recheckMicrophone()
+    XCTAssertEqual(reconnect.dropped, .init(reason: .microphone, retry: .microphone))
+
+    server.microphone = true
+    await reconnect.recheckMicrophone()
+    XCTAssertFalse(reconnect.micBlocked)
+    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    XCTAssertEqual(server.connects, 0)
+  }
+
   func testTheCallStaysCallingUntilTheCharacterAnswers() async {
     let transport = FakeTransport()
     let call = LiveCall(conversation: .fixture(), client: FakeServer().client(transport))
@@ -1192,7 +1209,7 @@ private final class FakeServer {
   private var reservations: [CallReservation?]
   private let endedAtDeadline: Bool
   private let confirmsHangup: Bool
-  private let microphone: Bool
+  var microphone: Bool
   private let talkSeconds: Int
   private let continuesCall: Bool
   private(set) var connects = 0

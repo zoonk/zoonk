@@ -211,6 +211,7 @@ struct ConversationTitle {
 private struct LiveCallRun: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.scenePhase) private var scenePhase
   @State private var call: LiveCall?
   @State private var saving: LiveCallSaveState?
   @State private var restarting: Task<Void, Never>?
@@ -238,6 +239,11 @@ private struct LiveCallRun: View {
       isInCall = phase == .connecting || phase == .live
       if phase == .ended, saving == nil {
         Task { await save() }
+      }
+    }
+    .onChange(of: scenePhase) { _, phase in
+      if phase == .active, let call {
+        Task { await call.recheckMicrophone() }
       }
     }
   }
