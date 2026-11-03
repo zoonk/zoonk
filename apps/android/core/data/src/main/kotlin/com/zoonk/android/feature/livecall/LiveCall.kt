@@ -4,7 +4,6 @@ import com.zoonk.android.data.EventTracker
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ExamSpeakingTaskCuesInner
 import com.zoonk.api.models.LanguageConversationSetup
-import com.zoonk.api.models.LanguageConversationSetup.EndsAtLimit
 import com.zoonk.api.models.LanguageConversationTurn
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.LiveCallCue
@@ -63,8 +62,6 @@ data class LiveCallState(
     val sayingGoodbye: Boolean = false,
     /** Nobody has made a sound for long enough to tell the learner there's no rush. */
     val quietHint: Boolean = false,
-    /** The plan's call time is what the talk time ends at: today's or this month's. */
-    val endsAtLimit: EndsAtLimit? = null,
 ) {
     val isOpen get() = phase == LiveCallPhase.Connecting || phase == LiveCallPhase.Live
 }
@@ -226,7 +223,6 @@ class LiveCall(
             }
         setup = ready.setup
         answeredAt = timeSource.markNow()
-        mutableState.update { it.copy(endsAtLimit = ready.setup.endsAtLimit) }
 
         val signals = LiveCallSignals(onEvent = { handle(it, mine) }, onLost = { lost(mine) }, onVoice = { heard(mine) })
         val created = transports.create(microphone, signals)

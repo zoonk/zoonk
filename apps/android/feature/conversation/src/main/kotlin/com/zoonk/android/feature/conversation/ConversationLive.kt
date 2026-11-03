@@ -79,7 +79,6 @@ import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversation
-import com.zoonk.api.models.LanguageConversationSetup.EndsAtLimit
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.SpeakingTask
 import kotlinx.coroutines.delay
@@ -451,14 +450,7 @@ private fun wrapUpLine(
     if (call.sayingGoodbye) return null
     return when (call.ending) {
         EndingReason.Time -> {
-            stringResource(
-                when (call.endsAtLimit) {
-                    EndsAtLimit.DAY -> R.string.conversation_wrap_up_day
-                    EndsAtLimit.MONTH -> R.string.conversation_wrap_up_month
-                    null -> R.string.conversation_wrap_up_time
-                },
-                name,
-            )
+            stringResource(R.string.conversation_wrap_up_time, name)
         }
 
         EndingReason.Done -> {

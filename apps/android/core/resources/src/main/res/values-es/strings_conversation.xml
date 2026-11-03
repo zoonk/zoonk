@@ -166,9 +166,7 @@
   "conversation_went_well": "743a64ca444c66528a594c0b1a2737d43099c7968547ada067ed3109107d5b0e",
   "conversation_words_to_practice": "bab8e7c0b258a0b6f066fd248a9f503fcd95813a043d92800c924d6b39f7793c",
   "conversation_work_on_first": "b7de1a4b9f5facb12a809474529da2bc816858ff7c5626ac9b6d5f695dfe9294",
-  "conversation_wrap_up_day": "8fe4fafaed2101f516dd4c5e9fe07e8f491a5121636e973f11751af5c0ce44e2",
   "conversation_wrap_up_done": "2b6fb48a0047c7b52586f3137ffec38389407ac888b76b28fee55bc5381d449b",
-  "conversation_wrap_up_month": "e8b4e4fc27365ff9a85e6b84263a1e143377dc2d7ee8992d000acf854b1ccd62",
   "conversation_wrap_up_time": "d96bcbaa2968a4226a254e0520213337964b093e7b0523c7aa2164c1f9ded1fc",
   "conversation_writing_call": "48b92ea859b67144472795a048b99e085f1bc12a989656c5d141f6f047fcc238",
   "conversation_writing_call_line_1": "e2564f60ad8c23abece00ef7230afc2c5fe1fc72ea445084806820a51b36a782",
@@ -260,8 +258,6 @@
     <string name="conversation_answer_out_loud">Respóndele a %1$s en voz alta.</string>
     <!-- The call reached its length: the character says goodbye once the learner answers. -->
     <string name="conversation_wrap_up_time">Ya casi se acaba el tiempo. %1$s se despedirá después de tu respuesta.</string>
-    <string name="conversation_wrap_up_day">Tu tiempo de llamadas de hoy está por agotarse. %1$s se despedirá después de tu respuesta.</string>
-    <string name="conversation_wrap_up_month">Tu tiempo de llamadas de este mes está por agotarse. %1$s se despedirá después de tu respuesta.</string>
     <!-- The learner did every goal of the call: the character ends the call once they answer. -->
     <string name="conversation_wrap_up_done">Completaste todos los objetivos. %1$s terminará la llamada después de tu respuesta.</string>
     <string name="conversation_call_ended">Llamada finalizada</string>

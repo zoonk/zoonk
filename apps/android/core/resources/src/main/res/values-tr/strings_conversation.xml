@@ -166,9 +166,7 @@
   "conversation_went_well": "af1de03cb819e336a868938dfefafe9c3025e9da82a98f0c22b8552058f06ccb",
   "conversation_words_to_practice": "c56b85ee253f1a8b2799369f32baf501db8a95159d505202b0d62c648afb02f1",
   "conversation_work_on_first": "071ad45962ae4e238c7f2cff50d8f9a84ff11d15faec59a323f3bc837b89890f",
-  "conversation_wrap_up_day": "9c55603f54f028367daa8b627e6601b345cdc0b905d52b786d1584a10cb92647",
   "conversation_wrap_up_done": "9d46347acdcb3fcf9e7562e901a7d50ed590d8c141134c6ef9557045997caee3",
-  "conversation_wrap_up_month": "d3cdc2d00ff1c8281380c2e672964df93cb5aabb9af4e2aac3d3aa3452dce5e9",
   "conversation_wrap_up_time": "2d5e2d87f04ba53543602687a7e8fb9f73d815a519b18218d9f302c05ea8e254",
   "conversation_writing_call": "f46a257482e04b874341f9606fb7b473dea95cebbc765bbd9f79c821b55c1562",
   "conversation_writing_call_line_1": "7f575ca916e731e35a49d0c60000e5bed0888260eb13037558573333971eef0d",
@@ -260,8 +258,6 @@
     <string name="conversation_answer_out_loud">%1$s için cevabını sesli söyle.</string>
     <!-- The call reached its length: the character says goodbye once the learner answers. -->
     <string name="conversation_wrap_up_time">Süre dolmak üzere. %1$s cevabından sonra vedalaşacak.</string>
-    <string name="conversation_wrap_up_day">Bugünkü sohbet süren dolmak üzere. %1$s cevabından sonra vedalaşacak.</string>
-    <string name="conversation_wrap_up_month">Bu ayki sohbet süren dolmak üzere. %1$s cevabından sonra vedalaşacak.</string>
     <!-- The learner did every goal of the call: the character ends the call once they answer. -->
     <string name="conversation_wrap_up_done">Tüm hedefler tamamlandı. %1$s cevabından sonra sohbeti bitirecek.</string>
     <string name="conversation_call_ended">Sohbet sona erdi</string>

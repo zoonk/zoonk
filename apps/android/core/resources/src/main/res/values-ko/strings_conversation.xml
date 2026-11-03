@@ -166,9 +166,7 @@
   "conversation_went_well": "2364b8576bd16cce5a39005a744524c12925c8a5b14f1b455b37157117343164",
   "conversation_words_to_practice": "dd15b6d01fce6abf897f6beb399b7359ed81bb34b9aee100eb2655bf4081db8c",
   "conversation_work_on_first": "5ad1737d0fc416295750e57848ce75651997850ec10249e8c76109656bdd1a10",
-  "conversation_wrap_up_day": "88c3e6d9c81541394d000dd3148194a9e72b929e5a428ed07d9f8861279aa53b",
   "conversation_wrap_up_done": "91eb28a3df91673735d2ea39187d4e67613ee443b7b97489d2a4a67029b6e693",
-  "conversation_wrap_up_month": "f2c4619fc68194bc6c499651b637d08c756a7088ec084a2cdeb18bf8c3efe902",
   "conversation_wrap_up_time": "26158a0f89158f72d53324abb1cbaea7b222cd608fc574a7808fa389826e9ac7",
   "conversation_writing_call": "2425e0ebb19833cfe8ab2d1a55a4a2caf45de7fb18c0c65cb52ba300366cfa59",
   "conversation_writing_call_line_1": "70d3b80408fcb46f2b7693d13be2210e7385f2909833ddfaffa7ae054e7a85c2",
@@ -260,8 +258,6 @@
     <string name="conversation_answer_out_loud">%1$s에게 소리 내어 답하세요.</string>
     <!-- The call reached its length: the character says goodbye once the learner answers. -->
     <string name="conversation_wrap_up_time">이제 곧 끝나요. 답을 마치면 %1$s(이)가 작별 인사를 해요.</string>
-    <string name="conversation_wrap_up_day">오늘 대화할 수 있는 시간이 얼마 남지 않았어요. 답을 마치면 %1$s(이)가 작별 인사를 해요.</string>
-    <string name="conversation_wrap_up_month">이번 달에 대화할 수 있는 시간이 얼마 남지 않았어요. 답을 마치면 %1$s(이)가 작별 인사를 해요.</string>
     <!-- The learner did every goal of the call: the character ends the call once they answer. -->
     <string name="conversation_wrap_up_done">목표를 모두 마쳤어요. 답을 마치면 %1$s(이)가 대화를 마무리해요.</string>
     <string name="conversation_call_ended">대화 종료</string>

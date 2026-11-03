@@ -166,9 +166,7 @@
   "conversation_went_well": "e31dc9a1dcdbcdd1f01f8097c641cdd5dd503b09ad5447d39f452d26c6db74b6",
   "conversation_words_to_practice": "54a71570048780c9cc80576ad8bd728fcdb72e9b046aa21f8c3ca34c11a66845",
   "conversation_work_on_first": "379de91e4e83f4c4483a811c4d8607c73297f95d62d487db7bb2903edaa908e8",
-  "conversation_wrap_up_day": "0b8b3e52bdff8c2b4f2ce18ca14c5bd862dd04fd3db2200ed104545a154f4a20",
   "conversation_wrap_up_done": "7612d1e09c95e5ee94a8fe7ec33cd63a65838ef14d7769e5dbcb77191835d37b",
-  "conversation_wrap_up_month": "0b372936380ae3c1fae53edb995f4d47b8be0dc6fbe985fcca78672977f83284",
   "conversation_wrap_up_time": "d08259dabaa489e6fdbb7e305424a0e998298047cd730c353ce2fa1d3824cb08",
   "conversation_writing_call": "ae1a28542137c9e50d168c6be2dfe5d7a59c8d12de9ed301293abf120e5604ed",
   "conversation_writing_call_line_1": "087e2e1aa8d495700b3a767bee82314c3db3a672ef65ead09df7a848ca1cd476",
@@ -260,8 +258,6 @@
     <string name="conversation_answer_out_loud">%1$sさんに声に出して答えてください。</string>
     <!-- The call reached its length: the character says goodbye once the learner answers. -->
     <string name="conversation_wrap_up_time">そろそろ終了の時間です。答え終わったら、%1$sさんがお別れのあいさつをします。</string>
-    <string name="conversation_wrap_up_day">今日の会話時間は残りわずかです。答え終わったら、%1$sさんがお別れのあいさつをします。</string>
-    <string name="conversation_wrap_up_month">今月の会話時間は残りわずかです。答え終わったら、%1$sさんがお別れのあいさつをします。</string>
     <!-- The learner did every goal of the call: the character ends the call once they answer. -->
     <string name="conversation_wrap_up_done">会話の目標をすべて達成しました。答え終わったら、%1$sさんが会話を締めくくります。</string>
     <string name="conversation_call_ended">会話が終了しました</string>
