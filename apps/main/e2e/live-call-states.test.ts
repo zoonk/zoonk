@@ -2,6 +2,7 @@ import { setTimeout } from "node:timers/promises";
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { test as base, expect } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
@@ -651,6 +652,112 @@ test.describe("Live call server states", () => {
           timeout: 20_000,
         })
         .toMatchObject({ status: "completed" });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect without the microphone says why, and typing carries the call on", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+      const transcript = page.getByRole("log", { name: "Conversation" });
+      await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+
+      await page.evaluate(() => {
+        Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+          configurable: true,
+          value: () => Promise.reject(new DOMException("Permission denied", "NotAllowedError")),
+        });
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(page.getByText("Your microphone is off")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByRole("button", { name: "End the call" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+      await page.getByRole("button", { name: "Type instead" }).click();
+
+      await expect(transcript.getByText(CHARACTER_RESUME)).toBeVisible();
+      await expect(transcript.getByText("Is it still free?")).toBeVisible();
+      await page.getByRole("button", { exact: true, name: "End" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+      const typed = await connectionFor(call.id);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: typed.id,
+        turns: [
+          { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+          { speaker: "learner", text: "Is it still free?" },
+          { speaker: "character", text: CHARACTER_REPLY },
+          { speaker: "character", text: CHARACTER_RESUME },
+        ],
+      });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect refused at the call limit says why and offers only to end the call", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+      const first = await connectionFor(call.id);
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+
+      // The call's talk window ran out while it was down, and today's call time is used up.
+      await prisma.liveCallConnection.update({
+        data: {
+          createdAt: new Date(first.createdAt.getTime() - 120_000),
+          deadlineAt: new Date(first.deadlineAt.getTime() - 120_000),
+        },
+        where: { id: first.id },
+      });
+
+      await usageRecordsFixture({
+        count: 1,
+        kind: "conversation",
+        seconds: 120,
+        userId: learner.user.id,
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(page.getByText("No more calls today")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Call again" })).toBeHidden();
+      await page.getByRole("button", { name: "End the call" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: first.id,
+        turns: [{ speaker: "character", text: "Hi! Are you calling about the apartment?" }],
+      });
     } finally {
       await owned.cleanup();
     }

@@ -17,9 +17,11 @@ import { ConversationIntro } from "./conversation-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
 import { ConversationResult } from "./conversation-result";
+import { getDroppedCall } from "./dropped-call";
+import { DroppedCallScreen } from "./dropped-call-screen";
 import { type CallSoFar, newCallSoFar } from "./live-call-so-far";
 import { SpeakingMockResult } from "./speaking-mock-result";
-import { type TappedCallAudio } from "./use-call-microphone";
+import { type CallAudio, type TappedCallAudio } from "./use-call-microphone";
 import { type CallStartOutcome } from "./use-call-start";
 import { type LiveCallActions, useLiveCall } from "./use-live-call";
 
@@ -140,21 +142,31 @@ function LiveCallRun({
         }
       : call.hangUp;
 
-  const problem = {
-    exitHref: hrefs.exit,
-    onEnd: call.hangUp,
-    onRetry: () => restart("call"),
-    onTakeover: () => restart("takeover"),
-    title,
-  };
+  const onStart = (audio: CallAudio | null) =>
+    void start({ audio, takeover: startWith === "takeover" });
 
-  // Whatever stops a reconnect, the call stays dropped, so it can still be ended and saved.
-  const stopped = call.phase === "failed" || (call.phase === "idle" && call.microphoneProblem);
+  const onRetry = () => restart("call");
+  const onTakeover = () => restart("takeover");
 
-  if (call.continuing && stopped) {
-    return <CallProblem {...problem} error="dropped" limit={null} />;
+  const dropped = getDroppedCall(call);
+
+  if (dropped) {
+    return (
+      <DroppedCallScreen
+        dropped={dropped}
+        limit={call.limit}
+        microphoneProblem={call.microphoneProblem}
+        name={conversation.character.name}
+        onEnd={call.hangUp}
+        onRetry={onRetry}
+        onStart={onStart}
+        onTakeover={onTakeover}
+        title={title}
+      />
+    );
   }
 
+  const problem = { exitHref: hrefs.exit, onRetry, onTakeover, title };
   const locked = conversation.locked || call.error === "plusRequired";
 
   if (locked || (call.phase === "idle" && (startWith === "intro" || call.microphoneProblem))) {
@@ -164,7 +176,7 @@ function LiveCallRun({
         exitHref={hrefs.exit}
         locked={locked}
         microphoneProblem={call.microphoneProblem}
-        onStart={(audio) => void start({ audio, takeover: startWith === "takeover" })}
+        onStart={onStart}
       />
     );
   }
@@ -175,7 +187,7 @@ function LiveCallRun({
 
   const ended = saving || call.phase === "ended";
 
-  if (!ended && call.phase === "failed") {
+  if (!ended && call.phase === "failed" && call.error !== "dropped") {
     return <CallProblem {...problem} error={call.error} limit={call.limit} />;
   }
 
