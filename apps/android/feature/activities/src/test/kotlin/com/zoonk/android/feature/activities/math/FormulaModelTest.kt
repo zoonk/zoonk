@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.activities.math
 
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.api.ApiJson
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -80,12 +81,41 @@ class FormulaModelTest {
         assertEquals(BaselineKind.WhatIf, on.baseline?.kind)
         assertEquals(1000.0, on.chartedNow!!, 1e-9)
         assertEquals(1500.0, on.chartedBefore!!, 1e-9)
-        assertEquals(-500.0, on.delta, 1e-9)
+        assertEquals(Change(-500.0, 0), on.delta)
         assertEquals(listOf("Rent goes up $500"), on.activeLabels)
         assertEquals(683.59375, on.baselineCurve!![10].second, 1e-9)
         assertEquals(-1000.0..2000.0, on.yDomain)
         assertNull(off.baseline)
         assertEquals(-1000.0..2000.0, off.yDomain)
+    }
+
+    @Test
+    fun aReadoutChangesByWhatItShowsSoOneThatRoundsToItsStartHasNoChange() {
+        val changes = { angle: Double ->
+            view("formulaModel.simulation", mapOf("angle" to angle, "speed" to 20.0)).readouts.associate { it.output.id to it.change }
+        }
+
+        assertEquals(mapOf("distance" to null, "peak" to Change(15.3 - 5.1, 1)), changes(60.0))
+        assertEquals(mapOf("distance" to Change(40.8 - 35.3, 2), "peak" to Change(10.2 - 5.1, 2)), changes(45.0))
+        assertEquals(Change(0.00000000000000499 - 35.3, 1), changes(90.0)["distance"])
+    }
+
+    @Test
+    fun aChangeRoundsItsReadoutsAsTheyAreWrittenAndKeepsTheDecimalsTheyShare() {
+        val change = { initial: Double, x: Double ->
+            val fields =
+                ApiJson.decodeFromString(
+                    FormulaFields.serializer(),
+                    """
+                    {"outputs":[{"formula":"x","id":"x","label":"Position","unit":"m"}],
+                     "variables":[{"initial":$initial,"label":"Position","max":10,"min":-10,"name":"x","step":0.005}]}
+                    """,
+                )
+            modelView(fields, fields.variables.first(), fields.outputs.first(), mapOf("x" to x), emptyMap()).readouts.first().change
+        }
+
+        assertEquals(Change(1.01 - 1.0, 4), change(1.0, 1.005))
+        assertEquals(Change(9.99 - -9.99, 2), change(-9.99, 9.99))
     }
 
     @Test
