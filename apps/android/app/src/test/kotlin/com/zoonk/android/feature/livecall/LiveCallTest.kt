@@ -1282,8 +1282,26 @@ class LiveCallTest {
             launch { summary = call.finish() }
             runCurrent()
             assertEquals(client.checks.last(), summary?.turns)
-            assertEquals(2L + 1L, summary?.spokenSeconds)
+            assertEquals(2L, summary?.spokenSeconds)
             assertTrue("Help asked before the drop counts", summary?.usedHelp == true)
+        }
+
+    @Test
+    fun shortRepliesSplitByADropAddUpBeforeTheCallsSpokenTimeIsRounded() =
+        runTest(dispatcher) {
+            val first = live()
+            transport.onEvent(learnerSays("Sí", 0.0, 400.0))
+            transport.onLost()
+            runCurrent()
+            transports.clear()
+
+            val call = live(call(soFar = first.soFar), setup(talkSeconds = 240, continuesCall = true))
+            transport.onEvent(learnerSays("Vale", 0.0, 400.0))
+            call.hangUp()
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(1L, summary?.spokenSeconds)
         }
 
     @Test

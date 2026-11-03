@@ -106,7 +106,7 @@ class LiveCallEventsTest {
             ),
             turns,
         )
-        assertEquals(2L, turns.spokenSeconds)
+        assertEquals(1600.0, turns.spokenMs, 0.0)
     }
 
     @Test

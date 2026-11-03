@@ -2,7 +2,6 @@ package com.zoonk.android.feature.livecall
 
 import com.zoonk.api.models.LanguageConversationTurn
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
-import kotlin.math.roundToLong
 
 /** Mirrors main's `live-call-transcript.ts`. A typed reply has no timeline. */
 data class TranscriptTurn(
@@ -36,13 +35,10 @@ fun List<TranscriptTurn>.adding(fragment: LiveServerEvent.Transcript): List<Tran
 
 fun List<TranscriptTurn>.addingTypedReply(text: String) = this + TranscriptTurn(Speaker.LEARNER, text)
 
-val List<TranscriptTurn>.spokenSeconds: Long
-    get() {
-        val spokenMs =
-            filter { it.speaker == Speaker.LEARNER }
-                .sumOf { turn -> if (turn.startMs != null && turn.endMs != null) turn.endMs - turn.startMs else 0.0 }
-        return (spokenMs / 1000).roundToLong()
-    }
+val List<TranscriptTurn>.spokenMs: Double
+    get() =
+        filter { it.speaker == Speaker.LEARNER }
+            .sumOf { turn -> if (turn.startMs != null && turn.endMs != null) turn.endMs - turn.startMs else 0.0 }
 
 val List<TranscriptTurn>.conversationTurns: List<LanguageConversationTurn>
     get() =

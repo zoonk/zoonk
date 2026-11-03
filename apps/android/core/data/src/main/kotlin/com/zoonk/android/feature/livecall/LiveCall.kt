@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.roundToLong
 import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -40,11 +41,12 @@ data class LiveCallTask(
 
 /**
  * What the call's earlier connections left, which calling again continues: its [turns] are shown
- * at once and never take a later connection's words, and each connection's spoken seconds count once.
+ * at once and never take a later connection's words, and [spokenMs] adds each connection's speech
+ * once, rounded only for the saved call.
  */
 data class CallSoFar(
     val turns: List<TranscriptTurn> = emptyList(),
-    val spokenSeconds: Long = 0,
+    val spokenMs: Double = 0.0,
     val usedHelp: Boolean = false,
     val metLabels: List<String> = emptyList(),
     val examCuesSent: Int = 0,
@@ -206,7 +208,7 @@ class LiveCall(
             val current = mutableState.value
             return CallSoFar(
                 turns = current.turns.map { TranscriptTurn(it.speaker, it.text) },
-                spokenSeconds = earlier.spokenSeconds + current.turns.spokenSeconds,
+                spokenMs = earlier.spokenMs + current.turns.spokenMs,
                 usedHelp = current.usedHelp,
                 metLabels = current.metLabels,
                 examCuesSent = examCuesSent,
@@ -225,7 +227,7 @@ class LiveCall(
         val id = connectionId ?: return null
         release()
         val call = soFar
-        return LiveCallSummary(id, call.spokenSeconds, call.turns.conversationTurns, call.usedHelp)
+        return LiveCallSummary(id, (call.spokenMs / 1000).roundToLong(), call.turns.conversationTurns, call.usedHelp)
     }
 
     /**
