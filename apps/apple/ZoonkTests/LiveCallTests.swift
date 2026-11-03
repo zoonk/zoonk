@@ -123,7 +123,7 @@ final class LiveCallTests: XCTestCase {
 
     transport.onEvent?(.started)
     XCTAssertEqual(call.phase, .live)
-    XCTAssertEqual(transport.sent.first, .append(setup.script.cues.opening))
+    XCTAssertEqual(transport.sent.first, .append(setup.script.cues.opening, eventId: "opening-1"))
 
     transport.onEvent?(.transcript(speaker: .learner, delta: "Hi", startMs: 0, endMs: 1000))
     transport.onEvent?(.closed)
@@ -401,15 +401,88 @@ final class LiveCallTests: XCTestCase {
     assertTimes(run.times(of: .goodbye), [20, 28], accuracy: 0.11)
   }
 
-  func testTheOpeningIsSentAgainOnlyWhileTheCharacterStaysSilent() {
-    var quiet = EndingRun()
-    quiet.wait(until: 10)
-    assertTimes(quiet.times(of: .opening), [0.1, 5], accuracy: 0.11)
+  func testTheOpeningIsSentAgainOnlyOnceTakenInAndUnanswered() {
+    var slow = EndingRun()
+    slow.wait(until: 10)
+    XCTAssertTrue(slow.times(of: .opening).isEmpty)
+
+    var silent = EndingRun()
+    silent.acknowledgeOpening(at: 0.8)
+    silent.wait(until: 10)
+    assertTimes(silent.times(of: .opening), [5.8], accuracy: 0.11)
 
     var answered = EndingRun()
+    answered.acknowledgeOpening(at: 0.8)
     answered.characterTalks(from: 2, to: 4)
     answered.wait(until: 10)
-    assertTimes(answered.times(of: .opening), [0.1], accuracy: 0.11)
+    XCTAssertTrue(answered.times(of: .opening).isEmpty)
+  }
+
+  func testAReplyTypedAtTheTalkTimeIsAnsweredBeforeTheGoodbye() {
+    var run = EndingRun()
+    run.chat(until: 110)
+    run.learnerComposes(from: 115, to: 120.9)
+    run.learnerSends(at: 121)
+    run.characterTalks(from: 122.5, to: 124)
+    run.wait(until: 130)
+
+    // Composing and then the reply hold the cue until the character answered and stopped.
+    assertTimes(run.times(of: .goodbye), [125.5], accuracy: 0.11)
+  }
+
+  func testWordsJustBeforeTheAcknowledgmentAreTheGoodbye() {
+    var run = EndingRun()
+    run.chat(until: 110)
+    run.learnerTalks(from: 115, to: 120.2)
+    run.characterTalks(from: 121, to: 121.25)
+    run.acknowledge(at: 121.4, startMs: 121_200)
+    run.characterTalks(from: 121.5, to: 123)
+    run.wait(until: 130)
+
+    XCTAssertEqual(run.hangUp?.reason, .time)
+    XCTAssertEqual(run.hangUp?.at ?? 0, 126, accuracy: 0.11)
+  }
+
+  func testWordsFromBeforeTheCueArentTheGoodbye() {
+    var run = EndingRun()
+    run.chat(until: 110)
+    run.learnerTalks(from: 115, to: 121)
+    run.characterSpeaks(at: 121.2, startMs: 118_000)
+    run.acknowledge(at: 121.5, startMs: 121_500)
+    run.wait(until: 135)
+
+    XCTAssertNil(run.hangUp)
+    XCTAssertEqual(run.times(of: .goodbye).count, 2)
+  }
+
+  func testTheLearnersOwnTranscriptStartsTheQuietAgain() {
+    var run = EndingRun()
+    run.characterTalks(from: 1, to: 3)
+    run.learnerTalks(from: 5, to: 6)
+    run.characterTalks(from: 6.5, to: 7)
+    run.learnerHeard(at: 7.5)
+    run.wait(until: 40)
+
+    assertTimes(run.times(of: .checkIn), [32.5], accuracy: 0.11)
+  }
+
+  func testTheLearnersTranscriptCountsAsSpeakingWhenTheMicrophoneMissedIt() {
+    var run = EndingRun()
+    run.chat(until: 110)
+    run.characterTalks(from: 117, to: 118.5)
+    run.learnerHeard(at: 121)
+    run.wait(until: 125)
+
+    assertTimes(run.times(of: .goodbye), [121], accuracy: 0.11)
+  }
+
+  func testTheFirstWordsAfterAPauseGetASpace() {
+    let turns = [TranscriptTurn]()
+      .adding("Is it available?", speaker: .character, startMs: 0, endMs: 900)
+      .adding("Yes", speaker: .character, startMs: 2500, endMs: 2800)
+      .adding(" it is.", speaker: .character, startMs: 2800, endMs: 3200)
+
+    XCTAssertEqual(turns.last?.text, "Is it available? Yes it is.")
   }
 
   private func event(_ json: String) -> LiveServerEvent? {
@@ -639,20 +712,48 @@ private struct EndingRun {
     }
   }
 
+  /// One key typed in the reply field.
   mutating func learnerTypes(at seconds: TimeInterval) {
     once(at: seconds) { $0.learnerTyped(at: $1) }
   }
 
-  mutating func acknowledge(at seconds: TimeInterval) {
-    once(at: seconds) { ending, _ in ending.goodbyeAcknowledged(startMs: seconds * 1000) }
+  /// A reply being typed, a few keys a second.
+  mutating func learnerComposes(from start: TimeInterval, to end: TimeInterval) {
+    every(0.3, from: start, to: end) { ending, at in
+      ending.learnerTyped(at: Self.start.addingTimeInterval(at))
+    }
+  }
+
+  mutating func learnerSends(at seconds: TimeInterval) {
+    once(at: seconds) { $0.learnerSent(at: $1) }
+  }
+
+  /// The learner's own words came back as a transcript.
+  mutating func learnerHeard(at seconds: TimeInterval) {
+    once(at: seconds) { $0.learnerHeard(at: $1) }
+  }
+
+  mutating func characterSpeaks(at seconds: TimeInterval, startMs: Double) {
+    once(at: seconds) { $0.characterSpoke(at: $1, startMs: startMs) }
+  }
+
+  mutating func acknowledgeOpening(at seconds: TimeInterval) {
+    once(at: seconds) { $0.openingAcknowledged(at: $1) }
+  }
+
+  /// A goodbye cue taken into the session's timeline, by default where it arrived.
+  mutating func acknowledge(at seconds: TimeInterval, startMs: Double? = nil) {
+    once(at: seconds) { ending, _ in
+      ending.goodbyeAcknowledged(startMs: startMs ?? seconds * 1000)
+    }
   }
 
   mutating func goalsMet(at seconds: TimeInterval) {
-    once(at: seconds) { ending, _ in ending.goalsMet() }
+    once(at: seconds) { $0.goalsMet(at: $1) }
   }
 
   mutating func saidGoodbye(at seconds: TimeInterval) {
-    once(at: seconds) { ending, _ in ending.saidGoodbye() }
+    once(at: seconds) { $0.saidGoodbye(at: $1) }
   }
 
   private mutating func once(

@@ -231,7 +231,12 @@ private struct CallReply: View {
       .textFieldStyle(.roundedBorder)
       .submitLabel(.send)
       .onSubmit(send)
-      .onChange(of: reply) { call.typing() }
+      .onChange(of: reply) { _, text in
+        // Clearing the field after sending isn't typing.
+        if !text.isEmpty {
+          call.typing()
+        }
+      }
       .accessibilityLabel(Text("Type your reply", tableName: "Voice", comment: "Typed reply field"))
 
       Button(action: send) {

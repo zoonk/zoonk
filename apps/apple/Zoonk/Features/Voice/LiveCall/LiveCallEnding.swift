@@ -4,9 +4,10 @@ import Foundation
 /// Android run too, fed with what happened and when so they run on any clock.
 ///
 /// GPT-Live has no end-of-turn or end-of-playback event, so the rules read the character's
-/// transcript fragments and the learner's microphone and typing. The hard stop (the server's
-/// deadline, past the talk time by the wrap-up) is the one ending that can cut a learner off: the
-/// others wait for the character's goodbye and a quiet moment after it.
+/// transcript fragments, the learner's microphone, transcripts and typing, and GPT-Live's
+/// acknowledgments of the cues. The hard stop (the server's deadline, past the talk time by the
+/// wrap-up) is the one ending that can cut a learner off: the others wait for the character's
+/// goodbye and a quiet moment after it.
 struct LiveCallEnding {
   enum Reason: Equatable {
     /// The talk time ran out.
@@ -39,6 +40,11 @@ struct LiveCallEnding {
   /// WebRTC's level is sampled, and short pauses between words stay one turn.
   static let micHangover: TimeInterval = 1
 
+  /// Measured over WebRTC: a cue's answer began 200 ms before its acknowledgment's `start_ms`.
+  /// Words from before the cue started earlier than this, since the cue waits for the character to
+  /// be quiet for `characterQuietMs`.
+  private static let goodbyeLeadMs = 500.0
+
   private(set) var armed: Reason?
   private(set) var isGoodbyeSaid = false
 
@@ -46,17 +52,24 @@ struct LiveCallEnding {
   private let liveAt: Date
   private let talkEndsAt: Date
   private let hardStopAt: Date
+  private var armedAt: Date?
   private var lastCharacterAt: Date?
   private var lastMicAt: Date?
+  /// The learner's own words came back as a transcript, about 1.5 s after they said them.
+  private var lastHeardAt: Date?
   private var lastTypedAt: Date?
-  private var openingSends = 0
+  private var lastSentAt: Date?
+  private var openingAcknowledgedAt: Date?
+  private var openingRetried = false
   private var cueSentAt: Date?
   private var cueSends = 0
-  private var characterSinceCue = false
-  private var goodbyeHeardFromMs: Double?
-  /// Where the silence the check-in was sent in began: the character's answer to it doesn't start
-  /// a new one.
-  private var checkedInSilence: Date?
+  private var goodbyeFromMs: Double?
+  /// The latest start of the character's words heard after the goodbye cue, before its
+  /// acknowledgment came.
+  private var heardBeforeAcknowledgmentMs: Double?
+  /// The current unanswered stretch began here; nil once the learner answered.
+  private var silenceFrom: Date?
+  private var checkedIn = false
   private var isOver = false
 
   init(timing: Timing, liveAt: Date, talkEndsAt: Date, hardStopAt: Date) {
@@ -64,61 +77,45 @@ struct LiveCallEnding {
     self.liveAt = liveAt
     self.talkEndsAt = talkEndsAt
     self.hardStopAt = hardStopAt
+    silenceFrom = liveAt
   }
 
   func isCharacterSpeaking(at now: Date) -> Bool {
-    guard let lastCharacterAt else {
-      return false
-    }
-
-    return now.timeIntervalSince(lastCharacterAt) < seconds(timing.characterQuietMs)
+    isRecent(lastCharacterAt, at: now, within: seconds(timing.characterQuietMs))
   }
 
-  /// The caller reports no microphone speech while muted, so then only typing counts.
-  func isLearnerActive(at now: Date) -> Bool {
-    if let lastMicAt, now.timeIntervalSince(lastMicAt) < Self.micHangover {
-      return true
-    }
-
-    if let lastTypedAt, now.timeIntervalSince(lastTypedAt) < seconds(timing.characterQuietMs) {
-      return true
-    }
-
-    return false
-  }
-
+  /// The caller reports no microphone speech while muted.
   func isLearnerSpeaking(at now: Date) -> Bool {
-    guard let lastMicAt else {
-      return false
-    }
-
-    return now.timeIntervalSince(lastMicAt) < Self.micHangover
+    isRecent(lastMicAt, at: now, within: Self.micHangover)
   }
 
-  /// The learner spoke or typed since then.
+  /// The learner spoke, was heard or typed since then.
   func hasLearnerActed(after date: Date) -> Bool {
-    [lastMicAt, lastTypedAt].contains { $0.map { $0 > date } ?? false }
+    lastLearnerAt.map { $0 > date } ?? false
   }
 
   /// "Take your time." on screen: the learner has left the character unanswered a while.
   func isQuietLong(at now: Date) -> Bool {
-    guard let silence = silenceStart(at: now) else {
-      return false
-    }
-
-    return now.timeIntervalSince(silence) >= seconds(timing.quietHintMs)
+    silenceFrom.map { now.timeIntervalSince($0) >= seconds(timing.quietHintMs) } ?? false
   }
 
   /// `startMs` places the fragment on the session's timeline, where acknowledgments are too.
   mutating func characterSpoke(at now: Date, startMs: Double) {
     lastCharacterAt = now
 
-    if cueSentAt != nil {
-      characterSinceCue = true
+    // The character's answer to its own check-in doesn't start a new stretch.
+    if !checkedIn {
+      silenceFrom = now.addingTimeInterval(seconds(timing.characterQuietMs))
     }
 
-    if let goodbyeHeardFromMs, startMs >= goodbyeHeardFromMs {
-      isGoodbyeSaid = true
+    guard cueSentAt != nil else {
+      return
+    }
+
+    if let goodbyeFromMs {
+      isGoodbyeSaid = isGoodbyeSaid || startMs >= goodbyeFromMs - Self.goodbyeLeadMs
+    } else {
+      heardBeforeAcknowledgmentMs = max(heardBeforeAcknowledgmentMs ?? startMs, startMs)
     }
   }
 
@@ -128,25 +125,54 @@ struct LiveCallEnding {
     learnerActed()
   }
 
-  /// A key typed in the reply field, or a reply sent.
+  /// The learner's words came back as a transcript: they spoke, even when the microphone's level
+  /// missed a soft voice. It arrives late, often after a short answer, so the quiet starts again
+  /// from it.
+  mutating func learnerHeard(at now: Date) {
+    lastHeardAt = now
+    learnerActed()
+    silenceFrom = now
+  }
+
+  /// A key typed in the reply field.
   mutating func learnerTyped(at now: Date) {
     lastTypedAt = now
     learnerActed()
   }
 
-  /// GPT-Live took in a goodbye cue at `startMs` on its timeline: what the character says from
-  /// there is the goodbye.
-  mutating func goodbyeAcknowledged(startMs: Double) {
-    goodbyeHeardFromMs = min(goodbyeHeardFromMs ?? startMs, startMs)
+  /// A typed reply went out.
+  mutating func learnerSent(at now: Date) {
+    lastSentAt = now
+    lastTypedAt = nil
+    learnerActed()
   }
 
-  mutating func goalsMet() {
-    arm(.done)
+  mutating func openingAcknowledged(at now: Date) {
+    openingAcknowledgedAt = openingAcknowledgedAt ?? now
+  }
+
+  /// GPT-Live took a goodbye cue into its timeline at `startMs`: what the character says from
+  /// about there is the goodbye, and words heard just before the acknowledgment count too.
+  mutating func goodbyeAcknowledged(startMs: Double) {
+    guard cueSentAt != nil, goodbyeFromMs == nil else {
+      return
+    }
+
+    goodbyeFromMs = startMs
+
+    if let heardBeforeAcknowledgmentMs, heardBeforeAcknowledgmentMs >= startMs - Self.goodbyeLeadMs
+    {
+      isGoodbyeSaid = true
+    }
+  }
+
+  mutating func goalsMet(at now: Date) {
+    arm(.done, at: now)
   }
 
   /// The learner said goodbye and the character said it back: it only remains to hang up.
-  mutating func saidGoodbye() {
-    if arm(.goodbye) {
+  mutating func saidGoodbye(at now: Date) {
+    if arm(.goodbye, at: now) {
       isGoodbyeSaid = true
     }
   }
@@ -164,21 +190,21 @@ struct LiveCallEnding {
 
     var actions: [Action] = []
 
-    if let cue = openingToSend(at: now) {
-      actions.append(.send(cue))
+    if openingToRetry(at: now) {
+      actions.append(.send(.opening))
     }
 
-    if armed == nil, now >= talkEndsAt {
-      arm(.time)
+    if now >= talkEndsAt {
+      arm(.time, at: now)
     }
 
-    if armed == nil, let silence = silenceStart(at: now) {
-      let quiet = now.timeIntervalSince(silence)
+    if armed == nil, let silenceFrom {
+      let quiet = now.timeIntervalSince(silenceFrom)
 
       if quiet >= seconds(timing.quietGoodbyeMs) {
-        arm(.quiet)
-      } else if checkedInSilence == nil, quiet >= seconds(timing.checkInMs) {
-        checkedInSilence = silence
+        arm(.quiet, at: now)
+      } else if !checkedIn, quiet >= seconds(timing.checkInMs) {
+        checkedIn = true
         actions.append(.send(.checkIn))
       }
     }
@@ -196,53 +222,47 @@ struct LiveCallEnding {
   }
 
   @discardableResult
-  private mutating func arm(_ reason: Reason) -> Bool {
+  private mutating func arm(_ reason: Reason, at now: Date) -> Bool {
     guard armed == nil else {
       return false
     }
 
     armed = reason
+    armedAt = now
     return true
   }
 
   private mutating func learnerActed() {
-    checkedInSilence = nil
+    silenceFrom = nil
+    checkedIn = false
   }
 
-  /// Sent once as the call goes live, and once more if the character stays silent.
-  private mutating func openingToSend(at now: Date) -> Cue? {
-    if openingSends == 0 {
-      openingSends = 1
-      return .opening
-    }
-
-    guard openingSends == 1, armed == nil, lastCharacterAt == nil,
-      now.timeIntervalSince(liveAt) >= seconds(timing.openingRetryMs)
+  /// The opening goes out as the call goes live (`LiveCall` sends it). Measured: a slow session
+  /// can take 6.7 s to speak, so it's sent again only once GPT-Live acknowledged it and the
+  /// character still stayed silent.
+  private mutating func openingToRetry(at now: Date) -> Bool {
+    guard !openingRetried, armed == nil, lastCharacterAt == nil, let openingAcknowledgedAt,
+      now.timeIntervalSince(openingAcknowledgedAt) >= seconds(timing.openingRetryMs)
     else {
-      return nil
+      return false
     }
 
-    openingSends = 2
-    return .opening
+    openingRetried = true
+    return true
   }
 
-  /// Once the character is quiet: at once when the learner is answering (GPT-Live waits for them
-  /// to finish), else when they start or after a while without them. Sent again once if nothing
-  /// came of it.
+  /// Once the character is quiet and no reply is being typed: at once while the learner talks
+  /// (GPT-Live waits for them to finish), after the character answered a reply they typed, or
+  /// when they leave the floor a while. Sent again once when nothing at all followed it.
   private mutating func goodbyeToSend(at now: Date) -> Cue? {
-    guard let armed, armed != .goodbye, !isGoodbyeSaid, !isCharacterSpeaking(at: now) else {
+    guard let armed, armed != .goodbye, !isGoodbyeSaid else {
       return nil
     }
 
     let cue: Cue = armed == .done ? .goodbyeDone : .goodbye
 
     guard let cueSentAt else {
-      let floorSince = [characterStop, lastTypedAt, lastMicAt].compactMap(\.self).max() ?? liveAt
-      let isDue =
-        armed == .quiet || isLearnerActive(at: now)
-        || now.timeIntervalSince(floorSince) >= seconds(timing.answerWaitMs)
-
-      guard isDue else {
+      guard isGoodbyeDue(at: now) else {
         return nil
       }
 
@@ -251,12 +271,8 @@ struct LiveCallEnding {
       return cue
     }
 
-    // The wait starts once the learner leaves the floor, not when the cue went out while they
-    // were still talking.
-    let waitingSince = max(cueSentAt, lastActivity)
-
-    guard cueSends == 1, !characterSinceCue,
-      now.timeIntervalSince(waitingSince) >= seconds(timing.goodbyeRetryMs)
+    guard cueSends == 1,
+      now.timeIntervalSince(max(cueSentAt, lastActivity)) >= seconds(timing.goodbyeRetryMs)
     else {
       return nil
     }
@@ -265,32 +281,42 @@ struct LiveCallEnding {
     return cue
   }
 
-  /// One unanswered stretch: from when the character stopped, or the call went live, until the
-  /// learner speaks or types. The character answering the check-in doesn't start a new one.
-  private func silenceStart(at now: Date) -> Date? {
-    if let checkedInSilence {
-      return checkedInSilence
+  private func isGoodbyeDue(at now: Date) -> Bool {
+    let characterQuiet = seconds(timing.characterQuietMs)
+    let answerWait = seconds(timing.answerWaitMs)
+
+    if isCharacterSpeaking(at: now) || isRecent(lastTypedAt, at: now, within: characterQuiet) {
+      return false
     }
 
-    let learnerAt = [lastMicAt, lastTypedAt].compactMap(\.self).max()
-
-    guard let lastCharacterAt, let characterStop else {
-      return learnerAt == nil ? liveAt : nil
+    if armed == .quiet || isLearnerSpeaking(at: now)
+      || isRecent(lastHeardAt, at: now, within: characterQuiet)
+    {
+      return true
     }
 
-    if let learnerAt, learnerAt >= lastCharacterAt {
-      return nil
+    // Measured: a goodbye sent with a typed reply was answered as part of the reply and never
+    // said, so it waits for the character to answer the reply.
+    if let lastSentAt, let armedAt, lastSentAt >= armedAt {
+      return lastCharacterAt.map { $0 > lastSentAt } ?? false
+        || now.timeIntervalSince(lastSentAt) >= answerWait
     }
 
-    return now >= characterStop ? characterStop : nil
+    let characterStop = lastCharacterAt?.addingTimeInterval(characterQuiet) ?? liveAt
+    let floorSince = max(characterStop, lastLearnerAt ?? .distantPast)
+    return now.timeIntervalSince(floorSince) >= answerWait
   }
 
-  private var characterStop: Date? {
-    lastCharacterAt?.addingTimeInterval(seconds(timing.characterQuietMs))
+  private var lastLearnerAt: Date? {
+    [lastMicAt, lastHeardAt, lastTypedAt, lastSentAt].compactMap(\.self).max()
   }
 
   private var lastActivity: Date {
-    [lastCharacterAt, lastMicAt, lastTypedAt].compactMap(\.self).max() ?? liveAt
+    [lastCharacterAt, lastLearnerAt].compactMap(\.self).max() ?? liveAt
+  }
+
+  private func isRecent(_ date: Date?, at now: Date, within interval: TimeInterval) -> Bool {
+    date.map { now.timeIntervalSince($0) < interval } ?? false
   }
 
   private func seconds(_ milliseconds: Int) -> TimeInterval {

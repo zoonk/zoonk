@@ -12,16 +12,21 @@ struct TranscriptTurn: Equatable, Sendable {
 /// The longest turn and the most turns the API takes (core's `conversation-turn-limits`).
 private let maxTurnLength = 2000
 private let maxTurns = 300
+/// A pause this long between two fragments starts a new sentence.
+private let utterancePauseMs = 1000.0
 
 extension [TranscriptTurn] {
-  /// Fragments are appended exactly as received, since they carry their own spaces.
+  /// Fragments carry their own spaces, so they're appended as received, except the first of words
+  /// said after a pause, which comes without one.
   func adding(
     _ delta: String, speaker: ConversationSpeaker, startMs: Double, endMs: Double
   ) -> [TranscriptTurn] {
     var turns = self
 
     if let last = turns.last, last.speaker == speaker, last.startMs != nil {
-      turns[turns.count - 1].text += delta
+      let paused = last.endMs.map { startMs - $0 >= utterancePauseMs } ?? false
+      let spaced = last.text.last?.isWhitespace == true || delta.first?.isWhitespace == true
+      turns[turns.count - 1].text += (paused && !spaced ? " " : "") + delta
       turns[turns.count - 1].endMs = endMs
       return turns
     }

@@ -92,6 +92,7 @@ final class LiveCall {
   @ObservationIgnored private var waitingReplies: [String] = []
   @ObservationIgnored private var timers: [Task<Void, Never>] = []
   @ObservationIgnored private var settle: Task<Void, Never>?
+  @ObservationIgnored private var openingCues = 0
   @ObservationIgnored private var goodbyeCues = 0
   @ObservationIgnored private var examCuesSent = 0
   @ObservationIgnored private var learnerSpokeSinceCheck = false
@@ -233,7 +234,8 @@ final class LiveCall {
     }
 
     send(script.cues.typedReply.quoting(trimmed))
-    typing()
+    ending?.learnerSent(at: .now)
+    advance()
   }
 
   /// A key typed in the reply field: the learner is answering.
@@ -373,9 +375,7 @@ final class LiveCall {
       turns = turns.adding(delta, speaker: speaker, startMs: startMs, endMs: endMs)
 
       if speaker == .learner {
-        // The transcript trails the voice, but proves the learner spoke when the microphone's
-        // level missed a soft voice.
-        learnerSpoke(at: now)
+        ending?.learnerHeard(at: now)
         learnerSpokeSinceCheck = true
         settle?.cancel()
       } else {
@@ -387,7 +387,9 @@ final class LiveCall {
       delegations += 1
       send(script.cues.noBackend, delegationId: id)
     case .acknowledged(let id, let startMs):
-      if id.hasPrefix(Self.goodbyeEventPrefix) {
+      if id.hasPrefix(Self.openingEventPrefix) {
+        ending?.openingAcknowledged(at: now)
+      } else if id.hasPrefix(Self.goodbyeEventPrefix) {
         ending?.goodbyeAcknowledged(startMs: startMs)
       }
     }
@@ -406,11 +408,11 @@ final class LiveCall {
     reconnecting = false
     ending = LiveCallEnding(
       timing: script.timing, liveAt: now, talkEndsAt: talkEndsAt, hardStopAt: hardStopAt)
-    advance(now)
+    sendOpening(script.cues.opening)
 
     for reply in waitingReplies {
       send(script.cues.typedReply.quoting(reply))
-      ending?.learnerTyped(at: now)
+      ending?.learnerSent(at: now)
     }
 
     waitingReplies = []
@@ -442,10 +444,7 @@ final class LiveCall {
       return
     }
 
-    learnerSpoke(at: .now)
-  }
-
-  private func learnerSpoke(at now: Date) {
+    let now = Date.now
     ending?.learnerSpoke(at: now)
     replyGaps.learnerSpoke(at: now)
   }
@@ -471,7 +470,7 @@ final class LiveCall {
     for action in ending?.advance(to: now) ?? [] {
       switch action {
       case .send(.opening):
-        send(script.cues.opening)
+        sendOpening(script.cues.opening)
       case .send(.checkIn):
         send(script.cues.checkIn)
       case .send(.goodbye):
@@ -500,7 +499,14 @@ final class LiveCall {
     }
   }
 
+  private static let openingEventPrefix = "opening-"
   private static let goodbyeEventPrefix = "goodbye-"
+
+  /// Its acknowledgment says GPT-Live took it in, so a slow start isn't greeted twice.
+  private func sendOpening(_ cue: LiveCallCue) {
+    openingCues += 1
+    send(cue, eventId: "\(Self.openingEventPrefix)\(openingCues)")
+  }
 
   /// Its acknowledgment says where on the session's timeline the goodbye starts.
   private func sendGoodbye(_ cue: LiveCallCue) {
@@ -558,20 +564,20 @@ final class LiveCall {
         metLabels = check.objectivesMet
       }
 
-      if ending?.armed == nil, let progress = check.progress?.value1 {
-        send(progress)
+      let now = Date.now
+
+      if let ending, ending.armed == nil {
+        // A goodbye the learner has talked past since it was checked isn't the end.
+        if check.goodbye, !ending.hasLearnerActed(after: sentAt) {
+          self.ending?.saidGoodbye(at: now)
+        } else if conversation.objectives.allSatisfy({ check.objectivesMet.contains($0.label) }) {
+          self.ending?.goalsMet(at: now)
+        } else if let progress = check.progress?.value1 {
+          send(progress)
+        }
       }
 
-      if conversation.objectives.allSatisfy({ check.objectivesMet.contains($0.label) }) {
-        ending?.goalsMet()
-      }
-
-      // A goodbye the learner has talked past since it was checked isn't the end.
-      if check.goodbye, ending?.hasLearnerActed(after: sentAt) == false {
-        ending?.saidGoodbye()
-      }
-
-      advance()
+      advance(now)
     } while checkAgain
 
     checking = false
