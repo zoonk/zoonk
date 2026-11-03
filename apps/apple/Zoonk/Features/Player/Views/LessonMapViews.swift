@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The lesson's last screen, before it's saved. On a spread the map has the leading page and help
-/// with it the trailing one, where Ask opens beside it.
+/// The lesson's last screen, before it's saved. On a spread with help to offer, the map has the
+/// leading page and the help the trailing one, where Ask opens beside it; without help it's one page.
 struct LessonMapStage: View {
   @Environment(\.lessonTutor) private var tutor
 
@@ -11,28 +11,35 @@ struct LessonMapStage: View {
   let summary: LessonSummary
 
   var body: some View {
-    PaneSplit(isSpread: true) {
-      mapPage
-        .safeAreaBar(edge: .bottom) {
-          if store.isAsking {
-            actionBar
+    if tutor.panel != nil, !store.isGuest {
+      PaneSplit(isSpread: true) {
+        mapPage
+          .safeAreaBar(edge: .bottom) {
+            if store.isAsking {
+              actionBar
+            }
           }
-        }
-    } secondary: {
-      if store.isAsking {
-        LessonAskPanel(store: store, isBeside: true)
-      } else {
-        LessonPage(store: store) {
-          if tutor.panel != nil, !store.isGuest {
+      } secondary: {
+        if store.isAsking {
+          LessonAskPanel(store: store, isBeside: true)
+        } else {
+          LessonPage(store: store) {
             LessonScreenHelp(store: store)
           }
+          .safeAreaBar(edge: .bottom) { actionBar }
         }
-        .safeAreaBar(edge: .bottom) { actionBar }
+      } single: {
+        onePage
       }
-    } single: {
-      mapPage
-        .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+    } else {
+      onePage
+        .lonePage()
     }
+  }
+
+  private var onePage: some View {
+    mapPage
+      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
   }
 
   private var mapPage: some View {
