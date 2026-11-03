@@ -15,6 +15,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: "Renan na empresa, junto ao caixa e a uma conta identificada como conta de casa.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -23,6 +24,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -31,6 +33,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -39,6 +42,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -47,6 +51,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -55,6 +60,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -63,6 +69,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -71,6 +78,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -79,6 +87,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -87,6 +96,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -95,6 +105,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -110,7 +121,6 @@ export const NOVICE_LESSON_SPECS = {
           "Organizar os registros de uma empresa sem confundir gastos do negócio com gastos do proprietário.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Entidade contábil",
   },
   "pt-equacao-patrimonial-beginner": {
@@ -126,6 +136,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -134,6 +145,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "formulaModel",
@@ -142,6 +154,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -150,6 +163,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "formulaModel",
@@ -158,6 +172,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -166,6 +181,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -174,6 +190,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -182,6 +199,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -190,6 +208,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -198,6 +217,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -206,6 +226,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -220,7 +241,6 @@ export const NOVICE_LESSON_SPECS = {
         useCase: "Conferir os totais patrimoniais registrados por uma empresa.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Equação patrimonial",
   },
   "pt-niveis-ecologicos-beginner": {
@@ -236,6 +256,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: "Um lago com água, sapos-cururus e plantas aquáticas.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -245,6 +266,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [0],
         visual:
           "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -254,6 +276,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [0],
         visual:
           "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -262,6 +285,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -271,6 +295,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [0],
         visual:
           "O lago com sapos-cururus, aguapés e outros seres vivos destacados; água e solo ao redor sem destaque.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -279,6 +304,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -288,6 +314,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [0],
         visual:
           "O lago com sapos-cururus, aguapés, outros seres vivos, água e solo; luz do Sol chegando aos aguapés.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "categorize",
@@ -296,6 +323,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -304,6 +332,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -318,7 +347,6 @@ export const NOVICE_LESSON_SPECS = {
           "Escolher o recorte adequado para estudar os seres vivos de um lago e seu ambiente.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Níveis de organização ecológica",
   },
   "pt-patrimonio-liquido-beginner": {
@@ -334,6 +362,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: "Davi em sua oficina, com ferramentas, dinheiro no caixa e um documento de dívida.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "formulaModel",
@@ -342,6 +371,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -350,6 +380,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -358,6 +389,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -366,6 +398,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "formulaModel",
@@ -374,6 +407,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -382,6 +416,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -395,7 +430,6 @@ export const NOVICE_LESSON_SPECS = {
         useCase: "Conferir a posição patrimonial de uma empresa a partir de seus registros.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Patrimônio líquido",
   },
   "pt-receitas-regulares-overview": {
@@ -411,6 +445,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [],
         visual:
           "Igor em uma bancada de consertos, recebendo de um cliente um objeto para consertar.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -419,6 +454,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -427,6 +463,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -435,6 +472,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -443,6 +481,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "categorize",
@@ -451,6 +490,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -459,6 +499,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -474,7 +515,6 @@ export const NOVICE_LESSON_SPECS = {
           "Reconhecer quais entradas de dinheiro têm frequência habitual ao pensar nos próximos meses.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Receitas regulares e eventuais",
   },
   "pt-usuarios-contabilidade-beginner": {
@@ -491,6 +531,7 @@ export const NOVICE_LESSON_SPECS = {
         skills: [],
         visual:
           "Fábio e uma representante de banco conversam diante de documentos sobre a empresa.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -499,6 +540,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -507,6 +549,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -515,6 +558,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -523,6 +567,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -531,6 +576,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "matchPairs",
@@ -539,6 +585,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -547,6 +594,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -555,6 +603,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -563,6 +612,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -571,6 +621,7 @@ export const NOVICE_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -586,7 +637,6 @@ export const NOVICE_LESSON_SPECS = {
           "Entender quem consulta informações de uma organização e para tomar quais decisões.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Usuários e finalidade da contabilidade",
   },
 } as const satisfies Record<string, LessonSpec>;

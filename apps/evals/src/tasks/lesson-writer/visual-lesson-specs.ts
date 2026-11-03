@@ -13,6 +13,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -21,6 +22,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -29,6 +31,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -37,6 +40,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -50,7 +54,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Telling how old a church is on a trip.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Reading a church doorway",
   },
   "en-compound-interest-beginner": {
@@ -65,6 +68,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -74,6 +78,7 @@ export const VISUAL_LESSON_SPECS = {
         skills: [0],
         visual:
           "A curve of the balance growing year by year: $1,000 at the start, $1,100, $1,210 and $1,331 after 3 years.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -82,6 +87,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -90,6 +96,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -98,6 +105,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -110,7 +118,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Comparing savings accounts and loans.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Compound interest",
   },
   "en-flower-parts-numbered": {
@@ -125,6 +132,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -134,6 +142,7 @@ export const VISUAL_LESSON_SPECS = {
         skills: [0],
         visual:
           "A flower cut in half lengthwise, with the petals, stamens, stigma and ovary labeled.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -143,6 +152,7 @@ export const VISUAL_LESSON_SPECS = {
         skills: [0],
         visual:
           "A flower cut in half lengthwise, with the petal, stamen, stigma and ovary numbered.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -151,6 +161,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -164,7 +175,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Knowing where fruit comes from in a garden.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Where seeds come from",
   },
   "en-laundry-care-labels-beginner": {
@@ -180,6 +190,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -188,6 +199,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -197,6 +209,7 @@ export const VISUAL_LESSON_SPECS = {
         skills: [0],
         visual:
           "A wool sweater on a bed, its sewn-in care tag turned out and reading 'HAND WASH COLD. LAY FLAT TO DRY.'",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -205,6 +218,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -218,7 +232,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Washing a new sweater without shrinking it.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Reading a care tag",
   },
   "pt-graficos-de-barras-beginner": {
@@ -234,6 +247,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -242,6 +256,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -250,6 +265,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -258,6 +274,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -266,6 +283,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -281,7 +299,6 @@ export const VISUAL_LESSON_SPECS = {
           "Apresentar contagens de pedidos ou respostas para comparar categorias no trabalho.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Gráficos de barras",
   },
   "pt-imagens-e-legendas-beginner": {
@@ -297,6 +314,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: "Danilo standing at a door, holding a closed red umbrella; no rain.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -305,6 +323,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -313,6 +332,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: "Otávio standing still next to a blue bicycle, both feet on the ground.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -321,6 +341,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -330,6 +351,7 @@ export const VISUAL_LESSON_SPECS = {
         skills: [0],
         visual:
           "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
+        visualKind: "picture",
       },
     ],
     skills: [
@@ -344,7 +366,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Interpretar charges, anúncios e fotos com legenda em provas de português.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Imagens e legendas",
   },
   "pt-tabela-e-grafico-beginner": {
@@ -360,6 +381,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -368,6 +390,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -376,6 +399,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "check",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -384,6 +408,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "explanation",
         skills: [1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -392,6 +417,7 @@ export const VISUAL_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -412,7 +438,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Ler relatórios e indicadores no trabalho.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Tabela e gráfico de barras",
   },
 } as const satisfies Record<string, LessonSpec>;

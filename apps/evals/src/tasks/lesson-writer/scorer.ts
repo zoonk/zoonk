@@ -4,7 +4,6 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { checkWrittenLesson } from "@zoonk/core/library/quality/code-checks";
 import { checkLessonPrograms } from "@zoonk/core/library/quality/program-checks";
-import { findQuestionBases } from "@zoonk/core/library/steps/question-bases";
 import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { findEmDashes } from "@zoonk/utils/text-flaws";
 import { LESSON_WRITER_SCORE_CATEGORIES } from "./score-categories";
@@ -50,7 +49,6 @@ async function checkLesson(
       find: (value) => findNumberFormatFlaws({ language: input.language, value }),
       lesson,
     }),
-    ...findQuestionBases({ lesson, screens: result.screens }).problems,
   ];
 
   const failingScreens = new Set(problems.map((problem) => problem.screen ?? -1));

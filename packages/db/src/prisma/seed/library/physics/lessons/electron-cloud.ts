@@ -17,6 +17,26 @@ export const electronCloudLesson: SeedLesson = {
   steps: [
     {
       content: {
+        text: t(
+          "Gabi draws an atom for her little brother: a nucleus with electrons circling it like planets. He points at one: “Where is it right now?” Gabi isn't sure anymore. Where is the electron?",
+          "Gabi desenha um átomo para o irmão: um núcleo com elétrons girando como planetas. Ele aponta um: “Onde ele está agora?” Gabi já não tem certeza. Onde está o elétron?",
+        ),
+        variant: "text",
+      },
+      kind: "hook",
+    },
+    {
+      content: {
+        text: t(
+          "In the classic drawing, the electron circles the nucleus like Earth circles the Sun. But a charge moving in a circle gives off light, and light carries energy away.\n\nAn orbiting electron would lose energy on every lap and spiral into the nucleus in about **16 trillionths of a second**. Atoms have lasted billions of years, so the drawing is wrong, not the atom.",
+          "No desenho clássico, o elétron gira em volta do núcleo como a Terra em volta do Sol. Só que uma carga andando em círculo emite luz, e a luz leva energia embora.\n\nUm elétron em órbita perderia energia a cada volta e cairia em espiral no núcleo em cerca de **16 trilionésimos de segundo**. Os átomos existem há bilhões de anos, então o errado é o desenho, não o átomo.",
+        ),
+        title: t("The planet picture breaks", "A imagem do planeta não funciona"),
+      },
+      kind: "explanation",
+    },
+    {
+      content: {
         options: [
           guess(
             "planet",
@@ -40,16 +60,6 @@ export const electronCloudLesson: SeedLesson = {
         variant: "guess",
       },
       kind: "hook",
-    },
-    {
-      content: {
-        text: t(
-          "In the classic drawing, the electron circles the nucleus like Earth circles the Sun. But a charge moving in a circle gives off light, and light carries energy away.\n\nAn orbiting electron would lose energy on every lap and spiral into the nucleus in about **16 trillionths of a second**. Atoms have lasted billions of years, so the drawing is wrong, not the atom.",
-          "No desenho clássico, o elétron gira em volta do núcleo como a Terra em volta do Sol. Só que uma carga andando em círculo emite luz, e a luz leva energia embora.\n\nUm elétron em órbita perderia energia a cada volta e cairia em espiral no núcleo em cerca de **16 trilionésimos de segundo**. Os átomos existem há bilhões de anos, então o errado é o desenho, não o átomo.",
-        ),
-        title: t("The planet picture breaks", "A imagem do planeta não funciona"),
-      },
-      kind: "explanation",
     },
     {
       content: {
@@ -369,6 +379,5 @@ export const electronCloudLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("Why doesn't the electron fall in?", "Por que o elétron não cai no núcleo?"),
 };

@@ -50,7 +50,7 @@ function rawSkill(topic: string) {
 }
 
 function rawScreen(kind: string, skills: number[], activityTemplate: string | null = null) {
-  return { activityTemplate, brief: kind, kind, skills, visual: null };
+  return { activityTemplate, brief: kind, kind, skills, visual: null, visualKind: "none" };
 }
 
 function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
@@ -59,10 +59,9 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
     description: "Temperatures below zero.",
     screens: kinds.map((kind, index) => ({
       ...rawScreen(kind, kind === "hook" ? [] : [1]),
-      visual: index < 2 ? "A thermometer below zero" : null,
+      ...(index < 2 ? { visual: "A thermometer below zero", visualKind: "picture" } : {}),
     })),
     skills: [rawSkill("Temperature")],
-    supportMode: "explanationFirst",
     title,
   };
 }
@@ -92,7 +91,6 @@ describe(generateLessonSpec, () => {
               rawScreen("application", [1, 2, 3, 4]),
             ],
             skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
-            supportMode: "explanationFirst",
             title: "Summarizing a data set",
           },
         ],
@@ -138,6 +136,7 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "guess",
         "explanation",
         "workedExample",
         "explanation",
@@ -151,6 +150,7 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "guess",
         "workedExample",
         "check",
         "explanation",
@@ -207,7 +207,6 @@ describe(generateLessonSpec, () => {
         rawScreen("application", [1, 2]),
       ],
       skills: ["Estrutura", "Enzima"].map((topic) => rawSkill(topic)),
-      supportMode: "explanationFirst",
       title: "Proteínas e enzimas",
     };
 
@@ -251,7 +250,6 @@ describe(generateLessonSpec, () => {
             description: "Temperatures.",
             screens: [rawScreen("hook", []), rawScreen("explanation", [1])],
             skills: [rawSkill("Temperature")],
-            supportMode: "explanationFirst",
             title: "Temperatures",
           },
         ],

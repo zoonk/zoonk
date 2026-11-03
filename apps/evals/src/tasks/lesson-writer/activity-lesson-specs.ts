@@ -13,6 +13,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -21,6 +22,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "keyboardFretboard",
@@ -29,6 +31,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -37,6 +40,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -45,6 +49,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -58,7 +63,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Choosing chords that fit the mood of a song you play.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Major or minor?",
   },
   "en-pea-crosses-chance": {
@@ -73,6 +77,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -81,6 +86,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "combinationGrid",
@@ -89,6 +95,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: "randomSimulation",
@@ -97,6 +104,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [1],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -105,6 +113,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -127,7 +136,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Not overreacting when a real batch misses the prediction a little.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "From Punnett squares to real seeds",
   },
   "en-python-range-beginner": {
@@ -143,6 +151,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -152,6 +161,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -160,6 +170,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "codeRunner",
@@ -168,6 +179,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -176,6 +188,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -189,7 +202,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Looping over pages, days or items without skipping the last one.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Count with range() in Python",
   },
   "en-tree-key-beginner": {
@@ -205,6 +217,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -214,6 +227,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "decisionTree",
@@ -222,6 +236,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: "A pine twig with long needles growing in bundles of two, close up.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -230,6 +245,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -238,6 +254,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -251,7 +268,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Naming trees on a walk or in a park from one leaf.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Name a tree from one leaf",
   },
   "en-ux-goals-spot-ai": {
@@ -267,6 +283,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -275,6 +292,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -283,6 +301,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "findError",
@@ -291,6 +310,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [1],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -299,6 +319,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -321,7 +342,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Reviewing a brief or an AI assistant's summary before a design sprint.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Writing UX goals",
   },
   "pt-camaras-do-coracao-beginner": {
@@ -337,6 +357,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -346,6 +367,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "labeledDiagram",
@@ -354,6 +376,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -362,6 +385,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -370,6 +394,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -393,7 +418,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Entender por que um defeito num lado do coração afeta os pulmões ou o corpo.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "As quatro câmaras do coração",
   },
   "pt-demanda-ovos-deslocamento": {
@@ -408,6 +432,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -416,6 +441,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "lineCrossing",
@@ -424,6 +450,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -432,6 +459,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -440,6 +468,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -454,7 +483,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Entender por que o preço de um alimento dispara ou cai no mercado.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Quando a curva se desloca",
   },
 } satisfies Record<string, LessonSpec>;

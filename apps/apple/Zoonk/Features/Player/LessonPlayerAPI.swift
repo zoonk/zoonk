@@ -33,7 +33,6 @@ struct LessonRunStart: Hashable, Sendable {
   let answers: [LessonRunAnswer]
   let hyperdrive: LessonHyperdriveStart
   let optionalStepIds: [String]
-  let support: LessonPlayerState.LessonSupport?
 }
 
 struct LessonFit: Hashable, Sendable {
@@ -156,10 +155,7 @@ struct LessonPlayerAPI: Sendable {
           },
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
-          optionalStepIds: run.optionalStepIds ?? [],
-          support: run.support.flatMap {
-            LessonPlayerState.LessonSupport(rawValue: $0.value1.rawValue)
-          }))
+          optionalStepIds: run.optionalStepIds ?? []))
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound:

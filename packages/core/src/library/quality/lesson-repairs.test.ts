@@ -16,6 +16,59 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
 }
 
 describe(repairWrittenLesson, () => {
+  it("writes a negative amount the locale's way in text, tables, activities and the quote that cites it", () => {
+    const sentence = "Com mais dívidas, o patrimônio fica R$ -1.000,00.";
+
+    const explanation: WrittenScreen = {
+      exampleLineIdea: null,
+      explore: null,
+      image: null,
+      kind: "explanation",
+      text: `${sentence}\n\n| Item | Valor |\n|---|---:|\n| Patrimônio | R$ -1.000,00 |`,
+      title: "Patrimônio negativo",
+      visual: null,
+    };
+
+    const activity: WrittenScreen = {
+      content: JSON.stringify({ check: { options: [{ text: "R$ -1.000,00" }] } }),
+      kind: "activity",
+      template: "formulaModel",
+    };
+
+    const quoted: WrittenScreen = {
+      basis: { quote: sentence, screen: 1 },
+      context: null,
+      image: null,
+      kind: "check",
+      options: ["R$ -1.000,00", "R$ 1.000,00"].map((text, index) => ({
+        isCorrect: index === 0,
+        picture: null,
+        reason: "Porque sim.",
+        text,
+      })),
+      question: "Quanto fica o patrimônio?",
+      visual: null,
+    };
+
+    const [text, play, question] = repairWrittenLesson({
+      language: "pt",
+      lesson: { screens: [explanation, activity, quoted], summary: hubMap(["Uma ideia."]) },
+    }).screens;
+
+    const fixed = "-R$\u00A01.000,00";
+
+    expect(text?.kind === "explanation" && text.text).toBe(
+      `Com mais dívidas, o patrimônio fica ${fixed}.\n\n| Item | Valor |\n|---|---:|\n| Patrimônio | ${fixed} |`,
+    );
+
+    expect(play?.kind === "activity" && play.content).toContain(fixed);
+    expect(question?.kind === "check" && question.options[0]?.text).toBe(fixed);
+
+    expect(question?.kind === "check" && question.basis?.quote).toBe(
+      `Com mais dívidas, o patrimônio fica ${fixed}.`,
+    );
+  });
+
   it("leaves a lesson with nothing to repair as it was", () => {
     const lesson = writtenTemperatureLesson();
     expect(repairWrittenLesson({ language: "en", lesson })).toStrictEqual(lesson);

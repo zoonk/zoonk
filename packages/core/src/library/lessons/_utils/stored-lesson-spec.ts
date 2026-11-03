@@ -1,9 +1,23 @@
 import {
   LESSON_SCREEN_KINDS,
+  type LessonScreen,
   type LessonSpec,
-  SUPPORT_MODES,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { LESSON_VISUAL_KINDS } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { z } from "zod";
+
+/** Plans saved before screens named their visual's kind show a picture or a template, or nothing. */
+function savedVisualKind(screen: Omit<LessonScreen, "visualKind">): LessonScreen["visualKind"] {
+  if (screen.kind === "activity") {
+    return "template";
+  }
+
+  if (screen.visual) {
+    return "picture";
+  }
+
+  return screen.activityTemplate ? "template" : "none";
+}
 
 /** `Lesson.spec` holds the normalized spec `generateLessonSpec` returns: skill indexes are 0-based. */
 const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
@@ -12,13 +26,19 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
   estimatedMinutes: z.number(),
   screens: z
     .array(
-      z.object({
-        activityTemplate: z.string().nullable(),
-        brief: z.string(),
-        kind: z.enum(LESSON_SCREEN_KINDS),
-        skills: z.array(z.number().int().nonnegative()),
-        visual: z.string().nullable(),
-      }),
+      z
+        .object({
+          activityTemplate: z.string().nullable(),
+          brief: z.string(),
+          kind: z.enum(LESSON_SCREEN_KINDS),
+          skills: z.array(z.number().int().nonnegative()),
+          visual: z.string().nullable(),
+          visualKind: z.enum(LESSON_VISUAL_KINDS).optional(),
+        })
+        .transform(({ visualKind, ...screen }) => ({
+          ...screen,
+          visualKind: visualKind ?? savedVisualKind(screen),
+        })),
     )
     .min(1),
   skills: z
@@ -33,7 +53,6 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
       }),
     )
     .min(1),
-  supportMode: z.enum(SUPPORT_MODES),
   title: z.string(),
 });
 

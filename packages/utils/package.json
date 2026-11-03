@@ -34,6 +34,7 @@
     "./languages": "./src/languages.ts",
     "./logger": "./src/logger.ts",
     "./math-answer": "./src/math-answer.ts",
+    "./negative-money": "./src/negative-money.ts",
     "./locale": "./src/locale.ts",
     "./locale-request": "./src/locale-request.ts",
     "./localized-number": "./src/localized-number.ts",

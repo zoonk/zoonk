@@ -13,10 +13,12 @@ export function temperatureSpec(): LessonSpec {
     screens: [
       {
         activityTemplate: null,
-        brief: "Guess the temperature after a rise.",
+        brief:
+          "At dawn the window thermometer shows −3 °C, and the forecast says 5 degrees warmer by noon. Where will the mark end up?",
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -24,6 +26,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: "A thermometer from −5 °C to 5 °C with an arrow going up.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -31,6 +34,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -38,6 +42,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -45,6 +50,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "numberLine",
@@ -52,6 +58,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -59,6 +66,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -66,6 +74,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -78,7 +87,6 @@ export function temperatureSpec(): LessonSpec {
         useCase: "Reading a weather forecast.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Temperature changes across zero",
   };
 }
@@ -112,7 +120,7 @@ export function hubMap(ideas: readonly string[]): LessonMap {
   };
 }
 
-/** The opening guess an intermediate lesson may open with; a beginner one opens with a scene. */
+/** A guess about the rise, for the screen the plan gives the guess. */
 export function temperatureGuess(): Extract<WrittenScreen, { kind: "hookGuess" }> {
   return {
     image: null,
@@ -208,7 +216,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
-        basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
+        basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
         context: null,
         image: null,
         kind: "check",

@@ -39,11 +39,11 @@ function toInput(
 
 const { regra, temperature } = BASE_LESSONS;
 const temperatureScreens = (temperature.lesson as WrittenLesson).screens;
-const mathCheck = temperatureScreens[3] as Extract<WrittenScreen, { kind: "mathCheck" }>;
+const mathCheck = temperatureScreens[4] as Extract<WrittenScreen, { kind: "mathCheck" }>;
 
 export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
   {
-    expected: { screens: [1, 3] },
+    expected: { screens: [1, 4] },
     id: "en-temperature-code-problems",
     userInput: toInput(
       temperature,
@@ -60,7 +60,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           title: "Up is up, even below zero",
           visual: null,
         },
-        3: {
+        4: {
           ...mathCheck,
           math: {
             ...mathCheck.math,
@@ -76,12 +76,12 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           problem: 'Uses filler ("it\'s important to note"); cut it and say the idea directly.',
           screen: 1,
         },
-        { problem: "Step 2 shows {result} without an expression.", screen: 3 },
+        { problem: "Step 2 shows {result} without an expression.", screen: 4 },
       ],
     ),
   },
   {
-    expected: { screens: [1, 3] },
+    expected: { screens: [1, 4] },
     id: "en-temperature-basis-follows",
     userInput: toInput(
       temperature,
@@ -98,7 +98,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           title: "Up is up, even below zero",
           visual: null,
         },
-        3: {
+        4: {
           ...mathCheck,
           basis: { quote: "a rise always moves **up** the thermometer.", screen: 2 },
           math: {
@@ -115,17 +115,17 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           problem: 'Uses filler ("it\'s important to note"); cut it and say the idea directly.',
           screen: 1,
         },
-        { problem: "Step 2 shows {result} without an expression.", screen: 3 },
+        { problem: "Step 2 shows {result} without an expression.", screen: 4 },
       ],
     ),
   },
   {
-    expected: { screens: [5] },
+    expected: { screens: [6] },
     id: "en-temperature-activity-answer",
     userInput: toInput(
       temperature,
       withScreens(temperature, {
-        5: {
+        6: {
           content: JSON.stringify({
             check: {
               answer: 6,
@@ -150,16 +150,16 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           template: "numberLine",
         },
       }),
-      [{ problem: "check.answer: The answer 6 doesn't match the computed 5", screen: 5 }],
+      [{ problem: "check.answer: The answer 6 doesn't match the computed 5", screen: 6 }],
     ),
   },
   {
-    expected: { screens: [7] },
+    expected: { screens: [8] },
     id: "en-temperature-numbered-reason",
     userInput: toInput(
       temperature,
       withScreens(temperature, {
-        7: {
+        8: {
           basis: null,
           context:
             "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
@@ -192,18 +192,18 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
         {
           problem:
             'The reason for "1" ("That\'s not right.") is too vague: say that 1 marks the starting −6 °C, before the rise.',
-          screen: 7,
+          screen: 8,
         },
       ],
     ),
   },
   {
-    expected: { screens: [2] },
+    expected: { screens: [1] },
     id: "pt-regra-reviewer-jargon",
     userInput: toInput(
       regra,
       withScreens(regra, {
-        2: {
+        1: {
           exampleLineIdea: null,
           explore: null,
           image: null,
@@ -216,8 +216,8 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
       [
         {
           problem:
-            'Uses "grandezas inversamente proporcionais", "constante de proporcionalidade" and notation before explaining them, right after a check about the gráfica. Fix: build on the gráfica check in everyday words: with the same order, more people means less time (inverse); with the same team, more labels means more time (direct). Introduce one term at a time and no notation.',
-          screen: 2,
+            'Uses "grandezas inversamente proporcionais", "constante de proporcionalidade" and notation before explaining them, right after the scene at the gráfica. Fix: say it in everyday words with the laundromat: for the same laundry, more dryers means less time (inverse); with the same dryers, more laundry means more time (direct). Introduce one term at a time and no notation.',
+          screen: 1,
         },
       ],
     ),

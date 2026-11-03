@@ -50,11 +50,7 @@ describe(findQuestionBases, () => {
 
     expect(bases).toStrictEqual([
       { question: CALCULATION, quote: "A rise always moves **up** the thermometer.", reading: 1 },
-      {
-        question: WHY_CHECK,
-        quote: "Count the degrees to zero, then the degrees after it.",
-        reading: 4,
-      },
+      { question: WHY_CHECK, quote: "First climb to zero: that takes 3 degrees.", reading: 2 },
     ]);
   });
 
@@ -153,7 +149,7 @@ describe(addQuestionBases, () => {
     });
 
     expect(contentAt(withBases, WHY_CHECK)).toMatchObject({
-      basis: { position: 3, quote: "Count the degrees to zero, then the degrees after it." },
+      basis: { position: 1, quote: "First climb to zero: that takes 3 degrees." },
     });
 
     expect(contentAt(withBases, APPLICATION)).toHaveProperty("basis", null);
@@ -164,6 +160,6 @@ describe(addQuestionBases, () => {
     const withBases = addQuestionBases({ lesson, positions, screens });
 
     expect(contentAt(withBases, CALCULATION)).toHaveProperty("basis", null);
-    expect(contentAt(withBases, WHY_CHECK)).toHaveProperty("basis.position", 4);
+    expect(contentAt(withBases, WHY_CHECK)).toHaveProperty("basis.position", 2);
   });
 });

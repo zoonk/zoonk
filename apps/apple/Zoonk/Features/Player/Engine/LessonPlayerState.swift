@@ -58,10 +58,6 @@ struct LessonPlayerState: Equatable, Sendable {
     let skippedWritingStepIds: [String]
   }
 
-  enum LessonSupport: String, Hashable, Sendable {
-    case explanationFirst, questionFirst
-  }
-
   /// A device-graded answer the server hasn't accepted yet: the lesson can't finish without it,
   /// and a resend keeps its attempt id so the server records it once.
   struct UnsavedAnswer: Hashable, Sendable {
@@ -75,7 +71,6 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
   let hasMap: Bool
-  private(set) var support: LessonSupport?
   private(set) var queue: [String]
   private(set) var position = 0
   private(set) var phase: Phase
@@ -117,15 +112,13 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
-    lessonId: String, steps lessonSteps: [LessonStep], hasMap: Bool = false,
-    support: LessonSupport? = nil, now: Date = .now
+    lessonId: String, steps lessonSteps: [LessonStep], hasMap: Bool = false, now: Date = .now
   ) {
     self.lessonId = lessonId
     steps = Dictionary(lessonSteps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     lessonOrder = lessonSteps.map(\.id)
     self.hasMap = hasMap
-    self.support = support
-    queue = Self.orderOpening(lessonOrder, steps: steps, support: support)
+    queue = lessonOrder
     phase = lessonOrder.isEmpty ? .completed : .playing
     completion = lessonOrder.isEmpty ? Completion(status: .ready) : nil
     stepStartedAt = now
@@ -607,15 +600,9 @@ struct LessonPlayerState: Equatable, Sendable {
     answers runAnswers: [LessonRunAnswer],
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
-    optionalStepIds: [String] = [],
-    support: LessonSupport? = nil
+    optionalStepIds: [String] = []
   ) {
     let isUntouched = results.isEmpty && quickCheck == nil
-
-    if isUntouched, support != self.support {
-      self.support = support
-      queue = Self.orderOpening(queue, steps: steps, support: support)
-    }
 
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
@@ -922,9 +909,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
   private mutating func resetForResume() {
     let leftOut = unavailableStepIds + skippedWritingStepIds
-    queue = Self.orderOpening(lessonOrder, steps: steps, support: support).filter {
-      !leftOut.contains($0)
-    }
+    queue = lessonOrder.filter { !leftOut.contains($0) }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
     for id in lessonOrder {
@@ -983,31 +968,6 @@ struct LessonPlayerState: Equatable, Sendable {
 
     let readingBefore = queue[..<open].lastIndex { isAnswerable($0) }
     position = readingBefore.map { $0 + 1 } ?? 0
-  }
-
-  /// A lesson that opens with explanations gets the check (or activity) that follows them first
-  /// when the learner partly knows the skill (`questionFirst`): they try what they know, then read.
-  private static func orderOpening(
-    _ queue: [String], steps: [String: LessonStep], support: LessonSupport?
-  )
-    -> [String]
-  {
-    guard support == .questionFirst,
-      let start = queue.firstIndex(where: { steps[$0]?.kind != .hook }),
-      let opening = steps[queue[start]], opening.isExplaining,
-      let questionIndex = queue.indices.first(where: {
-        $0 > start && steps[queue[$0]]?.isExplaining == false
-      }),
-      let question = steps[queue[questionIndex]], question.isRetried,
-      question.skillId == nil || opening.skillId == nil || question.skillId == opening.skillId
-    else {
-      return queue
-    }
-
-    var reordered = queue
-    reordered.remove(at: questionIndex)
-    reordered.insert(question.id, at: start)
-    return reordered
   }
 }
 

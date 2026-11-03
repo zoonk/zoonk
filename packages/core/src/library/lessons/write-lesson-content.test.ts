@@ -220,7 +220,7 @@ describe(writeLessonContent, () => {
       { position: 1, quote: "A rise always moves **up** the thermometer." },
       undefined,
       undefined,
-      { position: 4, quote: "Count the degrees to zero, then the degrees after it." },
+      { position: 2, quote: "First climb to zero: that takes 3 degrees." },
       null,
     ]);
   });
@@ -228,7 +228,13 @@ describe(writeLessonContent, () => {
   it("fixes what the code checks found, then records the fix's run on the screens it changed", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
-    const draft = mockDraft(withScreen(written, 1, explanation("In this lesson, a rise goes up.")));
+
+    const framed = {
+      ...written.screens[1],
+      text: "In this lesson, see why. A rise always moves **up** the thermometer.",
+    } as WrittenScreen;
+
+    const draft = mockDraft(withScreen(written, 1, framed));
     const fix = mockFix({ changedScreens: [1], lesson: written });
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });

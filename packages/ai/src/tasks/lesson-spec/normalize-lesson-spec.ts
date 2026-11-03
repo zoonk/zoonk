@@ -4,10 +4,9 @@ import {
   type LessonScreenKind,
   type LessonSpec,
   type LessonSpecSkill,
-  type SupportMode,
   estimateLessonMinutes,
-  getSupportModeFromScreens,
 } from "./lesson-spec-rules";
+import { type LessonVisualKind } from "./lesson-visuals";
 
 /** Skills are numbered from 1 in the order the lesson lists them. */
 type RawLessonScreen = {
@@ -16,6 +15,7 @@ type RawLessonScreen = {
   kind: LessonScreenKind;
   skills: number[];
   visual: string | null;
+  visualKind: LessonVisualKind;
 };
 
 export type RawLessonSpec = {
@@ -23,7 +23,6 @@ export type RawLessonSpec = {
   description: string;
   screens: RawLessonScreen[];
   skills: LessonSpecSkill[];
-  supportMode: SupportMode;
   title: string;
 };
 
@@ -83,19 +82,68 @@ function normalizeActivity({
     : { activityTemplate: null, kind: "check" };
 }
 
+type ScreenVisual = Pick<LessonScreen, "activityTemplate" | "visual" | "visualKind">;
+
+const DRAWN_FROM_BRIEF: ReadonlySet<LessonVisualKind> = new Set(["chart", "table", "timeline"]);
+
+/**
+ * A screen shows one visual. What the app draws from the brief's data needs nothing more; a
+ * picture needs its description and a template its id, so a kind without one falls back to the
+ * other one the plan filled in.
+ */
+function toVisual({
+  activityTemplate,
+  kind,
+  picture,
+  visualKind,
+}: {
+  activityTemplate: string | null;
+  kind: LessonScreenKind;
+  picture: string;
+  visualKind: LessonVisualKind;
+}): ScreenVisual {
+  const nothing: ScreenVisual = { activityTemplate: null, visual: null, visualKind: "none" };
+
+  // An activity draws itself; its picture is one its template asks for, such as a decision tree's case.
+  if (kind === "activity") {
+    return { activityTemplate, visual: picture || null, visualKind: "template" };
+  }
+
+  if (DRAWN_FROM_BRIEF.has(visualKind)) {
+    return { ...nothing, visualKind };
+  }
+
+  const asPicture: ScreenVisual | null = picture
+    ? { activityTemplate: null, visual: picture, visualKind: "picture" }
+    : null;
+
+  const asTemplate: ScreenVisual | null = activityTemplate
+    ? { activityTemplate, visual: null, visualKind: "template" }
+    : null;
+
+  const preferred = visualKind === "picture" ? [asPicture, asTemplate] : [asTemplate, asPicture];
+
+  return preferred.find((visual) => visual !== null) ?? nothing;
+}
+
 function normalizeScreen({
   exploreIds,
   screen,
   skillCount,
   templateIds,
 }: TemplateSets & { screen: RawLessonScreen; skillCount: number }): LessonScreen {
-  const visual = screen.visual?.trim() ?? "";
+  const activity = normalizeActivity({ exploreIds, screen, templateIds });
 
   return {
-    ...normalizeActivity({ exploreIds, screen, templateIds }),
+    ...activity,
+    ...toVisual({
+      activityTemplate: activity.activityTemplate,
+      kind: activity.kind,
+      picture: screen.visual?.trim() ?? "",
+      visualKind: screen.visualKind,
+    }),
     brief: screen.brief.trim(),
     skills: toSkillIndexes({ kind: screen.kind, numbers: screen.skills, skillCount }),
-    visual: visual || null,
   };
 }
 
@@ -116,8 +164,6 @@ export function normalizeLessonSpec({
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
     screens,
     skills,
-    // The writer builds an explanation on the check before it, so the screen plan decides.
-    supportMode: getSupportModeFromScreens(screens),
     title: toPlainLine(raw.title),
   };
 }

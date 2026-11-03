@@ -1,12 +1,13 @@
 Decide whether the picture planned for one screen of a short lesson teaches, or only decorates.
 
-`LESSON` names the lesson. `LEARNERS` is `new` when its learners have never seen the subject, and `experienced` when they already know its basics or prepare for an exam. `SCREEN` is the planned screen: its kind (a hook, an explanation, a worked example, a check, an activity or the application) and its brief, what the screen says or asks. `PICTURE` is the picture planned for it. `PREVIOUS_PICTURE` is the picture planned for the screen before, or "none".
+`LESSON` names the lesson. `LEARNERS` is `new` when its learners have never seen the subject, and `experienced` when they already know its basics or prepare for an exam. `SCREEN` is the planned screen: its kind (a hook, an explanation, a guess, a worked example, a check, an activity or the application) and its brief, what the screen says or asks. `PICTURE` is the picture planned for it. `PREVIOUS_PICTURE` is the picture planned for the screen before, or "none".
 
 A picture teaches when a learner who only read the screen's words would otherwise have to imagine something to understand it or to answer:
 
 - How something looks, is built, is arranged or moves: an organ or a cell and its parts, a machine, a molecule, a map with places, a layout of people or objects, an artwork or a building, an animal's body, a lever and where the forces act.
 - A comparison of two things that can only be seen, such as two paintings, two charts drawn differently, or a before and after of a shape or a scene.
 - A question about the picture itself: which part is marked, which caption fits, what a sign or a scene shows, when the skill is reading pictures.
+- The lesson's story, the everyday moment its hook opened on, shown again in a new state (later, changed, or with the part the screen is about highlighted), at every level.
 - For `new` learners: the screen's own concrete example or the case the lesson follows, or a thing, a group, a place or a structure the learner doesn't see in daily life, even when the words describe or define it.
 
 A picture only decorates when:

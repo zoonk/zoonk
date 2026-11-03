@@ -3,7 +3,6 @@ import { type ChapterLesson, formatChapterLessons } from "../_utils/chapter-less
 import { formatLocalContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
-import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
@@ -11,6 +10,7 @@ import {
   type LessonSpec,
   type LessonSpecSkill,
 } from "../lesson-spec/lesson-spec-rules";
+import { type LessonVisualKind } from "../lesson-spec/lesson-visuals";
 import { getWrittenKinds } from "./written-lesson-schema";
 
 type LessonActivityTemplate = { id: string; description: string; schema: string };
@@ -53,34 +53,49 @@ function formatSkill(skill: LessonSpecSkill, index: number): string {
   ].join("\n");
 }
 
+const DRAWN_VISUALS: Partial<Record<LessonVisualKind, string>> = {
+  chart: "a chart the app draws, with the brief's data",
+  table: "a table the app draws, with the brief's data",
+  timeline: "a timeline the app draws, with the brief's dates",
+};
+
+/** The visual the plan chose, so the writer never has to guess it. */
+function formatVisual(screen: LessonScreen): string {
+  const picture = `   Visual: ${screen.visual ? `a picture: ${screen.visual}` : "none"}`;
+
+  if (screen.kind === "activity") {
+    return `${picture}\n   Activity template: ${screen.activityTemplate}`;
+  }
+
+  if (screen.visualKind === "template") {
+    return `   Explore template: ${screen.activityTemplate}`;
+  }
+
+  const drawn = DRAWN_VISUALS[screen.visualKind];
+
+  return drawn ? `   Visual: ${drawn}` : picture;
+}
+
 function formatScreen({
-  novice,
   screen,
   skills,
   position,
   shortAnswers,
 }: {
-  novice: boolean;
   screen: LessonScreen;
   skills: readonly LessonSpecSkill[];
   position: number;
   shortAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((index) => skills[index]?.name ?? []);
-  const kinds = getWrittenKinds({ kind: screen.kind, novice, shortAnswers });
+  const kinds = getWrittenKinds({ kind: screen.kind, shortAnswers });
 
   return [
     `${position}. ${screen.kind}, written as: ${kinds.join(" or ")}`,
     `   Skills: ${skillNames.length > 0 ? skillNames.join("; ") : "none"}`,
     `   Brief: ${screen.brief}`,
-    `   Visual: ${screen.visual ?? "none"}`,
-    screen.activityTemplate &&
-      (screen.kind === "explanation"
-        ? `   Explore template: ${screen.activityTemplate}`
-        : `   Activity template: ${screen.activityTemplate}`),
-  ]
-    .filter(Boolean)
-    .join("\n");
+    formatVisual(screen),
+  ].join("\n");
 }
 
 function formatTemplates(templates: readonly LessonActivityTemplate[]): string {
@@ -106,11 +121,9 @@ function getToday(): string {
 
 export function formatLessonPlan(context: LessonWritingContext): string {
   const { spec } = context;
-  const novice = readsNoviceRules(context);
 
   const screens = spec.screens.map((screen, index) =>
     formatScreen({
-      novice,
       position: index + 1,
       screen,
       shortAnswers: Boolean(context.shortAnswers),
@@ -128,7 +141,6 @@ CHAPTER_TITLE: ${context.chapterTitle}
 LESSON_TITLE: ${spec.title}
 LESSON_DESCRIPTION: ${spec.description}
 CAN_DO: ${spec.canDo}
-SUPPORT_MODE: ${spec.supportMode}
 ${formatLessonExams(context.exams)}
 CHAPTER_LESSONS: ${formatChapterLessons(context.chapterLessons)}
 

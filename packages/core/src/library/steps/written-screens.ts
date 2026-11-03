@@ -53,11 +53,12 @@ function visualField(screen: { visual: LessonVisual | null }) {
   return screen.visual ? { visual: screen.visual } : {};
 }
 
-function exploreField(explore: { content: string; template: string } | null) {
-  const parsed = explore ? parseActivityJson(explore.content) : null;
+/** The explore a writer gave, checked as an explored activity; its issues say what a fix must change. */
+export function checkWrittenExplore(explore: { content: string; template: string }) {
+  const parsed = parseActivityJson(explore.content);
 
-  if (!explore || !parsed?.ok) {
-    return {};
+  if (!parsed.ok) {
+    return { issues: [`The explore isn't valid JSON: ${parsed.error}.`], ok: false as const };
   }
 
   const value = isJsonObject(parsed.value) ? parsed.value : {};
@@ -68,7 +69,19 @@ function exploreField(explore: { content: string; template: string } | null) {
     template: explore.template,
   });
 
-  return validated.ok ? { explore: validated.content } : {};
+  return validated.ok
+    ? { content: validated.content, ok: true as const }
+    : {
+        issues: validated.issues.map((item) =>
+          item.path ? `${item.path}: ${item.message}` : item.message,
+        ),
+        ok: false as const,
+      };
+}
+
+function exploreField(explore: { content: string; template: string } | null) {
+  const checked = explore ? checkWrittenExplore(explore) : null;
+  return checked?.ok ? { explore: checked.content } : {};
 }
 
 function toTeachingContent(

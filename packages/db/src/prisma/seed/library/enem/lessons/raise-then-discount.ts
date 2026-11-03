@@ -17,6 +17,27 @@ export const raiseThenDiscountLesson: SeedLesson = {
   steps: [
     {
       content: {
+        text: t(
+          "Bruno's favorite sneakers go up 10% in March. In April the store puts them 10% off. “Back to the old price,” he thinks, and heads to the store. Is he right?",
+          "O tênis favorito do Bruno sobe 10% em março. Em abril, a loja dá 10% de desconto. “Voltou ao preço de antes”, ele pensa, e vai à loja. Ele está certo?",
+        ),
+        variant: "text",
+      },
+      kind: "hook",
+    },
+    {
+      content: {
+        text: t(
+          "Turn every percent change into the number that multiplies the price:\n\n- +10% is × **1.1** (100% plus 10%)\n- −10% is × **0.9** (100% minus 10%)\n- +25% is × 1.25, −20% is × 0.8\n\nOnce each change is a multiplier, a chain of changes is a chain of multiplications.",
+          "Transforme cada variação no número que multiplica o preço:\n\n- +10% é × **1,1** (100% mais 10%)\n- −10% é × **0,9** (100% menos 10%)\n- +25% é × 1,25, −20% é × 0,8\n\nCom cada variação virando um fator, uma sequência de variações é uma sequência de multiplicações.",
+        ),
+        title: t("Every percent change is a multiplier", "Toda variação percentual é um fator"),
+      },
+      kind: "explanation",
+      skill: "percent-factor",
+    },
+    {
+      content: {
         options: [
           guess("same", t("The same as the original", "Igual ao original")),
           guess("higher", t("Higher than the original", "Maior que o original")),
@@ -36,14 +57,38 @@ export const raiseThenDiscountLesson: SeedLesson = {
     },
     {
       content: {
-        text: t(
-          "Turn every percent change into the number that multiplies the price:\n\n- +10% is × **1.1** (100% plus 10%)\n- −10% is × **0.9** (100% minus 10%)\n- +25% is × 1.25, −20% is × 0.8\n\nOnce each change is a multiplier, a chain of changes is a chain of multiplications.",
-          "Transforme cada variação no número que multiplica o preço:\n\n- +10% é × **1,1** (100% mais 10%)\n- −10% é × **0,9** (100% menos 10%)\n- +25% é × 1,25, −20% é × 0,8\n\nCom cada variação virando um fator, uma sequência de variações é uma sequência de multiplicações.",
+        problem: t(
+          "A product costs R$ 200. It goes up 10%, then down 10%. How much does it cost in the end?",
+          "Um produto custa R$ 200. Ele sobe 10% e depois cai 10%. Quanto custa no final?",
         ),
-        title: t("Every percent change is a multiplier", "Toda variação percentual é um fator"),
+        result: t(
+          "R$ 198, 1% less than it started. The 10% off came from R$ 220, so it removed R$ 22, more than the R$ 20 the raise added.",
+          "R$ 198, 1% a menos que no início. Os 10% de desconto saíram de R$ 220, então tiraram R$ 22, mais que os R$ 20 do aumento.",
+        ),
+        steps: [
+          {
+            math: t(
+              String.raw`+10\% \to 1.1 \qquad -10\% \to 0.9`,
+              String.raw`+10\% \to 1{,}1 \qquad -10\% \to 0{,}9`,
+            ),
+            text: t(
+              "Turn each change into its multiplier.",
+              "Transforme cada variação no seu fator.",
+            ),
+          },
+          {
+            math: t(String.raw`1.1 \times 0.9 = 0.99`, String.raw`1{,}1 \times 0{,}9 = 0{,}99`),
+            text: t("Multiply the multipliers.", "Multiplique os fatores."),
+          },
+          {
+            math: t(String.raw`200 \times 0.99 = 198`, String.raw`200 \times 0{,}99 = 198`),
+            text: t("Apply the result to the price.", "Aplique o resultado ao preço."),
+          },
+        ],
+        title: t("Up 10%, down 10%", "Sobe 10%, cai 10%"),
       },
-      kind: "explanation",
-      skill: "percent-factor",
+      kind: "workedExample",
+      skill: "successive-percent",
     },
     {
       content: {
@@ -84,41 +129,6 @@ export const raiseThenDiscountLesson: SeedLesson = {
       },
       kind: "check",
       skill: "percent-factor",
-    },
-    {
-      content: {
-        problem: t(
-          "A product costs R$ 200. It goes up 10%, then down 10%. How much does it cost in the end?",
-          "Um produto custa R$ 200. Ele sobe 10% e depois cai 10%. Quanto custa no final?",
-        ),
-        result: t(
-          "R$ 198, 1% less than it started. The 10% off came from R$ 220, so it removed R$ 22, more than the R$ 20 the raise added.",
-          "R$ 198, 1% a menos que no início. Os 10% de desconto saíram de R$ 220, então tiraram R$ 22, mais que os R$ 20 do aumento.",
-        ),
-        steps: [
-          {
-            math: t(
-              String.raw`+10\% \to 1.1 \qquad -10\% \to 0.9`,
-              String.raw`+10\% \to 1{,}1 \qquad -10\% \to 0{,}9`,
-            ),
-            text: t(
-              "Turn each change into its multiplier.",
-              "Transforme cada variação no seu fator.",
-            ),
-          },
-          {
-            math: t(String.raw`1.1 \times 0.9 = 0.99`, String.raw`1{,}1 \times 0{,}9 = 0{,}99`),
-            text: t("Multiply the multipliers.", "Multiplique os fatores."),
-          },
-          {
-            math: t(String.raw`200 \times 0.99 = 198`, String.raw`200 \times 0{,}99 = 198`),
-            text: t("Apply the result to the price.", "Aplique o resultado ao preço."),
-          },
-        ],
-        title: t("Up 10%, down 10%", "Sobe 10%, cai 10%"),
-      },
-      kind: "workedExample",
-      skill: "successive-percent",
     },
     {
       content: {
@@ -311,6 +321,5 @@ export const raiseThenDiscountLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("A raise, then a discount", "Aumento seguido de desconto"),
 };

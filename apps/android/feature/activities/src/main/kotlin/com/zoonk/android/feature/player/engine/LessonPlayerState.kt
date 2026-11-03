@@ -13,8 +13,6 @@ enum class LessonPhase { Playing, Checking, Feedback, Completed }
 
 enum class LessonNotice { AnswerNotSaved, PictureReady, SelfCorrect, WritingSkipped }
 
-enum class LessonSupport { ExplanationFirst, QuestionFirst }
-
 /** A typed or spoken answer the server couldn't grade for a reason the learner should see. */
 @Immutable
 sealed interface CheckIssue {
@@ -117,7 +115,6 @@ data class LessonPlayerState(
     val selfCorrected: List<String> = emptyList(),
     val skippedWritingStepIds: List<String> = emptyList(),
     val stepStartedAt: Long = 0,
-    val support: LessonSupport? = null,
     val unavailableStepIds: List<String> = emptyList(),
     val writingRestore: WritingRestore? = null,
 ) {
@@ -127,7 +124,6 @@ data class LessonPlayerState(
         fun initial(
             lessonId: String,
             steps: List<LessonStep>,
-            support: LessonSupport? = null,
             now: Long,
         ): LessonPlayerState {
             val byId = steps.associateBy(LessonStep::id)
@@ -137,11 +133,10 @@ data class LessonPlayerState(
             return LessonPlayerState(
                 lessonId = lessonId,
                 steps = byId,
-                queue = orderLessonOpening(queue, byId, support),
+                queue = queue,
                 phase = if (isEmpty) LessonPhase.Completed else LessonPhase.Playing,
                 completion = if (isEmpty) LessonCompletion(CompletionStatus.Ready) else null,
                 stepStartedAt = now,
-                support = support,
             )
         }
     }

@@ -33,6 +33,21 @@ async function continueFromMap() {
 }
 
 describe("lesson screens", () => {
+  it("opens with the explanation for a learner who practiced the skill, even from a page that says question first", async () => {
+    const practicedLearnerPage = { support: "questionFirst" } as const;
+
+    renderLessonPlayer({
+      lesson: buildLesson([teachingStep("explanation"), teachingStep("check")]),
+      ...practicedLearnerPage,
+    });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).not.toBeInTheDocument();
+    await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+  });
+
   it("keeps the lesson map in the screen's menu for the lesson's end", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({

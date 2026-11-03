@@ -1,7 +1,6 @@
-import { type LessonStepCheckResult, type LessonSupport } from "@zoonk/core/lesson-player/contract";
+import { type LessonStepCheckResult } from "@zoonk/core/lesson-player/contract";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
-import { orderLessonOpening } from "./_utils/lesson-opening";
 import {
   type LessonPlayerAnswer,
   type LessonPlayerCompletionState,
@@ -65,7 +64,6 @@ export type LessonPlayerState = {
   startedAt: number;
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
-  support: LessonSupport | null;
   unavailableStepIds: string[];
   writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };
@@ -107,7 +105,6 @@ export type LessonPlayerAction =
 
 export function createInitialState(
   lesson: Pick<LessonPlayerLesson, "id" | "steps"> & { hasMap: boolean },
-  support: LessonSupport | null = null,
 ): LessonPlayerState {
   const now = Date.now();
   const steps = Object.fromEntries(lesson.steps.map((step) => [step.id, step]));
@@ -126,7 +123,7 @@ export function createInitialState(
     notice: null,
     phase: queue.length === 0 ? "completed" : "playing",
     position: 0,
-    queue: orderLessonOpening({ queue, steps, support }),
+    queue,
     quickCheck: null,
     results: {},
     retried: [],
@@ -139,7 +136,6 @@ export function createInitialState(
     startedAt: now,
     stepStartedAt: now,
     steps,
-    support,
     unavailableStepIds: [],
     writingRestore: null,
   };

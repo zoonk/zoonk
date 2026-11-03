@@ -33,16 +33,10 @@ export const thereIsThereAreLesson: SeedLesson = {
   steps: [
     {
       content: {
-        options: [
-          guess("have", pt("Have two bedrooms.")),
-          guess("there", pt("There are two bedrooms."), true),
-          guess("it", pt("It has two bedroom.")),
-        ],
-        question: pt("Como se diz “Tem dois quartos” ao descrever um apartamento?"),
-        reveal: pt(
-          "“There are two bedrooms.” Em português, “tem” faz dois papéis. Em inglês, para dizer que algo existe num lugar, é there is ou there are.",
+        text: pt(
+          "Júlia achou um apartamento em Dublin e quer descrevê-lo para a mãe em inglês: dois quartos e uma varanda. Mas “tem dois quartos” vira “have two bedrooms”?",
         ),
-        variant: "guess",
+        variant: "text",
       },
       kind: "hook",
     },
@@ -55,6 +49,19 @@ export const thereIsThereAreLesson: SeedLesson = {
       },
       kind: "explanation",
       skill: "there-is-are",
+    },
+    {
+      content: {
+        options: [
+          guess("is-there", pt("Is there a garage?"), true),
+          guess("has", pt("Has a garage?")),
+          guess("there-is", pt("There is a garage?")),
+        ],
+        question: pt("Como você pergunta ao corretor “Tem garagem?”"),
+        reveal: pt("“Is there a garage?” Na pergunta, there is vira is there."),
+        variant: "guess",
+      },
+      kind: "hook",
     },
     { content: {}, kind: "vocabulary", skill: "apartment-rooms", word: "bedroom" },
     { content: {}, kind: "vocabulary", skill: "apartment-rooms", word: "bathroom" },

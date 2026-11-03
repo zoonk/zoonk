@@ -7,7 +7,7 @@ import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases"
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const SHARED_EXPECTATIONS = `
-  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
+  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
   - Estimated minutes are computed by code from the screen kinds; don't grade the number itself
   - Don't evaluate JSON formatting
 `;
@@ -107,7 +107,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know, so question first is a good fit
+      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know; the plan still explains before its first check
       - Must teach how to tell direct from inverse proportion before setting up the rule of three, with a worked example of each (inverse ones are the common trap)
       - Compound rule of three may be split into its own lesson or kept only if the lesson still fits; either is fine if the plan is coherent
       - Applications should look like real problems (workers and days, recipes, fuel and distance)
@@ -258,7 +258,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - The earlier lessons already taught what sets a trade price, liquidity and the spread: each gets at most a short reminder, never its own explanation screen, and the hook is about this lesson's idea, not a recap
       - The plan uses its own case and numbers: not the $20 then $21 trade, the $19 sale, the $20.10 and $20.00 price tags or the busy and empty market stalls the earlier lessons used
       - Each check asks something new (a new case, a harder one or a common mistake), never the same question with other numbers, and the application is a new situation that takes one more step, not the explanation's example again
-      - The hook has a tempting wrong answer, such as every share trading at the first price shown
+      - The hook is a scene that asks nothing; the guess right after the first explanation has a tempting wrong answer, such as every share trading at the first price shown
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -497,6 +497,8 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Written for candidates of the exam in EXAMS, finishing secondary school: checks are planned like that exam's contextualized multiple-choice questions on proteins and enzymes
+      - "Mesmo em causa própria" belongs to incompatibilidade (art. 28); no brief ties it to impedimento or to art. 27, which only says incompatibilidade forbids all advocacy and impedimento part of it (a regression: an earlier plan cited it as art. 27)
+      - The scene comes first and asks nothing, an explanation comes next, and the guess right after it; no check comes before that explanation
       - No "Spot the AI's mistake": an exam lesson never frames an activity as an AI assistant's answer
       - The explanation of how an enzyme works in steps (the substrate fits the active site, the reaction, the products leave and the enzyme is free again) shows them with a template to explore, such as the steps of a process in order, rather than a strip of drawings or text alone; a picture plans only what no template draws (a protein's folded shape, the active site's fit)
       - An activity, if any, is one whose interaction is the skill (ordering the enzyme's steps, sorting changes that do or don't alter a protein's shape), never decoration
@@ -642,7 +644,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - MUST be in Brazilian Portuguese
       - Exactly one lesson (never split) of about 3 to 5 minutes and 6 to 8 screens, whose only skill is the one given, with its name kept
       - It sums up the skill's core for candidates of the exam in EXAMS (law students and graduates): full, contained and limited efficacy of constitutional norms, what each means for a right's exercise, with one well-known example each from the Constitution only when the plan is sure of it; no screen explains what the Constitution is, and rare doctrinal classifications are left out
-      - One worked example that classifies a constitutional provision step by step (for example art. 5º, XIII, as contained efficacy), followed by a check where the learner classifies another; the hook comes first, the application last, and no more than 3 teaching screens in a row
+      - One worked example that classifies a constitutional provision step by step (for example art. 5º, XIII, as contained efficacy), followed by a check where the learner classifies another; the scene comes first and the guess right after the first explanation, the application last, and no more than 3 teaching screens in a row
       - At most one activity, only one that fits the skill (such as sorting provisions by their efficacy), and no "Spot the AI's mistake"; checks read like that exam's questions with confusions candidates make
       - No screen names the exam, its board or its notice
 
@@ -752,6 +754,9 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - The hard ideas the skill needs stay, each taught on its own screen before a check uses it, never left out: paying a debt with cash leaves the patrimônio líquido unchanged (the cash and the debt both go down), and the patrimônio líquido isn't the cash in the till. A case with the owner's personal belongings gets at most a one-sentence reminder of the earlier lesson's rule
       - The amounts are shown with what the app draws (a table that adds up, a before-and-after table, a formula to play with), not pictures; a picture shows only a scene to see, such as the hook's business, and never carries numbers
       - One person carries the example on every screen that needs someone
+      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - The explanation where patrimônio líquido lands plans one everyday comparison chosen so it clicks, then the term and the line that keeps it precise: patrimônio líquido isn't the cash in the till
+      - Every check asks only what an earlier screen taught (a regression: an earlier plan's checks asked about ideas no screen had explained)
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -808,6 +813,8 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - The levels are something to see: the screens that teach them show pictures of the same place, each with the level the screen is about highlighted, one scene per picture
       - At least two explanations come before the first check, and the checks use only levels already taught
       - One person at most, and a town only if the idea needs it
+      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - In this lesson about a place, most teaching screens show a picture of it (5 of 7 is good), never the same picture twice in a row
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -856,6 +863,8 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - The lesson keeps its nuances on their own screens: a regular income can change in amount and still be regular, regular doesn't mean guaranteed, and how often it comes decides the kind, not the kind of work
       - Income across months is shown with what the app draws (a table or a bar chart over months), and a picture only for a scene to see; no picture of two scenes at once
       - At most two checks or activities before the application, each after the idea it uses was taught
+      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - The main idea plans one everyday comparison chosen so it clicks, then the term and its precision point (a regular income isn't a guaranteed one)
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -1082,6 +1091,31 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       lessonTitle: "Equação patrimonial",
       level: "beginner",
       skills: ["Aplicar a equação patrimonial"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for one learner who runs a small bakery
+      - The scene opens on the learner's own stock (flour on the shelf, how much the bakery uses each week, how long a delivery takes) with a small table or chart the app draws, its numbers in the brief, and no picture: the lesson is private, so nothing the app draws is replaced by a picture
+      - At least one explanation or worked example in three shows a table, a chart or a template to explore (a formula with its sliders for the reorder point), never a picture standing in for them
+      - Right after the first explanation, one guess predicts something about the bakery's stock that beginners get wrong, never a calculation the screen before just did
+      - Every check asks only what an earlier screen taught, and money and amounts are written in one format
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ponto-de-pedido-private",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Estoque da doceria",
+      courseTitle: "Gestão da Doceria da Marta",
+      isPrivate: true,
+      language: "pt",
+      lessonCanDo: "Decidir quando pedir mais farinha antes de faltar",
+      lessonDescription:
+        "Quanto de cada ingrediente precisa estar no estoque quando chega a hora de pedir de novo.",
+      lessonTitle: "Ponto de pedido",
+      level: "beginner",
+      skills: ["Calcular o ponto de pedido de um ingrediente"],
     },
   },
 ];

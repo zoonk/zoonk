@@ -49,7 +49,6 @@ export function toAlphabetLessonCheck({
       estimatedMinutes: ALPHABET_LESSON_MINUTES,
       screens: [],
       skills: [],
-      supportMode: "explanationFirst",
       title: lesson.title,
     },
   };

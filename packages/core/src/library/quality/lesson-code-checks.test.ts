@@ -12,15 +12,14 @@ import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
 type CheckOptions = {
   allowActivityFallback?: boolean;
-  exams?: readonly unknown[];
   language?: string;
   level?: CourseLevel;
   shortAnswers?: boolean;
+  spec?: ReturnType<typeof temperatureSpec>;
 };
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
-    exams: undefined,
     language: "en",
     lesson,
     level: "beginner",
@@ -30,6 +29,35 @@ function check(lesson: WrittenLesson, options: CheckOptions = {}) {
 }
 
 const INTERMEDIATE: CheckOptions = { level: "intermediate" };
+
+/** The guess's planned screen, right after the first explanation. */
+const GUESS_AT = 2;
+
+function guessPlanned(): CheckOptions {
+  const spec = temperatureSpec();
+
+  const guess = {
+    ...spec.screens[1]!,
+    kind: "guess" as const,
+    visual: null,
+    visualKind: "none" as const,
+  };
+
+  return { spec: { ...spec, screens: spec.screens.toSpliced(GUESS_AT, 0, guess) } };
+}
+
+/** The written lesson with a guess on its planned screen, each later basis moved along. */
+function withGuess(guess: WrittenScreen): WrittenLesson {
+  const lesson = writtenTemperatureLesson();
+
+  const screens = lesson.screens.map((screen) =>
+    "basis" in screen && screen.basis && screen.basis.screen > GUESS_AT
+      ? { ...screen, basis: { ...screen.basis, screen: screen.basis.screen + 1 } }
+      : screen,
+  );
+
+  return { ...lesson, screens: screens.toSpliced(GUESS_AT, 0, guess) };
+}
 
 function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
   const lesson = writtenTemperatureLesson();
@@ -74,7 +102,6 @@ describe(checkWrittenLesson, () => {
     };
 
     const checked = checkWrittenLesson({
-      exams: undefined,
       language: "en",
       lesson: {
         ...lesson,
@@ -317,7 +344,11 @@ describe(checkWrittenLesson, () => {
       throw new Error("Screen 8 is a check.");
     }
 
-    const fallback = { ...application, question: "Where does the dot stop after the rise?" };
+    const fallback = {
+      ...application,
+      basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
+      question: "Where does the dot stop after the rise?",
+    };
 
     expect(codesOf(withScreen(5, fallback))).toContainEqual([5, "screenKind"]);
     expect(codesOf(withScreen(5, fallback), { allowActivityFallback: true })).toStrictEqual([]);
@@ -412,8 +443,8 @@ describe(checkWrittenLesson, () => {
 
     const duplicated = { ...hook, options: [...hook.options, { isCorrect: false, text: "2 °c" }] };
 
-    expect(codesOf(withScreen(0, duplicated), INTERMEDIATE)).toContainEqual([
-      0,
+    expect(codesOf(withGuess(duplicated), guessPlanned())).toContainEqual([
+      GUESS_AT,
       "duplicateOptions",
     ]);
   });
@@ -428,7 +459,7 @@ describe(checkWrittenLesson, () => {
         "Which sensor is the most precise?\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |\n| E | 50,1 |",
     };
 
-    expect(codesOf(withScreen(0, sensors), INTERMEDIATE)).toStrictEqual([[0, "optionData"]]);
+    expect(codesOf(withGuess(sensors), guessPlanned())).toStrictEqual([[GUESS_AT, "optionData"]]);
   });
 
   it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
@@ -458,13 +489,13 @@ describe(checkWrittenLesson, () => {
   it("rejects Markdown the player shows as marks and text a writer left unfinished", () => {
     const split = explanation("_The speaker opens the session.\nThe floor is yours._");
 
-    expect(codesOf(withScreen(1, split))).toStrictEqual([
-      [1, "markdown"],
-      [1, "markdown"],
+    expect(codesOf(withScreen(4, split))).toStrictEqual([
+      [4, "markdown"],
+      [4, "markdown"],
     ]);
 
-    expect(codesOf(withScreen(1, explanation("[Insert an example here]")))).toStrictEqual([
-      [1, "placeholder"],
+    expect(codesOf(withScreen(4, explanation("[Insert an example here]")))).toStrictEqual([
+      [4, "placeholder"],
     ]);
 
     const lesson = writtenTemperatureLesson();
@@ -479,7 +510,9 @@ describe(checkWrittenLesson, () => {
 
     const byPlace = { ...hook, reveal: "The right answer is the second." };
 
-    expect(codesOf(withScreen(0, byPlace), INTERMEDIATE)).toStrictEqual([[0, "optionPosition"]]);
+    expect(codesOf(withGuess(byPlace), guessPlanned())).toStrictEqual([
+      [GUESS_AT, "optionPosition"],
+    ]);
   });
 
   it("rejects a check that asks an earlier check's question with other numbers", () => {
@@ -527,15 +560,18 @@ describe(checkWrittenLesson, () => {
     expect(japanese("資産は会社が持つものです。")).not.toContainEqual([null, "summary"]);
   });
 
-  it("opens a beginner or overview lesson with a scene, while an exam's or an intermediate one may guess", () => {
-    const guessing = withScreen(0, temperatureGuess());
-    const scene: [number, string] = [0, "screenKind"];
+  it("opens every lesson with a scene and writes a guess only where the plan puts one", () => {
+    const openingGuess = withScreen(0, temperatureGuess());
+    const sceneKind: [number, string] = [0, "screenKind"];
+    const guessKind: [number, string] = [GUESS_AT, "screenKind"];
+    const sceneAsGuess = withGuess(writtenTemperatureLesson().screens[0]!);
 
-    expect(codesOf(guessing)).toContainEqual(scene);
-    expect(codesOf(guessing, { level: "overview" })).toContainEqual(scene);
-    expect(codesOf(guessing, INTERMEDIATE)).not.toContainEqual(scene);
-    expect(codesOf(guessing, { exams: [{ name: "ENEM" }] })).not.toContainEqual(scene);
-    expect(codesOf(writtenTemperatureLesson())).not.toContainEqual(scene);
+    expect(codesOf(openingGuess)).toContainEqual(sceneKind);
+    expect(codesOf(openingGuess, INTERMEDIATE)).toContainEqual(sceneKind);
+    expect(codesOf(openingGuess, { ...guessPlanned(), ...INTERMEDIATE })).toContainEqual(sceneKind);
+    expect(codesOf(withGuess(temperatureGuess()), guessPlanned())).toStrictEqual([]);
+    expect(codesOf(sceneAsGuess, guessPlanned())).toContainEqual(guessKind);
+    expect(codesOf(writtenTemperatureLesson())).not.toContainEqual(sceneKind);
   });
 
   it("lets two named ideas share a sentence, as two things with the same trait", () => {

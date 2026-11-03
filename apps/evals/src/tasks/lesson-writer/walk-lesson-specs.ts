@@ -28,10 +28,11 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
         {
           activityTemplate: null,
           brief:
-            "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Mostre esses valores em um gráfico de barras e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
+            "Em Macapá, Nayara registra a energia de uma cadeia do rio: 1.000 unidades nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Mostre esses valores em um gráfico de barras e termine na pergunta aberta, sem opções: para onde vai a energia que some de um grupo para o outro?",
           kind: "hook",
-          skills: [0],
+          skills: [],
           visual: null,
+          visualKind: "chart",
         },
         {
           activityTemplate: null,
@@ -40,6 +41,16 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Volte ao gráfico de Nayara e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -48,6 +59,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -56,6 +68,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -64,6 +77,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -72,6 +86,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: "categorize",
@@ -80,6 +95,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "activity",
           skills: [0],
           visual: null,
+          visualKind: "template",
         },
         {
           activityTemplate: null,
@@ -88,6 +104,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "application",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -103,7 +120,6 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
             "Interpretar dados de energia em uma sequência alimentar e comparar grupos de organismos.",
         },
       ],
-      supportMode: "explanationFirst",
       title: "Fluxo de energia e pirâmides tróficas",
     },
   },
@@ -122,26 +138,29 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
         {
           activityTemplate: null,
           brief:
-            "Renan mede uma peça cuja referência é 50,0 mm. Mostre numa tabela três leituras de cada um de cinco sensores: A: 49,8; 49,9; 50,0 mm; B: 51,0; 51,0; 51,1 mm; C: 48,0; 50,0; 52,0 mm; D: 49,0; 50,0; 51,0 mm; E: 50,4; 50,6; 50,8 mm. Pergunte qual sensor dá leituras agrupadas e perto da referência. Revele A assim que você escolher, sem explicar o motivo ainda.",
+            "Renan confere uma peça de 50,0 mm com dois sensores do laboratório. Mostre numa tabela as três leituras de cada um: A: 49,8; 49,9; 50,0 mm; C: 48,0; 50,0; 52,0 mm. Os dois acertam 50,0 mm uma vez. Pergunte, sem opções, se os dois são igualmente confiáveis.",
           kind: "hook",
           skills: [],
           visual: null,
+          visualKind: "table",
         },
         {
           activityTemplate: null,
           brief:
-            "Com referência de 20,0 cm, o grupo X leu 22,0; 22,1; 22,2 cm e o grupo Y leu 19,0; 20,0; 21,0 cm. Mostre as leituras numa tabela e pergunte qual grupo tem leituras mais agrupadas, mesmo longe da referência. Resposta: X; inclua como alternativa tentadora escolher Y por estar perto da referência.",
-          kind: "check",
-          skills: [0],
-          visual: null,
-        },
-        {
-          activityTemplate: null,
-          brief:
-            "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Use X e Y do caso anterior e deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
+            "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Mostre numa tabela, com referência de 20,0 cm, o grupo X (22,0; 22,1; 22,2 cm) e o grupo Y (19,0; 20,0; 21,0 cm): X é mais preciso. Deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "table",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Um terceiro sensor de Renan lê 51,0; 51,0; 51,1 mm na peça de 50,0 mm. Pergunte o que ele é: preciso e exato; preciso, mas não exato; exato, mas não preciso; nem um nem outro. Resposta: preciso, mas não exato; a próxima tela mostra por quê.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -150,6 +169,16 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Com referência de 5,00 V, o multímetro P leu 5,30; 5,31; 5,30 V e o multímetro Q leu 4,80; 5,00; 5,20 V. Mostre as leituras numa tabela e peça que o aluno escolha a descrição correta: P é mais preciso e Q tem o resultado central mais exato. Inclua como alternativa tentadora que o mais preciso também é o mais exato.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "table",
         },
         {
           activityTemplate: null,
@@ -158,6 +187,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -166,6 +196,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "explanation",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -174,6 +205,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "workedExample",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -182,6 +214,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "check",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -190,6 +223,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "check",
           skills: [1],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -198,6 +232,7 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           kind: "application",
           skills: [0, 1],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [
@@ -221,7 +256,6 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
           useCase: "Comunicar o resultado de uma medição feita várias vezes.",
         },
       ],
-      supportMode: "questionFirst",
       title: "Precisão, exatidão e incerteza",
     },
   },

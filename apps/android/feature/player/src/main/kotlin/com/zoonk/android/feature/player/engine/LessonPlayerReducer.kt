@@ -238,7 +238,7 @@ private fun LessonPlayerState.resumeFrom(
     answers: List<RunAnswer>,
     now: Long,
 ): LessonPlayerState {
-    val fresh = LessonPlayerState.initial(lessonId, steps.values.toList(), support, now)
+    val fresh = LessonPlayerState.initial(lessonId, steps.values.toList(), now = now)
     val restore = writingRestore.takeIf { notice == LessonNotice.WritingSkipped }
     val skipped = restore?.skippedWritingStepIds ?: skippedWritingStepIds
     val available = fresh.copy(queue = fresh.queue.filterNot { it in unavailableStepIds || it in skipped })

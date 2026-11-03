@@ -20,7 +20,7 @@ export const LESSON_WRITER_SCORE_CATEGORIES = defineScoreCategories([
     weight: 20,
   },
   {
-    expectations: `Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no "In this lesson", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or "why this matters in general". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.`,
+    expectations: `Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The first screen is a scene with nothing to answer, at every level (no "In this lesson", no recap, no greeting), and a guess appears only where the plan puts one. Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or "why this matters in general". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.`,
     id: "fitAndApplication",
     label: "Level, hook & application",
     weight: 25,

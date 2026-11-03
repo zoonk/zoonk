@@ -9,6 +9,7 @@ import {
   activityTemplates,
   exploreActivitySchema,
 } from "./activity-templates";
+import { DEFAULT_PROCESS_ICON } from "./process-icons";
 import { validateActivity, validateExploreActivity } from "./validate-activity";
 
 const fixtures = activityContentFixtures satisfies Record<ActivityTemplateId, unknown>;
@@ -367,15 +368,62 @@ describe(validateActivity, () => {
     expect(validateActivity(placed).ok).toBe(true);
   });
 
-  it("offers only icons the player draws for process steps", () => {
+  it("keeps a process whose step names an icon the player can't draw, with the default icon", () => {
     const madeUpIcon = structuredClone(fixtures.processOrder);
 
-    madeUpIcon.fields.steps = madeUpIcon.fields.steps.map((step) => ({
-      ...step,
-      icon: "sunshine",
-    }));
+    madeUpIcon.fields.steps = madeUpIcon.fields.steps.map((step, index) =>
+      index === 0 ? { ...step, icon: "sunshine" } : step,
+    );
 
-    expect(issueCodes(madeUpIcon)).toContain("invalidSchema");
+    const activity = validateActivity(madeUpIcon);
+
+    const explore = validateExploreActivity({
+      ...explored("processOrder"),
+      fields: madeUpIcon.fields,
+    });
+
+    const firstIcon = (result: typeof activity | typeof explore) =>
+      result.ok ? (result.content.fields as typeof madeUpIcon.fields).steps[0]?.icon : null;
+
+    expect(firstIcon(activity)).toBe(DEFAULT_PROCESS_ICON);
+    expect(firstIcon(explore)).toBe(DEFAULT_PROCESS_ICON);
+  });
+
+  it("gives each branch its own copy of an outcome two branches share, and walks the case to it", () => {
+    const impeded = validateExploreActivity(
+      sharedOutcomeTree(
+        [
+          { branch: "Sim", nodeId: "cargo" },
+          { branch: "Sim", nodeId: "fazenda" },
+        ],
+        "impedida",
+      ),
+    );
+
+    const free = validateExploreActivity(
+      sharedOutcomeTree(
+        [
+          { branch: "Sim", nodeId: "cargo" },
+          { branch: "Não", nodeId: "fazenda" },
+        ],
+        "livre",
+      ),
+    );
+
+    const fieldsOf = (result: typeof impeded) =>
+      result.ok
+        ? (result.content.fields as { case: { outcomeId: string }; nodes: { id: string }[] })
+        : null;
+
+    expect(fieldsOf(impeded)?.nodes.map((node) => node.id)).toStrictEqual([
+      "cargo",
+      "fazenda",
+      "impedida",
+      "livre",
+      "livre-2",
+    ]);
+
+    expect(fieldsOf(free)?.case.outcomeId).toBe("livre-2");
   });
 
   it("rejects molecules that can't be built with at most triple bonds or are too big", () => {
@@ -496,6 +544,39 @@ describe(validateActivity, () => {
     ).toContain("answerMismatch");
   });
 });
+
+function treeOutcome(id: string, label: string) {
+  return { id, kind: "outcome" as const, label };
+}
+
+function treeQuestion(id: string, yes: string, no: string) {
+  return {
+    branches: [
+      { label: "Sim", next: yes },
+      { label: "Não", next: no },
+    ],
+    id,
+    kind: "question" as const,
+    question: `${id}?`,
+  };
+}
+
+function sharedOutcomeTree(answers: { branch: string; nodeId: string }[], outcomeId: string) {
+  return {
+    data: { isExample: true },
+    fields: {
+      case: { answers, description: "Uma servidora quer advogar contra o município.", outcomeId },
+      nodes: [
+        treeQuestion("cargo", "fazenda", "livre"),
+        treeQuestion("fazenda", "impedida", "livre"),
+        treeOutcome("impedida", "Atuação impedida"),
+        treeOutcome("livre", "Essa regra não impede a atuação"),
+      ],
+      rootId: "cargo",
+    },
+    template: "decisionTree",
+  };
+}
 
 function explored(id: ActivityTemplateId) {
   const { data, fields, template } = fixtures[id] as {

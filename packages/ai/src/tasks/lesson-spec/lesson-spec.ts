@@ -14,15 +14,16 @@ import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
+import { type VisualFloor, getVisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
   type LessonSpec,
   type LessonSpecIssue,
-  SUPPORT_MODES,
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
+import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
@@ -49,6 +50,7 @@ const screenSchema = z.object({
   kind: z.enum(LESSON_SCREEN_KINDS),
   skills: z.array(z.number().int()),
   visual: z.string().nullable(),
+  visualKind: z.enum(LESSON_VISUAL_KINDS),
 });
 
 const lessonSchema = z.object({
@@ -56,7 +58,6 @@ const lessonSchema = z.object({
   description: z.string(),
   screens: z.array(screenSchema),
   skills: z.array(skillSchema),
-  supportMode: z.enum(SUPPORT_MODES),
   title: z.string(),
 });
 
@@ -78,6 +79,8 @@ export type LessonSpecParams = {
   material?: string;
   sources?: string;
   exams?: LessonExam[];
+  /** Built for one learner's own goal and never shared, so its pictures aren't reused. */
+  isPrivate?: boolean;
   setup?: boolean;
   /** Otherwise the lesson plans only checks learners answer by picking. */
   shortAnswers?: boolean;
@@ -99,14 +102,18 @@ function formatList(items: readonly string[]): string {
 
 function buildSystemPrompt(params: LessonSpecParams): string {
   const novice = readsNoviceRules(params);
+  const visualFloor = getVisualFloor(params);
 
   const prompt = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       experienced: !novice,
+      floor: visualFloor !== "none",
       material: Boolean(params.material),
       novice,
+      pictures: visualFloor === "pictures",
+      private: visualFloor === "drawn",
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -179,8 +186,8 @@ async function planLesson(params: LessonSpecParams) {
         splitLessonSpec({
           language: params.language,
           level: params.level,
-          novice: readsNoviceRules(params),
           spec,
+          visualFloor: getVisualFloor(params),
         }),
       );
 
@@ -196,8 +203,9 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "application",
   "checkGap",
   "earlyCheck",
+  "guess",
   "hook",
-  "hookPicture",
+  "hookVisual",
   "skillReference",
   "teachingVisual",
   "unpracticedSkill",
@@ -209,13 +217,15 @@ function countShapeIssues({
   data,
   level,
   novice,
+  visualFloor,
 }: {
   data: LessonSpecResult;
   level: CourseLevel;
   novice: boolean;
+  visualFloor: VisualFloor;
 }): number {
   return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
+    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec, visualFloor }))
     .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
 }
 
@@ -226,7 +236,12 @@ function countShapeIssues({
 export function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({
     countProblems: ({ data }) =>
-      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
+      countShapeIssues({
+        data,
+        level: params.level,
+        novice: readsNoviceRules(params),
+        visualFloor: getVisualFloor(params),
+      }),
     draft: () => planLesson(params),
   });
 }

@@ -86,7 +86,7 @@ describe(loadLessonSpecInputs, () => {
         canDo: "Add a rise to a temperature below zero",
         examples: [
           "−3 °C plus a 5 degree rise is 2 °C.",
-          "Guess the temperature after a rise.",
+          "At dawn the window thermometer shows −3 °C, and the forecast says 5 degrees warmer by noon. Where will the mark end up?",
           "From −3 °C, rise 5 degrees.",
           "Calculate a rise from −4 °C.",
           "Explain why −3 + 5 is 2.",

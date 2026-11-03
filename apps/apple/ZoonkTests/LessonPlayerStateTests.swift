@@ -228,14 +228,6 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .feedback)
   }
 
-  func testQuestionFirstSupportOpensWithTheQuestion() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
-
-    state.startRun(runId: "run", answers: [], support: .questionFirst)
-
-    XCTAssertEqual(state.queue, ["hook", "check", "explanation", "summary"])
-  }
-
   func testOptionalScreensAreLeftOut() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
