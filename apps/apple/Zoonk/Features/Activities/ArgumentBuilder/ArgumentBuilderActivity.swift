@@ -227,8 +227,8 @@ private struct ArgumentBuilderCanvas: View {
           style: StrokeStyle(lineWidth: 2, dash: filled == nil ? [5, 4] : []))
     }
     .accessibilityElement(children: .contain)
-    .dropDestination(for: String.self) { ids, _ in
-      guard isOpen, let id = ids.first else {
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard isOpen, let id = dropped.first?.id else {
         return false
       }
 
@@ -267,7 +267,7 @@ private struct ArgumentBuilderCanvas: View {
           content
         }
         .buttonStyle(ActivityTileStyle(mark: .plain))
-        .draggable(id)
+        .draggable(ActivityDragItem(id: id))
         .accessibilityLabel(
           part == .evidence
             ? Text(

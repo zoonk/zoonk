@@ -44,6 +44,12 @@ interface StepActions {
     /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
     fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
 
+    /** A canvas whose number keys act on its own state (categorize's groups) takes them while it shows, saying whether a key did anything. */
+    fun takeNumberKeys(keys: ((Int) -> Boolean)?) = Unit
+
+    /** The number key at [index] for the canvas that took the keys; false when none did or the key did nothing. */
+    fun pressNumberKey(index: Int): Boolean = false
+
     /** The action bar's main action, for a field's Enter key. */
     fun runPrimary()
 

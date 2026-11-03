@@ -54,7 +54,7 @@
   "challenge_trickster_recording_count": "2c6c6aa600c78b59bec92f797ce065ef27fb1f2a06be33d6474683b6adab7b53",
   "challenge_trickster_recordings": "3868421f63eba9a03272338c68039311bf35c8883b29537bca5791fc466990b2",
   "challenge_trickster_rule": "689a8f76daf881bbcfbd1aad8eb7eb02afbfd847a3cfbf4be0b6a4d17097f82e",
-  "challenge_undo": "dbcbcd05608fefedb08b824fcb5d687d64998afdb6f5a446bae8d967a4bad20f",
+  "challenge_undo": "676b865798867587bd93b1ab9da796314b7fd8b758e2eaaeea8b15fdc5b92249",
   "challenge_used_up_move": "dae2bdeec56ff3aa9cb06ec4e5f0330621bac0271245130eb69b6753d8130e73",
   "challenge_used_up_next_session": "c956d7b24cfef84520d1231561e365a88c9d250c8bce9bdd9b1f05185c0cec83",
   "challenge_used_up_on": "e78b9907f19072b1dd0964c740bff769f11e2fd32433dcc96956e06e94c66098",
@@ -173,7 +173,7 @@
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Auf %1$s verschoben</string>
     <string name="challenge_moved_detail">Dein Plan hat spätere Lektionen verschoben, damit Platz dafür ist.</string>
-    <string name="challenge_undo">Rückgängig</string>
+    <string name="challenge_undo">Rückgängig machen</string>
     <string name="challenge_move_before_monday">Eine wöchentliche Herausforderung oder Probeprüfung kann nur auf einen Tag ab dem kommenden Montag verschoben werden. Sie bleibt an ihrem Platz.</string>
     <string name="challenge_move_collision">An diesem Tag gibt es bereits eine wöchentliche Herausforderung oder Probeprüfung. Diese bleibt an ihrem Platz.</string>
     <string name="challenge_move_no_room">Dein Plan kann am Montag keinen Platz für diese Herausforderung schaffen. Sie bleibt an ihrem Platz.</string>

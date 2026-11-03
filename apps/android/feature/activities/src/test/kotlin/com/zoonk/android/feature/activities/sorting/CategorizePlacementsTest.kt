@@ -22,11 +22,4 @@ class CategorizePlacementsTest {
     fun keepsTheListOrder() {
         assertEquals(listOf("ice", "rust", "sugar"), unplacedItems(ids, mapOf("wood" to "chemical")) { it })
     }
-
-    @Test
-    fun movesForwardToTheNextItemLeftWrappingAround() {
-        assertEquals("rust", nextUnplacedId(ids, "wood", mapOf("wood" to "c")))
-        assertEquals("ice", nextUnplacedId(ids, "sugar", mapOf("rust" to "c", "sugar" to "c")))
-        assertNull(nextUnplacedId(ids, "sugar", mapOf("ice" to "p", "rust" to "c", "sugar" to "c", "wood" to "c")))
-    }
 }

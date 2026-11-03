@@ -22,9 +22,39 @@ struct CategorizeFields: Decodable, Hashable, Sendable {
       Dictionary(items.map { ($0.id, $0.groupId) }, uniquingKeysWith: { first, _ in first }))
   }
 
-  /// The same order as on the web.
+  /// The same order as on the web, which is also the order cards are dealt in.
   var shuffledItems: [Item] {
     SeededShuffle.shuffled(items, seed: items.map(\.id).joined(separator: " "))
+  }
+}
+
+/// Where each card is, and the cards sorted while dealing (last one last) for Undo.
+struct CategorizeSorting: Equatable, Sendable {
+  private(set) var placements: [String: String]
+  private(set) var history: [String] = []
+
+  func cardInHand(from items: [CategorizeFields.Item]) -> CategorizeFields.Item? {
+    items.first { placements[$0.id] == nil }
+  }
+
+  mutating func sort(_ itemId: String, into groupId: String) {
+    placements[itemId] = groupId
+    history.append(itemId)
+  }
+
+  /// Returns the card taken back, which is the card in hand again.
+  mutating func undo() -> String? {
+    guard let itemId = history.popLast() else {
+      return nil
+    }
+
+    placements[itemId] = nil
+    return itemId
+  }
+
+  /// Once every card is sorted. Undo only takes back cards while dealing, so the history stays.
+  mutating func move(_ itemId: String, to groupId: String) {
+    placements[itemId] = groupId
   }
 }
 
@@ -51,18 +81,5 @@ enum CategorizePlacements {
     _ items: [CategorizeFields.Item], expected: [String: String], placements: [String: String]
   ) -> [CategorizeFields.Item] {
     items.filter { placements[$0.id] != expected[$0.id] }
-  }
-
-  /// The next item to sort after one is placed: the one after it, wrapping around, so focus keeps
-  /// moving forward through what's left.
-  static func nextUnplacedId(
-    _ items: [CategorizeFields.Item], placedId: String, placements: [String: String]
-  ) -> String? {
-    guard let index = items.firstIndex(where: { $0.id == placedId }) else {
-      return unplaced(items, placements).first?.id
-    }
-
-    let ordered = Array(items[(index + 1)...] + items[...index])
-    return unplaced(ordered, placements).first?.id
   }
 }

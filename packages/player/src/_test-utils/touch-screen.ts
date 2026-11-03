@@ -61,20 +61,34 @@ function moveFinger({
   });
 }
 
+/** Rests a finger on the locator for as long as a drag takes to lift; it stays down until `liftFinger`. */
+export async function holdFinger(on: Locator) {
+  await expect.element(on).toBeInViewport();
+  const point = centerOf(on);
+
+  await commands.touch([
+    { touchPoints: [point], type: "touchStart" },
+    { touchPoints: [point], type: "touchMove", waitMs: HOLD_MS },
+  ]);
+
+  return point;
+}
+
+export async function slideFinger(from: Point, to: Locator) {
+  const end = centerOf(to);
+  await commands.touch(moveFinger({ end, moves: DRAG_MOVES, start: from }));
+  return end;
+}
+
+export async function liftFinger() {
+  await commands.touch([{ touchPoints: [], type: "touchEnd" }]);
+}
+
 export async function holdAndDrag({ from, to }: { from: Locator; to: Locator }) {
   await expect.element(to).toBeVisible();
   to.element().scrollIntoView({ block: "center" });
-  await expect.element(from).toBeInViewport();
-
-  const start = centerOf(from);
-  const [firstMove, ...moves] = moveFinger({ end: centerOf(to), moves: DRAG_MOVES, start });
-
-  await commands.touch([
-    { touchPoints: [start], type: "touchStart" },
-    ...(firstMove ? [{ ...firstMove, waitMs: HOLD_MS }] : []),
-    ...moves,
-    { touchPoints: [], type: "touchEnd" },
-  ]);
+  await slideFinger(await holdFinger(from), to);
+  await liftFinger();
 }
 
 export async function swipeFrom(

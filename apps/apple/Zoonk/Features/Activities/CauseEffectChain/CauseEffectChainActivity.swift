@@ -183,9 +183,9 @@ private struct CauseEffectCanvas: View {
             style: StrokeStyle(lineWidth: 2, dash: targetedId == node.id ? [] : [5, 4]))
       }
     }
-    .draggable(node.id)
-    .dropDestination(for: String.self) { ids, _ in
-      guard !isLocked, let from = ids.first, from != node.id,
+    .draggable(ActivityDragItem(id: node.id))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard !isLocked, let from = dropped.first?.id, from != node.id,
         fields.nodes.contains(where: { $0.id == from })
       else {
         return false

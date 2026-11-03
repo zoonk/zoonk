@@ -14,6 +14,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
@@ -119,6 +120,25 @@ class LessonSpreadTest {
 
         unfold()
         rate.assert(moved)
+    }
+
+    /** The cards sorted so far, the card in hand and what Undo takes back stay as the book opens, closes and opens again. */
+    @Test
+    @Config(qualifiers = BOOK)
+    fun halfSortedCardsAndTheirUndoStayAsTheBookFoldsAndOpens() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(ActivityFixtures.step("categorize"), summaryStep("end")), restoration = restoration)
+        rule.onNodeWithText("Same substance").performScrollTo().performClick()
+
+        for (change in listOf(::unfold, restoration::emulateSavedInstanceStateRestore, ::unfold)) {
+            change()
+            rule.onNodeWithText("1 of 3 sorted").assertExists()
+            rule.onNodeWithText("Rusting iron").assertExists()
+        }
+
+        rule.onNodeWithText("Undo").performScrollTo().performClick()
+        rule.onNodeWithText("0 of 3 sorted").assertExists()
+        rule.onNodeWithText("Melting ice").assertExists()
     }
 
     private companion object {

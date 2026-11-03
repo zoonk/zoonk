@@ -14,13 +14,3 @@ internal fun placementsAnswer(
     ids: List<String>,
     placements: Map<String, String>,
 ): ActivityAnswer? = if (ids.all { it in placements }) assignmentAnswer(ids.associateWith { placements.getValue(it) }) else null
-
-/** The next item still to sort after [placedId], going round to the start. */
-internal fun nextUnplacedId(
-    ids: List<String>,
-    placedId: String,
-    placements: Map<String, String>,
-): String? {
-    val index = ids.indexOf(placedId)
-    return (ids.drop(index + 1) + ids.take(index + 1)).firstOrNull { it !in placements }
-}

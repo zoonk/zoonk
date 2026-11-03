@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -14,13 +15,17 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.pressKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
@@ -360,6 +365,23 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Leave for now?").assertIsDisplayed()
         tap("Keep writing")
         assertEquals(0, closed)
+    }
+
+    /**
+     * The screen's number keys sort the card in hand without focus in the canvas, a held key sorts one card, and two presses
+     * in one frame sort two cards.
+     */
+    @Test
+    fun numberKeysSortEachCardInTurn() {
+        play(listOf(ActivityFixtures.step("categorize")))
+
+        rule.onRoot().performKeyInput {
+            pressKey(Key.Two, pressDurationMillis = 1_000)
+            pressKey(Key.One)
+        }
+
+        rule.onNodeWithText("2 of 3 sorted").assertExists()
+        rule.onNodeWithText("Burning wood").assertExists()
     }
 }
 

@@ -81,7 +81,7 @@
   "activities_geometry_molecule_start": "0d5eb8fe170b6e2873be4b848846d117439c176d543cfe0b5251881e467316da",
   "activities_geometry_molecule_target": "b659252cc92abe08c227498fe4c140c29bb4d2b299e4fb3bcdb2783d7ec08ccd",
   "activities_geometry_molecule_triple_bond": "a6f8222e036454831f379967f2550aefec01adf9c0f4f180dffa88bfa05a8798",
-  "activities_geometry_molecule_undo": "b023fc0ee424381c03b85b843e50c31f594e64da37d827de0bc7ae13e2331e26",
+  "activities_geometry_molecule_undo": "c1c81a45b96fb000fa850b46a2a340c2a7fdee66708b6049a2f5caee02a2e5e5",
   "activities_geometry_molecule_undone": "9b6a4f63269fde403d7955a5141d1babc23f55f5afc9f5154bc8c3ff095802b9",
   "activities_geometry_radians": "8aefee1b5121528d4bb695b206044db4c539a7a03380aab4c011988dec844148",
   "activities_geometry_sin": "9286e130f7b510a2fda9dd64711e3b1cd19ad040f024b582f4209e8110e9e54f",
@@ -184,7 +184,7 @@
     <plurals name="activities_geometry_molecule_bonds">
         <item quantity="other">결합 %1$d개</item>
     </plurals>
-    <string name="activities_geometry_molecule_undo">되돌리기</string>
+    <string name="activities_geometry_molecule_undo">실행 취소</string>
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$s 제거</string>
     <string name="activities_geometry_molecule_remove_selected">선택한 원자 삭제하기</string>

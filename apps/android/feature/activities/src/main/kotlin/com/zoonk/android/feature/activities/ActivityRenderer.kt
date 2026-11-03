@@ -25,6 +25,7 @@ fun hidesAskedTotal(
  * [expected] and [isCorrect] come from the server's check, so a canvas draws them and never grades.
  * While [isLocked] (being checked or checked) the player takes no new answer, so a canvas changes nothing.
  * [baseMap] is a map activity's base map as the API draws it, with its places already projected.
+ * [takeNumberKeys] gives the screen's number keys to a canvas whose keys act on its own state.
  */
 data class ActivityProps(
     val content: ActivityStepContent,
@@ -37,6 +38,7 @@ data class ActivityProps(
     val cantListen: Boolean = false,
     val onCantListenChange: (Boolean) -> Unit = {},
     val baseMap: ActivityBaseMap? = null,
+    val takeNumberKeys: (((Int) -> Boolean)?) -> Unit = {},
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
     val isExploring: Boolean get() = phase == ActivityPhase.Explore

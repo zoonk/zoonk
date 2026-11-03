@@ -626,6 +626,18 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
+      - The categorize activity's \`prompt\` says what to sort and by what (the records into the animal groups by their body traits), never how to work the screen: no "arraste", "toque", "clique" or any other gesture, although its brief asks the learner to drag each record
+      - The categorize activity sorts the four records into poríferos, cnidários, artrópodes and vertebrados by body traits, as its brief says
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-grupos-de-animais-activity-prompt",
+    userInput: toInput(WALK_LESSONS["pt-grupos-de-animais"]),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
       - The lesson opens on Renan's scene with sensors A and C in a Markdown table, asking with no options whether both are equally reliable; no check comes before the precision explanation
       - The guess comes right after that explanation and asks what the third sensor (51,0; 51,0; 51,1 mm) is, with "preciso, mas não exato" right and a reveal that doesn't explain why yet
       - A guess has at most 4 options, and the right one is among them

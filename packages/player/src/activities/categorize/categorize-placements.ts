@@ -2,6 +2,8 @@ import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schem
 
 export type Placements = Readonly<Record<string, string>>;
 
+export type SortState = { history: readonly string[]; placements: Placements };
+
 type Item = { id: string };
 
 export function unplacedItems<TItem extends Item>(
@@ -37,16 +39,32 @@ export function misplacedItems<TItem extends Item>({
   return items.filter((item) => placements[item.id] !== expected[item.id]);
 }
 
-export function nextUnplacedId({
-  items,
-  placedId,
-  placements,
+export function sortCard({
+  groupId,
+  itemId,
+  state,
 }: {
-  items: readonly Item[];
-  placedId: string;
-  placements: Placements;
-}): string | null {
-  const index = items.findIndex((item) => item.id === placedId);
-  const ordered = [...items.slice(index + 1), ...items.slice(0, index + 1)];
-  return unplacedItems(ordered, placements)[0]?.id ?? null;
+  groupId: string;
+  itemId: string;
+  state: SortState;
+}): SortState {
+  return {
+    history: [...state.history, itemId],
+    placements: { ...state.placements, [itemId]: groupId },
+  };
+}
+
+export function takeBackLastCard(state: SortState): SortState {
+  const lastId = state.history.at(-1);
+
+  if (lastId === undefined) {
+    return state;
+  }
+
+  return {
+    history: state.history.slice(0, -1),
+    placements: Object.fromEntries(
+      Object.entries(state.placements).filter(([itemId]) => itemId !== lastId),
+    ),
+  };
 }
