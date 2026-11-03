@@ -52,8 +52,6 @@ final class LiveCall {
     var wrapUp: LiveCallEnding.Reason?
   }
 
-  typealias EndsAtLimit = Components.Schemas.LanguageConversationSetup.EndsAtLimitPayload
-
   /// A session that hasn't started after this isn't going to.
   static let connectTimeout = Duration.seconds(15)
   /// How often the microphone is read and the ending rules run.
@@ -72,8 +70,6 @@ final class LiveCall {
   private(set) var endedAt: Date?
   /// The call's talk time, after which the character says goodbye.
   private(set) var talkSeconds: Int
-  /// The plan's call time runs out with this call: today's or this month's.
-  private(set) var endsAtLimit: EndsAtLimit?
   private(set) var signals = Signals()
 
   @ObservationIgnored private let conversation: LanguageConversation
@@ -185,7 +181,6 @@ final class LiveCall {
     talkSeconds = setup.talkSeconds
     talkEndsAt = now.addingTimeInterval(TimeInterval(setup.talkSeconds))
     hardStopAt = now.addingTimeInterval(TimeInterval(setup.seconds))
-    endsAtLimit = setup.endsAtLimit
     script = setup.script
 
     let transport = client.makeTransport()

@@ -995,7 +995,7 @@ extension Components.Schemas.LanguageConversationSetup {
     }
 
     return .init(
-      connectionId: connectionId, deadlineAt: .now.addingTimeInterval(165), endsAtLimit: nil,
+      connectionId: connectionId, deadlineAt: .now.addingTimeInterval(165),
       script: .init(
         cues: .init(
           checkIn: cue(.commentary, "Ask if they're there."),

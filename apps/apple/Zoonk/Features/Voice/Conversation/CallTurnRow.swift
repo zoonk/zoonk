@@ -126,7 +126,7 @@ struct CallTurnRow: View {
   }
 
   private var wrapUp: Text? {
-    wrapUpLine(call.signals.wrapUp, endsAtLimit: call.endsAtLimit, name: name).map {
+    wrapUpLine(call.signals.wrapUp, name: name).map {
       Text(verbatim: $0)
     }
   }
@@ -154,27 +154,12 @@ struct CallTurnRow: View {
 }
 
 /// From the talk time, or once every goal is met, until the goodbye.
-private func wrapUpLine(
-  _ reason: LiveCallEnding.Reason?, endsAtLimit: LiveCall.EndsAtLimit?, name: String
-) -> String? {
+private func wrapUpLine(_ reason: LiveCallEnding.Reason?, name: String) -> String? {
   switch reason {
   case .time:
-    switch endsAtLimit {
-    case .day:
-      String(
-        localized:
-          "Your call time for today is almost up. \(name) will say goodbye after your answer.",
-        table: "Voice", comment: "The plan's call time for today runs out with this call")
-    case .month:
-      String(
-        localized:
-          "Your call time for this month is almost up. \(name) will say goodbye after your answer.",
-        table: "Voice", comment: "The plan's call time for this month runs out with this call")
-    case nil:
-      String(
-        localized: "Almost time. \(name) will say goodbye after your answer.", table: "Voice",
-        comment: "The call's time is up: the character ends it after the learner's answer")
-    }
+    String(
+      localized: "Almost time. \(name) will say goodbye after your answer.", table: "Voice",
+      comment: "The call's time is up: the character ends it after the learner's answer")
   case .done:
     String(
       localized: "All goals done. \(name) will wrap up after your answer.", table: "Voice",
@@ -193,7 +178,7 @@ struct CallAnnouncements: ViewModifier {
   func body(content: Content) -> some View {
     content
       .onChange(of: call.signals.wrapUp) { _, wrapUp in
-        if let line = wrapUpLine(wrapUp, endsAtLimit: call.endsAtLimit, name: name) {
+        if let line = wrapUpLine(wrapUp, name: name) {
           announcePolitely(line)
         }
       }
