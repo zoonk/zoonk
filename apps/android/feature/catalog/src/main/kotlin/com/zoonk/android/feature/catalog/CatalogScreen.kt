@@ -75,6 +75,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LoadMoreFooter
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.SubjectLabel
@@ -420,39 +421,13 @@ private fun CourseGrid(
                 }
 
                 item(key = "more", span = { GridItemSpan(maxLineSpan) }) {
-                    LoadMoreFooter(isLoading = isLoadingMore, failed = loadMoreFailed, onRetry = loadMore)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LoadMoreFooter(
-    isLoading: Boolean,
-    failed: Boolean,
-    onRetry: () -> Unit,
-) {
-    val loadingLabel = stringResource(R.string.catalog_loading_more)
-
-    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-        when {
-            isLoading -> {
-                CircularProgressIndicator(Modifier.size(24.dp).semantics { contentDescription = loadingLabel }, strokeWidth = 2.dp)
-            }
-
-            failed -> {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(R.string.catalog_load_more_failed),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
+                    LoadMoreFooter(
+                        isLoading = isLoadingMore,
+                        failed = loadMoreFailed,
+                        loadingLabel = stringResource(R.string.catalog_loading_more),
+                        failedText = stringResource(R.string.catalog_load_more_failed),
+                        onRetry = loadMore,
                     )
-                    FilledTonalButton(onClick = onRetry) {
-                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
-                        Spacer(Modifier.size(8.dp))
-                        Text(stringResource(R.string.load_failed_try_again))
-                    }
                 }
             }
         }
