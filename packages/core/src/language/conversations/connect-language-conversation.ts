@@ -10,6 +10,7 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { buildLiveCall } from "./_utils/conversation-view";
 import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
+import { getTalkEndsAt } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import {
   type LanguageConversationConnectInput,
@@ -25,12 +26,11 @@ function getCallTimes(
   connection: Pick<LiveCallConnection, "createdAt" | "deadlineAt" | "heldSeconds">,
 ): Pick<LanguageConversationSetup, "seconds" | "talkSeconds"> {
   const now = Date.now();
-  const talkEndsAt = connection.createdAt.getTime() + connection.heldSeconds * MS_PER_SECOND;
   const secondsUntil = (at: number) => Math.max(1, Math.floor((at - now) / MS_PER_SECOND));
 
   return {
     seconds: secondsUntil(connection.deadlineAt.getTime()),
-    talkSeconds: secondsUntil(talkEndsAt),
+    talkSeconds: secondsUntil(getTalkEndsAt(connection)),
   };
 }
 

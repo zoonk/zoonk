@@ -56,6 +56,13 @@ export function getCallExposureMicros({
   );
 }
 
+/** Admission, the app's countdown and the learner's charge all end the talk time here. */
+export function getTalkEndsAt(
+  connection: Pick<LiveCallConnection, "createdAt" | "heldSeconds">,
+): number {
+  return connection.createdAt.getTime() + connection.heldSeconds * MS_PER_SECOND;
+}
+
 /** The learner pays for the part of the live time inside the talk window, never the wrap-up after it. */
 function getTalkSeconds({
   connection,
@@ -66,8 +73,10 @@ function getTalkSeconds({
   liveUntil: Date;
   startedAt: Date;
 }): number {
-  const talkEndsAt = connection.createdAt.getTime() + connection.heldSeconds * MS_PER_SECOND;
-  return secondsBetween(startedAt, new Date(Math.min(liveUntil.getTime(), talkEndsAt)));
+  return secondsBetween(
+    startedAt,
+    new Date(Math.min(liveUntil.getTime(), getTalkEndsAt(connection))),
+  );
 }
 
 export function getEndingCharge({

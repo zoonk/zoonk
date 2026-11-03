@@ -2,6 +2,7 @@ import { type LanguageConversation, type TransactionClient, sql } from "@zoonk/d
 import {
   getCallExposureMicros,
   getEndingCharge,
+  getTalkEndsAt,
 } from "../../language/conversations/_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "../../language/conversations/_utils/live-call-plus";
 import { settleLiveCall } from "../../language/conversations/_utils/settle-live-call";
@@ -56,8 +57,7 @@ async function requestedCallSeconds({
     return length;
   }
 
-  const talkEndsAt = first.createdAt.getTime() + first.heldSeconds * MS_PER_SECOND;
-  return Math.max(0, Math.floor((talkEndsAt - now.getTime()) / MS_PER_SECOND));
+  return Math.max(0, Math.floor((getTalkEndsAt(first) - now.getTime()) / MS_PER_SECOND));
 }
 
 async function clearOpenConnection({
