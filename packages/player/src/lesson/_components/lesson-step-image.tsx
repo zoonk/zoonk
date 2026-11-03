@@ -1,6 +1,6 @@
 "use client";
 
-import { PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
+import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
 import { cn } from "@zoonk/ui/lib/utils";
 import { OWN_FILES_WEB_PATH, getPrivateBlobPathname, toOwnFileUrl } from "@zoonk/utils/user-blobs";
 import Image from "next/image";
@@ -9,13 +9,7 @@ import { type PlayableStepImage } from "../lesson-player-types";
 
 const LESSON_IMAGE_SIZES = "(max-width: 640px) 100vw, 560px";
 
-/** The size new pictures are drawn at, for a picture whose payload lacks its own (stored ones carry it). */
-const DRAWN_SIZE = {
-  option: { height: 1024, width: 1024 },
-  scene: { height: 1024, width: 1536 },
-} as const;
-
-export type LessonPictureKind = keyof typeof DRAWN_SIZE;
+export type LessonPictureKind = keyof typeof DRAWN_PICTURE_SIZE;
 
 export type LessonPictureFrame = "hero" | "inline" | "question";
 
@@ -56,8 +50,8 @@ export function LessonStepImage({
   const isPrivate = getPrivateBlobPathname(image.url) !== null;
 
   const size = {
-    height: image.height ?? DRAWN_SIZE[kind].height,
-    width: image.width ?? DRAWN_SIZE[kind].width,
+    height: image.height ?? DRAWN_PICTURE_SIZE[kind].height,
+    width: image.width ?? DRAWN_PICTURE_SIZE[kind].width,
   };
 
   return (

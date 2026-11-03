@@ -3,10 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { OWN_FILES_WEB_PATH, toOwnFileUrl } from "@zoonk/utils/user-blobs";
 import { useState } from "react";
-import { PICTURE_BOX_CLASS, pictureBoxStyle } from "../_components/picture-box";
-
-/** The size new question pictures are drawn at, for a picture whose payload lacks its own (stored ones carry it). */
-const DRAWN_SIZE = { height: 1024, width: 1536 } as const;
+import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "../_components/picture-box";
 
 export type ItemPictureData = {
   alt: string;
@@ -23,8 +20,8 @@ export function ItemPicture({ image }: { image: ItemPictureData }) {
   }
 
   const size = {
-    height: image.height ?? DRAWN_SIZE.height,
-    width: image.width ?? DRAWN_SIZE.width,
+    height: image.height ?? DRAWN_PICTURE_SIZE.scene.height,
+    width: image.width ?? DRAWN_PICTURE_SIZE.scene.width,
   };
 
   return (
