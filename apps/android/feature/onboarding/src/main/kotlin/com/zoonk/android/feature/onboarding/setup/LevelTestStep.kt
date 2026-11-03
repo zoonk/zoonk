@@ -53,6 +53,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
@@ -61,6 +62,7 @@ import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
@@ -82,6 +84,7 @@ import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.TrueFalseLabels
 import java.util.Locale
@@ -166,7 +169,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Speaking -> {
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
+            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, grade = vm::speak, navigator, onSkip = vm::stop)
         }
 
         is LevelTestPhase.Done -> {
@@ -413,7 +416,7 @@ private fun ColumnScope.LevelTestSpeaking(
     sentence: LevelTestSentence,
     targetLanguage: String,
     goalId: String,
-    store: OnboardingStore,
+    grade: suspend (VoiceRecording) -> GradeOutcome<LanguageLevelTestSpokenResult>,
     navigator: AppNavigator,
     onSkip: () -> Unit,
 ) {
@@ -436,7 +439,7 @@ private fun ColumnScope.LevelTestSpeaking(
         answer = {},
     ) {
         VoiceAnswerRecorder(
-            grade = { store.speakLevelTest(goalId, it) },
+            grade = grade,
             onGraded = {},
             navigator = navigator,
             key = recorderKey,

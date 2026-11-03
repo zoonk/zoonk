@@ -11,11 +11,14 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestGeneration
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import kotlinx.coroutines.launch
 
 private class SentTestAnswer(
@@ -67,7 +70,7 @@ internal class LevelTestViewModel(
         private set
 
     /** The learner answered here, so the test ending after one of their answers is finished at once. */
-    private var answering = false
+    private var answered = false
 
     private val test get() = store.levelTests[goalId]
     private var sent: SentTestAnswer? = null
@@ -124,8 +127,14 @@ internal class LevelTestViewModel(
         skipped: Boolean = false,
     ) {
         if (isSaving) return
+        answered = true
         sent = SentTestAnswer(questionId, answerIndex, durationMs, skipped)
         send()
+    }
+
+    suspend fun speak(recording: VoiceRecording): GradeOutcome<LanguageLevelTestSpokenResult> {
+        answered = true
+        return store.speakLevelTest(goalId, recording)
     }
 
     /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
@@ -155,14 +164,11 @@ internal class LevelTestViewModel(
 
     /**
      * Main's: the learner's last answer ends the test, which is finished then, so its last screen
-     * shows the placement it earned. A test reopened after it ended waits for Build my plan.
+     * shows the placement it earned. A test that only reads as ended (reopened, or finished
+     * elsewhere) waits for Build my plan.
      */
     fun follow(phase: LevelTestPhase) {
-        when (phase) {
-            is LevelTestPhase.Question, is LevelTestPhase.Speaking -> answering = true
-            is LevelTestPhase.Done -> if (answering && !finished) finish {}
-            else -> Unit
-        }
+        if (phase is LevelTestPhase.Done && answered && !finished) finish {}
     }
 
     fun buildPlan(onDone: () -> Unit) = if (finished) onDone() else finish(onDone)

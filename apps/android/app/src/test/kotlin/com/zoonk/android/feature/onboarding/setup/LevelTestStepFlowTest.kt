@@ -332,6 +332,24 @@ class LevelTestStepFlowTest {
     }
 
     @Test
+    fun aQuestionThatRereadsAsEndedWaitsForBuildMyPlan() {
+        api.levelTest = levelTestOf(answered = 1)
+        show()
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+
+        api.levelTest = levelTestOf(answered = 2, next = DONE_NEXT)
+        rule.runOnIdle { store.levelTests[GOAL_ID].invalidate() }
+
+        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        assertEquals(0, api.finishedLevelTests)
+
+        tap("Build my plan")
+
+        assertEquals(1, api.finishedLevelTests)
+        assertEquals(1, done)
+    }
+
+    @Test
     fun anAnswerThatDidNotGoThroughIsSentAgainAsItWas() {
         api.writeFailure = ApiException(ApiError.Network)
         show()
