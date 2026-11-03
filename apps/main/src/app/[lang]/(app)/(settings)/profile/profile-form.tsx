@@ -106,7 +106,7 @@ function SaveError({ state }: { state: typeof initialState }) {
 
 type FormStatus = "error" | "idle" | "nameTooLong" | "success" | "usernameTaken";
 
-const initialState = { name: "", status: "idle" as FormStatus, username: "" };
+const initialState = { status: "idle" as FormStatus, username: "" };
 
 export function ProfileForm({
   defaultName,
@@ -122,7 +122,6 @@ export function ProfileForm({
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [name, setName] = useState(defaultName);
 
-  const currentName = state.name || defaultName;
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
   const canSave = !isNameTooLong && (status === "idle" || status === "available");
 
@@ -141,13 +140,12 @@ export function ProfileForm({
               isNameTooLong || state.status === "error" || state.status === "nameTooLong"
             }
             autoComplete="name"
-            defaultValue={currentName}
             id="name"
-            key={currentName}
             name="name"
             onChange={(event) => setName(event.target.value)}
             required
             type="text"
+            value={name}
           />
         </SettingRow>
 

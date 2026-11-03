@@ -3,12 +3,23 @@ import { getString } from "@zoonk/utils/json";
 import { type GenericEndpointContext } from "better-auth";
 import { APIError } from "better-auth/api";
 import { type SignInMethod, reportAuthEvent } from "./auth-events";
-import { NAME_MAX_LENGTH, NAME_TOO_LONG_ERROR_CODE } from "./name-rules";
+import { NAME_MAX_LENGTH, NAME_TOO_LONG_ERROR_CODE, isNameTooLong } from "./name-rules";
 import { type UserCreateAfterHook } from "./user-create-hooks";
 
-/** Checked on every write of a name, since Better Auth's own update endpoint doesn't go through core. */
-export function rejectLongName(name: unknown) {
-  if (typeof name === "string" && name.length > NAME_MAX_LENGTH) {
+/**
+ * Checked on every write of a name, since Better Auth's own update endpoint doesn't go through core.
+ * That endpoint passes any JSON value to the database, where an object like `{ set }` still writes.
+ */
+export function rejectInvalidName(name: unknown) {
+  if (name === undefined) {
+    return;
+  }
+
+  if (typeof name !== "string") {
+    throw new APIError("BAD_REQUEST", { message: "Send the name as text." });
+  }
+
+  if (isNameTooLong(name)) {
     throw new APIError("BAD_REQUEST", {
       code: NAME_TOO_LONG_ERROR_CODE,
       message: `Use ${NAME_MAX_LENGTH} characters or fewer for your name.`,

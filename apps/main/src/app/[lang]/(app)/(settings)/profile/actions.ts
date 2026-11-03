@@ -14,7 +14,7 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   const username = parseFormField(formData, "username");
 
   if (!name || !username) {
-    return { name: name ?? "", status: "error" as ProfileFormStatus, username: username ?? "" };
+    return { status: "error" as ProfileFormStatus, username: username ?? "" };
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -24,17 +24,17 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   const errorCode = getAuthError(error)?.code;
 
   if (errorCode === NAME_TOO_LONG_ERROR_CODE) {
-    return { name, status: "nameTooLong" as ProfileFormStatus, username };
+    return { status: "nameTooLong" as ProfileFormStatus, username };
   }
 
   if (errorCode === "USERNAME_IS_ALREADY_TAKEN") {
-    return { name, status: "usernameTaken" as ProfileFormStatus, username };
+    return { status: "usernameTaken" as ProfileFormStatus, username };
   }
 
   if (error || !result) {
     logError("Error updating profile:", error);
-    return { name, status: "error" as ProfileFormStatus, username };
+    return { status: "error" as ProfileFormStatus, username };
   }
 
-  return { name, status: "success" as ProfileFormStatus, username };
+  return { status: "success" as ProfileFormStatus, username };
 }

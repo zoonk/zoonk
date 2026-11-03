@@ -120,11 +120,11 @@ export function SetupProfileForm({
           aria-invalid={isNameTooLong}
           autoComplete="name"
           autoFocus
-          defaultValue={defaultName}
           id="name"
           name="name"
           onChange={(event) => setName(event.target.value)}
           type="text"
+          value={name}
         />
         <SetupError hasError={isNameTooLong} id={nameErrorId}>
           {t("Use 150 characters or fewer.")}

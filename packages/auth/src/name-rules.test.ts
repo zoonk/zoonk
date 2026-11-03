@@ -10,10 +10,22 @@ describe(isNameChangeTooLong, () => {
   });
 
   it("keeps a name saved before the limit until it changes", () => {
-    const savedName = "a".repeat(NAME_MAX_LENGTH + 50);
+    const savedName = ` ${"a".repeat(NAME_MAX_LENGTH + 50)} `;
 
-    expect(isNameChangeTooLong({ name: ` ${savedName} `, savedName })).toBe(false);
-    expect(isNameChangeTooLong({ name: savedName.slice(1), savedName })).toBe(true);
+    expect(isNameChangeTooLong({ name: savedName.trim(), savedName })).toBe(false);
+    expect(isNameChangeTooLong({ name: savedName.slice(2), savedName })).toBe(true);
+  });
+
+  it("counts characters as code points, as the API's maxLength does", () => {
+    const astral = "\u{20000}";
+
+    expect(isNameChangeTooLong({ name: astral.repeat(NAME_MAX_LENGTH), savedName: "Ana" })).toBe(
+      false,
+    );
+
+    expect(
+      isNameChangeTooLong({ name: astral.repeat(NAME_MAX_LENGTH + 1), savedName: "Ana" }),
+    ).toBe(true);
   });
 
   it("counts the name without its surrounding spaces", () => {

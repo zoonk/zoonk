@@ -176,13 +176,13 @@ describe("current user", () => {
     });
 
     it("keeps a name saved before the limit while the username changes", async () => {
-      const savedName = "a".repeat(NAME_MAX_LENGTH + 50);
+      const savedName = ` ${"a".repeat(NAME_MAX_LENGTH + 50)} `;
       const user = await userFixture({ name: savedName });
       const username = `kept_name_${randomUUID().slice(0, 8)}`;
       await signIn(user);
 
       await expect(
-        updateCurrentUser({ input: { name: savedName, username } }),
+        updateCurrentUser({ input: { name: savedName.trim(), username } }),
       ).resolves.toMatchObject({ name: savedName, username });
     });
 
