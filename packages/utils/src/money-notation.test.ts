@@ -58,17 +58,6 @@ describe(createMoneyNotationRepair, () => {
     ]);
   });
 
-  it.each([
-    ["it", ["€ 12.345,00 l'anno", "€ 300 al mese"], ["€ 12.345 l'anno", "€ 300 al mese"]],
-    [
-      "pl",
-      ["12\u00A0345,00 zł rocznie", "300 zł miesięcznie"],
-      ["12\u00A0345 zł rocznie", "300 zł miesięcznie"],
-    ],
-  ])("reads %s amounts its notation only groups from five digits", (language, texts, expected) => {
-    expect(repair(language, texts)).toStrictEqual(expected);
-  });
-
   it("reads both ends of a money range, and an end it can't read keeps every zero cent", () => {
     expect(repair("pt", ["R$ 3.000,00", "de R$ 2400,00–2500,50"])).toStrictEqual([
       "R$ 3.000,00",

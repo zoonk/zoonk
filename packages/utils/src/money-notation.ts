@@ -28,7 +28,7 @@ const MONEY_AMOUNTS = [AMOUNT_AFTER_MARK, RANGE_END, AMOUNT_BEFORE_MARK, RANGE_S
 
 const BARE_UNITS = /^[1-9]\d*$/u;
 const SPACE = /\s/u;
-const NOTATION_SAMPLE = 12_345.5;
+const NOTATION_SAMPLE = 1234.5;
 const ZERO_CENTS = "00";
 
 type Notation = { decimal: string; pattern: RegExp };
