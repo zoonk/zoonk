@@ -16,21 +16,21 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
 }
 
 describe(repairWrittenLesson, () => {
-  it("writes a negative amount the locale's way in text, tables, activities and the quote that cites it", () => {
-    const sentence = "Com mais dívidas, o patrimônio fica R$ -1.000,00.";
+  it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
+    const sentence = "The balance ends at $ -12,34 after the refund.";
 
     const explanation: WrittenScreen = {
       exampleLineIdea: null,
       explore: null,
       image: null,
       kind: "explanation",
-      text: `${sentence}\n\n| Item | Valor |\n|---|---:|\n| Patrimônio | R$ -1.000,00 |`,
-      title: "Patrimônio negativo",
+      text: `${sentence}\n\n| Item | Amount |\n|---|---:|\n| Balance | $ -12,34 |`,
+      title: "A negative balance",
       visual: null,
     };
 
     const activity: WrittenScreen = {
-      content: JSON.stringify({ check: { options: [{ text: "R$ -1.000,00" }] } }),
+      content: JSON.stringify({ check: { options: [{ text: "$ -12,34" }] } }),
       kind: "activity",
       template: "formulaModel",
     };
@@ -40,32 +40,32 @@ describe(repairWrittenLesson, () => {
       context: null,
       image: null,
       kind: "check",
-      options: ["R$ -1.000,00", "R$ 1.000,00"].map((text, index) => ({
+      options: ["$ -12,34", "$ 12,34"].map((text, index) => ({
         isCorrect: index === 0,
         picture: null,
-        reason: "Porque sim.",
+        reason: "That's the balance.",
         text,
       })),
-      question: "Quanto fica o patrimônio?",
+      question: "What's the balance?",
       visual: null,
     };
 
     const [text, play, question] = repairWrittenLesson({
-      language: "pt",
-      lesson: { screens: [explanation, activity, quoted], summary: hubMap(["Uma ideia."]) },
+      language: "en",
+      lesson: { screens: [explanation, activity, quoted], summary: hubMap(["One idea."]) },
     }).screens;
 
-    const fixed = "-R$\u00A01.000,00";
+    const fixed = "-$ 12,34";
 
     expect(text?.kind === "explanation" && text.text).toBe(
-      `Com mais dívidas, o patrimônio fica ${fixed}.\n\n| Item | Valor |\n|---|---:|\n| Patrimônio | ${fixed} |`,
+      `The balance ends at ${fixed} after the refund.\n\n| Item | Amount |\n|---|---:|\n| Balance | ${fixed} |`,
     );
 
     expect(play?.kind === "activity" && play.content).toContain(fixed);
     expect(question?.kind === "check" && question.options[0]?.text).toBe(fixed);
 
     expect(question?.kind === "check" && question.basis?.quote).toBe(
-      `Com mais dívidas, o patrimônio fica ${fixed}.`,
+      `The balance ends at ${fixed} after the refund.`,
     );
   });
 
