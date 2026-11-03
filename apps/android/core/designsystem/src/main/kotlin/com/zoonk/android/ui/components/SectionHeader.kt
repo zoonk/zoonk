@@ -1,8 +1,5 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,18 +28,23 @@ fun SectionHeader(
         return
     }
 
-    Row(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+    SectionHeader(title, modifier) {
         Text(
             detail,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         )
     }
+}
+
+/** Main's `PageSectionHeader` with something other than a short fact at its end, such as a legend or a button. */
+@Composable
+fun SectionHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    trailing: @Composable () -> Unit,
+) {
+    HeadingRow(title, MaterialTheme.typography.titleMedium, modifier, Alignment.CenterVertically, trailing)
 }
 
 /** Main's `PageSectionLabel`: a quiet label naming a group inside a section, still a heading for TalkBack. */
