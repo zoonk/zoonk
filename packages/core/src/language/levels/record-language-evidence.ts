@@ -8,6 +8,7 @@ import {
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
+import { awardLanguageLevelCertificates } from "../../certificates/_utils/award-language-certificates";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
@@ -72,10 +73,23 @@ async function addSkillEvidence(
     where: { userLanguageSkill: { language, skill, userId } },
   });
 
+  const next = applyLevelEvidence(current, evidence);
+  const raised = next.score > current.score;
+  const now = new Date();
+
   await tx.languageSkillLevel.update({
-    data: applyLevelEvidence(current, evidence),
+    data: { ...next, ...(raised && current.raisedAt === null && { raisedAt: now }) },
     where: { id: current.id },
   });
+
+  if (raised) {
+    await awardLanguageLevelCertificates(tx, {
+      language,
+      now,
+      previous: { score: current.score, skill },
+      userId,
+    });
+  }
 }
 
 async function changesSelection(tx: TransactionClient, input: SkillEvidence): Promise<boolean> {

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
 export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<string, unknown> {
@@ -8,15 +8,17 @@ export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<stri
 
 /** A supplied goal must belong to the learner; otherwise falls back to their active or latest goal for the language. */
 export async function findLearnerLanguageGoal({
+  db = prisma,
   goalId,
   targetLanguage,
   userId,
 }: {
+  db?: TransactionClient;
   goalId?: string;
   targetLanguage: string;
   userId: string;
 }): Promise<Goal | null> {
-  const goals = await prisma.goal.findMany({
+  const goals = await db.goal.findMany({
     orderBy: { updatedAt: "desc" },
     where: { kind: "language", targetLanguage, userId },
   });
