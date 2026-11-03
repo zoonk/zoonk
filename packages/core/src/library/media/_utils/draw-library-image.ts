@@ -38,7 +38,7 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
 export async function drawLibraryImage({
   alt,
   analytics,
-  canvas,
+  canvas = "landscape",
   category,
   context,
   language,
@@ -73,7 +73,7 @@ export async function drawLibraryImage({
 
   const resolution = await resolveLibraryIdentity({
     analytics,
-    request: { hasLabels, kind: "image", language, ownerId, prompt, textAllowed },
+    request: { canvas, hasLabels, kind: "image", language, ownerId, prompt, textAllowed },
   });
 
   if (resolution.kind === "existing") {

@@ -122,7 +122,11 @@ describe(lessonImagesWorkflow, () => {
       libraryLessonFixture(),
       mediaAssetFixture({
         prompt: describeImageScene(reusedScene),
-        reuseKey: buildImageReuseKey({ language: null, prompt: describeImageScene(reusedScene) }),
+        reuseKey: buildImageReuseKey({
+          canvas: "landscape",
+          language: null,
+          prompt: describeImageScene(reusedScene),
+        }),
         styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);
