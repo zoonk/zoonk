@@ -135,13 +135,13 @@ function arm(state: CallEndingState, reason: CallEndingReason, at: number): Call
 }
 
 function quietFor(state: CallEndingState, at: number) {
-  return state.learnerSpeaking ? null : at - state.quietFrom;
+  return state.learnerSpeaking ? 0 : at - state.quietFrom;
 }
 
 function stepSilence(state: CallEndingState, at: number): Step {
   const quiet = quietFor(state, at);
 
-  if (state.reason || quiet === null) {
+  if (state.reason) {
     return { commands: [], state };
   }
 
@@ -304,10 +304,13 @@ function reduce(
     return acknowledge(state, event);
   }
 
+  // The microphone's quiet starts as its hangover ends, the same moment on every platform.
   if (event.type === "speech") {
+    const quietFrom = state.learnerSpeaking ? Math.max(state.quietFrom, at) : state.quietFrom;
+
     return event.speaking
       ? { ...markLearner(state, at), learnerSpeaking: true, spokeOutLoud: true }
-      : { ...state, learnerSpeaking: false };
+      : { ...state, learnerSpeaking: false, quietFrom };
   }
 
   if (event.type === "learnerHeard") {
@@ -374,13 +377,11 @@ export function stepCallEnding(state: CallEndingState, event: CallEndingEvent): 
 }
 
 export function getCallEndingView(state: CallEndingState, at: number) {
-  const quiet = quietFor(state, at);
-
   return {
     characterSpeaking: isCharacterSpeaking(state, at),
     greeted: state.characterAt !== null,
     learnerSpeaking: state.learnerSpeaking,
-    quietHint: quiet !== null && quiet >= state.timing.quietHintMs,
+    quietHint: quietFor(state, at) >= state.timing.quietHintMs,
     reason: state.reason,
     saidGoodbye: state.saidGoodbye,
     spokeOutLoud: state.spokeOutLoud,

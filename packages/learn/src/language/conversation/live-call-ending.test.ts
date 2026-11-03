@@ -41,6 +41,16 @@ function learnerTalks(from: number, ms: number): CallEndingEvent[] {
   ];
 }
 
+/** Apple's and Android's timelines: the character's words from `from` through `to`. */
+function characterSays(from: number, to: number): CallEndingEvent[] {
+  return [...characterTalks(from, to - from), { at: to, startMs: to, type: "characterSpoke" }];
+}
+
+/** Apple's and Android's timelines: the microphone hears the learner from `from` through `to`. */
+function learnerSays(from: number, to: number): CallEndingEvent[] {
+  return learnerTalks(from, to - from);
+}
+
 function learnerTypes(from: number, ms: number): CallEndingEvent[] {
   return range(from, from + ms, 500).map((at) => ({ at, type: "typing" }));
 }
@@ -53,11 +63,13 @@ function play({
   events,
   seconds = 165,
   talkSeconds,
+  tickMs = TICK_MS,
   until,
 }: {
   events: CallEndingEvent[];
   seconds?: number;
   talkSeconds: number;
+  tickMs?: number;
   until: number;
 }) {
   const start = startCallEnding({
@@ -67,12 +79,15 @@ function play({
     timing: TIMING,
   });
 
-  const ticks = range(TICK_MS, until + TICK_MS, TICK_MS).map((at): CallEndingEvent => ({
+  const ticks = range(tickMs, until + tickMs, tickMs).map((at): CallEndingEvent => ({
     at,
     type: "tick",
   }));
 
-  const timeline = [...events, ...ticks].toSorted((first, second) => first.at - second.at);
+  const timeline = [...events.filter((event) => event.at <= until), ...ticks].toSorted(
+    (first, second) => first.at - second.at,
+  );
+
   const log = start.commands.map((command) => ({ at: 0, ...command }));
   let { state } = start;
 
@@ -445,58 +460,69 @@ describe("a quiet learner", () => {
     expect(cueTimes(log)).toStrictEqual([0, 34_500]);
   });
 
-  it("starts the quiet over after a cough that never becomes words, and is checked on once more", () => {
-    const { goodbyes, log, state } = play({
-      events: [...GREETING, ...characterTalks(30_000, 1500), ...learnerTalks(35_000, 300)],
-      talkSeconds: 120,
-      until: 90_000,
-    });
-
-    // The microphone last heard them, its hangover included, at 36.2 s.
-    expect(getCallEndingView(state, 48_100).quietHint).toBe(false);
-    expect(getCallEndingView(state, 48_200).quietHint).toBe(true);
-    expect(cueTimes(log)).toStrictEqual([0, 29_000, 61_250]);
-    expect(goodbyes.map((entry) => entry.at)).toStrictEqual([86_250]);
-  });
-
-  it("is told nothing while the microphone hears them", () => {
-    const { log, state } = play({
-      events: [...GREETING, ...learnerTalks(20_000, 10_000)],
-      talkSeconds: 120,
-      until: 40_000,
-    });
-
-    expect(getCallEndingView(state, 30_000).quietHint).toBe(false);
-    expect(cueTimes(log)).toStrictEqual([0]);
-  });
-
-  it("is checked on 25 s after their last keystroke", () => {
-    const { log } = play({
-      events: [...GREETING, ...learnerTypes(20_000, 2000)],
-      talkSeconds: 120,
-      until: 60_000,
-    });
-
-    expect(cueTimes(log)).toStrictEqual([0, 46_500]);
-  });
-
-  it("isn't handled as quiet when steady noise keeps the microphone busy, so the call ends at its talk time", () => {
-    const { goodbyes, log } = play({
-      events: [...GREETING, ...learnerTalks(4000, 130_000)],
-      talkSeconds: 60,
-      until: 70_000,
-    });
-
-    expect(cueTimes(log)).toStrictEqual([0]);
-    expect(goodbyes).toMatchObject([{ at: 60_000, cue: "goodbye", whileLearnerSpeaks: true }]);
-  });
-
   it("isn't checked on once the call is ending", () => {
     const { log } = play({ events: GREETING, talkSeconds: 20, until: 40_000 });
 
     expect(log.filter((entry) => entry.type === "cue").map((entry) => entry.cue)).toStrictEqual([
       "opening",
     ]);
+  });
+});
+
+/** The same timelines, ticks and numbers as Apple's and Android's LiveCall tests. */
+describe("the quiet, counted from the last sound anyone made", () => {
+  const greeting = characterSays(1000, 3000);
+
+  function quietPlay(events: CallEndingEvent[], until: number) {
+    return play({ events: [...greeting, ...events], talkSeconds: 120, tickMs: 100, until });
+  }
+
+  it("1. starts again after a cough that never becomes words", () => {
+    const { goodbyes, log, state } = quietPlay(learnerSays(20_000, 20_200), 75_000);
+
+    // The microphone goes quiet at 21.2 s.
+    expect(getCallEndingView(state, 33_100).quietHint).toBe(false);
+    expect(getCallEndingView(state, 33_300).quietHint).toBe(true);
+    expect(cueTimes(log)).toStrictEqual([0, 46_200]);
+    expect(goodbyes.map((entry) => entry.at)).toStrictEqual([71_200]);
+  });
+
+  it("2. gets its own check-in after a cough that follows the check-in", () => {
+    const { goodbyes, log } = quietPlay(
+      [...characterSays(31_000, 33_000), ...learnerSays(40_000, 40_200)],
+      95_000,
+    );
+
+    expect(cueTimes(log)).toStrictEqual([0, 29_500, 66_200]);
+    expect(goodbyes.map((entry) => entry.at)).toStrictEqual([91_200]);
+  });
+
+  it("3. starts when the last sound stops, whoever made it", () => {
+    const reply = [...learnerSays(4000, 6400), ...characterSays(6500, 7500)];
+    // The character stops at 9 s; the learner's microphone goes quiet at 9.4 s.
+    const finishing = quietPlay([...reply, ...learnerSays(7600, 8400)], 40_000);
+    // Their transcript comes back during the reply: the quiet starts once the character stops.
+    const heard = quietPlay([...reply, { at: 8200, type: "learnerHeard" }], 40_000);
+
+    expect(cueTimes(finishing.log)).toStrictEqual([0, 34_400]);
+    expect(cueTimes(heard.log)).toStrictEqual([0, 34_000]);
+  });
+
+  it("4. starts again after typing alone", () => {
+    const { log } = quietPlay([{ at: 20_000, type: "typing" }], 60_000);
+
+    expect(cueTimes(log)).toStrictEqual([0, 45_000]);
+  });
+
+  it("5. never fires while the microphone keeps hearing them, and starts once it goes quiet", () => {
+    const noise = learnerSays(5000, 70_000);
+    const during = quietPlay(noise, 70_000);
+
+    expect(getCallEndingView(during.state, 70_000).quietHint).toBe(false);
+    expect(cueTimes(during.log)).toStrictEqual([0]);
+    expect(during.goodbyes).toHaveLength(0);
+    // The microphone goes quiet at 71 s.
+    expect(cueTimes(quietPlay(noise, 100_000).log)).toStrictEqual([0, 96_000]);
   });
 });
 
