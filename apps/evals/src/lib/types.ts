@@ -59,6 +59,7 @@ export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCase
 }
 
 type TaskUsage = {
+  audioSeconds?: number;
   inputTokens: number | undefined;
   outputTokens: number | undefined;
   inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
@@ -66,6 +67,7 @@ type TaskUsage = {
 };
 
 export type TokenUsage = {
+  audioSeconds?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens?: number;
@@ -75,6 +77,7 @@ export type TokenUsage = {
 
 export function toTokenUsage(usage: TaskUsage): TokenUsage {
   return {
+    audioSeconds: usage.audioSeconds,
     cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
     cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
     inputTokens: usage.inputTokens ?? 0,
@@ -142,7 +145,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   score?: TaskScorer<TExpected>;
   scoreCategories?: ScoreCategory[];
   latencyBudget?: LatencyBudget;
-  output?: "image" | "speech" | "transcription";
+  output?: "image" | "realtime" | "speech" | "transcription";
 };
 
 /** Only invoke generate or score with the test case paired with this type-erased task. */

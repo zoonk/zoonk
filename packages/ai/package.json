@@ -78,6 +78,7 @@
     "./tasks/language/alphabet-lesson": "./src/tasks/language/alphabet-lesson.ts",
     "./tasks/language/level-test-bank": "./src/tasks/language/level-test-bank.ts",
     "./tasks/language/live-call-creation": "./src/tasks/language/live-call-creation.ts",
+    "./tasks/language/live-call-provider": "./src/tasks/language/_utils/live-call-provider.ts",
     "./tasks/language/live-call-session": "./src/tasks/language/live-call-session.ts",
     "./tasks/language/live-conversation-instructions": "./src/tasks/language/live-conversation-instructions.ts",
     "./tasks/language/live-conversation-models": "./src/tasks/language/live-conversation-models.ts",
