@@ -2683,7 +2683,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld classées"
+            "value" : "Cartes classées : %1$lld sur %2$lld"
           }
         },
         "it" : {
