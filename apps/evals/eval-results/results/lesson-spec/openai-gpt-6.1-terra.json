@@ -50,11 +50,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The first check essentially repeats the filing date just taught. Dev's name adds context, but the learner only retrieves April 15, 2026 rather than uses the deadline to make a decision.",
           "kind": "minorErrors",
@@ -248,14 +244,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Tax brackets"
-            },
-            {
-              "order": "before",
-              "title": "Deductions and credits"
-            }
+            { "order": "before", "title": "Tax brackets" },
+            { "order": "before", "title": "Deductions and credits" }
           ],
           "chapterTitle": "Income taxes",
           "courseTitle": "Personal finance",
@@ -264,10 +254,7 @@
           "lessonDescription": "When a federal tax return is due, and what an extension does and doesn't delay.",
           "lessonTitle": "Federal tax deadlines and extensions",
           "level": "beginner",
-          "skills": [
-            "Know the federal tax filing deadline",
-            "Use a filing extension correctly"
-          ],
+          "skills": ["Know the federal tax filing deadline", "Use a filing extension correctly"],
           "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>"
         }
       }
@@ -519,14 +506,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Cargos, empregos e funções públicas"
-            },
-            {
-              "order": "after",
-              "title": "Regime disciplinar"
-            }
+            { "order": "before", "title": "Cargos, empregos e funções públicas" },
+            { "order": "after", "title": "Regime disciplinar" }
           ],
           "chapterTitle": "Agentes públicos",
           "courseTitle": "Direito Administrativo",
@@ -790,18 +771,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Ordenar y filtrar datos"
-            },
-            {
-              "order": "before",
-              "title": "Funciones SUMAR.SI y CONTAR.SI"
-            },
-            {
-              "order": "after",
-              "title": "Gráficos a partir de tablas"
-            }
+            { "order": "before", "title": "Ordenar y filtrar datos" },
+            { "order": "before", "title": "Funciones SUMAR.SI y CONTAR.SI" },
+            { "order": "after", "title": "Gráficos a partir de tablas" }
           ],
           "chapterTitle": "Resumir datos",
           "courseTitle": "Análisis de datos con hojas de cálculo",
@@ -866,11 +838,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The final application's distractor explanation is mathematically incorrect: extending the last distance increment gives 18 + (18 − 8) = 28 m, not 24 m. Also, although graph recognition is an explicit learning goal, every assessed task uses tables or verbal numerical relationships; none requires reading a graph.",
           "kind": "minorErrors",
@@ -884,12 +852,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Written for candidates of the exam in EXAMS, finishing secondary school, with checks like that exam's contextualized questions that read tables and graphs\n      - No \"Spot the AI's mistake\": an exam lesson never frames an activity as an AI assistant's answer\n      - The explanations of how one quantity changes with another (directly proportional, inversely proportional, with the square) let the learner see it: a template to explore where a slider changes one quantity and the other follows on a curve, or a chart with exact values; never a picture carrying the numbers\n      - An activity, if any, is one whose interaction is the skill (moving a value and saying how the other changed, reading a relation off a table or a curve)\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "avoidTemplates": [
-            "categorize",
-            "findError"
-          ]
-        },
+        "expected": { "avoidTemplates": ["categorize", "findError"] },
         "id": "pt-relacoes-grandezas-exam-prep-activities-1",
         "userInput": {
           "activityTemplates": [
@@ -1070,14 +1033,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Inclinação e área em gráficos físicos"
-            },
-            {
-              "order": "after",
-              "title": "Componentes e soma de vetores"
-            }
+            { "order": "before", "title": "Inclinação e área em gráficos físicos" },
+            { "order": "after", "title": "Componentes e soma de vetores" }
           ],
           "chapterTitle": "Grandezas físicas e representações",
           "courseTitle": "Física",
@@ -1148,11 +1105,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Some explanations introduce the term or period before examining the concrete painting, reversing the requested concrete-to-name sequence. The equilibrium check's distractor that everything occupies one corner is conspicuously false rather than tempting. Several artwork titles identify multiple versions, notably Caravaggio's A Ceia em Emaús; specifying the version matters because the worked example relies on projected gestures.",
           "kind": "minorErrors",
@@ -1166,9 +1119,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Comparing a Renaissance and a Baroque painting needs the two paintings shown: one picture with both, labeled 1 and 2, describing what each shows (composition, light, movement); a question about them is fine since the skill is reading artworks\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-pt-comparar-pinturas-1",
         "userInput": {
           "activityTemplates": [
@@ -1355,9 +1306,7 @@
           "lessonDescription": "Compare a calma e o equilíbrio do Renascimento com o drama e a luz forte do Barroco.",
           "lessonTitle": "Renascimento e Barroco: comparando pinturas",
           "level": "beginner",
-          "skills": [
-            "Comparar a composição e a luz de pinturas renascentistas e barrocas"
-          ]
+          "skills": ["Comparar a composição e a luz de pinturas renascentistas e barrocas"]
         }
       }
     },
@@ -1428,9 +1377,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The cycle's stages (evaporation, condensation, precipitation, collection) are shown, not only named: a picture of the cycle with its stages, and/or a labeled diagram (one picture with the stages numbered) to name them, as an activity or explored on an explanation\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-en-water-cycle-1",
         "userInput": {
           "activityTemplates": [
@@ -1617,9 +1564,7 @@
           "lessonDescription": "Follow water from the ocean to the clouds and back as rain and rivers.",
           "lessonTitle": "The water cycle",
           "level": "beginner",
-          "skills": [
-            "Describe the stages of the water cycle in order"
-          ]
+          "skills": ["Describe the stages of the water cycle in order"]
         }
       }
     },
@@ -1870,14 +1815,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "割合と百分率"
-            },
-            {
-              "order": "after",
-              "title": "割合をグラフで比べる"
-            }
+            { "order": "before", "title": "割合と百分率" },
+            { "order": "after", "title": "割合をグラフで比べる" }
           ],
           "chapterTitle": "割合",
           "courseTitle": "毎日の数学",
@@ -1886,10 +1825,7 @@
           "lessonDescription": "2割引や10%増しの値段を、電卓なしで出せるようになります。",
           "lessonTitle": "割引と値上げを計算する",
           "level": "beginner",
-          "skills": [
-            "割引後の値段を計算できる",
-            "値上げ後の値段を計算できる"
-          ]
+          "skills": ["割引後の値段を計算できる", "値上げ後の値段を計算できる"]
         }
       }
     },
@@ -2140,14 +2076,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "테이블과 행 이해하기"
-            },
-            {
-              "order": "after",
-              "title": "여러 조건으로 행 고르기"
-            }
+            { "order": "before", "title": "테이블과 행 이해하기" },
+            { "order": "after", "title": "여러 조건으로 행 고르기" }
           ],
           "chapterTitle": "데이터 고르기",
           "courseTitle": "SQL 기초",
@@ -2156,9 +2086,7 @@
           "lessonDescription": "WHERE로 필요한 주문만 골라 보고서를 빠르게 만들어요.",
           "lessonTitle": "WHERE로 행 고르기",
           "level": "beginner",
-          "skills": [
-            "WHERE로 조건에 맞는 행을 고를 수 있어요"
-          ]
+          "skills": ["WHERE로 조건에 맞는 행을 고를 수 있어요"]
         }
       }
     },
@@ -2409,14 +2337,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Enflasyon nedir?"
-            },
-            {
-              "order": "after",
-              "title": "Fonları karşılaştırmak"
-            }
+            { "order": "before", "title": "Enflasyon nedir?" },
+            { "order": "after", "title": "Fonları karşılaştırmak" }
           ],
           "chapterTitle": "Birikimini korumak",
           "courseTitle": "Kişisel finans",
@@ -2425,9 +2347,7 @@
           "lessonDescription": "Vadeli hesabın faizi enflasyonu geçiyor mu, birkaç adımda hesapla.",
           "lessonTitle": "Faiz enflasyonu geçiyor mu?",
           "level": "beginner",
-          "skills": [
-            "Reel getiriyi hesaplamak"
-          ]
+          "skills": ["Reel getiriyi hesaplamak"]
         }
       }
     },
@@ -2678,18 +2598,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Percent of a quantity"
-            },
-            {
-              "order": "after",
-              "title": "Discounts and markups"
-            },
-            {
-              "order": "after",
-              "title": "Percentage points"
-            }
+            { "order": "before", "title": "Percent of a quantity" },
+            { "order": "after", "title": "Discounts and markups" },
+            { "order": "after", "title": "Percentage points" }
           ],
           "chapterTitle": "Fractions and percentages",
           "courseTitle": "Mathematics",
@@ -2698,9 +2609,7 @@
           "lessonDescription": "Work out how much a price or a salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
           "lessonTitle": "Percent change",
           "level": "beginner",
-          "skills": [
-            "Calculate a percent change"
-          ]
+          "skills": ["Calculate a percent change"]
         }
       }
     },
@@ -2951,18 +2860,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Razão e escala"
-            },
-            {
-              "order": "before",
-              "title": "Grandezas proporcionais"
-            },
-            {
-              "order": "after",
-              "title": "Porcentagem"
-            }
+            { "order": "before", "title": "Razão e escala" },
+            { "order": "before", "title": "Grandezas proporcionais" },
+            { "order": "after", "title": "Porcentagem" }
           ],
           "chapterTitle": "Razão e proporção",
           "courseTitle": "Matemática",
@@ -3226,18 +3126,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "A luz em pacotes"
-            },
-            {
-              "order": "before",
-              "title": "Onda ou partícula?"
-            },
-            {
-              "order": "after",
-              "title": "O princípio da incerteza"
-            }
+            { "order": "before", "title": "A luz em pacotes" },
+            { "order": "before", "title": "Onda ou partícula?" },
+            { "order": "after", "title": "O princípio da incerteza" }
           ],
           "chapterTitle": "O átomo por dentro",
           "courseTitle": "Física quântica",
@@ -3246,9 +3137,7 @@
           "lessonDescription": "Descubra por que o elétron não despenca no núcleo e por que isso faz os átomos, e você, existirem.",
           "lessonTitle": "Por que o elétron não cai no núcleo",
           "level": "overview",
-          "skills": [
-            "Explicar por que o elétron não cai no núcleo"
-          ]
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
         }
       }
     },
@@ -3319,11 +3208,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Written for candidates of the exam in EXAMS, finishing secondary school: checks are planned like that exam's contextualized multiple-choice questions on proteins and enzymes\n      - No \"Spot the AI's mistake\": an exam lesson never frames an activity as an AI assistant's answer\n      - The explanation of how an enzyme works in steps (the substrate fits the active site, the reaction, the products leave and the enzyme is free again) shows them with a template to explore, such as the steps of a process in order, rather than a strip of drawings or text alone; a picture plans only what no template draws (a protein's folded shape, the active site's fit)\n      - An activity, if any, is one whose interaction is the skill (ordering the enzyme's steps, sorting changes that do or don't alter a protein's shape), never decoration\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "avoidTemplates": [
-            "findError"
-          ]
-        },
+        "expected": { "avoidTemplates": ["findError"] },
         "id": "pt-enzimas-exam-prep-activities-1",
         "userInput": {
           "activityTemplates": [
@@ -3504,14 +3389,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Carboidratos e lipídios"
-            },
-            {
-              "order": "after",
-              "title": "Nucleotídeos, ácidos nucleicos e ATP"
-            }
+            { "order": "before", "title": "Carboidratos e lipídios" },
+            { "order": "after", "title": "Nucleotídeos, ácidos nucleicos e ATP" }
           ],
           "chapterTitle": "Biomoléculas e funções celulares",
           "courseTitle": "Biologia",
@@ -3526,10 +3405,7 @@
           "lessonDescription": "Como a sequência de aminoácidos dá forma a uma proteína e como uma enzima encaixa a molécula que transforma.",
           "lessonTitle": "Proteínas e enzimas",
           "level": "intermediate",
-          "skills": [
-            "Relacionar estrutura proteica e função",
-            "Explicar a ação de uma enzima"
-          ]
+          "skills": ["Relacionar estrutura proteica e função", "Explicar a ação de uma enzima"]
         }
       }
     },
@@ -3582,11 +3458,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The final application asks learners to identify a lobe's location but provides no brain diagram, leaving the spatial information to imagination. The function-matching activity largely repeats the explanations' wording rather than testing transfer. The explanations also introduce anatomical names before concrete everyday examples.",
           "kind": "minorErrors",
@@ -3600,9 +3472,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The screens that explain where each lobe is and what it does show the brain with those lobes (one picture of the brain with its lobes labeled, the lobe in question highlighted on each screen, or a labeled diagram whose picture numbers the lobes); a lesson that names the lobes in words only fails\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-brain-lobes-1",
         "userInput": {
           "activityTemplates": [
@@ -3789,10 +3659,7 @@
           "lessonDescription": "Find the frontal, parietal, temporal and occipital lobes and their jobs.",
           "lessonTitle": "The lobes of the brain",
           "level": "beginner",
-          "skills": [
-            "Locate the four lobes of the brain",
-            "Match each lobe to its main job"
-          ]
+          "skills": ["Locate the four lobes of the brain", "Match each lobe to its main job"]
         }
       }
     },
@@ -4070,10 +3937,7 @@
               "order": "before",
               "title": "Separação patrimonial"
             },
-            {
-              "order": "after",
-              "title": "Desafio: Elementos do patrimônio"
-            }
+            { "order": "after", "title": "Desafio: Elementos do patrimônio" }
           ],
           "chapterTitle": "Elementos do patrimônio",
           "courseTitle": "Contabilidade",
@@ -4082,9 +3946,7 @@
           "lessonDescription": "O patrimônio líquido representa a diferença entre os recursos da entidade e suas obrigações.",
           "lessonTitle": "Patrimônio líquido",
           "level": "beginner",
-          "skills": [
-            "Identificar elementos do patrimônio"
-          ]
+          "skills": ["Identificar elementos do patrimônio"]
         }
       }
     },
@@ -4142,11 +4004,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Strengthen transfer in the final application by using a fresh, realistic case rather than another monthly-salary-versus-one-off-income comparison. For example, ask learners to distinguish weekly repair payments of varying amounts from an occasional repair payment.",
           "kind": "potentialImprovements",
@@ -4335,18 +4193,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "after",
-              "title": "Despesas recorrentes e ocasionais"
-            },
-            {
-              "order": "after",
-              "title": "Despesas fixas e variáveis"
-            },
-            {
-              "order": "after",
-              "title": "Registro de movimentações"
-            }
+            { "order": "after", "title": "Despesas recorrentes e ocasionais" },
+            { "order": "after", "title": "Despesas fixas e variáveis" },
+            { "order": "after", "title": "Registro de movimentações" }
           ],
           "chapterTitle": "Entradas e saídas de dinheiro",
           "courseTitle": "Educação Financeira",
@@ -4355,9 +4204,7 @@
           "lessonDescription": "Salário, renda de trabalho eventual e outras entradas podem ter frequências diferentes.",
           "lessonTitle": "Receitas regulares e eventuais",
           "level": "overview",
-          "skills": [
-            "Identificar receitas"
-          ]
+          "skills": ["Identificar receitas"]
         }
       }
     },
@@ -4428,9 +4275,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in biology\n      - The hook is a scene that asks nothing: one real place full of life shown in a picture, ending on the question the lesson answers (how do the living things of a place fit together?), with no options\n      - Each explanation teaches one level (population, community, ecosystem), with one new term per screen; organismo was taught in an earlier lesson and is recalled in a few words, never introduced again on the screen that introduces espécie\n      - A species is defined precisely (living beings alike enough to reproduce together and have fertile offspring), never as \"related living beings\"\n      - The levels are something to see: the screens that teach them show pictures of the same place, each with the level the screen is about highlighted, one scene per picture\n      - At least two explanations come before the first check, and the checks use only levels already taught\n      - One person at most, and a town only if the idea needs it\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "pt-niveis-ecologicos-beginner-1",
         "userInput": {
           "activityTemplates": [
@@ -4629,14 +4474,8 @@
               "order": "before",
               "title": "Organização dos organismos"
             },
-            {
-              "order": "after",
-              "title": "Estrutura e função nos seres vivos"
-            },
-            {
-              "order": "after",
-              "title": "Desafio: Organização da vida"
-            }
+            { "order": "after", "title": "Estrutura e função nos seres vivos" },
+            { "order": "after", "title": "Desafio: Organização da vida" }
           ],
           "chapterTitle": "Organização da vida",
           "courseTitle": "Biologia",
@@ -4645,9 +4484,7 @@
           "lessonDescription": "Os níveis ecológicos conectam indivíduos da mesma espécie, comunidades e componentes não vivos.",
           "lessonTitle": "Níveis de organização ecológica",
           "level": "beginner",
-          "skills": [
-            "Distinguir níveis de organização ecológica"
-          ]
+          "skills": ["Distinguir níveis de organização ecológica"]
         }
       }
     }

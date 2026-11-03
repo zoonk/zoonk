@@ -50,16 +50,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Improve the hook-resolution visual by showing both paths from $50: a 50% rise to $75 and a 100% rise to $100. The explanation already calculates both correctly, but displaying them together would make the changing-base insight easier to see.",
           "kind": "potentialImprovements",
@@ -107,18 +99,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -136,9 +119,7 @@
             "Discounts and markups",
             "Percentage points"
           ],
-          "skills": [
-            "Calculate a percent change"
-          ]
+          "skills": ["Calculate a percent change"]
         }
       }
     },
@@ -191,11 +172,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The classification activity leaves important conditions unstated: speed and travel time require a fixed distance, and guests and cake portions require a fixed quantity of cake. Without these conditions, the classifications are not necessarily valid. In the inverse worked example, the visual flips 4/6 to 6/4, while the equation 6/4 = x/8 follows the established table convention by inverting the time ratio instead. The writer needs one consistent setup.",
           "kind": "minorErrors",
@@ -248,18 +225,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -272,11 +240,7 @@
           "lessonDescription": "Monte e resolva regras de três simples e compostas, reconhecendo quando as grandezas são direta ou inversamente proporcionais.",
           "lessonTitle": "Regra de três simples e composta",
           "level": "intermediate",
-          "otherLessonTitles": [
-            "Razão e escala",
-            "Grandezas proporcionais",
-            "Porcentagem"
-          ],
+          "otherLessonTitles": ["Razão e escala", "Grandezas proporcionais", "Porcentagem"],
           "skills": [
             "Identificar grandezas direta e inversamente proporcionais",
             "Resolver regra de três simples",
@@ -391,18 +355,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -420,9 +375,7 @@
             "Quantum tunneling",
             "The quantum harmonic oscillator"
           ],
-          "skills": [
-            "Derive the energy levels of a particle in a box"
-          ]
+          "skills": ["Derive the energy levels of a particle in a box"]
         }
       }
     },
@@ -532,18 +485,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -561,9 +505,7 @@
             "Onda ou partícula?",
             "O princípio da incerteza"
           ],
-          "skills": [
-            "Explicar por que o elétron não cai no núcleo"
-          ]
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
         }
       }
     },
@@ -673,18 +615,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -815,18 +748,9 @@
               "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
               "id": "labeledDiagram"
             },
-            {
-              "description": "Place events on a timeline drawn to scale.",
-              "id": "timeline"
-            },
-            {
-              "description": "Sort items into groups.",
-              "id": "categorize"
-            },
-            {
-              "description": "Match items from two columns.",
-              "id": "matchPairs"
-            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
             {
               "description": "Edit and run a short JavaScript or Python program and check its output.",
               "id": "codeRunner"
@@ -839,11 +763,7 @@
           "lessonDescription": "Mean, median, mode, range, interquartile range, variance and standard deviation, and when to use each.",
           "lessonTitle": "Summarizing a data set",
           "level": "beginner",
-          "otherLessonTitles": [
-            "Types of data",
-            "Histograms",
-            "Box plots"
-          ],
+          "otherLessonTitles": ["Types of data", "Histograms", "Box plots"],
           "skills": [
             "Calculate the mean",
             "Find the median",
@@ -1129,10 +1049,7 @@
               "order": "before",
               "title": "Separação patrimonial"
             },
-            {
-              "order": "after",
-              "title": "Desafio: Elementos do patrimônio"
-            }
+            { "order": "after", "title": "Desafio: Elementos do patrimônio" }
           ],
           "chapterTitle": "Elementos do patrimônio",
           "courseTitle": "Contabilidade",
@@ -1141,9 +1058,7 @@
           "lessonDescription": "O patrimônio líquido representa a diferença entre os recursos da entidade e suas obrigações.",
           "lessonTitle": "Patrimônio líquido",
           "level": "beginner",
-          "skills": [
-            "Identificar elementos do patrimônio"
-          ]
+          "skills": ["Identificar elementos do patrimônio"]
         }
       }
     },
@@ -1214,9 +1129,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in biology\n      - The hook is a scene that asks nothing: one real place full of life shown in a picture, ending on the question the lesson answers (how do the living things of a place fit together?), with no options\n      - Each explanation teaches one level (population, community, ecosystem), with one new term per screen; organismo was taught in an earlier lesson and is recalled in a few words, never introduced again on the screen that introduces espécie\n      - A species is defined precisely (living beings alike enough to reproduce together and have fertile offspring), never as \"related living beings\"\n      - The levels are something to see: the screens that teach them show pictures of the same place, each with the level the screen is about highlighted, one scene per picture\n      - At least two explanations come before the first check, and the checks use only levels already taught\n      - One person at most, and a town only if the idea needs it\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "pt-niveis-ecologicos-beginner-1",
         "userInput": {
           "activityTemplates": [
@@ -1415,14 +1328,8 @@
               "order": "before",
               "title": "Organização dos organismos"
             },
-            {
-              "order": "after",
-              "title": "Estrutura e função nos seres vivos"
-            },
-            {
-              "order": "after",
-              "title": "Desafio: Organização da vida"
-            }
+            { "order": "after", "title": "Estrutura e função nos seres vivos" },
+            { "order": "after", "title": "Desafio: Organização da vida" }
           ],
           "chapterTitle": "Organização da vida",
           "courseTitle": "Biologia",
@@ -1431,9 +1338,7 @@
           "lessonDescription": "Os níveis ecológicos conectam indivíduos da mesma espécie, comunidades e componentes não vivos.",
           "lessonTitle": "Níveis de organização ecológica",
           "level": "beginner",
-          "skills": [
-            "Distinguir níveis de organização ecológica"
-          ]
+          "skills": ["Distinguir níveis de organização ecológica"]
         }
       }
     }

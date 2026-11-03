@@ -2,10 +2,7 @@
   "modelId": "anthropic/claude-haiku-5.5:none",
   "results": [
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -24,9 +21,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "spec-en-particle-in-a-box-advanced-1-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -41,21 +36,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -63,9 +47,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-en-particle-in-a-box-advanced-2-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -80,21 +62,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -102,9 +73,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-2-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -119,21 +88,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -141,9 +99,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-3-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -158,21 +114,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -180,9 +125,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-5-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -197,21 +140,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -219,9 +151,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-2-1",
         "userInput": {
           "lesson": "The lobes of the brain",
@@ -236,21 +166,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -258,9 +177,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-5-1",
         "userInput": {
           "lesson": "The lobes of the brain",
@@ -275,21 +192,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -297,9 +203,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-9-1",
         "userInput": {
           "lesson": "The lobes of the brain",
@@ -314,21 +218,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -336,9 +229,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-1-1",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
@@ -353,21 +244,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -375,9 +255,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-4-1",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
@@ -392,21 +270,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -414,9 +281,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-1-1",
         "userInput": {
           "lesson": "The water cycle",
@@ -431,21 +296,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -453,9 +307,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-2-1",
         "userInput": {
           "lesson": "The water cycle",
@@ -470,21 +322,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -492,9 +333,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-1-1",
         "userInput": {
           "lesson": "A expansão do Império Romano",
@@ -509,21 +348,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -531,9 +359,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-5-1",
         "userInput": {
           "lesson": "A expansão do Império Romano",
@@ -548,21 +374,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -570,9 +385,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-lever-1-1",
         "userInput": {
           "lesson": "How a lever multiplies force",
@@ -587,21 +400,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -609,9 +411,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-lever-7-1",
         "userInput": {
           "lesson": "How a lever multiplies force",
@@ -626,21 +426,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -648,9 +437,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-6-1",
         "userInput": {
           "lesson": "Syntax trees",
@@ -665,21 +452,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -687,9 +463,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-8-1",
         "userInput": {
           "lesson": "Syntax trees",
@@ -704,21 +478,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -726,9 +489,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-1-1",
         "userInput": {
           "lesson": "Ligação covalente",
@@ -743,21 +504,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -765,9 +515,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-2-1",
         "userInput": {
           "lesson": "Ligação covalente",
@@ -782,21 +530,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -804,9 +541,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-6-1",
         "userInput": {
           "lesson": "Ligação covalente",
@@ -821,21 +556,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -843,9 +567,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-2-1",
         "userInput": {
           "lesson": "The 4-3-3 formation",
@@ -860,21 +582,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -882,9 +593,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-5-1",
         "userInput": {
           "lesson": "The 4-3-3 formation",
@@ -899,21 +608,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -921,9 +619,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-earth-mars-5-1",
         "userInput": {
           "lesson": "Earth and Mars compared",
@@ -938,21 +634,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -960,9 +645,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-1-1",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
@@ -977,21 +660,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -999,9 +671,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-2-1",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
@@ -1016,21 +686,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1038,9 +697,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-3-1",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
@@ -1055,21 +712,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1077,9 +723,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-5-1",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
@@ -1094,21 +738,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1116,9 +749,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-1-1",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
@@ -1133,21 +764,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1155,9 +775,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-4-1",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
@@ -1172,21 +790,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1194,9 +801,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-7-1",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
@@ -1211,21 +816,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1233,9 +827,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-1-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -1250,21 +842,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1272,9 +853,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-2-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -1289,10 +868,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1311,9 +887,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-5-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -1328,21 +902,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1350,9 +913,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-7-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -1367,21 +928,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -1389,9 +939,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-11-1",
         "userInput": {
           "lesson": "Particle in a box",
@@ -1406,10 +954,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1428,9 +973,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-1-1",
         "userInput": {
           "lesson": "Percent change",
@@ -1445,10 +988,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1467,9 +1007,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-2-1",
         "userInput": {
           "lesson": "Percent change",
@@ -1484,10 +1022,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1506,9 +1041,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-3-1",
         "userInput": {
           "lesson": "Percent change",
@@ -1523,10 +1056,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1545,9 +1075,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-6-1",
         "userInput": {
           "lesson": "Percent change",
@@ -1562,21 +1090,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -1584,9 +1101,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-8-1",
         "userInput": {
           "lesson": "Percent change",
@@ -1601,21 +1116,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1623,9 +1127,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-1-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -1640,21 +1142,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1662,9 +1153,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-2-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -1679,21 +1168,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1701,9 +1179,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-3-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -1718,21 +1194,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1740,9 +1205,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-5-1",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
@@ -1757,21 +1220,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -1779,9 +1231,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-pt-regra-de-tres-intermediate-3-1",
         "userInput": {
           "lesson": "Regra de três simples e composta",
@@ -1796,10 +1246,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1818,9 +1265,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-python-range-beginner-2-1",
         "userInput": {
           "lesson": "Count with range() in Python",
@@ -1835,21 +1280,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1857,9 +1291,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-tree-key-beginner-2-1",
         "userInput": {
           "lesson": "Name a tree from one leaf",
@@ -1874,21 +1306,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1896,9 +1317,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-camaras-do-coracao-beginner-2-1",
         "userInput": {
           "lesson": "As quatro câmaras do coração",
@@ -1913,10 +1332,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1935,9 +1351,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-compound-interest-beginner-2-1",
         "userInput": {
           "lesson": "Compound interest",
@@ -1952,21 +1366,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1974,9 +1377,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
         "userInput": {
           "lesson": "Imagens e legendas",
@@ -1991,21 +1392,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -2013,9 +1403,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-5-1",
         "userInput": {
           "lesson": "Imagens e legendas",
@@ -2030,21 +1418,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -2052,9 +1429,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-patrimonio-liquido-beginner-0-1",
         "userInput": {
           "lesson": "Patrimônio líquido",
@@ -2069,21 +1444,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -2091,9 +1455,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-niveis-ecologicos-beginner-2-1",
         "userInput": {
           "lesson": "Níveis de organização ecológica",
@@ -2108,10 +1470,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2130,9 +1489,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-pt-receitas-regulares-overview-1-1",
         "userInput": {
           "lesson": "Receitas regulares e eventuais",

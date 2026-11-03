@@ -50,27 +50,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
-        "expected": {
-          "labels": "none"
-        },
+        "expected": { "labels": "none" },
         "id": "language-house-1",
         "userInput": {
           "context": "Spanish for Brazilians › Finding a place to live",
@@ -131,27 +117,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The result specifies two supporting elements—a sunbeam and a water droplet—where the cover expectations allow only one small supporting object. Removing the droplet would preserve the leaf-in-sunlight concept and meet the stricter cover requirement.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A chapter cover: one object that stands for photosynthesis, such as a leaf in sunlight. No labels. Nothing more than a small supporting object.",
-        "expected": {
-          "labels": "none"
-        },
+        "expected": { "labels": "none" },
         "id": "cover-photosynthesis-1",
         "userInput": {
           "context": "Biology",
@@ -211,27 +187,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "rule-of-three-pt-1",
         "userInput": {
           "context": "Matemática básica › Proporções › Regra de três",
@@ -292,16 +254,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Show identical copies accumulating in the stack, rather than relying only on a directional arrow, to make repeated production more immediately visible.",
           "kind": "potentialImprovements",
@@ -310,9 +264,7 @@
       ],
       "testCase": {
         "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "printing-press-en-1",
         "userInput": {
           "context": "World history › The Renaissance › The printing press",
@@ -373,27 +325,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The result includes two labels despite the expectation allowing at most one short label. “nuvem eletrônica” unnecessarily captions the cloud; retain only “núcleo”.",
           "kind": "minorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "electron-cloud-pt-1",
         "userInput": {
           "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
@@ -458,22 +400,12 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "question-cell-diagram-pt-1",
         "userInput": {
           "context": "Biologia › Célula › Organelas da célula vegetal",
@@ -533,27 +465,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "overloaded-water-cycle-1",
         "userInput": {
           "context": "Earth science › The water cycle › Evaporation",
@@ -613,16 +531,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Explicitly specify thin connecting lines, as requested; the result describes the correct connections but leaves their visual weight unspecified.",
           "kind": "potentialImprovements",
@@ -631,9 +541,7 @@
       ],
       "testCase": {
         "expectations": "A syntax tree for 'the cat slept': S at the top splitting into NP and VP, NP over 'the cat' and VP over 'slept', each node a short label joined by thin lines. Labels match the screen exactly.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "syntax-tree-en-1",
         "userInput": {
           "context": "Introduction to linguistics › Syntax › Syntax trees",
@@ -693,27 +601,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The requested hand pushing down on the long side is missing. A downward arrow communicates the force direction, but does not fully provide the concrete action specified in the expectations.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A lever: a long bar on a triangular fulcrum near one end, a heavy rock on the short side and a hand pushing down on the long side, with labels for the fulcrum, the load and the effort.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "lever-en-1",
         "userInput": {
           "context": "Physics › Simple machines › How a lever multiplies force",
@@ -773,27 +671,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A discount as before and after: an old price tag and a new one, maybe a -25% badge. Labels with the prices help here and must be exactly $80 and $60.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "discount-en-1",
         "userInput": {
           "context": "Personal finance › Percentages › Discounts",
@@ -858,22 +742,12 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating food, linked to water molecules spinning. Uses a sequence layout or a clear relation; motion shows spinning.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "microwave-en-1",
         "userInput": {
           "context": "Everyday physics › Heat › How a microwave heats food",
@@ -933,27 +807,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "All four labels are placed on their brain sections, whereas the task-specific expectation requests labels next to their respective lobes. This is a small placement mismatch; the labels and anatomical regions are otherwise correct.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "brain-lobes-en-1",
         "userInput": {
           "context": "Human biology › The nervous system › The lobes of the brain",
@@ -1013,27 +877,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Two paintings compared side by side, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "paintings-comparison-pt-1",
         "userInput": {
           "context": "História da arte › Do Renascimento ao Barroco › Comparando pinturas",
@@ -1093,28 +943,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The desk, chair, and visible wrench and screwdriver add objects beyond the specified scene. These details are unnecessary under the explicit restriction against unnamed additions; Igor receiving the envelope with the toolbox beside him is sufficient.",
           "kind": "minorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
-        "expected": {
-          "labels": "any",
-          "layout": "single"
-        },
+        "expected": { "labels": "any", "layout": "single" },
         "id": "one-place-not-two-pt-1",
         "userInput": {
           "alt": "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
@@ -1175,28 +1014,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The scene includes more supporting objects than allowed: the desk, computer monitor, and pen holder are three distinct props even though grouped into one array entry. The monitor and pen holder add unnecessary clutter.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
-        "expected": {
-          "labels": "any",
-          "layout": "single"
-        },
+        "expected": { "labels": "any", "layout": "single" },
         "id": "two-moments-become-one-pt-1",
         "userInput": {
           "alt": "Igor recebe o pagamento combinado no trabalho.",
@@ -1257,28 +1085,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
-        "expected": {
-          "labels": "some",
-          "layout": "comparison"
-        },
+        "expected": { "labels": "some", "layout": "comparison" },
         "id": "two-scenes-to-compare-pt-1",
         "userInput": {
           "alt": "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
