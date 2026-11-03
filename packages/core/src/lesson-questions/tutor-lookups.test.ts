@@ -270,6 +270,37 @@ describe(lookUpTutorData, () => {
     });
   });
 
+  it("follows a planned skill merged since into its survivor, by subject", async () => {
+    const [{ goal, library, user }, survivor] = await Promise.all([
+      plannedLearner(),
+      skillFixture(),
+    ]);
+
+    const math = library.skills[0]?.id ?? "";
+
+    await prisma.skill.update({ data: { mergedIntoId: survivor.id }, where: { id: math } });
+
+    await Promise.all([
+      attemptFixture({ isCorrect: true, skillId: survivor.id, userId: user.id }),
+      mistakeFixture({
+        skillId: survivor.id,
+        snapshot: { answer: "12", question: "What is 3 × 5?" },
+        userId: user.id,
+      }),
+    ]);
+
+    const asked = await answering(goal.id);
+
+    await expect(lookUp(asked, { area: "Math", what: "mistakes" })).resolves.toMatchObject({
+      mistakes: [{ question: "What is 3 × 5?" }],
+      status: "found",
+    });
+
+    await expect(lookUp(asked, { area: "math", what: "subjectProgress" })).resolves.toMatchObject({
+      subjects: [{ answers: { right: 1, total: 1 }, openMistakes: 1 }],
+    });
+  });
+
   it("reads the mocks the learner finished for the goal, with no estimate when the scoring gives none", async () => {
     const [{ goal, user }, otherGoal] = await Promise.all([
       learnerWithEmptyPlan(),
