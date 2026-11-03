@@ -16,6 +16,9 @@ import com.zoonk.api.models.LanguageConversationSetup
 import com.zoonk.api.models.LanguageConversationTurn
 import com.zoonk.api.models.LiveCallEndResponse
 import com.zoonk.api.models.LiveCallSdpInput
+import com.zoonk.api.models.LiveCallSdpInputSessionConfig
+import com.zoonk.api.models.LiveCallSdpInputSessionConfigProviderOptions
+import com.zoonk.api.models.LiveCallSdpInputSessionConfigProviderOptionsZoonk
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -28,10 +31,14 @@ interface LiveCallClient {
     /** Reserves the call; [takeover] ends the learner's other open call first. */
     suspend fun connect(takeover: Boolean): CallReservation
 
-    /** The server's SDP answer to [offer]; it creates the session with its own model, instructions and voice. */
+    /**
+     * The server's SDP answer to [offer]; it creates the session with its own model, instructions and
+     * voice, and a session that continues the call carries on from [turns], the call so far.
+     */
     suspend fun redeem(
         connectionId: UUID,
         offer: String,
+        turns: List<LanguageConversationTurn>,
     ): String
 
     /** Has the server hang up: whether it already had at the call's deadline, null if unconfirmed. */
@@ -156,7 +163,14 @@ class LiveConversationCalls(
     override suspend fun redeem(
         connectionId: UUID,
         offer: String,
+        turns: List<LanguageConversationTurn>,
     ): String {
+        val soFar =
+            turns.takeIf { it.isNotEmpty() }?.let {
+                LiveCallSdpInputSessionConfig(
+                    LiveCallSdpInputSessionConfigProviderOptions(LiveCallSdpInputSessionConfigProviderOptionsZoonk(it)),
+                )
+            }
         val answer =
             cache.mutate { session ->
                 perform {
@@ -164,7 +178,7 @@ class LiveConversationCalls(
                         .clients(
                             session,
                         ).language
-                        .redeemLanguageConversationSdp(conversationId, connectionId, LiveCallSdpInput(offer))
+                        .redeemLanguageConversationSdp(conversationId, connectionId, LiveCallSdpInput(offer, soFar))
                 }
             }
         return (answer as? MutationResult.Done)?.value?.sdp ?: throw IllegalStateException("The call's answer didn't come")

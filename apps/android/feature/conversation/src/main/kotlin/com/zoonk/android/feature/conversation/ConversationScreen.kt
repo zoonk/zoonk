@@ -109,8 +109,15 @@ internal fun ConversationEntry(
             ConversationViewModel(
                 conversationId = id,
                 store = app.conversations,
-                newCall = { task ->
-                    LiveCall(task, LiveConversationCalls(id, app.api, app.cache), app.callTransports, app.scope, app.analytics)
+                newCall = { task, soFar ->
+                    LiveCall(
+                        task,
+                        LiveConversationCalls(id, app.api, app.cache),
+                        app.callTransports,
+                        app.scope,
+                        app.analytics,
+                        soFar = soFar,
+                    )
                 },
                 ongoing = app.calls,
                 timeZone = { TimeZone.getDefault().id },
@@ -326,12 +333,11 @@ private fun Conversation(
             ConversationLive(
                 conversation = conversation,
                 call = callState,
-                usedHelp = model.usedHelp,
                 actions =
                     LiveCallActions(
                         // Ending a call that hasn't connected goes back to its intro.
                         onEnd = { if (callState.phase == LiveCallPhase.Connecting) model.showIntro() else call.hangUp() },
-                        onHelp = model::help,
+                        onHelp = call::help,
                         onMute = call::toggleMute,
                         onSend = call::sendText,
                         onTyping = call::typed,

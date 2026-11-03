@@ -27,13 +27,27 @@ import kotlin.time.TimeSource
 
 /**
  * What the call is about: [examCues] is non-null for an exam task, whose one goal is the task itself,
- * graded when the call ends. [kind] is the conversation's kind as analytics names it.
+ * graded when the call ends. [kind] is the conversation's kind as analytics names it, and
+ * [talkSeconds] the whole call's talk time, its minutes.
  */
 data class LiveCallTask(
     val kind: String,
     val objectives: List<String>,
     val met: List<String>,
+    val talkSeconds: Long,
     val examCues: List<ExamSpeakingTaskCuesInner>? = null,
+)
+
+/**
+ * What the call's earlier connections left, which calling again continues: its [turns] are shown
+ * at once and never take a later connection's words, and each connection's spoken seconds count once.
+ */
+data class CallSoFar(
+    val turns: List<TranscriptTurn> = emptyList(),
+    val spokenSeconds: Long = 0,
+    val usedHelp: Boolean = false,
+    val metLabels: List<String> = emptyList(),
+    val examCuesSent: Int = 0,
 )
 
 enum class LiveCallPhase { Idle, Connecting, Live, Ended, Failed }
@@ -46,6 +60,7 @@ data class LiveCallState(
     val limit: Limit.Reached? = null,
     val turns: List<TranscriptTurn> = emptyList(),
     val metLabels: List<String> = emptyList(),
+    val usedHelp: Boolean = false,
     val muted: Boolean = false,
     val micBlocked: Boolean = false,
     val reconnecting: Boolean = false,
@@ -55,9 +70,8 @@ data class LiveCallState(
     val learnerSpoke: Boolean = false,
     /** The character has said its first words: the learner was told it answers first, so until then the call is still ringing. */
     val answered: Boolean = false,
+    /** How far into its talk time the call is, its earlier connections included. */
     val elapsedSeconds: Long = 0,
-    /** How long the call talks from when it went live; its ending starts then. */
-    val talkSeconds: Long = 0,
     val ending: EndingReason? = null,
     val sayingGoodbye: Boolean = false,
     /** Nobody has made a sound for long enough to tell the learner there's no rush. */
@@ -71,13 +85,15 @@ data class LiveCallSummary(
     val connectionId: UUID,
     val spokenSeconds: Long,
     val turns: List<LanguageConversationTurn>,
+    val usedHelp: Boolean,
 )
 
 /**
  * Mirrors main's `useLiveCall`. The microphone is asked for before [start], so the permission
  * prompt never takes time from the call. Ending it silences it at once; the server then hangs it up
  * and confirms before the peer goes and before anything is saved. [scope] is the app's, so a call
- * left mid-request still hangs up; [leave] stops everything else it runs.
+ * left mid-request still hangs up; [leave] stops everything else it runs. It continues [soFar] when
+ * the server says this connection continues the call, and starts over otherwise.
  */
 class LiveCall(
     private val task: LiveCallTask,
@@ -86,8 +102,12 @@ class LiveCall(
     private val scope: CoroutineScope,
     private val analytics: EventTracker = EventTracker {},
     private val timeSource: TimeSource.WithComparableMarks = TimeSource.Monotonic,
+    soFar: CallSoFar = CallSoFar(),
 ) {
-    private val mutableState = MutableStateFlow(LiveCallState(metLabels = task.met))
+    private var earlier = soFar
+    private var helped = false
+    private val mutableState =
+        MutableStateFlow(LiveCallState(turns = soFar.turns, metLabels = (task.met + soFar.metLabels).distinct(), usedHelp = soFar.usedHelp))
     val state: StateFlow<LiveCallState> = mutableState.asStateFlow()
 
     private val phase get() = mutableState.value.phase
@@ -109,7 +129,13 @@ class LiveCall(
     private val waitingReplies = mutableListOf<String>()
     private val timers = mutableListOf<Job>()
     private var settle: Job? = null
-    private var examCuesSent = 0
+    private var examCuesSent = soFar.examCuesSent
+
+    private var liveAt: Long? = null
+    private var talkSecondsLeft = 0L
+
+    /** A new call's clock starts when it goes live; a continued one's counts the talk time the server says it already used. */
+    private var clockZeroAt: Long? = null
     private var checkTiming = CheckTiming()
     private var checking = false
 
@@ -169,6 +195,24 @@ class LiveCall(
         advance()
     }
 
+    fun help() {
+        helped = true
+        mutableState.update { it.copy(usedHelp = true) }
+    }
+
+    /** What a call started again on this screen continues; earlier turns lose their timeline, so new words never join them. */
+    val soFar: CallSoFar
+        get() {
+            val current = mutableState.value
+            return CallSoFar(
+                turns = current.turns.map { TranscriptTurn(it.speaker, it.text) },
+                spokenSeconds = earlier.spokenSeconds + current.turns.spokenSeconds,
+                usedHelp = current.usedHelp,
+                metLabels = current.metLabels,
+                examCuesSent = examCuesSent,
+            )
+        }
+
     fun toggleMute() {
         val current = mutableState.value
         if (current.phase != LiveCallPhase.Live || current.micBlocked) return
@@ -180,8 +224,8 @@ class LiveCall(
     suspend fun finish(): LiveCallSummary? {
         val id = connectionId ?: return null
         release()
-        val turns = mutableState.value.turns
-        return LiveCallSummary(id, turns.spokenSeconds, turns.conversationTurns)
+        val call = soFar
+        return LiveCallSummary(id, call.spokenSeconds, call.turns.conversationTurns, call.usedHelp)
     }
 
     /**
@@ -223,6 +267,11 @@ class LiveCall(
             }
         setup = ready.setup
         answeredAt = timeSource.markNow()
+        if (ready.setup.continuesCall) {
+            clockZeroAt = -(task.talkSeconds - ready.setup.talkSeconds) * 1000
+        } else {
+            startOver()
+        }
 
         val signals = LiveCallSignals(onEvent = { handle(it, mine) }, onLost = { lost(mine) }, onVoice = { heard(mine) })
         val created = transports.create(microphone, signals)
@@ -236,7 +285,7 @@ class LiveCall(
         try {
             val offer = created.makeOffer()
             if (attempt != mine) return
-            val answer = client.redeem(ready.setup.connectionId, offer)
+            val answer = client.redeem(ready.setup.connectionId, offer, earlier.turns.conversationTurns)
             if (attempt != mine) return
             created.accept(answer)
         } catch (e: CancellationException) {
@@ -271,7 +320,17 @@ class LiveCall(
         closeConfirmed = false
         endedAtDeadline = false
         reported = false
+        liveAt = null
         return answer
+    }
+
+    /** The server opened a new call: the earlier one's words and help aren't this one's. Goals met stay met for the conversation. */
+    private fun startOver() {
+        val dropped = earlier.turns.size
+        earlier = CallSoFar()
+        examCuesSent = 0
+        clockZeroAt = null
+        mutableState.update { it.copy(turns = it.turns.drop(dropped), usedHelp = helped) }
     }
 
     private fun failure(reservation: CallReservation) =
@@ -365,42 +424,43 @@ class LiveCall(
                 hardStopAt = setup.seconds * 1000,
             )
         gaps = ReplyGaps()
-        mutableState.update {
-            it.copy(
-                phase = LiveCallPhase.Live,
-                reconnecting = false,
-                talkSeconds = ((setup.talkSeconds * 1000 - now) / 1000).coerceAtLeast(0),
-            )
-        }
+        liveAt = now
+        talkSecondsLeft = ((setup.talkSeconds * 1000 - now) / 1000).coerceAtLeast(0)
+        val zeroAt = clockZeroAt ?: now
+        mutableState.update { it.copy(phase = LiveCallPhase.Live, reconnecting = false, elapsedSeconds = (now - zeroAt) / 1000) }
 
         sendOpening(setup.script.cues.opening)
         waitingReplies.forEach { send(typedReply(setup.script.cues.typedReply, it)) }
         if (waitingReplies.isNotEmpty()) ending?.learnerSent(now)
         waitingReplies.clear()
-        startClock(liveAt = now)
+        startClock(zeroAt)
     }
 
-    private fun startClock(liveAt: Long) {
+    private fun startClock(zeroAt: Long) {
         timers +=
             scope.launch {
                 while (phase == LiveCallPhase.Live) {
                     delay(TICK)
                     if (phase != LiveCallPhase.Live) return@launch
                     val now = now() ?: return@launch
-                    mutableState.update { it.copy(elapsedSeconds = (now - liveAt) / 1000) }
-                    sendExamCue(elapsed = now - liveAt)
+                    mutableState.update { it.copy(elapsedSeconds = (now - zeroAt) / 1000) }
+                    sendExamCue(elapsed = now - zeroAt)
                     advance()
                 }
             }
     }
 
-    /** An exam's own cues follow its format, not the ending: none once the call says goodbye. */
+    /**
+     * An exam's own cues follow its format, not the ending: none once the call says goodbye, and none
+     * twice. Of the cues that came due while the call was down, only the latest is sent.
+     */
     private fun sendExamCue(elapsed: Long) {
         val cues = task.examCues.orEmpty()
-        val next = cues.getOrNull(examCuesSent) ?: return
-        if (ending?.reason != null || elapsed < next.atSeconds * 1000) return
-        send(LiveClientCommand.Append(LiveCallCue.Channel.INSTRUCTIONS, next.say))
-        examCuesSent += 1
+        if (ending?.reason != null) return
+        val due = cues.indexOfLast { it.atSeconds * 1000 <= elapsed }
+        if (due < examCuesSent) return
+        send(LiveClientCommand.Append(LiveCallCue.Channel.INSTRUCTIONS, cues[due].say))
+        examCuesSent = due + 1
     }
 
     /** Does what the ending says is due now, then shows where the call is. */
@@ -541,11 +601,13 @@ class LiveCall(
     private fun report(reason: CallEnd) {
         if (reported || connectionId == null) return
         reported = true
-        val current = mutableState.value
-        val learnerTurns = current.turns.conversationTurns.count { it.speaker == Speaker.LEARNER }
-        analytics.track(
-            gaps.event(reason, task.kind, learnerTurns, talkSeconds = current.talkSeconds, durationSeconds = current.elapsedSeconds),
-        )
+        val learnerTurns =
+            mutableState.value.turns
+                .drop(earlier.turns.size)
+                .conversationTurns
+                .count { it.speaker == Speaker.LEARNER }
+        val duration = liveAt?.let { live -> now()?.let { (it - live) / 1000 } } ?: 0
+        analytics.track(gaps.event(reason, task.kind, learnerTurns, talkSeconds = talkSecondsLeft, durationSeconds = duration))
     }
 
     private fun silence() {

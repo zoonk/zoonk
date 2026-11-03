@@ -41,12 +41,14 @@ val SCRIPT =
             ),
     )
 
-/** [talkSeconds] of talk, then the server hangs up [seconds] after the answer. */
+/** [talkSeconds] of talk, then the server hangs up [seconds] after the answer; [continuesCall] when the call dropped and was called again. */
 fun setup(
     talkSeconds: Long = 300,
     seconds: Long = talkSeconds + 45,
+    continuesCall: Boolean = false,
 ) = LanguageConversationSetup(
     connectionId = CONNECTION,
+    continuesCall = continuesCall,
     deadlineAt = Instant.parse("2026-10-29T12:05:00Z"),
     script = SCRIPT,
     seconds = seconds,
@@ -115,6 +117,7 @@ class FakeCallClient : LiveCallClient {
     var reservations = ArrayDeque<CallReservation>(listOf(CallReservation.Ready(setup())))
     val connects = mutableListOf<Boolean>()
     val redeemed = mutableListOf<Pair<UUID, String>>()
+    val offeredTurns = mutableListOf<List<LanguageConversationTurn>>()
     val ended = mutableListOf<UUID>()
     var endAnswers = ArrayDeque<Boolean?>()
     val checks = mutableListOf<List<LanguageConversationTurn>>()
@@ -142,8 +145,10 @@ class FakeCallClient : LiveCallClient {
     override suspend fun redeem(
         connectionId: UUID,
         offer: String,
+        turns: List<LanguageConversationTurn>,
     ): String {
         redeemed += connectionId to offer
+        offeredTurns += turns
         return "answer"
     }
 

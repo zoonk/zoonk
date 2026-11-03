@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
+import com.zoonk.android.feature.livecall.setup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -128,31 +129,47 @@ class ConversationFlowTest {
     }
 
     @Test
-    fun aDroppedCallCanBeCalledAgainOrEndedForFeedback() {
+    fun aDroppedCallCalledAgainContinuesWhatWasSaidAndSavesTheWholeCall() {
         client.reservations =
             ArrayDeque(
                 listOf(
-                    CallReservation.Ready(
-                        com.zoonk.android.feature.livecall
-                            .setup(),
-                    ),
-                    CallReservation.Ready(
-                        com.zoonk.android.feature.livecall
-                            .setup(),
-                    ),
+                    CallReservation.Ready(setup()),
+                    CallReservation.Ready(setup(talkSeconds = 150, continuesCall = true)),
+                    CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true)),
                 ),
             )
         show()
         goLive()
-
+        transport.onEvent(characterSays("¡Hola! ¿Qué le pongo?"))
+        transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
+        compose.onNodeWithContentDescription("Help").performClick()
         transport.onLost()
         compose.waitForIdle()
         compose.onNodeWithText("The call dropped").assertExists()
 
         compose.onNodeWithText("Call again").performClick()
         compose.waitForIdle()
-        assertEquals(2, transports.size)
         compose.onNodeWithText("Calling Lucía…").assertExists()
+        seen("You: Un café, por favor.")
+        val earlier = listOf("¡Hola! ¿Qué le pongo?", "Un café, por favor.")
+        assertEquals(earlier, client.offeredTurns.last().map { it.text })
+
+        // Cancelling the call back to its intro keeps what was said for the next start.
+        compose.onNodeWithContentDescription("Cancel").performClick()
+        compose.waitForIdle()
+        goLive()
+        assertEquals(3, transports.size)
+        assertEquals(earlier, client.offeredTurns.last().map { it.text })
+        seen("Lucía: ¡Hola! ¿Qué le pongo?")
+
+        transport.onEvent(learnerSays("Con leche", 0.0, 1000.0))
+        compose.onNodeWithContentDescription("End").performClick()
+        compose.waitForIdle()
+
+        val saved = api.completions.single()
+        assertEquals(earlier + "Con leche", saved.turns.map { it.text })
+        assertEquals(3L, saved.spokenSeconds)
+        assertTrue(saved.usedHelp)
     }
 
     @Test

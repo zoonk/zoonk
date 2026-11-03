@@ -37,18 +37,22 @@ class LiveCallTest {
     private val transports = mutableListOf<FakeTransport>()
     private val transport get() = transports.single()
     private val events = mutableListOf<AnalyticsEvent>()
-    private val task = LiveCallTask(kind = "practice", objectives = listOf("Order a coffee", "Ask the price"), met = emptyList())
+    private val task =
+        LiveCallTask(kind = "practice", objectives = listOf("Order a coffee", "Ask the price"), met = emptyList(), talkSeconds = 300)
     private val cues = SCRIPT.cues
 
-    private fun TestScope.call(task: LiveCallTask = this@LiveCallTest.task) =
-        LiveCall(
-            task = task,
-            client = client,
-            transports = { microphone, signals -> FakeTransport(microphone, signals).also(transports::add) },
-            scope = CoroutineScope(SupervisorJob() + dispatcher),
-            analytics = { events += it },
-            timeSource = testScheduler.timeSource,
-        )
+    private fun TestScope.call(
+        task: LiveCallTask = this@LiveCallTest.task,
+        soFar: CallSoFar = CallSoFar(),
+    ) = LiveCall(
+        task = task,
+        client = client,
+        transports = { microphone, signals -> FakeTransport(microphone, signals).also(transports::add) },
+        scope = CoroutineScope(SupervisorJob() + dispatcher),
+        analytics = { events += it },
+        timeSource = testScheduler.timeSource,
+        soFar = soFar,
+    )
 
     private fun TestScope.live(
         call: LiveCall = call(),
@@ -141,7 +145,7 @@ class LiveCallTest {
             runCurrent()
 
             assertEquals(LiveCallPhase.Live, call.phase)
-            assertEquals(300L, call.state.value.talkSeconds)
+            assertEquals(listOf(emptyList<LanguageConversationTurn>()), client.offeredTurns)
             assertEquals(listOf(cues.opening.text), transport.commentary.map { it.content })
             assertEquals(1, transport.sent.size)
         }
@@ -1230,6 +1234,148 @@ class LiveCallTest {
             call.hangUp()
 
             assertEquals(LiveCallPhase.Failed, call.phase)
+        }
+
+    /** A call that dropped after the character greeted, the learner answered and asked for help. */
+    private fun TestScope.dropped(): CallSoFar {
+        val first = live()
+        transport.onEvent(characterSays("¿Qué desea?", 0.0, 900.0))
+        transport.onEvent(learnerSays("Un café", 1000.0, 2600.0))
+        first.help()
+        transport.onLost()
+        runCurrent()
+        transports.clear()
+        return first.soFar
+    }
+
+    @Test
+    fun aCallStartedAgainShowsTheCallSoFarSendsItWithTheOfferAndSavesTheWholeCall() =
+        runTest(dispatcher) {
+            val soFar = dropped()
+            val earlier =
+                listOf(LanguageConversationTurn(Speaker.CHARACTER, "¿Qué desea?"), LanguageConversationTurn(Speaker.LEARNER, "Un café"))
+
+            val call = call(soFar = soFar)
+            assertEquals(
+                listOf("¿Qué desea?", "Un café"),
+                call.state.value.turns
+                    .map { it.text },
+            )
+            live(call, setup(talkSeconds = 240, continuesCall = true))
+            assertEquals(earlier, client.offeredTurns.last())
+
+            // The new session's timeline starts again: its words are new turns, never the earlier ones'.
+            transport.onEvent(learnerSays(" con leche", 0.0, 800.0))
+            transport.onEvent(characterSays("Ahora mismo", 900.0, 1500.0))
+            wait(LiveCall.REPLY_SETTLED)
+            assertEquals(
+                earlier +
+                    listOf(
+                        LanguageConversationTurn(Speaker.LEARNER, "con leche"),
+                        LanguageConversationTurn(Speaker.CHARACTER, "Ahora mismo"),
+                    ),
+                client.checks.last(),
+            )
+
+            call.hangUp()
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(client.checks.last(), summary?.turns)
+            assertEquals(2L + 1L, summary?.spokenSeconds)
+            assertTrue("Help asked before the drop counts", summary?.usedHelp == true)
+        }
+
+    @Test
+    fun aContinuedCallsClockStartsAtTheTalkTimeItAlreadyUsedAndCountsTheWaitToConnect() =
+        runTest(dispatcher) {
+            val call = call(soFar = dropped())
+            client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(talkSeconds = 240, continuesCall = true))))
+            call.start(microphone = true)
+            runCurrent()
+            wait(2.seconds)
+            transport.onEvent(LiveServerEvent.Started)
+            runCurrent()
+
+            assertEquals(62L, call.state.value.elapsedSeconds)
+            wait(1.seconds)
+            assertEquals(63L, call.state.value.elapsedSeconds)
+        }
+
+    @Test
+    fun aNewCallsClockStartsWhenItGoesLive() =
+        runTest(dispatcher) {
+            val call = call()
+            client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup())))
+            call.start(microphone = true)
+            runCurrent()
+            wait(2.seconds)
+            transport.onEvent(LiveServerEvent.Started)
+            runCurrent()
+
+            assertEquals(0L, call.state.value.elapsedSeconds)
+            wait(1.seconds)
+            assertEquals(1L, call.state.value.elapsedSeconds)
+        }
+
+    @Test
+    fun aCallTheServerStartsOverLeavesTheEarlierWordsAndHelpButKeepsTheGoalsMet() =
+        runTest(dispatcher) {
+            val soFar = dropped().copy(metLabels = listOf("Order a coffee"))
+            val call = call(soFar = soFar)
+            client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(continuesCall = false))))
+            call.start(microphone = true)
+            call.sendText("Hola")
+            runCurrent()
+
+            assertEquals(
+                listOf("Hola"),
+                call.state.value.turns
+                    .map { it.text },
+            )
+            assertEquals(emptyList<LanguageConversationTurn>(), client.offeredTurns.last())
+            assertFalse(call.state.value.usedHelp)
+            assertEquals(listOf("Order a coffee"), call.state.value.metLabels)
+            transport.onEvent(LiveServerEvent.Started)
+            runCurrent()
+            assertEquals(0L, call.state.value.elapsedSeconds)
+
+            call.hangUp()
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(listOf(LanguageConversationTurn(Speaker.LEARNER, "Hola")), summary?.turns)
+            assertEquals(0L, summary?.spokenSeconds)
+        }
+
+    @Test
+    fun aContinuedExamSendsNoCueTwiceAndOfThoseDueWhileItWasDownOnlyTheLatest() =
+        runTest(dispatcher) {
+            val exam =
+                task.copy(
+                    objectives = emptyList(),
+                    examCues =
+                        listOf(
+                            ExamSpeakingTaskCuesInner(10, "First"),
+                            ExamSpeakingTaskCuesInner(15, "Second"),
+                            ExamSpeakingTaskCuesInner(20, "Third"),
+                            ExamSpeakingTaskCuesInner(40, "Last"),
+                        ),
+                )
+            val first = live(call(exam))
+            wait(10.seconds)
+            assertEquals(listOf("First"), transport.instructions)
+            transport.onLost()
+            runCurrent()
+            transports.clear()
+
+            // Called again 22 s into the talk time: the second and third cues came due meanwhile.
+            val call = call(exam, first.soFar)
+            live(call, setup(talkSeconds = 278, continuesCall = true))
+            wait(1.seconds)
+            assertEquals(listOf("Third"), transport.instructions)
+            wait(18.seconds)
+            assertEquals(listOf("Third", "Last"), transport.instructions)
         }
 
     private companion object {
