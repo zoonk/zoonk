@@ -1,6 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { normalizeString } from "@zoonk/utils/string";
+import { toWords } from "@/lib/words";
 import { type CallTurn } from "./learner";
 import { type LiveConversationInput } from "./run-call";
 import {
@@ -29,11 +29,6 @@ const OPENING_WORDS_SHARE = 0.8;
 const QUOTE_WORDS = 4;
 
 const SENTENCE_END = /(?<=[.!?…])\s+/u;
-const PUNCTUATION = /[^\p{L}\p{N}\s]/gu;
-
-function toWords(text: string): string[] {
-  return normalizeString(text.replaceAll(PUNCTUATION, " ")).split(" ").filter(Boolean);
-}
 
 function toSentences(text: string): string[] {
   return text
