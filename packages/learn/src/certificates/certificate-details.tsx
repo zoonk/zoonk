@@ -5,7 +5,11 @@ import { Button } from "@zoonk/ui/components/button";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type CertificateLinks, formatCertificateCode } from "@zoonk/utils/certificate-links";
+import {
+  type CertificateLinks,
+  formatCertificateCode,
+  getCertificateDisplayUrl,
+} from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useSkillName } from "../language/_utils/use-skill-name";
@@ -105,8 +109,7 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
 function OwnerLinkRow({ links }: { links: CertificateLinks }) {
   const t = useExtracted();
   const { copy } = useClipboard();
-  const url = new URL(links.url);
-  const shown = `${url.host.replace(/^www\./u, "")}${url.pathname}`;
+  const shown = getCertificateDisplayUrl(links.url);
 
   return (
     <DetailRow label={t("Link")} mono>

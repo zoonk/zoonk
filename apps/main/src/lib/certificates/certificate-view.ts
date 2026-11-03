@@ -2,7 +2,7 @@ import "server-only";
 import { getCategoryNames } from "@/lib/categories/category";
 import { getLevelLabels } from "@/lib/public/public-labels";
 import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
-import { formatCertificateCode, getCertificateLinks } from "@zoonk/utils/certificate-links";
+import { getCertificateDisplayUrl, getCertificateLinks } from "@zoonk/utils/certificate-links";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -84,12 +84,6 @@ export function getCertificateFileTitle(facts: CertificateFacts): string {
     .join("");
 }
 
-/** The printed link drops "www.": `zoonk.com/c/<code>` is what a reader types from paper. */
-function getDisplayUrl(url: string, code: string): string {
-  const { host } = new URL(url);
-  return `${host.replace(/^www\./u, "")}/c/${formatCertificateCode(code)}`;
-}
-
 async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> {
   const t = await getExtracted({ locale });
   const links = getCertificateLinks(facts);
@@ -102,7 +96,7 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
 
   return {
     date: formatCertificateDate({ isoDate: facts.completedOn, locale }),
-    displayUrl: getDisplayUrl(links.url, facts.code),
+    displayUrl: getCertificateDisplayUrl(links.url),
     kindLabel:
       facts.kind === "placement"
         ? t({

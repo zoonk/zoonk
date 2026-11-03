@@ -10,7 +10,7 @@ import { CertificateMoment } from "@zoonk/learn/certificates/moment";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { type EarnedMoments } from "@zoonk/learn/session/moment-ceremony";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { getCertificateLinks } from "@zoonk/utils/certificate-links";
+import { getCertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState } from "react";
 import { markCertificateShownAction, saveCertificateNameAction } from "./certificate-actions";
 import { markMilestoneShownAction } from "./milestone-actions";
@@ -49,7 +49,7 @@ export function SessionCertificates({
       onShown={(code) => void markCertificateShownAction(code)}
       saveName={saveCertificateNameAction}
       signUpHref={(code) =>
-        `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(getPathname({ href: `/c/${code}`, locale }))}`
+        `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(getPathname({ href: getCertificatePath(code), locale }))}`
       }
     />
   );

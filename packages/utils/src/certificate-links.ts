@@ -39,6 +39,16 @@ export function formatCertificateCode(code: string): string {
   return code.match(new RegExp(`.{1,${CODE_GROUP}}`, "gu"))?.join("-") ?? code;
 }
 
+export function getCertificatePath(code: string): string {
+  return `/c/${formatCertificateCode(code)}`;
+}
+
+/** The link as printed and shown, without "www.": `zoonk.com/c/<code>` is what a reader types from paper. */
+export function getCertificateDisplayUrl(url: string): string {
+  const { host, pathname } = new URL(url);
+  return `${host.replace(/^www\./u, "")}${pathname}`;
+}
+
 /** The name is the only thing on a certificate that changes after it's earned. */
 export function getCertificateImageVersion(recipientName: string | null): string {
   return hashSeed(`${CERTIFICATE_DESIGN_VERSION}:${recipientName ?? ""}`).toString(VERSION_RADIX);
@@ -82,7 +92,7 @@ export function getCertificateLinks({
   origin = MAIN_URL,
   ...input
 }: CertificateLinkInput & { origin?: string }): CertificateLinks {
-  const path = `/c/${formatCertificateCode(input.code)}`;
+  const path = getCertificatePath(input.code);
   const url = new URL(path, origin).toString();
   const locale = getSupportedLocaleFromLanguage(input.language);
   const version = getCertificateImageVersion(input.recipientName);

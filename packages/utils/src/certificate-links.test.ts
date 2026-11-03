@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatCertificateCode, getCertificateLinks } from "./certificate-links";
+import {
+  formatCertificateCode,
+  getCertificateDisplayUrl,
+  getCertificateLinks,
+} from "./certificate-links";
 
 const COURSE = {
   code: "K7QF2M9XHD4P",
@@ -78,5 +82,13 @@ describe(getCertificateLinks, () => {
 describe(formatCertificateCode, () => {
   it("groups a code in fours for reading aloud and typing from paper", () => {
     expect(formatCertificateCode("K7QF2M9XHD4P")).toBe("K7QF-2M9X-HD4P");
+  });
+});
+
+describe(getCertificateDisplayUrl, () => {
+  it("prints the dashed link without www, as a reader types it from paper", () => {
+    const { url } = getCertificateLinks({ ...COURSE, origin: "https://www.zoonk.com" });
+
+    expect(getCertificateDisplayUrl(url)).toBe("zoonk.com/c/K7QF-2M9X-HD4P");
   });
 });

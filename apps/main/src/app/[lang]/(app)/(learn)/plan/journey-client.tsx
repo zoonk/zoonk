@@ -27,6 +27,7 @@ import {
   type StudyNext,
 } from "@zoonk/learn/journey";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
+import { getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState, useSyncExternalStore } from "react";
 
 /** "Try again" starts the run only on the learner's tap. */
@@ -221,7 +222,7 @@ export function JourneyClient({
           next && {
             ...next,
             certificate: next.certificate && {
-              href: next.certificate.code ? `/c/${next.certificate.code}` : null,
+              href: next.certificate.code ? getCertificatePath(next.certificate.code) : null,
               onClaim: claimCertificate,
             },
             onContinue: () => continueNextLevel(next.onContinue),
