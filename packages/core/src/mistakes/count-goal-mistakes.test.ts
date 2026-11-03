@@ -10,7 +10,7 @@ import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession, mockSessionFailure } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { mistakeListInputSchema } from "./contract";
-import { countOpenGoalMistakes } from "./count-goal-mistakes";
+import { countGoalMistakes } from "./count-goal-mistakes";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
 const YESTERDAY = new Date("2026-10-14T12:00:00Z");
@@ -20,17 +20,23 @@ async function readCounts(goalId: string) {
     listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId, limit: 1, status: "open" })),
   );
 
-  const open = await countDatabaseStatements(() => countOpenGoalMistakes({ goalId }));
+  const counted = await countDatabaseStatements(() => countGoalMistakes({ goalId }));
 
-  if (notebook.result.status !== "ready" || open.result.status !== "ready") {
-    throw new Error("Expected the notebook and open count to be ready");
+  if (notebook.result.status !== "ready" || counted.result.status !== "ready") {
+    throw new Error("Expected the notebook and goal counts to be ready");
   }
 
-  expect(open.result.open).toBe(notebook.result.counts.open);
-  assertReadBudget(open, 12);
-  expect(open.statements).toBeLessThan(notebook.statements);
+  const { fixed, open } = counted.result;
 
-  return open.result.open;
+  expect({ fixed, open }).toStrictEqual({
+    fixed: notebook.result.counts.fixed,
+    open: notebook.result.counts.open,
+  });
+
+  assertReadBudget(counted, 12);
+  expect(counted.statements).toBeLessThan(notebook.statements);
+
+  return { fixed, open };
 }
 
 describe("goal mistake counts", () => {
@@ -39,19 +45,19 @@ describe("goal mistake counts", () => {
     vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
   });
 
-  it("requires a session before reading the open count", async () => {
+  it("requires a session before reading the counts", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
     mockSession(null);
 
-    const result = await countDatabaseStatements(() => countOpenGoalMistakes({ goalId: goal.id }));
+    const result = await countDatabaseStatements(() => countGoalMistakes({ goalId: goal.id }));
 
     expect(result).toStrictEqual({ result: { status: "unauthorized" }, statements: 0, writes: 0 });
 
     const failure = new Error("session unavailable");
     mockSessionFailure(failure);
 
-    await expect(countOpenGoalMistakes({ goalId: goal.id })).rejects.toBe(failure);
+    await expect(countGoalMistakes({ goalId: goal.id })).rejects.toBe(failure);
   });
 
   it("hides another learner's goal", async () => {
@@ -59,7 +65,7 @@ describe("goal mistake counts", () => {
     const goal = await goalFixture({ userId: owner.id });
     mockSession(other.id);
 
-    await expect(countOpenGoalMistakes({ goalId: goal.id })).resolves.toStrictEqual({
+    await expect(countGoalMistakes({ goalId: goal.id })).resolves.toStrictEqual({
       status: "notFound",
     });
   });
@@ -70,7 +76,7 @@ describe("goal mistake counts", () => {
     await mistakeFixture({ userId: user.id });
     mockSession(user.id);
 
-    await expect(readCounts(goal.id)).resolves.toBe(0);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 0, open: 0 });
   });
 
   it("counts an open entry even when no practice material exists", async () => {
@@ -85,10 +91,10 @@ describe("goal mistake counts", () => {
     await mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: user.id });
     mockSession(user.id);
 
-    await expect(readCounts(goal.id)).resolves.toBe(1);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 0, open: 1 });
   });
 
-  it("keeps open counts across local midnight and excludes fixed, foreign and out-of-scope mistakes", async () => {
+  it("keeps counts across local midnight, fixed ones apart, and excludes foreign and out-of-scope mistakes", async () => {
     vi.setSystemTime(new Date("2026-10-15T02:30:00Z"));
 
     const [user, other, elsewhere] = await Promise.all([
@@ -123,11 +129,11 @@ describe("goal mistake counts", () => {
 
     mockSession(user.id);
 
-    await expect(readCounts(goal.id)).resolves.toBe(2);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 1, open: 2 });
 
     vi.setSystemTime(new Date("2026-10-15T03:00:00Z"));
 
-    await expect(readCounts(goal.id)).resolves.toBe(2);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 1, open: 2 });
   });
 
   it("follows a merged plan skill to its survivor", async () => {
@@ -149,7 +155,7 @@ describe("goal mistake counts", () => {
 
     mockSession(user.id);
 
-    await expect(readCounts(goal.id)).resolves.toBe(1);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 0, open: 1 });
   });
 
   it("includes the finer skill taught by a goal lesson", async () => {
@@ -172,6 +178,6 @@ describe("goal mistake counts", () => {
 
     mockSession(user.id);
 
-    await expect(readCounts(goal.id)).resolves.toBe(1);
+    await expect(readCounts(goal.id)).resolves.toStrictEqual({ fixed: 0, open: 1 });
   });
 });
