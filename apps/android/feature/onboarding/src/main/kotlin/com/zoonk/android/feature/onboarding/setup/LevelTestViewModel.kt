@@ -69,9 +69,6 @@ internal class LevelTestViewModel(
     var placement by mutableStateOf<CertificateFacts?>(null)
         private set
 
-    /** The learner answered here, so the test ending after one of their answers is finished at once. */
-    private var answered = false
-
     private val test get() = store.levelTests[goalId]
     private var sent: SentTestAnswer? = null
 
@@ -127,15 +124,12 @@ internal class LevelTestViewModel(
         skipped: Boolean = false,
     ) {
         if (isSaving) return
-        answered = true
         sent = SentTestAnswer(questionId, answerIndex, durationMs, skipped)
         send()
     }
 
-    suspend fun speak(recording: VoiceRecording): GradeOutcome<LanguageLevelTestSpokenResult> {
-        answered = true
-        return store.speakLevelTest(goalId, recording)
-    }
+    suspend fun speak(recording: VoiceRecording): GradeOutcome<LanguageLevelTestSpokenResult> =
+        store.speakLevelTest(goalId, recording).also { finishIfEnded() }
 
     /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
     fun retryAnswer() {
@@ -151,6 +145,7 @@ internal class LevelTestViewModel(
             } else {
                 sent = null
                 answerFailed = false
+                finishIfEnded()
             }
         }
     }
@@ -160,15 +155,6 @@ internal class LevelTestViewModel(
         if (isSaving) return
         stopped = true
         finish {}
-    }
-
-    /**
-     * Main's: the learner's last answer ends the test, which is finished then, so its last screen
-     * shows the placement it earned. A test that only reads as ended (reopened, or finished
-     * elsewhere) waits for Build my plan.
-     */
-    fun follow(phase: LevelTestPhase) {
-        if (phase is LevelTestPhase.Done && answered && !finished) finish {}
     }
 
     fun buildPlan(onDone: () -> Unit) = if (finished) onDone() else finish(onDone)
@@ -200,7 +186,8 @@ internal class LevelTestViewModel(
         isSaving = true
         answerFailed = false
         viewModelScope.launch {
-            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
+            val outcome = store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)
+            when (outcome) {
                 is WriteOutcome.Done -> {
                     sent = null
                 }
@@ -212,7 +199,17 @@ internal class LevelTestViewModel(
                 }
             }
             isSaving = false
+            if (outcome is WriteOutcome.Done) finishIfEnded()
         }
+    }
+
+    /**
+     * Main's: the learner's own answer that ends the test finishes it then, so its last screen shows
+     * the placement it earned. A test that only reads as ended (reopened, or finished elsewhere)
+     * waits for Build my plan.
+     */
+    private fun finishIfEnded() {
+        if (!finished && phase(test.state.value) is LevelTestPhase.Done) finish {}
     }
 
     private fun Resource<LanguageLevelTest>.preparing() = (state.value.value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value

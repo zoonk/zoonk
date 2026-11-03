@@ -123,7 +123,6 @@ fun ColumnScope.LanguageLevelTestStep(
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val finish = { vm.finish(onDone) }
-    LaunchedEffect(phase) { vm.follow(phase) }
 
     when (phase) {
         LevelTestPhase.Loading -> {
