@@ -46,6 +46,8 @@ import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.richtext.RichInlineText
+import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogLessonFirstScreen
 import kotlinx.coroutines.launch
@@ -199,7 +201,7 @@ private fun LessonFirstScreen(
 
         is CatalogLessonFirstScreen.TextWrapper -> {
             Column {
-                Text(screen.value.text, style = MaterialTheme.typography.titleLarge)
+                RichText(screen.value.text, style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.size(24.dp))
                 start()
             }
@@ -244,7 +246,7 @@ private fun LessonMore(
                                     .size(6.dp)
                                     .background(MaterialTheme.colorScheme.onSurfaceVariant, CircleShape),
                             )
-                            Text(idea, style = MaterialTheme.typography.bodyLarge)
+                            RichInlineText(idea, style = MaterialTheme.typography.bodyLarge)
                         }
                     }
                 }

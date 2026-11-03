@@ -26,15 +26,15 @@ const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
 const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
- * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct
- * 2026). In a battle where no judge scored its own family (3 Nov 2026, 6 cases), Opus 5.5 ranked
- * first under both judges that scored it, at Terra's accuracy and about 9 times its cost, and Gemini
- * 4 Argon beat 3.8 Flash, which failed a case. Each model falls back to the others, all from other
- * families, so an outage at one provider doesn't stop lessons.
+ * Terra leads: Sonnet 5.5 and Opus 5.5 wrote more engaging lessons in a benchmark where no judge
+ * scored its own family (3 Nov 2026, 24 cases), but at 7 and 10 times Terra's cost and about twice
+ * its time. Sonnet comes next: it matched or beat Opus, with fewer factual slips, at two thirds of
+ * its cost. Each model falls back to the others, all from other families, so an outage at one
+ * provider doesn't stop lessons.
  */
 const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
-  "anthropic/claude-opus-5.5",
+  "anthropic/claude-sonnet-5.5",
   "google/gemini-4-argon",
 ] as const;
 

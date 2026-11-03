@@ -2,32 +2,28 @@
 
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { PageEyebrow, PageSectionTitle } from "../../_components/page";
-import { StudyTimeUsedUpActions, StudyTimeUsedUpNote } from "../../_components/study-time-used-up";
-import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
+import { TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
-import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
-import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { TaskFrame } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
+import { CallIntroFooter, type CallIntroFooterState, callsCharacter } from "./call-intro-footer";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
-import { loadLiveCallSession } from "./load-live-call-session";
-import { type TappedCallAudio, openCallAudioInTap } from "./use-call-microphone";
+import {
+  type CallAudio,
+  type MicrophoneProblem,
+  type TappedCallAudio,
+  holdCallAudio,
+} from "./use-call-microphone";
 
 type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
 
-type CallIntroFooterState = CheckpointStart | "dailyLimitReached";
-
 type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired" | "ready";
 
-/**
- * The tap opens the microphone, since Safari on iOS asks for it only during a tap; the host hands
- * it to the call.
- */
 export function CheckpointCallIntro({
   conversation,
   dailyLimitReached,
@@ -51,8 +47,8 @@ export function CheckpointCallIntro({
     [],
   );
 
-  const run = async () => {
-    const audio = openCallAudioInTap();
+  const run = async (opened: CallAudio) => {
+    const audio = holdCallAudio(opened);
     const mine = attempt.current + 1;
     attempt.current = mine;
     setStart("starting");
@@ -74,7 +70,8 @@ export function CheckpointCallIntro({
       exitHref="/today"
       footer={
         <CallIntroFooter
-          onStart={() => void run()}
+          conversation={conversation}
+          onStart={(audio) => void run(audio)}
           start={toFooterState({ dailyLimitReached, rereading, start })}
         />
       }
@@ -102,15 +99,25 @@ export function ConversationIntro({
   conversation,
   exitHref,
   locked = false,
+  microphoneProblem = null,
   onStart,
 }: {
   conversation: LanguageConversationView;
   exitHref: string;
   locked?: boolean;
-  onStart: () => void;
+  microphoneProblem?: MicrophoneProblem | null;
+  onStart: (audio: CallAudio) => void;
 }) {
   const { examTask } = conversation;
-  const footer = <CallIntroFooter onStart={onStart} start={locked ? "plusRequired" : "idle"} />;
+
+  const footer = (
+    <CallIntroFooter
+      conversation={conversation}
+      microphoneProblem={microphoneProblem}
+      onStart={onStart}
+      start={locked ? "plusRequired" : "idle"}
+    />
+  );
 
   return examTask ? (
     <ExamTaskIntro
@@ -124,77 +131,39 @@ export function ConversationIntro({
   );
 }
 
-function preloadLiveCall() {
-  void loadLiveCallSession();
-}
-
-/**
- * Its status region is mounted from the start, so a line that replaces a refused Start is read out.
- */
-function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
+function HowTheCallWorks({ conversation }: { conversation: LanguageConversationIntro }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const titleId = useId();
+  const { name } = conversation.character;
+  const time = formatDuration(conversation.minutes);
+
+  const steps = [
+    t("{name} answers and speaks first.", { name }),
+    t("Then it's your turn: answer out loud, or type if you can't talk."),
+    t(
+      "When you've done everything, or after about {time}, {name} says goodbye and the call ends.",
+      { name, time },
+    ),
+  ];
 
   return (
-    <>
-      <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
-        {start === "dailyLimitReached" && (
-          <StudyTimeUsedUpNote>
-            {t({
-              description: "The daily time limit is a setting that stops study for the day.",
-              message:
-                "You've reached your daily time limit. You can make this call in your next session.",
-            })}
-          </StudyTimeUsedUpNote>
-        )}
-      </div>
-      <CallIntroActions onStart={onStart} start={start} />
-    </>
-  );
-}
-
-function CallIntroActions({
-  onStart,
-  start,
-}: {
-  onStart: () => void;
-  start: CallIntroFooterState;
-}) {
-  const t = useExtracted();
-
-  if (start === "plusRequired") {
-    return (
-      <>
-        <ChallengeCallPlusNotice />
-        <SeePlusAction />
-      </>
-    );
-  }
-
-  if (start === "dailyLimitReached") {
-    return <StudyTimeUsedUpActions href="/today" />;
-  }
-
-  const starting = start === "starting";
-
-  return (
-    <>
-      {start === "failed" && (
-        <p className="text-destructive-text text-sm text-pretty" role="alert">
-          {t("The call didn't start. Try again in a moment.")}
-        </p>
-      )}
-
-      <TaskActions
-        onFocus={preloadLiveCall}
-        onPointerDown={preloadLiveCall}
-        onPointerEnter={preloadLiveCall}
-      >
-        <TaskMainButton busy={starting} onClick={onStart}>
-          {!starting && <PhoneIcon aria-hidden="true" />}
-          {starting ? t("Starting…") : t("Start the call")}
-        </TaskMainButton>
-      </TaskActions>
-    </>
+    <section aria-labelledby={titleId} className="flex flex-col gap-2">
+      <PageSectionTitle id={titleId}>{t("How the call works")}</PageSectionTitle>
+      <ol className="flex flex-col gap-2">
+        {steps.map((step, index) => (
+          <li className="flex gap-3 text-[0.9375rem] leading-snug text-pretty" key={step}>
+            <span
+              aria-hidden="true"
+              className="text-muted-foreground w-3 shrink-0 font-mono text-[0.8125rem] leading-5.5 tabular-nums"
+            >
+              {index + 1}
+            </span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
@@ -211,6 +180,8 @@ function CallIntro({
   const formatDuration = useFormatDuration();
   const eyebrow = useConversationTitle(conversation);
   const { character } = conversation;
+  const time = formatDuration(conversation.minutes);
+  const isCall = callsCharacter(conversation);
 
   return (
     <TaskFrame
@@ -222,19 +193,23 @@ function CallIntro({
     >
       <header className="flex flex-col gap-2">
         <PageEyebrow>
-          {t("{time} · Level {level}", {
-            level: conversation.level,
-            time: formatDuration(conversation.minutes),
-          })}
+          {t("About {time} · Level {level}", { level: conversation.level, time })}
         </PageEyebrow>
         <h1 className="text-title text-balance">{conversation.title}</h1>
         <p className="text-muted-foreground text-pretty">{conversation.situation}</p>
+        {!isCall && (
+          <p className="text-muted-foreground text-sm text-pretty">
+            {t("It ends on its own after about {time}.", { time })}
+          </p>
+        )}
       </header>
 
       <CharacterRow
         detail={t("{role} · {place}", { place: character.place, role: character.role })}
         name={character.name}
       />
+
+      {isCall && <HowTheCallWorks conversation={conversation} />}
 
       <TaskAsideContent
         aria-labelledby="call-goals"
@@ -258,7 +233,7 @@ function CallIntro({
         </ChecklistRows>
       </TaskAsideContent>
 
-      <MicNote>{t("Speak or type. The microphone is used only during the call.")}</MicNote>
+      <MicNote>{t("Turn your sound on. The microphone is on only during the call.")}</MicNote>
     </TaskFrame>
   );
 }

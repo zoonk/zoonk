@@ -4,6 +4,7 @@ import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref } from "@/lib/public/public-hrefs";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
+import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
@@ -39,7 +40,9 @@ export async function LessonMore({
                 <LineMarker>
                   <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
                 </LineMarker>
-                <span className="text-pretty">{idea}</span>
+                <span className="text-pretty">
+                  <LessonRichText text={idea} />
+                </span>
               </li>
             ))}
           </ul>

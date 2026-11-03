@@ -13,31 +13,43 @@ type OnDemand<T> = {
    * elsewhere it's null while it loads.
    */
   useModule: (options?: { enabled?: boolean; wait?: boolean }) => T | null;
+  /**
+   * Suspends until it's here. When the load it waited on fails, it throws that error to the nearest
+   * error boundary; an earlier failed load, such as a preload, only makes it try again.
+   */
+  useRequiredModule: () => T;
 };
+
+type Failure = { error: unknown };
 
 export function createOnDemand<T>(importer: () => Promise<T>): OnDemand<T> {
   const state: {
-    failed: boolean;
+    failure: Failure | null;
     listeners: Set<() => void>;
     load: Promise<T | null> | null;
     loaded: T | null;
-  } = { failed: false, listeners: new Set(), load: null, loaded: null };
+    waitedFailure: Failure | null;
+  } = { failure: null, listeners: new Set(), load: null, loaded: null, waitedFailure: null };
 
   function load(): Promise<T | null> {
-    state.load ??= importer().then(
-      (module) => {
-        state.loaded = module;
-        state.failed = false;
-        state.listeners.forEach((listener) => listener());
-        return module;
-      },
-      () => {
-        // The next load tries again; meanwhile nothing waits on code that isn't coming.
-        state.failed = true;
-        state.load = null;
-        return null;
-      },
-    );
+    if (!state.load) {
+      state.waitedFailure = null;
+
+      state.load = importer().then(
+        (module) => {
+          state.loaded = module;
+          state.failure = null;
+          state.listeners.forEach((listener) => listener());
+          return module;
+        },
+        (error: unknown) => {
+          // The next load tries again; meanwhile nothing waits on code that isn't coming.
+          state.failure = { error };
+          state.load = null;
+          return null;
+        },
+      );
+    }
 
     return state.load;
   }
@@ -63,7 +75,7 @@ export function createOnDemand<T>(importer: () => Promise<T>): OnDemand<T> {
       }
     }, [missing]);
 
-    if (missing && !state.failed && (hydrating || (wait ?? waitsAbove))) {
+    if (missing && !state.failure && (hydrating || (wait ?? waitsAbove))) {
       // oxlint-disable-next-line typescript/only-throw-error -- Suspense's contract, as `lazy` keeps it: React waits on the thrown load, then draws again.
       throw load();
     }
@@ -71,5 +83,26 @@ export function createOnDemand<T>(importer: () => Promise<T>): OnDemand<T> {
     return enabled ? loaded : null;
   }
 
-  return { getLoaded, load, useModule };
+  async function waitForLoad() {
+    if (!(await load())) {
+      state.waitedFailure = state.failure;
+    }
+  }
+
+  function useRequiredModule(): T {
+    const loaded = useSyncExternalStore(subscribe, getLoaded, getLoaded);
+
+    if (loaded) {
+      return loaded;
+    }
+
+    if (state.waitedFailure) {
+      throw state.waitedFailure.error;
+    }
+
+    // oxlint-disable-next-line typescript/only-throw-error -- Suspense's contract, as in useModule.
+    throw waitForLoad();
+  }
+
+  return { getLoaded, load, useModule, useRequiredModule };
 }

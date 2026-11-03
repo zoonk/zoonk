@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./after-page-load": "./src/after-page-load.ts",
     "./aggregation": "./src/aggregation.ts",
     "./apportion": "./src/apportion.ts",
     "./belt-level": "./src/belt-level.ts",

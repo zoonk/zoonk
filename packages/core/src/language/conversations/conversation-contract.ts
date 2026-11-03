@@ -11,8 +11,9 @@ import {
   examTaskViewSchema,
 } from "../exam-speaking/speaking-contract";
 import { isWebRtcAudioOffer } from "./_utils/webrtc-offer";
+import { callFeedbackSchema, speakingMockFeedbackSchema } from "./call-feedback-contract";
 import { MAX_CONVERSATION_TURNS, MAX_CONVERSATION_TURN_LENGTH } from "./conversation-turn-limits";
-import { SPEAKING_MOCK_CRITERIA, SPEAKING_MOCK_SCALES } from "./speaking-mock-format";
+import { liveCallCueSchema, liveCallScriptSchema } from "./live-call-script-contract";
 
 const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
@@ -56,56 +57,6 @@ export const speakingMockScenarioSchema = conversationScenarioSchema.extend({
 export const examSpeakingScenarioSchema = conversationScenarioSchema.extend({
   examTask: examTaskSnapshotSchema,
 });
-
-const callFeedbackSchema = z
-  .object({
-    encouragement: z.string(),
-    improve: z
-      .object({ better: z.string(), said: z.string(), why: z.string() })
-      .nullable()
-      .meta({ description: "The one thing to fix, with what the learner said and a better way" }),
-    kind: z.literal("call"),
-    pronunciation: z
-      .array(z.object({ respelling: z.string(), tip: z.string(), word: z.string() }))
-      .meta({ description: "At most two words the learner said that are often hard to say" }),
-    wentWell: z.array(z.string()).meta({ description: "Phrases the learner said well" }),
-  })
-  .meta({ id: "LanguageCallFeedback" });
-
-const HALF_BAND = 0.5;
-
-function speakingMockFeedbackFor<const TExam extends SpeakingMockExam>(exam: TExam) {
-  const { halfBands, maxBand, minBand } = SPEAKING_MOCK_SCALES[exam];
-  const step = halfBands ? HALF_BAND : 1;
-  const band = z.number().min(minBand).max(maxBand).multipleOf(step);
-  const criterion = z.enum(SPEAKING_MOCK_CRITERIA[exam]);
-
-  return z.object({
-    criteria: z.array(
-      z.object({ bandHigh: band, bandLow: band, criterion, evidence: z.string(), tip: z.string() }),
-    ),
-    exam: z.literal(exam),
-    focus: criterion,
-    kind: z.literal("speakingMock"),
-    overall: z
-      .object({ bandHigh: band, bandLow: band })
-      .meta({ description: "Estimated band range, never an official score" }),
-  });
-}
-
-const speakingMockFeedbackSchema = z
-  .discriminatedUnion("exam", [
-    speakingMockFeedbackFor("ielts").meta({
-      description: "IELTS Speaking: four criteria on the 0 to 9 band scale",
-      id: "LanguageIeltsSpeakingMockFeedback",
-    }),
-    speakingMockFeedbackFor("toefl").meta({
-      description:
-        "TOEFL iBT Speaking: Listen and Repeat accuracy and four interview criteria on the 1 to 6 band scale",
-      id: "LanguageToeflSpeakingMockFeedback",
-    }),
-  ])
-  .meta({ id: "LanguageSpeakingMockFeedback" });
 
 export const conversationFeedbackSchema = z.discriminatedUnion("kind", [
   callFeedbackSchema,
@@ -267,15 +218,22 @@ export const languageConversationSetupSchema = z
   .object({
     connectionId: z.uuid(),
     deadlineAt: z.iso.datetime().meta({ description: "When the server hangs the call up" }),
-    endsAtLimit: z.enum(["day", "month"]).nullable(),
+    script: liveCallScriptSchema,
     seconds: z
       .int()
       .positive()
       .meta({
         description:
-          "The call time left when the server answered: end the call this long after the answer arrived, whatever the device's clock says",
+          "How long until the server hangs up, from when its answer arrived, whatever the device's clock says: the hard stop",
       }),
     sessionUrl: z.string(),
+    talkSeconds: z
+      .int()
+      .positive()
+      .meta({
+        description:
+          "The talk time left when the server answered: start ending the call this long after the answer arrived. `seconds` adds the wrap-up for the goodbye",
+      }),
     voice: z.string(),
   })
   .meta({ id: "LanguageConversationSetup" });
@@ -326,8 +284,24 @@ export type LanguageConversationObjectiveCheckInput = z.infer<
 
 export const languageConversationObjectiveCheckSchema = z
   .object({
+    goodbye: z
+      .boolean()
+      .meta({
+        description:
+          "This check read the transcript sent and found it ending with the learner and the character saying goodbye to each other: end the call without a goodbye cue, unless the learner spoke or typed after sending it. False when it found none or read nothing new",
+      }),
     objectivesMet: z
       .array(z.string())
       .meta({ description: "Labels of every objective the learner has achieved so far" }),
+    progress: liveCallCueSchema
+      .nullable()
+      .meta({
+        description:
+          "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
+      }),
   })
   .meta({ id: "LanguageConversationObjectiveCheck" });
+
+export type LanguageConversationObjectiveCheck = z.infer<
+  typeof languageConversationObjectiveCheckSchema
+>;

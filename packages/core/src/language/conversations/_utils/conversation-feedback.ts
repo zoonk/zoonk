@@ -19,7 +19,7 @@ import {
 import { getMetObjectives } from "../conversation-rules";
 import { getSpeakingMockOverall, getSpeakingMockRating } from "../speaking-mock-format";
 import { type SavedScenario } from "./conversation-view";
-import { findNewlyMetObjectives } from "./objective-check";
+import { runObjectiveCheck } from "./objective-check";
 
 type ReviewInput = {
   level: CefrLevel;
@@ -138,10 +138,10 @@ export function getExamTaskObjectives({
 }
 
 async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
-  const newlyMet = await findNewlyMetObjectives(input);
+  const { met } = await runObjectiveCheck(input);
 
   return getMetObjectives({
-    labels: [...input.row.objectivesMet, ...newlyMet],
+    labels: [...input.row.objectivesMet, ...met],
     objectives: input.scenario.objectives,
   });
 }

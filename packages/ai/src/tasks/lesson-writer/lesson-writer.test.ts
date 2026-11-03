@@ -81,7 +81,7 @@ function option(text: string, isCorrect: boolean) {
 describe(getLessonRewriteModel, () => {
   it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
     expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "openai/gpt-6.1-terra"])).toBe(
-      "anthropic/claude-opus-5.5",
+      "anthropic/claude-sonnet-5.5",
     );
 
     expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
@@ -89,7 +89,7 @@ describe(getLessonRewriteModel, () => {
     );
 
     // A fallback wrote one of them: both families are left out.
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
+    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-sonnet-5.5"])).toBe(
       "google/gemini-4-argon",
     );
   });
@@ -196,15 +196,17 @@ describe(writeLessonDraft, () => {
       spec: spec([screen("hook"), screen("check")]),
     } satisfies Parameters<typeof writeLessonDraft>[0];
 
-    await writeLessonDraft({ ...params, model: "anthropic/claude-opus-5.5" });
-    const opus = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
+    await writeLessonDraft({ ...params, model: "anthropic/claude-sonnet-5.5" });
+    const sonnet = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
     await writeLessonDraft(params);
     const terra = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
-    expect(opus).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
+    expect(sonnet).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
 
-    expect(terra).toMatchObject({ models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"] });
+    expect(terra).toMatchObject({
+      models: ["anthropic/claude-sonnet-5.5", "google/gemini-4-argon"],
+    });
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {

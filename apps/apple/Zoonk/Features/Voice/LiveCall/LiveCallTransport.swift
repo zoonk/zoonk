@@ -2,34 +2,33 @@ import AVFoundation
 import Foundation
 import WebRTC
 
-/// GPT-Live's other events (usage, acknowledgments, errors for a cue it rejected) don't move the call.
+/// GPT-Live's other events (usage, errors for a cue it rejected) don't move the call.
 enum LiveServerEvent: Equatable, Sendable {
   case started
   case closed
   case transcript(speaker: ConversationSpeaker, delta: String, startMs: Double, endMs: Double)
   case delegation(id: String)
+  /// GPT-Live took in the cue sent with this id, at `startMs` on the session's timeline.
+  case acknowledged(id: String, startMs: Double)
 }
 
 typealias ConversationSpeaker = Components.Schemas.LanguageConversationTurn.SpeakerPayload
 
-/// What the app tells GPT-Live during a call: context it acts on now (`instructions`) or only
-/// keeps in mind (`thinking`), and muting the learner's audio.
+/// What the app tells GPT-Live during a call: a cue on one of its channels, and muting the
+/// learner's audio.
 enum LiveClientCommand: Equatable, Sendable {
-  case instructions(String)
-  case thinking(String, delegationId: String? = nil)
+  case append(LiveCallCue, delegationId: String? = nil, eventId: String? = nil)
   case mute(Bool)
 
   /// The event as GPT-Live reads it (`@ai-sdk/openai`'s `serializeOpenAILiveClientEvent`).
   var json: Data {
     let object: [String: Any] =
       switch self {
-      case .instructions(let content):
-        ["type": "session.instructions.append", "content": content, "delegation_id": NSNull()]
-      case .thinking(let content, let delegationId):
+      case .append(let cue, let delegationId, let eventId):
         [
-          "type": "session.thinking.append", "content": content,
+          "type": "session.\(cue.channel.rawValue).append", "content": cue.text,
           "delegation_id": delegationId.map { $0 as Any } ?? NSNull(),
-        ]
+        ].merging(eventId.map { ["event_id": $0] } ?? [:]) { first, _ in first }
       case .mute(let muted):
         ["type": muted ? "session.input_audio.mute" : "session.input_audio.unmute"]
       }
@@ -47,6 +46,7 @@ extension LiveServerEvent {
       let startMs: Double?
       let endMs: Double?
       let delegation: Delegation?
+      let clientEventId: String?
     }
 
     let decoder = JSONDecoder()
@@ -77,6 +77,13 @@ extension LiveServerEvent {
       }
 
       self = .delegation(id: id)
+    case "session.commentary.appended", "session.instructions.appended",
+      "session.thinking.appended":
+      guard let id = event.clientEventId, let startMs = event.startMs else {
+        return nil
+      }
+
+      self = .acknowledged(id: id, startMs: startMs)
     default:
       return nil
     }
@@ -91,6 +98,8 @@ protocol LiveCallTransport: AnyObject {
   func makeOffer() async throws -> String
   func accept(answer: String) async throws
   func send(_ command: LiveClientCommand)
+  /// Whether the learner's microphone heard speech since the last time it was asked.
+  func hearsSpeech() async -> Bool
   /// Stops the learner's audio going out and the character's playing, for good.
   func silence()
   func close()
@@ -110,6 +119,9 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
 
   /// A disconnected peer gets this long to come back before the call counts as lost.
   private static let disconnectGrace = Duration.seconds(5)
+  /// The microphone's level (linear RMS after echo cancellation) that counts as speech: above a
+  /// quiet room, below a soft voice.
+  private static let speechLevel = 0.02
 
   private var connection: RTCPeerConnection?
   private var channel: RTCDataChannel?
@@ -119,6 +131,7 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
   private var opened: CheckedContinuation<Void, any Error>?
   private var disconnectTimer: Task<Void, Never>?
   private var isClosed = false
+  private var heard = MicrophoneEnergy()
 
   init() {
     configureAudioSession()
@@ -188,6 +201,22 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     }
 
     channel.sendData(RTCDataBuffer(data: command.json, isBinary: false))
+  }
+
+  func hearsSpeech() async -> Bool {
+    guard let connection, !isClosed else {
+      return false
+    }
+
+    let now = await withCheckedContinuation { continuation in
+      // WebRTC answers on its own thread.
+      connection.statistics { @Sendable report in
+        continuation.resume(returning: MicrophoneEnergy(report))
+      }
+    }
+
+    defer { heard = now }
+    return now.level(since: heard) >= Self.speechLevel
   }
 
   func silence() {
@@ -285,6 +314,33 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     configuration.mode = AVAudioSession.Mode.voiceChat.rawValue
     configuration.categoryOptions = [.defaultToSpeaker, .allowBluetoothHFP]
     RTCAudioSessionConfiguration.setWebRTC(configuration)
+  }
+}
+
+/// The microphone's totals in WebRTC's `media-source` statistics, whose difference gives the level
+/// between two readings.
+private struct MicrophoneEnergy: Sendable {
+  var energy = 0.0
+  var duration = 0.0
+
+  init() {}
+
+  init(_ report: RTCStatisticsReport) {
+    let source = report.statistics.values.first {
+      $0.type == "media-source" && $0.values["kind"] as? String == "audio"
+    }
+    energy = (source?.values["totalAudioEnergy"] as? NSNumber)?.doubleValue ?? 0
+    duration = (source?.values["totalSamplesDuration"] as? NSNumber)?.doubleValue ?? 0
+  }
+
+  func level(since earlier: MicrophoneEnergy) -> Double {
+    let samples = duration - earlier.duration
+
+    guard samples > 0 else {
+      return 0
+    }
+
+    return ((energy - earlier.energy) / samples).squareRoot()
   }
 }
 

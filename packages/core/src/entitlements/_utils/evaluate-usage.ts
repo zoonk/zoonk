@@ -2,7 +2,6 @@ import { type UsageKind } from "@zoonk/db";
 import { type AllowanceLimit, type EntitlementTier, type UsageDecision } from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
-  MIN_CALL_SECONDS,
   getActiveGoalLimit,
   getDailySpendBudgetMicros,
   getUsageRule,
@@ -58,9 +57,7 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   return checks.filter((check): check is LimitCheck => check !== false);
 }
 
-export type CallTimePeriod = "day" | "month";
-
-export type CallTimeLeft = { limit: number; period: CallTimePeriod; seconds: number };
+export type CallTimeLeft = { limit: number; period: "day" | "month"; seconds: number };
 
 /** Null means uncapped; an exhausted monthly cap takes precedence because tomorrow cannot reset it. */
 export function getCallTimeLeft({
@@ -86,23 +83,11 @@ export function getCallTimeLeft({
       ? null
       : { limit: monthSeconds, period: "month", seconds: monthSeconds - usedThisMonth };
 
-  if (!day || (month && (month.seconds < MIN_CALL_SECONDS || month.seconds <= day.seconds))) {
+  if (!day || (month && (month.seconds <= 0 || month.seconds <= day.seconds))) {
     return month;
   }
 
   return day;
-}
-
-/** Uncapped uses hold all requested seconds; capped calls may hold less. */
-export function getCallHold({ left, seconds }: { left: CallTimeLeft | null; seconds: number }): {
-  heldSeconds: number;
-  shortenedBy: CallTimePeriod | null;
-} {
-  if (!left || left.seconds >= seconds) {
-    return { heldSeconds: seconds, shortenedBy: null };
-  }
-
-  return { heldSeconds: Math.max(0, left.seconds), shortenedBy: left.period };
 }
 
 function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit | null {
@@ -113,7 +98,7 @@ function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit |
     usedToday: counts.secondsToday,
   });
 
-  if (!left || left.seconds >= MIN_CALL_SECONDS) {
+  if (!left || left.seconds > 0) {
     return null;
   }
 
@@ -139,8 +124,13 @@ function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
   }
 
   const budget = getDailySpendBudgetMicros(claim.tier);
+  const spent = claim.counts.spentTodayMicros;
 
-  if (claim.costMicros > 0 && claim.counts.spentTodayMicros + claim.costMicros > budget) {
+  // A call starts while any budget is left and always runs whole; the budget refuses the next one.
+  const overBudget =
+    claim.kind === "conversation" ? spent >= budget : spent + claim.costMicros > budget;
+
+  if (claim.costMicros > 0 && overBudget) {
     return { limit: budget, period: "day", resource: "aiSpend", tier: claim.tier };
   }
 

@@ -126,7 +126,7 @@ private struct FindErrorCanvas: View {
     .modifier(ActivityNumberKey(index: index))
     .accessibilityLabel(
       Text(
-        "Step \(index + 1): \(LessonRichText.plain(step.text))", tableName: "Activities",
+        "Step \(index + 1): \(LessonRichText.spoken(step.text))", tableName: "Activities",
         comment: "VoiceOver: one step of a worked answer")
     )
     .accessibilityAddTraits(step.id == pickedId ? .isSelected : [])
@@ -149,7 +149,7 @@ private struct FindErrorCanvas: View {
     switch mark {
     case .right:
       Text(
-        "The wrong step. \(LessonRichText.plain(fields.correction))", tableName: "Activities",
+        "The wrong step. \(LessonRichText.spoken(fields.correction))", tableName: "Activities",
         comment: "VoiceOver after the check: the step that was wrong, then its correction")
     case .wrong:
       Text(

@@ -11,7 +11,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallPhase
-import com.zoonk.android.feature.livecall.LiveCallScript
+import com.zoonk.android.feature.livecall.LiveCallTask
 import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
@@ -35,7 +35,7 @@ enum class CallSave { Saving, Closing, Failed, Ended, TakenOver }
 class ConversationViewModel(
     private val conversationId: UUID,
     private val store: ConversationStore,
-    private val newCall: (LiveCallScript) -> LiveCall,
+    private val newCall: (LiveCallTask) -> LiveCall,
     private val ongoing: OngoingCalls,
     private val timeZone: () -> String,
     private val prep: PrepTimes,
@@ -81,7 +81,7 @@ class ConversationViewModel(
         call?.leave()
         usedHelp = false
         save = null
-        val next = newCall(conversation.script)
+        val next = newCall(conversation.callTask)
         call = next
         next.start(microphone, takeover)
         // The notification's Hang up does what End does: a call that hasn't connected goes back to its intro.
@@ -197,13 +197,18 @@ class ConversationViewModel(
     }
 }
 
-val LanguageConversation.script: LiveCallScript
+val LanguageConversation.callTask: LiveCallTask
     get() =
-        LiveCallScript(
-            openingLine = openingLine,
+        LiveCallTask(
+            kind =
+                when (kind) {
+                    LanguageConversation.Kind.PRACTICE -> "practice"
+                    LanguageConversation.Kind.CHECKPOINT -> "checkpoint"
+                    LanguageConversation.Kind.SPEAKING_MOCK -> "speaking_mock"
+                    LanguageConversation.Kind.EXAM_SPEAKING -> "exam_speaking"
+                },
             objectives = objectives.map { it.label },
             met = objectives.filter { it.met }.map { it.label },
-            minutes = minutes,
             examCues = examTask?.cues,
         )
 

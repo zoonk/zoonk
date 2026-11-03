@@ -146,17 +146,7 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.failed && limit && (
-        <CallLimitMessage
-          className="py-4"
-          limit={limit}
-          title={
-            limit.period === "month"
-              ? t("Not enough call time this month for this task")
-              : t("Not enough call time today for this task")
-          }
-        />
-      )}
+      {call.failed && limit && <CallLimitMessage className="py-4" limit={limit} />}
 
       {call.failed && !limit && (
         <p className="text-destructive-text px-1 text-sm" role="alert">

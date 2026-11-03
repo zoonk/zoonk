@@ -3,15 +3,27 @@
 import {
   type ConversationTurn,
   type LanguageConversationView,
+  type LanguageConversationObjectiveCheck as ObjectiveCheck,
 } from "@zoonk/core/language/conversations/contract";
-import { formatObjectivesProgressCue } from "@zoonk/core/language/conversations/live-call-cues";
-import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { sendLiveCallCue } from "./live-call-commands";
-import { type LiveCallSession } from "./live-call-session";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type LiveCallCue } from "./live-call-script";
+import {
+  NO_CHECK_TIMING,
+  REPLY_SETTLED_MS,
+  hearFragment,
+  isCheckDue,
+  readTranscript,
+} from "./objective-check-timing";
 
-const REPLY_SETTLED_MS = 1500;
+/** What a check found, for the transcript as it was at `snapshotAt`. */
+export type ObjectiveCheckResult = {
+  allMet: boolean;
+  goodbye: boolean;
+  progress: LiveCallCue | null;
+  snapshotAt: number;
+};
 
-type CheckObjectives = (turns: ConversationTurn[]) => Promise<string[] | null>;
+type CheckObjectives = (turns: ConversationTurn[]) => Promise<ObjectiveCheck | null>;
 
 const skipObjectiveChecks = () => Promise.resolve(null);
 
@@ -19,12 +31,12 @@ function useObjectiveChecks({
   checkObjectives,
   conversation,
   getTurns,
-  onChange,
+  onChecked,
 }: {
   checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
-  onChange: (met: string[]) => void;
+  onChecked: (check: ObjectiveCheck & { snapshotAt: number }) => void;
 }) {
   const [metLabels, setMetLabels] = useState(() =>
     conversation.objectives
@@ -34,32 +46,26 @@ function useObjectiveChecks({
 
   const met = useRef(metLabels);
   const running = useRef(false);
-  const again = useRef(false);
-  const learnerSpoke = useRef(false);
+  const timing = useRef(NO_CHECK_TIMING);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const check = useCallback(async () => {
-    if (running.current) {
-      again.current = true;
-      return;
-    }
-
     running.current = true;
-
-    do {
-      again.current = false;
-      // oxlint-disable-next-line no-await-in-loop -- One check at a time, then one more for turns that ended meanwhile.
-      const found = await checkObjectives(getTurns()).catch(() => null);
-
-      if (found && found.length > met.current.length) {
-        met.current = found;
-        setMetLabels(found);
-        onChange(found);
-      }
-    } while (again.current);
-
+    const snapshotAt = Date.now();
+    const turns = getTurns();
+    timing.current = readTranscript(timing.current);
+    const found = await checkObjectives(turns).catch(() => null);
     running.current = false;
-  }, [checkObjectives, getTurns, onChange]);
+
+    if (found) {
+      if (found.objectivesMet.length > met.current.length) {
+        met.current = found.objectivesMet;
+        setMetLabels(found.objectivesMet);
+      }
+
+      onChecked({ ...found, objectivesMet: met.current, snapshotAt });
+    }
+  }, [checkObjectives, getTurns, onChecked]);
 
   const clearSettle = useCallback(() => {
     if (settle.current) {
@@ -68,23 +74,39 @@ function useObjectiveChecks({
     }
   }, []);
 
-  const onLearnerTurn = useCallback(() => {
-    learnerSpoke.current = true;
-    clearSettle();
-  }, [clearSettle]);
+  /** Each fragment waits for the transcript to settle again; a check still running holds the next. */
+  const hear = useCallback(
+    (fragment: Parameters<typeof hearFragment>[1]) => {
+      timing.current = hearFragment(timing.current, fragment);
+      clearSettle();
 
-  const onCharacterTurn = useCallback(() => {
-    if (!learnerSpoke.current) {
-      return;
-    }
+      const settled = () => {
+        if (running.current) {
+          settle.current = setTimeout(settled, REPLY_SETTLED_MS);
+          return;
+        }
 
-    clearSettle();
+        settle.current = null;
 
-    settle.current = setTimeout(() => {
-      learnerSpoke.current = false;
-      void check();
-    }, REPLY_SETTLED_MS);
-  }, [check, clearSettle]);
+        if (isCheckDue(timing.current)) {
+          void check();
+        }
+      };
+
+      settle.current = setTimeout(settled, REPLY_SETTLED_MS);
+    },
+    [check, clearSettle],
+  );
+
+  const onLearnerTurn = useCallback(
+    (startMs?: number) => hear({ speaker: "learner", startMs }),
+    [hear],
+  );
+
+  const onCharacterTurn = useCallback(
+    (startMs: number) => hear({ speaker: "character", startMs }),
+    [hear],
+  );
 
   useEffect(() => clearSettle, [clearSettle]);
 
@@ -95,31 +117,26 @@ export function useCallObjectives({
   checkObjectives,
   conversation,
   getTurns,
-  sessionRef,
+  onResult,
 }: {
   checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
-  sessionRef: RefObject<LiveCallSession | null>;
+  onResult: (result: ObjectiveCheckResult) => void;
 }) {
   const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
 
-  const onChange = useCallback(
-    (met: string[]) => {
-      if (sessionRef.current) {
-        sendLiveCallCue({
-          channel: "thinking",
-          content: formatObjectivesProgressCue({
-            met,
-            open: labels.filter((label) => !met.includes(label)),
-          }),
-          session: sessionRef.current,
-        });
-      }
-    },
-    [labels, sessionRef],
+  const onChecked = useCallback(
+    ({ goodbye, objectivesMet, progress, snapshotAt }: ObjectiveCheck & { snapshotAt: number }) =>
+      onResult({
+        allMet: labels.length > 0 && labels.every((label) => objectivesMet.includes(label)),
+        goodbye,
+        progress,
+        snapshotAt,
+      }),
+    [labels, onResult],
   );
 
   const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
-  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
+  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChecked });
 }

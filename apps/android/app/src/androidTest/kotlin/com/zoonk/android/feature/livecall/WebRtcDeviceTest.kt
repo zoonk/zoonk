@@ -22,7 +22,7 @@ class WebRtcDeviceTest {
     fun anOfferCarriesTheLearnersAudioAndTheEventsChannel() =
         runBlocking(Dispatchers.Main) {
             val before = audio.mode
-            val transport = WebRtcLiveCallTransport(context, microphone = false, onEvent = {}, onLost = {})
+            val transport = WebRtcLiveCallTransport(context, microphone = false, LiveCallSignals(onEvent = {}, onLost = {}, onVoice = {}))
 
             val offer = withTimeout(OFFER_TIMEOUT_MS) { transport.makeOffer() }
 
@@ -40,7 +40,8 @@ class WebRtcDeviceTest {
     fun aSecondCallMakesItsOwnPeer() =
         runBlocking(Dispatchers.Main) {
             repeat(2) {
-                val transport = WebRtcLiveCallTransport(context, microphone = false, onEvent = {}, onLost = {})
+                val transport =
+                    WebRtcLiveCallTransport(context, microphone = false, LiveCallSignals(onEvent = {}, onLost = {}, onVoice = {}))
                 assertTrue(withTimeout(OFFER_TIMEOUT_MS) { transport.makeOffer() }.contains("m=audio"))
                 transport.close()
             }

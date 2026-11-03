@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.livecall.CallReservation
+import com.zoonk.android.feature.livecall.LiveServerEvent
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
 import com.zoonk.android.ui.components.Limit
@@ -67,7 +68,7 @@ class ConversationScreenshots {
         val harness = ConversationHarness()
         harness.client.reservations = ArrayDeque(listOf(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day))))
         harness.show(compose)
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Call Lucía").performClick()
         shot("problem-limit-phone")
     }
 
@@ -89,12 +90,17 @@ class ConversationScreenshots {
         harness.show(compose, dark)
         shot("intro-$name")
 
-        harness.goLive(compose)
+        compose.onNodeWithText("Call Lucía").performClick()
+        shot("calling-$name")
+        harness.transport.onEvent(LiveServerEvent.Started)
         harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        shot("live-talking-$name")
         harness.transport.onEvent(learnerSays("Hola, quería un café con leche, por favor.", 1000.0, 3200.0))
         harness.transport.onEvent(characterSays("Muy bien. ¿Algo más?"))
-        compose.onNodeWithContentDescription("Help").performClick()
+        compose.mainClock.advanceTimeBy(2000)
         shot("live-$name")
+        compose.onNodeWithContentDescription("Help").performClick()
+        shot("live-help-$name")
 
         compose.onNodeWithContentDescription("End").performClick()
         var step = 0

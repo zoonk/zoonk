@@ -1,0 +1,412 @@
+{
+  "codeChecks": {
+    "openai/gpt-6.1-terra": { "passed": 6, "problems": [], "total": 6 },
+    "anthropic/claude-opus-5.5": {
+      "passed": 5,
+      "problems": [
+        "Screen 2: Has 64 words besides its tables; an explanation here aims for about 35. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it."
+      ],
+      "total": 6
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 5,
+      "problems": [
+        "Screen 2: Has 66 words besides its tables; an explanation here aims for about 35. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it."
+      ],
+      "total": 6
+    },
+    "google/gemini-4-argon": { "passed": 6, "problems": [], "total": 6 }
+  },
+  "expectations": "\n      - MUST be in US English, for beginners\n      - The findError activity is an AI assistant's answer (`author: \"ai\"`) whose one mistake is in step 2 as the brief says: a solution (\"show the fee on the home screen\") taken as the goal; the steps after it build on it, and the last step is never the wrong one\n      - Every situation happens in a product team and its app (food delivery, banking), never at a bakery or a market; people and towns come from CAST\n      - No reason or reveal points at an option by its place (\"the second one\", \"option B\"): each names the option by what it says\n      - The checks and the application each ask something new\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At every level, exams and class material included, the first screen is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; no check comes before the first explanation or worked example, and the writer adds no screen the plan doesn't have, so a plan with no screen planned as a guess has no guess. A screen planned as the guess is a `hookGuess` that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach. Reading costs the learner, so length is never a strength here: score at most 7 when screens run longer than their idea needs (a second example, a recap, side detail the learner reads past), since a shorter screen that teaches the same thing is the better one.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The first screen is a scene with nothing to answer, at every level (no \"In this lesson\", no recap, no greeting), and a guess appears only where the plan puts one. Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T17:59:38.196Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Each check has exactly one defensible answer and every reason matches its option. The error sits in step 2 as the brief says, and later steps build on it.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "It opens on a concrete team-board scene with a short, spoken voice. The added 'Same thing with...' line is a slightly awkward second example.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "It teaches one idea with clear contrasts, and the term is introduced through the example before it is used.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "It includes the tempting 'Redesign the payment button' distractor, and the application asks something new. Its distractors (a badge, a chatbot) are plausible and the reasons are solid. The application basis is null even though screen 2's sentence decides it.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook is a scene, and the banking application names a made-up app (Vaultly). The plan is followed and the summary covers both ideas.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "C sets every scene in a named product team and app, and its findError builds steps 3 and 4 clearly on the wrong goal in step 2. Its summary covers both skills. Minor weaknesses: the hook question half-gives away the answer, and the explanation's second example pair feels tacked on.",
+          "score": 8.25
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The answers are correct with one right option each, and the findError is correct. 'Fewer shoppers give up when a fee appears' uses fee context that the explanation never set up, though it is still correct.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "It opens with a short concrete scene. The extra ticket-app example adds reading without teaching much new.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The flow is clear: the team's aim comes first, then the rule, then the contrast. The sentences are short.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "It includes the tempting distractor, and the reasons are fine but generic. The application context hints at one solution, and its basis is null.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook lacks an explicit product team or app setting, and 'fictional Cedar Bank' is awkward. The summary's second idea only restates the progress bar rather than stating the skill.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "B is accurate and follows the plan, but the hook never establishes a product team or app. The explanation adds an off-plan ticket app example, and the application awkwardly labels 'fictional Cedar Bank' and hints with Mei's suggestion. Its summary also only weakly covers the skill of telling a goal from a solution.",
+          "score": 7.7
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 10465,
+        "outputTokens": 1612,
+        "reasoningTokens": 639
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Every concept, option, and reason is accurate and defensible, and the findError activity accurately diagnoses how steps 3 and 4 build on step 2's flawed goal.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The voice is warm, concrete, and conversational, leading with Mei's online shoe shop before stating the rule. Screen 2 adds a brief second analogy ('Same at a coffee shop') at the end that slightly extends the screen beyond what the checkout example needs.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Model D is the only model that explains what 'UX' stands for ('UX means user experience: what using a product is like') before relying on the term for beginners.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "All checks test real application and include the required tempting wrong answer ('Redesign the payment button'). However, Screen 5 has a null `basis` even though the sentence quoted on Screen 2 clearly decides the right answer.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the beginner level, uses CAST names, and follows all screen briefs. It includes a tiny coffee shop comparison on Screen 2 rather than keeping every single mention strictly inside a product team and its app, and says 'made-up Harbor Bank' explicitly in the text.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model D is the strongest output because it defines the acronym 'UX' for beginners right when 'UX goal' is introduced, follows every brief cleanly, and uses a warm, concrete teacher voice. Its only flaws are leaving `basis` null on Screen 5 and including a brief coffee-shop analogy outside of an app team.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All domain concepts, options, reasons, and the AI error-spotting steps are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Direct, engaging, and grounded in concrete examples first. Like Model D, Screen 2 tacks on an extra diner analogy at the end when the checkout example had already taught the idea.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short and easy to follow, though it introduces the term 'UX goal' without briefly telling a beginner that UX stands for user experience.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Both checks include accurate `basis` quotes and helpful reasons, and every check asks something new. On Screen 3, it adapts the brief's tempting wrong answer from 'Redesign the payment button' to 'Redesign the reorder button' to fit its pharmacy scenario.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows the screen order, CAST names, and US English context well, with a clean one-sentence-per-idea summary. Includes a brief diner analogy on Screen 2 alongside the app situations.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A is well-written, provides proper `basis` quotes on both check screens, and handles the `findError` activity accurately. However, it slightly alters the exact wording of the required tempting wrong answer on Screen 3 ('Redesign the reorder button' instead of 'Redesign the payment button') and leaves the acronym 'UX' undefined for beginners.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All questions, answers, and reasons are accurate and unambiguous.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "More abrupt and closer to a textbook on Screen 2, stating the formal definition in the second sentence before unpacking the progress bar example, and tacking on a generic second example ('For a ticket app...').",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Short sentences, but it never explains what 'UX' stands for to a beginner and doesn't explain in `why` or `explanation` of Screen 4 how steps 3 and 4 go wrong because of step 2.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 3 uses the exact tempting distractor from the brief, but its correct answer ('Fewer shoppers give up when a fee appears') anticipates Screen 4's fee scenario. Screen 5 leaves `basis` null when Screen 2's definition directly decides the answer, and the reasons are somewhat terse.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Keeps every single example strictly inside a product team and its app, uses CAST character Mei, and follows the five-screen plan. Awkwardly writes 'At the fictional Cedar Bank's app' in the learner-facing text.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model B stays strictly within product teams and apps across all examples and hits the exact wording of the tempting wrong answer on Screen 3. However, its `findError` explanation misses how steps 3 and 4 build on the mistake, its Screen 5 `basis` is null, and its prose is drier and more textbook-like on Screen 2.",
+          "score": 8.1
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 8814,
+        "outputTokens": 1391,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The distinction between an experience goal and a proposed design is accurate, and each multiple-choice question has one defensible answer. The AI activity correctly locates the originating mistake in step 2, with later steps building on it.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Tyler's whiteboard provides a concrete opening, and the language is conversational. However, the explanation adds another payment-goal/button contrast after already establishing the distinction, creating an unnecessary recap and triggering the length cap.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The explanation connects the progress bar directly to the difference between choosing a design and naming an experience change. The short sentences and concrete activity steps make the lesson easy for a beginner to follow.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The AI activity tests error detection, and the banking application transfers the distinction to a new problem. However, the first check largely repeats the explanation's payment example, and the application has a null basis even though screen 2 supplies the deciding rule.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The output follows the five-screen sequence, opens with a noninteractive scene, and adds no unplanned guess. App-based situations, CAST naming, the required payment-button distractor, the banking application, and one-sentence summary ideas all fit the brief.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "Model C best preserves the planned lesson and keeps every situation within an app context. Its main weaknesses are a nearly recall-only checkout check and the missing basis for the banking application.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The goals and solutions are classified correctly, and the option feedback matches those classifications. The AI's step-2 mistake and its downstream consequences are represented accurately.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The opening is concrete, and the explanation uses direct, everyday language. The additional diner comparison repeats an already clear distinction, adding unnecessary reading and triggering the length cap.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The explanation makes both the desired change and the proposed design explicit before asking the learner to distinguish them. The activity also clearly explains why measuring exposure to a design is different from measuring the intended experience change.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The pharmacy classification, AI error detection, and banking application each require a distinct use of the idea. Both multiple-choice checks have relevant quoted bases, and their feedback explains the goal-versus-solution distinction without identifying options by position.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The screen order, noninteractive hook, AI activity structure, and banking application follow the requested format. However, the diner comparison leaves the required product-team/app setting, and the pharmacy check substitutes a different scenario and distractor for the planned payment-button check.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A provides the strongest progression of distinct checks and supplies useful grounding for both multiple-choice questions. It ranks slightly lower because the diner example violates the required setting and the pharmacy check replaces the planned payment-button scenario.",
+          "score": 8.45
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The examples and answer keys correctly distinguish desired experience changes from proposed fixes. The AI activity contains the intended originating error in step 2, and the remaining steps consistently build on that mistaken goal.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Mei's whiteboard scene and the plainspoken explanation are approachable. The coffee-shop comparison adds a second example after the checkout distinction is already established, making the screen longer than its idea requires.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The lesson explicitly explains UX as what using a product is like and contrasts the desired change with the chosen fix. The checks and activity use short, understandable statements without demanding unexplained technical knowledge.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks apply the distinction to payment completion, an AI-generated goal, and finding a banking setting, with useful option feedback. The banking question nevertheless has a null basis despite the explanation containing the rule that decides its answer.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson preserves the planned screen sequence, required payment-button distractor, and realistic banking application. However, the coffee-shop example violates the app-only setting requirement, and the online shoe-shop opening does not explicitly establish a product team working on its app.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model D is accessible and accurately teaches the central distinction, including a well-formed AI error activity. It loses ground through the off-scope coffee-shop comparison, an opening that does not clearly establish an app team, and missing grounding for the final check.",
+          "score": 8.3
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 8122,
+        "outputTokens": 2590,
+        "reasoningTokens": 1343
+      }
+    }
+  ],
+  "outputs": {
+    "openai/gpt-6.1-terra": "646a0a6e3b5d3ab9",
+    "anthropic/claude-opus-5.5": "e28b0e6f35280401",
+    "anthropic/claude-sonnet-5.5": "73299827cdd7749b",
+    "google/gemini-4-argon": "957e2158848cab5c"
+  },
+  "swapped": false,
+  "taskId": "lesson-writer",
+  "testCaseId": "en-ux-goals-spot-ai-2"
+}

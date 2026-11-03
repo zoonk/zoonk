@@ -224,7 +224,9 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.context().close();
 });
 
-test("a goal a link filled in doesn't fill the box again once it's made", async ({ browser }) => {
+test("a goal a link filled in doesn't fill the box again once it's made, on Back or on a new goal", async ({
+  browser,
+}) => {
   const user = await createE2EUser(getBaseURL());
   const words = `i want to understand quantum physics ${randomUUID().slice(0, 8)}`;
 
@@ -244,10 +246,18 @@ test("a goal a link filled in doesn't fill the box again once it's made", async 
   await page.getByRole("button", { name: "Looks right" }).click();
   await expect(page).toHaveURL(GOAL_URL);
 
+  const box = page.getByRole("textbox", { name: "I want to" });
+  await page.goBack();
+  await expect(page).toHaveURL(/\/start$/u);
+  await expect(box).toHaveValue("");
+  await page.goForward();
+  await expect(page).toHaveURL(GOAL_URL);
+
   const switcher = page.getByRole("button", { name: /^Understand quantum physics.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
   await page.getByRole("menuitem", { name: "Start a new goal" }).click();
-  await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
+  await expect(page).toHaveURL(/\/start$/u);
+  await expect(box).toHaveValue("");
   await page.context().close();
 });

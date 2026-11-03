@@ -79,14 +79,16 @@ function installWebRTC() {
   return { getAudioTracks: () => [track], getTracks: () => [track] } as unknown as MediaStream;
 }
 
-async function closedWithoutConfirmation(endedByServer: () => Promise<boolean>) {
+async function watchLiveCall(endedByServer: () => Promise<boolean>) {
   const stream = installWebRTC();
   const call = { phase: "connecting" };
+  const closed = vi.fn();
   const session = createLiveCallSession({ onEvent: () => null, sessionUrl: "/live-session" });
 
   watchConnection({
     endedByServer,
     isOpen: () => call.phase === "connecting" || call.phase === "live",
+    onClosed: closed,
     onEnded: () => {
       call.phase = "ended";
     },
@@ -99,6 +101,12 @@ async function closedWithoutConfirmation(endedByServer: () => Promise<boolean>) 
   await session.connect({ stream });
   call.phase = "live";
   FakePeerConnection.last?.channel.close();
+
+  return { call, closed, session };
+}
+
+async function closedWithoutConfirmation(endedByServer: () => Promise<boolean>) {
+  const { call, session } = await watchLiveCall(endedByServer);
   await vi.waitFor(() => expect(call.phase).not.toBe("live"));
   session.dispose();
 
@@ -116,5 +124,15 @@ describe(watchConnection, () => {
 
   it("treats a close our server didn't make as a dropped call", async () => {
     await expect(closedWithoutConfirmation(async () => false)).resolves.toBe("failed");
+  });
+
+  it("says the call closed at once, while our server is still asked how", async () => {
+    const { call, closed, session } = await watchLiveCall(
+      () => Promise.withResolvers<boolean>().promise,
+    );
+
+    await vi.waitFor(() => expect(closed).toHaveBeenCalledOnce());
+    expect(call.phase).toBe("live");
+    session.dispose();
   });
 });

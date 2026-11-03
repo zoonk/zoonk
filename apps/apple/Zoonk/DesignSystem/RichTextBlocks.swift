@@ -1,15 +1,50 @@
 import SwiftUI
 
+/// A line of rich text as drawn, and what VoiceOver says for it when that differs, such as a
+/// formula in words ("1 over 4").
+struct RichInline {
+  var text: AttributedString
+  var spoken: String? = nil
+
+  /// For a label or an announcement.
+  var said: String {
+    spoken ?? String(text.characters)
+  }
+
+  static func + (lhs: RichInline, rhs: RichInline) -> RichInline {
+    RichInline(
+      text: lhs.text + rhs.text,
+      spoken: lhs.spoken == nil && rhs.spoken == nil ? nil : lhs.said + rhs.said)
+  }
+
+  static func += (lhs: inout RichInline, rhs: RichInline) {
+    lhs = lhs + rhs
+  }
+
+  /// For quoting it inside another `Text`, which drops a quoted Text's own label: draw it, then
+  /// give the whole line a label that quotes it spoken.
+  func quoted(spoken: Bool) -> Text {
+    spoken ? Text(verbatim: said) : Text(text)
+  }
+}
+
+extension Text {
+  init(_ inline: RichInline) {
+    let text = Text(inline.text)
+    self = inline.spoken.map { text.accessibilityLabel($0) } ?? text
+  }
+}
+
 /// Anything beyond paragraphs, lists and GFM tables stays text, so a stray marker never changes a
 /// screen's layout. Each caller reads the inline markup its own way: lessons typeset math, items don't.
 struct RichTextBlocks: View {
   let text: String
   /// A quote of the text, in its markup, to highlight where it first shows.
   let mark: String?
-  let inline: (String) -> AttributedString
+  let inline: (String) -> RichInline
 
   init(
-    _ text: String, mark: String? = nil, inline: @escaping (String) -> AttributedString
+    _ text: String, mark: String? = nil, inline: @escaping (String) -> RichInline
   ) {
     self.text = text
     self.mark = mark
@@ -19,7 +54,7 @@ struct RichTextBlocks: View {
   var body: some View {
     let blocks = RichTextBlock.parse(text)
     let marked = mark.flatMap { quote in
-      RichTextBlock.mark(quote, in: blocks) { String(inline($0).characters) }
+      RichTextBlock.mark(quote, in: blocks) { String(inline($0).text.characters) }
     }
 
     VStack(alignment: .leading, spacing: 12) {
@@ -56,15 +91,13 @@ struct RichTextBlocks: View {
     }
   }
 
-  private func highlighting(_ text: AttributedString, _ mark: RichTextBlock.Mark?)
-    -> AttributedString
-  {
-    guard let mark, let range = text.range(of: mark.text) else {
-      return text
+  private func highlighting(_ inline: RichInline, _ mark: RichTextBlock.Mark?) -> RichInline {
+    guard let mark, let range = inline.text.range(of: mark.text) else {
+      return inline
     }
 
-    var marked = text
-    marked[range].backgroundColor = .warning.opacity(0.15)
+    var marked = inline
+    marked.text[range].backgroundColor = .warning.opacity(0.15)
     return marked
   }
 

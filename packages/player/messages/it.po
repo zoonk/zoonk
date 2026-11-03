@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "Metti {total, plural, one {# carta} other {# carte}} nei gruppi {groups}, una alla volta."
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item} è nel gruppo {group}. Prossima carta: {next}."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item} è nel gruppo {group}."
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "Hai ripreso {item}."
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "Nessuna carta qui"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "<item></item> va nel gruppo <group></group>."
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "{right} su {total} nel gruppo giusto"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "{item} va nel gruppo {group}."
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "{sorted} su {total} classificate"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "A quale gruppo appartiene?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} è nel gruppo {group}."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} è nel gruppo {group}. Prossima carta: {next}."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "Hai ripreso {item}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"

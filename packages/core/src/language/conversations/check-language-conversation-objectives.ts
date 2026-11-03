@@ -3,8 +3,12 @@ import { type LanguageConversation, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { readSavedScenario } from "./_utils/conversation-view";
-import { findNewlyMetObjectives } from "./_utils/objective-check";
-import { type LanguageConversationObjectiveCheckInput } from "./conversation-contract";
+import { getObjectivesProgressCue } from "./_utils/live-call-script";
+import { NOTHING_FOUND, type ObjectiveCheck, runObjectiveCheck } from "./_utils/objective-check";
+import {
+  type LanguageConversationObjectiveCheck,
+  type LanguageConversationObjectiveCheckInput,
+} from "./conversation-contract";
 import { getMetObjectives } from "./conversation-rules";
 import { findOwnedConversation } from "./get-language-conversation";
 
@@ -26,11 +30,11 @@ const CHECKS_PER_CALL_MINUTE = 4;
 async function checkNewTurns({
   row,
   ...check
-}: Parameters<typeof findNewlyMetObjectives>[0] & {
+}: Parameters<typeof runObjectiveCheck>[0] & {
   row: Pick<LanguageConversation, "checkedTurns" | "id" | "minutes">;
-}): Promise<string[]> {
+}): Promise<ObjectiveCheck> {
   if (check.turns.length <= row.checkedTurns) {
-    return [];
+    return NOTHING_FOUND;
   }
 
   const { count } = await prisma.languageConversation.updateMany({
@@ -43,15 +47,15 @@ async function checkNewTurns({
   });
 
   if (count === 0) {
-    return [];
+    return NOTHING_FOUND;
   }
 
   const turns = check.turns.slice(Math.max(0, row.checkedTurns - CONTEXT_TURNS));
-  return findNewlyMetObjectives({ ...check, row, turns });
+  return runObjectiveCheck({ ...check, row, turns });
 }
 
 export type CheckLanguageConversationObjectivesResult =
-  | { objectivesMet: string[]; status: "ready" }
+  | { check: LanguageConversationObjectiveCheck; status: "ready" }
   | { status: "conversationEnded" | "invalid" | "notFound" | "unauthorized" };
 
 export async function checkLanguageConversationObjectives({
@@ -94,9 +98,11 @@ export async function checkLanguageConversationObjectives({
     where: { conversationId: row.id, state: "live", userId },
   });
 
-  const newlyMet = scenario.examTask
-    ? []
+  const found = scenario.examTask
+    ? NOTHING_FOUND
     : await checkNewTurns({ row, scenario, turns: input.turns, userId });
+
+  const newlyMet = found.met;
 
   const labels =
     newlyMet.length === 0
@@ -123,8 +129,21 @@ export async function checkLanguageConversationObjectives({
             : unchanged(current.objectivesMet);
         });
 
+  const objectivesMet = getMetObjectives({ labels, objectives: scenario.objectives });
+
+  const open = scenario.objectives
+    .map((objective) => objective.label)
+    .filter((label) => !objectivesMet.includes(label));
+
   return {
-    objectivesMet: getMetObjectives({ labels, objectives: scenario.objectives }),
+    check: {
+      goodbye: found.goodbye,
+      objectivesMet,
+      progress:
+        !found.goodbye && labels.length > row.objectivesMet.length
+          ? getObjectivesProgressCue({ met: objectivesMet, open })
+          : null,
+    },
     status: "ready",
   };
 }

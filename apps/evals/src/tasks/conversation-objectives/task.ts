@@ -26,18 +26,31 @@ function getScore({ missed, wrong }: { missed: number; wrong: number }): number 
   return missed > 0 ? MISSED_SCORE : EXACT_SCORE;
 }
 
+function toGoodbyeLabel(goodbye: boolean): string {
+  return goodbye ? " (goodbye)" : "";
+}
+
+/** A goodbye that wasn't said hangs up on the learner; a missed one only lets the call run on. */
 const scoreConversationObjectives: TaskScorer<ConversationObjectivesExpected> = ({
   output,
   testCase,
 }) => {
   const expected = testCase.expected?.met ?? [];
-  const { met } = JSON.parse(output) as CheckConversationObjectivesSchema;
+  const expectedGoodbye = testCase.expected?.goodbye ?? false;
+  const { goodbye, met } = JSON.parse(output) as CheckConversationObjectivesSchema;
   const labels = [...new Set(met.map((objective) => objective.label))];
   const wrong = labels.filter((label) => !expected.includes(label));
   const missed = expected.filter((label) => !labels.includes(label));
 
-  const score = getScore({ missed: missed.length, wrong: wrong.length });
-  const classification = { expected: toLabel(expected), predicted: toLabel(labels) };
+  const score = getScore({
+    missed: missed.length + (expectedGoodbye && !goodbye ? 1 : 0),
+    wrong: wrong.length + (goodbye && !expectedGoodbye ? 1 : 0),
+  });
+
+  const classification = {
+    expected: `${toLabel(expected)}${toGoodbyeLabel(expectedGoodbye)}`,
+    predicted: `${toLabel(labels)}${toGoodbyeLabel(goodbye)}`,
+  };
 
   return {
     ...createFixedScore({
@@ -54,7 +67,7 @@ export const conversationObjectivesTask: Task<
   ConversationObjectivesExpected
 > = {
   description:
-    "Say which of a live call's open objectives the learner's own words achieved so far, from the transcript: code checks the labels",
+    "Say which of a live call's open objectives the learner's own words achieved so far, and whether its last exchange was a mutual goodbye, from the transcript: code checks both",
   generate: (input) => checkConversationObjectives({ ...input, useFallback: false }),
   id: "conversation-objectives",
   name: "Conversation Objectives",
