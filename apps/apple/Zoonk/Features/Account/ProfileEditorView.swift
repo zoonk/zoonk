@@ -49,8 +49,8 @@ struct ProfileEditorView: View {
       } footer: {
         if !isRequiredSetup {
           Text(
-            "How Zoonk and your buddy call you", tableName: "Account",
-            comment: "What the profile name is for")
+            "How Zoonk and your buddy call you, and the name on your certificates.",
+            tableName: "Account", comment: "What the profile name is for")
         }
       }
 

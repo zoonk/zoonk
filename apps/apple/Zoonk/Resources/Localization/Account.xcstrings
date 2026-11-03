@@ -2296,6 +2296,65 @@
         }
       }
     },
+    "Certificates" : {
+      "comment" : "Settings row for the learner's certificates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zertifikate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificats"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificati"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "証明書"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인증서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certyfikaty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificados"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sertifikalar"
+          }
+        }
+      }
+    },
     "Change" : {
       "comment" : "Shows the username field in setup",
       "localizations" : {
@@ -4912,67 +4971,61 @@
         }
       }
     },
-    "How Zoonk and your buddy call you" : {
+    "How Zoonk and your buddy call you, and the name on your certificates." : {
       "comment" : "What the profile name is for",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So nennen dich Zoonk und dein Kumpel"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How Zoonk and your buddy call you"
+            "value" : "So nennen dich Zoonk und dein Kumpel. Dieser Name steht auf deinen Zertifikaten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te llaman Zoonk y tu compañero"
+            "value" : "El nombre que usan Zoonk y tu compañero para llamarte y que aparece en tus certificados."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le nom utilisé par Zoonk et ton Compagnon pour s’adresser à toi"
+            "value" : "Le nom qu’utilisent Zoonk et ton compagnon pour t’appeler et qui figure sur tes certificats."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come ti chiamano Zoonk e il tuo compagno"
+            "value" : "Il nome con cui ti chiamano Zoonk e il tuo compagno e che compare sui tuoi certificati."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkと相棒が呼びかけるときの名前"
+            "value" : "Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk와 짝꿍이 부를 이름"
+            "value" : "Zoonk와 짝꿍이 부를 이름이에요. 인증서에도 이 이름이 표시돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jak Zoonk i twój kumpel się do ciebie zwracają"
+            "value" : "Tak zwracają się do ciebie Zoonk i twój kumpel. To imię widnieje też na twoich certyfikatach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como o Zoonk e seu parceiro te chamam"
+            "value" : "O nome que o Zoonk e seu parceiro usam para te chamar e que aparece nos seus certificados."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ve arkadaşının sana nasıl hitap ettiği"
+            "value" : "Zoonk ve ders arkadaşının sana nasıl hitap edeceğini ve sertifikalarında yer alacak adı belirler."
           }
         }
       }

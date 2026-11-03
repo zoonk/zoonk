@@ -120,7 +120,7 @@ struct MockResultView: View {
       isAtHinge = $0
     }
     .navigationTitle(MockLabels.title(number: view.number))
-    .milestoneCeremony(view.day.ceremony)
+    .completionMoments(view.day)
     .toolbar {
       if view.purpose != .placement {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))

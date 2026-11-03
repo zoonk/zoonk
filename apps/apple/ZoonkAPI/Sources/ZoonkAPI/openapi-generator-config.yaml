@@ -22,6 +22,7 @@ filter:
     - askMaterialQuestion
     - cancelStripeSubscription
     - checkLanguageConversationObjectives
+    - claimCourseCertificate
     - completeGoalPlacement
     - completeLanguageConversation
     - completePronunciationRound
@@ -97,6 +98,7 @@ filter:
     - finishLanguageLevelTest
     - finishMock
     - getCatalogLesson
+    - getCertificate
     - getChallenge
     - getChallengeTeam
     - getChapter
@@ -177,6 +179,7 @@ filter:
     - gradeMockEssays
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
+    - listCertificates
     - listChapterLessons
     - listCourseCategoryCounts
     - listCourseChapters
@@ -190,6 +193,7 @@ filter:
     - listMocks
     - listPronunciationReviews
     - listSourceChangeNotices
+    - markCertificateShown
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock

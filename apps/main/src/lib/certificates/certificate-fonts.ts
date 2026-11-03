@@ -14,7 +14,8 @@ const FONTS_DIR = join(process.cwd(), "src/lib/certificates/fonts");
 /*
  * Satori takes no variable fonts, so each weight the design uses is its own instance, named in
  * hundreds: the 560, 620 and 640 instances answer for 600, 700 and 800. These copies carry no
- * kerning, since Satori leaves a wide gap after every word it kerns.
+ * kerning: the Satori inside `next/og` leaves a wide gap after every word it kerns
+ * (https://github.com/vercel/next.js/issues/101100).
  */
 const LATIN_FONTS: FontFile[] = [
   { file: "Geist-400.ttf", name: "Geist", weight: 400 },

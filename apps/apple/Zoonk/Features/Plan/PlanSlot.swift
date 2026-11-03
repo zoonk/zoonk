@@ -396,14 +396,18 @@ private struct PlanPausedSlot: View {
 
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
+  @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
   @State private var failed = false
   @State private var isStarting = false
+  @State private var isClaiming = false
+  @State private var claimed: [CertificateFacts] = []
+  @State private var opened: OpenedCertificate?
 
   let context: PlanContext
 
   var body: some View {
-    let next = store.studyNext(goalId: context.goal.id)
+    let end = store.planEnd(goalId: context.goal.id)
 
     VStack(alignment: .leading, spacing: 8) {
       Label {
@@ -413,7 +417,38 @@ private struct PlanFinishedSlot: View {
         StatusMark(status: .done)
       }
 
-      if let value = next.value, value.nextLevel != nil || !value.related.isEmpty {
+      if let certificate = end.value?.certificate {
+        if let code = certificate.code {
+          Button {
+            opened = OpenedCertificate(code: code)
+          } label: {
+            Label {
+              Text(
+                "View certificate", tableName: "Plan",
+                comment: "Opens the certificate of the finished plan's course")
+            } icon: {
+              Image(systemName: "rosette")
+            }
+          }
+          .buttonStyle(.bordered)
+        } else {
+          Button {
+            Task { await claim() }
+          } label: {
+            Label {
+              Text(
+                "Get your certificate", tableName: "Plan",
+                comment: "Writes the certificate of the finished plan's course and shows it")
+            } icon: {
+              Image(systemName: "rosette")
+            }
+          }
+          .buttonStyle(.mainAction)
+          .disabled(isClaiming)
+        }
+      }
+
+      if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {
         Text(
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
@@ -452,7 +487,30 @@ private struct PlanFinishedSlot: View {
         .foregroundStyle(.destructive)
       }
     }
-    .loads(next, refreshable: false)
+    .loads(end, refreshable: false)
+    .completionMoments(certificates: claimed)
+    .sheet(item: $opened) { opened in
+      CertificateSheet(code: opened.code)
+        .accessibilitySizeStyles()
+    }
+  }
+
+  private func claim() async {
+    isClaiming = true
+    failed = false
+
+    switch await certificates.claim(goalID: context.goal.id) {
+    case .done(let certificate?):
+      if certificate.wasShown {
+        opened = OpenedCertificate(code: certificate.facts.code)
+      } else {
+        claimed = [certificate.facts]
+      }
+    case .done(nil), .failed: failed = true
+    case .obsolete: break
+    }
+
+    isClaiming = false
   }
 
   private func continueAtNextLevel() async {

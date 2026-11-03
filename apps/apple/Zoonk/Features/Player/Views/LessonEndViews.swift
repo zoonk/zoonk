@@ -28,7 +28,7 @@ struct LessonCompletionView: View {
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
-    .milestoneCeremony(day?.ceremony)
+    .completionMoments(day)
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
       if status == .saved, soundsEnabled {
