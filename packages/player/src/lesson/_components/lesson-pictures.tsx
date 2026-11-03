@@ -185,7 +185,7 @@ function PictureFrame({
   return (
     <div
       className={cn(
-        "flex w-full justify-start",
+        "flex w-full justify-start max-sm:justify-center",
         frame === "hero" && "max-sm:-mx-4 max-sm:w-[calc(100%+2rem)]",
         className,
       )}
