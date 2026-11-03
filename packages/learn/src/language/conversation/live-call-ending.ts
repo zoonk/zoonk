@@ -193,7 +193,7 @@ function evaluate(state: CallEndingState, at: number): Step {
   }
 
   const commands: CallEndingCommand[] = [];
-  let next = state;
+  let next = at >= state.talkEndsAt ? arm(state, "time", at) : state;
 
   if (
     next.characterAt === null &&
@@ -205,8 +205,6 @@ function evaluate(state: CallEndingState, at: number): Step {
     commands.push({ cue: "opening", id: OPENING_IDS[1], type: "cue" });
     next = { ...next, openingRetried: true };
   }
-
-  next = at >= next.talkEndsAt ? arm(next, "time", at) : next;
 
   for (const step of [stepSilence, stepGoodbye]) {
     const stepped = step(next, at);
