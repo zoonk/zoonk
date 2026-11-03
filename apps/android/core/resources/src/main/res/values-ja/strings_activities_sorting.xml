@@ -2,14 +2,14 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "891845ce7a5a5c8003d7211432cde5663952b93ee0cafb8671454be0a56ff8b8",
-  "activities_sorting_all_sorted": "68b4b682d53c70ac2b131be64c56ab3a5e955249917f6a047bd1f08e602dc53a",
+  "activities_sorting_all_sorted": "d9dc7afd5910ace1acb1a4212a1df3011659344a2aa21c700bc23f931812b263",
   "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
   "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
   "activities_sorting_badge_match_pairs": "7ece404ad928beba3ccf02e5c96d220e7ebaa91a0f9ed3e245c5a571a85ff9e2",
   "activities_sorting_badge_place_in_time": "76da7c02e82aa5e8c784078f18c48517c55285ae434ae8ea444be97c6e64ad67",
   "activities_sorting_badge_put_in_order": "d778df71a8bd601baf8c2d175e71e5417cf6d537ac87706923326974c0ada97c",
   "activities_sorting_badge_sort_groups": "9609fa8f3749a3358d880434f4177c6f66767ee0f9d8fda72094285d4122aa7e",
-  "activities_sorting_belongs_in": "7401e320d50834789943264075fcebe1d4a527e4262c91b00e0c23660e19adf5",
+  "activities_sorting_belongs_in": "2144cb26f3f3fd87d41d635f8a5911046714a311414b7e534c9263eddafa5b1b",
   "activities_sorting_card_matched": "ae68fd4dbb4722f8d1c39bc6a8befa1fa33ffc5333c65cf43c5dc9b0a7ce1fc6",
   "activities_sorting_card_no_match": "1f63cec9feef6f0429f955215adac6b0fb126c48e8998a8b9f86498b9b308050",
   "activities_sorting_cards_to_match": "e92f76b51379a607a7b37b56e52b66965f7b51b5d38376382110a89a1a2d0a5c",
@@ -27,6 +27,8 @@
   "activities_sorting_gap_between": "4806db0506b278c385b922af2c410cde33a08d9ef10eb30372e8980f4ddb27db",
   "activities_sorting_goes_with": "8cfbc9697971aeef0d64ce8a6cae880ec22ce637f536fcfc2c3f654f710a350d",
   "activities_sorting_how_they_connect": "a5012060160db06d92512d4d559b0a308501e88a03ddcd040966801f6bc29a61",
+  "activities_sorting_is_in": "5aaafac9fd5f02c4226b2c4c1e0a535f1f388ba121e8524c3a1cd5ee79f5bfa8",
+  "activities_sorting_is_in_next": "a6d646b3e6285078904ba27dc013602a5c21f7b6de402f5b23e295aa8d6c32df",
   "activities_sorting_led_to": "9c2397942de6b4dd2e7b63988a5f9c32db89b9691fbecb4d1d9754443eb3a2ca",
   "activities_sorting_linked": "a155b319a22253861848ae422bfe7a02c77459f71ac72c106401f86ea07b82e5",
   "activities_sorting_links_count": "1bcc545cb0e1037d0d3fe8e90cad52b0403343f2885ce6467a66a9401011936a",
@@ -34,30 +36,29 @@
   "activities_sorting_matched": "496c6dd2dfdbd971569c8b8a01d939a2482a39ee53421f70a204c8ed5ef24e2a",
   "activities_sorting_missed_first_try": "8b7f43c750e4fec41af547257196b746e2a20ab7dd5cae29250fd5df34c350bf",
   "activities_sorting_missed_link": "131b41ff7df4e636f35b87cbb21006bbd699258a1975a1d87228c97ee1ab989b",
+  "activities_sorting_more_count": "378161f736208a989d0308d9ffa43903e1d419c6538757bd0d6e683c0b340fa9",
+  "activities_sorting_move_to": "075fa6194374f16b6c323472124f88e32b5f5b879163e9c12e0f878f9b9d2dd9",
   "activities_sorting_name_on_spot": "7769fc13b1ee2dcf3e0307510b43c7e5ed94f203c76284aa93697ed55bce4631",
   "activities_sorting_name_taken_off": "1b933710e08fe3ce1d8cf6fc3e1f932afd33fff2220664a70ea71c4aef6ec8ce",
   "activities_sorting_names": "f9fe4e3564b20798232270869341f4601161b638302440bfbf5bd822602ebded",
+  "activities_sorting_no_cards": "7c2cc64cc26aac97dc86c74a12afd2f75118e62aa962fa06e6b795ea582ae6f5",
   "activities_sorting_no_match_note": "b13515c2a43418c2f9c2644312a6bb03605a9d792e7cf99b48c2b9b323953a79",
   "activities_sorting_not_a_link": "2e66888400e233c8b24ffb7bca4cfcefc667231b6aaa5448737170cfc55dd4c8",
   "activities_sorting_not_quite": "79c813067d6d09daac67de517dd41cf7da5550bc3461018121d4937ef6c03f1c",
   "activities_sorting_not_straight": "169468194c57486c358d396a574dd288a18e884ad869ff04fde10aee8c7d4da0",
-  "activities_sorting_nothing_here": "072f3b242c8caf4794af6702838fd009006f6a00ebc5ec7dc6906b7eb4334288",
   "activities_sorting_now_pick": "5477d5fa2eb5461c722a234d0a52091dfd1ce6fcbdf056ccaa5534c63c90522e",
   "activities_sorting_pairs_matched": "f23877e12a530c6ca273671c2e62c84949cc2f9abe53e82682a3eb2053218eb5",
   "activities_sorting_pick_a_name": "acbe14d5e62769fe2f62aa4ebb95c843062bc03e01cefef92fc26f006b10466f",
   "activities_sorting_pick_cause": "02449ab9f652bdbb2d4477b99097eabaa877f106d6cf05b323a840c2c9c73b14",
   "activities_sorting_place_on_timeline": "6a6939de908b4b427326ef05531c63502c1694569a98d590becb9fa1b3b75480",
-  "activities_sorting_placed": "3eba9057fc49b6cf864e7dae4142ac51e86fb04297c568e582119b1d3c321a61",
-  "activities_sorting_put_in": "40c7e57b208a988169f7e662d8f48d05097ab7c354ab7ac83602ebfb7e3f9ad1",
-  "activities_sorting_put_it_here": "5352460e50ddd677538904ae4fe200a6235fb66835499f0ef918d8017e7792da",
   "activities_sorting_put_on_spot": "a8402a1a467727b5a2d5f4cb982dba037ac74040d9a254750181a7a2cd580edc",
   "activities_sorting_remove_link": "2da528ec2fa3a8f8c6956685a0732b2d342434b6f859f2505ce28f132c0cbfdd",
   "activities_sorting_removed": "d33d7de45a8222d3b08fc6bb24d304087ae39ab461f438631c516850b5708780",
-  "activities_sorting_right_count": "da5e4e049a2a0b0e3644220a3a236461bea9d9fb49bcaeec963835bb5ad1fe8d",
+  "activities_sorting_right_count": "d7055c18cd7eb7f9bb38a68c7ea0cf5c26cfdb55d37607aceb776727b54634c1",
   "activities_sorting_right_group": "70b043561c53845a60ee9d7c71cefd1f42eececf50a9497c65c9e7312449ede9",
   "activities_sorting_right_order": "523d0882550609bf5c2247e1bf548574108ecfa9bf28e13fe9f111db39488a94",
   "activities_sorting_show_real_dates": "98e71885853284faf6f52615f4357a2f568aa90f7958d09aff5a42cc6c0fea10",
-  "activities_sorting_sorted_count": "7e2774855bda1c19961243d97f038c881fdf5cf2a092271595e051ea0a836f60",
+  "activities_sorting_sorted_count": "130a041cfa2e7f685296a43cc33ad54424b4f5c7a07e792ea8ab61a54f0b0b89",
   "activities_sorting_spot_empty": "1ab159e7c2f67945c722f6b745c9fc061e79a1e1e0164cf3b89b742693b5a38c",
   "activities_sorting_spot_named": "2757f095b267f3157a645c69cf23d97f0476d6afd087e25c89e2166d1fb2fa7a",
   "activities_sorting_spots_to_label": "c2f68187efbd62cccdc6bdad45b3d801f8ec490085a07cfffc6d55030fd7e958",
@@ -65,8 +66,10 @@
   "activities_sorting_tap_a_name": "71ce382e3e66696d85af6fb48f4c960600b562e6cfcf55c374876d6346edcdae",
   "activities_sorting_time_between": "387852c754bbe9e2a96f155965096392f7aa7b339b20e604f07e66ee0f8b73f5",
   "activities_sorting_timeline_from": "cfcbea564900f7ca34e84975d99f64647b495e2d777b08ef04d48ad17f9da0fb",
-  "activities_sorting_to_sort": "51d2cd960411259211154901391a80f8853e259b5493554e67ba81be7561e216",
+  "activities_sorting_took_back": "ac2b2b2b6c6cb369512185c6662133d3f3b015b674fabc4402541eb44ba10ee0",
+  "activities_sorting_undo": "fd187c0ed03a69b04fee88cefa0a867828237fc15ebfe114542bee74c7dd1670",
   "activities_sorting_what_each_number_shows": "1a1bdebf29bf8d2aac977a64479214c72a3a7aa8848de73dfe08c82bdd81e7c0",
+  "activities_sorting_which_group": "49c0898701f0afbdc8d5b0cebb409bc398a72d2dced299e293cd6562d327843e",
   "activities_sorting_wrong_group": "7c6fce80eec0d0baf96cbe13948fe0797828530f20146b59a6c5ef53779f04e5",
   "activities_sorting_year_and_guess": "3997c471b00ad8c6dd8c07e7878b2d02b01ecfa885b83247a3bcf8a4f32231b6",
   "activities_sorting_year_bce": "52686e10bdad4f2da1898b75ab52eebec5adf963c43121dc6d09878e9a49756d",
@@ -79,31 +82,36 @@
 -->
 <resources>
     <string name="activities_sorting_badge_sort_groups">グループに分ける</string>
-    <!-- Above the items still to sort into groups. -->
-    <string name="activities_sorting_to_sort">未分類</string>
-    <string name="activities_sorting_all_sorted">すべて分類できました。準備ができたら答え合わせをしましょう。</string>
-    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". -->
     <plurals name="activities_sorting_sorted_count">
-        <item quantity="other">%1$d個を分類済み（全%2$d個）</item>
+        <item quantity="other">%1$d/%2$d枚を分類済み</item>
     </plurals>
-    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
-    <string name="activities_sorting_put_in">%1$sを%2$sに入れる</string>
-    <!-- In an empty group while an item is picked. -->
-    <string name="activities_sorting_put_it_here">ここに入れる</string>
-    <!-- In an empty group. -->
-    <string name="activities_sorting_nothing_here">まだ何もありません</string>
-    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
-    <plurals name="activities_sorting_placed">
-        <item quantity="other">%1$sを%2$sに入れました。%3$d個を分類済みです（全%4$d個）。</item>
-    </plurals>
+    <!-- Under the card being sorted, above the groups to choose from. -->
+    <string name="activities_sorting_which_group">どのグループに当てはまりますか？</string>
+    <!-- Takes back the card sorted last. -->
+    <string name="activities_sorting_undo">元に戻す</string>
+    <!-- On a group, beside the last card sorted into it: how many more cards it holds, like "+2". -->
+    <string name="activities_sorting_more_count">+%1$d</string>
+    <!-- Read by TalkBack after a card is sorted; the last one is the card to sort now, like "Melting ice is in Same substance. Next: Rusting iron." -->
+    <string name="activities_sorting_is_in_next">%1$sを%2$sに入れました。次は%3$sです。</string>
+    <!-- Read by TalkBack after the last card is sorted or a card is moved, like "Melting ice is in Same substance." -->
+    <string name="activities_sorting_is_in">%1$sを%2$sに入れました。</string>
+    <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
+    <string name="activities_sorting_took_back">%1$sを戻しました。</string>
+    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">すべて分けました。カードをタップすると移動できます。</string>
+    <!-- Title of the menu that moves a sorted card to another group. -->
+    <string name="activities_sorting_move_to">移動先</string>
+    <!-- A group that holds no cards once every card is sorted. -->
+    <string name="activities_sorting_no_cards">カードはありません</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
     <string name="activities_sorting_right_group">%1$s、正しいグループ</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s、間違ったグループ</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d個を正しく分類（全%2$d個）</string>
+    <string name="activities_sorting_right_count">正しく分類できた数：%1$d / %2$d</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
-    <string name="activities_sorting_belongs_in">%1$sの正しいグループは%2$sです。</string>
+    <string name="activities_sorting_belongs_in">「%1$s」が入るのは「%2$s」です。</string>
     <string name="activities_sorting_badge_put_in_order">順番に並べる</string>
     <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
     <string name="activities_sorting_steps_in_your_order">並べ替えた手順</string>
