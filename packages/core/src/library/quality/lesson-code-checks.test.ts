@@ -13,6 +13,7 @@ import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 type CheckOptions = {
   allowActivityFallback?: boolean;
   exams?: readonly unknown[];
+  language?: string;
   level?: CourseLevel;
   shortAnswers?: boolean;
 };
@@ -511,6 +512,19 @@ describe(checkWrittenLesson, () => {
     ]);
 
     expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
+  });
+
+  it("counts a Japanese summary idea's sentences, which end on 。 with no space after", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const japanese = (text: string) =>
+      codesOf({ ...lesson, summary: hubMap([text]) }, { language: "ja" });
+
+    expect(
+      japanese("資産は会社が持つものです。負債は返すお金です。純資産は残りです。"),
+    ).toContainEqual([null, "summary"]);
+
+    expect(japanese("資産は会社が持つものです。")).not.toContainEqual([null, "summary"]);
   });
 
   it("opens a beginner or overview lesson with a scene, while an exam's or an intermediate one may guess", () => {
