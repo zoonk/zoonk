@@ -123,15 +123,6 @@ class ProfileFormViewModel(
     }
 }
 
-/** `@zoonk/auth/name-rules`: a changed name fits in 150 code points; one saved before the limit stays until it changes. */
-internal fun isNameChangeTooLong(
-    name: String,
-    savedName: String,
-): Boolean {
-    val trimmedName = name.trim()
-    return trimmedName != savedName.trim() && trimmedName.codePointCount(0, trimmedName.length) > 150
-}
-
 /** `@zoonk/auth/username-rules`: 3 to 30 letters, numbers or underscores. */
 internal fun isUsernameSyntaxValid(username: String): Boolean =
     username.length in 3..30 && username.all { it in 'a'..'z' || it in '0'..'9' || it == '_' }

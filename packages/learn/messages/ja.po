@@ -1839,6 +1839,21 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "証明書に載る名前：<strong>{name}</strong>さん"
 
 #: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150文字以内で入力してください。"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。いつでも変更できます。"
+
+#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "証明書に記載する名前"
@@ -1852,16 +1867,6 @@ msgstr "証明書に載せたい名前"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "フルネーム"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。いつでも変更できます。"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"

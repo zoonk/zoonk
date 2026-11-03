@@ -1839,6 +1839,21 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "On your certificate: <strong>{name}</strong>"
 
 #: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Use 150 characters or fewer."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "Your certificates and your buddy use this name."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "Your certificates and your buddy use this name. You can change it anytime."
+
+#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "Name on your certificates"
@@ -1852,16 +1867,6 @@ msgstr "Your name, as it should appear"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Your full name"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "Your certificates and your buddy use this name."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "Your certificates and your buddy use this name. You can change it anytime."
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"

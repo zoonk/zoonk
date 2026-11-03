@@ -39,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.AccountStore
+import com.zoonk.android.feature.account.isNameChangeTooLong
 import kotlinx.coroutines.launch
 
 /**
@@ -78,12 +79,18 @@ class CertificateNameModel(
         saved[CHANGING] = false
     }
 
-    fun save() {
-        if (isSaving || name.isBlank()) return
+    /** [current] is the saved name, or null when there's none yet. */
+    fun save(current: String?) {
+        val trimmed = name.trim()
+        if (isSaving || trimmed.isEmpty() || isNameChangeTooLong(trimmed, current.orEmpty())) return
+        if (trimmed == current) {
+            stop()
+            return
+        }
         isSaving = true
         failed = false
         viewModelScope.launch {
-            val failure = account.saveProfile(name.trim())
+            val failure = account.saveProfile(trimmed)
             isSaving = false
             if (failure == null) stop() else failed = true
         }
@@ -114,7 +121,8 @@ fun CertificateNameField(
 ) {
     val focus = remember { FocusRequester() }
     val name = model.name
-    val save = model::save
+    val isTooLong = isNameChangeTooLong(name, current.orEmpty())
+    val save = { model.save(current) }
 
     BackHandler(enabled = current != null, onBack = model::stop)
     LaunchedEffect(Unit) { if (current != null) focus.requestFocus() }
@@ -143,8 +151,18 @@ fun CertificateNameField(
             },
             placeholder = { Text(stringResource(R.string.certificates_name_placeholder)) },
             supportingText = {
-                Text(stringResource(if (current == null) R.string.certificates_name_hint_new else R.string.certificates_name_hint))
+                Text(
+                    stringResource(
+                        when {
+                            isTooLong -> R.string.account_name_too_long
+                            current == null -> R.string.certificates_name_hint_new
+                            else -> R.string.certificates_name_hint
+                        },
+                    ),
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                )
             },
+            isError = isTooLong,
             singleLine = true,
             readOnly = model.isSaving,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done),
@@ -164,7 +182,9 @@ fun CertificateNameField(
             if (current != null) {
                 TextButton(onClick = model::stop, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) }
             }
-            Button(onClick = save, enabled = name.isNotBlank() && !model.isSaving) { Text(stringResource(R.string.certificates_save)) }
+            Button(onClick = save, enabled = name.isNotBlank() && !isTooLong && !model.isSaving) {
+                Text(stringResource(R.string.certificates_save))
+            }
         }
     }
 }

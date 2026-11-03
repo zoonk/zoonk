@@ -1839,6 +1839,21 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "인증서 이름: <strong>{name}</strong>님"
 
 #: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
+
+#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "인증서에 표시되는 이름"
@@ -1852,16 +1867,6 @@ msgstr "인증서에 표시할 이름"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "이름(성 포함)"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"

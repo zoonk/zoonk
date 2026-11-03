@@ -1,5 +1,6 @@
 "use client";
 
+import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
@@ -19,19 +20,23 @@ import { ChangeSaveError } from "../_components/save-error";
 export type SaveCertificateName = (name: string) => Promise<boolean>;
 
 function useNameSave({
+  current,
   onSaved,
   save,
 }: {
+  current: string | null;
   onSaved?: (name: string) => void;
   save: SaveCertificateName;
 }) {
+  const [name, setName] = useState(current ?? "");
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
+  const trimmed = name.trim();
+  const isTooLong = isNameChangeTooLong({ name, savedName: current ?? "" });
+  const canSave = !pending && Boolean(trimmed) && !isTooLong;
 
-  const submit = (name: string) => {
-    const trimmed = name.trim();
-
-    if (!trimmed) {
+  const submit = () => {
+    if (!canSave) {
       return;
     }
 
@@ -45,7 +50,19 @@ function useNameSave({
     });
   };
 
-  return { failed, pending, submit };
+  return { canSave, failed, isTooLong, name, pending, setName, submit };
+}
+
+function NameHint({ current, isTooLong }: { current: string | null; isTooLong: boolean }) {
+  const t = useExtracted();
+
+  if (isTooLong) {
+    return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
+  }
+
+  return current
+    ? t("Your certificates and your buddy use this name.")
+    : t("Your certificates and your buddy use this name. You can change it anytime.");
 }
 
 /** In place on the award moment and on the page, while there's no name to print or a change to make. */
@@ -64,8 +81,12 @@ export function CertificateNameField({
 }) {
   const t = useExtracted();
   const id = useId();
-  const [name, setName] = useState(current ?? "");
-  const { failed, pending, submit } = useNameSave({ onSaved, save });
+
+  const { canSave, failed, isTooLong, name, pending, setName, submit } = useNameSave({
+    current,
+    onSaved,
+    save,
+  });
 
   return (
     <form
@@ -73,7 +94,7 @@ export function CertificateNameField({
       data-slot="certificate-name-field"
       onSubmit={(event) => {
         event.preventDefault();
-        submit(name);
+        submit();
       }}
     >
       <label className="text-[0.8125rem] font-[550]" htmlFor={`${id}-name`}>
@@ -83,6 +104,7 @@ export function CertificateNameField({
       <div className="flex gap-2">
         <Input
           aria-describedby={`${id}-hint`}
+          aria-invalid={isTooLong}
           autoComplete="name"
           // oxlint-disable-next-line jsx-a11y/no-autofocus -- The field is what the learner asked for, or the one thing between them and sharing.
           autoFocus={Boolean(current)}
@@ -101,7 +123,7 @@ export function CertificateNameField({
         <Button
           aria-busy={pending || undefined}
           className="shrink-0"
-          disabled={pending || !name.trim()}
+          disabled={!canSave}
           focusableWhenDisabled
           size="lg"
           type="submit"
@@ -111,9 +133,7 @@ export function CertificateNameField({
       </div>
 
       <p className="text-muted-foreground text-xs leading-snug" id={`${id}-hint`}>
-        {current
-          ? t("Your certificates and your buddy use this name.")
-          : t("Your certificates and your buddy use this name. You can change it anytime.")}
+        <NameHint current={current} isTooLong={isTooLong} />
       </p>
 
       {failed && <ChangeSaveError />}
@@ -133,21 +153,27 @@ function NameDialogForm({
 }) {
   const t = useExtracted();
   const id = useId();
-  const [name, setName] = useState(current ?? "");
-  const { failed, pending, submit } = useNameSave({ onSaved: onClose, save });
+
+  const { canSave, failed, isTooLong, name, pending, setName, submit } = useNameSave({
+    current,
+    onSaved: onClose,
+    save,
+  });
 
   return (
     <form
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
-        submit(name);
+        submit();
       }}
     >
       <label className="sr-only" htmlFor={`${id}-name`}>
         {t("Name on your certificates")}
       </label>
       <Input
+        aria-describedby={isTooLong ? `${id}-error` : undefined}
+        aria-invalid={isTooLong}
         autoComplete="name"
         id={`${id}-name`}
         onChange={(event) => setName(event.target.value)}
@@ -155,6 +181,12 @@ function NameDialogForm({
         required
         value={name}
       />
+
+      {isTooLong && (
+        <p className="text-destructive-text text-sm" id={`${id}-error`}>
+          {t("Use 150 characters or fewer.")}
+        </p>
+      )}
 
       {failed && <ChangeSaveError />}
 
@@ -164,7 +196,7 @@ function NameDialogForm({
         </Button>
         <Button
           aria-busy={pending || undefined}
-          disabled={pending || !name.trim()}
+          disabled={!canSave}
           focusableWhenDisabled
           size="lg"
           type="submit"

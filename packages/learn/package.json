@@ -188,6 +188,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.106",
+    "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

@@ -1839,6 +1839,21 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "Sertifikandaki ad: <strong>{name}</strong>"
 
 #: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "En fazla 150 karakter kullan."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
+
+#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "Sertifikalarındaki ad"
@@ -1852,16 +1867,6 @@ msgstr "Adın, görünmesini istediğin şekilde"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Adın ve soyadın"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"
