@@ -129,24 +129,31 @@ function createFrameScreen({
   brief,
   kind,
   skills,
+  visual = null,
 }: {
   brief: string;
   kind: LessonScreenKind;
   skills: number[];
+  visual?: string | null;
 }): LessonScreen {
-  return { activityTemplate: null, brief, kind, skills, visual: null };
+  return { activityTemplate: null, brief, kind, skills, visual };
 }
 
-/** The first lesson keeps the original hook and the last the original application. */
+/**
+ * The first lesson keeps the original hook and the last the original application. A new learner's
+ * lesson always opens on a picture, so a new hook shows its own scene.
+ */
 function getFrame({
   isFirst,
   isLast,
+  novice,
   remap,
   skills,
   spec,
 }: {
   isFirst: boolean;
   isLast: boolean;
+  novice: boolean;
   remap: ReadonlyMap<number, number>;
   skills: readonly LessonSpecSkill[];
   spec: LessonSpec;
@@ -168,7 +175,12 @@ function getFrame({
         }),
     hook: hook
       ? remapScreen({ fallback: [0], remap, screen: hook })
-      : createFrameScreen({ brief: skills[0]?.useCase ?? "", kind: "hook", skills: [0] }),
+      : createFrameScreen({
+          brief: skills[0]?.useCase ?? "",
+          kind: "hook",
+          skills: [0],
+          visual: novice ? skills[0]?.useCase : null,
+        }),
   };
 }
 
@@ -180,12 +192,14 @@ function buildPart({
   group,
   index,
   language,
+  novice,
   spec,
   total,
 }: {
   group: readonly SkillSegment[];
   index: number;
   language: string;
+  novice: boolean;
   spec: LessonSpec;
   total: number;
 }): LessonSpec {
@@ -196,6 +210,7 @@ function buildPart({
   const frame = getFrame({
     isFirst: index === 0,
     isLast: index === total - 1,
+    novice,
     remap,
     skills,
     spec,
@@ -226,10 +241,12 @@ function buildPart({
 export function splitLessonSpec({
   language,
   level,
+  novice = false,
   spec,
 }: {
   language: string;
   level: CourseLevel;
+  novice?: boolean;
   spec: LessonSpec;
 }): LessonSpec[] {
   if (spec.skills.length <= 1 || fitsLesson({ level, spec })) {
@@ -243,6 +260,6 @@ export function splitLessonSpec({
   }
 
   return groups.map((group, index) =>
-    buildPart({ group, index, language, spec, total: groups.length }),
+    buildPart({ group, index, language, novice, spec, total: groups.length }),
   );
 }

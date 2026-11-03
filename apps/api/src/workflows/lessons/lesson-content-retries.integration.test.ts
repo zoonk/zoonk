@@ -101,7 +101,7 @@ describe("lesson draft durability", () => {
           throw new Error("Judge unavailable");
         }
 
-        return true;
+        return { probability: 0.9, teaches: true };
       });
 
     const chapter = await libraryChapterFixture();

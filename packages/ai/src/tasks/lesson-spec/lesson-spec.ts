@@ -176,7 +176,12 @@ async function planLesson(params: LessonSpecParams) {
   const lessons = params.quick
     ? specs.slice(0, 1)
     : specs.flatMap((spec) =>
-        splitLessonSpec({ language: params.language, level: params.level, spec }),
+        splitLessonSpec({
+          language: params.language,
+          level: params.level,
+          novice: readsNoviceRules(params),
+          spec,
+        }),
       );
 
   const data: LessonSpecResult = { lessons };
