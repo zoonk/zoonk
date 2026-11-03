@@ -20,7 +20,6 @@ type CheckOptions = {
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
-    exams: undefined,
     language: "en",
     lesson,
     level: "beginner",
@@ -74,7 +73,6 @@ describe(checkWrittenLesson, () => {
     };
 
     const checked = checkWrittenLesson({
-      exams: undefined,
       language: "en",
       lesson: {
         ...lesson,

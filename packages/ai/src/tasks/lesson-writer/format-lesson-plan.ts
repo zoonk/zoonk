@@ -3,7 +3,6 @@ import { type ChapterLesson, formatChapterLessons } from "../_utils/chapter-less
 import { formatLocalContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
-import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
@@ -54,20 +53,18 @@ function formatSkill(skill: LessonSpecSkill, index: number): string {
 }
 
 function formatScreen({
-  novice,
   screen,
   skills,
   position,
   shortAnswers,
 }: {
-  novice: boolean;
   screen: LessonScreen;
   skills: readonly LessonSpecSkill[];
   position: number;
   shortAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((index) => skills[index]?.name ?? []);
-  const kinds = getWrittenKinds({ kind: screen.kind, novice, shortAnswers });
+  const kinds = getWrittenKinds({ kind: screen.kind, shortAnswers });
 
   return [
     `${position}. ${screen.kind}, written as: ${kinds.join(" or ")}`,
@@ -106,11 +103,9 @@ function getToday(): string {
 
 export function formatLessonPlan(context: LessonWritingContext): string {
   const { spec } = context;
-  const novice = readsNoviceRules(context);
 
   const screens = spec.screens.map((screen, index) =>
     formatScreen({
-      novice,
       position: index + 1,
       screen,
       shortAnswers: Boolean(context.shortAnswers),

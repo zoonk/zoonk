@@ -109,7 +109,7 @@ async function planLesson({
     homeChapterId: inputs.homeChapterId,
     lessonId,
     novice,
-    pictures: listPlannedPictures({ novice, specs: data.lessons }),
+    pictures: listPlannedPictures(data.lessons),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,

@@ -165,9 +165,9 @@ describe(writeLessonDraft, () => {
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
 
-    expect(regular.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");
-    expect(beginner.userPrompt).toContain("1. hook, written as: hookText\n");
-    expect(beginnerExam.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");
+    // Every lesson opens on its story's moment; the guess comes later.
+    expect(regular.userPrompt).toContain("1. hook, written as: hookText\n");
+    expect(beginnerExam.userPrompt).toContain("1. hook, written as: hookText\n");
 
     // Only learners whose exams ask written answers may get the application as a typed answer.
     expect(regular.userPrompt).toContain("3. application, written as: check or mathCheck\n");
