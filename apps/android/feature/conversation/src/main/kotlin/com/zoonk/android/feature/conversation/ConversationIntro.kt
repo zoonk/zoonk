@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.conversation
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -15,7 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -173,7 +178,10 @@ internal fun CallStartActions(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (launcher.micBlocked) {
-            MicrophoneOff(stringResource(R.string.conversation_mic_off, characterName))
+            // The message takes the place of the button that had focus, so focus moves to it.
+            val message = remember { FocusRequester() }
+            LaunchedEffect(Unit) { message.requestFocus() }
+            MicrophoneOff(stringResource(R.string.conversation_mic_off, characterName), Modifier.focusRequester(message).focusable())
             Button(onClick = launcher.typeInstead, modifier = Modifier.barAction()) {
                 Icon(painterResource(R.drawable.ic_keyboard), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))

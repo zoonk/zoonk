@@ -50,6 +50,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -312,7 +314,7 @@ private fun LiveBar(
     val next = if (conversation.examTask == null) conversation.objectives.firstOrNull { it.label !in call.metLabels } else null
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         CallTurn(call, conversation.character.name, next?.description)
-        TypedReply(call.isOpen, actions.onSend, actions.onTyping)
+        TypedReply(call.isOpen, actions.onSend, actions.onTyping, focusOnStart = call.micBlocked)
         CallControls(
             call,
             actions,
@@ -492,12 +494,16 @@ private fun MarkDisc(
     }
 }
 
+/** On a call made by typing, the field is where the learner goes next, so it takes focus when the call opens. */
 @Composable
 private fun TypedReply(
     canSend: Boolean,
     onSend: (String) -> Unit,
     onTyping: () -> Unit,
+    focusOnStart: Boolean,
 ) {
+    val field = remember { FocusRequester() }
+    LaunchedEffect(Unit) { if (focusOnStart) field.requestFocus() }
     var text by rememberSaveable { mutableStateOf("") }
     val send = {
         if (text.isNotBlank()) {
@@ -512,7 +518,7 @@ private fun TypedReply(
             text = it
             onTyping()
         },
-        modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
+        modifier = Modifier.fillMaxWidth().focusRequester(field).semantics { contentDescription = label },
         enabled = canSend,
         placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
         trailingIcon = {
