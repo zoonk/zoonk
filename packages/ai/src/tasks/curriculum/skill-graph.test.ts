@@ -55,6 +55,8 @@ const NOTICE: ExamOutline = {
   topicFrequency: [],
 };
 
+async function* noPartials() {}
+
 function answer(output: unknown) {
   const step = {
     model: { modelId: MODEL, provider: "gateway" },
@@ -202,6 +204,35 @@ describe(generateSkillGraph, () => {
 
     expect(streamText).toHaveBeenCalledOnce();
     expect(data.skills).toHaveLength(1);
+  });
+
+  it("fails with the provider's own error when the stream fails", async () => {
+    const providerError = new Error("The provider refused the request");
+    const noOutput = Promise.reject(new Error("No output generated."));
+    noOutput.catch(() => null);
+
+    vi.mocked(streamText).mockReset();
+
+    vi.mocked(streamText).mockImplementation(({ onError }) => {
+      void onError?.({ error: providerError });
+
+      return {
+        finalStep: noOutput,
+        output: noOutput,
+        partialOutputStream: noPartials(),
+        steps: noOutput,
+        usage: noOutput,
+      } as never;
+    });
+
+    await expect(
+      generateSkillGraph({
+        goal: "Entender juros compostos",
+        goalKind: "learn",
+        language: "pt",
+        purpose: "overview",
+      }),
+    ).rejects.toBe(providerError);
   });
 
   it("writes the graph once more when code finds it flawed, and keeps the better one", async () => {

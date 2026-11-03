@@ -205,18 +205,28 @@ async function writePart<TOutput>({
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
-    generate: () =>
-      finishStreamedPart({
+    generate: () => {
+      // A failed stream rejects with the SDK's `NoOutputGeneratedError`. The provider's error is the
+      // real cause, and the SDK's default handler would log it with the learner's prompt.
+      const streamErrors: unknown[] = [];
+
+      return finishStreamedPart({
         generation: streamText({
           instructions: systemPrompt,
           model,
+          onError: ({ error }) => {
+            streamErrors.push(error);
+          },
           output: Output.object({ schema: partSchema }),
           prompt: userPrompt,
           providerOptions,
           reasoning,
         }),
         onSkillNamed: params.onSkillNamed,
-      }),
+      }).catch((error: unknown) => {
+        throw streamErrors[0] ?? error;
+      });
+    },
     libraryInput: true,
     systemPrompt,
     task: "skill-graph",
