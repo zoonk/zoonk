@@ -23,8 +23,24 @@ enum AnalyticsEvent: Equatable {
     case chapter, course, lesson
   }
 
+  /// A reply gap runs from the learner's microphone going quiet to the next character transcript
+  /// arriving: a proxy for the wait the learner heard.
+  struct CallEnded: Equatable {
+    let conversationKind: String
+    let delegations: Int
+    let durationSeconds: Int
+    let learnerTurns: Int
+    let reason: String
+    let replyGapMaxMs: Int?
+    let replyGapMedianMs: Int?
+    let slowReplies: Int
+    let talkSeconds: Int
+    let unansweredTurns: Int
+  }
+
   case activityAbandoned(lessonID: String, screen: Int, stepKind: String, wrongInARow: Int)
   case activityUsed(lessonID: String, template: String)
+  case callEnded(CallEnded)
   case ceremonyShown(Ceremony)
   case goalTyped(hasAttachment: Bool)
   case homeViewed
@@ -41,6 +57,7 @@ enum AnalyticsEvent: Equatable {
     switch self {
     case .activityAbandoned: "Activity Abandoned"
     case .activityUsed: "Activity Used"
+    case .callEnded: "Call Ended"
     case .ceremonyShown: "Ceremony Shown"
     case .goalTyped: "Goal Typed"
     case .homeViewed: "Home Viewed"
@@ -64,6 +81,14 @@ enum AnalyticsEvent: Equatable {
       ]
     case .activityUsed(let lessonID, let template):
       ["lesson_id": lessonID, "template": template]
+    case .callEnded(let call):
+      [
+        "conversation_kind": call.conversationKind, "delegations": call.delegations,
+        "duration_seconds": call.durationSeconds, "learner_turns": call.learnerTurns,
+        "reason": call.reason, "reply_gap_max_ms": orNull(call.replyGapMaxMs),
+        "reply_gap_median_ms": orNull(call.replyGapMedianMs), "slow_replies": call.slowReplies,
+        "talk_seconds": call.talkSeconds, "unanswered_turns": call.unansweredTurns,
+      ]
     case .ceremonyShown(let ceremony):
       ["ceremony": ceremony.rawValue]
     case .goalTyped(let hasAttachment):

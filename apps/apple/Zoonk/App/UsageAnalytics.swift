@@ -32,7 +32,7 @@ struct AnalyticsLearner: Equatable {
 }
 
 /// Main sends a missing value as null, which a Swift optional in `[String: Any]` can't encode.
-private func orNull<Value>(_ value: Value?) -> Any {
+func orNull<Value>(_ value: Value?) -> Any {
   if let value { value } else { NSNull() }
 }
 

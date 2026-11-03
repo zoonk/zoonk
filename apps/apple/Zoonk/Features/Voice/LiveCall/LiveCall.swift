@@ -8,16 +8,16 @@ struct LiveCallClient {
   let redeem: @MainActor (_ connectionId: String, _ offer: String) async throws -> String
   /// Has the server hang up: whether it already had at the call's deadline, nil if unconfirmed.
   let end: @MainActor (_ connectionId: String) async -> Bool?
-  /// Every goal met so far, from what was said; nil when the check didn't run.
-  let checkObjectives: @MainActor ([ConversationTurn]) async -> [String]?
+  /// Nil when the check didn't run.
+  let checkObjectives: @MainActor ([ConversationTurn]) async -> ObjectiveCheck?
   let makeTransport: @MainActor () -> any LiveCallTransport
-  /// Asks for the microphone; false when the learner said no (the call still runs, typed).
+  /// Asks for the microphone; false when the learner said no.
   let requestMicrophone: @MainActor () async -> Bool
 }
 
-/// Mirrors main's `useLiveCall`. The microphone is asked for first, so the permission prompt never
-/// takes time from the call. Ending it silences it at once; the server then hangs it up and confirms
-/// before the peer goes and before anything is saved.
+/// Mirrors main's `useLiveCall`. The microphone is asked for before anything is reserved, so a
+/// learner who says no can choose to type instead. Ending a call silences it at once; the server
+/// then hangs it up and confirms before the peer goes and before anything is saved.
 @MainActor
 @Observable
 final class LiveCall {
@@ -39,20 +39,23 @@ final class LiveCall {
     case plusRequired
   }
 
+  /// What the turn row and the wrap-up line show, as the call's clock runs.
+  struct Signals: Equatable {
+    var isCharacterTalking = false
+    var isLearnerSpeaking = false
+    var isQuietLong = false
+    var isSayingGoodbye = false
+    var wrapUp: LiveCallEnding.Reason?
+  }
+
   typealias EndsAtLimit = Components.Schemas.LanguageConversationSetup.EndsAtLimitPayload
 
   /// A session that hasn't started after this isn't going to.
   static let connectTimeout = Duration.seconds(15)
-  /// The character starts wrapping up this long before the call's time is over.
-  static let wrapUpSeconds: TimeInterval = 20
-  /// The learner quiet this long: the character asks if they're there.
-  static let silenceNudgeSeconds: TimeInterval = 20
-  /// Still quiet this long after their last word, the call ends: it's paid by the second.
-  static let silenceEndSeconds: TimeInterval = 45
-  /// GPT-Live usually opens within a second; still silent after this, it's told again once.
-  static let openingRetry = Duration.seconds(5)
   /// The character's answer has settled once its transcript stays quiet this long.
   static let replySettled = Duration.milliseconds(1500)
+  /// How often the microphone is read and the ending rules run.
+  static let tick = Duration.milliseconds(200)
 
   private(set) var phase = Phase.idle
   private(set) var failure: Failure?
@@ -60,13 +63,16 @@ final class LiveCall {
   private(set) var turns: [TranscriptTurn] = []
   private(set) var metLabels: [String]
   private(set) var muted = false
+  /// The learner said no to the microphone, or chose to type.
   private(set) var micBlocked = false
   private(set) var reconnecting = false
-  private(set) var isCharacterTalking = false
   private(set) var liveSince: Date?
-  /// The plan's call time running out while the character wraps up: today's or this month's.
-  private(set) var limitNear: EndsAtLimit?
-  private(set) var limitSeconds: Int
+  private(set) var endedAt: Date?
+  /// The call's talk time, after which the character says goodbye.
+  private(set) var talkSeconds: Int
+  /// The plan's call time runs out with this call: today's or this month's.
+  private(set) var endsAtLimit: EndsAtLimit?
+  private(set) var signals = Signals()
 
   @ObservationIgnored private let conversation: LanguageConversation
   @ObservationIgnored private let client: LiveCallClient
@@ -75,19 +81,20 @@ final class LiveCall {
   @ObservationIgnored private var attempt = 0
   @ObservationIgnored private var closeConfirmed = false
   @ObservationIgnored private var endedAtDeadline = false
-  @ObservationIgnored private var ending: Task<Bool, Never>?
-  @ObservationIgnored private var endsAt: Date?
-  @ObservationIgnored private var endsAtLimit: EndsAtLimit?
+  @ObservationIgnored private var closing: Task<Bool, Never>?
+  @ObservationIgnored private var script: LiveCallScript?
+  @ObservationIgnored private var talkEndsAt: Date?
+  @ObservationIgnored private var hardStopAt: Date?
+  @ObservationIgnored private var ending: LiveCallEnding?
+  @ObservationIgnored private var replyGaps = LiveCallReplyGaps()
+  @ObservationIgnored private var delegations = 0
+  @ObservationIgnored private var tracked = false
   @ObservationIgnored private var waitingReplies: [String] = []
   @ObservationIgnored private var timers: [Task<Void, Never>] = []
-  @ObservationIgnored private var openingRetry: Task<Void, Never>?
   @ObservationIgnored private var settle: Task<Void, Never>?
-  @ObservationIgnored private var talking: Task<Void, Never>?
-  @ObservationIgnored private var lastLearnerAt = Date.now
-  @ObservationIgnored private var nudged = false
-  @ObservationIgnored private var wrappedUp = false
-  @ObservationIgnored private var cuesSent = 0
-  @ObservationIgnored private var learnerSpoke = false
+  @ObservationIgnored private var goodbyeCues = 0
+  @ObservationIgnored private var examCuesSent = 0
+  @ObservationIgnored private var learnerSpokeSinceCheck = false
   @ObservationIgnored private var checking = false
   @ObservationIgnored private var checkAgain = false
 
@@ -95,21 +102,35 @@ final class LiveCall {
     self.conversation = conversation
     self.client = client
     metLabels = conversation.objectives.filter(\.met).map(\.label)
-    limitSeconds = conversation.minutes * 60
+    talkSeconds = conversation.minutes * 60
   }
 
-  /// Leaving the screen or starting again cancels a start still on its way.
+  /// The learner has said something out loud: until then the turn row tells them to.
+  var hasLearnerSpoken: Bool {
+    turns.contains { $0.speaker == .learner && $0.startMs != nil }
+  }
+
+  /// Leaving the screen or starting again cancels a start still on its way. A learner who said no
+  /// to the microphone stays on the intro, with nothing reserved.
   func start(takeover: Bool = false) async {
     attempt += 1
     let mine = attempt
-    phase = .connecting
     failure = nil
 
-    micBlocked = !(await client.requestMicrophone())
+    if !micBlocked {
+      let granted = await client.requestMicrophone()
 
-    guard attempt == mine else {
-      return
+      guard attempt == mine else {
+        return
+      }
+
+      guard granted else {
+        micBlocked = true
+        return
+      }
     }
+
+    phase = .connecting
 
     let reservation = await reserve(takeover: takeover, isCurrent: { self.attempt == mine })
 
@@ -122,9 +143,13 @@ final class LiveCall {
       return
     }
 
-    // The time the server said was left, from now: the device's clock can be off.
-    endsAt = Date.now.addingTimeInterval(TimeInterval(setup.seconds))
+    // The times the server said were left, from now: the device's clock can be off.
+    let now = Date.now
+    talkSeconds = setup.talkSeconds
+    talkEndsAt = now.addingTimeInterval(TimeInterval(setup.talkSeconds))
+    hardStopAt = now.addingTimeInterval(TimeInterval(setup.seconds))
     endsAtLimit = setup.endsAtLimit
+    script = setup.script
 
     let transport = client.makeTransport()
     self.transport = transport
@@ -155,13 +180,25 @@ final class LiveCall {
     }
   }
 
+  /// The learner chose to do the call by typing.
+  func startTyping() async {
+    micBlocked = true
+    await start()
+  }
+
+  /// The learner hung up: at once, with no goodbye, as a phone does.
   func hangUp() {
-    guard phase == .connecting || phase == .live else {
+    end(.learnerEnded)
+  }
+
+  /// The learner cancelled while calling: the reservation goes, and nothing is saved.
+  func cancel() {
+    guard phase == .connecting else {
       return
     }
 
-    silence()
-    phase = .ended
+    track(.learnerEnded)
+    leave()
   }
 
   /// A call still going shows as dropped, and the server hangs it up.
@@ -187,13 +224,26 @@ final class LiveCall {
     }
 
     turns = turns.addingTypedReply(trimmed)
-    learnerTurn()
+    learnerSpokeSinceCheck = true
+    settle?.cancel()
 
-    if phase == .live {
-      transport?.send(.instructions(LiveCallCue.typedReply(trimmed)))
-    } else {
+    guard phase == .live, let script else {
       waitingReplies.append(trimmed)
+      return
     }
+
+    send(script.cues.typedReply.quoting(trimmed))
+    typing()
+  }
+
+  /// A key typed in the reply field: the learner is answering.
+  func typing() {
+    guard phase == .live else {
+      return
+    }
+
+    ending?.learnerTyped(at: .now)
+    advance()
   }
 
   func toggleMute() {
@@ -232,8 +282,8 @@ final class LiveCall {
       return true
     }
 
-    if let ending {
-      return await ending.value
+    if let closing {
+      return await closing.value
     }
 
     let task = Task { [client] in
@@ -244,11 +294,11 @@ final class LiveCall {
         self.endedAtDeadline = atDeadline
       }
 
-      self.ending = nil
+      self.closing = nil
       return atDeadline != nil
     }
 
-    ending = task
+    closing = task
     return await task.value
   }
 
@@ -308,56 +358,59 @@ final class LiveCall {
       return
     }
 
-    guard phase == .live else {
+    guard phase == .live, let script else {
       return
     }
+
+    let now = Date.now
 
     switch event {
     case .started:
       break
     case .closed:
-      hangUp()
+      end(.hardStop)
     case .transcript(let speaker, let delta, let startMs, let endMs):
       turns = turns.adding(delta, speaker: speaker, startMs: startMs, endMs: endMs)
 
       if speaker == .learner {
-        learnerTurn()
+        // The transcript trails the voice, but proves the learner spoke when the microphone's
+        // level missed a soft voice.
+        learnerSpoke(at: now)
+        learnerSpokeSinceCheck = true
+        settle?.cancel()
       } else {
-        openingRetry?.cancel()
+        ending?.characterSpoke(at: now, startMs: startMs)
+        replyGaps.characterSpoke(at: now)
         characterTurn()
       }
     case .delegation(let id):
-      transport?.send(.thinking(LiveCallCue.noBackend, delegationId: id))
+      delegations += 1
+      send(script.cues.noBackend, delegationId: id)
+    case .acknowledged(let id, let startMs):
+      if id.hasPrefix(Self.goodbyeEventPrefix) {
+        ending?.goodbyeAcknowledged(startMs: startMs)
+      }
     }
+
+    advance(now)
   }
 
   private func goLive() {
+    guard let script, let talkEndsAt, let hardStopAt else {
+      return
+    }
+
     let now = Date.now
     liveSince = now
-    lastLearnerAt = now
-
-    if let endsAt {
-      limitSeconds = max(0, Int(endsAt.timeIntervalSince(now).rounded()))
-    }
-
     phase = .live
     reconnecting = false
-
-    let opening = LiveCallCue.opening(conversation.openingLine)
-    transport?.send(.instructions(opening))
-
-    openingRetry = Task { [weak self] in
-      try? await Task.sleep(for: Self.openingRetry)
-
-      guard !Task.isCancelled, let self, self.phase == .live else {
-        return
-      }
-
-      self.transport?.send(.instructions(opening))
-    }
+    ending = LiveCallEnding(
+      timing: script.timing, liveAt: now, talkEndsAt: talkEndsAt, hardStopAt: hardStopAt)
+    advance(now)
 
     for reply in waitingReplies {
-      transport?.send(.instructions(LiveCallCue.typedReply(reply)))
+      send(script.cues.typedReply.quoting(reply))
+      ending?.learnerTyped(at: now)
     }
 
     waitingReplies = []
@@ -365,68 +418,108 @@ final class LiveCall {
   }
 
   private func startClock() {
-    let cues = conversation.speakingTask?.cues ?? []
-
     timers.append(
       Task { [weak self] in
         while !Task.isCancelled {
-          try? await Task.sleep(for: .milliseconds(500))
+          try? await Task.sleep(for: Self.tick)
 
-          guard let self, self.phase == .live, let start = self.liveSince, let endsAt = self.endsAt
-          else {
+          guard let self, self.phase == .live else {
             return
           }
 
-          let now = Date.now
-          let elapsed = now.timeIntervalSince(start)
-          let quiet = now.timeIntervalSince(self.lastLearnerAt)
-
-          if self.cuesSent < cues.count, !self.wrappedUp,
-            elapsed >= TimeInterval(cues[self.cuesSent].atSeconds)
-          {
-            self.transport?.send(.instructions(cues[self.cuesSent].say))
-            self.cuesSent += 1
-          }
-
-          if !self.wrappedUp, now >= endsAt.addingTimeInterval(-Self.wrapUpSeconds) {
-            self.wrappedUp = true
-            self.limitNear = self.endsAtLimit
-            self.transport?.send(.instructions(LiveCallCue.wrapUp))
-          }
-
-          if !self.nudged, !self.wrappedUp, quiet >= Self.silenceNudgeSeconds {
-            self.nudged = true
-            self.transport?.send(.instructions(LiveCallCue.silence))
-          }
-
-          if now >= endsAt || quiet >= Self.silenceEndSeconds {
-            self.hangUp()
-          }
+          await self.listen()
+          self.sendExamCues()
+          self.advance()
         }
       })
   }
 
-  /// Every word the learner says or types keeps the call from ending on its silence timeout.
-  private func learnerTurn() {
-    lastLearnerAt = .now
-    nudged = false
-    learnerSpoke = true
-    settle?.cancel()
+  /// Muted or typing, the microphone never counts as speech.
+  private func listen() async {
+    guard let transport, !muted, !micBlocked, await transport.hearsSpeech(),
+      phase == .live, !muted
+    else {
+      return
+    }
+
+    learnerSpoke(at: .now)
   }
 
-  private func characterTurn() {
-    isCharacterTalking = true
-    talking?.cancel()
-    talking = Task { [weak self] in
-      try? await Task.sleep(for: .milliseconds(1200))
+  private func learnerSpoke(at now: Date) {
+    ending?.learnerSpoke(at: now)
+    replyGaps.learnerSpoke(at: now)
+  }
 
-      if !Task.isCancelled {
-        self?.isCharacterTalking = false
+  /// An exam's own prompts, at their times, until the ending starts.
+  private func sendExamCues() {
+    guard let liveSince, let cues = conversation.speakingTask?.cues, ending?.armed == nil,
+      examCuesSent < cues.count,
+      Date.now.timeIntervalSince(liveSince) >= TimeInterval(cues[examCuesSent].atSeconds)
+    else {
+      return
+    }
+
+    send(LiveCallCue(channel: .instructions, text: cues[examCuesSent].say))
+    examCuesSent += 1
+  }
+
+  private func advance(_ now: Date = .now) {
+    guard phase == .live, let script else {
+      return
+    }
+
+    for action in ending?.advance(to: now) ?? [] {
+      switch action {
+      case .send(.opening):
+        send(script.cues.opening)
+      case .send(.checkIn):
+        send(script.cues.checkIn)
+      case .send(.goodbye):
+        sendGoodbye(script.cues.goodbye)
+      case .send(.goodbyeDone):
+        sendGoodbye(script.cues.goodbyeDone)
+      case .hangUp(let reason):
+        end(reason.map { EndReason($0) } ?? .hardStop)
+        return
       }
     }
 
+    guard let ending else {
+      return
+    }
+
+    let next = Signals(
+      isCharacterTalking: ending.isCharacterSpeaking(at: now),
+      isLearnerSpeaking: ending.isLearnerSpeaking(at: now),
+      isQuietLong: ending.isQuietLong(at: now),
+      isSayingGoodbye: ending.isGoodbyeSaid,
+      wrapUp: ending.armed)
+
+    if next != signals {
+      signals = next
+    }
+  }
+
+  private static let goodbyeEventPrefix = "goodbye-"
+
+  /// Its acknowledgment says where on the session's timeline the goodbye starts.
+  private func sendGoodbye(_ cue: LiveCallCue) {
+    goodbyeCues += 1
+    send(cue, eventId: "\(Self.goodbyeEventPrefix)\(goodbyeCues)")
+  }
+
+  /// The character's next words answer the cue, not the learner: they aren't a reply gap.
+  private func send(_ cue: LiveCallCue, delegationId: String? = nil, eventId: String? = nil) {
+    transport?.send(.append(cue, delegationId: delegationId, eventId: eventId))
+
+    if cue.channel != .thinking {
+      replyGaps.cueSent()
+    }
+  }
+
+  private func characterTurn() {
     // An exam task's one goal is the task itself, graded when the call ends.
-    guard learnerSpoke, conversation.speakingTask == nil else {
+    guard learnerSpokeSinceCheck, conversation.speakingTask == nil else {
       return
     }
 
@@ -438,7 +531,7 @@ final class LiveCall {
         return
       }
 
-      self.learnerSpoke = false
+      self.learnerSpokeSinceCheck = false
       await self.checkObjectives()
     }
   }
@@ -454,13 +547,31 @@ final class LiveCall {
 
     repeat {
       checkAgain = false
-      let found = await client.checkObjectives(turns.conversationTurns)
+      let sentAt = Date.now
+      let check = await client.checkObjectives(turns.conversationTurns)
 
-      if let found, found.count > metLabels.count {
-        metLabels = found
-        let open = conversation.objectives.map(\.label).filter { !found.contains($0) }
-        transport?.send(.thinking(LiveCallCue.objectivesProgress(met: found, open: open)))
+      guard phase == .live, let check else {
+        continue
       }
+
+      if check.objectivesMet.count > metLabels.count {
+        metLabels = check.objectivesMet
+      }
+
+      if ending?.armed == nil, let progress = check.progress?.value1 {
+        send(progress)
+      }
+
+      if conversation.objectives.allSatisfy({ check.objectivesMet.contains($0.label) }) {
+        ending?.goalsMet()
+      }
+
+      // A goodbye the learner has talked past since it was checked isn't the end.
+      if check.goodbye, ending?.hasLearnerActed(after: sentAt) == false {
+        ending?.saidGoodbye()
+      }
+
+      advance()
     } while checkAgain
 
     checking = false
@@ -484,11 +595,22 @@ final class LiveCall {
       }
 
       if closed && endedAtDeadline {
-        hangUp()
+        end(.hardStop)
       } else {
         fail(wasLive ? .dropped : .connect)
       }
     }
+  }
+
+  private func end(_ reason: EndReason) {
+    guard phase == .connecting || phase == .live else {
+      return
+    }
+
+    silence()
+    endedAt = .now
+    phase = .ended
+    track(reason)
   }
 
   private func fail(_ failure: Failure, limit: CallLimit? = nil) {
@@ -496,7 +618,28 @@ final class LiveCall {
     self.limit = limit
     phase = .failed
     reconnecting = false
+    track(failure == .dropped ? .dropped : .failed)
     Task { _ = await release() }
+  }
+
+  /// Once per reserved connection, however it ended.
+  private func track(_ reason: EndReason) {
+    guard connectionId != nil, !tracked else {
+      return
+    }
+
+    tracked = true
+    replyGaps.callEnded()
+
+    UsageAnalytics.track(
+      .callEnded(
+        .init(
+          conversationKind: conversation.kind.analyticsName, delegations: delegations,
+          durationSeconds: liveSince.map { Int(Date.now.timeIntervalSince($0).rounded()) } ?? 0,
+          learnerTurns: turns.filter { $0.speaker == .learner }.count, reason: reason.rawValue,
+          replyGapMaxMs: replyGaps.maxMs, replyGapMedianMs: replyGaps.medianMs,
+          slowReplies: replyGaps.slowReplies, talkSeconds: talkSeconds,
+          unansweredTurns: replyGaps.unansweredTurns)))
   }
 
   private func silence() {
@@ -505,16 +648,44 @@ final class LiveCall {
     }
 
     timers = []
-    openingRetry?.cancel()
     settle?.cancel()
-    talking?.cancel()
-    isCharacterTalking = false
+    signals = Signals()
     transport?.silence()
   }
 
   private func closeTransport() {
     transport?.close()
     transport = nil
+  }
+}
+
+extension LiveCall {
+  /// How a call ended, as the call-ended event reports it.
+  enum EndReason: String {
+    case time, done, goodbye, quiet, dropped, failed
+    case learnerEnded = "learner_ended"
+    case hardStop = "hard_stop"
+
+    init(_ reason: LiveCallEnding.Reason) {
+      switch reason {
+      case .time: self = .time
+      case .done: self = .done
+      case .goodbye: self = .goodbye
+      case .quiet: self = .quiet
+      }
+    }
+  }
+}
+
+extension LanguageConversation.KindPayload {
+  /// Core's `ConversationKind` in analytics.
+  fileprivate var analyticsName: String {
+    switch self {
+    case .practice: "practice"
+    case .checkpoint: "checkpoint"
+    case .speakingMock: "speaking_mock"
+    case .examSpeaking: "exam_speaking"
+    }
   }
 }
 
@@ -580,16 +751,16 @@ extension LiveCallClient {
         return ended ?? nil
       },
       checkObjectives: { turns in
-        let met = await voice.cache.mutate { identity in
+        let check = await voice.cache.mutate { identity in
           try await api.checkObjectives(
             conversationId: conversationId, turns: turns, token: identity.bearerToken)
         }
 
-        guard case .done(let labels) = met else {
+        guard case .done(let found) = check else {
           return nil
         }
 
-        return labels
+        return found
       },
       makeTransport: { WebRTCLiveCallTransport() },
       requestMicrophone: { await AVAudioApplication.requestRecordPermission() })

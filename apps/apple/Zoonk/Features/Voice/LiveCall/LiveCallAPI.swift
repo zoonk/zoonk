@@ -11,6 +11,9 @@ extension LanguageConversation {
   var mockExam: Components.Schemas.SpeakingMockExam? { exam?.value1 }
 }
 
+typealias ObjectiveCheck = Components.Schemas.LanguageConversationObjectiveCheck
+typealias LiveCallScript = Components.Schemas.LiveCallScript
+
 /// `total`: a guest's plan has no call time.
 struct CallLimit: Equatable, Sendable {
   let period: HelpLimit.Period
@@ -224,7 +227,7 @@ struct LiveCallAPI: Sendable {
     conversationId: String,
     turns: [ConversationTurn],
     token: String
-  ) async throws -> [String]? {
+  ) async throws -> ObjectiveCheck? {
     try await clients.perform(token: token) { client in
       let output = try await client.checkLanguageConversationObjectives(
         path: .init(conversationId: conversationId), body: .json(.init(turns: turns)))
@@ -233,7 +236,7 @@ struct LiveCallAPI: Sendable {
         return nil
       }
 
-      return try response.body.json.objectivesMet
+      return try response.body.json
     }
   }
 

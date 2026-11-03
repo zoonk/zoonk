@@ -1,15 +1,18 @@
 import SwiftUI
 
-/// Nothing is graded while talking.
+/// Nothing is graded while talking. Once the call ends its transcript stays, and the controls give
+/// way to the save's status, so the end reads as an ending, never as a drop.
 struct ConversationLiveView: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @State private var reply = ""
-  @FocusState private var isTyping: Bool
+  @Environment(\.isToolbarVertical) private var isToolbarVertical
+  @State private var isShowingPhrases = false
 
   let call: LiveCall
   let conversation: LanguageConversation
   @Binding var usedHelp: Bool
+  /// Set once the call ended.
+  let saving: LiveCallSaveState?
   let onEnd: () -> Void
+  let onRetrySave: () -> Void
 
   var body: some View {
     // Side panels are panes, never inspectors: one presented while iPhone Duo is folded misplaces
@@ -19,7 +22,13 @@ struct ConversationLiveView: View {
     } secondary: {
       ScrollView {
         VStack(alignment: .leading, spacing: 20) {
-          aside
+          if conversation.speakingTask == nil {
+            CallGoals(conversation: conversation, met: call.metLabels)
+          }
+
+          if usedHelp {
+            CallPhrases(conversation: conversation)
+          }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .scenePadding()
@@ -28,91 +37,151 @@ struct ConversationLiveView: View {
     } single: {
       callColumn(besideAside: false)
     }
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        CallClock(call: call)
+    .safeAreaBar(edge: .top) {
+      // A vertical bar (iPhone Duo) has no room for the clock, so it tops the call.
+      if isToolbarVertical {
+        CallHeader(call: call)
+          .scenePadding(.horizontal)
       }
     }
+    .toolbar {
+      if !isToolbarVertical {
+        ToolbarItem(placement: .principal) {
+          CallHeader(call: call)
+        }
+      }
+    }
+    .sheet(isPresented: $isShowingPhrases) {
+      NavigationStack {
+        ScrollView {
+          CallPhrases(conversation: conversation)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .scenePadding()
+        }
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(role: .close) {
+              isShowingPhrases = false
+            }
+          }
+        }
+      }
+      .presentationDetents([.medium, .large])
+    }
+    .modifier(CallAnnouncements(call: call, name: conversation.character.name))
   }
 
   private func callColumn(besideAside: Bool) -> some View {
+    CallTranscript(call: call, conversation: conversation, showsGoals: !besideAside)
+      // The controls belong to the call's column, so they stay beside the aside rather than under
+      // it, and one column moves them off iPhone Duo's fold.
+      .safeAreaBar(edge: .bottom) {
+        VStack(spacing: 12) {
+          if call.phase == .ended || saving != nil {
+            CallEndedStatus(
+              state: saving ?? .saving,
+              isGrading: conversation.kind == .speakingMock || conversation.speakingTask != nil,
+              onRetry: onRetrySave)
+          } else {
+            CallTurnRow(call: call, conversation: conversation)
+            CallReply(call: call)
+            controls(besideAside: besideAside)
+          }
+        }
+        .scenePadding()
+        .keepsOffFold()
+      }
+  }
+
+  private func controls(besideAside: Bool) -> some View {
+    CallControls(call: call, onEnd: onEnd) {
+      usedHelp = true
+
+      // Beside the call the aside shows the phrases; in one column a sheet does, so they don't
+      // grow the transcript the call is following.
+      if !besideAside {
+        isShowingPhrases = true
+      }
+    }
+  }
+}
+
+/// Follows the newest line until the learner scrolls back to read, and offers the way back.
+private struct CallTranscript: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var position = ScrollPosition()
+  @State private var isFollowing = true
+
+  let call: LiveCall
+  let conversation: LanguageConversation
+  let showsGoals: Bool
+
+  var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 20) {
-        CharacterRow(intro: CallIntro(conversation), isTalking: call.isCharacterTalking)
+        CharacterRow(intro: CallIntro(conversation), isTalking: call.signals.isCharacterTalking)
 
-        if !besideAside, conversation.speakingTask == nil {
+        if showsGoals, conversation.speakingTask == nil {
           CallGoals(conversation: conversation, met: call.metLabels)
         }
 
-        transcript
-
-        Text(status)
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-          .accessibilityAddTraits(.updatesFrequently)
-
-        if !besideAside {
-          tip
-
-          if usedHelp {
-            phrases
-          }
-        }
+        lines
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .scenePadding()
     }
-    .defaultScrollAnchor(.top, for: .alignment)
-    .defaultScrollAnchor(.bottom, for: .sizeChanges)
+    .scrollPosition($position)
     .scrollDismissesKeyboard(.interactively)
-    // The controls belong to the call's column, so they stay beside the aside rather than under
-    // it, and one column moves them off iPhone Duo's fold.
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 12) {
-        typedReply
-        controls
+    .onChange(of: call.turns) {
+      if isFollowing {
+        scrollToEnd()
       }
-      .scenePadding()
-      .keepsOffFold()
+    }
+    // The keyboard or a taller bar covers the end: the newest line stays in sight.
+    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+      geometry.containerSize.height - geometry.contentInsets.top - geometry.contentInsets.bottom
+    } action: { old, new in
+      if isFollowing, new < old {
+        position.scrollTo(edge: .bottom)
+      }
+    }
+    // Only the learner's own scrolling decides: following's animation passes through the middle.
+    .onScrollPhaseChange { _, phase, context in
+      switch phase {
+      case .tracking, .interacting:
+        isFollowing = false
+      case .idle where !isFollowing:
+        let geometry = context.geometry
+        isFollowing =
+          geometry.contentOffset.y + geometry.containerSize.height - geometry.contentInsets.bottom
+          >= geometry.contentSize.height - 24
+      default:
+        break
+      }
+    }
+    .overlay(alignment: .bottom) {
+      if !isFollowing {
+        Button {
+          isFollowing = true
+          scrollToEnd()
+        } label: {
+          Label {
+            Text(
+              "Scroll to latest", tableName: "Voice", comment: "Scrolls a call to its newest line")
+          } icon: {
+            Image(systemName: "arrow.down")
+          }
+          .labelStyle(.iconOnly)
+        }
+        .buttonStyle(.glass)
+        .buttonBorderShape(.circle)
+        .controlSize(.large)
+        .padding(.bottom, 8)
+      }
     }
   }
 
-  @ViewBuilder private var aside: some View {
-    if conversation.speakingTask == nil {
-      CallGoals(conversation: conversation, met: call.metLabels)
-    }
-
-    tip
-
-    if usedHelp {
-      phrases
-    }
-  }
-
-  private var status: String {
-    if call.phase == .connecting || call.phase == .idle {
-      return call.reconnecting
-        ? String(localized: "Reconnecting…", table: "Voice", comment: "The call reconnects")
-        : String(localized: "Calling…", table: "Voice", comment: "The call is ringing")
-    }
-
-    if call.micBlocked {
-      return String(
-        localized: "Microphone off", table: "Voice", comment: "The microphone is blocked")
-    }
-
-    if call.muted {
-      return String(localized: "Muted", table: "Voice", comment: "The learner muted themselves")
-    }
-
-    return call.isCharacterTalking
-      ? String(
-        localized: "\(conversation.character.name) is talking…", table: "Voice",
-        comment: "The character is speaking")
-      : String(localized: "Listening…", table: "Voice", comment: "The call is listening")
-  }
-
-  private var transcript: some View {
+  private var lines: some View {
     VStack(alignment: .leading, spacing: 12) {
       ForEach(Array(call.turns.enumerated()), id: \.offset) { _, turn in
         let text = turn.text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -138,52 +207,21 @@ struct ConversationLiveView: View {
     .typesettingLanguage(.init(identifier: conversation.targetLanguage))
   }
 
-  @ViewBuilder
-  private var tip: some View {
-    if let limitNear = call.limitNear {
-      Label {
-        if limitNear == .month {
-          Text(
-            "Your call time for this month is almost up.", tableName: "Voice",
-            comment: "The plan's call time runs out this month")
-        } else {
-          Text(
-            "Your call time for today is almost up.", tableName: "Voice",
-            comment: "The plan's call time runs out today")
-        }
-      } icon: {
-        Image(systemName: "clock")
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
-    } else if conversation.speakingTask == nil,
-      let next = conversation.objectives.first(where: { !call.metLabels.contains($0.label) })
-    {
-      Label {
-        Text("Tip: \(next.description)", tableName: "Voice", comment: "A hint for the next goal")
-      } icon: {
-        Image(systemName: "lightbulb")
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+  private func scrollToEnd() {
+    withAnimation(reduceMotion ? nil : .easeOut(duration: 0.3)) {
+      position.scrollTo(edge: .bottom)
     }
   }
+}
 
-  private var phrases: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
-        .font(.headline)
+/// What's sent while the call connects goes out once it does. The field never takes focus by
+/// itself: speaking is the main way to answer, and the keyboard would cover the conversation.
+private struct CallReply: View {
+  @State private var reply = ""
 
-      ForEach(conversation.hints, id: \.self) { hint in
-        Text(hint)
-          .typesettingLanguage(.init(identifier: conversation.targetLanguage))
-        Divider()
-      }
-    }
-  }
+  let call: LiveCall
 
-  /// What's sent while the call connects goes out once it does.
-  private var typedReply: some View {
+  var body: some View {
     HStack(spacing: 8) {
       TextField(
         String(
@@ -191,9 +229,9 @@ struct ConversationLiveView: View {
         text: $reply
       )
       .textFieldStyle(.roundedBorder)
-      .focused($isTyping)
       .submitLabel(.send)
       .onSubmit(send)
+      .onChange(of: reply) { call.typing() }
       .accessibilityLabel(Text("Type your reply", tableName: "Voice", comment: "Typed reply field"))
 
       Button(action: send) {
@@ -209,13 +247,34 @@ struct ConversationLiveView: View {
     }
   }
 
-  /// Hanging up is the one red control. At accessibility sizes three titles don't fit side by
-  /// side, so they show on a long press, as a tab bar's do.
-  private var controls: some View {
+  private func send() {
+    call.sendText(reply)
+    reply = ""
+  }
+}
+
+/// Hanging up is the one red control, as wide as its title needs. When the titles don't fit side
+/// by side, as at accessibility sizes, they show on a long press, as a tab bar's do.
+private struct CallControls: View {
+  let call: LiveCall
+  let onEnd: () -> Void
+  let onHelp: () -> Void
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      buttons
+        .labelStyle(.titleAndIcon)
+      buttons
+        .labelStyle(.iconOnly)
+    }
+    .lineLimit(1)
+    .buttonStyle(.bordered)
+    .controlSize(.large)
+  }
+
+  private var buttons: some View {
     HStack(spacing: 8) {
-      Button {
-        usedHelp = true
-      } label: {
+      Button(action: onHelp) {
         Label {
           Text("Help", tableName: "Voice", comment: "Shows phrases to use in the call")
         } icon: {
@@ -241,25 +300,167 @@ struct ConversationLiveView: View {
 
       Button(role: .destructive, action: onEnd) {
         Label {
-          Text("End", tableName: "Voice", comment: "Hangs up the call")
+          // Before the character answers, nothing is lost by stopping.
+          if call.phase == .live {
+            Text("End", tableName: "Voice", comment: "Hangs up the call")
+          } else {
+            Text("Cancel", tableName: "Voice", comment: "Stops a call that hasn't connected yet")
+          }
         } icon: {
           Image(systemName: "phone.down.fill")
         }
-        .frame(maxWidth: .infinity)
       }
+      .fixedSize()
       .accessibilityShowsLargeContentViewer()
     }
-    .buttonStyle(.bordered)
-    .controlSize(.large)
-    .labelStyle(
-      dynamicTypeSize.isAccessibilitySize
-        ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
-    )
+  }
+}
+
+/// The call's elapsed time, and a thin bar filling toward its talk time: a soft length, not a
+/// countdown.
+private struct CallHeader: View {
+  let call: LiveCall
+
+  var body: some View {
+    TimelineView(.periodic(from: .now, by: 1)) { context in
+      let elapsed = elapsed(at: context.date)
+      let talk = TimeInterval(max(call.talkSeconds, 1))
+      let time = Text(clock(elapsed))
+
+      VStack(spacing: 4) {
+        HStack(spacing: 6) {
+          Circle()
+            .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
+            .frame(width: 8, height: 8)
+
+          time
+            .font(.subheadline.monospacedDigit())
+        }
+        .opacity(call.liveSince == nil ? 0 : 1)
+
+        ProgressView(value: min(elapsed, talk), total: talk)
+          .frame(width: 96)
+      }
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(
+        Text("Call time", tableName: "Voice", comment: "VoiceOver: the call's clock")
+      )
+      .accessibilityValue(time)
+    }
   }
 
-  private func send() {
-    call.sendText(reply)
-    reply = ""
+  private func elapsed(at date: Date) -> TimeInterval {
+    guard let start = call.liveSince else {
+      return 0
+    }
+
+    return max(0, (call.endedAt ?? date).timeIntervalSince(start))
+  }
+
+  private func clock(_ seconds: TimeInterval) -> String {
+    Duration.seconds(Int(seconds)).formatted(.time(pattern: .minuteSecond))
+  }
+}
+
+/// The call is over: the transcript stays, and this says what happens with it.
+private struct CallEndedStatus: View {
+  @State private var isSlow = false
+
+  let state: LiveCallSaveState
+  let isGrading: Bool
+  let onRetry: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          title
+            .font(.headline)
+          detail
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      } icon: {
+        if state == .saving {
+          ProgressView()
+        } else {
+          Image(systemName: "exclamationmark.triangle")
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .accessibilityElement(children: .combine)
+
+      if state == .closing || state == .failed {
+        Button(action: onRetry) {
+          Text("Try again", tableName: "Voice", comment: "Retries saving a call")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+      }
+    }
+    .task(id: state) {
+      guard state == .saving else {
+        return
+      }
+
+      // Past this a save says it's still working: a call's feedback takes a few seconds, an
+      // exam's grade about half a minute.
+      try? await Task.sleep(for: .seconds(isGrading ? 45 : 20))
+      isSlow = true
+    }
+  }
+
+  private var title: Text {
+    switch state {
+    case .closing:
+      Text(
+        "The call is still closing. Try again in a moment.", tableName: "Voice",
+        comment: "The server hasn't confirmed the call ended")
+    case .failed:
+      Text("We couldn't save the call.", tableName: "Voice", comment: "Saving a call failed")
+    default:
+      Text("Call ended", tableName: "Voice", comment: "The call hung up and is being saved")
+    }
+  }
+
+  private var detail: Text {
+    if state != .saving {
+      return Text(verbatim: "")
+    }
+
+    if isGrading {
+      return isSlow
+        ? Text(
+          "Still rating your speaking. This is taking longer than usual.", tableName: "Voice",
+          comment: "An exam task's grade takes long")
+        : Text(
+          "Rating your speaking on the exam's criteria. It usually takes about half a minute.",
+          tableName: "Voice", comment: "An exam task is graded")
+    }
+
+    return isSlow
+      ? Text(
+        "Still writing your feedback. This is taking longer than usual.", tableName: "Voice",
+        comment: "A call's feedback takes long")
+      : Text("Writing your feedback…", tableName: "Voice", comment: "A call's feedback is written")
+  }
+}
+
+private struct CallPhrases: View {
+  let conversation: LanguageConversation
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
+        .font(.headline)
+
+      ForEach(conversation.hints, id: \.self) { hint in
+        Text(hint)
+          .typesettingLanguage(.init(identifier: conversation.targetLanguage))
+        Divider()
+      }
+    }
   }
 }
 
@@ -301,37 +502,5 @@ private struct CallGoals: View {
           isMet ? Text("Done", tableName: "Voice", comment: "VoiceOver: a goal is met") : Text(""))
       }
     }
-  }
-}
-
-private struct CallClock: View {
-  let call: LiveCall
-
-  var body: some View {
-    TimelineView(.periodic(from: .now, by: 1)) { context in
-      let elapsed = call.liveSince.map { max(0, context.date.timeIntervalSince($0)) } ?? 0
-
-      let time = Text(
-        "\(clock(elapsed)) / \(clock(TimeInterval(call.limitSeconds)))", tableName: "Voice",
-        comment: "The call's elapsed time over its length")
-
-      HStack(spacing: 6) {
-        Circle()
-          .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
-          .frame(width: 8, height: 8)
-
-        time
-          .font(.subheadline.monospacedDigit())
-      }
-      .accessibilityElement(children: .ignore)
-      .accessibilityLabel(
-        Text("Call time", tableName: "Voice", comment: "VoiceOver: the call's clock")
-      )
-      .accessibilityValue(time)
-    }
-  }
-
-  private func clock(_ seconds: TimeInterval) -> String {
-    Duration.seconds(Int(seconds)).formatted(.time(pattern: .minuteSecond))
   }
 }
