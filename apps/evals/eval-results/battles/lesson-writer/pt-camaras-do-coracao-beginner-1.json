@@ -1,0 +1,215 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - Atria receive and ventricles pump; the right side sends blood to the lungs and the left side to the whole body; the septum keeps the two sides apart\n      - The labeled diagram's `picture` is the heart seen from the front with no words in it; its parts are the four chambers and the septum, each named in Portuguese with the part it marks in English, and its feedback explains the left-right mix-up of a heart seen from the front\n      - The check about which chamber pumps to the body uses the right-ventricle trap and explains the thicker wall of the left ventricle\n      - The application about a hole in the septum follows from what the lesson taught\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T14:04:55.581Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All facts are correct: atria receive, ventricles pump, the right side goes to the lungs and the left to the body, and the left ventricle has the thicker wall. The left-to-right shunt is also correct. Each check has exactly one defensible answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook uses a vivid number and ends on a question. But the explanation reads like a textbook: definitions first, no picturable everyday example or comparison (such as waiting rooms or pumps), and short telegraphic sentences.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "One screen introduces câmaras, átrios, ventrículos and septo, plus the front-view flip, without explaining why the sides look reversed. The 'mais força' idea first appears in the application context without being taught earlier.",
+              "score": 6,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The body-pumping check uses the right-ventricle trap and mentions the thicker wall. Still, the wrong-option reason doesn't explain why the right ventricle is tempting. Diagram mix-up feedback restates the rule without a bridge, and the application context says the blood pushes harder on the left, which gives away the answer.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The language is correct Brazilian Portuguese at beginner level. The hookText ends on a question, the cast name Edson is used, and the summary gives one sentence per idea. The application is realistic, though it is only loosely tied to what the lesson taught about pressure.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "The lesson is accurate and follows the plan. The labeled diagram, the right-ventricle trap and the septum-hole application are all present, in correct Brazilian Portuguese. However, the explanation is a dense, rule-first block that introduces four terms with no everyday comparison. Feedback states the left-right flip without explaining why it happens, and the application context gives away the answer.",
+          "score": 7.2
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 9921,
+        "outputTokens": 1293,
+        "reasoningTokens": 603
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All anatomical facts, chamber positions, and blood pathways are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is warm and conversational, using a concrete analogy ('como numa pessoa de frente para você') to explain the anatomical left-right flip. However, Screen 2 delivers a rapid list of rules without a concrete example or comparison before the rules.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Screen 2 introduces four technical terms at once (câmaras, átrios, ventrículos, septo), violating the rule against introducing two new terms on one screen. Additionally, the greater pressure on the left side needed for Screen 5 is only mentioned inside the feedback of Screen 4 rather than in the main lesson text.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 4 cleverly asks for the visual position of the chamber rather than just its name, testing both skills together instead of pure recall. However, Screen 5 requires knowing that the left side pushes harder to distinguish between two options, which was only mentioned in Screen 4's option feedback.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Everything fits the beginner level and Brazilian context well, including a named cast member (Edson) at a SUS clinic in Goiânia on Screen 5 and a clean one-sentence-per-idea summary.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B creates a much better learning experience: its check on Screen 4 forces the learner to apply spatial reasoning rather than simply repeating a sentence from the explanation, and its application on Screen 5 uses a realistic Brazilian setting (a SUS clinic in Goiânia). Its only notable flaw is introducing 4 new anatomical terms on a single explanation screen (driven by the brief) and relying on the feedback of Screen 4 for the learner to deduce the left-to-right shunt in Screen 5.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All facts about the chambers, septum, and blood flow are accurate, and the activity parts and feedback are properly structured.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screen 2 reads like a compressed textbook glossary entry, stating four definitions and rules in a row without any everyday analogy or concrete example to help the learner picture how the heart works.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Screen 2 introduces four new terms on a single screen (câmaras, átrios, ventrículos, septo) with very terse explanations, and gives no analogy for why the left and right sides look flipped from the front.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 4 is a pure recall check that asks the learner to repeat a sentence directly from Screen 2 ('O ventrículo direito bombeia para os pulmões; o esquerdo, para o corpo todo.'). Screen 5 is well-constructed and gives the necessary pressure clue in the context.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The application on Screen 5 mentions a character (Edson) and an exam, but fails to name a concrete place from the Brazilian context as required. Otherwise, the level, hook, and summary follow the guidelines.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A follows all structural and anatomical briefs accurately, and thoughtfully includes the pressure clue in the context of Screen 5 so the learner can deduce the right answer. However, Screen 2 reads like a compressed textbook paragraph introducing four terms at once, Screen 4 is a pure verbatim recall question, and Screen 5 lacks a concrete place in its application.",
+          "score": 8.05
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 8387,
+        "outputTokens": 995,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As localizações, funções e destinos do sangue estão corretos para a abordagem introdutória solicitada. As respostas corretas e a explicação da parede mais grossa do ventrículo esquerdo correspondem às expectativas.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "O gancho apresenta uma informação sobre Edson, não uma experiência cotidiana que o aprendiz reconheça. A explicação central é uma sequência de definições e regras, sem um exemplo concreto ou comparação que introduza seu funcionamento.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A linguagem é curta e acessível, e a comparação com uma pessoa de frente esclarece a inversão dos lados. Entretanto, a segunda tela introduz câmaras, átrios, ventrículos e septo de uma vez, e falta explicar previamente como a diferença de força determina o sentido da passagem pelo furo.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "A atividade exige localizar estruturas, e a checagem seguinte combina posição e função, incluindo a armadilha do ventrículo direito com feedback útil. A fundamentação é incompleta: a checagem das câmaras tem basis nula, e a frase citada na aplicação explica a separação, mas não distingue os dois sentidos de passagem oferecidos.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Entrega as telas permitidas na ordem correta, hookText sem resposta exigida, português brasileiro e resumo com uma frase por ideia. A aplicação no posto do SUS em Goiânia é concreta, mas a direção esquerda–direita deveria decorrer mais claramente do ensino anterior.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A sequência respeita as cinco telas planejadas e cobre corretamente as câmaras, os destinos do sangue e a orientação do coração visto de frente. O diagrama e seus feedbacks são bons, mas a explicação concentra muitos conceitos e a aplicação exige uma ponte mais explícita entre a força do lado esquerdo e a passagem pelo furo.",
+          "score": 7.55
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 6390,
+        "outputTokens": 820,
+        "reasoningTokens": 295
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-camaras-do-coracao-beginner-1"
+}

@@ -1,0 +1,473 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Written for candidates of the exam in EXAMS, who studied law: no screen explains what the OAB, the Constitution, a lawyer, the Estatuto or human rights are, and the OAB isn't introduced as \"a entidade dos advogados\"\n      - The finalidades match art. 44 of Lei 8.906/1994 and are cited as such: I (defend the Constitution, the legal order of the democratic rule of law, human rights and social justice, and pursue the good application of laws, the quick administration of justice and the improvement of legal culture and institutions) and II (promote, exclusively, the representation, defense, selection and discipline of lawyers throughout Brazil); nothing says the OAB judges cases or that its exclusivity covers the finalidades of item I\n      - Every check has 3 or 4 options whose wrong ones are confusions law candidates make (a finalidade of item I taken as corporate or exclusive, exclusivity read as limiting the OAB to lawyers, cobrar celeridade taken as a power to decide), each as plausible and as long as the right one; no absurd option (\"toda pessoa detida é advogada\")\n      - No screen names the exam, its board or its notice (\"Exame de Ordem\", \"1ª fase\", \"FGV\", \"edital\")\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T13:53:52.725Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The finalidades match art. 44 I and II exactly, and exclusivity is correctly scoped. Each check has one defensible answer, and every reason matches its option.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Named characters appear, but the explanations are definition-driven with abstract wording. Screen 3 does open by building on Raimundo's case.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen carries one idea in short sentences. 'Pugnar' is avoided by rewording it as 'se empenhe'. Exclusivity is stated plainly but not illustrated.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The briefed tempting answers (cumulative requisites, exclusivity applied to everything, 'both corporate') all appear. Check 2's options 2 and 3 nearly duplicate each other, and the line 'não é condição para outra' gives away check 5.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It follows the plan, uses Belém, avoids naming the exam, and keeps summary ideas to one sentence each. The application is somewhat abstract.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "C is the only output that never names the exam, and it follows every brief with accurate art. 44 content. Its checks have clean, parallel options, and screen 6 explains that exclusivity does not limit item I. Its weaknesses are a textbook tone, a near-duplicate wrong option in check 2, and screen 4 handing over the answer to check 5.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Article content and exclusivity scope are accurate, and the reasons are sound. Every check has one defensible answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "It uses specific places and links back to an earlier case. Even so, the explanations still read like a statute with legal register.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "It glosses 'pugnar' and keeps one idea per screen. Some sentences run long.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The plausible distractors include the corregedorias and 'cumulative requisites', and the reasons explain why each is tempting. A few options are less realistic, such as the 'criminal exception' one.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The application is realistic and named (a Vitória seccional, a presídio). It names 'Exame de Ordem', violating the no-exam rule.",
+              "score": 6,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "D is the most concrete and teacher-like: it sets cases in a Porto Velho TJ and a Belém comarca, explains 'pugnar', and ties screen 3 back to Raimundo. Its checks have strong misconception distractors. However, the application names 'Exame de Ordem', breaking an explicit rule.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Art. 44 is cited correctly and the checks are defensible. The summary omits the exclusivity limit but stays correct.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Explanations are abstract, opening with a definition and connectors like 'Conforme' and 'Além do papel social'. There are few concrete scenes.",
+              "score": 5,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The explanations are clear, but the word 'pugnar' is left unexplained.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks test the planned misconceptions with adequate reasons. Some distractors are weak, such as 'autorização prévia de cada advogado'.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It names 'Exame de Ordem' and its examples are generic, though it follows the plan and uses Londrina.",
+              "score": 6,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "B is accurate and follows the plan, but it is the most textbook-like and generic of the three. Its exampleLineIdea names the 'Exame de Ordem'. Its reveal also starts explaining the answer instead of leaving that for the next screens.",
+          "score": 6.6
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 18956,
+        "outputTokens": 2353,
+        "reasoningTokens": 915
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Every statutory citation and legal distinction under art. 44, I and II of Lei 8.906/1994 is accurate, and each check has a single defensible correct answer with matching feedback.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screens consistently lead with a concrete scenario or bridge from the previous question before stating the statutory rule, keeping a direct, natural Brazilian Portuguese voice throughout.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short, transitions are smooth, and potentially archaic statutory verbs like 'pugnar' are briefly glossed without talking down to law graduates.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "All four checks test application of the statutory concepts with plausible, similarly sized distractors rooted in real candidate confusions, and basis quotes point to the exact deciding sentences.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the law-candidate persona (no basic definitions of OAB or Constitution, no exam-board name-dropping), uses the provided cast and Brazilian cities naturally, and ends with a clean one-sentence-per-idea summary.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A delivers the strongest overall lesson, adhering closely to the statutory wording of art. 44 of Lei 8.906/1994 while keeping explanations concrete, example-first, and tailored to law candidates. Its checks have well-balanced options that reflect real exam misconceptions without giving away the answer by length, and the basis quotes accurately pinpoint the deciding sentences.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Accurately presents art. 44, I and II of the Estatuto da Advocacia and cleanly distinguishes institutional from corporate purposes and from judicial power.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Warm, direct voice that connects screens smoothly; Screen 4 states the statutory rule before the concrete example of delayed court cases, though it remains easy to follow.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Clear, concise sentences that explain 'pugnar' naturally and explicitly state on Screen 4 that each objective stands on its own, setting up the Screen 5 check cleanly.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Distractors and reasons are well-crafted, except in Screen 8 where only the correct option cites '(art. 44, I)' and '(art. 44, II)' explicitly while the wrong options omit the article references, making the right answer stand out.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Fits the target audience and local Brazilian context well, grounds the final application in a concrete place (Seccional da OAB do Pará, em Belém), and follows all brief requirements.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model E is very close in quality, with natural teacher flow, strong explanations, and an engaging application scenario in Belém. It trails Model A slightly because in Screen 8 the correct option includes the parenthetical statutory citations '(art. 44, I)' and '(art. 44, II)' while the three distractors omit them, creating a minor formatting cue.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Legally accurate across all screens and checks, paraphrasing 'pugnar' as 'se empenhe' while preserving the meaning of art. 44, I and II.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Reads somewhat dry and encyclopedic; explanations state rules directly with minimal narrative grounding or concrete imagery compared to the other models.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Short, direct sentences that are easy to parse, with a clear basis sentence on Screen 4 ('Uma dessas atuações não é condição para outra.').",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "In Screen 2, two distractors ('combater a demora dá à OAB o poder de julgar recursos' and 'a OAB pode julgar recursos sempre que o processo demorar') are nearly identical, and Screen 8 options are telegraphic code-lists rather than full parallel classifications.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the audience constraints, avoids naming the exam or board, uses the cast and Belém appropriately, and provides a valid one-sentence-per-idea summary.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model C is legally accurate and follows the structural briefs, but reads much closer to a dry summary than an engaging teacher. Its explanations lack concrete examples beyond repeating the check prompts, and several distractors in the checks are less aligned with the specific misconceptions requested for law candidates.",
+          "score": 8.2
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 13101,
+        "outputTokens": 1330,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Reproduz corretamente as finalidades dos dois incisos do art. 44 e delimita a exclusividade às atribuições corporativas. As respostas e justificativas distinguem corretamente cobrar providências de julgar recursos.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Retoma o problema de Raimundo em linguagem direta e usa uma situação concreta na Seccional em Belém. A apresentação da finalidade corporativa, porém, fica abstrata e enumera atribuições sem um exemplo imediato.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Explica os dois tipos de finalidade com palavras acessíveis e esclarece expressamente que cada objetivo do inciso I vale por si antes da questão de Thaís. Também traduz “pugnar” e delimita a exclusividade sem exigir que o aluno complete o raciocínio.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões exigem avaliar propostas e classificar situações, com justificativas que enfrentam as confusões previstas. Algumas alternativas são sensivelmente mais curtas que a correta, sobretudo na aplicação, e o último distrator da questão de Murilo é menos convincente.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Segue as oito telas previstas, usa um palpite inicial com revelação e não menciona o exame. A aplicação no presídio e na Seccional de Belém é concreta, e o resumo preserva uma frase por ideia.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "É a melhor combinação de precisão, linguagem acessível e progressão didática. Explica a autonomia dos objetivos antes de cobrá-la e oferece uma aplicação concreta, embora algumas alternativas ainda sejam pouco equilibradas.",
+          "score": 8.85
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Apresenta corretamente todo o conteúdo exigido dos incisos I e II do art. 44. As questões têm uma única resposta defensável e não atribuem à OAB competência para julgar recursos judiciais.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "O recurso parado há três anos em Belém torna o problema inicial concreto, e a explicação seguinte retoma esse caso. A tela sobre finalidade corporativa perde essa qualidade e passa a uma exposição abstrata das atribuições.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A distinção entre cobrar e julgar é apresentada em frases simples, e “pugnar” recebe tradução imediata. Entretanto, a tela 4 apenas enumera objetivos, deixando para o feedback posterior a explicação de que não são requisitos cumulativos.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Os checks exploram as confusões jurídicas previstas e culminam em uma classificação integrada dos três pedidos. Há desequilíbrio de extensão nas alternativas, especialmente na questão de Murilo, e a base da questão de Thaís é menos decisiva que uma afirmação explícita sobre a autonomia dos objetivos.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respeita a sequência, os tipos de tela e a proibição de mencionar o exame, sem explicar conceitos jurídicos básicos ao público formado em Direito. A aplicação em Porto Velho é pertinente e o resumo apresenta cada ideia em uma frase.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "É uma alternativa forte, fiel ao plano e juridicamente correta, com linguagem geralmente natural. Fica atrás de E porque só explicita a independência dos objetivos no feedback da questão que já exige essa compreensão.",
+          "score": 8.65
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As finalidades legais estão completas e corretamente associadas aos incisos I e II. As respostas distinguem a atuação institucional, a corporativa e a ausência de competência para assumir julgamentos judiciais.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A apelação em Porto Velho e os pedidos na Seccional de Vitória oferecem situações visualizáveis. Contudo, duas das três explicações começam pela regra abstrata, com expressões formais como “qualifica apenas o trato” e pouca aproximação concreta.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Define as finalidades e traduz “pugnar”, mas concentra bastante conteúdo em frases longas. Assim como A, só explicita a independência dos objetivos no feedback da questão de Thaís, não na explicação anterior.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões exigem aplicação e apresentam alternativas geralmente equilibradas em extensão. Alguns distratores são menos naturais, como a suposta exceção criminal à exclusividade, e a base da questão de Thaís apenas lista os objetivos.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Cumpre a sequência e oferece uma aplicação concreta envolvendo presídio, seleção profissional e recursos atrasados. Entretanto, a tela final menciona expressamente o “Exame de Ordem”, contrariando a proibição da tarefa.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "Entrega conteúdo jurídico correto e uma aplicação bem contextualizada, mas usa uma voz mais formal e menos didática. A menção explícita ao “Exame de Ordem” viola uma restrição direta da tarefa.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Apresenta corretamente as finalidades do art. 44 e não estende a exclusividade ao inciso I. As respostas assinaladas e suas justificativas são juridicamente compatíveis com as situações propostas.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "As explicações começam por definições ou transcrições legais, com expressões como “finalidade autônoma” e “exercício de atividade jurisdicional”. Os exemplos são genéricos ou aparecem depois da regra, produzindo uma experiência predominantemente expositiva.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A divisão entre finalidade institucional e corporativa é compreensível para o público jurídico. Ainda assim, “pugnar” aparece sem tradução e a autonomia dos objetivos só é explicitada depois que o aluno precisa julgá-la.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Os checks normalmente exigem julgamento ou classificação, mas vários distratores são pouco plausíveis. Exigir autorização de cada advogado para defender direitos humanos ou proibir a OAB de tratar da aplicação das leis torna a eliminação excessivamente fácil.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Segue as oito telas e situa a aplicação em Londrina, mantendo o português brasileiro e o público jurídico. Porém, o exemplo da finalidade corporativa cita o “Exame de Ordem”, violando uma restrição explícita.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "O núcleo jurídico está correto, mas a experiência é mais próxima de um resumo de manual do que de uma explicação guiada. Distratores artificiais e a menção proibida ao exame reduzem sua qualidade em relação às demais opções.",
+          "score": 7.7
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 14983,
+        "outputTokens": 2587,
+        "reasoningTokens": 810
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-finalidades-oab-exam-prep-1"
+}

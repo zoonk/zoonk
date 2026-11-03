@@ -1,0 +1,215 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for intermediate learners\n      - The lines-and-crossing activity has a supply and a demand line with example numbers marked as an example, and its `shift` moves supply to the left (the bird flu), so the crossing rises to a higher price and a smaller quantity; the feedback covers moving demand instead and moving the wrong way\n      - The 2022 egg prices are presented as real (about US$ 1.80 to over US$ 4 a dozen) and the activity's own numbers as an example\n      - The check moves demand to the right (price and quantity both rise) with the supply trap, and the application moves the bread's supply right (price falls)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T14:04:34.914Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The 2022 egg prices are presented as real and the activity numbers are flagged as an example. The supply-left shift correctly raises price and lowers quantity. The check and application each have one defensible answer with matching reasons.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The explanation opens with textbook definitions of the curves before the egg example. It is abstract and packed with clauses like \"se todo o resto ficar igual\". The reveal \"A lição mostra como isso ajuda a explicar\" is a flat topic statement rather than a reason to keep reading.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "One explanation screen covers five ideas: both curves, equilibrium, the supply-left shift, demand right and supply right. It also never contrasts a shift of the curve with a movement along it. The sentences are clear enough for intermediate learners, but the screen is overloaded.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Both checks make the learner predict, and the wrong options are real misconceptions, including the supply trap and wrong quantity direction. Reasons explain each option, and the activity feedback covers the wrong line and the wrong direction. However, both checks have null basis even though the explanation sentences on demand right and supply right clearly decide them.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The output is in Brazilian Portuguese with a Recife padaria application and follows the plan's briefs in order. The summary gives one sentence per idea. The reveal is a slip: it is meta and barely explains the answer.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "The economics is correct throughout. The example lines (y=x, y=12−x, supply shifted left by 2, crossing moves to Q=5, P=7) are labeled as an example, and the check and bread application follow the briefs. Weaknesses: the explanation is a dense, definition-first paragraph covering several ideas, the hook reveal is thin and meta, and both checks have null basis even though the explanation clearly decides them.",
+          "score": 7.4
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 10026,
+        "outputTokens": 1237,
+        "reasoningTokens": 513
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All economic principles, shifts, and activity math are accurate. In the activity, the initial crossing is at x=8, y=1.80, and shifting supply left by 6 moves the crossing to x=6, y=2.60 (higher price, lower quantity), cleanly modeling the egg price spike with `isExample: true`.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is natural, conversational, and direct ('granjeiros', 'no café, no almoço e no jantar'). Every concept is anchored in the concrete egg or bread story rather than abstract rules.",
+              "score": 10,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen focuses on one clear idea using everyday language. It explains both supply and demand in context on the hook and explanation screens before introducing 'preço de equilíbrio', leaving no skipped steps.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks and activity require predicting outcomes in new scenarios and include empathetic, specific reasons for why the traps are tempting. However, `basis` is left `null` on both check screens even though the explanation screen contains sentences that help decide how the crossing moves.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows all briefs, uses natural Brazilian Portuguese, incorporates a cast member (Davi) in Recife for the application, and writes single-sentence summary cards.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B delivers a warm, conversational, and concrete lesson that grounds every economic concept in the egg and bakery scenarios without slipping into textbook abstractions. Its activity lines even approximate the real 2022 price jump while being properly flagged as example data. The only flaw is leaving `basis` null on the check screens when earlier sentences in the explanation help decide the answers.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The economics and math are accurate. The activity lines cross at (6,6) and shifting supply left by 2 moves the crossing to (5,7), raising price and lowering quantity, with `isExample: true` set.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screen 2 slips into dry textbook prose ('Ao subir o preço, a oferta cresce e a demanda cai... Maior vontade de comprar desloca a demanda à direita; menor custo de produção desloca a oferta à direita, se todo o resto ficar igual'), stating abstract rules without examples.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Screen 2 packs too many ideas into a single short paragraph: defining both curves, movement along the curves, equilibrium, a leftward supply shift, a rightward demand shift, and a rightward supply shift from production costs without explaining why lower cost shifts supply right.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 2 explicitly pre-teaches the exact rules tested in Screens 4 and 5 ('Maior vontade de comprar desloca a demanda à direita; menor custo de produção desloca a oferta à direita'), turning the checks partially into recall, and yet `basis` is left `null` on both checks despite those exact deciding sentences on Screen 2.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Uses proper Brazilian Portuguese, follows the screen plan and Recife bakery brief, and keeps summary cards to one sentence each.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A meets the structural and accuracy requirements, but its explanation screen reads like a compressed textbook, cramming abstract rules onto the end of the screen just so the later checks can quote them. Like Model B, it also leaves `basis` null on the check screens despite writing exact rule sentences for them.",
+          "score": 8.05
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 8349,
+        "outputTokens": 1004,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Os deslocamentos e seus resultados estão corretos, inclusive na dieta e na padaria. Os dados históricos aparecem como reais, os números da atividade estão identificados como exemplo e suas linhas produzem a mudança de preço de US$ 1,80 para US$ 2,60, com quantidade menor.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Ovos encarecendo, dieta nas redes e pão na padaria dão concretude à aula, com linguagem próxima do leitor. A explicação central, porém, abre com uma sequência de definições e concentra o mecanismo em um parágrafo, criando um trecho mais próximo de livro didático.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A linguagem é acessível e o equilíbrio recebe uma definição direta. Falta explicar, antes de falar em deslocamento para a esquerda, que a quantidade ocupa o eixo horizontal; essa ponte aparece apenas nos rótulos da atividade.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "A atividade exige mover a curva correta e oferece feedback específico para curva e direção erradas. Os checks pedem previsão e transferência, incluem a armadilha da oferta e explicam os distratores; os campos basis nulos são justificáveis porque nenhuma frase anterior decide diretamente esses novos casos.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Entrega as cinco telas na ordem prevista, seguidas de resumo com uma frase por ideia, em português brasileiro adequado ao nível intermediário. O hookGuess tem revelação comum e a aplicação situa concretamente a queda do custo do trigo em uma padaria de Recife.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A sequência atende ao plano e permite aplicar corretamente os deslocamentos de oferta e demanda, com atividade funcional e bons distratores. A principal melhoria seria explicar os eixos e o movimento do cruzamento antes de exigir essa leitura do gráfico.",
+          "score": 8.55
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 6239,
+        "outputTokens": 1194,
+        "reasoningTokens": 695
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-demanda-ovos-deslocamento-1"
+}
