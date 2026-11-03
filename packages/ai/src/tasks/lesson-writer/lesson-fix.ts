@@ -25,8 +25,9 @@ import {
 
 /**
  * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
- * of 5 cases and Terra all 5 (30 Oct 2026). Opus, the writer's other family, fixed every flagged
- * screen in all 5 too (3 Nov 2026).
+ * of 5 cases and Terra all 5 (30 Oct 2026). Opus keeps another family in the chain; on the one case
+ * that could be scored cleanly (3 Nov 2026) it fixed the flagged screen but left a 921-character
+ * screen over the 750 limit, a new problem the next check catches.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
