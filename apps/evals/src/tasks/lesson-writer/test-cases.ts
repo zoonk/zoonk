@@ -31,7 +31,7 @@ function toInput(input: Omit<LessonWriterInput, "activityTemplates">): LessonWri
 
 const SHARED_EXPECTATIONS = `
   - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)
-  - At \`overview\` and \`beginner\` without exams or class material, the hook is a \`hookText\` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
+  - At every level, exams and class material included, the first screen is a \`hookText\` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; no check comes before the first explanation or worked example. The screen planned as the guess, right after the first explanation, is a \`hookGuess\` that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
   - Calculations written as \`mathCheck\` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
   - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its \`prompt\` and its \`alt\` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)
@@ -262,6 +262,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - Notation is consistent across screens (ħ, m, L, n), and the worked derivation reveals one move per step
       - The slider graph shows how energy depends on n or L, with a check about what the learner saw
       - Checks need real understanding (why n = 0 isn't allowed, how E scales with L), with reasons for every option
+      - Every image \`alt\` stays under 160 characters and reads as a whole sentence, not cut mid-word
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -600,6 +601,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - The finalidades match art. 44 of Lei 8.906/1994 and are cited as such: I (defend the Constitution, the legal order of the democratic rule of law, human rights and social justice, and pursue the good application of laws, the quick administration of justice and the improvement of legal culture and institutions) and II (promote, exclusively, the representation, defense, selection and discipline of lawyers throughout Brazil); nothing says the OAB judges cases or that its exclusivity covers the finalidades of item I
       - Every check has 3 or 4 options whose wrong ones are confusions law candidates make (a finalidade of item I taken as corporate or exclusive, exclusivity read as limiting the OAB to lawyers, cobrar celeridade taken as a power to decide), each as plausible and as long as the right one; no absurd option ("toda pessoa detida é advogada")
       - No screen names the exam, its board or its notice ("Exame de Ordem", "1ª fase", "FGV", "edital")
+      - The lesson opens on Lorena's scene at the fórum with nothing to answer, and the first check comes after the first explanation; the guess about her two proposals comes right after that explanation
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -609,6 +611,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
+      - The lesson opens on Nayara's chart as a scene with nothing to answer; the guess comes right after the first explanation, with at most 4 options
       - The guess's answer agrees with its own chart and with the later screens: each of 1.000, 120 and 14 units is about 12% of the one before, so the group that eats the fish has about 1 or 2 units. The plan's 10 units (over 70% of 14) is never marked right or called a possible value, and nothing marked right rests on a fixed 10% rule, which a later screen says not to apply automatically
       - The screens with 900, 108 and 15 units give the shares as 12% and about 14% and say the share varies with what is eaten and the energy organisms use
       - The checks use the planned traps (energy destroyed in cellular respiration; all the food's energy passing intact to the next consumer; choosing the predators because they're at the top), with a reason on every option
@@ -623,9 +626,10 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
-      - The guess shows the sensors' readings as a Markdown table and asks which sensor's readings are grouped and close to 50,0 mm, with sensor A (49,8 to 50,0 mm) right and a reveal that doesn't explain why yet
-      - The guess's options name only sensors its table lists, and every sensor the table lists is an option: a guess has at most 4 options, so its table keeps at most four of the plan's five sensors, A among them, never A to D offered under a table that also lists E
-      - Precision is how close the readings are to each other and accuracy how close their center is to the reference; the checks use the planned traps (the group near the reference taken as the more grouped one; the whole spread taken as the margin)
+      - The lesson opens on Renan's scene with sensors A and C in a Markdown table, asking with no options whether both are equally reliable; no check comes before the precision explanation
+      - The guess comes right after that explanation and asks what the third sensor (51,0; 51,0; 51,1 mm) is, with "preciso, mas não exato" right and a reveal that doesn't explain why yet
+      - A guess has at most 4 options, and the right one is among them
+      - Precision is how close the readings are to each other and accuracy how close their center is to the reference; the checks use the planned traps (the more precise multimeter taken as the more accurate one; the whole spread taken as the margin)
       - Every center is the midpoint of the extreme readings and every margin half the distance between them: 8,2 ± 0,2 cm, 18,8 ± 0,2 mm, 11,9 ± 0,2 cm, 32,0 ± 0,4 °C, and in the application A 49,6 ± 0,1 mm and B 50,0 ± 0,2 mm, with B meeting both conditions
       - No screen names the exam, its board or its notice
 
@@ -690,6 +694,8 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - The first explanation, whose brief packs a definition, a caveat and a formula to explore, is two or three short sentences with one bold term (patrimônio líquido); bens, direitos and obrigações are recalled in plain words, never bold or defined again; the caveat (a book value, not a sale price) stays, briefly
       - Every number in the worked example, the checks, the explore and the application matches the plan and adds up
       - Options are short; the why goes in each option's reason
+      - Every check before the application is decided by a sentence an earlier screen states, quoted in its \`basis\`, never an idea no screen taught (a regression: an earlier lesson's checks asked about ideas not taught)
+      - Money is written in one format on every screen (never R$ 2.000 on one and R$ 2.000,00 on another)
       - The summary card is a \`hub\` whose sentences each name their subject ("O patrimônio líquido é…"), never a fragment that only reads with its label
 
       ${SHARED_EXPECTATIONS}

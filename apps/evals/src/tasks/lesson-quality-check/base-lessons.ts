@@ -2,6 +2,7 @@ import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { LESSON_SPECS } from "../lesson-writer/lesson-specs";
 import { VISUAL_LESSON_SPECS } from "../lesson-writer/visual-lesson-specs";
+import { openOnScene } from "./scene-first";
 
 type BaseLesson = {
   chapterTitle: string;
@@ -13,7 +14,7 @@ type BaseLesson = {
   shortAnswers?: boolean;
 };
 
-export const BASE_LESSONS = {
+const RECORDED = {
   doorways: {
     chapterTitle: "Reading buildings",
     courseTitle: "Art history",
@@ -364,12 +365,12 @@ export const BASE_LESSONS = {
             "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
           explore: null,
           image: {
-            alt: "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo.",
+            alt: "Com a mesma roupa, mais secadoras levam menos tempo; com as mesmas secadoras, mais roupa leva mais tempo.",
             prompt:
-              "Duas cenas de uma gráfica. Mesmo pedido: 2 trabalhadores levam mais tempo que 4. Mesma equipe: 1 pilha de etiquetas leva menos tempo que 2. Rótulos: 'pedido fixo', 'equipe fixa', 'menos tempo', 'mais tempo'.",
+              "Duas cenas de uma lavanderia. Mesma roupa: 2 secadoras levam mais tempo que 4. Mesmas secadoras: 1 cesto de roupa leva menos tempo que 2. Rótulos: 'roupa fixa', 'secadoras fixas', 'menos tempo', 'mais tempo'.",
           },
           kind: "explanation",
-          text: "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+          text: "Olhe a lavanderia. Para a mesma roupa, mais secadoras significam menos tempo: é uma relação **inversa**. Com as mesmas secadoras, mais roupa significa mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
           title: "O que fica fixo?",
           visual: null,
         },
@@ -835,4 +836,80 @@ export const BASE_LESSONS = {
       title: "Temperature changes across zero",
     },
   },
+} satisfies Record<string, BaseLesson>;
+
+/**
+ * Recorded before every lesson opened on a scene, so each opens on one now: its guess moves right
+ * after the first explanation, and a check asked before teaching moves after it.
+ */
+export const BASE_LESSONS = {
+  doorways: RECORDED.doorways,
+  eletron: openOnScene(RECORDED.eletron, {
+    order: [1, 0, 2, 3, 4, 5, 6],
+    plan: {
+      brief:
+        "Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas, e um comentário diz que o desenho está errado. Termine na pergunta aberta: onde está o erro?",
+      order: [1, 0, 2, 3, 4, 5, 6],
+      picture:
+        "Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas.",
+    },
+    scene: {
+      image: {
+        alt: "Bianca olha no celular o desenho de um átomo com elétrons em trilhas ao redor do núcleo.",
+        prompt:
+          "Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas.",
+      },
+      kind: "hookText",
+      text: "Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas. Um comentário diz que esse desenho está errado. Onde está o erro?",
+      visual: null,
+    },
+  }),
+  regra: openOnScene(RECORDED.regra, {
+    order: [2, 0, 3, 1, 4, 5, 6, 7, 8, 9],
+    plan: {
+      brief:
+        "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam, e o dono promete ao cliente o prazo de sempre. Termine na pergunta aberta: ele pode prometer isso?",
+      changes: {
+        1: {
+          brief:
+            "Compare dois casos numa lavanderia: para a mesma roupa, mais secadoras significam menos tempo, uma relação inversa; com as mesmas secadoras, mais roupa significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+          visual:
+            "Duas cenas de uma lavanderia: roupa fixa com números diferentes de secadoras; secadoras fixas com cestos de roupa diferentes.",
+        },
+        2: {
+          brief:
+            "Peça que o aluno escolha o que acontece com o prazo da gráfica em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+        },
+      },
+      order: [1, 0, 3, 2, 4, 5, 6, 7, 8, 9],
+      picture: "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+    },
+    scene: {
+      image: {
+        alt: "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+        prompt: "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+      },
+      kind: "hookText",
+      text: "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam. O dono promete ao cliente o prazo de sempre. Ele pode prometer isso?",
+      visual: null,
+    },
+  }),
+  temperature: openOnScene(RECORDED.temperature, {
+    order: [1, 0, 2, 3, 4, 5, 6, 7],
+    plan: {
+      brief:
+        "At dawn the thermometer outside Maya's window reads −3 °C, and the forecast says 5 degrees warmer by noon, so she leaves her coat at home. End on the open question: was that a good call?",
+      order: [1, 0, 2, 3, 4, 5, 6, 7],
+      picture: "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+    },
+    scene: {
+      image: {
+        alt: "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+        prompt: "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+      },
+      kind: "hookText",
+      text: "At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?",
+      visual: null,
+    },
+  }),
 } satisfies Record<string, BaseLesson>;

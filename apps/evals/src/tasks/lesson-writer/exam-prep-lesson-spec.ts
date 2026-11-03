@@ -26,20 +26,12 @@ export const EXAM_PREP_LESSON: Pick<
       {
         activityTemplate: null,
         brief:
-          "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: A) só a primeira; B) só a segunda; C) ambas; D) nenhuma. Resposta: C; mostre-a após a escolha e deixe a explicação para as próximas telas.",
+          "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados? Mostre a cena numa figura.",
         kind: "hook",
         skills: [],
-        visual: null,
-        visualKind: "none",
-      },
-      {
-        activityTemplate: null,
-        brief:
-          "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
-        kind: "check",
-        skills: [0],
-        visual: null,
-        visualKind: "none",
+        visual:
+          "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -53,8 +45,26 @@ export const EXAM_PREP_LESSON: Pick<
       {
         activityTemplate: null,
         brief:
+          "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
+        kind: "guess",
+        skills: [0],
+        visual: null,
+        visualKind: "none",
+      },
+      {
+        activityTemplate: null,
+        brief:
           "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
         kind: "explanation",
+        skills: [0],
+        visual: null,
+        visualKind: "none",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
+        kind: "check",
         skills: [0],
         visual: null,
         visualKind: "none",

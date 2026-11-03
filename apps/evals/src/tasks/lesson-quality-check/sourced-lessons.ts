@@ -1,5 +1,6 @@
-import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
+import { openOnScene } from "./scene-first";
 
 const taxDeadlines: WrittenLesson = {
   screens: [
@@ -219,7 +220,71 @@ const estabilidade: WrittenLesson = {
   },
 };
 
+const lostPostGuess: WrittenScreen = {
+  image: null,
+  kind: "hookGuess",
+  options: [
+    { isCorrect: false, text: "Não, nunca mais" },
+    { isCorrect: true, text: "Sim, nos casos que a Constituição prevê" },
+    { isCorrect: false, text: "Só se ela pedir para sair" },
+  ],
+  question: "Depois de estável, Ana ainda pode perder o cargo?",
+  reveal: "Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.",
+  visual: null,
+};
+
+/** Recorded before every lesson opened on a scene; the guess now follows the first explanation. */
 export const SOURCED_BASE_LESSONS = {
-  estabilidade: { ...SOURCED_LESSONS["pt-estabilidade"], lesson: estabilidade },
-  taxDeadlines: { ...SOURCED_LESSONS["en-tax-deadlines"], lesson: taxDeadlines },
+  estabilidade: openOnScene(
+    { ...SOURCED_LESSONS["pt-estabilidade"], lesson: estabilidade },
+    {
+      order: [1, 0, 3, 2, 4],
+      plan: {
+        brief:
+          "Ana passou num concurso e tomou posse na prefeitura, e uma colega diz que agora ela está garantida para sempre. Termine na pergunta aberta: é isso mesmo?",
+        changes: {
+          0: {
+            brief:
+              "Pergunte, sem valer ponto, se depois de estável Ana ainda pode perder o cargo: nunca mais; sim, nos casos que a Constituição prevê; só se ela pedir para sair. A resposta é a segunda; a próxima tela mostra os casos.",
+          },
+        },
+        order: [1, 0, 3, 2, 4],
+        picture:
+          "Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega.",
+      },
+      rewrites: { 0: lostPostGuess },
+      scene: {
+        image: {
+          alt: "Ana recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega sorridente.",
+          prompt:
+            "Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega.",
+        },
+        kind: "hookText",
+        text: "Ana passou num concurso e tomou posse na prefeitura. No primeiro dia, uma colega diz: “Agora você está garantida para sempre.” Será que é isso mesmo?",
+        visual: null,
+      },
+    },
+  ),
+  taxDeadlines: openOnScene(
+    { ...SOURCED_LESSONS["en-tax-deadlines"], lesson: taxDeadlines },
+    {
+      order: [1, 0, 2, 3, 4],
+      plan: {
+        brief:
+          "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+        order: [1, 0, 2, 3, 4],
+        picture: "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+      },
+      scene: {
+        image: {
+          alt: "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+          prompt:
+            "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop.",
+        },
+        kind: "hookText",
+        text: "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+        visual: null,
+      },
+    },
+  ),
 };

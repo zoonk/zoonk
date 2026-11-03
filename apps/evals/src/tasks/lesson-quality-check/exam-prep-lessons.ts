@@ -1,5 +1,6 @@
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { EXAM_PREP_LESSON } from "../lesson-writer/exam-prep-lesson-spec";
+import { openOnScene } from "./scene-first";
 
 const lesson: WrittenLesson = {
   screens: [
@@ -222,4 +223,20 @@ const lesson: WrittenLesson = {
   },
 };
 
-export const EXAM_PREP_BASE_LESSON = { ...EXAM_PREP_LESSON, lesson };
+/** Recorded before every lesson opened on a scene; its plan already does, so only the lesson moves. */
+export const EXAM_PREP_BASE_LESSON = openOnScene(
+  { ...EXAM_PREP_LESSON, lesson },
+  {
+    order: [2, 0, 3, 1, 4, 5, 6, 7],
+    scene: {
+      image: {
+        alt: "Lorena, advogada, ouve no fórum um senhor com uma pasta grossa de processo.",
+        prompt:
+          "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo.",
+      },
+      kind: "hookText",
+      text: "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados?",
+      visual: null,
+    },
+  },
+);
