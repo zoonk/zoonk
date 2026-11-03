@@ -1,5 +1,6 @@
 "use client";
 
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 import { useExtracted } from "next-intl";
@@ -20,6 +21,7 @@ import {
 } from "./categorize-placements";
 import { CategorizeSorted } from "./categorize-sorted";
 import { CategorizeSorting } from "./categorize-sorting";
+import { useSortAnnouncements } from "./use-sort-announcements";
 
 type CategorizeProps = ActivityRendererProps<"categorize">;
 
@@ -31,11 +33,12 @@ function CategorizeTextAlternative({
   total: number;
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
 
   return (
     <ActivityTextAlternative>
       {t("Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time.", {
-        groups: groups.map((group) => group.label).join(", "),
+        groups: groups.map((group) => spoken.inline(group.label)).join(", "),
         total,
       })}
     </ActivityTextAlternative>
@@ -50,7 +53,7 @@ export function CategorizeActivity({
   onAnswerChange,
   phase,
 }: CategorizeProps) {
-  const t = useExtracted();
+  const announce = useSortAnnouncements();
   const domPrefix = useId();
   const interactionState = usePlayerInteractionState();
   const { groups } = content.fields;
@@ -91,15 +94,7 @@ export function CategorizeActivity({
     const nextCard = unplacedItems(items, next.placements)[0];
 
     if (nextCard) {
-      commit(
-        next,
-        t({
-          description:
-            "Read by screen readers after a card is sorted; {next} is the card to sort now.",
-          message: "{item} is in {group}. Next: {next}.",
-          values: { group: group.label, item: card.text, next: nextCard.text },
-        }),
-      );
+      commit(next, announce.placedWithNext({ card, group, next: nextCard }));
 
       return;
     }
@@ -108,9 +103,7 @@ export function CategorizeActivity({
       document.activeElement === undoRef.current ||
       (groupsRef.current?.contains(document.activeElement) ?? false);
 
-    flushSync(() =>
-      commit(next, t("{item} is in {group}.", { group: group.label, item: card.text })),
-    );
+    flushSync(() => commit(next, announce.placed(card, group)));
 
     if (hadFocus) {
       statusRef.current?.focus();
@@ -127,16 +120,7 @@ export function CategorizeActivity({
     const next = takeBackLastCard(state);
     const hadFocus = document.activeElement === undoRef.current;
 
-    flushSync(() =>
-      commit(
-        next,
-        t({
-          description: "Read by screen readers after Undo: this card is back to be sorted again.",
-          message: "Took back {item}.",
-          values: { item: taken.text },
-        }),
-      ),
-    );
+    flushSync(() => commit(next, announce.tookBack(taken)));
 
     if (hadFocus && next.history.length === 0) {
       groupsRef.current?.querySelector("button")?.focus();
@@ -153,9 +137,7 @@ export function CategorizeActivity({
 
     const next = { ...state, placements: { ...state.placements, [itemId]: groupId } };
 
-    flushSync(() =>
-      commit(next, t("{item} is in {group}.", { group: group.label, item: item.text })),
-    );
+    flushSync(() => commit(next, announce.placed(item, group)));
 
     document.querySelector<HTMLElement>(`#${CSS.escape(rowId(itemId))}`)?.focus();
   }

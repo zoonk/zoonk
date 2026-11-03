@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "{total, plural, other {#枚のカード}}を{groups}に1枚ずつ分けてください。"
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item}を{group}に入れました。次は{next}です。"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item}を{group}に入れました。"
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "{item}を戻しました。"
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "カードはありません"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "「<item></item>」が入るのは「<group></group>」です。"
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "正しく分類できた数：{right} / {total}"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "「{item}」が入るのは「{group}」です。"
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "{sorted}/{total}枚を分類済み"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "どのグループに当てはまりますか？"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item}を{group}に入れました。"
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item}を{group}に入れました。次は{next}です。"
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "{item}を戻しました。"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
