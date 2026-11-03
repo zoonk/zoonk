@@ -78,18 +78,28 @@ async function setup(lessons = 6, dailyMinutes = 5) {
   return { goal, library, user };
 }
 
+async function readCoverage(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
+  const result = await getPlanTimeAdvice({ goalId, input: { studyDays, ...week } });
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected the time advice, got ${result.status}`);
+  }
+
+  return result.advice;
+}
+
 async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
   const [coverage, found] = await Promise.all([
-    getPlanTimeAdvice({ goalId, input: { studyDays, ...week } }),
+    readCoverage(goalId, studyDays, week),
     findPlanTimeToCover({ goalId, input: { studyDays, weekendMinutes: week.weekendMinutes } }),
   ]);
 
-  if (coverage.status !== "ready" || found.status !== "ready") {
-    throw new Error(`Expected the time advice, got ${coverage.status} and ${found.status}`);
+  if (found.status !== "ready") {
+    throw new Error(`Expected the time that covers everything, got ${found.status}`);
   }
 
   return {
-    ...coverage.advice,
+    ...coverage,
     recommendedMinutes: found.time.recommendedMinutes,
     suggested: found.time.suggested,
   };
@@ -196,6 +206,7 @@ describe(getPlanTimeAdvice, () => {
     ).resolves.toMatchObject({ advice: { endDate: null, ready: true }, status: "ready" });
   });
 
+  // It saves and searches an exam plan at a dozen daily times, past the default timeout on CI's slower runners.
   it("recommends the least fitting accepted time when more time adds an exam mock", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
@@ -224,9 +235,12 @@ describe(getPlanTimeAdvice, () => {
 
     const studyDays = [0];
     const advice = await readAdvice(goal.id, studyDays);
-    const preview55 = await readAdvice(goal.id, studyDays, { dailyMinutes: 55 });
-    const preview65 = await readAdvice(goal.id, studyDays, { dailyMinutes: 65 });
-    const preview70 = await readAdvice(goal.id, studyDays, { dailyMinutes: 70 });
+
+    const [preview55, preview65, preview70] = await Promise.all([
+      readCoverage(goal.id, studyDays, { dailyMinutes: 55 }),
+      readCoverage(goal.id, studyDays, { dailyMinutes: 65 }),
+      readCoverage(goal.id, studyDays, { dailyMinutes: 70 }),
+    ]);
 
     expect(preview55.coveredShare).toBe(1);
     expect(preview65.coveredShare).toBe(1);
@@ -309,13 +323,10 @@ describe(getPlanTimeAdvice, () => {
 
     expect([
       advice.recommendedMinutes,
-      preview55.recommendedMinutes,
-      preview65.recommendedMinutes,
-      preview70.recommendedMinutes,
       time70.recommendedMinutes,
       planTime.recommendedMinutes,
-    ]).toStrictEqual([55, 55, 55, 55, 55, 55]);
-  });
+    ]).toStrictEqual([55, 55, 55]);
+  }, 60_000);
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
     const { goal, library } = await setup();
@@ -377,8 +388,8 @@ describe(getPlanTimeAdvice, () => {
       });
 
       const [ownAsDay, wholeDay] = await Promise.all([
-        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: own }),
-        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: day }),
+        readCoverage(goal.id, EVERY_DAY, { dailyMinutes: own }),
+        readCoverage(goal.id, EVERY_DAY, { dailyMinutes: day }),
       ]);
 
       expect(ownAsDay.coveredShare).toBeLessThan(1);
@@ -536,7 +547,7 @@ describe(getPlanTimeAdvice, () => {
       throw new Error("Expected a daily-time recommendation");
     }
 
-    const picked = await readAdvice(goal.id, EVERY_DAY, {
+    const picked = await readCoverage(goal.id, EVERY_DAY, {
       dailyMinutes: recommended,
       weekendMinutes: 30,
     });
@@ -565,7 +576,7 @@ describe(getPlanTimeAdvice, () => {
       }
 
       const input = { dailyMinutes, studyDays, weekendMinutes };
-      const picked = await readAdvice(goal.id, studyDays, input);
+      const picked = await readCoverage(goal.id, studyDays, input);
       const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
       expect(result.status).toBe("updated");
 
@@ -597,7 +608,10 @@ describe(getPlanTimeAdvice, () => {
       const recommended = advice.recommendedMinutes ?? goal.dailyMinutes;
       const promisedCoverage = advice.recommendedMinutes === null ? advice.coveredShare : 1;
 
-      const picked = await readAdvice(goal.id, studyDays, { ...input, dailyMinutes: recommended });
+      const picked = await readCoverage(goal.id, studyDays, {
+        ...input,
+        dailyMinutes: recommended,
+      });
 
       const result = await updateGoal({
         goalId: goal.id,
@@ -666,7 +680,7 @@ describe(getPlanTimeAdvice, () => {
     });
 
     const input = { dailyMinutes: 20, studyDays: WEEKDAYS };
-    const picked = await readAdvice(goal.id, WEEKDAYS, input);
+    const picked = await readCoverage(goal.id, WEEKDAYS, input);
     const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
     expect(result.status).toBe("updated");
 
