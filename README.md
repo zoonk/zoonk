@@ -37,7 +37,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 2. `pnpm db:setup` to create the local development, test, and E2E databases, apply migrations, and seed new ones. It connects as `postgres:postgres@localhost:5432` (creating that role if it can) and never resets a database it didn't create, so rerun it whenever you like
 3. `pnpm dev` to start the apps
 
-No environment variable is required: the apps use local defaults, sign-in codes land in the local mailbox, and services you haven't configured stay off. Anything that generates, such as plans and lessons, needs `AI_GATEWAY_API_KEY` in `apps/main/.env` and `apps/api/.env`; each app's `.env.example` lists what the other keys turn on.
+No environment variable is required: the apps use local defaults, sign-in codes land in the local mailbox, and services you haven't configured stay off. Anything that generates, such as plans and lessons, goes through AI Gateway: with access to Zoonk's Vercel team, sign in to the Vercel CLI and link the apps ([development guide](./.agents/guides/development.md#local-development-and-sign-in)); otherwise set your own `AI_GATEWAY_API_KEY` in `apps/main/.env` and `apps/api/.env`. Each app's `.env.example` lists what the other keys turn on.
 
 ### Local Development
 
