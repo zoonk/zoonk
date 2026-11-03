@@ -1,5 +1,6 @@
 "use client";
 
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
+import { FirstLessonWarmUp } from "./first-lesson-warm-up";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -245,6 +247,7 @@ export function NextStop({
   notWritten,
   sessionBar,
   tap = null,
+  warmUp = null,
 }: {
   actions: NextStopActions;
   alternative: DayStep | null;
@@ -257,6 +260,7 @@ export function NextStop({
   notWritten: LessonNotWritten | null;
   sessionBar: { completed: number; total: number };
   tap?: NextStopTap | null;
+  warmUp?: WarmUpDeck | null;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -298,6 +302,10 @@ export function NextStop({
 
         {!isReady && !notWritten && (
           <Waiting actions={actions} block={block} generationId={generationId} lesson={lesson} />
+        )}
+
+        {!notWritten && (
+          <FirstLessonWarmUp alternative={Boolean(alternative)} deck={warmUp} isReady={isReady} />
         )}
       </TaskBody>
 

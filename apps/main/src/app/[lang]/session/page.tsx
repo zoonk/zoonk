@@ -19,6 +19,7 @@ import {
   readSessionStoppedParam,
 } from "@/lib/session/session-stopped-param";
 import { withQuery } from "@/lib/with-query";
+import { getFirstLessonWarmUp } from "@zoonk/core/lookahead/first-lesson-warm-up";
 import { findAlternativeStudyBlock } from "@zoonk/core/sessions/alternative";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import {
@@ -30,6 +31,7 @@ import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { type DayStep, type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
+import { safeAsync } from "@zoonk/utils/error";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
@@ -152,6 +154,15 @@ async function NextStepView({
 }) {
   const state = await loadLessonState({ next, step });
   const lesson = getNextStopLesson({ ...screen, state, step });
+  const notWritten = getNotWritten({ lesson, state, ...screen });
+
+  const waitedId =
+    lesson !== "ready" && !notWritten && step.kind === "learn" ? step.lessonId : null;
+
+  // The card is optional: a deck that can't be read leaves the wait without it.
+  const { data: warmUp } = waitedId
+    ? await safeAsync(() => getFirstLessonWarmUp({ lessonId: waitedId }))
+    : { data: null };
 
   return (
     <SessionMain>
@@ -162,10 +173,11 @@ async function NextStepView({
         goalId={facts.goal.id}
         key={`${facts.goal.id}:${facts.localDate.toISOString()}:${step.position}`}
         lesson={lesson}
-        notWritten={getNotWritten({ lesson, state, ...screen })}
+        notWritten={notWritten}
         step={step}
         stepRef={next?.ref.position === step.position ? next.ref : null}
         userId={facts.userId}
+        warmUp={warmUp ?? null}
       />
     </SessionMain>
   );

@@ -62,17 +62,19 @@ function WarmUpReveal({ card, pickedId }: { card: Card; pickedId: string }) {
 }
 
 function NextGuess({
+  enterKey,
   hasNext,
   onNext,
   ref,
 }: {
+  enterKey: boolean;
   hasNext: boolean;
   onNext: () => void;
   ref: Ref<HTMLButtonElement>;
 }) {
   const t = useExtracted();
 
-  useEnterKey(onNext, { enabled: hasNext });
+  useEnterKey(onNext, { enabled: hasNext && enterKey });
 
   if (!hasNext) {
     return <p className="text-muted-foreground self-end text-sm">{t("That's all for now.")}</p>;
@@ -99,11 +101,14 @@ function NextGuess({
 export function WarmUpCard({
   deck,
   holding,
+  nextOnEnter = true,
   onGuess,
   surface,
 }: {
   deck: WarmUpDeck;
   holding: boolean;
+  /** False when Enter already runs another button on the screen. */
+  nextOnEnter?: boolean;
   onGuess: () => void;
   surface: WarmUpSurface;
 }) {
@@ -234,7 +239,12 @@ export function WarmUpCard({
       </div>
 
       {answered && !holding && (
-        <NextGuess hasNext={shown.position + 1 < deck.cards.length} onNext={next} ref={nextRef} />
+        <NextGuess
+          enterKey={nextOnEnter}
+          hasNext={shown.position + 1 < deck.cards.length}
+          onNext={next}
+          ref={nextRef}
+        />
       )}
     </section>
   );
