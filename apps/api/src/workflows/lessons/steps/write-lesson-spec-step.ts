@@ -1,13 +1,24 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
-import { keepTeachingPictures } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
 } from "@zoonk/core/cache/course-content";
 import { claimLibraryGeneration } from "@zoonk/core/library/claims/generation";
-import { loadLessonSpecInputs } from "@zoonk/core/library/curriculum/lesson-spec-inputs";
+import {
+  type JudgedPicture,
+  type PlannedPicture,
+  dropDecorativePictures,
+  judgePlannedPicture,
+  listPlannedPictures,
+} from "@zoonk/core/library/curriculum/lesson-pictures";
+import {
+  type LessonSpecInputs,
+  loadLessonSpecInputs,
+} from "@zoonk/core/library/curriculum/lesson-spec-inputs";
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
 import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
@@ -25,6 +36,22 @@ type SpecInput = {
   wait?: CallWait;
   workflowRunId: string;
 };
+
+type SpecAnalytics = ReturnType<typeof toContentAnalytics>;
+
+type PlannedLessonSpecs = {
+  analytics: SpecAnalytics;
+  homeChapterId: LessonSpecInputs["homeChapterId"];
+  lessonId: string;
+  novice: boolean;
+  pictures: PlannedPicture[];
+  provenance: Parameters<typeof saveLessonSpecs>[0]["provenance"];
+  scope: LessonSpecInputs["scope"];
+  specs: LessonSpec[];
+  workflowRunId: string;
+};
+
+type PlanResult = { status: LessonSpecOutcome } | ({ status: "planned" } & PlannedLessonSpecs);
 
 async function claimSpec({ lessonId, workflowRunId }: SpecInput) {
   const claim = await claimLibraryGeneration({ id: lessonId, target: "lessonSpec", workflowRunId });
@@ -54,11 +81,11 @@ async function planLesson({
   lessonId,
   wait = "soon",
   workflowRunId,
-}: SpecInput): Promise<LessonSpecOutcome> {
+}: SpecInput): Promise<PlanResult> {
   const inputs = await loadLessonSpecInputs(lessonId);
 
   if (!inputs) {
-    return "missing";
+    return { status: "missing" };
   }
 
   const context = toContentAnalytics({ analytics, scope: inputs.scope, workflowRunId });
@@ -75,50 +102,104 @@ async function planLesson({
     serviceTier: chooseServiceTier({ reuse, wait }),
   });
 
-  const specs = await Promise.all(
-    data.lessons.map((spec) =>
-      keepTeachingPictures({ analytics: context, level: inputs.prompt.level, spec }),
-    ),
-  );
-
-  const saved = await saveLessonSpecs({
+  return {
     analytics: context,
     homeChapterId: inputs.homeChapterId,
     lessonId,
+    novice: readsNoviceRules(inputs.prompt),
+    pictures: listPlannedPictures(data.lessons),
     provenance,
     scope: inputs.scope,
-    specs,
+    specs: data.lessons,
+    status: "planned",
     workflowRunId,
-  });
-
-  return saved.status === "saved" ? "ready" : "missing";
+  };
 }
 
-export async function writeLessonSpecStep(
-  input: SpecInput,
-): Promise<CourseContentWrite<LessonSpecOutcome>> {
-  "use step";
-
-  return collectCourseContentTags(() => writeLessonSpec(input));
-}
-
-async function writeLessonSpec(input: SpecInput): Promise<LessonSpecOutcome> {
+async function writeLessonPlan(input: SpecInput): Promise<PlanResult> {
   const claim = await claimSpec(input);
 
   if (claim === "completed") {
-    return "ready";
+    return { status: "ready" };
   }
 
   if (claim === "running") {
-    return "waiting";
+    return { status: "waiting" };
   }
 
   await using stream = createStepStream<LessonStreamStep>();
   await stream.status({ entityId: input.lessonId, status: "started", step: "planLesson" });
 
-  const outcome = await planLesson(input);
+  const planned = await planLesson(input);
 
-  await stream.status({ entityId: input.lessonId, status: "completed", step: "planLesson" });
+  if (planned.status !== "planned") {
+    await stream.status({ entityId: input.lessonId, status: "completed", step: "planLesson" });
+  }
 
-  return outcome;
+  return planned;
+}
+
+/** Plans the lesson without saving it, so each planned picture can be judged in its own step. */
+export async function planLessonSpecStep(
+  input: SpecInput,
+): Promise<CourseContentWrite<PlanResult>> {
+  "use step";
+
+  return collectCourseContentTags(() => writeLessonPlan(input));
+}
+
+export async function judgeLessonPictureStep({
+  analytics,
+  novice,
+  picture,
+}: {
+  analytics: SpecAnalytics;
+  novice: boolean;
+  picture: PlannedPicture;
+}): Promise<JudgedPicture> {
+  "use step";
+
+  return judgePlannedPicture({ analytics, novice, picture });
+}
+
+async function saveLessonPlan({
+  judged,
+  planned,
+}: {
+  judged: readonly JudgedPicture[];
+  planned: PlannedLessonSpecs;
+}): Promise<LessonSpecOutcome> {
+  const lesson = await prisma.lesson.findUnique({
+    select: { specRunId: true, specStatus: true },
+    where: { id: planned.lessonId },
+  });
+
+  // The runtime runs a step's body again when its result was lost after the body ended.
+  if (lesson?.specStatus === "completed" && lesson.specRunId === planned.workflowRunId) {
+    return "ready";
+  }
+
+  const saved = await saveLessonSpecs({
+    analytics: planned.analytics,
+    homeChapterId: planned.homeChapterId,
+    lessonId: planned.lessonId,
+    provenance: planned.provenance,
+    scope: planned.scope,
+    specs: dropDecorativePictures({ judged, specs: planned.specs }),
+    workflowRunId: planned.workflowRunId,
+  });
+
+  await using stream = createStepStream<LessonStreamStep>();
+  await stream.status({ entityId: planned.lessonId, status: "completed", step: "planLesson" });
+
+  return saved.status === "saved" ? "ready" : "missing";
+}
+
+export async function saveLessonSpecStep(input: {
+  judged: readonly JudgedPicture[];
+  planned: PlannedLessonSpecs;
+}): Promise<CourseContentWrite<LessonSpecOutcome>> {
+  "use step";
+
+  return collectCourseContentTags(() => saveLessonPlan(input));
 }

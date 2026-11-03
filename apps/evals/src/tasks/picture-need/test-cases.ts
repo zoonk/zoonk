@@ -766,4 +766,48 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "application",
     },
   }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-patrimonio-liquido-beginner-0",
+    lesson: "Patrimônio líquido",
+    level: "beginner",
+    picture:
+      "A oficina de Davi com suas ferramentas, um cliente que ainda vai pagar e um documento de dívida com o banco, sem valores.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre a oficina de Davi: ferramentas, um cliente que ainda vai pagar e uma dívida com o banco. Termine com a pergunta da aula, sem pedir resposta: quanto da oficina é de Davi de verdade?",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-niveis-ecologicos-beginner-2",
+    lesson: "Níveis de organização ecológica",
+    level: "beginner",
+    picture:
+      "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
+    previousPicture:
+      "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
+    screen: {
+      brief:
+        "Explique que uma população reúne os organismos de uma mesma espécie que vivem em uma área ao mesmo tempo. No lago, todos os sapos-cururus formam uma população.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-pt-receitas-regulares-overview-1",
+    lesson: "Receitas regulares e eventuais",
+    level: "overview",
+    picture:
+      "No local de trabalho, Igor recebendo dinheiro pelo seu trabalho, com o dinheiro em destaque.",
+    previousPicture:
+      "Igor recebendo um pagamento no local de trabalho, com um calendário na parede.",
+    screen: {
+      brief:
+        "Explique que receita é o dinheiro que uma pessoa recebe. O pagamento que entra para Igor pelo seu trabalho é um exemplo.",
+      kind: "explanation",
+    },
+  }),
 ];

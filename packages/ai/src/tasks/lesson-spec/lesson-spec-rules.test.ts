@@ -40,8 +40,8 @@ const validScreens = [
   screen("application"),
 ];
 
-function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner") {
-  return getLessonSpecIssues({ level, spec: lesson }).map((issue) => issue.code);
+function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
+  return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
 }
 
 describe(estimateLessonMinutes, () => {
@@ -128,6 +128,21 @@ describe(getLessonSpecIssues, () => {
     ];
 
     expect(getCodes(spec(screens))).toStrictEqual(["checkGap"]);
+  });
+
+  it("asks a new learner's lesson for two teaching screens before its first check", () => {
+    const early = spec([
+      screen("hook", []),
+      screen("explanation"),
+      screen("check"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ]);
+
+    expect(getCodes(early, "beginner", true)).toContain("earlyCheck");
+    expect(getCodes(early)).not.toContain("earlyCheck");
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
   });
 
   it("checks the support mode against the screen after the hook", () => {

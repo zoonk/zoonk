@@ -169,7 +169,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Overview lesson for a curious adult: why the electron doesn't fall into the nucleus, told as a story with an everyday comparison (a blurred fan, a cloud) and no formulas, equations or notation
-      - A guess-first hook fits ("the electron orbits like the Earth around the Sun?"); checks are light and fun
+      - The hook is a scene that asks nothing: the atom's picture as a story, ending on the question the lesson answers (why doesn't the electron fall in?), with no options; checks are light and come after at least two teaching screens
       - No worked examples are needed for an overview idea; a visual of the cloud versus the old orbit picture helps
       - Orbitals in detail, quantum numbers and the uncertainty principle's math belong elsewhere
 
@@ -741,6 +741,143 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       lessonTitle: "Faiz enflasyonu geçiyor mu?",
       level: "beginner",
       skills: ["Reel getiriyi hesaplamak"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in accounting
+      - The hook is a scene that asks nothing: the lesson's main example (a small business with its things, what clients still owe it and what it owes) in one or two everyday sentences, ending on the question the lesson answers (how much of it really belongs to the owner?), with no options and no term the lesson explains (bens, direitos, obrigações, patrimônio líquido)
+      - Explanation first, with at least two explanations or worked examples before the first check
+      - One new term per screen: bens, direitos and obrigações were taught in the earlier lessons and are recalled in a few words, never defined again all on one screen together with patrimônio líquido and a caveat
+      - The hard ideas the skill needs stay, each taught on its own screen before a check uses it, never left out: paying a debt with cash leaves the patrimônio líquido unchanged (the cash and the debt both go down), and the patrimônio líquido isn't the cash in the till. A case with the owner's personal belongings gets at most a one-sentence reminder of the earlier lesson's rule
+      - The amounts are shown with what the app draws (a table that adds up, a before-and-after table, a formula to play with), not pictures; a picture shows only a scene to see, such as the hook's business, and never carries numbers
+      - One person carries the example on every screen that needs someone
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-patrimonio-liquido-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Identificar bens e direitos de uma entidade",
+          ideas: [
+            "Bens são recursos que a empresa controla e pode usar ou vender, como máquinas, dinheiro e marcas adquiridas.",
+            "Direitos são valores ou benefícios que a empresa tem a receber, como o pagamento por uma venda entregue.",
+          ],
+          order: "before",
+          title: "Bens e direitos",
+        },
+        {
+          canDo: "Identificar obrigações de uma entidade",
+          ideas: [
+            "Uma obrigação é um compromisso que a empresa já tem com outra parte e ainda precisa cumprir, mesmo antes do vencimento.",
+            "Um plano de compra, por si só, não cria uma obrigação.",
+          ],
+          order: "before",
+          title: "Obrigações",
+        },
+        {
+          canDo: "Distinguir o patrimônio da entidade do patrimônio pessoal",
+          ideas: [
+            "Na contabilidade, a empresa é considerada separadamente de seus proprietários.",
+            "Os bens, direitos e dívidas da empresa não se confundem automaticamente com os itens pessoais de seus proprietários.",
+          ],
+          order: "before",
+          title: "Separação patrimonial",
+        },
+        ...outlined({ after: ["Desafio: Elementos do patrimônio"] }),
+      ],
+      chapterTitle: "Elementos do patrimônio",
+      courseTitle: "Contabilidade",
+      language: "pt",
+      lessonCanDo: "Calcular o patrimônio líquido a partir de bens, direitos e obrigações",
+      lessonDescription:
+        "O patrimônio líquido representa a diferença entre os recursos da entidade e suas obrigações.",
+      lessonTitle: "Patrimônio líquido",
+      level: "beginner",
+      skills: ["Identificar elementos do patrimônio"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in biology
+      - The hook is a scene that asks nothing: one real place full of life shown in a picture, ending on the question the lesson answers (how do the living things of a place fit together?), with no options
+      - Each explanation teaches one level (population, community, ecosystem), with one new term per screen; organismo was taught in an earlier lesson and is recalled in a few words, never introduced again on the screen that introduces espécie
+      - A species is defined precisely (living beings alike enough to reproduce together and have fertile offspring), never as "related living beings"
+      - The levels are something to see: the screens that teach them show pictures of the same place, each with the level the screen is about highlighted, one scene per picture
+      - At least two explanations come before the first check, and the checks use only levels already taught
+      - One person at most, and a town only if the idea needs it
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-niveis-ecologicos-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Reconhecer características compartilhadas pelos seres vivos",
+          ideas: [
+            "Todo ser vivo é formado por células, unidades que compõem seu corpo e realizam atividades essenciais.",
+            "Reprodução é a formação de novos seres vivos a partir de seres vivos anteriores, mas nem todo indivíduo se reproduz.",
+          ],
+          order: "before",
+          title: "Características dos seres vivos",
+        },
+        {
+          canDo: "Relacionar células, tecidos, órgãos e organismos",
+          ideas: [
+            "A célula é uma pequena unidade viva que compõe os seres vivos; um organismo é um ser vivo inteiro.",
+            "Em muitos organismos multicelulares, células organizadas formam tecidos, e diferentes tecidos que trabalham juntos formam órgãos.",
+          ],
+          order: "before",
+          title: "Organização dos organismos",
+        },
+        ...outlined({
+          after: ["Estrutura e função nos seres vivos", "Desafio: Organização da vida"],
+        }),
+      ],
+      chapterTitle: "Organização da vida",
+      courseTitle: "Biologia",
+      language: "pt",
+      lessonCanDo: "Distinguir organismo, população, comunidade e ecossistema",
+      lessonDescription:
+        "Os níveis ecológicos conectam indivíduos da mesma espécie, comunidades e componentes não vivos.",
+      lessonTitle: "Níveis de organização ecológica",
+      level: "beginner",
+      skills: ["Distinguir níveis de organização ecológica"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a curious adult (overview): plain words, no formulas
+      - The hook is a scene that asks nothing: one person's money coming in (a monthly salary and an occasional side job), ending on the question the lesson answers, with no options; never a guess whose question already says the answer ("pays every month... which one comes at agreed intervals?")
+      - The lesson keeps its nuances on their own screens: a regular income can change in amount and still be regular, regular doesn't mean guaranteed, and how often it comes decides the kind, not the kind of work
+      - Income across months is shown with what the app draws (a table or a bar chart over months), and a picture only for a scene to see; no picture of two scenes at once
+      - At most two checks or activities before the application, each after the idea it uses was taught
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-receitas-regulares-overview",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: [
+          "Despesas recorrentes e ocasionais",
+          "Despesas fixas e variáveis",
+          "Registro de movimentações",
+        ],
+      }),
+      chapterTitle: "Entradas e saídas de dinheiro",
+      courseTitle: "Educação Financeira",
+      language: "pt",
+      lessonCanDo: "Distinguir receitas regulares de receitas eventuais",
+      lessonDescription:
+        "Salário, renda de trabalho eventual e outras entradas podem ter frequências diferentes.",
+      lessonTitle: "Receitas regulares e eventuais",
+      level: "overview",
+      skills: ["Identificar receitas"],
     },
   },
 ];

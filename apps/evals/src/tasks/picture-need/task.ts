@@ -2,12 +2,17 @@ import { createBooleanEvaluation } from "@/lib/evaluation-routes";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { pictureNeedClassifier } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type PictureNeedExpected, type PictureNeedInput, TEST_CASES } from "./test-cases";
 
 type PictureNeedOutput = { teaches: boolean };
 
 const route = createBooleanEvaluation({
-  classifier: pictureNeedClassifier,
+  classifier: {
+    ...pictureNeedClassifier,
+    toInput: ({ level, ...input }: PictureNeedInput) =>
+      pictureNeedClassifier.toInput({ ...input, novice: readsNoviceRules({ level }) }),
+  },
   toOutput: (teaches): PictureNeedOutput => ({ teaches }),
 });
 

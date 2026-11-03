@@ -29,7 +29,12 @@ import {
   fixLessonContentStep,
   writeLessonContentStep,
 } from "./steps/write-lesson-content-step";
-import { type LessonSpecOutcome, writeLessonSpecStep } from "./steps/write-lesson-spec-step";
+import {
+  type LessonSpecOutcome,
+  judgeLessonPictureStep,
+  planLessonSpecStep,
+  saveLessonSpecStep,
+} from "./steps/write-lesson-spec-step";
 
 export type LessonContentInput = {
   lessonId: string;
@@ -89,6 +94,28 @@ async function waitForOwner(lessonId: string) {
   return finish({ lessonId, status: status === "ready" ? "ready" : "busy" });
 }
 
+async function planLessonSpec({
+  input,
+  workflowRunId,
+}: {
+  input: LessonContentInput;
+  workflowRunId: string;
+}): Promise<LessonSpecOutcome> {
+  const planned = await deliverCourseContent(planLessonSpecStep({ ...input, workflowRunId }));
+
+  if (planned.status !== "planned") {
+    return planned.status;
+  }
+
+  const { analytics, novice, pictures } = planned;
+
+  const judged = await Promise.all(
+    pictures.map((picture) => judgeLessonPictureStep({ analytics, novice, picture })),
+  );
+
+  return deliverCourseContent(saveLessonSpecStep({ judged, planned }));
+}
+
 function planWhenFree({
   input,
   workflowRunId,
@@ -98,7 +125,7 @@ function planWhenFree({
 }): Promise<LessonSpecOutcome> {
   return repeatUntil({
     done: (outcome) => outcome !== "waiting",
-    run: () => deliverCourseContent(writeLessonSpecStep({ ...input, workflowRunId })),
+    run: () => planLessonSpec({ input, workflowRunId }),
     times: MAX_WAITS,
     wait: () => sleep(WAIT_INTERVAL),
   });

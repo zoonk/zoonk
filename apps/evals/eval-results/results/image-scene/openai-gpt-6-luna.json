@@ -50,13 +50,27 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "A discount as before and after: an old price tag and a new one, maybe a -25% badge. Labels with the prices help here and must be exactly $80 and $60.",
-        "expected": { "labels": "some" },
+        "expected": {
+          "labels": "some"
+        },
         "id": "discount-en-1",
         "userInput": {
           "context": "Personal finance › Percentages › Discounts",
@@ -117,13 +131,27 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
-        "expected": { "labels": "any" },
+        "expected": {
+          "labels": "any"
+        },
         "id": "electron-cloud-pt-1",
         "userInput": {
           "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
@@ -184,8 +212,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Make the incoming microwave bands visually distinct from the outgoing heat lines, and give the incoming bands directional arrowheads to strengthen the cause-and-effect reading.",
           "kind": "potentialImprovements",
@@ -194,7 +230,9 @@
       ],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating food, linked to water molecules spinning. Uses a sequence layout or a clear relation; motion shows spinning.",
-        "expected": { "labels": "any" },
+        "expected": {
+          "labels": "any"
+        },
         "id": "microwave-en-1",
         "userInput": {
           "context": "Everyday physics › Heat › How a microwave heats food",
@@ -255,13 +293,27 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
-        "expected": { "labels": "none" },
+        "expected": {
+          "labels": "none"
+        },
         "id": "language-house-1",
         "userInput": {
           "context": "Spanish for Brazilians › Finding a place to live",
@@ -340,7 +392,9 @@
       ],
       "testCase": {
         "expectations": "A chapter cover: one object that stands for photosynthesis, such as a leaf in sunlight. No labels. Nothing more than a small supporting object.",
-        "expected": { "labels": "none" },
+        "expected": {
+          "labels": "none"
+        },
         "id": "cover-photosynthesis-1",
         "userInput": {
           "context": "Biology",
@@ -405,12 +459,22 @@
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
-        "expected": { "labels": "some" },
+        "expected": {
+          "labels": "some"
+        },
         "id": "rule-of-three-pt-1",
         "userInput": {
           "context": "Matemática básica › Proporções › Regra de três",
@@ -471,17 +535,27 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The “evaporation” label acts as a caption for the process already shown by the rising water-vapor marks and arrow. It is redundant rather than necessary for readability, triggering the labels category cap of 6.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
-        "expected": { "labels": "any" },
+        "expected": {
+          "labels": "any"
+        },
         "id": "overloaded-water-cycle-1",
         "userInput": {
           "context": "Earth science › The water cycle › Evaporation",
@@ -547,12 +621,22 @@
           "kind": "majorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
-        "expected": { "labels": "any" },
+        "expected": {
+          "labels": "any"
+        },
         "id": "printing-press-en-1",
         "userInput": {
           "context": "World history › The Renaissance › The printing press",
@@ -560,6 +644,250 @@
           "language": "en",
           "request": "One press making many copies of the same book",
           "screenText": "Before the press, one scribe took months to copy a book. A press could print hundreds of copies in the same time.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side-by-side scenes clearly convey the intended contrast: calm symmetry and soft, even light versus diagonal movement and intense light against deep shadows. No visible titles, artists, or style labels reveal the answer.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The composition contains exactly the two requested paintings, treated as one comparison. The figures and lighting serve that comparison without adding unrelated objects or ideas.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The empty labels array omits both explicitly required numeric identifiers, 1 and 2. These are necessary to identify the paintings as specified, rather than unnecessary captions.",
+          "score": 4,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All substantive descriptive fields are written in Portuguese rather than English. Only the layout value is English; there are no label targets to assess for placement.",
+          "score": 2,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "1 of 2 parts passed. The prices or numbers on this screen need labels, but the scene has none.",
+          "score": 5.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1350,
+          "outputTokens": 603,
+          "reasoningTokens": 219
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required labels 1 and 2 are missing, leaving the paintings without the specified identifiers. The focalObject, relation, and supportingObjects descriptions are in Portuguese, violating the requirement that all non-label fields be in English.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Two paintings compared side by side, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "paintings-comparison-pt-1",
+        "userInput": {
+          "context": "História da arte › Do Renascimento ao Barroco › Comparando pinturas",
+          "language": "pt",
+          "request": "Duas pinturas para comparar: 1, uma cena renascentista calma e simétrica com luz suave; 2, uma cena barroca com diagonal forte e luz intensa contra sombras profundas",
+          "screenText": "Qual das pinturas é barroca?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The salary handoff and adjacent toolbox correctly convey the requested core scene. However, the added appliance and bills suggest paid repair activity at the same workplace, contrary to the intended distinction and the explicit restriction against adding these elements.",
+          "score": 6,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The result correctly requests a single scene rather than stacked or adjacent scenes. Nevertheless, it explicitly adds a forbidden appliance, bills, and motion graphics, turning the simple salary handoff into a depiction of two income ideas.",
+          "score": 6,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The labels array is empty, correctly avoiding unnecessary labels or captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. With no labels, there are no label-placement targets to check.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1382,
+          "outputTokens": 682,
+          "reasoningTokens": 260
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The repaired appliance and nearby bills violate the explicit requirement to show only the salary handoff with Igor's toolbox beside him. They also place evidence of paid repair work at his workplace, blurring the screen's distinction between salary earned there and occasional repairs performed elsewhere.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The dashed line and arrow add unnecessary visual clutter to a handoff that is already understandable from the adults' hands and envelope.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly describe Igor as an adult; the result specifies adulthood only for the person handing him the envelope.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
+        "expected": {
+          "labels": "any",
+          "layout": "single"
+        },
+        "id": "one-place-not-two-pt-1",
+        "userInput": {
+          "alt": "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
+          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+          "language": "pt",
+          "request": "Igor no trabalho recebe um envelope de salário de outra pessoa. Ao lado de Igor está sua caixa de ferramentas de conserto. Cena cotidiana, sem texto.",
+          "screenText": "Igor recebe seu salário no trabalho. Fora dali, às vezes ele conserta aparelhos e recebe por esses serviços.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The payment exchange and calendar communicate recurring income, and the bicycle sale is consistent with the screen text. However, explicitly placing both scenes side by side violates the task-specific single-scene requirement and weakens the intended focus on Igor's monthly workplace payment.",
+          "score": 6,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The comparison layout and placement instructions create two separate narrative scenes. The bicycle exchange is a second focal event, not a small supporting object, so the result fails the explicit requirement to reduce the overloaded request to one scene.",
+          "score": 6,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The labels array is empty, appropriately matching the expectation that no labels are needed. No unnecessary captions or prices are introduced.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All populated textual fields are in English. There are no labels requiring placement targets.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. This screen needs one scene (single), but the scene's layout is comparison.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1364,
+          "outputTokens": 673,
+          "reasoningTokens": 269
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result explicitly requests two scenes side by side: monthly pay on the left and the bicycle sale on the right. This directly violates the requirement to show only one scene and divides attention instead of focusing on the workplace payment identified by the alt text.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Explicitly describe Igor as an adult to ensure the illustration preserves the required age.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
+        "expected": {
+          "labels": "any",
+          "layout": "single"
+        },
+        "id": "two-moments-become-one-pt-1",
+        "userInput": {
+          "alt": "Igor recebe o pagamento combinado no trabalho.",
+          "context": "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+          "language": "pt",
+          "request": "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
+          "screenText": "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
           "textAllowed": true
         }
       }

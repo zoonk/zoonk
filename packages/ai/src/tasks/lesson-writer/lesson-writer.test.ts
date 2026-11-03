@@ -24,6 +24,9 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "Write it for the exams.",
     "{{/exams}}",
     "Keep it short.",
+    "{{#experienced}}",
+    "Open with a guess.",
+    "{{/experienced}}",
     "{{#novice}}",
     "Show it before asking.",
     "{{/novice}}",
@@ -123,42 +126,48 @@ describe(writeLessonDraft, () => {
         writeLessonDraft({ ...params, shortAnswers: true }),
       ]);
 
-    expect(regular.systemPrompt).toBe("Write the lesson.\nKeep it short.\nCheck it.");
+    expect(regular.systemPrompt).toBe(
+      "Write the lesson.\nKeep it short.\nOpen with a guess.\nCheck it.",
+    );
 
     expect(beginner.systemPrompt).toBe(
       "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
     );
 
     expect(beginnerExam.systemPrompt).toBe(
-      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nCheck it.",
+      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
     expect(spotAi.systemPrompt).toBe(
-      "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nCheck it.",
+      "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
     expect(material.systemPrompt).toBe(
-      "Write the lesson.\nWrite it from the material.\nKeep it short.\nCheck it.",
+      "Write the lesson.\nWrite it from the material.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
     expect(sources.systemPrompt).toBe(
-      "Write the lesson.\nWrite it from the sources.\nKeep it short.\nCheck it.",
+      "Write the lesson.\nWrite it from the sources.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
     expect(exam.systemPrompt).toBe(
-      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nCheck it.",
+      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
     expect(setup.systemPrompt).toBe(
-      "Write the lesson.\nKeep it short.\nWrite the setup.\nCheck it.",
+      "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite the setup.\nCheck it.",
     );
 
     expect(written.systemPrompt).toBe(
-      "Write the lesson.\nKeep it short.\nWrite typed answers.\nCheck it.",
+      "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite typed answers.\nCheck it.",
     );
 
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
+
+    expect(regular.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");
+    expect(beginner.userPrompt).toContain("1. hook, written as: hookText\n");
+    expect(beginnerExam.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");
 
     // Only learners whose exams ask written answers may get the application as a typed answer.
     expect(regular.userPrompt).toContain("3. application, written as: check or mathCheck\n");

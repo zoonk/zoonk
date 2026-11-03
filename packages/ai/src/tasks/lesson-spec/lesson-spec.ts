@@ -190,6 +190,7 @@ async function planLesson(params: LessonSpecParams) {
 const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "application",
   "checkGap",
+  "earlyCheck",
   "hook",
   "skillReference",
   "unpracticedSkill",
@@ -197,9 +198,17 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "workedExample",
 ]);
 
-function countShapeIssues({ data, level }: { data: LessonSpecResult; level: CourseLevel }): number {
+function countShapeIssues({
+  data,
+  level,
+  novice,
+}: {
+  data: LessonSpecResult;
+  level: CourseLevel;
+  novice: boolean;
+}): number {
   return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, spec }))
+    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
     .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
 }
 
@@ -209,7 +218,8 @@ function countShapeIssues({ data, level }: { data: LessonSpecResult; level: Cour
  */
 export function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({
-    countProblems: ({ data }) => countShapeIssues({ data, level: params.level }),
+    countProblems: ({ data }) =>
+      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
     draft: () => planLesson(params),
   });
 }

@@ -95,9 +95,11 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
+  const novice = readsNoviceRules(params);
+
   const systemPrompt = selectPromptVariants({
     template: fixPrompt,
-    variants: { novice: readsNoviceRules(params), shortAnswers: Boolean(params.shortAnswers) },
+    variants: { experienced: !novice, novice, shortAnswers: Boolean(params.shortAnswers) },
   });
 
   const userPrompt = `${formatLessonPlan(params)}

@@ -75,7 +75,7 @@ describe(checkImageAsset, () => {
     });
 
     expect(drawSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ corrections: ["shows a different object"] }),
+      expect.objectContaining({ canvas: "landscape", corrections: ["shows a different object"] }),
     );
 
     const [stored, screen, question] = await Promise.all([
@@ -112,9 +112,13 @@ describe(checkImageAsset, () => {
     expect(question).toBeNull();
   });
 
-  it("takes an option's picture out of use when its redraws fail, so the option is described", async () => {
+  it("redraws an option's square picture square and takes it out of use when the redraws fail", async () => {
     const [asset, lesson] = await Promise.all([
-      mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} doorway` }) }),
+      mediaAssetFixture({
+        height: 1024,
+        scene: testScene({ focalObject: `a ${randomUUID()} doorway` }),
+        width: 1024,
+      }),
       libraryLessonFixture(),
     ]);
 
@@ -129,11 +133,14 @@ describe(checkImageAsset, () => {
     });
 
     mockImageChecks([false, false, false]);
-    mockDrawnImages([await drawTestImage(), await drawTestImage()]);
+    const drawSpy = mockDrawnImages([await drawTestImage(), await drawTestImage()]);
 
     await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({
       status: "removed",
     });
+
+    expect(drawSpy).toHaveBeenCalledTimes(2);
+    expect(drawSpy).toHaveBeenCalledWith(expect.objectContaining({ canvas: "square" }));
 
     const [option, screen] = await Promise.all([
       prisma.stepOptionPicture.findUnique({

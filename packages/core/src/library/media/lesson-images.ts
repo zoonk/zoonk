@@ -116,6 +116,7 @@ export async function createStepImage({
 
   const picture = await drawLibraryImage({
     ...getLessonPictureScope(lesson),
+    alt: request.alt,
     analytics,
     numberedParts: request.parts,
     request: request.prompt,
@@ -197,7 +198,9 @@ export async function createStepOptionPicture({
 
   const picture = await drawLibraryImage({
     ...getLessonPictureScope(lesson),
+    alt: request.alt,
     analytics,
+    canvas: "square",
     request: request.prompt,
     screenText: request.screenText,
     textAllowed: false,
