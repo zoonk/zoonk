@@ -224,7 +224,6 @@ async function deployApp({
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
-    ...(project.app === "api" ? { NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" } : {}),
     ...(project.app === "api" && mainAppUrl ? { MAIN_APP_URL: mainAppUrl } : {}),
     ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
     ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),

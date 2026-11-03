@@ -27,15 +27,17 @@
 
 - Node.js v26
 - pnpm v12
-- PostgreSQL v18
+- PostgreSQL v18, running on this machine
 
-We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions.
+We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions. On macOS, install PostgreSQL with `brew install postgresql@18 && brew services start postgresql@18` and put `$(brew --prefix postgresql@18)/bin` on your `PATH`. On a Linux machine or a cloud agent, `bash scripts/cloud/setup.sh` installs all three ([cloud agents](./.agents/guides/development.md#cloud-agents)).
 
 ### Installation
 
-- `pnpm install` to install dependencies for all apps and packages
-- Check out the [@zoonk/db package README](./packages/db/README.md) for database setup instructions
-- Check out the [main app README](./apps/main/README.md) for app-specific setup instructions
+1. `pnpm install` to install dependencies for all apps and packages
+2. `pnpm db:setup` to create the local development, test, and E2E databases, apply migrations, and seed new ones. It connects as `postgres:postgres@localhost:5432` (creating that role if it can) and never resets a database it didn't create, so rerun it whenever you like
+3. `pnpm dev` to start the apps
+
+No environment variable is required: the apps use local defaults, sign-in codes land in the local mailbox, and services you haven't configured stay off. Anything that generates, such as plans and lessons, goes through AI Gateway: with access to Zoonk's Vercel team, sign in to the Vercel CLI and link the apps ([development guide](./.agents/guides/development.md#local-development-and-sign-in)); otherwise set your own `AI_GATEWAY_API_KEY` in `apps/main/.env` and `apps/api/.env`. Each app's `.env.example` lists what the other keys turn on.
 
 ### Local Development
 
@@ -55,7 +57,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 ### Working with Git worktrees
 
-Codex, T3 Code, and Claude Code run `pnpm worktree:setup` when they create a worktree and wait for it before the agent starts: Codex through `.codex/environments/zoonk.toml`, T3 Code through the Setup action in `t3.json` (import it once from the project's Actions menu, under From t3.json), and Claude Code through the `WorktreeCreate` hook in `.claude/settings.json`, which creates its worktrees in `.claude/worktrees/` from the session's current commit. For other tools, run it once in the new worktree after `git worktree add`. It installs dependencies, generates Prisma, and prepares isolated development, test, and E2E databases when the primary checkout has a local `zoonk` database. Keep using `pnpm dev`, `pnpm test`, and `pnpm e2e` normally.
+Codex, T3 Code, and Claude Code run `pnpm worktree:setup` when they create a worktree and wait for it before the agent starts: Codex through `.codex/environments/zoonk.toml`, T3 Code through the Setup action in `t3.json` (import it once from the project's Actions menu, under From t3.json), and Claude Code through the `WorktreeCreate` hook in `.claude/settings.json`, which creates its worktrees in `.claude/worktrees/` from the session's current commit. For other tools, run it once in the new worktree after `git worktree add`. It installs dependencies, generates Prisma, and prepares the worktree's own development, test, and E2E databases on the local PostgreSQL server; the development copy starts as a snapshot of the primary checkout's `zoonk` when there is one. Keep using `pnpm dev`, `pnpm test`, and `pnpm e2e` normally.
 
 See [worktree database setup](./packages/db/README.md#worktree-databases) for prerequisites, cleanup, and recovery.
 
