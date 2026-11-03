@@ -30,7 +30,7 @@ jobs:
     if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     concurrency:
-      group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.ref }}
+      group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.run_id }}
       cancel-in-progress: false
     steps:
       - name: Check out code
@@ -45,7 +45,7 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 30
     concurrency:
-      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.ref }}
+      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.run_id }}
       # Let the running build finish and save its compilation cache.
       cancel-in-progress: false
     steps:
@@ -100,9 +100,6 @@ jobs:
     if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     timeout-minutes: 35
-    concurrency:
-      group: ${{ github.workflow }}-test-${{ github.ref }}
-      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

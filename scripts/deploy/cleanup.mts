@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { github } from "./api.mts";
 import { requiredEnv } from "./config.mts";
-import { cancelPreviews } from "./deployment.mts";
+import { cancelBuilds } from "./deployment.mts";
 import { findBranch, neon } from "./neon.mts";
 
 const prNumber = requiredEnv("PR_NUMBER");
@@ -12,7 +12,7 @@ async function isClosed(): Promise<boolean> {
 }
 
 if (await isClosed()) {
-  await cancelPreviews();
+  await cancelBuilds();
   const branch = await findBranch(`preview/pr-${prNumber}`);
 
   // A reopen can arrive while the remote builds are being canceled.
