@@ -20,8 +20,8 @@ struct LiveCallClient {
 }
 
 /// What "Call again" hands the next connection on the same screen: the call so far.
-/// `connectionId` is what completion must name, the latest connection the screen saw, once one went
-/// live: until then there's no call to save.
+/// `connectionId` is what completion must name, the latest connection the screen saw: a new call
+/// has none.
 struct CallSoFar {
   var turns: [TranscriptTurn] = []
   var metLabels: [String]
@@ -151,11 +151,16 @@ final class LiveCall {
     droppedConnectionId != nil
   }
 
-  /// A reconnect's own reservation is the latest connection even if it never goes live.
-  var soFar: CallSoFar {
-    .init(
+  /// Nil until a connection of the call went live: calling again after one that never did starts
+  /// over. A reconnect's own reservation is the latest connection even if it never goes live.
+  var soFar: CallSoFar? {
+    guard liveSince != nil || continuing else {
+      return nil
+    }
+
+    return .init(
       turns: turns, metLabels: metLabels, usedHelp: usedHelp, examCuesSent: examCuesSent,
-      connectionId: liveSince != nil || continuing ? connectionId ?? droppedConnectionId : nil)
+      connectionId: connectionId ?? droppedConnectionId)
   }
 
   var dropped: DroppedCall? {
@@ -387,7 +392,7 @@ final class LiveCall {
   func finish() async -> Components.Schemas.LanguageConversationCompletionInput? {
     await settled()
 
-    guard let connectionId = soFar.connectionId else {
+    guard let connectionId = soFar?.connectionId else {
       return nil
     }
 

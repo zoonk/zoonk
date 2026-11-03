@@ -432,7 +432,7 @@ final class LiveCallTests: XCTestCase {
     XCTAssertFalse(call.usedHelp)
     // Nothing to save until it goes live, and a failure is its own.
     XCTAssertFalse(call.continuing)
-    XCTAssertNil(call.soFar.connectionId)
+    XCTAssertNil(call.soFar)
   }
 
   func testAReconnectThatDoesntGoLiveStillSavesTheWholeCallUnderTheLatestConnection() async {
@@ -479,14 +479,16 @@ final class LiveCallTests: XCTestCase {
 
     XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
 
-    // A new call has nothing to save: the screen takes it back to its intro.
+    // A new call has nothing to save, not even a reply typed while it rang: the screen takes it
+    // back to its intro, to start over.
     let new = LiveCall(conversation: .fixture(), client: FakeServer().client(FakeTransport()))
 
     await new.start()
+    new.sendText("Hello?")
     new.cancel()
 
     XCTAssertNil(new.dropped)
-    XCTAssertNil(new.soFar.connectionId)
+    XCTAssertNil(new.soFar)
   }
 
   func testAReservationAnsweringAfterTheCancelIsTheConnectionTheCallSavesUnder() async {
