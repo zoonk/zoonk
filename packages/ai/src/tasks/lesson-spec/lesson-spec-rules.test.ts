@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   type LessonScreen,
@@ -44,8 +45,15 @@ const illustratedScreens = validScreens.map((item, index) =>
   index === 0 || index === 1 ? { ...item, visual: `Picture ${index}` } : item,
 );
 
-function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
-  return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
+function getCodes(
+  lesson: LessonSpec,
+  level: CourseLevel = "beginner",
+  novice = false,
+  visualFloor: VisualFloor = novice ? "pictures" : "none",
+) {
+  return getLessonSpecIssues({ level, novice, spec: lesson, visualFloor }).map(
+    (issue) => issue.code,
+  );
 }
 
 describe(estimateLessonMinutes, () => {
@@ -149,7 +157,7 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
   });
 
-  it("asks a new learner's lesson for a visual on one teaching screen in three, rounded up", () => {
+  it("asks a shared lesson for a visual on one teaching screen in three, rounded up", () => {
     const longLesson = [
       screen("hook", [], { visual: "The shop" }),
       screen("explanation"),
@@ -173,16 +181,30 @@ describe(getLessonSpecIssues, () => {
       );
 
     expect(getCodes(showing([1, 4]), "beginner", true)).toStrictEqual(["teachingVisual"]);
+
+    expect(getCodes(showing([1, 4]), "advanced", false, "pictures")).toStrictEqual([
+      "teachingVisual",
+    ]);
+
     expect(getCodes(showing([1, 4, 8]), "beginner", true)).toStrictEqual([]);
   });
 
-  it("asks a new learner's lesson for its hook's picture and one more visual", () => {
+  it("asks a shared lesson for its hook's picture and one more visual, and a private one only for the visual", () => {
     expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([
       "hookPicture",
       "teachingVisual",
     ]);
 
-    expect(getCodes(spec(validScreens))).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), "intermediate", false, "pictures")).toStrictEqual([
+      "hookPicture",
+      "teachingVisual",
+    ]);
+
+    expect(getCodes(spec(validScreens), "beginner", true, "drawn")).toStrictEqual([
+      "teachingVisual",
+    ]);
+
+    expect(getCodes(spec(validScreens), "beginner", true, "none")).toStrictEqual([]);
 
     const explored = validScreens.map((item, index) =>
       index === 0 ? { ...item, visual: "The shop" } : item,
@@ -191,6 +213,38 @@ describe(getLessonSpecIssues, () => {
     explored[2] = screen("explanation", [0], { activityTemplate: "formulaModel" });
 
     expect(getCodes(spec(explored), "beginner", true)).toStrictEqual([]);
+  });
+
+  it("places one guess after the story's first explanation", () => {
+    const guessed = (at: number) => {
+      const screens = [...validScreens];
+      screens.splice(at, 0, screen("guess"));
+      return spec(screens);
+    };
+
+    expect(getCodes(guessed(2))).toStrictEqual([]);
+    expect(getCodes(guessed(1))).toStrictEqual(["guess"]);
+
+    const twice = [...validScreens];
+    twice.splice(2, 0, screen("guess"));
+    twice.splice(4, 0, screen("guess"));
+
+    expect(getCodes(spec(twice))).toStrictEqual(["guess"]);
+  });
+
+  it("counts teaching on both sides of the guess as one run", () => {
+    const run = [
+      screen("hook", []),
+      screen("explanation"),
+      screen("explanation"),
+      screen("guess"),
+      screen("explanation"),
+      screen("explanation"),
+      screen("check"),
+      screen("application"),
+    ];
+
+    expect(getCodes(spec(run))).toStrictEqual(["checkGap"]);
   });
 
   it("checks the support mode against the screen after the hook", () => {

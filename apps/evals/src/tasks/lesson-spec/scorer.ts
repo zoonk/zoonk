@@ -2,6 +2,7 @@ import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-sc
 import { type TaskScorer } from "@/lib/types";
 import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
+import { type VisualFloor, getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
 import { type LessonSpecExpected } from "./visual-test-cases";
@@ -84,17 +85,19 @@ function checkLessonSpecs({
   level,
   novice,
   output,
+  visualFloor,
 }: {
   expected: LessonSpecExpected | undefined;
   level: LessonLevel;
   novice: boolean;
   output: string;
+  visualFloor: VisualFloor;
 }): CodeCheckResult {
   const lessons = parseLessons(output);
 
   const results = lessons.map((lesson, index) => ({
     lesson,
-    problems: getLessonSpecIssues({ level, novice, spec: lesson }).map(
+    problems: getLessonSpecIssues({ level, novice, spec: lesson, visualFloor }).map(
       (issue) => `Lesson ${index + 1} ("${lesson.title}"): ${issue.detail}`,
     ),
   }));
@@ -126,17 +129,20 @@ function checkLessonSpecs({
 
 export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) => {
   const level = getLevel(testCase.userInput);
-  const { exams, material } = testCase.userInput;
+  const { exams, isPrivate, material } = testCase.userInput;
+  const materialText = typeof material === "string" ? material : undefined;
 
   const novice = readsNoviceRules({
     exams: Array.isArray(exams) ? exams : [],
     level,
-    material: typeof material === "string" ? material : undefined,
+    material: materialText,
   });
+
+  const visualFloor = getVisualFloor({ isPrivate: isPrivate === true, material: materialText });
 
   return scoreWithCodeChecks({
     check: (value) =>
-      checkLessonSpecs({ expected: testCase.expected, level, novice, output: value }),
+      checkLessonSpecs({ expected: testCase.expected, level, novice, output: value, visualFloor }),
     output,
     scoreCategories: LESSON_SPEC_SCORE_CATEGORIES,
     testCase,

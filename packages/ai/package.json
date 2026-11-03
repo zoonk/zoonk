@@ -96,6 +96,7 @@
     "./tasks/lesson-spec/picture-need": "./src/tasks/lesson-spec/picture-need.ts",
     "./tasks/lesson-spec/rules": "./src/tasks/lesson-spec/lesson-spec-rules.ts",
     "./tasks/novice-rules": "./src/tasks/_utils/novice-rules.ts",
+    "./tasks/visual-floor": "./src/tasks/_utils/visual-floor.ts",
     "./tasks/lesson-writer": "./src/tasks/lesson-writer/lesson-writer.ts",
     "./tasks/lesson-writer/fix": "./src/tasks/lesson-writer/lesson-fix.ts",
     "./tasks/lesson-writer/map": "./src/tasks/lesson-writer/lesson-map.ts",

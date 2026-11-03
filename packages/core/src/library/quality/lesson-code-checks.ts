@@ -5,7 +5,6 @@ import {
   type WrittenScreen,
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { findOptionPositionReferences } from "../_utils/answer-options";
@@ -51,7 +50,6 @@ type ScreenCheckInput = {
   index: number;
   language: string;
   level: CourseLevel;
-  novice: boolean;
   screen: WrittenScreen;
   specScreen: LessonScreen;
   shortAnswers: boolean;
@@ -61,12 +59,11 @@ type Problem = { code: LessonCheckCode; problem: string } | false;
 
 function getKindProblems({
   allowActivityFallback,
-  novice,
   screen,
   specScreen,
   shortAnswers,
 }: ScreenCheckInput): Problem[] {
-  const kinds = getWrittenKinds({ kind: specScreen.kind, novice, shortAnswers });
+  const kinds = getWrittenKinds({ kind: specScreen.kind, shortAnswers });
 
   const fallback =
     allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check";
@@ -232,11 +229,9 @@ export function toReviewedLesson({
   };
 }
 
-/** `exams` and `material` decide with `level` whether the lesson follows the novice rules. */
 export function checkWrittenLesson({
   allowActivityFallback = false,
   chapterLessons,
-  exams,
   language,
   lesson,
   level,
@@ -247,7 +242,6 @@ export function checkWrittenLesson({
 }: {
   allowActivityFallback?: boolean;
   chapterLessons?: Parameters<typeof findRepeatedExamples>[0]["chapterLessons"];
-  exams: readonly unknown[] | undefined;
   language: string;
   lesson: WrittenLesson;
   level: CourseLevel;
@@ -256,8 +250,7 @@ export function checkWrittenLesson({
   spec: LessonSpec;
   shortAnswers?: boolean;
 }): { problems: LessonCheckProblem[]; screens: ConvertedScreen[] } {
-  const novice = readsNoviceRules({ exams, level, material });
-  const lessonInput = { allowActivityFallback, language, level, novice, shortAnswers };
+  const lessonInput = { allowActivityFallback, language, level, shortAnswers };
 
   const checked = lesson.screens.flatMap((screen, index) => {
     const specScreen = spec.screens[index];

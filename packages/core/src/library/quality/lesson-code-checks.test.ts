@@ -12,15 +12,14 @@ import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
 type CheckOptions = {
   allowActivityFallback?: boolean;
-  exams?: readonly unknown[];
   language?: string;
   level?: CourseLevel;
   shortAnswers?: boolean;
+  spec?: ReturnType<typeof temperatureSpec>;
 };
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
-    exams: undefined,
     language: "en",
     lesson,
     level: "beginner",
@@ -30,6 +29,20 @@ function check(lesson: WrittenLesson, options: CheckOptions = {}) {
 }
 
 const INTERMEDIATE: CheckOptions = { level: "intermediate" };
+
+/** The guess has its own planned screen; here the first, so a guess fixture can replace it. */
+function guessPlanned(): CheckOptions {
+  const spec = temperatureSpec();
+
+  return {
+    spec: {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 0 ? { ...screen, kind: "guess" as const } : screen,
+      ),
+    },
+  };
+}
 
 function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
   const lesson = writtenTemperatureLesson();
@@ -74,7 +87,6 @@ describe(checkWrittenLesson, () => {
     };
 
     const checked = checkWrittenLesson({
-      exams: undefined,
       language: "en",
       lesson: {
         ...lesson,
@@ -428,7 +440,7 @@ describe(checkWrittenLesson, () => {
         "Which sensor is the most precise?\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |\n| E | 50,1 |",
     };
 
-    expect(codesOf(withScreen(0, sensors), INTERMEDIATE)).toStrictEqual([[0, "optionData"]]);
+    expect(codesOf(withScreen(0, sensors), guessPlanned())).toStrictEqual([[0, "optionData"]]);
   });
 
   it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
@@ -479,7 +491,7 @@ describe(checkWrittenLesson, () => {
 
     const byPlace = { ...hook, reveal: "The right answer is the second." };
 
-    expect(codesOf(withScreen(0, byPlace), INTERMEDIATE)).toStrictEqual([[0, "optionPosition"]]);
+    expect(codesOf(withScreen(0, byPlace), guessPlanned())).toStrictEqual([[0, "optionPosition"]]);
   });
 
   it("rejects a check that asks an earlier check's question with other numbers", () => {
@@ -527,14 +539,13 @@ describe(checkWrittenLesson, () => {
     expect(japanese("資産は会社が持つものです。")).not.toContainEqual([null, "summary"]);
   });
 
-  it("opens a beginner or overview lesson with a scene, while an exam's or an intermediate one may guess", () => {
+  it("opens every lesson with a scene and writes a guess only where the plan puts one", () => {
     const guessing = withScreen(0, temperatureGuess());
     const scene: [number, string] = [0, "screenKind"];
 
     expect(codesOf(guessing)).toContainEqual(scene);
-    expect(codesOf(guessing, { level: "overview" })).toContainEqual(scene);
-    expect(codesOf(guessing, INTERMEDIATE)).not.toContainEqual(scene);
-    expect(codesOf(guessing, { exams: [{ name: "ENEM" }] })).not.toContainEqual(scene);
+    expect(codesOf(guessing, INTERMEDIATE)).toContainEqual(scene);
+    expect(codesOf(guessing, guessPlanned())).not.toContainEqual(scene);
     expect(codesOf(writtenTemperatureLesson())).not.toContainEqual(scene);
   });
 

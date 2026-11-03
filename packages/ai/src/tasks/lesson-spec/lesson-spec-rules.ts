@@ -1,9 +1,14 @@
+import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 
-/** `application` becomes a check (or an activity) set in a realistic situation. */
+/**
+ * `application` becomes a check (or an activity) set in a realistic situation. `guess` is the
+ * unscored question that follows the first explanation.
+ */
 export const LESSON_SCREEN_KINDS = [
   "hook",
   "explanation",
+  "guess",
   "workedExample",
   "check",
   "activity",
@@ -59,7 +64,7 @@ export const LESSON_SIZE = {
   minMinutes: 2,
   minScreens: 5,
   noviceTeachingBeforeFirstCheck: 2,
-  noviceTeachingScreensPerVisual: 3,
+  teachingScreensPerVisual: 3,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
@@ -70,6 +75,7 @@ const SCREEN_SECONDS: Record<LessonScreenKind, number> = {
   application: 40,
   check: 20,
   explanation: 25,
+  guess: 20,
   hook: 15,
   workedExample: 45,
 };
@@ -87,6 +93,7 @@ type LessonSpecIssueCode =
   | "application"
   | "checkGap"
   | "earlyCheck"
+  | "guess"
   | "hook"
   | "hookPicture"
   | "screenCount"
@@ -140,9 +147,14 @@ export function getSupportModeFromScreens(screens: readonly LessonScreen[]): Sup
   return first && isPracticeScreen(first.kind) ? "questionFirst" : "explanationFirst";
 }
 
+/** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
     (state, screen) => {
+      if (screen.kind === "guess") {
+        return state;
+      }
+
       const current = isTeachingScreen(screen.kind) ? state.current + 1 : 0;
       return { current, longest: Math.max(state.longest, current) };
     },
@@ -181,20 +193,31 @@ function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
 function getTeachingVisualIssue(screens: readonly LessonScreen[]) {
   const teaching = screens.filter((screen) => isTeachingScreen(screen.kind));
   const shown = teaching.filter((screen) => screen.visual || screen.activityTemplate).length;
-  const needed = Math.ceil(teaching.length / LESSON_SIZE.noviceTeachingScreensPerVisual);
+  const needed = Math.ceil(teaching.length / LESSON_SIZE.teachingScreensPerVisual);
 
   return (
     shown < needed && {
       code: "teachingVisual" as const,
-      detail: `${shown} of ${teaching.length} explanations and worked examples show a picture or a template to explore; a new learner needs at least ${needed}.`,
+      detail: `${shown} of ${teaching.length} explanations and worked examples show a picture or a template to explore; the lesson needs at least ${needed}.`,
     }
   );
 }
 
-/** A floor for new learners, not a share to fill: the hook's picture and a few more visuals. */
-function getNoviceVisualIssues(screens: readonly LessonScreen[]) {
+/** A floor, not a share to fill: the hook's picture in a shared lesson and a few more visuals. */
+function getVisualFloorIssues({
+  screens,
+  visualFloor,
+}: {
+  screens: readonly LessonScreen[];
+  visualFloor: VisualFloor;
+}) {
+  if (visualFloor === "none") {
+    return [];
+  }
+
   return [
-    screens[0]?.kind === "hook" &&
+    visualFloor === "pictures" &&
+      screens[0]?.kind === "hook" &&
       !screens[0].visual && {
         code: "hookPicture" as const,
         detail: "The hook has no picture of the lesson's main example.",
@@ -203,7 +226,29 @@ function getNoviceVisualIssues(screens: readonly LessonScreen[]) {
   ].filter((issue) => issue !== false);
 }
 
-function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
+/** The guess needs the story's first idea before it. */
+function getGuessIssue(screens: readonly LessonScreen[]) {
+  const guesses = screens.filter((screen) => screen.kind === "guess").length;
+  const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
+  const at = screens.findIndex((screen) => screen.kind === "guess");
+
+  return (
+    (guesses > 1 || (at !== -1 && (firstTeaching === -1 || at < firstTeaching))) && {
+      code: "guess" as const,
+      detail: "A lesson has at most one guess, after at least one explanation or worked example.",
+    }
+  );
+}
+
+function getShapeIssues({
+  novice,
+  spec,
+  visualFloor,
+}: {
+  novice: boolean;
+  spec: LessonSpec;
+  visualFloor: VisualFloor;
+}) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
   const applications = screens.filter((screen) => screen.kind === "application").length;
@@ -235,7 +280,8 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
-    ...(novice ? getNoviceVisualIssues(screens) : []),
+    getGuessIssue(screens),
+    ...getVisualFloorIssues({ screens, visualFloor }),
   ].filter((issue) => issue !== false);
 }
 
@@ -291,19 +337,24 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/** An empty list means the spec passes. `novice` is `readsNoviceRules` for the lesson. */
+/**
+ * An empty list means the spec passes. `novice` is `readsNoviceRules` for the lesson, and
+ * `visualFloor` is `getVisualFloor`.
+ */
 export function getLessonSpecIssues({
   level,
   novice = false,
   spec,
+  visualFloor = "none",
 }: {
   level: CourseLevel;
   novice?: boolean;
   spec: LessonSpec;
+  visualFloor?: VisualFloor;
 }): LessonSpecIssue[] {
   return [
     ...getSizeIssues({ level, spec }),
-    ...getShapeIssues({ novice, spec }),
+    ...getShapeIssues({ novice, spec, visualFloor }),
     ...getSkillIssues(spec),
   ];
 }

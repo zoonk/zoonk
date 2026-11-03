@@ -14,6 +14,7 @@ import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
+import { type VisualFloor, getVisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
@@ -78,6 +79,8 @@ export type LessonSpecParams = {
   material?: string;
   sources?: string;
   exams?: LessonExam[];
+  /** Built for one learner's own goal and never shared, so its pictures aren't reused. */
+  isPrivate?: boolean;
   setup?: boolean;
   /** Otherwise the lesson plans only checks learners answer by picking. */
   shortAnswers?: boolean;
@@ -107,9 +110,11 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       experienced: !novice,
       material: Boolean(params.material),
       novice,
+      private: getVisualFloor(params) === "drawn",
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
+      visualFloor: getVisualFloor(params) === "pictures",
     },
   });
 
@@ -179,8 +184,8 @@ async function planLesson(params: LessonSpecParams) {
         splitLessonSpec({
           language: params.language,
           level: params.level,
-          novice: readsNoviceRules(params),
           spec,
+          visualFloor: getVisualFloor(params),
         }),
       );
 
@@ -196,6 +201,7 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "application",
   "checkGap",
   "earlyCheck",
+  "guess",
   "hook",
   "hookPicture",
   "skillReference",
@@ -209,13 +215,15 @@ function countShapeIssues({
   data,
   level,
   novice,
+  visualFloor,
 }: {
   data: LessonSpecResult;
   level: CourseLevel;
   novice: boolean;
+  visualFloor: VisualFloor;
 }): number {
   return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
+    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec, visualFloor }))
     .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
 }
 
@@ -226,7 +234,12 @@ function countShapeIssues({
 export function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({
     countProblems: ({ data }) =>
-      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
+      countShapeIssues({
+        data,
+        level: params.level,
+        novice: readsNoviceRules(params),
+        visualFloor: getVisualFloor(params),
+      }),
     draft: () => planLesson(params),
   });
 }

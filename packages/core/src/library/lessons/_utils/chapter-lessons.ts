@@ -22,6 +22,7 @@ const EXAMPLE_FIELDS: Partial<Record<StepKind, readonly string[]>> = {
 const EXAMPLE_SCREENS: ReadonlySet<LessonSpec["screens"][number]["kind"]> = new Set([
   "application",
   "check",
+  "guess",
   "hook",
   "workedExample",
 ]);

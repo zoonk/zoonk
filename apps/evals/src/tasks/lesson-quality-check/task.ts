@@ -43,7 +43,6 @@ function reviewWrittenLesson({
   ...context
 }: LessonQualityCheckInput & ModelOptions) {
   const { screens } = checkWrittenLesson({
-    exams: context.exams,
     language: context.language,
     lesson,
     level: context.level,

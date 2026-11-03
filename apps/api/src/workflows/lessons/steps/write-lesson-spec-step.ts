@@ -3,6 +3,7 @@ import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
+import { getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
@@ -109,7 +110,10 @@ async function planLesson({
     homeChapterId: inputs.homeChapterId,
     lessonId,
     novice,
-    pictures: listPlannedPictures({ novice, specs: data.lessons }),
+    pictures: listPlannedPictures({
+      specs: data.lessons,
+      visualFloor: getVisualFloor(inputs.prompt),
+    }),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,
