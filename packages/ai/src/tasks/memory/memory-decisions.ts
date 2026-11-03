@@ -15,7 +15,7 @@ const EXPLICITLY_ASKED_AT = 0.7;
  */
 const DESTRUCTIVE_AT = 0.5;
 
-export type MemoryGateCandidate = MemoryFactText & { evidence: string };
+export type MemoryGateCandidate = MemoryFactText & { evidence: string; expiresAt?: Date | null };
 
 export type MemoryGateProbabilities = {
   explicitlyAsked: number;
