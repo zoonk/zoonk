@@ -8,6 +8,7 @@ import { type MemoryFactCategory } from "@zoonk/ai/tasks/memory/facts";
 export type ExpectedFact = {
   categories: MemoryFactCategory[];
   keywords: string[];
+  dates?: string[];
   intent?: "forget" | "remember";
   expiresOn?: string[];
   evidence?: string[];
@@ -399,6 +400,88 @@ export const TEST_CASES: ExtractionCase[] = [
     id: "en-chat-dated-move",
     input: "Learner: I'm moving to Italy in June next year, can the examples be about life there?",
     language: "en",
+  }),
+  extractionCase({
+    expected: {
+      facts: [
+        {
+          categories: ["context", "background", "routine"],
+          dates: ["october 2", "october 9"],
+          keywords: ["tokyo", "japan"],
+        },
+      ],
+      forbidden: ["next friday", "this friday", "next week"],
+      maxFacts: 3,
+    },
+    id: "en-chat-relative-day",
+    input:
+      "Learner: I fly to Tokyo next Friday for a three-month work assignment, can the examples be about Japan?",
+    language: "en",
+  }),
+  extractionCase({
+    expected: {
+      facts: [{ categories: ["routine"], keywords: ["tuesday"] }],
+      forbidden: ["phoenix"],
+      maxFacts: 2,
+    },
+    id: "en-chat-sensitive-reason",
+    input:
+      "Learner: I can't study on Tuesday evenings, that's when I go to Phoenix, my addiction recovery group.",
+    language: "en",
+  }),
+  extractionCase({
+    expected: {
+      facts: [{ categories: ["routine", "context"], keywords: ["saturday"] }],
+      forbidden: ["september", "october"],
+      maxFacts: 2,
+    },
+    id: "en-chat-recurring-day",
+    input:
+      "Learner: I volunteer at an animal shelter every Saturday morning, so weekends are tight.",
+    language: "en",
+  }),
+  extractionCase({
+    expected: {
+      facts: [
+        {
+          categories: ["background", "context", "routine", "goals"],
+          dates: ["marco de 2027", "marco 2027"],
+          keywords: ["ciencia de dados"],
+        },
+      ],
+      maxFacts: 3,
+    },
+    id: "pt-chat-relative-year",
+    input: "Learner: em março eu começo uma pós em ciência de dados, com aulas à noite.",
+    language: "pt",
+  }),
+  extractionCase({
+    expected: {
+      facts: [
+        { categories: ["background", "context"], keywords: ["estagio", "publicidade"] },
+        { categories: ["routine"], keywords: ["almoco"] },
+      ],
+      forbidden: ["semana que vem", "proxima semana"],
+      maxFacts: 3,
+    },
+    id: "pt-chat-relative-week",
+    input:
+      "Learner: semana que vem eu começo um estágio numa agência de publicidade, aí só vou conseguir estudar no horário do almoço.",
+    language: "pt",
+  }),
+  extractionCase({
+    expected: {
+      facts: [{ categories: ["goals", "context"], dates: ["october"], keywords: ["montreal"] }],
+      forbidden: ["next month"],
+      maxFacts: 3,
+    },
+    id: "en-onboarding-relative-month",
+    input: [
+      "In their words: We move to Montreal next month and I need French for daily life there.",
+      "Goal: French for daily life",
+    ].join("\n"),
+    language: "en",
+    source: "onboarding",
   }),
   extractionCase({
     expected: { facts: [], forbidden: ["friday", "exam"], maxFacts: 0 },

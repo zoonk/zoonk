@@ -251,6 +251,51 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["routine", "context"], "keywords": ["saturday"] }],
+          "forbidden": ["september", "october"],
+          "maxFacts": 2
+        },
+        "id": "en-chat-recurring-day-1",
+        "userInput": {
+          "input": "Learner: I volunteer at an animal shelter every Saturday morning, so weekends are tight.",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "categories": ["background", "context"], "keywords": ["estagio", "publicidade"] },
+            { "categories": ["routine"], "keywords": ["almoco"] }
+          ],
+          "forbidden": ["semana que vem", "proxima semana"],
+          "maxFacts": 3
+        },
+        "id": "pt-chat-relative-week-1",
+        "userInput": {
+          "input": "Learner: semana que vem eu começo um estágio numa agência de publicidade, aí só vou conseguir estudar no horário do almoço.",
+          "language": "pt",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
         "expected": { "facts": [], "forbidden": ["friday", "exam"], "maxFacts": 0 },
         "id": "en-chat-exam-date-1",
         "userInput": {
@@ -317,6 +362,30 @@
         "id": "en-onboarding-exam-goal-1",
         "userInput": {
           "input": "In their words: I want to get into Law at USP, I'm terrible at math\nGoal: ENEM 2026\nTarget date: 2026-11-08\ntargetScore: 700 in the essay",
+          "language": "en",
+          "source": "onboarding",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "categories": ["goals"], "keywords": ["italian", "italy"] },
+            { "categories": ["routine", "context"], "keywords": ["commute", "train", "bus"] }
+          ],
+          "forbidden": ["10 minutes", "minutes a day"],
+          "maxFacts": 3
+        },
+        "id": "en-onboarding-time-in-words-1",
+        "userInput": {
+          "input": "In their words: I want to speak Italian for a trip to Italy next June. I can do 10 minutes a day on my train commute.\nGoal: Italian for travel\nTarget date: 2027-06-01",
           "language": "en",
           "source": "onboarding",
           "today": "2026-09-26"
@@ -442,6 +511,103 @@
           "input": "Learner: Esquece que eu moro em Recife, me mudei pra São Paulo mês passado.",
           "language": "pt",
           "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "background", "routine"],
+              "dates": ["october 2", "october 9"],
+              "keywords": ["tokyo", "japan"]
+            }
+          ],
+          "forbidden": ["next friday", "this friday", "next week"],
+          "maxFacts": 3
+        },
+        "id": "en-chat-relative-day-1",
+        "userInput": {
+          "input": "Learner: I fly to Tokyo next Friday for a three-month work assignment, can the examples be about Japan?",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["routine"], "keywords": ["tuesday"] }],
+          "forbidden": ["phoenix"],
+          "maxFacts": 2
+        },
+        "id": "en-chat-sensitive-reason-1",
+        "userInput": {
+          "input": "Learner: I can't study on Tuesday evenings, that's when I go to Phoenix, my addiction recovery group.",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["background", "context", "routine", "goals"],
+              "dates": ["marco de 2027", "marco 2027"],
+              "keywords": ["ciencia de dados"]
+            }
+          ],
+          "maxFacts": 3
+        },
+        "id": "pt-chat-relative-year-1",
+        "userInput": {
+          "input": "Learner: em março eu começo uma pós em ciência de dados, com aulas à noite.",
+          "language": "pt",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "categories": ["goals", "context"], "dates": ["october"], "keywords": ["montreal"] }
+          ],
+          "forbidden": ["next month"],
+          "maxFacts": 3
+        },
+        "id": "en-onboarding-relative-month-1",
+        "userInput": {
+          "input": "In their words: We move to Montreal next month and I need French for daily life there.\nGoal: French for daily life",
+          "language": "en",
+          "source": "onboarding",
           "today": "2026-09-26"
         }
       }
@@ -933,42 +1099,6 @@
             { "speaker": "character", "text": "Two pepperoni pizzas, no problem." },
             { "speaker": "learner", "text": "How much is it? ... Ok, thank you, bye." }
           ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Missing a remember goals fact with italian/italy.",
-          "kind": "majorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Missing a remember goals fact with italian/italy.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Missing a remember goals fact with italian/italy.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "categories": ["goals"], "keywords": ["italian", "italy"] },
-            { "categories": ["routine", "context"], "keywords": ["commute", "train", "bus"] }
-          ],
-          "forbidden": ["10 minutes", "minutes a day"],
-          "maxFacts": 3
-        },
-        "id": "en-onboarding-time-in-words-1",
-        "userInput": {
-          "input": "In their words: I want to speak Italian for a trip to Italy next June. I can do 10 minutes a day on my train commute.\nGoal: Italian for travel\nTarget date: 2027-06-01",
-          "language": "en",
-          "source": "onboarding",
-          "today": "2026-09-26"
         }
       }
     }

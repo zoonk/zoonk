@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { auth } from "@zoonk/auth";
+import { NAME_MAX_LENGTH, NAME_TOO_LONG_ERROR_CODE } from "@zoonk/auth/name-rules";
 import { type User, prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
@@ -153,6 +154,36 @@ describe("current user", () => {
       await expect(
         prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
       ).resolves.toMatchObject({ name: "Kept", username });
+    });
+
+    it("refuses a new name past the limit and saves one at the limit", async () => {
+      const user = await userFixture({ name: "Kept" });
+      await signIn(user);
+
+      await expect(
+        updateCurrentUser({ input: { name: "a".repeat(NAME_MAX_LENGTH + 1) } }),
+      ).rejects.toMatchObject({ body: { code: NAME_TOO_LONG_ERROR_CODE }, statusCode: 400 });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+      ).resolves.toMatchObject({ name: "Kept" });
+
+      const longestName = "a".repeat(NAME_MAX_LENGTH);
+
+      await expect(updateCurrentUser({ input: { name: longestName } })).resolves.toMatchObject({
+        name: longestName,
+      });
+    });
+
+    it("keeps a name saved before the limit while the username changes", async () => {
+      const savedName = ` ${"a".repeat(NAME_MAX_LENGTH + 50)} `;
+      const user = await userFixture({ name: savedName });
+      const username = `kept_name_${randomUUID().slice(0, 8)}`;
+      await signIn(user);
+
+      await expect(
+        updateCurrentUser({ input: { name: savedName.trim(), username } }),
+      ).resolves.toMatchObject({ name: savedName, username });
     });
 
     it("does not mutate a user for a guest", async () => {

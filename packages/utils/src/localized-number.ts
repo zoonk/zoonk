@@ -21,7 +21,12 @@ export function getNumberFormatter(
     return cached;
   }
 
-  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), options);
+  /* A number that reads as zero takes no sign, though -0 and -0.0001 at two decimals are negative. */
+  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), {
+    signDisplay: "negative",
+    ...options,
+  });
+
   formatters.set(key, formatter);
   return formatter;
 }
@@ -47,7 +52,7 @@ export function formatLocalizedNumber({
   const formatted = getNumberFormatter(locale, {
     maximumFractionDigits: digits,
     notation: compact ? "compact" : "standard",
-    signDisplay: signed ? "exceptZero" : "auto",
+    ...(signed && { signDisplay: "exceptZero" }),
     useGrouping: grouping,
   }).format(value);
 

@@ -48,6 +48,12 @@ fun ProfileFields(
     val showsUsernameField =
         isEditingUsername || form.username.isEmpty() || form.failure == AccountFailure.UsernameTaken ||
             form.usernameStatus == UsernameStatus.Taken
+    val nameHint =
+        when {
+            form.isNameTooLong -> R.string.account_name_too_long
+            isSetup -> null
+            else -> R.string.account_name_description
+        }
 
     LaunchedEffect(Unit) { if (isSetup) nameFocus.requestFocus() }
 
@@ -61,7 +67,11 @@ fun ProfileFields(
                     .focusRequester(nameFocus)
                     .semantics { contentType = ContentType.PersonFullName },
             label = { Text(stringResource(R.string.account_name)) },
-            supportingText = if (isSetup) null else ({ Text(stringResource(R.string.account_name_description)) }),
+            supportingText =
+                nameHint?.let { hint ->
+                    { Text(stringResource(hint), Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+                },
+            isError = form.isNameTooLong,
             singleLine = true,
             readOnly = form.isSaving,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),

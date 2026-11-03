@@ -1,5 +1,6 @@
 "use client";
 
+import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/auth/username-rules";
 import {
   type UsernameStatus as UsernameStatusType,
@@ -20,9 +21,19 @@ import {
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { profileFormAction } from "./actions";
+
+function NameHint({ isTooLong }: { isTooLong: boolean }) {
+  const t = useExtracted();
+
+  if (isTooLong) {
+    return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
+  }
+
+  return t("How Zoonk and your buddy call you");
+}
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
   const t = useExtracted();
@@ -74,6 +85,14 @@ function SaveError({ state }: { state: typeof initialState }) {
     return <ChangeSaveError />;
   }
 
+  if (state.status === "nameTooLong") {
+    return (
+      <p className="text-destructive-text text-sm" role="alert">
+        {t("Use 150 characters or fewer.")}
+      </p>
+    );
+  }
+
   if (state.status === "usernameTaken") {
     return (
       <p className="text-destructive-text text-sm" role="alert">
@@ -85,9 +104,9 @@ function SaveError({ state }: { state: typeof initialState }) {
   return null;
 }
 
-type FormStatus = "error" | "idle" | "success" | "usernameTaken";
+type FormStatus = "error" | "idle" | "nameTooLong" | "success" | "usernameTaken";
 
-const initialState = { name: "", status: "idle" as FormStatus, username: "" };
+const initialState = { status: "idle" as FormStatus, username: "" };
 
 export function ProfileForm({
   defaultName,
@@ -101,29 +120,32 @@ export function ProfileForm({
   const usernameHintId = useId();
   const [state, formAction] = useActionState(profileFormAction, initialState);
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
+  const [name, setName] = useState(defaultName);
 
-  const currentName = state.name || defaultName;
-  const canSave = status === "idle" || status === "available";
+  const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
+  const canSave = !isNameTooLong && (status === "idle" || status === "available");
 
   return (
     <form action={formAction} className="flex flex-col">
       <ListGroup>
         <SettingRow
-          description={t("How Zoonk and your buddy call you")}
+          description={<NameHint isTooLong={isNameTooLong} />}
           descriptionId={nameHintId}
           label={<label htmlFor="name">{t("Name")}</label>}
           wide
         >
           <Input
             aria-describedby={nameHintId}
-            aria-invalid={state.status === "error"}
+            aria-invalid={
+              isNameTooLong || state.status === "error" || state.status === "nameTooLong"
+            }
             autoComplete="name"
-            defaultValue={currentName}
             id="name"
-            key={currentName}
             name="name"
+            onChange={(event) => setName(event.target.value)}
             required
             type="text"
+            value={name}
           />
         </SettingRow>
 
