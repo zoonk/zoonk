@@ -115,8 +115,7 @@ private struct HookStepView: View {
       } icon: {
         Image(systemName: "sparkles")
       }
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      .chip()
       StepMedia(step: step, visual: content.visual, asks: true, opens: true)
       LessonQuestionText(text: question)
     } else {
@@ -219,9 +218,12 @@ private struct WorkedExampleStepView: View {
 
   @ViewBuilder
   private var problem: some View {
-    Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+    Label {
+      Text("Worked example", tableName: "Player", comment: "Label above a worked example")
+    } icon: {
+      Image(systemName: "list.number")
+    }
+    .chip()
 
     if let title = content.title {
       LessonQuestionText(text: title)
@@ -311,8 +313,7 @@ private struct TypedAnswerStepView: View {
         } icon: {
           Image(systemName: "pencil.line")
         }
-        .font(.caption.monospaced())
-        .foregroundStyle(.secondary)
+        .chip()
       }
 
       LessonQuestionText(text: content.question)
