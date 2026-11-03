@@ -27,7 +27,6 @@ test.describe("Login Page", () => {
     await page.getByRole("button", { name: /^continue$/iu }).click();
     const redirect = await mainLogin;
     expect(redirect.status()).toBe(307);
-    await page.goto("about:blank");
 
     const signedIn = await page.request.get("/auth/login", { maxRedirects: 0 });
     expect(signedIn.status()).toBe(307);
