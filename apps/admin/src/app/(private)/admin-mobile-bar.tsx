@@ -25,8 +25,6 @@ function AdminMobileBarContent({ account }: { account: AdminAccount }) {
         <span className="sr-only">Menu</span>
       </Button>
 
-      <span className="text-sm font-semibold">Zoonk Admin</span>
-
       <SidebarSearch
         className="ml-auto max-w-64 flex-1"
         label="Search…"
