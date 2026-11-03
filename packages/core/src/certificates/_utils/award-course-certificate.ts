@@ -158,10 +158,12 @@ function sumStudiedMinutes(studied: readonly CourseItem[]): number | null {
   return Math.round(minutes.reduce((sum: number, value) => sum + (value ?? 0), 0));
 }
 
-/** The learner's last finished work dates the certificate, so a later claim keeps that day. */
+/** The last course work the learner finished dates the certificate, so a later claim keeps that day. */
 function getLastFinishedAt(items: readonly CourseItem[]): Date {
   const times = items
-    .filter((item) => isWorkFinished(item.status) && item.completedAt)
+    .filter(
+      (item) => COURSE_WORK_KINDS.has(item.kind) && isWorkFinished(item.status) && item.completedAt,
+    )
     .map((item) => item.completedAt?.getTime() ?? 0);
 
   return times.length > 0 ? new Date(Math.max(...times)) : new Date();

@@ -332,6 +332,27 @@ describe(claimCourseCertificate, () => {
     await expect(readMapCertificate()).resolves.toStrictEqual({ code });
   });
 
+  it("dates an exam's course by its course work, not a mock done after it", async () => {
+    const fixture = await courseGoal({
+      items: [
+        { status: "done" },
+        { status: "done" },
+        { kind: "mock", status: "done" },
+        WON_CHALLENGE,
+      ],
+      kind: "exam",
+    });
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: new Date("2026-10-01T12:00:00Z") },
+      where: { kind: { not: "mock" }, planId: fixture.plan.id },
+    });
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+      certificate: { completedOn: "2026-10-01" },
+    });
+  });
+
   it("refuses an unfinished course and another learner's goal", async () => {
     const [fixture, other] = await Promise.all([courseGoal(), userFixture()]);
 
