@@ -49,8 +49,8 @@ class LiveCallEnding(
     private var lastTypedAt: Long? = null
     private var lastSentAt: Long? = null
 
-    /** Where the learner's unanswered silence started: when the character stopped, or the call went live; null once they answer. */
-    private var silenceSince: Long? = liveAt
+    /** When the last sound anyone made stopped (or the last keystroke): the quiet the check-in and the quiet goodbye count from. */
+    private var quietSince = liveAt
     private var checkedIn = false
     private var openingTakenAt: Long? = null
     private var openingRetried = false
@@ -66,8 +66,8 @@ class LiveCallEnding(
         startMs: Double,
     ) {
         lastCharacterAt = now
-        // The character's answer to its own check-in doesn't start again the silence it checks in on.
-        if (!checkedIn) silenceSince = now + timing.characterQuietMs
+        // The character's answer to its own check-in doesn't start again the quiet it checks in on.
+        if (!checkedIn) soundUntil(now + timing.characterQuietMs)
         if (goodbyeSentAt == null || goodbyeSaid) return
         if (goodbyeTaken) {
             goodbyeSaid = startsGoodbye(startMs)
@@ -92,29 +92,28 @@ class LiveCallEnding(
     /** The microphone heard the learner; a muted or blocked one never reports. */
     fun learnerSpoke(now: Long) {
         lastVoiceAt = now
-        learnerActed(now)
+        learnerActed(until = now + VOICE_HANGOVER_MS)
     }
 
     /**
      * The learner's words came back as a transcript, 1.3 to 1.8 s after they said them, often after a
-     * short answer: they count as speaking, and the silence starts again from them.
+     * short answer: they count as speaking.
      */
     fun learnerHeard(now: Long) {
         lastHeardAt = now
-        learnerActed(now)
-        silenceSince = silenceSince ?: now
+        learnerActed(until = now)
     }
 
     /** A reply being typed holds the goodbye: the character can't see it and would talk over it. */
     fun learnerTyped(now: Long) {
         lastTypedAt = now
-        learnerActed(now)
+        learnerActed(until = now)
     }
 
     fun learnerSent(now: Long) {
         lastSentAt = now
         lastTypedAt = null
-        learnerActed(now)
+        learnerActed(until = now)
     }
 
     fun goalsMet(now: Long) = arm(EndingReason.Done, now)
@@ -135,17 +134,17 @@ class LiveCallEnding(
     /** What the microphone hears, for the screen; a learner on a typed call never shows as speaking. */
     fun learnerSpeaking(now: Long) = lastVoiceAt?.let { now - it < VOICE_HANGOVER_MS } == true
 
-    fun quietHint(now: Long) = reason == null && silenceSince?.let { now - it >= timing.quietHintMs } == true
+    fun quietHint(now: Long) = reason == null && now - quietSince >= timing.quietHintMs
 
     fun next(now: Long): Step? {
         if (now >= hardStopAt) return Step.HangUp(null)
         if (goodbyeSaid && now - lastActivityAt() >= timing.goodbyeQuietMs) return Step.HangUp(reason)
 
         if (now >= talkEndsAt) arm(EndingReason.Time, now)
-        val silence = silenceSince?.let { now - it } ?: 0
-        if (silence >= timing.quietGoodbyeMs) arm(EndingReason.Quiet, now)
+        val quiet = now - quietSince
+        if (quiet >= timing.quietGoodbyeMs) arm(EndingReason.Quiet, now)
 
-        if (reason == null && !checkedIn && silence >= timing.checkInMs) {
+        if (reason == null && !checkedIn && quiet >= timing.checkInMs) {
             checkedIn = true
             return Step.CheckIn
         }
@@ -205,10 +204,14 @@ class LiveCallEnding(
         armedAt = now
     }
 
-    /** Only what the learner does once the character stopped answers it: talking over its last words doesn't. */
-    private fun learnerActed(now: Long) {
-        silenceSince = silenceSince?.takeIf { it > now }
+    /** A sound or keystroke from the learner starts a new quiet once it stops, with its own check-in. */
+    private fun learnerActed(until: Long) {
+        soundUntil(until)
         checkedIn = false
+    }
+
+    private fun soundUntil(at: Long) {
+        quietSince = maxOf(quietSince, at)
     }
 
     /** The microphone hears them, or their words just came back: the model waits for a speaker to finish. */

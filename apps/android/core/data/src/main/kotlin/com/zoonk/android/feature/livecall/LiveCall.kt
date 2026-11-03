@@ -61,7 +61,7 @@ data class LiveCallState(
     val talkSeconds: Long = 0,
     val ending: EndingReason? = null,
     val sayingGoodbye: Boolean = false,
-    /** The learner has left a silence long enough to tell them there's no rush. */
+    /** Nobody has made a sound for long enough to tell the learner there's no rush. */
     val quietHint: Boolean = false,
     /** The plan's call time is what the talk time ends at: today's or this month's. */
     val endsAtLimit: EndsAtLimit? = null,
