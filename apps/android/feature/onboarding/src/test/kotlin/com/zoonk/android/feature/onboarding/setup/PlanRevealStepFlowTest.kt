@@ -172,7 +172,8 @@ class PlanRevealStepFlowTest {
         planApi.planFailure = null
         planApi.shownPlan = planOf()
         rule.onNodeWithText("Reconnect").performScrollTo().performClick()
-        rule.mainClock.advanceTimeByFrame()
+        // The plan shows once a second passes after that tap, so a second tap can't land on it.
+        rule.mainClock.advanceTimeBy(1_100)
 
         rule.onNodeWithText("Plan created").assertIsDisplayed()
     }

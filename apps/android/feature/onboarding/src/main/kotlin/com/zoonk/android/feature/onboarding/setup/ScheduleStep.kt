@@ -51,6 +51,7 @@ import com.zoonk.android.feature.plan.lineAdvice
 import com.zoonk.android.feature.plan.markedTimes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
+import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.TimeSelect
@@ -183,15 +184,18 @@ private fun ColumnScope.ScheduleTime(
     val answered = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
     val gate = answered ?: PlanGate(planReadiness.ready, planReadiness.readingNotice)
     val gateAnswer = if (dated) covering else timeAdvice
-    if (waitsForPlan(gate, answered != null, run)) {
+    val hold = rememberReadyHold(ready = !waitsForPlan(gate, answered != null, run))
+    if (!hold.over) {
         val gateFailed = gateAnswer.status == PollStatus.Failed
-        if (gate.readingNotice && !gateFailed && !run.isStopped) {
-            val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
-            NoticeReading(document, lastEdition = false)
-        } else {
-            val retry = if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry
-            PlanBuilding(run.withPoll(gateFailed), retry)
-        }
+        val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
+        PlanBuilding(
+            run.withPoll(gateFailed),
+            if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry,
+            hold = hold,
+            readyDescription = R.string.warm_up_plan_ready_one_question,
+            readyAction = R.string.onboarding_continue,
+            reading = NoticeRead(document, lastEdition = false).takeIf { gate.readingNotice && !gateFailed && !run.isStopped },
+        )
         return
     }
 

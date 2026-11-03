@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "warm_up_deck_end": "f925607f0ba6e65302d85e9f96e499b0cfdf11c13592c08fb415d251fdaeb02f",
+  "warm_up_lesson_ready": "0755419e8b55ef0a3442e2c20e85648d62f78fff92210b20ef6a03743b108bdc",
+  "warm_up_next": "83c9e2bb47134909235c93084d500727869216c537d5a8fbd4a41bb050a1cba3",
+  "warm_up_plan_ready": "07c4464cf9e041ae4f34234861616e8a17ffb57f0ee3ef6bc3c39629e702740a",
+  "warm_up_plan_ready_one_question": "0d9ff5330cdbd9248a9839e704fa85fdfa1f20f0fc5b11c21c085ca584eab670",
+  "warm_up_plan_ready_whenever": "c0f06a9be492af0fe597749082b07536c683e7734c05501f58745305b0b7856c",
+  "warm_up_questions_ready": "662d63c9779e77aaf9b5584a4d34e198ea73dff4f536fabd4e2b38f568f4dcc9",
+  "warm_up_questions_ready_description": "8198fb619ed435c3b865f407972fa8de77cedeb5a9f5c9b7fe9398347bb0a5e8",
+  "warm_up_title": "1c890db4c63ff51f346b2294be306b92ae94be41fa856e756f2d87d679a04991"
+}
+-->
+<resources>
+    <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
+    <string name="warm_up_title">Zgaduj, póki czekasz</string>
+    <!-- Button under a guessed question's answer: shows the next question. -->
+    <string name="warm_up_next">Zgaduj dalej</string>
+    <!-- Under the last question's answer: there are no more questions to guess. -->
+    <string name="warm_up_deck_end">Na razie to wszystko.</string>
+    <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
+    <string name="warm_up_plan_ready">Twój plan jest gotowy</string>
+    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
+    <string name="warm_up_plan_ready_one_question">Jeszcze jedno pytanie i zobaczysz plan.</string>
+    <!-- Under "Your plan is ready" on the step that shows the plan. -->
+    <string name="warm_up_plan_ready_whenever">Zobacz go, kiedy chcesz.</string>
+    <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
+    <string name="warm_up_questions_ready">Twoje pytania są gotowe</string>
+    <string name="warm_up_questions_ready_description">Zacznij odpowiadać, kiedy chcesz.</string>
+    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <string name="warm_up_lesson_ready">Twoja lekcja jest gotowa. Zacznij, kiedy chcesz.</string>
+</resources>
