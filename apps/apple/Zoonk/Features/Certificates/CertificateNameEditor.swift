@@ -19,6 +19,14 @@ struct CertificateNameEditor: View {
     name.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
+  private var isTooLong: Bool {
+    ProfileName.isChangeTooLong(name, saved: current)
+  }
+
+  private var canSave: Bool {
+    !trimmed.isEmpty && trimmed != current && !isTooLong && !session.isWorking
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       label
@@ -47,12 +55,22 @@ struct CertificateNameEditor: View {
           }
         }
         .buttonStyle(.mainAction)
-        .disabled(trimmed.isEmpty || trimmed == current || session.isWorking)
+        .disabled(!canSave)
       }
 
-      hint
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+      Group {
+        if isTooLong {
+          Text(
+            "Use 150 characters or fewer.", tableName: "Account",
+            comment: "Shown under the profile name field when the typed name is too long"
+          )
+          .foregroundStyle(.destructive)
+        } else {
+          hint
+            .foregroundStyle(.secondary)
+        }
+      }
+      .font(.footnote)
 
       AccountFailureMessage(failure: session.failure)
     }
@@ -90,7 +108,7 @@ struct CertificateNameEditor: View {
   }
 
   private func save() {
-    guard !trimmed.isEmpty, trimmed != current, !session.isWorking else {
+    guard canSave else {
       return
     }
 

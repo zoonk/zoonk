@@ -51,9 +51,9 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -80,11 +80,9 @@ fun CertificatesScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when (state) {
                 is LoadState.Loaded, LoadState.Empty -> {
-                    PageWithSupportingPane(supportingPane = null) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-                            LazyColumn(Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                                certificates(app, navigator, state.value.orEmpty())
-                            }
+                    BeforeFold { beforeFold ->
+                        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
+                            certificates(app, navigator, state.value.orEmpty())
                         }
                     }
                 }

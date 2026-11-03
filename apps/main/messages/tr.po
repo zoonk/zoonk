@@ -1231,9 +1231,9 @@ msgstr "Verilerin"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Zoonk ve arkadaşın sana bu adla seslenir"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1257,6 +1257,11 @@ msgstr "Kullanıcı adı"
 msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "Adın, kullanıcı adın ve hesabın."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "En fazla 150 karakter kullan."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"

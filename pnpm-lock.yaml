@@ -1282,6 +1282,9 @@ importers:
       '@ai-sdk/openai':
         specifier: 4.0.106
         version: 4.0.106(zod@4.6.7)
+      '@zoonk/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@zoonk/core':
         specifier: workspace:*
         version: link:../core

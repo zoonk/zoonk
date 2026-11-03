@@ -59,7 +59,10 @@ export async function getCurrentUser() {
   return findCurrentUser(session.user.id);
 }
 
-/** Better Auth must not rewrite an unchanged username. */
+/**
+ * Better Auth must not rewrite an unchanged username, and a name saved before the length limit
+ * stays while it's unchanged.
+ */
 function getSessionUserUpdate({
   currentUser,
   input,
@@ -67,10 +70,11 @@ function getSessionUserUpdate({
   currentUser: CurrentUser;
   input: CurrentUserUpdate;
 }): CurrentUserUpdate {
+  const name = input.name?.trim();
   const username = input.username === undefined ? undefined : normalizeUsername(input.username);
 
   return {
-    ...(input.name !== undefined && input.name !== currentUser.name && { name: input.name }),
+    ...(name !== undefined && name !== currentUser.name.trim() && { name }),
     ...(username !== undefined && username !== currentUser.username && { username }),
   };
 }

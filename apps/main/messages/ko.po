@@ -1231,9 +1231,9 @@ msgstr "내 데이터"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Zoonk와 짝꿍이 부를 이름"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Zoonk와 짝꿍이 부를 이름이에요. 인증서에도 이 이름이 표시돼요."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1257,6 +1257,11 @@ msgstr "사용자 이름"
 msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "이름, 사용자 이름, 계정 정보예요."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"

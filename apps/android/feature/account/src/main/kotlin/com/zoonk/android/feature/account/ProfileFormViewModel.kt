@@ -25,7 +25,7 @@ class ProfileFormViewModel(
     user: MeUser,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    private var savedName = user.name
+    private var savedName = user.name.trim()
     private var savedUsername = user.username.orEmpty()
 
     var name by handle.saveable { mutableStateOf(user.name) }
@@ -48,9 +48,12 @@ class ProfileFormViewModel(
     val isChanged: Boolean
         get() = name.trim() != savedName || username != savedUsername
 
+    val isNameTooLong: Boolean
+        get() = isNameChangeTooLong(name, savedName)
+
     val canSave: Boolean
         get() =
-            !isSaving && name.isNotBlank() && isUsernameSyntaxValid(username) &&
+            !isSaving && name.isNotBlank() && !isNameTooLong && isUsernameSyntaxValid(username) &&
                 usernameStatus != UsernameStatus.Taken && usernameStatus != UsernameStatus.Checking
 
     init {
@@ -98,12 +101,13 @@ class ProfileFormViewModel(
     fun save() {
         if (!canSave) return
         isSaving = true
+        val trimmedName = name.trim()
         viewModelScope.launch {
             try {
-                failure = account.saveProfile(name.trim(), username)
+                failure = account.saveProfile(trimmedName.takeIf { it != savedName }, username)
                 if (failure == AccountFailure.UsernameTaken) usernameStatus = UsernameStatus.Taken
                 if (failure == null) {
-                    savedName = name.trim()
+                    savedName = trimmedName
                     savedUsername = username
                     usernameStatus = UsernameStatus.Idle
                     isSaved = true

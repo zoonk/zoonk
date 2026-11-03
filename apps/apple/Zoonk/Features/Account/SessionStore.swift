@@ -326,11 +326,17 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  /// A nil `username` keeps the current one.
+  /// A nil `username` keeps the current one. Sends the name only when it changed, so a name saved
+  /// before the length limit doesn't block a username change.
   func updateProfile(name: String, username: String? = nil) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut
       return false
+    }
+
+    let changedName = ProfileName.isChange(name, saved: account?.user.name ?? "") ? name : nil
+    guard changedName != nil || username != nil else {
+      return true
     }
 
     markInteractiveOperationStarted()
@@ -343,7 +349,7 @@ final class SessionStore {
     do {
       let updatedAccount = try await api.updateProfile(
         token: authenticatedSession.bearerToken,
-        name: name,
+        name: changedName,
         username: username)
 
       guard

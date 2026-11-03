@@ -24291,9 +24291,10 @@
         "type": "object",
         "properties": {
           "name": {
-            "description": "Display name",
+            "description": "Display name. Send it only to change it: a name saved before the length limit stays until it changes",
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "maxLength": 150
           },
           "username": {
             "description": "Username shown in profile URLs and mentions",

@@ -1,12 +1,16 @@
 package com.zoonk.android.feature.certificates
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -47,8 +51,10 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.OwnedCertificate
@@ -91,7 +97,13 @@ fun CertificateScreen(
             }
         },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .consumeWindowInsets(padding)
+                .imePadding(),
+        ) {
             when {
                 certificate != null -> {
                     Certificate(app, certificate, actions, isGuest) { navigator.open(AppRoute.Login) }
@@ -102,12 +114,14 @@ fun CertificateScreen(
                 }
 
                 state is LoadState.Loaded || state == LoadState.Empty -> {
-                    EmptyState(
-                        icon = R.drawable.ic_workspace_premium,
-                        title = stringResource(R.string.certificates_not_found),
-                        description = stringResource(R.string.not_found_description),
-                        modifier = Modifier.padding(detailPagePadding()),
-                    )
+                    BeforeFold { beforeFold ->
+                        EmptyState(
+                            icon = R.drawable.ic_workspace_premium,
+                            title = stringResource(R.string.certificates_not_found),
+                            description = stringResource(R.string.not_found_description),
+                            modifier = beforeFold.padding(detailPagePadding()),
+                        )
+                    }
                 }
 
                 else -> {
@@ -118,6 +132,10 @@ fun CertificateScreen(
     }
 }
 
+/**
+ * The certificate and what the learner can do with it, which on an open book takes the page after
+ * the fold.
+ */
 @Composable
 private fun Certificate(
     app: AppContainer,
@@ -126,98 +144,120 @@ private fun Certificate(
     isGuest: Boolean,
     onCreateAccount: () -> Unit,
 ) {
-    var renaming by rememberSaveable { mutableStateOf(false) }
+    // Above both layouts: folding moves what the learner does between the one column and the page after the fold, and each keeps its scroll.
+    val name = certificateNameModel(app)
     var linkedIn by rememberSaveable { mutableStateOf(false) }
-    val recipient = certificate.recipientName
-    val fileName = certificate.fileName()
+    val pageScroll = rememberScrollState()
+    val usesScroll = rememberScrollState()
+    val uses = @Composable { Uses(certificate, actions, isGuest, onCreateAccount, name) { linkedIn = true } }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(detailPagePadding())
-            .widthIn(max = DETAIL_PAGE_WIDTH),
-    ) {
-        Text(
-            certificate.naming.words(),
-            Modifier.pageTitle(),
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            certificate.kindLine(),
-            Modifier.padding(top = 4.dp, bottom = 16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        CertificatePicture(certificate.pictureUrl, app.images, certificate.pictureLabel(), Modifier.fillMaxWidth())
-
-        when {
-            isGuest -> {
-                Column(Modifier.padding(top = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(stringResource(R.string.certificates_guest_line), style = MaterialTheme.typography.bodyLarge)
-                    OutlinedButton(onClick = onCreateAccount) { Text(stringResource(R.string.certificates_create_account)) }
-                }
-            }
-
-            // Share, print, download and LinkedIn wait for a name, as main's page does.
-            recipient == null -> {
-                CertificateNameField(app, current = null, onSaved = {}, modifier = Modifier.padding(top = 24.dp))
-            }
-
-            else -> {
-                Column(Modifier.padding(top = 8.dp).bleed(LIST_ITEM_INSET)) {
-                    ActionRow(
-                        R.drawable.ic_print,
-                        stringResource(R.string.certificates_print),
-                        busy = actions.busy == CertificateAction.Print,
-                        enabled = actions.busy == null,
-                    ) {
-                        actions.print(certificate, fileName)
-                    }
-                    ActionRow(
-                        R.drawable.ic_download,
-                        stringResource(R.string.certificates_download),
-                        busy = actions.busy == CertificateAction.Download,
-                        enabled = actions.busy == null,
-                    ) {
-                        actions.download(certificate, fileName)
-                    }
-                    ActionRow(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin)) { linkedIn = true }
-                    ActionRow(
-                        R.drawable.ic_link,
-                        stringResource(R.string.certificates_copy_link),
-                    ) { actions.copy(certificate.url.toString(), R.string.certificates_link_copied) }
-                    HorizontalDivider(Modifier.padding(vertical = 8.dp))
-                    if (renaming) {
-                        CertificateNameField(
-                            app = app,
-                            current = recipient,
-                            onSaved = { renaming = false },
-                            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
-                            onCancel = { renaming = false },
-                        )
-                    } else {
-                        ListItem(
-                            headlineContent = { Text(stringResource(R.string.certificates_name_on_certificate)) },
-                            modifier = Modifier.clickable(role = Role.Button) { renaming = true },
-                            supportingContent = { Text(recipient) },
-                            leadingContent = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        )
-                    }
-                }
-            }
+    PageWithSupportingPane(supportingPane = { DetailColumn(usesScroll) { uses() } }, panesTouch = true, atFoldOnly = true) { usesBeside ->
+        DetailColumn(pageScroll) {
+            Text(
+                certificate.naming.words(),
+                Modifier.pageTitle(),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                certificate.kindLine(),
+                Modifier.padding(top = 4.dp, bottom = 16.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            CertificatePicture(certificate.pictureUrl, app.images, certificate.pictureLabel(), Modifier.fillMaxWidth())
+            if (!usesBeside) uses()
         }
-
-        Text(
-            stringResource(R.string.certificates_link_note),
-            Modifier.padding(top = 16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
     }
 
     if (linkedIn) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+}
+
+@Composable
+private fun DetailColumn(
+    scroll: ScrollState,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(scroll)
+            .padding(detailPagePadding())
+            .widthIn(max = DETAIL_PAGE_WIDTH),
+        content = content,
+    )
+}
+
+/** Print, download, LinkedIn, the link and the name, or what a guest or a learner without a name does first. */
+@Composable
+private fun Uses(
+    certificate: OwnedCertificate,
+    actions: CertificateActions,
+    isGuest: Boolean,
+    onCreateAccount: () -> Unit,
+    name: CertificateNameModel,
+    onAddToLinkedIn: () -> Unit,
+) {
+    val recipient = certificate.recipientName
+    val fileName = certificate.fileName()
+
+    when {
+        isGuest -> {
+            Column(Modifier.padding(top = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(stringResource(R.string.certificates_guest_line), style = MaterialTheme.typography.bodyLarge)
+                OutlinedButton(onClick = onCreateAccount) { Text(stringResource(R.string.certificates_create_account)) }
+            }
+        }
+
+        // Share, print, download and LinkedIn wait for a name, as main's page does.
+        recipient == null -> {
+            CertificateNameField(current = null, name, Modifier.padding(top = 24.dp))
+        }
+
+        else -> {
+            Column(Modifier.padding(top = 8.dp).bleed(LIST_ITEM_INSET)) {
+                ActionRow(
+                    R.drawable.ic_print,
+                    stringResource(R.string.certificates_print),
+                    busy = actions.busy == CertificateAction.Print,
+                    enabled = actions.busy == null,
+                ) {
+                    actions.print(certificate, fileName)
+                }
+                ActionRow(
+                    R.drawable.ic_download,
+                    stringResource(R.string.certificates_download),
+                    busy = actions.busy == CertificateAction.Download,
+                    enabled = actions.busy == null,
+                ) {
+                    actions.download(certificate, fileName)
+                }
+                ActionRow(R.drawable.ic_north_east, stringResource(R.string.certificates_add_to_linkedin), onClick = onAddToLinkedIn)
+                ActionRow(
+                    R.drawable.ic_link,
+                    stringResource(R.string.certificates_copy_link),
+                ) { actions.copy(certificate.url.toString(), R.string.certificates_link_copied) }
+                HorizontalDivider(Modifier.padding(vertical = 8.dp))
+                if (name.changing) {
+                    CertificateNameField(recipient, name, Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp))
+                } else {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.certificates_name_on_certificate)) },
+                        modifier = Modifier.clickable(role = Role.Button) { name.change(recipient) },
+                        supportingContent = { Text(recipient) },
+                        leadingContent = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    )
+                }
+            }
+        }
+    }
+
+    Text(
+        stringResource(R.string.certificates_link_note),
+        Modifier.padding(top = 16.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall,
+    )
 }
 
 @Composable

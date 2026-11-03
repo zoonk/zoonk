@@ -1231,9 +1231,9 @@ msgstr "Twoje dane"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Tak zwracają się do ciebie Zoonk i twój kumpel"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Tak zwracają się do ciebie Zoonk i twój kumpel. To imię widnieje też na twoich certyfikatach."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1257,6 +1257,11 @@ msgstr "Nazwa użytkownika"
 msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "Twoje imię, nazwa użytkownika i konto."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Wpisz maksymalnie 150 znaków."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"

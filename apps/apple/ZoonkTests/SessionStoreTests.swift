@@ -1134,10 +1134,31 @@ final class SessionStoreTests: XCTestCase {
 
     _ = await session.updateProfile(name: "Ana Souza")
     await certificates.load()
-    _ = await session.updateProfile(name: "Ana Souza")
+    _ = await session.updateProfile(name: "Ana Souza", username: "ana_souza")
     await certificates.load()
 
+    XCTAssertEqual(api.profileUpdates.map(\.name), ["Ana Souza", nil])
     XCTAssertEqual(certificates.state, .loaded(2))
+  }
+
+  @MainActor
+  func testProfileSaveSendsTheNameOnlyWhenItChanged() async {
+    let longName = String(repeating: "a", count: ProfileName.maxLength + 50)
+    let savedName = " \(longName) "
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(name: savedName)),
+      updateProfileResult: .success(makeAccount(name: savedName)))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let savedUsername = await session.updateProfile(name: longName, username: "new_username")
+    let savedNewName = await session.updateProfile(name: "Ana", username: "new_username")
+
+    XCTAssertTrue(savedUsername)
+    XCTAssertTrue(savedNewName)
+    XCTAssertEqual(api.profileUpdates.map(\.name), [nil, "Ana"])
+    XCTAssertEqual(api.profileUpdates.map(\.username), ["new_username", "new_username"])
   }
 
   @MainActor
@@ -1198,8 +1219,9 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     )?
   var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
-  var updateProfileHandler: (@MainActor (String, String, String?) async throws -> CurrentAccount)?
+  var updateProfileHandler: (@MainActor (String, String?, String?) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
+  private(set) var profileUpdates = [(name: String?, username: String?)]()
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -1272,8 +1294,11 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     try signOutResult.get()
   }
 
-  func updateProfile(token: String, name: String, username: String?) async throws -> CurrentAccount
+  func updateProfile(token: String, name: String?, username: String?) async throws
+    -> CurrentAccount
   {
+    profileUpdates.append((name, username))
+
     if let updateProfileHandler {
       return try await updateProfileHandler(token, name, username)
     }
@@ -1368,7 +1393,8 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func updateProfile(token: String, name: String, username: String?) async throws -> CurrentAccount
+  func updateProfile(token: String, name: String?, username: String?) async throws
+    -> CurrentAccount
   {
     throw AccountAPIError.invalidResponse
   }

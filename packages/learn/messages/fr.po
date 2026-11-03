@@ -935,7 +935,6 @@ msgid "{low} to {high}"
 msgstr "{low} à {high}"
 
 #: src/_utils/use-state-label.ts
-#: src/memory/memory-labels.tsx
 msgctxt "BkpBqH"
 msgid "Learning"
 msgstr "En cours"
@@ -1840,6 +1839,21 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "Sur ton certificat : <strong>{name}</strong>"
 
 #: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Utilise au maximum 150 caractères."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise. Tu peux le changer à tout moment."
+
+#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "Nom sur tes certificats"
@@ -1853,16 +1867,6 @@ msgstr "Ton nom, tel qu’il doit apparaître"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Ton nom complet"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise. Tu peux le changer à tout moment."
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"
@@ -5648,7 +5652,6 @@ msgid "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}
 msgstr "{stars, plural, =0 {# étoile sur 3} one {# étoile sur 3} other {# étoiles sur 3}}"
 
 #: src/language/conversation/call-stars-step.tsx
-#: src/memory/memory-labels.tsx
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Objectifs"
@@ -6895,24 +6898,35 @@ msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "Supprimer"
 
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.XHLYdJ"
+msgid "Goals"
+msgstr "Objectifs"
+
 #. A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "XQZA8e"
+msgctxt "memoryCategories.XQZA8e"
 msgid "Background"
 msgstr "Parcours"
 
 #: src/memory/memory-labels.tsx
-msgctxt "lEdpUM"
+msgctxt "memoryCategories.lEdpUM"
 msgid "Routine"
 msgstr "Routine"
 
 #: src/memory/memory-labels.tsx
-msgctxt "PCSt5T"
+msgctxt "memoryCategories.PCSt5T"
 msgid "Preferences"
 msgstr "Préférences"
 
+#. A category of what Zoonk remembers about the learner: how their studies are going, like mixing up two ideas or reading better than they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "V2qutI"
+msgctxt "memoryCategories.BkpBqH"
+msgid "Learning"
+msgstr "Apprentissage"
+
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.V2qutI"
 msgid "Context"
 msgstr "Contexte"
 

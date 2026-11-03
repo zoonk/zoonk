@@ -53,7 +53,7 @@ struct CertificatePicture: View {
         return
       }
 
-      loaded = image ?? loaded
+      loaded = image
       isLoading = false
     }
   }

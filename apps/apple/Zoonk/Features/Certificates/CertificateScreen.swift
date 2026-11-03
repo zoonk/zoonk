@@ -14,13 +14,10 @@ struct CertificateScreen: View {
       switch certificate.state {
       case .loaded(let value):
         CertificateDetail(certificate: value)
-      case .failed(let error):
-        PracticeLoadFailureView(error: error) {
+      case .idle, .loading, .failed, .empty:
+        SettingsLoadingState(state: certificate.state) {
           Task { await certificate.refresh() }
         }
-      case .idle, .loading, .empty:
-        ProgressView()
-          .lonePage()
       }
     }
     .navigationTitle(

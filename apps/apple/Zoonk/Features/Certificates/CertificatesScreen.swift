@@ -24,13 +24,10 @@ struct CertificatesScreen: View {
         }
       case .empty:
         EmptyCertificates()
-      case .failed(let error):
-        PracticeLoadFailureView(error: error) {
+      case .idle, .loading, .failed:
+        SettingsLoadingState(state: store.list.state) {
           Task { await store.list.refresh() }
         }
-      case .idle, .loading:
-        ProgressView()
-          .lonePage()
       }
     }
     .navigationTitle(
@@ -111,7 +108,6 @@ private struct EmptyCertificates: View {
         }
       }
     }
-    .lonePage()
     // The list too, so pull to refresh also brings back goals that failed to load.
     .loads(store.list, store.upNext)
   }
