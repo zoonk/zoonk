@@ -1,8 +1,11 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 
-export async function isMemoryEnabled(userId: string): Promise<boolean> {
-  const profile = await prisma.userLearningProfile.findUnique({
+export async function isMemoryEnabled(
+  userId: string,
+  client: Pick<TransactionClient, "userLearningProfile"> = prisma,
+): Promise<boolean> {
+  const profile = await client.userLearningProfile.findUnique({
     select: { memoryEnabled: true },
     where: { userId },
   });

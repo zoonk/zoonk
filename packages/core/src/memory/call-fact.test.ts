@@ -11,14 +11,24 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanupTestCalls, connectTestCall } from "../_test-utils/connect-test-call";
+import {
+  cleanupTestCalls,
+  connectTestCall,
+  reserveTestCall,
+} from "../_test-utils/connect-test-call";
 import { freezeClock } from "../_test-utils/frozen-clock";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import {
   anotherLiveConversation,
   liveCallFixture,
 } from "../language/conversations/_test-utils/live-call-fixture";
 import { getLanguageConversation } from "../language/conversations/get-language-conversation";
+import { redeemLiveCallSdp } from "../language/conversations/redeem-live-call-sdp";
 import { startLanguageConversation } from "../language/conversations/start-language-conversation";
 import { findFactForCall } from "./call-fact";
 import { deleteMemoryFact } from "./delete-memory-fact";
@@ -48,7 +58,7 @@ async function pastCall({
 }
 
 function findFact(userId: string, now = new Date()) {
-  return findFactForCall({ now, userId });
+  return findFactForCall({ now, transaction: prisma, userId });
 }
 
 function lastInstructions() {
@@ -192,6 +202,79 @@ describe("a call's memory note", () => {
 
     expect(lastInstructions()).toContain('"Vai se mudar para Toronto em fevereiro"');
     expect(lastInstructions()).not.toContain("Tem uma entrevista na sexta");
+  });
+
+  it("gives the fact to only one of two practice calls started at once", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const move = await memoryFactFixture({
+      statement: "Vai se mudar para Toronto em fevereiro",
+      userId: user.id,
+    });
+
+    const start = () =>
+      startLanguageConversation({ chapterId: renting.id, kind: "practice", minutes: 2 });
+
+    const writer = holdLearnerLock({ userId: user.id });
+    const pid = await writer.pid;
+    const starts = [start(), start()];
+    // Saving the day first locks the plan and the learner with statements of their own.
+    await waitForBlockedStatement(pid, /FOR (?:NO KEY )?UPDATE/u, 2);
+    writer.release();
+    await writer.done;
+    await Promise.all(starts);
+
+    const calls = await prisma.languageConversation.findMany({
+      orderBy: { memoryFactId: { nulls: "last", sort: "asc" } },
+      select: { memoryFactId: true },
+      where: { kind: "practice", userId: user.id },
+    });
+
+    expect(calls).toStrictEqual([{ memoryFactId: move.id }, { memoryFactId: null }]);
+  });
+
+  it("leaves the note out when the learner deletes the fact while the call connects", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+
+    const move = await memoryFactFixture({
+      statement: "Vai se mudar para Toronto em fevereiro",
+      userId: user.id,
+    });
+
+    await prisma.languageConversation.update({
+      data: { memoryFactId: move.id },
+      where: { id: conversation.id },
+    });
+
+    const reserved = await reserveTestCall(conversation.id);
+    const connectionId = reserved.status === "ready" ? reserved.setup.connectionId : "";
+
+    const writer = holdLearnerLock({
+      beforeCommit: (tx) =>
+        tx.memoryFact.update({
+          data: { deletedAt: new Date(), status: "deleted" },
+          where: { id: move.id },
+        }),
+      userId: user.id,
+    });
+
+    const pid = await writer.pid;
+
+    const redeemed = redeemLiveCallSdp({
+      connectionId,
+      conversationId: conversation.id,
+      input: { sdp: "test-offer" },
+    });
+
+    await waitForBlockedStatement(pid, LEARNER_LOCK);
+    writer.release();
+    await writer.done;
+
+    await expect(redeemed).resolves.toMatchObject({ status: "ready" });
+    expect(lastInstructions()).toContain("You are Linda");
+    expect(lastInstructions()).not.toContain("Toronto");
   });
 
   it("gives a checkpoint call no fact", async () => {

@@ -81,23 +81,22 @@ async function prepareCreation({
   isGuest: boolean;
   userId: string;
 }): Promise<Prepared> {
-  const learnerNote = await readCallNote({ conversationId, now: new Date(), userId });
-
   return writeLearnerChange<Prepared>({ userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId });
+    const now = new Date();
 
-    const [connection, conversation] = await Promise.all([
+    const [connection, conversation, learnerNote] = await Promise.all([
       transaction.liveCallConnection.findFirst({
         where: { conversationId, id: connectionId, userId },
       }),
       transaction.languageConversation.findFirst({ where: { id: conversationId, userId } }),
+      readCallNote({ conversationId, now, transaction, userId }),
     ]);
 
     if (!connection || !conversation) {
       return unchanged({ status: "notFound" as const });
     }
 
-    const now = new Date();
     const call = buildLiveCall({ learnerNote, row: conversation });
 
     if (!call || conversation.reviewRunId !== null) {
