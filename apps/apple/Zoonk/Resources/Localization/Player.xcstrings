@@ -3923,7 +3923,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "答えはこちら"
+            "value" : "答えはこちらです"
           }
         },
         "ko" : {
@@ -3941,7 +3941,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja a resposta"
+            "value" : "Aqui está a resposta"
           }
         },
         "tr" : {
