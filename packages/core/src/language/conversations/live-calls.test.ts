@@ -199,6 +199,53 @@ describe("live calls", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
+  it("[1] lets a learner at the limit finish a dropped call: the reconnect holds what's left of its talk window, then the next start is refused", async () => {
+    const { conversation, user } = await learner();
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 80, userId: user.id });
+    const first = await live(conversation.id);
+
+    advance(47);
+    const second = await live(conversation.id);
+
+    expect(second).toMatchObject({
+      seconds: TWO_MINUTES - 47 + WRAP_UP,
+      talkSeconds: TWO_MINUTES - 47,
+    });
+
+    await expect(
+      usage({ connectionId: second.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({
+      costMicros: getLiveCallReservationMicros(TWO_MINUTES - 47),
+      seconds: TWO_MINUTES - 47,
+    });
+
+    advance(second.seconds);
+    await endLiveCall({ connectionId: second.connectionId, reason: "deadline" });
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
+      limit: { limit: TWO_MINUTES, period: "day", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+
+    await expect(callSecondsUsed(user.id)).resolves.toBe(80 + TWO_MINUTES);
+    expect(first.connectionId).not.toBe(second.connectionId);
+  });
+
+  it("[1] gives a practice reconnect only what's left of its talk window, and a whole call once that's over", async () => {
+    const { conversation } = await learner({ plus: true });
+    await live(conversation.id);
+
+    advance(30);
+    const reconnected = await live(conversation.id);
+    advance(TWO_MINUTES - 30 + 1);
+    const restarted = await reserved(conversation.id);
+
+    expect([reconnected, restarted]).toMatchObject([
+      { talkSeconds: TWO_MINUTES - 30 },
+      { talkSeconds: TWO_MINUTES },
+    ]);
+  });
+
   it("[1] keeps a checkpoint's first talk time on every reconnect, each with its own wrap-up, until that time is over", async () => {
     const { conversation } = await learner({ kind: "checkpoint", plus: true });
     const first = await live(conversation.id);

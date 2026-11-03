@@ -21,6 +21,7 @@ import { type EntitlementViewer } from "./entitlement-viewer";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
 
 /** Must escape the transaction so a refused reservation rolls back its claimed call time. */
 export class LiveCallReservationRefusedError extends Error {
@@ -32,8 +33,14 @@ export class LiveCallReservationRefusedError extends Error {
   }
 }
 
-/** A checkpoint keeps the talk time its first connection opened; other calls start over. */
-async function requestedCallSeconds({
+type RequestedCall = { reconnect: boolean; seconds: number };
+
+/**
+ * A call that connected finishes, so a reconnect keeps what's left of its talk window, whatever the
+ * allowance; a reservation that never connected started nothing. Once the window is over, a
+ * checkpoint has ended and other calls start over.
+ */
+async function requestCall({
   conversation,
   now,
   transaction,
@@ -41,23 +48,23 @@ async function requestedCallSeconds({
   conversation: LanguageConversation;
   now: Date;
   transaction: TransactionClient;
-}): Promise<number> {
-  const length = conversation.minutes * 60;
-
-  if (conversation.kind !== "checkpoint") {
-    return length;
-  }
-
-  const first = await transaction.liveCallConnection.findFirst({
-    orderBy: { createdAt: "asc" },
-    where: { conversationId: conversation.id },
+}): Promise<RequestedCall | null> {
+  const latest = await transaction.liveCallConnection.findFirst({
+    orderBy: { createdAt: "desc" },
+    where: { conversationId: conversation.id, startedAt: { not: null } },
   });
 
-  if (!first) {
-    return length;
+  const left = latest ? Math.floor((getTalkEndsAt(latest) - now.getTime()) / MS_PER_SECOND) : 0;
+
+  if (left > 0) {
+    return { reconnect: true, seconds: left };
   }
 
-  return Math.max(0, Math.floor((getTalkEndsAt(first) - now.getTime()) / MS_PER_SECOND));
+  if (latest && conversation.kind === "checkpoint") {
+    return null;
+  }
+
+  return { reconnect: false, seconds: conversation.minutes * SECONDS_PER_MINUTE };
 }
 
 async function clearOpenConnection({
@@ -180,31 +187,32 @@ export async function reserveLiveCall({
     return { period: "day", status: "connectionLimitReached" };
   }
 
-  const seconds = await requestedCallSeconds({ conversation, now, transaction });
+  const call = await requestCall({ conversation, now, transaction });
 
-  if (seconds === 0) {
+  if (!call) {
     return { status: "conversationEnded" };
   }
 
-  return holdCallTime({ conversation, now, seconds, transaction, viewer });
+  return holdCallTime({ ...call, conversation, now, transaction, viewer });
 }
 
 async function holdCallTime({
   conversation,
   now,
+  reconnect,
   seconds,
   transaction,
   viewer,
-}: {
+}: RequestedCall & {
   conversation: LanguageConversation;
   now: Date;
-  seconds: number;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
   const id = await newConnectionId(transaction);
 
   const { decision } = await claimUsageInTransaction({
+    continuing: reconnect,
     generated: false,
     kind: "conversation",
     now,
@@ -218,7 +226,7 @@ async function holdCallTime({
     return decision;
   }
 
-  if (!(await hasMonthlyBudgetLeft({ now, transaction, viewer }))) {
+  if (!reconnect && !(await hasMonthlyBudgetLeft({ now, transaction, viewer }))) {
     throw new LiveCallReservationRefusedError({
       limit: {
         limit: getCallMonthlyBudgetMicros(viewer.tier),

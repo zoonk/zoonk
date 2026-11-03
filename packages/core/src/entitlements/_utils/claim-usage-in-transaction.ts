@@ -9,6 +9,7 @@ import { countUsage } from "./usage-counts";
 type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
 export async function claimUsageInTransaction({
+  continuing = false,
   generated,
   kind,
   now,
@@ -17,6 +18,8 @@ export async function claimUsageInTransaction({
   transaction,
   viewer,
 }: {
+  /** Continues a start the limits already admitted, so only its use is recorded. */
+  continuing?: boolean;
   generated: boolean;
   kind: UsageKind;
   now: Date;
@@ -33,10 +36,18 @@ export async function claimUsageInTransaction({
     return { decision: { status: "allowed" }, recorded: false };
   }
 
-  const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });
-
   const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
-  const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
+
+  const decision: UsageDecision = continuing
+    ? { status: "allowed" }
+    : evaluateUsage({
+        costMicros,
+        counts: await countUsage({ client: transaction, kind, now, userId: viewer.userId }),
+        generated,
+        kind,
+        now,
+        tier: viewer.tier,
+      });
 
   if (decision.status !== "allowed") {
     return { decision, recorded: false };

@@ -304,7 +304,7 @@ describe("language conversations", () => {
     expect(row.startedAt).not.toBeNull();
   });
 
-  it("starts a dropped call over when it connects again, keeping what the dropped one ran", async () => {
+  it("connects a dropped call again for what's left of its talk time, keeping what the dropped one ran", async () => {
     freezeClock();
 
     const { renting, user } = await languageGoalFixture();
@@ -323,7 +323,7 @@ describe("language conversations", () => {
 
     const second = await reserveTestCall(conversationId);
 
-    expect(second).toMatchObject({ setup: { talkSeconds: 60 }, status: "ready" });
+    expect(second).toMatchObject({ setup: { talkSeconds: 30 }, status: "ready" });
 
     const records = await prisma.usageRecord.findMany({
       orderBy: { createdAt: "asc" },
@@ -332,7 +332,7 @@ describe("language conversations", () => {
 
     expect(records).toMatchObject([
       { seconds: 30, targetId: first.setup.connectionId },
-      { seconds: 60, targetId: second.status === "ready" ? second.setup.connectionId : "" },
+      { seconds: 30, targetId: second.status === "ready" ? second.setup.connectionId : "" },
     ]);
   });
 
