@@ -65,7 +65,7 @@ class PlanStoreTest {
         runTest {
             val api = FakePlanApi()
             val store = store(api) { Instant.parse("2026-10-28T12:00:00Z") }
-            val next = store.studyNext[goalId]
+            val next = store.finished[goalId]
 
             next.load()
             next.load()

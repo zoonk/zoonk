@@ -82,13 +82,13 @@ export function getCertificateLinks({
   origin = MAIN_URL,
   ...input
 }: CertificateLinkInput & { origin?: string }): CertificateLinks {
-  const path = `/c/${input.code}`;
+  const path = `/c/${formatCertificateCode(input.code)}`;
   const url = new URL(path, origin).toString();
   const locale = getSupportedLocaleFromLanguage(input.language);
   const version = getCertificateImageVersion(input.recipientName);
 
   const imageUrl = (variant: CertificateImageVariant) =>
-    new URL(`/${locale}${path}/image/${variant}.png?v=${version}`, origin).toString();
+    new URL(`/${locale}/c/${input.code}/image/${variant}.png?v=${version}`, origin).toString();
 
   return {
     imageUrls: {

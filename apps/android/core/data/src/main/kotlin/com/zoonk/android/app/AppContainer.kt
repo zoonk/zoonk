@@ -42,6 +42,9 @@ import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
 import com.zoonk.android.feature.ceremonies.MilestoneViews
+import com.zoonk.android.feature.certificates.CertificateFiles
+import com.zoonk.android.feature.certificates.CertificateStore
+import com.zoonk.android.feature.certificates.LiveCertificatesApi
 import com.zoonk.android.feature.challenge.ChallengeStore
 import com.zoonk.android.feature.challenge.LiveChallengeApi
 import com.zoonk.android.feature.checkpoint.CheckpointStore
@@ -272,6 +275,8 @@ class AppContainer private constructor(
         )
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
     val milestoneViews = MilestoneViews(api, cache)
+    val certificates = CertificateStore(LiveCertificatesApi(api), cache)
+    val certificateFiles = CertificateFiles(File(context.cacheDir, "certificates"), api.http)
 
     // Pronunciation reviews (L8).
     val pronunciation = PronunciationStore(LivePronunciationApi(api), cache, timeZone)

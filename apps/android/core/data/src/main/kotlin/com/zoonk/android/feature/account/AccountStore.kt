@@ -63,10 +63,10 @@ class AccountStore(
             null
         }
 
-    /** Null when saved, or when another session took over meanwhile. */
+    /** Null when saved, or when another session took over meanwhile. Without [username], only the name changes. */
     suspend fun saveProfile(
         name: String,
-        username: String,
+        username: String? = null,
     ): AccountFailure? {
         val result =
             cache.mutate(invalidating = setOf(DataDomain.UserSession)) { session ->

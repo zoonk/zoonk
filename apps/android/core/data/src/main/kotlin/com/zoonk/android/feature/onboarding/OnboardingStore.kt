@@ -480,13 +480,17 @@ class OnboardingStore(
                 api.speakLevelTest(it, goalId, recording)
             }.toGradeOutcome()
 
-    /** Saves the test's levels as the plan's start; a test whose questions were never written has none to save. */
+    /**
+     * Saves the test's levels as the plan's start, answering with the placement certificate it earned;
+     * a test whose questions were never written has none to save, and answers null.
+     */
     suspend fun finishLevelTest(goalId: String) =
-        write(setOf(DataDomain.Goals, DataDomain.UserProgress)) { session ->
+        write(setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.Certificates)) { session ->
             try {
                 api.finishLevelTest(session, goalId)
             } catch (e: ApiException) {
                 if (e.code != "LEVEL_TEST_PREPARING") throw e
+                null
             }
         }
 }

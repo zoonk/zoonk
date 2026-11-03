@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalNavigationSuiteType
@@ -39,6 +40,7 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
@@ -172,14 +174,15 @@ internal fun PlanPage(
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
     val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
-    val next =
+    val finished =
         if (page.plan.end != null) {
-            app.plans.studyNext[page.goal.id]
+            app.plans.finished[page.goal.id]
                 .collectShown()
                 .value.value
         } else {
             null
         }
+    val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
         mutableStateOf(
@@ -252,12 +255,23 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
-                next = next,
+                next = finished?.next,
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
+                certificate = finished?.certificate,
+                claimingCertificate = claim.claiming,
+                claimFailed = claim.failed,
+                onCertificate = {
+                    val open = { code: String -> navigator.open(AppRoute.Certificate(code)) }
+                    finished?.certificate?.code?.let(open) ?: claim.claim(open)
+                },
             ),
         slotState = viewModel.slotState,
     )
+
+    claim.awarded?.let { awarded ->
+        CertificateCeremony(app, listOf(awarded), claim::closeMoment, onCreateAccount = { navigator.open(AppRoute.Login) }, app.timeSource)
+    }
 
     if (editing) {
         PlanEditor(

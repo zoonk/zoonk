@@ -47,6 +47,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
@@ -219,6 +220,9 @@ internal fun PlayingLesson(
             buddy = summary.value?.buddy,
             ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
             tutor = tutor,
+            certificatesMoment = { awarded, onClose ->
+                CertificateCeremony(app, awarded, onClose, onCreateAccount = { navigator.open(AppRoute.Login) }, app.timeSource)
+            },
         )
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }

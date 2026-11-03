@@ -111,7 +111,7 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
   const t = useExtracted();
   const { copy } = useClipboard();
   const url = new URL(links.url);
-  const shown = `${url.host.replace(/^www\./u, "")}/c/${formatCertificateCode(url.pathname.split("/").at(-1) ?? "")}`;
+  const shown = `${url.host.replace(/^www\./u, "")}${url.pathname}`;
 
   return (
     <DetailRow label={t("Link")} mono>

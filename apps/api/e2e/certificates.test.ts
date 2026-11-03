@@ -33,7 +33,7 @@ test.describe("Certificates API", () => {
       title: "Quantum physics from scratch",
     });
 
-    expect(new URL(body.url).pathname).toBe(`/c/${certificate.code}`);
+    expect(new URL(body.url).pathname).toBe(`/c/${formatCertificateCode(certificate.code)}`);
 
     expect(new URL(body.imageUrls.print).pathname).toBe(
       `/en/c/${certificate.code}/image/print.png`,

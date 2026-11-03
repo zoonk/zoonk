@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  estimateLines,
   fitRouteLabels,
   getCoveredFallbacks,
   getLinkOverflow,
@@ -22,6 +21,16 @@ const COURSE_FINE_PRINT =
 /** A line box in u, as the sheet's name and title draw them. */
 const NAME_LINE = 92 * 1.02;
 const TITLE_LINE = 40 * 1.14;
+
+function getTopicOverflow(topic: string): number {
+  return getSheetOverflow({
+    covered: { kind: "topics", topics: [topic] },
+    finePrint: COURSE_FINE_PRINT,
+    graph: "labelledRoute",
+    nameHeight: NAME_LINE,
+    titleHeight: TITLE_LINE,
+  });
+}
 
 describe(getSheetOverflow, () => {
   it("fits a one-line name and title with every topic and the route", () => {
@@ -62,6 +71,12 @@ describe(getSheetOverflow, () => {
       }),
     ).toBeGreaterThan(0);
   });
+
+  it("reserves more room for wide-script topics than Latin topics of the same length", () => {
+    expect(getTopicOverflow("量子物理".repeat(5))).toBeGreaterThan(
+      getTopicOverflow("abcd".repeat(5)),
+    );
+  });
 });
 
 describe(getLinkOverflow, () => {
@@ -87,14 +102,6 @@ describe(getCoveredFallbacks, () => {
     ]);
 
     expect(getCoveredFallbacks({ kind: "readouts" })).toStrictEqual([{ kind: "readouts" }, null]);
-  });
-});
-
-describe(estimateLines, () => {
-  it("counts wide scripts as a full em", () => {
-    expect(estimateLines({ fontSize: 10, text: "abcd", width: 40 })).toBe(1);
-    expect(estimateLines({ fontSize: 10, text: "量子物理", width: 40 })).toBe(1);
-    expect(estimateLines({ fontSize: 10, text: "量子物理学", width: 40 })).toBe(2);
   });
 });
 

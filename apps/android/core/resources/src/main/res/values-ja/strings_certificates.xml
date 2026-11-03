@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "certificates_add_to_linkedin": "efe486be162d77994a971e97f0060867f1c5b4ee08d9f406d5897f71232b1512",
+  "certificates_alt_course": "e5e3a3f657a167895ec0162410d1685fe4ade81e0d6e1e6d97ab3f5c125aecd4",
+  "certificates_alt_dated": "db6481fc1147f06f077e7da930fc5d242667af73edfd6d424e834b87acf4220b",
+  "certificates_alt_level": "d8f19457442040e5cf19f485c02b47b339eb139ba7ec5d49d804212e42706284",
+  "certificates_alt_placement": "1333037f851cc29f9d525b8df293ca380e0f9180eadd9f99c82e2fc57a9bd0fd",
+  "certificates_cancel": "6811eb3b8457a7440f5c00482c445dd303d88348dc13dab552376eaf7f972387",
+  "certificates_caption_course": "c3f9da9644b957639d6b43d3f4ab7e54e5e5ce3adb78b66d891b7ef7c2413741",
+  "certificates_caption_course_hours": "8355bfeabee864b7e425649868a2943b38b7964cf66017d4d6c83ccbff97dd5a",
+  "certificates_caption_level": "527f3bc995cd9ce0aa320a46f3fe8c1de93b22fd40485c927a9cbfa3dfd10bad",
+  "certificates_caption_placement": "3743b356af80ea6332cf1599308f37d92209dbf5c3043d02c44d7ce8ade5f1a9",
+  "certificates_certificate": "faf9813d7d601a3d0cc509b874637e3fc94b70dcd52cc7be2426a7c081242a2a",
+  "certificates_change": "cf402ba1903e888e16a249b6c9e6eac5851f4f9a1d6852d73eef4634da50ba1a",
+  "certificates_change_name": "9ca32d61be063e49a347d9d8e25076feda761727137a24bf4766eddadcba27e2",
+  "certificates_continue": "80cd617861e4f2c2981e36d829a9bb531f3301963551986778a1c51c4a771d0a",
+  "certificates_continue_learning": "3ab84743aeadcfab872da5b57d55028ea9343e56a43ae0f546956a1b4996305e",
+  "certificates_copied": "8cb77ff6c8c8adc61e430a720e35408fb875b5fed6382105d800b4ae80324027",
+  "certificates_copy": "cf3b5ce4d2242f4c030a34e16d325e05205a16e77dc338d456aea2c675e9d895",
+  "certificates_copy_field": "a0a08c6c0c085227bd0a11cec839e57fec34833a6f85d89e52186d22e07f4a61",
+  "certificates_copy_link": "0d2b1bb9497e71a5c0d415568b9f6edd10b671b335d1cab80edc61d8fda23da1",
+  "certificates_count": "3450d2b26dba66870a67007d99dd210c4a628f27d4be88a081292e5a0175ea6f",
+  "certificates_course_complete": "647deaddeb68a572c0fb825906c1c928ccf6d6a5f8f6f41eee978529036e5ee8",
+  "certificates_course_ready": "27cefd17c8bd4eb5e949c8ddf162d57e869afaf8652f436c2428bd5d02a877e0",
+  "certificates_create_account": "6445dc0ac16c63c59ebb9cc33264b99260a415e920ca6cf0153a30ca567a27ec",
+  "certificates_download": "1d677addd3ea3f41d7bf4478ad350a1aac20cdb72dfa93b0e794088ec764c36d",
+  "certificates_downloaded": "083108a6d0fd9f1f7c6735599f733e18ea88c5c963182e69369e70f62787b785",
+  "certificates_earned": "2fe91ac016d0efc5a9f7d8cc2bed07895d3ffae818c58555c3c02c68a7f9bc89",
+  "certificates_empty_description": "af4d9593c69275b659dd0cd04f56cd38d6fdae71c60ffb4ab0ba91cc03cbb617",
+  "certificates_empty_title": "560cfcc84197462dbf0f0083b0cd624fc874d9433f706f5cc37743db76eb26ed",
+  "certificates_get": "eb3ce16cce76f8c7be697c59beadba0b23014aefaaeeb0c9e3c0877cea22b3af",
+  "certificates_guest_line": "e52bface47fbfa2fac807c0f38f996e2e84306b97ecc07d117bc3edccc2ccd47",
+  "certificates_kind_completion": "d462f7d4f7ef1ecca5acef1a745d27ec70fce142fc0bd24d86aa91d567edd134",
+  "certificates_kind_placement": "4d0d4473550af0f91809f208d1662eb95b63db37a5445c22fcd072649b826285",
+  "certificates_language_level": "9987e63967f64a86ca3261cd00169010e92b2a1980b8f74aba1ac1b59c9f59ea",
+  "certificates_language_ready": "31050fa6733fa3aba1ffa8a359a0269e09f4ebfb35cff8fe481d3a8469457c9e",
+  "certificates_lead": "055a8ab98c487d8088f2d1b6d973414481a8a951a023caacc38edd683016981b",
+  "certificates_lessons": "44e370d609869892fd9ec871c88ae1c5af633a808b835e4169a41d428b029515",
+  "certificates_level_complete": "043bc1152f69d1518b8977e962d53b1fe6e9b281559ba8cb658e593a97c74ce3",
+  "certificates_link_copied": "f46445552ff45def0a289fef0200127a9523517660d3cde5bc96bb595b3bce30",
+  "certificates_link_note": "d46159988b052501ede260392bb60759d31bfd2501eedb7a1c0f5d09a354c2f9",
+  "certificates_linkedin_credential_id": "5a15aad395583b83221940b0d9db3fdaae30889b26f15777def001e5ed407ca2",
+  "certificates_linkedin_credential_url": "a9f242fad564281dbc14e14227ea9ea35ba6826edf7dc65e3c0f9e000dddcdeb",
+  "certificates_linkedin_description": "69ab9eef47ff9843480868b5b043d0849d98894324f4bc18b4a9edbd3b1e6814",
+  "certificates_linkedin_issue_date": "a72fbdbb4a2097254b6cc12a4067978044b9ad62684703aec5385fd14408e679",
+  "certificates_linkedin_name": "4854d6cc1863c7d0f64af75bd20fd948391160983e36a01d50017a97bd82709b",
+  "certificates_linkedin_open": "9c66b3045111cd30188f07af1d2f9fa60900881b269fc4b44e2970309e48fc8d",
+  "certificates_linkedin_organization": "216df24c16efe8fcecfa6bdcbe5de9907ebb938924a896d2eb433eb702359a90",
+  "certificates_linkedin_placement_name": "6ac06e1646490732e73cdc10fc778dbe94da0d3309d4cb9864945165613fd91c",
+  "certificates_linkedin_title": "5a0582159cc95faa005f0db7a32f0b6ca82f0c0d87697c06aedfba91ebfdc5b2",
+  "certificates_name_hint": "20294b9fec6373fea26e213b0d70e5391a4e8c34312e3a60b6e30e4049380b9b",
+  "certificates_name_hint_new": "059348423b74a6f4785cc873762c9fdaf123cc1c0b6538cf3faacfd77d0a6170",
+  "certificates_name_label": "0bf86507c76d9dc6a33b06aa319feb5c1e5a49a79ba7c169e107c3e6ea6a2ebb",
+  "certificates_name_label_new": "a6aa5df7f8423a03d33d2cfab3bc55c85c6eb6450d195ca58adad98c4eb77185",
+  "certificates_name_on_certificate": "03a634b427227c2f4fb9da5f0612ab848adb33aea3e9fb2baa69f8e1e739cf72",
+  "certificates_name_placeholder": "8c75d0fcc0db667129d79d6fdb63caaab783c53a9d075d1080c0cad5b8a28ba7",
+  "certificates_name_save_failed": "acbd191780a63e83d00c056209191d0bb628b32d44556fb12a52795d19be4234",
+  "certificates_not_found": "6c99237141dfc9c2937bbc811cd62081c2a11550435aa3ded34d9d4295a63d46",
+  "certificates_on_your_certificate": "ea507e165672fba13d2222efe710f7b6f7e3ac514932c2e38d01b0fa1cbc60e2",
+  "certificates_picture_failed": "8fd152897f58246cfadc029c83a52f7b6fd137143a41933f1b705aed97f668e2",
+  "certificates_placement_row_guest": "ac9db633c4406bfaa18652019228b0e95237fef936ae47269253e54d6eb723f2",
+  "certificates_placement_row_saved": "cafc34bcd439d8f8c648813a458bd54fde74aaac2789d94b578b3b7928c79397",
+  "certificates_placement_row_title": "75895dd92cbdb922073c4fa90161c4478149366a7353289bc6e84cd642751123",
+  "certificates_print": "b0c4227f3521cb49ab4d36185ffea0247cb3cb3cb822aceb14742f611ed4666e",
+  "certificates_save": "5863debae35a59d5ff193c907134d734d329ca92489cae59d93fec643b4b5c30",
+  "certificates_saved_one": "d1ba86a406ca4b0c5908d344c5c9ad5b9e75df6547d0cb7e5088fa2fd62fa51e",
+  "certificates_saved_several": "08a68ffeba8f4c3269d9f9f007a092fdf0e49d0999c94b623ef4697cbd386cac",
+  "certificates_several_ready": "02ec7cf434fc18c8551a912cc7f2a4cde7393182526b3d2b24331ba4a19bef64",
+  "certificates_share": "e174d22c06fa98deb257b555ec93c8286f261cb3afd9e8047cb33ff08c9e6927",
+  "certificates_title": "33912b1ce8262645256d1c08d7ad232613a7098990ce0192789c2deefcc698d9",
+  "certificates_up_next": "1e284ef269e194ac8af7f674b93c90bfa843a15c7c7ab1d551135b21c211935a",
+  "certificates_up_next_course": "15abd3c9335f134d743766ec21cc9570b85fe55c030912143c69851ab06c20f5",
+  "certificates_up_next_language": "c3723928785065da3888850c3a1689edadb0628463f5ed81a9e44557d6a43540",
+  "certificates_view": "7cfaf61c3e9e471b53090e894fcb8ebd2f93968a876c2dcfd955a9a3b8fe9f5e"
+}
+-->
+<resources>
+    <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
+    <string name="certificates_title">証明書</string>
+    <!-- Above the page title, counting the learner's certificates. -->
+    <plurals name="certificates_count">
+        <item quantity="other">%1$d枚の証明書</item>
+    </plurals>
+    <string name="certificates_lead">証明書はいつでも印刷、ダウンロード、共有できます。</string>
+    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
+    <string name="certificates_kind_completion">修了証</string>
+    <!-- A certificate stating the language level a placement test measured, such as "Spanish B1". -->
+    <string name="certificates_kind_placement">レベル診断の結果</string>
+    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_level">%1$s %2$s</string>
+    <string name="certificates_empty_title">証明書はまだありません</string>
+    <string name="certificates_empty_description">コースや語学のレベルを修了すると、証明書がここに表示されます。無料で印刷や共有ができます。レベル診断の結果もここに表示されます。</string>
+    <string name="certificates_continue_learning">学習を続ける</string>
+    <!-- A section title on the empty page, over the learner's goals and how each one earns a certificate. -->
+    <!-- On a finished plan's card: opens the course's certificate. -->
+    <string name="certificates_view">証明書を見る</string>
+    <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
+    <string name="certificates_get">証明書を受け取る</string>
+    <string name="certificates_up_next">次のレッスン</string>
+    <string name="certificates_up_next_course">学習計画を完了すると証明書を受け取れます</string>
+    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
+    <string name="certificates_up_next_language">練習しているスキルがすべて次のレベルに達すると受け取れます</string>
+    <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
+    <string name="certificates_course_complete">コース修了！</string>
+    <!-- The title of a full screen shown once, right after the learner finishes a language level. %1$s is the CEFR level, such as "B1". -->
+    <string name="certificates_level_complete">%1$s修了！</string>
+    <!-- The title when the learner earned two or more certificates at once. -->
+    <plurals name="certificates_earned">
+        <item quantity="other">証明書を%1$d枚獲得しました</item>
+    </plurals>
+    <!-- %1$s is the course's title. -->
+    <string name="certificates_course_ready">%1$sの証明書ができました。</string>
+    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_ready">%1$s %2$sの証明書ができました。</string>
+    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
+    <string name="certificates_several_ready">%1$sの証明書ができました。</string>
+    <string name="certificates_guest_line">無料アカウントを作成すると、証明書を保存して名前を入れられます。</string>
+    <string name="certificates_create_account">無料アカウントを作成する</string>
+    <!-- %1$s is the learner's name, as printed on their certificate. -->
+    <string name="certificates_on_your_certificate">証明書に載る名前：%1$s</string>
+    <!-- A short button beside the learner's name, to edit the name printed on their certificates. -->
+    <string name="certificates_change">変更する</string>
+    <!-- TalkBack's name for the Change button beside the learner's name. -->
+    <string name="certificates_change_name">証明書に記載する名前を変更する</string>
+    <!-- The label of a field where a learner without a name types it for the first time. -->
+    <string name="certificates_name_label_new">証明書に記載する名前</string>
+    <!-- The label of the field with the learner's current name, when they change it. -->
+    <string name="certificates_name_label">証明書に記載する名前</string>
+    <string name="certificates_name_placeholder">フルネーム</string>
+    <string name="certificates_name_hint_new">証明書にこの名前が載ります。相棒もこの名前で呼びます。いつでも変更できます。</string>
+    <string name="certificates_name_hint">証明書にこの名前が載ります。相棒もこの名前で呼びます。</string>
+    <string name="certificates_save">保存する</string>
+    <string name="certificates_cancel">キャンセル</string>
+    <string name="certificates_name_save_failed">保存できませんでした。もう一度お試しください。</string>
+    <string name="certificates_share">共有する</string>
+    <!-- Opens a sheet that helps the learner add the certificate to their LinkedIn profile. -->
+    <string name="certificates_add_to_linkedin">LinkedInに追加する</string>
+    <!-- "Certificates" is the place name. -->
+    <string name="certificates_saved_one">「証明書」に保存されています。</string>
+    <!-- "Certificates" is the place name. -->
+    <string name="certificates_saved_several">「証明書」に保存されています。</string>
+    <string name="certificates_continue">続ける</string>
+    <!-- A row on the language level test's last screen. %1$s is the language, such as "Spanish", and %2$s the level the test measured, such as "B1". -->
+    <string name="certificates_placement_row_title">レベル診断の結果：%1$s %2$s</string>
+    <string name="certificates_placement_row_saved">「証明書」に保存しました。いつでも共有できます。</string>
+    <string name="certificates_placement_row_guest">無料アカウントを作成すると、結果を保存して共有できます。</string>
+    <!-- The title of the screen showing one certificate. -->
+    <string name="certificates_certificate">証明書</string>
+    <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->
+    <string name="certificates_print">印刷する</string>
+    <!-- Saves the certificate's picture to the phone's Pictures. -->
+    <string name="certificates_download">ダウンロードする</string>
+    <string name="certificates_copy_link">リンクをコピーする</string>
+    <string name="certificates_link_copied">リンクをコピーしました</string>
+    <!-- A row showing the learner's name as their certificates print it, opening a field to change it. -->
+    <string name="certificates_name_on_certificate">証明書に記載する名前</string>
+    <string name="certificates_link_note">リンクを知っている人は誰でもこの証明書を見られます。このページは検索結果に表示されません。</string>
+    <!-- A short message after the certificate's picture was saved to the phone's Pictures. -->
+    <string name="certificates_downloaded">「Pictures」に保存しました</string>
+    <string name="certificates_picture_failed">証明書を読み込めませんでした。もう一度試してください。</string>
+    <string name="certificates_not_found">この証明書が見つかりませんでした</string>
+    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name and %2$s the course's title. -->
+    <string name="certificates_alt_course">%1$sさんが%2$sを修了しました</string>
+    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <string name="certificates_alt_level">%1$sさんが%2$sレベルの%3$sを修了しました</string>
+    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the language, such as "Spanish", and %3$s the level, such as "B1". -->
+    <string name="certificates_alt_placement">%1$sさんのレベル診断の結果：%2$s %3$s</string>
+    <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
+    <string name="certificates_alt_dated">%1$s、%2$s</string>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
+    <string name="certificates_caption_course">Zoonkで%1$sを修了しました（%2$s）。</string>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
+    <plurals name="certificates_caption_course_hours">
+        <item quantity="other">Zoonkで%1$sを修了しました。%2$sに取り組み、約%3$d時間学習しました。</item>
+    </plurals>
+    <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
+    <plurals name="certificates_lessons">
+        <item quantity="other">%1$sレッスン</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_caption_level">Zoonkでレベル%1$s（%2$s）を修了しました。</string>
+    <!-- Text the learner can post with their certificate. %1$s is the language, such as "Spanish", and %2$s the level a placement test measured, such as "B1". -->
+    <string name="certificates_caption_placement">Zoonkの%1$sレベル診断の結果は%2$sでした。</string>
+    <string name="certificates_linkedin_title">LinkedInのプロフィールに追加する</string>
+    <string name="certificates_linkedin_description">LinkedInで免許・資格を追加するフォームが開きます。各項目をコピーして貼り付けてください。</string>
+    <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->
+    <string name="certificates_linkedin_name">名前</string>
+    <string name="certificates_linkedin_organization">発行団体</string>
+    <string name="certificates_linkedin_issue_date">発行日</string>
+    <string name="certificates_linkedin_credential_id">認定番号</string>
+    <string name="certificates_linkedin_credential_url">認定URL</string>
+    <!-- The certificate's name in LinkedIn's form for a placement test's result. %1$s is the language, such as "Spanish", and %2$s the level, such as "B1". -->
+    <string name="certificates_linkedin_placement_name">%1$sのレベル診断結果：%2$s</string>
+    <string name="certificates_linkedin_open">LinkedInを開く</string>
+    <string name="certificates_copy">コピーする</string>
+    <!-- TalkBack's name for a Copy button. %1$s is the field it copies, such as "Credential ID". -->
+    <string name="certificates_copy_field">%1$sをコピーする</string>
+    <string name="certificates_copied">コピーしました</string>
+</resources>

@@ -30,7 +30,7 @@ function countEms({ narrow, text }: { narrow: number; text: string }): number {
 }
 
 /** A rough line count for text Satori wraps, used only to decide what fits. */
-export function estimateLines({
+function estimateLines({
   fontSize,
   text,
   width,
