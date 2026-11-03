@@ -12,6 +12,8 @@ import {
   PhoneOffIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useSentenceSpace } from "../../_utils/locale";
+import { SavingLine } from "./call-problem";
 import { CharacterAvatar } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
@@ -208,18 +210,27 @@ export function CallTurn({
 export function CallAnnouncer({
   call,
   ended,
+  grading,
   name,
 }: {
   call: LiveCall;
   ended: boolean;
+  grading: boolean;
   name: string;
 }) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const wrapUp = useWrapUpLine({ call, name });
 
   const announcement = (() => {
     if (ended) {
-      return t("Call ended. Writing your feedback…");
+      return (
+        <>
+          {t("Call ended")}
+          {space}
+          <SavingLine grading={grading} />
+        </>
+      );
     }
 
     if (call.reconnecting && call.phase !== "live") {

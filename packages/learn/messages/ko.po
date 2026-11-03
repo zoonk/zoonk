@@ -4821,9 +4821,10 @@ msgid "Listening…"
 msgstr "듣고 있어요…"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "8Zqfxu"
-msgid "Call ended. Writing your feedback…"
-msgstr "대화가 끝났어요. 피드백을 만들고 있어요…"
+#: src/language/conversation/call-problem.tsx
+msgctxt "eisS9Z"
+msgid "Call ended"
+msgstr "대화가 끝났어요"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "SENRqu"
@@ -5009,11 +5010,6 @@ msgstr "아직 피드백을 만들고 있어요. 평소보다 오래 걸리고 �
 msgctxt "isO0rt"
 msgid "Writing your feedback…"
 msgstr "피드백을 만들고 있어요…"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "eisS9Z"
-msgid "Call ended"
-msgstr "대화가 끝났어요"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "uywYO7"

@@ -4821,9 +4821,10 @@ msgid "Listening…"
 msgstr "À ton écoute…"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "8Zqfxu"
-msgid "Call ended. Writing your feedback…"
-msgstr "Appel terminé. Préparation de ton bilan…"
+#: src/language/conversation/call-problem.tsx
+msgctxt "eisS9Z"
+msgid "Call ended"
+msgstr "Appel terminé"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "SENRqu"
@@ -5009,11 +5010,6 @@ msgstr "La préparation de ton retour est toujours en cours. Cela prend plus de 
 msgctxt "isO0rt"
 msgid "Writing your feedback…"
 msgstr "Préparation de ton retour…"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "eisS9Z"
-msgid "Call ended"
-msgstr "Appel terminé"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "uywYO7"

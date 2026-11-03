@@ -175,7 +175,7 @@ export function CallProblem({
 /** A call's feedback takes a few seconds, an exam's grade 13 to 33 s (about 23 for most). */
 const SLOW_SAVE_MS = { feedback: 20_000, grade: 45_000 } as const;
 
-function SavingLine({ grading }: { grading: boolean }) {
+export function SavingLine({ grading }: { grading: boolean }) {
   const t = useExtracted();
   const afterMs = SLOW_SAVE_MS[grading ? "grade" : "feedback"];
   const isSlow = useTakingLong({ active: true, afterMs });

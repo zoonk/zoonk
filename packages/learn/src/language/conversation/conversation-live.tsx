@@ -234,7 +234,12 @@ export function ConversationLive({
         fit="always"
         footer={
           <div className="lg:max-w-column flex w-full flex-col gap-3 lg:mx-auto lg:px-4">
-            <CallAnnouncer call={call} ended={ending?.state === "saving"} name={character.name} />
+            <CallAnnouncer
+              call={call}
+              ended={ending?.state === "saving"}
+              grading={grading}
+              name={character.name}
+            />
             {ending ? (
               <CallEndedStatus grading={grading} onRetry={ending.onRetry} state={ending.state} />
             ) : (

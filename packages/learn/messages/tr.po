@@ -4821,9 +4821,10 @@ msgid "Listening…"
 msgstr "Dinliyoruz…"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "8Zqfxu"
-msgid "Call ended. Writing your feedback…"
-msgstr "Sohbet bitti. Geri bildirimini hazırlıyoruz…"
+#: src/language/conversation/call-problem.tsx
+msgctxt "eisS9Z"
+msgid "Call ended"
+msgstr "Sohbet bitti"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "SENRqu"
@@ -5009,11 +5010,6 @@ msgstr "Geri bildirimini hâlâ hazırlıyoruz. Normalden uzun sürüyor."
 msgctxt "isO0rt"
 msgid "Writing your feedback…"
 msgstr "Geri bildirimini hazırlıyoruz…"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "eisS9Z"
-msgid "Call ended"
-msgstr "Sohbet bitti"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "uywYO7"
