@@ -305,3 +305,13 @@ export async function loadGoalSkillIds(goalId: string): Promise<string[]> {
   const plan = await loadGoalPlan(goalId);
   return plan.skills.map((skill) => skill.id);
 }
+
+/** Where a goal's answers and mistakes are recorded: its skills and their finer lesson skills. */
+export function getMemberSkillIds(skills: readonly Pick<GoalSkillNode, "memberSkillIds">[]) {
+  return unique(skills.flatMap((skill) => skill.memberSkillIds));
+}
+
+export async function loadGoalMemberSkillIds(goalId: string): Promise<string[]> {
+  const plan = await loadGoalPlan(goalId);
+  return getMemberSkillIds(plan.skills);
+}

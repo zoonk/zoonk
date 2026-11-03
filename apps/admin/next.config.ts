@@ -1,3 +1,4 @@
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { type NextConfig } from "next";
 
 const CACHE_IMAGE_DAYS = 30;
@@ -22,6 +23,7 @@ const nextConfig: NextConfig = {
   },
   partialPrefetching: true,
   reactCompiler: true,
+  turbopack: { rules: tailwindRules },
   typescript: { ignoreBuildErrors: true },
 };
 

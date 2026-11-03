@@ -277,7 +277,7 @@ export function ChartVisualView({
         <div className="w-full" ref={ref}>
           <svg
             aria-hidden="true"
-            className="block overflow-visible text-xs tabular-nums"
+            className="block overflow-visible text-xs tabular-nums select-none"
             height={height}
             viewBox={`0 0 ${width} ${height}`}
             width={width}

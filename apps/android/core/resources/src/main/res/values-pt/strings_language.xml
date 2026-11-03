@@ -10,12 +10,12 @@
   "language_level": "e6c65afc3e9724308959d73d8ac38bf67b0c332a05b027b2744a9b6b35e614d7",
   "language_level_by_skill": "4a42e3b8b191e71c86c446721c8b6173d10bffc4d5b33b759a5f98f331d68a93",
   "language_level_down": "9c6e792123ae46f0bb8dfbeac4e14410359777f55ab82d8ee9b1c61907ad95fc",
-  "language_level_goal": "11703e020e2531b5d862668ebd9d361e8f2cd4a2dc752103bd6da82a8a7d1220",
-  "language_level_goal_by": "026e4651209f1202e8cd2570f7b679f51063f0c84534cf08307fed7747a82875",
+  "language_level_goal": "6e89b75de087b64f009b15ff13d9146ac3c66c510742275736ed1d794ee259fc",
+  "language_level_goal_by": "1f74495160dc1898de1a5928adbfd6dbcdc92adc0bec961a724a9da7a724ba0b",
   "language_level_rose": "008448d74b3c1efcdb89031b56df9753379a43a0d53e09fc9678b7e1b7085a69",
   "language_level_toward": "a4396f3294ec3799e14ced6647cbb4950024c73122e49601796cbd9d188e6d98",
-  "language_level_toward_goal": "108fd6b803a589b05b7068281aa1098e734cc7905eb938b9de4e51037c493ad8",
-  "language_level_toward_spoken": "b6131cf49157c78476841f486f943c570e834359d9a279851a14a7202cdee1eb",
+  "language_level_toward_goal": "b0030930880d7dc43d088ecd56c3348581b97544cd1588c6625f784bac80160a",
+  "language_level_toward_spoken": "5b2c343395986506f8f1a16aa6a017173ff2dee67b804fa23dc907404e10530f",
   "language_level_up": "2c67746afd51d6da6900a2ad2c6361dc72d3ee586b29a5af912fa8dbf8b7e0c9",
   "language_levels_move": "cfbbaf171bfa3430b6598e5ca0bdf68e23bf5d53e3d84bf7134fa946fdeec2f9",
   "language_levels_rose": "3f31791e5c0de0a3388ce17a01884c2364e4415ecebd8d82137f757b7f6b6cc1",
@@ -85,9 +85,9 @@
     <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
     <string name="language_level_by_skill">Nível por habilidade</string>
     <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
-    <string name="language_level_goal_by">Meta %1$s até %2$s</string>
+    <string name="language_level_goal_by">Objetivo %1$s até %2$s</string>
     <!-- The level the learner aims for: "Goal B2". -->
-    <string name="language_level_goal">Meta %1$s</string>
+    <string name="language_level_goal">Objetivo %1$s</string>
     <!-- What TalkBack says for a skill's row: "Reading, B1". -->
     <string name="language_skill_level">%1$s, %2$s</string>
     <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
@@ -110,7 +110,7 @@
     <!-- Read by TalkBack after the next thing the learner will be able to do, which they can't do yet. -->
     <string name="language_can_do_not_yet">Ainda não</string>
     <!-- What TalkBack says for a level and the level the learner aims for, shown as "B1 → B2": "B1, goal B2". -->
-    <string name="language_level_toward_goal">%1$s, meta %2$s</string>
+    <string name="language_level_toward_goal">%1$s, objetivo %2$s</string>
     <string name="language_pattern_noticed">A gente percebeu um padrão</string>
     <string name="language_pattern_typos">Só erros de digitação</string>
     <string name="language_pattern_typos_description">Seus erros recentes foram de digitação, não de alguma regra que você precisa aprender.</string>
@@ -139,7 +139,7 @@
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
-    <string name="language_level_toward_spoken">%1$s, meta %2$s</string>
+    <string name="language_level_toward_spoken">%1$s, objetivo %2$s</string>
     <!-- Opens the Plan from Today's level. -->
     <string name="language_see_your_plan">Ver seu plano</string>
 </resources>

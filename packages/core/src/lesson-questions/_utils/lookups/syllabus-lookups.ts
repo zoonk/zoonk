@@ -3,6 +3,7 @@ import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-loo
 import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { getOutlinedUntil } from "../../../plans/_utils/stand-in-lessons";
 import { buildSyllabus } from "../../../view-models/syllabus/_utils/build-syllabus";
@@ -155,17 +156,20 @@ function loadOpenMistakes({ skillIds, userId }: { skillIds: string[]; userId: st
   });
 }
 
+/** Answers and mistakes are recorded on the finer lesson skills too. */
 function getSubjectSkillIds({
   input,
+  members,
   subject,
 }: {
   input: SyllabusInput;
+  members: ReadonlyMap<string, readonly string[]>;
   subject: SyllabusSubject;
 }): Set<string> {
   return new Set(
     input.skills
       .filter((skill) => subject.areas.includes(skill.area))
-      .map((skill) => skill.skillId),
+      .flatMap((skill) => members.get(skill.skillId) ?? [skill.skillId]),
   );
 }
 
@@ -193,7 +197,7 @@ export async function lookUpSubjectProgress({
   area,
   goal,
 }: Lookup): Promise<GoalTutorLookUpResult> {
-  const loaded = await loadSyllabus(goal);
+  const [loaded, plan] = await Promise.all([loadSyllabus(goal), loadGoalPlan(goal.id)]);
   const what = "subjectProgress";
 
   if (!loaded) {
@@ -207,8 +211,10 @@ export async function lookUpSubjectProgress({
     return { areas: syllabus.subjects.map((subject) => subject.name), status: "notFound", what };
   }
 
+  const members = new Map(plan.skills.map((skill) => [skill.id, skill.memberSkillIds]));
+
   const bySubject = picked.map((subject) => ({
-    skillIds: getSubjectSkillIds({ input, subject }),
+    skillIds: getSubjectSkillIds({ input, members, subject }),
     subject,
   }));
 

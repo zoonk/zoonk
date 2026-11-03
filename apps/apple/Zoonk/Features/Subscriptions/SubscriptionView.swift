@@ -145,12 +145,12 @@ struct SubscriptionView: View {
     .onInAppPurchaseCompletion { _, result in
       boughtHere = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),
-        synchronizationScope: session.account?.user.id
-      ) { signedTransaction, expectedAccountID in
-        await session.synchronizeAppleSubscription(
-          signedTransaction: signedTransaction,
-          expectedAccountID: expectedAccountID)
-      }
+        owner: { session.subscriptionOwner },
+        synchronize: { signedTransaction, expectedAccountID in
+          await session.synchronizeAppleSubscription(
+            signedTransaction: signedTransaction,
+            expectedAccountID: expectedAccountID)
+        })
     }
     .loads(settings.allowance, settings.freePlan, refreshable: false)
     .navigationTitle(Text.zoonkPlus)
@@ -176,12 +176,12 @@ struct SubscriptionView: View {
     Button {
       Task {
         await subscriptions.restorePurchases(
-          synchronizationScope: session.account?.user.id
-        ) { signedTransaction, expectedAccountID in
-          await session.synchronizeAppleSubscription(
-            signedTransaction: signedTransaction,
-            expectedAccountID: expectedAccountID)
-        }
+          owner: { session.subscriptionOwner },
+          synchronize: { signedTransaction, expectedAccountID in
+            await session.synchronizeAppleSubscription(
+              signedTransaction: signedTransaction,
+              expectedAccountID: expectedAccountID)
+          })
       }
     } label: {
       HStack(spacing: 8) {
@@ -1132,5 +1132,15 @@ extension AttributedString {
     var link = AttributedString(address)
     link.link = URL(string: "mailto:\(address)")
     return link
+  }
+}
+
+extension SessionStore {
+  fileprivate var subscriptionOwner: AppStoreSubscriptionOwner? {
+    guard let account, let authenticatedSession else {
+      return nil
+    }
+
+    return AppStoreSubscriptionOwner(accountID: account.user.id, session: authenticatedSession)
   }
 }

@@ -3,7 +3,7 @@
 {
   "memory_category_background": "62b522aeaabe9370ab34e5f69de06bd3a6af9ea35d2b7414893e8c08091b3cf7",
   "memory_category_context": "46a795e5178dcf26f08e1397211180d3adacf7c1b49926ee372b0d22d0a69c61",
-  "memory_category_goals": "a41feba2615afbfd0c4d6f38f56d92ae931f898d35d70e6dbfe62f5133f67034",
+  "memory_category_goals": "4e5c877c3f3cbc66ca94755aff771a47afc1599fc813f3ef95a50441cbeb43db",
   "memory_category_learning": "8876e752aa6790d90fe093b535f810f3a4f8255f7917de1e72e8bcb1543121d2",
   "memory_category_preferences": "c578228e900689045a3d29d7aa3900bb19f7d7f0d0b63200ef183e8d76421a39",
   "memory_category_routine": "e4c7fa92d463f10268524f86a43bfb2f480eb4b7f289c65d621c484ce0d622e2",
@@ -44,7 +44,7 @@
     <string name="memory_empty_on">Nada ainda. Conforme você estuda e conversa, aparecem aqui anotações curtas que ajudam o Zoonk a te ensinar.</string>
     <string name="memory_empty_off">Nada por aqui. O Zoonk não guarda anotações sobre você enquanto a memória está desativada.</string>
     <string name="memory_save_failed">Não foi possível salvar. Tente de novo.</string>
-    <string name="memory_category_goals">Metas</string>
+    <string name="memory_category_goals">Objetivos</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
     <string name="memory_category_background">Trajetória</string>
     <string name="memory_category_routine">Rotina</string>

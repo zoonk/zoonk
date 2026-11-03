@@ -4,7 +4,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
-import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
+import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getLibraryCourse } from "../../library/courses/get-library-course";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { getGoalPlan } from "../../plans/get-goal-plan";
@@ -146,8 +146,9 @@ function shorten(text: string | null | undefined): string | null {
   return text ? text.slice(0, MAX_MISTAKE_TEXT) : null;
 }
 
+/** Fixed ones too: a learner who fixed a mistake still asks about it. */
 async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeContext["mistakes"]>> {
-  const skillIds = await loadGoalSkillIds(goal.id);
+  const skillIds = await loadGoalMemberSkillIds(goal.id);
 
   if (skillIds.length === 0) {
     return [];
@@ -155,9 +156,9 @@ async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeCont
 
   const mistakes = await prisma.mistake.findMany({
     orderBy: { createdAt: "desc" },
-    select: { skill: { select: { name: true } }, snapshot: true },
+    select: { skill: { select: { name: true } }, snapshot: true, status: true },
     take: RECENT_MISTAKES,
-    where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },
+    where: { skillId: { in: skillIds }, userId: goal.userId },
   });
 
   return mistakes.map((mistake) => {
@@ -166,6 +167,7 @@ async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeCont
     return {
       answer: shorten(snapshot.answer),
       correctAnswer: shorten(snapshot.correctAnswer),
+      ...(mistake.status === "fixed" && { fixed: true as const }),
       question: shorten(snapshot.question) ?? "",
       skill: mistake.skill?.name ?? null,
     };

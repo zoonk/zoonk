@@ -159,11 +159,15 @@ describe("language view models", () => {
     expect(forIelts.status === "ready" && forIelts.progress.speaking).toBeNull();
   });
 
-  it("gives a language goal that names no exam its language's paper at its target, exam-style", async () => {
+  it("gives a language goal the speaking paper of the exam it names, at its target", async () => {
     const setup = await languageGoalFixture();
 
     await prisma.goal.update({
-      data: { details: { targetLevel: "B2" }, targetLanguage: "es", title: "Espanhol" },
+      data: {
+        details: { reason: "Quero fazer o DELE um dia", targetLevel: "B2" },
+        targetLanguage: "es",
+        title: "Espanhol",
+      },
       where: { id: setup.goal.id },
     });
 
@@ -366,7 +370,7 @@ describe("language view models", () => {
     ]);
   });
 
-  it("adds the level across skills to Today, and leaves the noticed pattern to Today's own read", async () => {
+  it("adds the level across skills to Today, leaves the noticed pattern to Today's own read, and offers no exam's speaking to a goal that names none", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
@@ -394,11 +398,7 @@ describe("language view models", () => {
 
     expect(result).toStrictEqual({
       status: "ready",
-      today: {
-        level: { label: "A2+", target: "B1+" },
-        pronunciation: null,
-        speaking: { access: "plusRequired", title: "B1 Preliminary" },
-      },
+      today: { level: { label: "A2+", target: "B1+" }, pronunciation: null, speaking: null },
     });
   });
 });
