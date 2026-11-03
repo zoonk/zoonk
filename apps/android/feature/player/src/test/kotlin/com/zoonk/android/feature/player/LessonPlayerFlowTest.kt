@@ -359,13 +359,16 @@ class LessonPlayerFlowTest {
         assertEquals(0, closed)
     }
 
-    /** The screen's number keys sort the card in hand without focus in the canvas, and two presses in one frame sort two cards. */
+    /**
+     * The screen's number keys sort the card in hand without focus in the canvas, a held key sorts one card, and two presses
+     * in one frame sort two cards.
+     */
     @Test
     fun numberKeysSortEachCardInTurn() {
         play(listOf(ActivityFixtures.step("categorize")))
 
         rule.onRoot().performKeyInput {
-            pressKey(Key.Two)
+            pressKey(Key.Two, pressDurationMillis = 1_000)
             pressKey(Key.One)
         }
 

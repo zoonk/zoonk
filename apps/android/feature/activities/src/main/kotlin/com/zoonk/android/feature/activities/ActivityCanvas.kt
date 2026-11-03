@@ -84,12 +84,14 @@ fun activityCanvasColor(): Color =
 @Composable
 fun ActivityCanvasHeader(
     readout: @Composable () -> Unit,
+    itemVerticalAlignment: Alignment.Vertical = Alignment.Top,
     labels: @Composable ColumnScope.() -> Unit,
 ) {
     FlowRow(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.spacedBy(4.dp),
+        itemVerticalAlignment = itemVerticalAlignment,
     ) {
         Column(Modifier.padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp), content = labels)
         readout()

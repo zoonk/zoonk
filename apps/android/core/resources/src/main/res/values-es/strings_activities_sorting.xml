@@ -82,7 +82,7 @@
 -->
 <resources>
     <string name="activities_sorting_badge_sort_groups">Clasifica en grupos</string>
-    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". -->
+    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". The form follows the first number, the cards sorted so far. -->
     <plurals name="activities_sorting_sorted_count">
         <item quantity="one">%1$d de %2$d clasificadas</item>
         <item quantity="many">%1$d de %2$d clasificadas</item>

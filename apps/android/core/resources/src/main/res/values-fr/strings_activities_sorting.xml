@@ -58,7 +58,7 @@
   "activities_sorting_right_group": "69ecbf207e5c41296301b85737e0823dc8b0d1d22232024808e86fae19a1d679",
   "activities_sorting_right_order": "a0be98bee4575ea4592be780cde5d89b276ef91b78b86aa24266dfa24b65d457",
   "activities_sorting_show_real_dates": "d33b716ea2efe147b7fc010ce6d2f67f22d9d6767bbd65eb2fb98eeb2dda03cd",
-  "activities_sorting_sorted_count": "6144f7e089997fd0552f61c1ad70bbc44b9b8be66fdded70402c8fa5d822de79",
+  "activities_sorting_sorted_count": "fabbcbc2a955393501e0fdaf1d1b81b9f175ffae6ff9f68036cd86f86ce4acf2",
   "activities_sorting_spot_empty": "4d5ff7a47b55e5be73b3f810ab9aa0f5d002645303fe3739347c16791a285e9d",
   "activities_sorting_spot_named": "133b74783232518f0934428359e45b3368954534aade0a1b11804d6aa1f585b5",
   "activities_sorting_spots_to_label": "fa5d40ce981ff1d3cb0d145ab5c35c3a3481d8e96fbc70169582fcd22352be7f",
@@ -82,11 +82,11 @@
 -->
 <resources>
     <string name="activities_sorting_badge_sort_groups">Classe par groupes</string>
-    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". -->
+    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". The form follows the first number, the cards sorted so far. -->
     <plurals name="activities_sorting_sorted_count">
-        <item quantity="one">%1$d cartes classées sur %2$d</item>
-        <item quantity="many">%1$d cartes classées sur %2$d</item>
-        <item quantity="other">%1$d cartes classées sur %2$d</item>
+        <item quantity="one">Cartes classées : %1$d sur %2$d</item>
+        <item quantity="many">Cartes classées : %1$d sur %2$d</item>
+        <item quantity="other">Cartes classées : %1$d sur %2$d</item>
     </plurals>
     <!-- Under the card being sorted, above the groups to choose from. -->
     <string name="activities_sorting_which_group">Dans quel groupe va cette carte ?</string>

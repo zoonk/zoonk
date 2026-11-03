@@ -48,13 +48,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
+import com.zoonk.android.feature.activities.ActivityCanvasHeader
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
@@ -66,7 +66,9 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichInlineText
-import com.zoonk.android.ui.richtext.plainText
+import com.zoonk.android.ui.richtext.parseRichInline
+import com.zoonk.android.ui.richtext.richText
+import com.zoonk.android.ui.richtext.toOneLine
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf26FieldsGroupsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf26FieldsItemsInner
@@ -99,10 +101,12 @@ private fun CategorizeActivity(props: ActivityProps) {
     val expected = props.expected.assignmentPairs.takeIf { props.isChecked }
     val unsorted = unplacedItems(items, placements) { it.id }
     val card = unsorted.firstOrNull()
+    val sorted = items.size - unsorted.size
     val editable = !props.isChecked && !props.isLocked
     val focus = remember(groups.size, ids) { CategorizeFocus(groups.size, ids) }
 
-    fun labelOf(group: Group) = plainText(group.label)
+    val cardNames = items.associate { it.id to spokenLine(it.text) }
+    val groupNames = groups.associate { it.id to spokenLine(it.label) }
 
     fun place(next: Map<String, String>) {
         placements = next
@@ -116,14 +120,15 @@ private fun CategorizeActivity(props: ActivityProps) {
         val next = placements + (item.id to group.id)
         place(next)
         history = history + item.id
-        val name = plainText(item.text)
+        val name = cardNames.getValue(item.id)
+        val groupName = groupNames.getValue(group.id)
         val following = unplacedItems(items, next) { it.id }.firstOrNull()
         announcement =
             if (following != null) {
-                resources.getString(R.string.activities_sorting_is_in_next, name, labelOf(group), plainText(following.text))
+                resources.getString(R.string.activities_sorting_is_in_next, name, groupName, cardNames.getValue(following.id))
             } else {
                 // Compose can't move TalkBack's focus to the status line, so the status is said after the card.
-                val placed = resources.getString(R.string.activities_sorting_is_in, name, labelOf(group))
+                val placed = resources.getString(R.string.activities_sorting_is_in, name, groupName)
                 "$placed ${resources.getString(R.string.activities_sorting_all_sorted)}"
             }
         if (following == null && (focus.inGroups || focus.onUndo)) focus.toStatusLine = true
@@ -135,7 +140,7 @@ private fun CategorizeActivity(props: ActivityProps) {
         if (!editable) return
         place(placements - last)
         history = history.dropLast(1)
-        announcement = resources.getString(R.string.activities_sorting_took_back, plainText(items.first { it.id == last }.text))
+        announcement = resources.getString(R.string.activities_sorting_took_back, cardNames.getValue(last))
         if (history.isEmpty() && focus.onUndo) focus.groups.first().requestFocus()
     }
 
@@ -145,7 +150,7 @@ private fun CategorizeActivity(props: ActivityProps) {
     ) {
         if (!editable) return
         place(placements + (item.id to group.id))
-        announcement = resources.getString(R.string.activities_sorting_is_in, plainText(item.text), labelOf(group))
+        announcement = resources.getString(R.string.activities_sorting_is_in, cardNames.getValue(item.id), groupNames.getValue(group.id))
         focus.toMovedRow = item.id
     }
 
@@ -175,30 +180,34 @@ private fun CategorizeActivity(props: ActivityProps) {
                             modifier = Modifier.focusRequester(focus.rows.getValue(item.id)),
                         )
                     } else {
-                        CheckedRow(item, if (expected[item.id] == group.id) AnswerResult.Right else AnswerResult.Wrong)
+                        val result = if (expected[item.id] == group.id) AnswerResult.Right else AnswerResult.Wrong
+                        CheckedRow(item, cardNames.getValue(item.id), result)
                     }
                 }
             }
             if (expected != null) CategorizeResults(groups, items, expected, placements)
         } else {
             Text(
-                pluralStringResource(R.plurals.activities_sorting_sorted_count, items.size, items.size - unsorted.size, items.size),
+                pluralStringResource(R.plurals.activities_sorting_sorted_count, sorted, sorted, items.size),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
             CardInHand(items, card)
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            ActivityCanvasHeader(
+                readout = {
+                    UndoButton(
+                        shown = history.isNotEmpty(),
+                        enabled = editable,
+                        onClick = ::undo,
+                        modifier = Modifier.onFocusChanged { focus.onUndo = it.isFocused },
+                    )
+                },
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     stringResource(R.string.activities_sorting_which_group),
-                    Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
-                )
-                UndoButton(
-                    shown = history.isNotEmpty(),
-                    enabled = editable,
-                    onClick = ::undo,
-                    modifier = Modifier.onFocusChanged { focus.onUndo = it.isFocused },
                 )
             }
             Column(
@@ -320,14 +329,14 @@ private fun GroupToSort(
             if (latest == null) {
                 PreviewChip("", Modifier.alpha(0f))
             } else {
-                PreviewChip(plainText(latest.text), Modifier.weight(1f, fill = false))
+                PreviewChip(latest.text, Modifier.weight(1f, fill = false))
                 if (others > 0) PreviewChip(stringResource(R.string.activities_sorting_more_count, others), muted = true)
             }
         }
     }
 }
 
-/** A card already in a group, in one line: the full text shows once every card is sorted. */
+/** A card already in a group, in one line as the card shows it: the full text shows once every card is sorted. */
 @Composable
 private fun PreviewChip(
     text: String,
@@ -335,17 +344,21 @@ private fun PreviewChip(
     muted: Boolean = false,
 ) {
     val shape = RoundedCornerShape(6.dp)
-    Text(
+    val style = MaterialTheme.typography.labelMedium
+    RichInlineText(
         text,
         modifier
             .clip(shape)
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
             .padding(horizontal = 8.dp, vertical = 3.dp),
-        color = if (muted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-        style = if (muted) MaterialTheme.typography.labelMedium.withTabularFigures() else MaterialTheme.typography.labelMedium,
+        style =
+            if (muted) {
+                style.withTabularFigures().copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else {
+                style.copy(color = MaterialTheme.colorScheme.onSurface)
+            },
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -436,14 +449,12 @@ private fun MovableRow(
 @Composable
 private fun CheckedRow(
     item: Item,
+    spokenName: String,
     result: AnswerResult,
 ) {
     val right = result == AnswerResult.Right
     val description =
-        stringResource(
-            if (right) R.string.activities_sorting_right_group else R.string.activities_sorting_wrong_group,
-            plainText(item.text),
-        )
+        stringResource(if (right) R.string.activities_sorting_right_group else R.string.activities_sorting_wrong_group, spokenName)
 
     CardRow(
         item,
@@ -472,6 +483,13 @@ private fun CardRow(
         RichInlineText(item.text, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
         trailing()
     }
+}
+
+/** What TalkBack says for a card or a group's label: its words, with its math read out as the card shows it. */
+@Composable
+private fun spokenLine(text: String): String {
+    val line = richText(remember(text) { parseRichInline(toOneLine(text)) })
+    return line.spoken ?: line.text.text
 }
 
 /** A row's mark at the end, growing with the text as the font gets larger. */
@@ -509,11 +527,11 @@ private fun CategorizeResults(
             ActivityReasons {
                 misplaced.forEach { item ->
                     ActivityReason(item.why) {
-                        Text(
+                        RichInlineText(
                             stringResource(
                                 R.string.activities_sorting_belongs_in,
-                                plainText(item.text),
-                                plainText(groups.firstOrNull { it.id == expected[item.id] }?.label.orEmpty()),
+                                item.text,
+                                groups.firstOrNull { it.id == expected[item.id] }?.label.orEmpty(),
                             ),
                         )
                     }

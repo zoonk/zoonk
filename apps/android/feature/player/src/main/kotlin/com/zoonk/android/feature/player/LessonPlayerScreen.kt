@@ -404,7 +404,8 @@ fun LessonPlayer(
                         if (event.type == KeyEventType.KeyDown) touches.intValue++
                         false
                     }.onKeyEvent { event ->
-                        event.type == KeyEventType.KeyDown && state != null && screen != null &&
+                        // A shortcut acts once per press, as main's do: a held number key would otherwise sort every card.
+                        event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0 && state != null && screen != null &&
                             handleKey(event.key, state, screen, viewModel, actions, leave) {
                                 if (ownEnd == null) {
                                     completionMainAction(lesson, state, ending, viewModel, exits)

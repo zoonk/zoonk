@@ -82,7 +82,7 @@
 -->
 <resources>
     <string name="activities_sorting_badge_sort_groups">그룹으로 나누기</string>
-    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". -->
+    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". The form follows the first number, the cards sorted so far. -->
     <plurals name="activities_sorting_sorted_count">
         <item quantity="other">%1$d/%2$d개 분류 완료</item>
     </plurals>
