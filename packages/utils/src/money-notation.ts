@@ -1,30 +1,17 @@
 import { getNumberFormatter } from "./localized-number";
-import { MONEY_AMOUNT, MONEY_MARK } from "./money-marks";
-import { repairNegativeMoney } from "./negative-money";
+import { MONEY_MARK } from "./money-marks";
 
-const CONNECTOR = String.raw`\s?[–—~〜-]\s?|\s(?:a|à|até|bis|do|hasta|to)\s`;
+const AMOUNT = String.raw`\d{1,3}(?:[.,   ]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?`;
 
 const AMOUNT_AFTER_MARK = new RegExp(
-  String.raw`(?<=(?<![\p{L}\p{N}])(?:${MONEY_MARK})\s?)(?:${MONEY_AMOUNT})(?![.,]?\d)`,
-  "gu",
-);
-
-const RANGE_END = new RegExp(
-  String.raw`(?<=(?<![\p{L}\p{N}])(?:${MONEY_MARK})\s?(?:${MONEY_AMOUNT})(?:${CONNECTOR}))(?:${MONEY_AMOUNT})(?![.,]?\d)`,
+  String.raw`(?<=(?<![\p{L}\p{N}])(?:${MONEY_MARK})\s?)(?:${AMOUNT})(?![.,]?\d)`,
   "gu",
 );
 
 const AMOUNT_BEFORE_MARK = new RegExp(
-  String.raw`(?<![\p{L}\p{N}.,])(?:${MONEY_AMOUNT})(?![.,]?\d)(?=\s?(?:${MONEY_MARK})(?!\p{L}))`,
+  String.raw`(?<![\p{L}\p{N}.,])(?:${AMOUNT})(?![.,]?\d)(?=\s?(?:${MONEY_MARK})(?!\p{L}))`,
   "gu",
 );
-
-const RANGE_START = new RegExp(
-  String.raw`(?<![\p{L}\p{N}.,])(?:${MONEY_AMOUNT})(?![.,]?\d)(?=(?:${CONNECTOR})(?:${MONEY_AMOUNT})\s?(?:${MONEY_MARK})(?!\p{L}))`,
-  "gu",
-);
-
-const MONEY_AMOUNTS = [AMOUNT_AFTER_MARK, RANGE_END, AMOUNT_BEFORE_MARK, RANGE_START];
 
 const BARE_UNITS = /^[1-9]\d*$/u;
 const SPACE = /\s/u;
@@ -60,14 +47,16 @@ function readAmount({
 }
 
 function findAmounts(text: string): string[] {
-  return MONEY_AMOUNTS.flatMap((pattern) => [...text.matchAll(pattern)].map(([amount]) => amount));
+  return [...text.matchAll(AMOUNT_AFTER_MARK), ...text.matchAll(AMOUNT_BEFORE_MARK)].map(
+    ([amount]) => amount,
+  );
 }
 
 /**
- * Rewrites how the money in `texts` is written, never what it's worth: a minus moves in front of
- * the mark, a bare amount gets the language's thousands separator, and zero cents go only when
- * every amount is whole, both ends of a range included. An amount the language's notation can't
- * read for sure (R$ 2,400 in Portuguese) stays as written and keeps the zero cents everywhere.
+ * Rewrites how the money in `texts` is written, never what it's worth: a bare amount gets the
+ * language's thousands separator, and zero cents go only when every amount is whole. An amount the
+ * language's notation can't read for sure (R$ 2,400 in Portuguese) stays as written and keeps the
+ * zero cents everywhere.
  */
 export function createMoneyNotationRepair({
   language,
@@ -80,7 +69,7 @@ export function createMoneyNotationRepair({
   const grouper = getNumberFormatter(language, { maximumFractionDigits: 0 });
 
   const allWhole = texts
-    .flatMap((text) => findAmounts(repairNegativeMoney({ text })))
+    .flatMap((text) => findAmounts(text))
     .every((amount) => {
       const parsed = readAmount({ amount, notation });
       return parsed !== null && (parsed.cents ?? ZERO_CENTS) === ZERO_CENTS;
@@ -101,8 +90,5 @@ export function createMoneyNotationRepair({
   };
 
   return (text) =>
-    MONEY_AMOUNTS.reduce(
-      (written, pattern) => written.replaceAll(pattern, rewrite),
-      repairNegativeMoney({ text }),
-    );
+    text.replaceAll(AMOUNT_AFTER_MARK, rewrite).replaceAll(AMOUNT_BEFORE_MARK, rewrite);
 }

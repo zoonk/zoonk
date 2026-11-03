@@ -148,19 +148,6 @@ describe(repairWrittenLesson, () => {
     });
   });
 
-  it("keeps zero cents when a negative amount has real cents", () => {
-    const repaired = repairWrittenLesson({
-      language: "pt",
-      lesson: {
-        screens: [explanationOf("O saldo começou em R$ 3.000,00.")],
-        summary: hubMap(["No fim do mês, o saldo ficou em R$ -2,50."]),
-      },
-    });
-
-    expect(repaired.screens[0]).toMatchObject({ text: "O saldo começou em R$ 3.000,00." });
-    expect(repaired.summary.ideas[0]?.text).toBe("No fim do mês, o saldo ficou em -R$ 2,50.");
-  });
-
   it("leaves an activity's program and expected output as written, repairing only its prose", () => {
     const fields = {
       editableLines: [2],

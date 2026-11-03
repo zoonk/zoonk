@@ -58,28 +58,6 @@ describe(createMoneyNotationRepair, () => {
     ]);
   });
 
-  it("reads both ends of a money range, and an end it can't read keeps every zero cent", () => {
-    expect(repair("pt", ["R$ 3.000,00", "de R$ 2400,00–2500,50"])).toStrictEqual([
-      "R$ 3.000,00",
-      "de R$ 2.400,00–2.500,50",
-    ]);
-
-    expect(repair("pt", ["R$ 3.000,00", "de R$ 2400 a 3600"])).toStrictEqual([
-      "R$ 3.000",
-      "de R$ 2.400 a 3.600",
-    ]);
-
-    expect(repair("pt", ["R$ 3.000,00", "de R$ 2400–2,500"])).toStrictEqual([
-      "R$ 3.000,00",
-      "de R$ 2.400–2,500",
-    ]);
-
-    expect(repair("de", ["300,00 €", "2400–2500,50 €"])).toStrictEqual([
-      "300,00 €",
-      "2.400–2.500,50 €",
-    ]);
-  });
-
   it("leaves numbers without a money mark and compact amounts alone", () => {
     const texts = ["Em 2024, 3000 pessoas", "de R$ 2 mil a R$ 4 mil", "3.000 - 300 = 2.700"];
     expect(repair("pt", texts)).toStrictEqual(texts);
