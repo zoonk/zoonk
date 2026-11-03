@@ -5,7 +5,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
@@ -31,8 +31,22 @@ import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 
-function usePlanWait(recordPlanWait: OnboardingActions["recordPlanWait"]) {
+const PLAN_WAIT_STEPS = new Set<OnboardingStep>(["plan", "schedule"]);
+
+function usePlanWait({
+  recordPlanWait,
+  step,
+}: {
+  recordPlanWait: OnboardingActions["recordPlanWait"];
+  step: OnboardingStep;
+}) {
   const startedAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!PLAN_WAIT_STEPS.has(step)) {
+      startedAt.current = null;
+    }
+  }, [step]);
 
   return (isReady: boolean) => {
     if (!isReady) {
@@ -183,7 +197,7 @@ export function OnboardingStepScreen({
 }) {
   const subject = getSubject(view);
   const props = { onAnswer, pending };
-  const onPlanReadyChange = usePlanWait(actions.recordPlanWait);
+  const onPlanReadyChange = usePlanWait({ recordPlanWait: actions.recordPlanWait, step });
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
