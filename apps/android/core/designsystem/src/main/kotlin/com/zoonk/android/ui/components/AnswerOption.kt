@@ -46,10 +46,10 @@ fun AnswerOptionGroup(
 /**
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words and, once checked, the word its result shows. An option among several
- * picks is a [Role.Checkbox], and one that acts at once instead of being picked a [Role.Button]; [tag]
- * replaces the result's word (an order step's place). A [glyph]
- * marks the key in place of its number, as main's net-scored statements (✓, ✗, –). The key sits on
- * the words' first line, or at the top with [keyAtTop].
+ * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
+ * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
+ * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
+ * [keyAtTop].
  */
 @Composable
 fun AnswerOption(
