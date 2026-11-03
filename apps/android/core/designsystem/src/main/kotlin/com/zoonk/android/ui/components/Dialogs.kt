@@ -97,8 +97,8 @@ fun TimePickerDialog(
 }
 
 /**
- * A dialog over the whole window, drawn behind the system bars. Its window has bars of its own, so
- * their icons follow the light or dark theme as the app's do.
+ * A dialog over the whole window, drawn behind the system bars. Its window has bars of its own,
+ * set up edge to edge as the activity's are, with icons that follow the light or dark theme.
  */
 @Composable
 fun FullScreenDialog(
@@ -110,6 +110,7 @@ fun FullScreenDialog(
         val light = !isSystemInDarkTheme()
         SideEffect {
             val window = (view.parent as? DialogWindowProvider)?.window ?: return@SideEffect
+            WindowCompat.enableEdgeToEdge(window)
             WindowCompat.getInsetsController(window, view).run {
                 isAppearanceLightStatusBars = light
                 isAppearanceLightNavigationBars = light
