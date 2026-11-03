@@ -114,6 +114,14 @@ export function CertificateLink({
   );
 }
 
+/**
+ * An equal share of the room the post's parts leave. A post without numbers takes a second share
+ * above the graph, so a blank doesn't open over the name and the graph sits on the footer instead.
+ */
+function FreeSpace() {
+  return <div style={{ display: "flex", flexGrow: 1 }} />;
+}
+
 function PostStats({ view }: { view: CertificateView }) {
   const { stats } = SHARE.post;
 
@@ -177,13 +185,14 @@ export function CertificatePost({
     <ShareCard variant="post">
       <Brand logoSrc={logo} scale={1} spec={post.brand} />
 
+      <FreeSpace />
+
       <span
         style={{
           color: CERTIFICATE_COLORS.muted,
           fontSize: post.kind.size,
           fontWeight: FONT_WEIGHTS.kind,
           letterSpacing: "-0.015em",
-          marginTop: "auto",
         }}
       >
         {view.kindLabel}
@@ -191,6 +200,8 @@ export function CertificatePost({
 
       <ShapedImage above={post.name.above} text={fitted.name} />
       <ShapedImage above={post.title.above} text={fitted.title} />
+
+      {view.stats.length === 0 && <FreeSpace />}
 
       <div style={{ display: "flex", marginTop: post.graph.above }}>
         <CertificateGraph

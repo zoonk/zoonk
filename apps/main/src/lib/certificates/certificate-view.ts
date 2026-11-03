@@ -18,6 +18,7 @@ import {
   type KindInput,
   type Readout,
   getSkillReadouts,
+  getSkillStats,
   getStudyFacts,
   getStudyStats,
 } from "./certificate-study-view";
@@ -155,7 +156,7 @@ async function getPlacementView(input: KindInput): Promise<KindView> {
         "How a placement result was measured. The level follows the CEFR scale, without claiming official recognition.",
       message: "Measured by Zoonk's placement test · aligned with the CEFR",
     }),
-    stats: readouts.map((readout) => ({ label: readout.label, unit: "", value: readout.value })),
+    stats: getSkillStats(readouts),
     subject: null,
   };
 }
@@ -163,7 +164,7 @@ async function getPlacementView(input: KindInput): Promise<KindView> {
 async function getLanguageLevelView(input: KindInput): Promise<KindView> {
   const { facts, locale } = input;
 
-  const [t, readouts, studyFacts, stats] = await Promise.all([
+  const [t, readouts, studyFacts, studyStats] = await Promise.all([
     getExtracted({ locale }),
     getSkillReadouts(input),
     getStudyFacts(input),
@@ -186,7 +187,7 @@ async function getLanguageLevelView(input: KindInput): Promise<KindView> {
         "How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.",
       message: "Level completed · aligned with the CEFR",
     }),
-    stats,
+    stats: studyStats.length > 0 ? studyStats : getSkillStats(readouts),
     subject: null,
   };
 }

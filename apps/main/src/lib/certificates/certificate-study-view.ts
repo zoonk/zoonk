@@ -32,6 +32,10 @@ export async function getSkillReadouts({ facts, locale }: KindInput): Promise<Re
   }));
 }
 
+export function getSkillStats(readouts: readonly Readout[]): CertificateStat[] {
+  return readouts.map((readout) => ({ label: readout.label, unit: "", value: readout.value }));
+}
+
 export async function getStudyFacts({ facts, locale }: KindInput): Promise<Readout[]> {
   const t = await getExtracted({ locale });
   const { lessonsStudied, lessonsTestedOut, minutes } = getShownStudyCounts(facts);
