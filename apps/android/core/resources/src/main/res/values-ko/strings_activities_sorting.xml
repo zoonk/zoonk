@@ -55,7 +55,7 @@
   "activities_sorting_remove_link": "51643c739724072a40578050ffc617e33b1e945bf745b603d060b7c4f80c1541",
   "activities_sorting_removed": "b43b4973b3186cccc07498a964cf89223d3cac18b58de72151b2d1596524b69f",
   "activities_sorting_right_count": "75f57486444011777a1d942b762ad90ccb5e877e541c997fcc88b161b74098bf",
-  "activities_sorting_right_group": "8c15e2a6ba944d13c3a1460f2e6e4982833296a223741b62347116b4a7fa5c97",
+  "activities_sorting_right_group": "f35be266fcf068cf1f7035925a4ee4bbc302566789fa152f0060efe3a475c401",
   "activities_sorting_right_order": "cf237dc141326ba06594ca17aa7caccb6ce36f5777bc4e6d4f048af93c75d593",
   "activities_sorting_show_real_dates": "458fe6dea26acd83f9da740a7037d248999a5563da08be95eac623f3967ac8ba",
   "activities_sorting_sorted_count": "3d723f4886272cc16e101c245c5c93aa1ad1b0a634cb1cadf3ac854005b55f07",
@@ -67,7 +67,7 @@
   "activities_sorting_time_between": "73394fbf690e0f3cde3722131993e32db6ad7453782371ac319e1a22eda418cf",
   "activities_sorting_timeline_from": "c4ef0d032e98505ab25e077fc02c165ef390bb56b46883559a85fc0139672b4c",
   "activities_sorting_took_back": "0e6de1801b5a6fafececd546797bf37f04ea0c4bd986fda1909fc48fa812e445",
-  "activities_sorting_undo": "b616e2869c866ece9e83d528042bafbf8b79cb61e4efb4d1e880e9089d41d7e9",
+  "activities_sorting_undo": "453aaa8e532a8d40b74b66d3710b88f5dcc26a7af60b3e5244490821038b1cbb",
   "activities_sorting_what_each_number_shows": "648121b8f7037c9b87eff7c4d4b1407d3abe06f0d442179380ed061e4e44e8fc",
   "activities_sorting_which_group": "2455c4b436012908a9c227e7e47a6dece9ba3da95633e1ffe5003b86c3388899",
   "activities_sorting_wrong_group": "7cb99953390152b76f0984dd25f3524668e3fdb6b62470592df518a649a9f02c",
@@ -89,7 +89,7 @@
     <!-- Under the card being sorted, above the groups to choose from. -->
     <string name="activities_sorting_which_group">어느 그룹에 들어갈까요?</string>
     <!-- Takes back the card sorted last. -->
-    <string name="activities_sorting_undo">되돌리기</string>
+    <string name="activities_sorting_undo">실행 취소</string>
     <!-- On a group, beside the last card sorted into it: how many more cards it holds, like "+2". -->
     <string name="activities_sorting_more_count">+%1$d</string>
     <!-- Read by TalkBack after a card is sorted; the last one is the card to sort now, like "Melting ice is in Same substance. Next: Rusting iron." -->
@@ -105,7 +105,7 @@
     <!-- A group that holds no cards once every card is sorted. -->
     <string name="activities_sorting_no_cards">카드가 없어요</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
-    <string name="activities_sorting_right_group">%1$s, 알맞은 그룹</string>
+    <string name="activities_sorting_right_group">%1$s, 올바른 그룹</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, 잘못된 그룹</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->

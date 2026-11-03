@@ -63,7 +63,7 @@
   "activities_tree_it_leads_to": "b69eecfeb2e42350367cc16d9a2f70d8bf906de5559c81121b3ebf0b427e5c92",
   "activities_tree_leads_to": "8ea70011eae28227645d27adb012d8f9c81e27914b0684371b333173bd98e792",
   "activities_tree_still_possible": "cf0cba74810dd165473c5ddab9f0cc658fa6ba1e172307a876e4e17f4aa1a450",
-  "activities_tree_undo": "fff4c090a659e98784d051a49ceaea2af352dff7e746d946b277a08d67c0a8aa",
+  "activities_tree_undo": "ce53bd60f60fc91a5adf080760d6d7bcf1b9313499979416c1f36e0af72a0ad9",
   "activities_tree_walk": "25417d17e58cd509088c5046217b155b03b968f76eac76ae6762dc9a0e644f5f",
   "activities_tree_you_chose": "4cc3b80bb3e19c66d9ace34e0c408fd476ae9fd2151dd9726b913cda85de19ad",
   "activities_tree_your_answers": "20ea0b619233e19b2248e27b2a5cb6888dc48bc761550247f273a39826efb3a0"
@@ -118,7 +118,7 @@
     <string name="activities_tree_still_possible">남은 가능성</string>
     <string name="activities_tree_your_answers">내 답변</string>
     <string name="activities_tree_leads_to">답변에 따른 결과</string>
-    <string name="activities_tree_undo">되돌리기</string>
+    <string name="activities_tree_undo">실행 취소</string>
     <string name="activities_tree_walk">이 사례의 판단 과정</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->
     <string name="activities_tree_you_chose">선택한 항목: %1$s</string>

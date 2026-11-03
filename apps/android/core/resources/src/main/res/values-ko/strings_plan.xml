@@ -570,7 +570,7 @@
   "plan_tools_without": "06163415e60e0aaf2376c0ace33205f2f127e8665ecaa6f506c7fa9c98003ffd",
   "plan_try_again": "dc98417b560732ae3b4bff210d071467cc7bc79f59550bc65c69a59fd1b80bae",
   "plan_tuesdays": "e70a0cd29941957cfda9f6133c3cc63d7fce2be1271c47e3c09d503abf320589",
-  "plan_undo": "ccd0e3faa7898463c1b8e149cc3c79ff40bd60bf44fbd0971aef9f867189d550",
+  "plan_undo": "c1b16070b19f787bde9d22305d8be221b30523ac460e4a0906012d38c14ff6f9",
   "plan_unit_lessons_being_written": "f36c97401b7c2c884b269794aeabd842f2909ee02331a261c59dfcce02957860",
   "plan_until": "83b56ea42238fdb02f4ca161513f779f8147d8fe8e76bcd8ea5d8a30ad20e491",
   "plan_until_estimate": "7243fcc7851b3637681ed897a00376a41ea2845783f063f3e94d33816e3d6d4e",
@@ -1165,7 +1165,7 @@
     <string name="plan_change_weekly_challenges_on">매주 %1$s에 주간 챌린지</string>
     <string name="plan_editor_title">계획 조정하기</string>
     <string name="plan_editor_close">닫기</string>
-    <string name="plan_undo">되돌리기</string>
+    <string name="plan_undo">실행 취소</string>
     <string name="plan_deadline">기한</string>
     <string name="plan_named_month_note">우선 %1$s로 정해 뒀어요. 날짜를 알게 되면 선택하세요.</string>
     <string name="plan_no_deadline_note">마감일이 없으면 원하는 속도로 모든 내용을 공부해요. 마감일이 있으면 그날까지 가장 중요한 내용을 공부할 수 있도록 계획을 맞춰요.</string>

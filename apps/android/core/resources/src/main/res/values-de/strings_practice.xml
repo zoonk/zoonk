@@ -31,7 +31,7 @@
   "practice_time_machine_seen": "e8d2f00c28cc981567cd360695c05f0e8f6e820f76e917c02fa221bcec1d8d3d",
   "practice_time_machine_tripped": "549be218e27ee95202092a6dc1b9e8fab5183ec732ce68640d8cb872e41c30e0",
   "practice_try_again": "fc903144519d24a306f3c2b37321bcdad3cf52c3de46141c386a645a2153eddf",
-  "practice_undo": "d02a57b790ae5156c243866c1bca3b0e6d4a5a66172f910112549659950b287f",
+  "practice_undo": "a7c761e56c979c59a363592921d4e0cbf8d00405b969beb041767736f6eed86c",
   "practice_undo_failed": "8eb85cb411faf58bdab2eeaa261eb5c73c46a5c0e0ed94d23fc467e8b281c9ca"
 }
 -->
@@ -44,7 +44,7 @@
     <string name="practice_next">Weiter</string>
     <!-- Sends a test's answers when its last questions couldn't be written. -->
     <string name="practice_finish_now">Mit diesen Antworten abschließen</string>
-    <string name="practice_undo">Rückgängig</string>
+    <string name="practice_undo">Rückgängig machen</string>
     <string name="practice_undo_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d von %2$d</string>

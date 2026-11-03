@@ -101,7 +101,7 @@
   "tutor_plan_change_one_week": "2f9b92e8c0c1f32a1f2dd98901ddf291de9dbd5a072c21ac4b718db9dc797ea1",
   "tutor_plan_change_replaced": "4cdf30816ee0f164a93bdeafb90a4b23718ea67375fe14fbd949469e00c80612",
   "tutor_plan_change_title": "dd54b9b0c4adbaea8ee443701b92b163a9f731fec17c9e4be09691899751f3a5",
-  "tutor_plan_change_undo": "a48a7a1e6434e42ef9739d8bb80c0482c719ec2b4993972f4f79affaf6c3c065",
+  "tutor_plan_change_undo": "5e3a2eb706643d9d7275775924cf2068cc2ee2e0234df28b477a4bb3a0b87bb5",
   "tutor_plan_change_use_my_date": "3050354c611ea757b5c64215060e19ac6e9bf4e5410862fe090e02a1025ac438",
   "tutor_retry_last_question": "9bf4e66538dd4b8858ca6cbcd2858afaddca2f92435601221129a6e57d0f53e6",
   "tutor_send": "31695b9f0fa135fe3d76e2ed2c7ff1a109f499291fa478ed76a703a03fb5a4a8",
@@ -259,7 +259,7 @@
     <string name="tutor_plan_change_not_now">나중에</string>
     <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
     <string name="tutor_plan_change_use_my_date">그래도 내가 정한 날짜 사용하기</string>
-    <string name="tutor_plan_change_undo">되돌리기</string>
+    <string name="tutor_plan_change_undo">실행 취소</string>
     <string name="tutor_plan_change_declined">적용하지 않았어요. 계획은 그대로 유지돼요.</string>
     <string name="tutor_plan_change_replaced">새 제안으로 바뀌었어요.</string>
     <string name="tutor_plan_change_failed">저장하지 못했어요. 다시 시도해 보세요.</string>

@@ -27,7 +27,7 @@
   "memory_source_onboarding": "26489b61b545ac96859200048e570d6eccd08effc3c15bc420c80def8a1d605c",
   "memory_source_session": "1f4d35377bb969b96543b688be81473188cbe24f7a729e6b269f635e5959c050",
   "memory_source_you": "627c4fbced9a6885774e81861a7b86c0549a36bff1d10ea056f0d837b10459f9",
-  "memory_undo": "233395ddc4da426abe270addca007907e431867be04aa4b2a7b16469b23564c2",
+  "memory_undo": "23bdc4e211dca854d156029f929e9e8a04f2a255217a461a8892710cc571b65a",
   "memory_undo_failed": "e7db3f07c39f328713b9e6373d667e9b2caea304d4484255f9ee29067d3e4f5c",
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
   "memory_updated_more": "db289de3164c9a5836fa73b90382ccf65f82511f4db307cbe9aa3e81e810b306",
@@ -74,7 +74,7 @@
     <plurals name="memory_updated_more">
         <item quantity="other">외 %d개</item>
     </plurals>
-    <string name="memory_undo">되돌리기</string>
+    <string name="memory_undo">실행 취소</string>
     <string name="memory_change_undone">변경 사항을 되돌렸어요</string>
     <string name="memory_undo_failed">그사이 내용이 바뀌어서 되돌릴 수 없어요.</string>
 </resources>

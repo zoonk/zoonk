@@ -55,7 +55,7 @@
   "activities_sorting_remove_link": "2da528ec2fa3a8f8c6956685a0732b2d342434b6f859f2505ce28f132c0cbfdd",
   "activities_sorting_removed": "d33d7de45a8222d3b08fc6bb24d304087ae39ab461f438631c516850b5708780",
   "activities_sorting_right_count": "d7055c18cd7eb7f9bb38a68c7ea0cf5c26cfdb55d37607aceb776727b54634c1",
-  "activities_sorting_right_group": "70b043561c53845a60ee9d7c71cefd1f42eececf50a9497c65c9e7312449ede9",
+  "activities_sorting_right_group": "8a2454710303882e925d254c389aac5c9db3cba75081a4075db265437ff23566",
   "activities_sorting_right_order": "523d0882550609bf5c2247e1bf548574108ecfa9bf28e13fe9f111db39488a94",
   "activities_sorting_show_real_dates": "98e71885853284faf6f52615f4357a2f568aa90f7958d09aff5a42cc6c0fea10",
   "activities_sorting_sorted_count": "130a041cfa2e7f685296a43cc33ad54424b4f5c7a07e792ea8ab61a54f0b0b89",
@@ -70,7 +70,7 @@
   "activities_sorting_undo": "fd187c0ed03a69b04fee88cefa0a867828237fc15ebfe114542bee74c7dd1670",
   "activities_sorting_what_each_number_shows": "1a1bdebf29bf8d2aac977a64479214c72a3a7aa8848de73dfe08c82bdd81e7c0",
   "activities_sorting_which_group": "49c0898701f0afbdc8d5b0cebb409bc398a72d2dced299e293cd6562d327843e",
-  "activities_sorting_wrong_group": "7c6fce80eec0d0baf96cbe13948fe0797828530f20146b59a6c5ef53779f04e5",
+  "activities_sorting_wrong_group": "f2b9fdaa1f17e2a17177dc01727aeba82d048d6a1f970980cd6688b077c3d072",
   "activities_sorting_year_and_guess": "3997c471b00ad8c6dd8c07e7878b2d02b01ecfa885b83247a3bcf8a4f32231b6",
   "activities_sorting_year_bce": "52686e10bdad4f2da1898b75ab52eebec5adf963c43121dc6d09878e9a49756d",
   "activities_sorting_year_ce": "b82cd12d97a13462b701a616b69c198c0040767b84cc92de548707fe1356907d",
@@ -105,9 +105,9 @@
     <!-- A group that holds no cards once every card is sorted. -->
     <string name="activities_sorting_no_cards">カードはありません</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
-    <string name="activities_sorting_right_group">%1$s、正しいグループ</string>
+    <string name="activities_sorting_right_group">%1$s、正しいグループです</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
-    <string name="activities_sorting_wrong_group">%1$s、間違ったグループ</string>
+    <string name="activities_sorting_wrong_group">%1$s、グループが違います</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
     <string name="activities_sorting_right_count">正しく分類できた数：%1$d / %2$d</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
