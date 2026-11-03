@@ -71,6 +71,7 @@ export function BattleLeaderboard({
 
   const sortedEntries = sortEntries(entries, sortKey, sortDirection);
   const categories = entries[0]?.categoryScores ?? [];
+  const hasCodeChecks = entries.some((entry) => entry.codeChecks);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -118,6 +119,8 @@ export function BattleLeaderboard({
               <TableHead key={category.categoryId}>{category.label}</TableHead>
             ))}
 
+            {hasCodeChecks && <TableHead>Code checks</TableHead>}
+
             <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP50")}>
               p50 {sortKey === "latencyP50" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
@@ -155,6 +158,13 @@ export function BattleLeaderboard({
                   </TableCell>
                 );
               })}
+              {hasCodeChecks && (
+                <TableCell>
+                  {entry.codeChecks
+                    ? `${entry.codeChecks.passed}/${entry.codeChecks.total} parts, ${entry.codeChecks.problems} problems`
+                    : "—"}
+                </TableCell>
+              )}
               <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
               <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
               <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>

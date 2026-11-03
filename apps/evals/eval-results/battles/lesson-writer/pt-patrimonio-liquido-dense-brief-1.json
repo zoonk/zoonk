@@ -1,0 +1,473 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for total beginners in accounting\n      - The plan's hook is a guess, and a beginner's hook is a scene: a `hookText` about Davi's workshop that ends on an open question the lesson answers, never the guess's choices in words, and no term the lesson explains\n      - The first explanation, whose brief packs a definition, a caveat and a formula to explore, is two or three short sentences with one bold term (patrimônio líquido); bens, direitos and obrigações are recalled in plain words, never bold or defined again; the caveat (a book value, not a sale price) stays, briefly\n      - Every number in the worked example, the checks, the explore and the application matches the plan and adds up\n      - Options are short; the why goes in each option's reason\n      - The summary card is a `hub` whose sentences each name their subject (\"O patrimônio líquido é…\"), never a fragment that only reads with its label\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T13:53:57.898Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Every number matches the plan and adds up. Each mistake expression and reason is correct, and the R$ 5.000,00 'old PL' reason is accurate.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook is a concrete scene with Davi, the bench, the cash and the boleto. The voice is warm and direct, and Davi's workshop carries through most screens. Check 4 uses a generic 'outra empresa'.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Bens, direitos and obrigações are recalled in plain words with examples before the bold term, and each screen holds one idea. The steps are explicit.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The mathChecks cover the tempting omissions, including the planned 'only the supplier' error, and the reasons are specific. The activity misses the planned R$ 10.000,00 error but offers a good alternative misconception.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It follows the plan closely, with a realistic application in Davi's notebook. The summary is a hub with named subjects, and the caveat is kept. One slip: the activity distractor differs from the plan.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "Model B has the best scene hook, at Davi's workbench, and ends on the question the lesson answers. Its first explanation recalls bens, direitos and obrigações in plain words, bolds only patrimônio líquido and keeps the book-value caveat. The math is correct throughout and the mistake reasons are strong, but the activity drops the plan's R$ 10.000,00 distractor and uses R$ 13.000,00 instead.",
+          "score": 8.45
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All calculations and reasons are correct. The R$ 10.000,00 reason, adding the new debt to the old PL, checks out.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook barely sets a scene: it restates the plan without sensory detail. The explanation opens with a stack of definitions, and the tone is terse, somewhat dry.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Short and clear, with workshop examples for each component. However, the components get re-defined on one dense screen instead of a light recall.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks hit the planned misconceptions, and the activity distractor matches the plan with clear reasons. Check 4 has only two mistakes and a generic company.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It follows the plan briefs closely, with a fitting application and a hub summary with named subjects. The '{bens}' values without ',00' are a minor local-format slip.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model E is correct and follows the plan closely, including the R$ 10.000,00 activity distractor with a sound reason. Its hook is less of a scene, closer to the plan's statement, and the explanation re-defines bens, direitos and obrigações with a list-like 'X são Y' structure. Prices in the mathChecks lack ',00' formatting.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The activity reason for R$ 10.000,00 is arithmetically wrong (6.000 + 5.000 = 11.000), so a reason teaches an incorrect computation. This triggers the cap of 6.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook is a statement rather than a scene. The explanation leads with a formal definition and abstract terms like 'recursos próprios', in a textbook tone.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "'Terceiros' and 'recursos próprios' are used without explanation, and bens and direitos are not recalled in plain words.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The distractors are reasonable and the application includes the planned R$ 8.500,00 error. One reason is wrong, and the basis quote is generic.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It follows the plan screens and the application is good. The summary hub names its subjects but drops the caveat.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "Model A is structurally complete and its math is mostly right. However, the activity's R$ 10.000,00 reason claims it comes from adding the obligations to the bens, which would actually give R$ 11.000,00, so the reason is false. The explanation introduces unexplained phrasing ('obrigações com terceiros', 'recursos próprios') and doesn't recall bens and direitos in plain words.",
+          "score": 6.5
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 21677,
+        "outputTokens": 2547,
+        "reasoningTokens": 927
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All calculations, formulas, and explanations are mathematically and domain-accurately sound, and the `mathCheck` expressions and reasons match their values.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is warm, conversational, and direct, consistently placing Davi's concrete workshop numbers before or alongside the rule. Capped at 8 because Screen 4 uses a generic example ('Uma empresa') instead of a specific named situation.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Screen 2 smoothly weaves the recall of bens, direitos, and obrigações into the explanation in plain words without re-defining them as standalone textbook terms. Minor flaw: Screen 5 unnecessarily bolds 'negativo' and Screen 2 runs to four short sentences instead of two or three.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks test application with clear misconception-based feedback, but Screen 6 fails to include the required R$ 10.000,00 tempting wrong answer specified in the plan (using R$ 13.000,00 instead) and omits the target values from the activity prompt.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook is an engaging beginner scene ending on an open question, the application grounds Davi's check in a realistic tool (Google Planilhas), and every summary sentence names its subject cleanly.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model C best follows the pedagogical and structural expectations, especially on Screen 2 where it recalls bens, direitos, and obrigações in plain parenthetical words rather than re-defining them from scratch, and on Screen 5 where it introduces the concrete scenario before stating the rule. Its main flaw is omitting the planned R$ 10.000,00 distractor in the Screen 6 activity check.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All math, formulas, and check options are accurate and well-aligned with their feedback reasons.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screen 5 nicely sets up Davi's workshop in a bad month before giving the rule for negative equity, and the tone is approachable. Capped at 8 because Screen 2 opens with three textbook-style definitions in a row and Screen 4 uses a generic 'Uma loja'.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Beginner-friendly language overall, but Screen 2 has six sentences and explicitly defines bens, direitos, and obrigações again instead of recalling them briefly in two or three sentences as required.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Every check tests understanding and includes all required distractors from the brief (including R$ 5.000,00 on Screen 4, R$ 10.000,00 on Screen 6, and R$ 8.500,00 on Screen 7) with clear, helpful reasons.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Fits the beginner level and Brazilian context well, though the Screen 7 table omits Brazilian currency formatting (`1.000` instead of `R$ 1.000,00`) and the summary includes an extra card re-defining prior terms.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model D includes all planned numbers and distractors accurately, including the R$ 10.000,00 option on Screen 6, and keeps examples before rules on Screen 5. However, it violates the Screen 2 expectation by spending three separate sentences re-defining bens, direitos, and obrigações (stretching the screen to six sentences), and uses unformatted numbers in the Screen 7 table.",
+          "score": 8.45
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All numbers, formulas, tables, and `mathCheck` configurations are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Reads somewhat dry and textbook-like: Screen 2 opens by defining all three prior terms, Screen 4 uses a generic 'Uma empresa', and Screen 5 states the abstract rule for negative equity before showing Davi's example.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are concise and Screen 2 stays within the three-sentence limit with only one bold term, though its semicolon-separated list of definitions ('bens são...; direitos são...; obrigações são...') re-defines the terms rather than recalling them naturally inside the main idea.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Includes all required values and tempting mistakes across Screens 4, 6, and 7. On Screen 6, the question omits the new obligation value (R$ 5.000,00), forcing the learner to rely on the top prompt rather than having a self-contained question.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the Brazilian Portuguese formatting and beginner level, and the `hub` summary sentences all name their subject, though the first summary item repeats definitions of bens, direitos, and obrigações rather than focusing strictly on the lesson's new ideas.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model E is accurate and hits all required numeric distractors in the checks and activity, while keeping Screen 2 to three sentences. However, it reads more like a dry textbook—stating abstract rules before examples on Screen 5 and opening Screen 2 with a three-part definition list.",
+          "score": 8.25
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 15274,
+        "outputTokens": 2554,
+        "reasoningTokens": 1053
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Os cálculos, as fórmulas e os motivos dos erros estão corretos. Os modelos usam os valores iniciais previstos e identificam os dados como exemplos.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A bancada, as ferramentas e o boleto tornam a abertura fácil de imaginar, e a explicação usa linguagem direta. A empresa genérica do primeiro exercício e a apresentação da regra antes do exemplo negativo deixam pequenos trechos menos envolventes.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A primeira explicação conecta os termos conhecidos a objetos e valores cotidianos, esclarecendo também o sentido de valor contábil. O exemplo resolvido e os feedbacks mostram as operações sem saltos relevantes.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Os exercícios exigem cálculo e classificação, com feedback específico e bases pertinentes. A atividade funciona, mas não inclui o distrator de R$ 10.000,00 exigido pelo plano.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respeita a sequência, o português brasileiro, a abertura sem escolha e o resumo em frases completas. A aplicação no caderno da oficina é concreta, mas a atividade troca uma alternativa expressamente solicitada.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "É o conjunto mais equilibrado: apresenta uma cena concreta, conecta o cálculo a objetos familiares e oferece uma aplicação bem contextualizada. A principal lacuna é substituir o distrator obrigatório de R$ 10.000,00 na atividade.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Todos os resultados e fórmulas conferem com os valores apresentados. O feedback de R$ 10.000,00 descreve corretamente a soma equivocada da nova dívida ao patrimônio líquido anterior.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A oficina e o exemplo negativo antes da regra ajudam a visualizar o conceito. Entretanto, a sequência inicial de definições e o exercício de uma loja sem identidade criam um trecho mais escolar.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "As palavras são simples e as etapas do cálculo ficam explícitas. A primeira tela explicativa, porém, acumula três definições, o conceito principal, a ressalva e uma instrução, em vez de manter uma explicação concentrada.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Os exercícios testam operações e identificação de recursos e dívidas, com alternativas curtas e feedback útil. A atividade solicita a mudança exata de controle prevista e inclui os erros tentadores exigidos.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "A sequência, a cena inicial, a aplicação e o formato hub estão presentes. A primeira explicação excede duas ou três frases e redefine bens, direitos e obrigações; a tabela final também abandona o padrão monetário solicitado.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Tem cálculos corretos, linguagem acessível e a atividade mais fiel aos distratores planejados. Perde principalmente por transformar a primeira explicação em seis frases que redefinem conteúdos que deveriam apenas ser retomados.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Os resultados, as expressões e os feedbacks matemáticos estão corretos. Os modelos mantêm os valores previstos e apresentam os dados como exemplos.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A cena da oficina e a apresentação concreta do saldo negativo tornam a aprendizagem próxima do cotidiano. O exercício de uma empresa genérica e a linha isolada de fórmula deixam alguns momentos menos naturais.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "O exemplo resolvido explica tanto as operações quanto o significado do resultado. Entretanto, “valor contábil” aparece sem esclarecer que se trata do valor registrado nos controles.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões exigem cálculo e têm motivos coerentes para as alternativas erradas. A atividade omite R$ 10.000,00 e sua instrução de mover o controle é menos específica que a mudança solicitada no plano.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "A abertura, a sequência e a aplicação no Google Planilhas combinam com o contexto proposto. A primeira explicação tem quatro frases e antecipa a fórmula fora do explore, enquanto a atividade substitui o distrator expressamente pedido.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "É correto e oferece boas pontes entre os cálculos e o significado dos valores, especialmente no exemplo negativo. Fica atrás pela primeira explicação fora do formato pedido, pelo termo contábil pouco esclarecido e pela ausência do distrator obrigatório na atividade.",
+          "score": 8.35
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Os resultados principais e as fórmulas estão corretos. Porém, o feedback atribui R$ 10.000,00 à soma de bens e obrigações, que nos valores da atividade seria R$ 11.000,00.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A primeira explicação começa por uma definição abstrata, com expressões como “obrigações com terceiros” e “recursos próprios”. O exercício genérico e a explicação negativa sem retomar explicitamente Davi reforçam um tom de livro didático.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "O exemplo resolvido apresenta claramente a soma e a subtração. Já a introdução usa “valor contábil”, “recursos próprios” e “terceiros” sem pontes suficientes para um iniciante.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Os exercícios principais testam cálculo e usam bases relevantes. A atividade não orienta a mudança de R$ 3.000,00 para R$ 5.000,00 e contém um motivo matematicamente errado para uma alternativa.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Mantém as sete telas, a abertura sem escolha, a aplicação na oficina e o resumo hub com frases completas. Entretanto, não retoma os termos em palavras cotidianas, omite a ação planejada na atividade e deixa a ressalva sobre preço de venda fora do resumo.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "Entrega a estrutura principal e acerta os resultados dos exercícios, mas exige mais decodificação do iniciante. O erro matemático no feedback da atividade e a ausência de uma instrução de manipulação comprometem sua utilidade.",
+          "score": 6.5
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 16096,
+        "outputTokens": 2694,
+        "reasoningTokens": 1003
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-patrimonio-liquido-dense-brief-1"
+}

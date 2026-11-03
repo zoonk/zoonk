@@ -38,7 +38,7 @@ type BattleRankingResult =
 
 type BattleRankingGeneration = { result: BattleRankingResult; usage: TokenUsage };
 
-function addUsage(first: TokenUsage, second: TokenUsage): TokenUsage {
+export function addUsage(first: TokenUsage, second: TokenUsage): TokenUsage {
   return {
     cacheReadTokens: (first.cacheReadTokens ?? 0) + (second.cacheReadTokens ?? 0),
     cacheWriteTokens: (first.cacheWriteTokens ?? 0) + (second.cacheWriteTokens ?? 0),

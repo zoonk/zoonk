@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /** Mirrors the step contract's image request limits (core `stepImageRequestSchema`). */
-const MAX_IMAGE_PROMPT_LENGTH = 400;
-const MAX_IMAGE_ALT_LENGTH = 160;
+export const MAX_IMAGE_PROMPT_LENGTH = 400;
+export const MAX_IMAGE_ALT_LENGTH = 160;
 const MIN_NUMBERED_PARTS = 2;
 const MAX_NUMBERED_PARTS = 6;
 

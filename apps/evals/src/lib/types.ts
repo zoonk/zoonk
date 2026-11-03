@@ -50,9 +50,16 @@ export function getJudgeExpectations(testCase: TestCase): string {
   return testCase.expectations;
 }
 
-export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCases">): boolean {
+/**
+ * Battles need text the judges read and a judge's scores to compare: a task scored by its own
+ * scorer battles only when it exposes the code checks that scorer runs, so battles report them too.
+ */
+export function supportsJudgeMode(
+  task: Pick<RegisteredTask, "codeChecks" | "output" | "score" | "testCases">,
+): boolean {
   return (
-    !task.score &&
+    !task.output &&
+    (!task.score || Boolean(task.codeChecks)) &&
     task.testCases.length > 0 &&
     task.testCases.every((testCase) => Boolean(testCase.expectations))
   );
@@ -112,6 +119,18 @@ export type TaskScorer<TExpected = unknown> = (
   params: TaskScoreParams<TExpected>,
 ) => Promise<TaskScoreResult> | TaskScoreResult;
 
+/** What code checked in an output, out of `total` parts, before any judge reads it. */
+export type CodeCheckResult = {
+  passed: number;
+  total: number;
+  problems: string[];
+  judgedOutput: string;
+};
+
+export type TaskCodeChecks<TExpected = unknown> = (
+  params: TaskScoreParams<TExpected>,
+) => Promise<CodeCheckResult> | CodeCheckResult;
+
 type TaskGenerateInput<TInput> = TInput & {
   model: string;
   useFallback?: boolean;
@@ -140,15 +159,21 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   evaluate?: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
+  /** The code checks `score` runs before its judge, so battles can report them too. */
+  codeChecks?: TaskCodeChecks<TExpected>;
   scoreCategories?: ScoreCategory[];
   latencyBudget?: LatencyBudget;
   output?: "image" | "speech" | "transcription";
 };
 
 /** Only invoke generate or score with the test case paired with this type-erased task. */
-export type RegisteredTask = Omit<Task<never, unknown, never>, "score" | "testCases"> & {
+export type RegisteredTask = Omit<
+  Task<never, unknown, never>,
+  "codeChecks" | "score" | "testCases"
+> & {
   testCases: TestCase[];
   score?: (params: never) => Promise<TaskScoreResult> | TaskScoreResult;
+  codeChecks?: (params: never) => Promise<CodeCheckResult> | CodeCheckResult;
 };
 
 export type OutputEntry = TokenUsage & {
@@ -197,12 +222,23 @@ export type ModelRanking = {
 
 type JudgeRanking = { judgeId: string; rankings: ModelRanking[]; usage?: TokenUsage };
 
+export type BattleCodeChecks = Pick<CodeCheckResult, "passed" | "problems" | "total">;
+
 export type BattleMatchup = {
   taskId: string;
   testCaseId: string;
   expectations: string;
   judgedAt: string;
   judgments: JudgeRanking[];
+  /**
+   * A hash of each judged output by model. Judgments are reused only for the same outputs, so a
+   * new output or another set of models is judged again.
+   */
+  outputs?: Record<string, string>;
+  /** Each judge ranked the outputs in both orders and its scores were averaged. */
+  swapped?: boolean;
+  /** For tasks scored by code before their judge, what code found in each model's output. */
+  codeChecks?: Record<string, BattleCodeChecks>;
 };
 
 export type BattleLeaderboardEntry = {
@@ -216,4 +252,6 @@ export type BattleLeaderboardEntry = {
   scoresByJudge: Record<string, number>;
   scoresByTestCase: Record<string, number>;
   categoryScores: CategoryScoreSummary[];
+  /** Summed over the battles that ran code checks on this model's outputs. */
+  codeChecks?: { passed: number; problems: number; total: number };
 };

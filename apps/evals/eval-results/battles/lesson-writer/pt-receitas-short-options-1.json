@@ -1,0 +1,473 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for an overview: plain words, light checks\n      - The plan's hook is a guess, and an overview's hook is a scene: a `hookText` about Igor's repair work in one or two sentences that ends on the question the lesson answers, with nothing to answer\n      - The check about a weekly payment whose amount changes keeps its learning move and its tempting wrong answer (the amount changing makes it irregular), with short options; an option may carry a short reason (\"Não, porque o valor muda\") only because choosing the right explanation is what this check practices, and each reason is one short sentence\n      - The application keeps its two choices and their meaning, as short options\n      - The summary card is a `hub` whose sentences each name their subject (\"Uma receita regular…\"), never a fragment such as \"Repete-se em intervalos definidos\"\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T13:54:01.852Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All classifications and reasons are correct. Each check has exactly one defensible answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Igor's specific situations (jardinagem, caderno, supermercado) are easy to picture, and the voice is plain. However, the rule comes before the table on the regular and eventual screens.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen teaches one idea in short sentences. Terms are introduced one at a time and explained.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Wrong options are real misconceptions, and each reason is one short sentence. Both bases quote the sentence that decides the answer.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the overview level and is written in Brazilian Portuguese. It follows the briefs, and the application is concrete.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "Model A follows every planned screen in order. It has a clean hookText scene, short check options that keep the tempting «Não, porque o valor muda», and a well-chosen basis on both checks. Its summary hub uses full sentences that name their subjects, and the application names a concrete place (supermercado). Its main weakness is that the regular and eventual screens state the rule before the table.",
+          "score": 8.75
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The content is correct throughout. Each check has one right answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The example comes before the rule, which works well. The contexts are generic, though (\"um serviço\"), and the wording is somewhat repetitive.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short and there is one idea per screen. Screen 3's restated sentence is slightly redundant.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The tempting wrong answers and reasons are good. The application's null basis is a flaw, since screen 5 clearly decides that question.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the overview level and follows the plan. The application setting is weaker, since it only places Igor at the bench.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model B shows each table before its rule, which gives a good example-first flow, and its options are very short and faithful to the plan. However, the application has a null basis even though the eventual-income screen clearly decides it. The check context is also bare, and screen 3 repeats \"intervalos habituais\" awkwardly.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Saying the value can change \"um pouco\" understates the idea that any change in amount still counts as regular. This is a small imprecision; the checks are otherwise correct.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The examples are the most vivid of the three, and the voice is spoken. The rule still comes first on the explanation screens.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "\"Orçamento\" is introduced in the summary without explanation. The activity reasons \"Repete-se...\" and \"Ocorreu de forma pontual\" lack an explicit subject.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The misconceptions are good and the bases are present. The options are longer than the plan's short ones, and the tempting answer is extended.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson fits the overview level and the briefs are followed. The summary is slightly vaguer than the others.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "Model C has vivid details (ventiladores, entregas toda sexta) and follows the plan. However, it lengthens the planned short tempting option, and saying the value can change \"um pouco\" implies only small changes. Its summary's first idea relies on the unexplained word \"orçamento\", and one activity reason is a subjectless fragment.",
+          "score": 7.65
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 14876,
+        "outputTokens": 2000,
+        "reasoningTokens": 612
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All financial concepts, examples, tables, and check options/reasons are accurate and unambiguous.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Warm, conversational Brazilian Portuguese that brings Igor's routine to life with specific numbers and objects (R$ 80 vs. R$ 120, Pix on the 5th, fixing a radio). Screen 2 states the rule one sentence before the example, which is a tiny blemish on an otherwise concrete flow.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen teaches one clear idea in short, plain sentences appropriate for an overview level, with markdown tables matching the brief.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Screen 4's check preserves the required tempting wrong answer ('Não, porque o valor muda'), keeps each option's reason to one short sentence, and uses an exact basis quote from Screen 3.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook is a two-sentence hookText ending on the lesson's question, the application uses short options in a realistic Brazilian context (Pix on day 5), and the hub summary names the subject in every sentence.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model D delivers the most natural, engaging Brazilian teacher voice while meeting every structural and task-specific requirement. It enriches the plan's briefs with concrete everyday details (such as R$ 80 and R$ 120 on Fridays, Pix on the 5th, an old radio, and a used bicycle) while keeping all check reasons to a single short sentence.",
+          "score": 9.75
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All definitions, tables, categorizations, and check explanations are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Every explanation screen introduces Igor's example before stating the term, though the prose is somewhat dry and repeats the brief's generic phrasing ('um serviço', 'Venda única de um objeto') instead of painting a vivid everyday scene.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Short, direct sentences and clean tables make the distinction between regular and occasional income effortless to follow.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Check options are concise, each reason is a single short sentence as required, and Screen 4's basis quote accurately points to the deciding sentence on Screen 3.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows all overview-level rules, uses a two-sentence hookText, keeps application options short, and writes complete subject-led sentences in the hub summary.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model B follows every constraint cleanly—including a two-sentence hook, single-sentence check reasons, examples before definitions on every explanation screen, and well-formed hub summary sentences. It ranks just behind Model D because its wording stays very close to the raw plan briefs rather than adding concrete everyday texture.",
+          "score": 9.35
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All concepts, tables, and classifications are accurate, though Screen 7's basis quote only covers half of the application answer (the occasional repairs, not the monthly salary).",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Friendly, direct voice ('cai todo mês', 'voltar no ritmo') that explicitly closes the loop on the hook's question in Screen 2, though Screen 2 leads with the definition before the example.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Plain, accessible language suitable for an overview lesson, with clear tables and rules.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "While the options and misconceptions are well chosen, every option reason on Screens 4 and 7 is written as two sentences, violating the task expectation that each reason be one short sentence.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hub summary and application context (Google Planilhas) work well, but the hookText is split into three sentences instead of the required one or two sentences.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model E is clear and well-toned, and it smartly answers the hook's question on Screen 2, but it violates two explicit task expectations: its hookText is three sentences instead of one or two, and its check reasons on Screens 4 and 7 use two sentences instead of one short sentence.",
+          "score": 8.3
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 9571,
+        "outputTokens": 1892,
+        "reasoningTokens": 627
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The classifications, tables, and correct answers consistently distinguish frequency from payment amount. The fictional examples and activity assignments are accurate in context.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The salary and customer-dependent repairs introduce the rules through situations the learner can picture. Car washing, specific payment amounts, a radio, and a bicycle make this the most concrete version.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Short sentences explain each income category using familiar monthly and weekly patterns. The lesson introduces one main idea at a time without requiring calculations or unexplained technical knowledge.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The weekly-payment question and sorting activity test classification and address plausible misconceptions. The application incorrectly has a null basis even though screen 5 explicitly says that repair income arrives in some months but not others.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The two-sentence scene, Brazilian context, ordered screens, and subject-naming hub summary fit the brief. The application nevertheless adds a third choice where exactly two were required.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The strongest teaching sequence introduces the main distinctions through Igor’s concrete experiences before explaining the rules. Its main weaknesses are the extra application choice and the missing basis for that question.",
+          "score": 8.95
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The explanations correctly make habitual frequency—not a fixed amount—the classification criterion. The tables, activity assignments, and marked answers match the planned situations.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The repair scene and gardening example are familiar and specific. However, all three explanation screens introduce the definition before the concrete example, making the teaching more rule-led than example-led.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The lesson explains receita and both categories in short, accessible sentences. Monthly and weekly examples make intervalos habituais understandable without adding unnecessary concepts.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks require applying the frequency criterion, and the sorting activity reinforces it across four cases. Feedback explains the misconceptions, and both question bases point to relevant earlier sentences.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook, screen sequence, tables, and hub summary follow the requested overview format. The application retains the intended meanings but adds an explicitly disallowed third choice.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "This is a reliable, complete lesson with accurate content, useful feedback, and appropriate question grounding. It is less engaging than D because the explanations consistently lead with definitions, and it also violates the application's two-choice requirement.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The lesson correctly distinguishes regular and occasional income by frequency while allowing amounts to change. Its tables, classifications, and marked answers are consistent with that distinction.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The salary and repair examples lead naturally into the two main definitions, and the voice is conversational. The weekly check remains less vivid because it names only an unspecified serviço rather than a concrete job.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The main concepts are explained in plain language, with ritmo connected to monthly and weekly repetition. Screens remain focused and require no formulas or substantial inference.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The questions and categorization activity test understanding, preserve the amount-changing misconception, and provide relevant feedback. However, every weekly-check reason uses two sentences instead of the required single short sentence.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson uses Brazilian Portuguese, a practical planning application, and a compliant subject-naming hub summary. Multiple explicit constraints are missed: the hook exceeds two sentences, weekly feedback exceeds its sentence limit, and the application adds a third choice.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "The central explanations are accessible and usually introduce Igor’s situation before naming the category. Several explicit brevity requirements are missed: the hook has three sentences, weekly-check feedback uses two sentences per option, and the application has three choices.",
+          "score": 8.55
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The classifications and correct answers are substantively correct. Saying the amount may change um pouco unnecessarily suggests a limit, while frequência mensal garantida overstates what being regular guarantees.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The neighborhood repairs and Friday delivery payments supply useful everyday context. All three explanation screens nevertheless lead with definitions, and wording such as frequência de repetição no tempo makes the voice more textbook-like.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The main distinction is understandable through monthly and weekly examples. The summary introduces orçamento without explaining it, adding an avoidable financial term at overview level.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The weekly check preserves the tempting amount-based misconception and explains each option appropriately. The sorting activity and final application require classification, with relevant earlier sentences supplied as question bases.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The two-sentence hook, ordered screens, required tables, and complete hub sentences fit the overview. The application adds a third option despite the explicit requirement to keep two.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "The lesson covers the required distinction and provides sound classification practice. It is more definition-led, contains slightly misleading wording about amount variation and guaranteed salary frequency, and does not preserve the application's two choices.",
+          "score": 7.9
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 10507,
+        "outputTokens": 2507,
+        "reasoningTokens": 1034
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-receitas-short-options-1"
+}

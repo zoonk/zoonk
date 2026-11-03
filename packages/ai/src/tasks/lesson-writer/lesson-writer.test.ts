@@ -1,10 +1,13 @@
 import { generateText } from "ai";
-import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it, vi } from "vitest";
+import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { getLessonRewriteModel, writeLessonDraft } from "./lesson-writer";
 import type * as Ai from "ai";
+
+/** Where the schema the answer follows starts, after the writer's rules. */
+const OUTPUT_FORMAT = "\n\n# Output format";
 
 vi.mock("server-only", () => ({}));
 
@@ -81,13 +84,13 @@ describe(getLessonRewriteModel, () => {
       "anthropic/claude-opus-5.5",
     );
 
-    expect(getLessonRewriteModel(["google/gemini-3.8-flash", "google/gemini-3.8-flash"])).toBe(
+    expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
       "openai/gpt-6.1-terra",
     );
 
     // A fallback wrote one of them: both families are left out.
     expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
-      "google/gemini-3.8-flash",
+      "google/gemini-4-argon",
     );
   });
 });
@@ -125,41 +128,44 @@ describe(writeLessonDraft, () => {
         writeLessonDraft({ ...params, shortAnswers: true }),
       ]);
 
-    expect(regular.systemPrompt).toBe(
+    expect(regular.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(beginner.systemPrompt).toBe(
+    expect(beginner.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
     );
 
-    expect(beginnerExam.systemPrompt).toBe(
+    expect(beginnerExam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(spotAi.systemPrompt).toBe(
+    expect(spotAi.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(material.systemPrompt).toBe(
+    expect(material.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it from the material.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(sources.systemPrompt).toBe(
+    expect(sources.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it from the sources.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(exam.systemPrompt).toBe(
+    expect(exam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(setup.systemPrompt).toBe(
+    expect(setup.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite the setup.\nCheck it.",
     );
 
-    expect(written.systemPrompt).toBe(
+    expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite typed answers.\nCheck it.",
     );
+
+    // The schema travels in the system prompt, since no provider but OpenAI takes it as a grammar.
+    expect(regular.systemPrompt).toContain('"const":"hookGuess"');
 
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
@@ -176,7 +182,7 @@ describe(writeLessonDraft, () => {
     );
   });
 
-  it("falls back from Gemini to Sol before Opus", async () => {
+  it("falls back to the chain's other models, each from another family", async () => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({ screens: [], summary: EMPTY_MAP }),
     );
@@ -190,22 +196,20 @@ describe(writeLessonDraft, () => {
       spec: spec([screen("hook"), screen("check")]),
     } satisfies Parameters<typeof writeLessonDraft>[0];
 
-    await writeLessonDraft({ ...params, model: "google/gemini-3.8-flash" });
-    const gemini = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
+    await writeLessonDraft({ ...params, model: "anthropic/claude-opus-5.5" });
+    const opus = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
     await writeLessonDraft(params);
     const terra = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
-    expect(gemini).toMatchObject({ models: ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] });
+    expect(opus).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
 
-    expect(terra).toMatchObject({
-      models: ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"],
-    });
+    expect(terra).toMatchObject({ models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"] });
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {
-    // Opus 5.5 rewrote a held-back lesson (9 Oct 2026) without strict decoding, since the writer's
-    // schema has more nullable fields than Anthropic's strict mode takes, and left out `picture`.
+    // Opus 5.5 rewrote a held-back lesson (9 Oct 2026) without strict decoding and left out
+    // `picture`; no model writes the lesson under strict decoding now.
     const draft = {
       screens: [
         {
@@ -223,23 +227,7 @@ describe(writeLessonDraft, () => {
       },
     };
 
-    const model = new MockLanguageModelV4({
-      doGenerate: {
-        content: [{ text: JSON.stringify(draft), type: "text" }],
-        finishReason: { raw: "end_turn", unified: "stop" },
-        usage: {
-          inputTokens: { cacheRead: 0, cacheWrite: 0, noCache: 10, total: 10 },
-          outputTokens: { reasoning: 0, text: 10, total: 10 },
-        },
-        warnings: [],
-      },
-    });
-
-    const { generateText: actualGenerateText } = await vi.importActual<typeof Ai>("ai");
-
-    vi.mocked(generateText).mockImplementationOnce((options) =>
-      actualGenerateText({ ...options, model }),
-    );
+    await answerOnceWith(draft);
 
     const { data } = await writeLessonDraft({
       activityTemplates: [],
@@ -251,5 +239,43 @@ describe(writeLessonDraft, () => {
     });
 
     expect(data.screens[0]).toMatchObject({ options: [{ picture: null }, { picture: null }] });
+  });
+
+  it("brings a long alt and a guess's extra wrong option within bounds instead of failing", async () => {
+    const alt = "word ".repeat(40).trim();
+
+    await answerOnceWith({
+      screens: [
+        {
+          image: { alt, prompt: "A pressure sensor on a pipe." },
+          kind: "hookGuess",
+          options: [
+            { isCorrect: false, text: "A" },
+            { isCorrect: true, text: "B" },
+            { isCorrect: false, text: "C" },
+            { isCorrect: false, text: "D" },
+            { isCorrect: false, text: "E" },
+          ],
+          question: "Which reading do you trust?",
+          reveal: "B, because it was calibrated.",
+          visual: null,
+        },
+      ],
+      summary: EMPTY_MAP,
+    });
+
+    const { data } = await writeLessonDraft({
+      activityTemplates: [],
+      chapterTitle: "Sensors",
+      courseTitle: "Instrumentation",
+      language: "en",
+      level: "intermediate",
+      spec: spec([screen("hook")]),
+    });
+
+    expect(data.screens[0]).toMatchObject({
+      image: { alt: expect.stringMatching(/^(?:word ){30,}word\u2026$/u) },
+      options: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
+    });
   });
 });

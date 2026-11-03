@@ -1,18 +1,14 @@
 import { createFixedScore, generateScore } from "./score";
 import { calculateScore } from "./score-calculation";
 import {
+  type CodeCheckResult,
   type ScoreCategory,
   type TaskScoreResult,
   type TestCase,
   getJudgeExpectations,
 } from "./types";
 
-export type CodeCheckResult = {
-  passed: number;
-  total: number;
-  problems: string[];
-  judgedOutput: string;
-};
+export { type CodeCheckResult } from "./types";
 
 const CODE_CHECKS_CATEGORY_ID = "codeChecks";
 const MIN_SCORE = 6;

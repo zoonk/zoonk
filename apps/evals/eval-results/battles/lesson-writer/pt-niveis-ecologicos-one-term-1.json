@@ -1,0 +1,473 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for total beginners\n      - The plan's hook is a guess, and a beginner's hook is a scene: a `hookText` showing the pond in one or two everyday sentences that end on an open question the lesson answers (how its living things fit together), never the guess's choices in words, and its picture of the pond\n      - Each explanation has at most one term in bold, two or three short sentences: on the screen about espécie, only espécie is bold, and organismo, taught in an earlier lesson, is recalled in plain words\n      - A species is living beings alike enough to reproduce together and have fertile offspring, never just \"related living beings\"\n      - Every picture is one scene of the same pond, its `alt` describing that same scene, the people in it adults\n      - One person at most carries the lesson (the plan names Murilo only in the application)\n      - The summary card is `nested` (organismo inside população inside comunidade inside ecossistema, smallest first), each idea with a short label and a sentence that names its level and reads on its own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T13:54:02.380Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All definitions are correct, including species with fertile offspring. Every check has one defensible answer with matching reasons.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook is a pond scene with an open question, and comunidade and ecossistema come after concrete pond details. The tone is warm and plain, with minor textbook phrasing.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Each screen has one bold term in short sentences, and organismo is recalled in plain words. The steps are clear.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks use the planned tempting misconceptions with good reasons, and the activity contrasts comunidade with ecossistema. Bases are appropriate.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook fits the lesson well and the application is concrete (Parque Barigui). It loses points for multiple named people beyond Murilo-only-in-application and a merged summary label.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "D is the only output whose hook ends on the question the lesson answers: how one toad relates to the water and plants. Content is accurate, the espécie screen bolds only espécie, and ideas arrive through the pond. However, it uses three people (Murilo in the hook, plus Sabrina and Cauê), which breaks the one-person rule. Its summary also merges organismo and espécie into one label.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Definitions are correct, the species definition includes fertile offspring, and checks are sound.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Examples come before rules on most screens and the sentences are short. However, the hook is a quiz-like question and the delivery is terse.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "There is one bold term per screen and the sentences are clear. The guess answer opening screen 2 is a little disjointed.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks hit the planned misconceptions with clear reasons, and the activity is good.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook question is the guess, not the lesson question. Murilo carries all checks instead of only the application.",
+              "score": 6,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "A is accurate and concise, and introduces each term right after a pond example. It follows the plan closely and its nested summary is clean. Its hook asks the guess question rather than the lesson's question, and screen 2 answers it ('A água não está viva...'). Murilo also appears in every check, not only the application.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Content is correct, including fertile offspring, and the checks have single right answers.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The phrasing is more textbook-like, with passive and definition-first sentences on several screens. The hook is a scene but asks the guess.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "There is one bold term per screen, but the sentences are longer and denser ('fatores físicos').",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "There are good distractors, including the tempting ones, and reasons explain each option. The activity is solid.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The cast use is correct and the application is concrete. However, the hook question is the guess rather than how the pond's life fits together.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "B is accurate and keeps Murilo only in the application, which is set concretely in Santarém. Its hook ends on the guess question, though, not the lesson question. The explanations also lean formal and definition-first ('é chamado de', 'Ao reunir... temos', 'Trata-se').",
+          "score": 7.4
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 19356,
+        "outputTokens": 2429,
+        "reasoningTokens": 1102
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All biological definitions, ecological levels, check options, reasons, and basis quotes are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is natural and conversational, and the hook sets a vivid scene ending on the big open question the lesson answers. However, screens 3, 5, and 7 state the abstract definition before giving the concrete pond example, which triggers the cap of 7.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Explanations are crystal clear for a beginner, bolding only one new term per screen and explaining 'aguapés' and fertile offspring in plain language.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks use concrete numbers and scenarios, include the required tempting misconceptions, and provide clear, helpful feedback.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It uses only Murilo across the lesson, grounds the application in a real Brazilian place (Lagoa da Pampulha, em Belo Horizonte), and adapts the hook to an open question. It loses a point because the first item in the nested summary card labels 'Organismo e espécie' together instead of keeping the label strictly to the nested level 'Organismo' and three sentences are used in the hook instead of one or two.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model C is the strongest overall, featuring a warm, engaging beginner voice, a realistic Brazilian application (Lagoa da Pampulha in Belo Horizonte), and the only hook that properly ends on an open question about how the living things and the pond fit together. Its main minor weaknesses are stating definitions before examples on screens 3, 5, and 7, and bundling 'espécie' into the 'Organismo' label on the nested summary card.",
+          "score": 8.95
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All scientific definitions, examples, checks, and basis quotes are accurate and defensible.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Model A reliably gives the concrete pond example before or with the rule on its explanation screens, though the prose is slightly dry and the hook asks a closed riddle ('O que nesse lago não está vivo...?') that has to be awkwardly answered at the start of screen 2.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short, only one term is bolded per explanation screen, and 'organismo' and 'aguapés' are explained in plain beginner words.",
+              "score": 10,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "All checks test understanding with good distractor reasons and accurate basis quotes, though the scenarios are slightly more bare-bones than Model C's.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The summary card and single character (Murilo) follow the rules, but the hook ends on the plan's closed guess rather than an open question about how the pond's living things fit together, and screen 9 uses a generic 'um lago' instead of naming a concrete place.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A follows the structural rules well—introducing examples before rules on screens 3, 5, and 7, using only one character (Murilo), and formatting the nested summary card cleanly. However, its hook asks the literal trivia riddle from the plan instead of an open question about how living things fit together, and its final application omits a concrete real-world place.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All biological concepts, classifications, and check explanations are accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screens 3, 5, and 7 state the formal definition before the concrete pond example (capping the score at 7), and the hook ends on a closed riddle ('Qual é?') that screen 2 never even answers.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The explanations use simple language, clarify what aguapés are in parentheses, and keep to one bolded term per screen.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks and activity effectively test the distinctions between levels and address the required misconceptions.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "While the application nicely names Lago Igapó in Londrina and the summary card is properly formatted, the lesson uses three different characters (Rosana, Cauê, Murilo) despite the rule that at most one person carries the lesson, and the hook asks the closed riddle instead of the open question on how the living things fit together.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model E has clear explanations and a well-grounded application in Londrina (Lago Igapó), but it violates several task expectations. It introduces three different characters (Rosana, Cauê, Murilo) when at most one person is allowed, leaves its closed hook question unanswered on screen 2, and puts definitions before examples on most explanation screens.",
+          "score": 8.45
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 12819,
+        "outputTokens": 1371,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As definições ecológicas estão corretas, incluindo descendentes férteis na explicação de espécie. As questões têm uma única resposta defensável e devolutivas cientificamente adequadas.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "“O lago não tem só sapos” cria uma transição concreta, e os aguapés usando água e luz preparam bem a definição de ecossistema. A tela de população ainda começa com uma formulação abstrata e relativamente longa.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Retoma organismo em linguagem simples, explica a reprodução fértil sem jargão e identifica aguapés como plantas aquáticas. As explicações mantêm um conceito novo por tela e destacam somente o termo central.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões exigem identificar erros de classificação e incluem as alternativas tentadoras previstas. As bases apontam para regras decisivas, e a atividade contrasta explicitamente comunidade e ecossistema.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Mantém a sequência planejada, imagens coerentes do lago e uma aplicação concreta no Parque Barigui. Entretanto, usa Murilo, Sabrina e Cauê, contrariando o limite de uma pessoa, e mistura organismo e espécie no primeiro nível do resumo.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "É o mais forte na progressão didática: apresenta comunidade e ecossistema por situações concretas antes de formular suas definições. Os principais desvios são o excesso de personagens e a inclusão de espécie no primeiro nível do resumo aninhado.",
+          "score": 8.45
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As definições, a soma de 40 e 25 sapos e as classificações estão corretas. A devolutiva distingue cuidadosamente duas populações que são parte da comunidade, sem confundi-las com todos os seres vivos do lago.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A contagem concreta dos sapos e a pergunta final do gancho ajudam a visualizar o problema. Contudo, população, comunidade e ecossistema começam pela regra antes do exemplo, acionando o teto para essa ordenação predominante.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Explica espécie por filhotes capazes de se reproduzir, identifica aguapés como plantas que boiam e separa claramente os quatro níveis. O vocabulário e as devolutivas são acessíveis ao iniciante.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões exploram os dois critérios de população e a diferença entre comunidade e ecossistema. As bases são decisivas, e o feedback da atividade explicita o que muda entre os dois níveis maiores.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "A aplicação na Lagoa da Pampulha é concreta, e todas as imagens mantêm o mesmo cenário. O gancho tem três frases em vez de uma ou duas, e o resumo acrescenta espécie ao nível que deveria representar apenas organismo.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Oferece explicações acessíveis, boas questões e excelente continuidade visual do mesmo lago. Fica atrás principalmente pela apresentação predominantemente definição-primeiro e por pequenos desvios no gancho e no resumo.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As definições principais e as respostas marcadas estão corretas. Na questão sobre sapos e aguapés, dizer que juntos “compõem uma comunidade” é menos preciso que dizer que fazem parte dela, pois a própria lição inclui outros seres vivos.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Predominam formulações de manual, como “Ao reunir todos os indivíduos” e “O conjunto de todas as populações”, antes dos exemplos. Expressões como “fatores físicos” e “vivos e não vivos integrados” tornam a voz menos cotidiana.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "A sequência dos níveis é compreensível e a fertilidade é explicada em palavras comuns. Porém, aguapés aparecem no texto sem serem identificados claramente como plantas, deixando uma ponte concreta importante dependente da imagem.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões trabalham erros reais e a atividade fornece o contraste solicitado. A base da questão sobre sapos e aguapés cita a definição de comunidade, quando a regra de população de uma única espécie decidiria a resposta mais diretamente.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respeita a ordem das telas, reserva Murilo à aplicação e apresenta os quatro níveis corretamente no resumo. O gancho, porém, continua perguntando qual elemento não vivo é indispensável, em vez de abrir a questão sobre como os seres do lago se organizam.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "Cumpre a estrutura e entrega um resumo aninhado limpo, mas exige mais esforço de leitura e mantém o gancho centrado na adivinhação original. As questões são úteis, embora uma base e algumas formulações sobre comunidade sejam menos precisas.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "As definições centrais estão corretas. Entretanto, afirmar que “Um único ser vivo não mostra as relações com a água e a luz” ensina uma impossibilidade falsa: essas relações podem ser observadas em um organismo, embora esse recorte não cubra o estudo de todos os seres do lago.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "A explicação de espécie parte dos sapos concretos e o contraste entre seres vivos e água é direto. Entretanto, três das quatro explicações introduzem a definição antes do exemplo, limitando a progressão de exemplo para regra.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "As frases são acessíveis, organismo é retomado corretamente e aguapés são explicados no momento em que aparecem. A distinção entre comunidade e ecossistema é explicitada tanto no texto quanto na atividade.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "As questões testam classificação e apresentam os distratores previstos, com bases pertinentes. A justificativa da alternativa organismo na aplicação é inadequada; deveria explicar a insuficiência do recorte, não negar a possibilidade de observar relações ambientais.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "A aplicação no Lago Igapó e o resumo aninhado atendem bem ao contexto. O gancho tem três frases e preserva a adivinhação sobre algo não vivo, enquanto Rosana, Cauê e Murilo violam o limite de uma pessoa conduzindo a lição.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "É direto, acessível e apresenta um bom contraste entre comunidade e ecossistema. Perde qualidade por manter um gancho de adivinhação, introduzir três personagens e usar uma justificativa cientificamente inadequada na aplicação.",
+          "score": 7.3
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 14387,
+        "outputTokens": 2830,
+        "reasoningTokens": 1034
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-niveis-ecologicos-one-term-1"
+}

@@ -1,0 +1,215 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese, for a curious adult (overview)\n      - No formulas, equations or notation anywhere; the idea is told as a story with everyday comparisons (a cloud, a blurred fan)\n      - Physically correct: the old orbit picture is wrong because a circling charge would radiate and spiral in; the electron is described by a cloud of where it's likely to be, and confinement costs energy\n      - Checks are light and fun but still make the learner use the idea, with reasons for every option\n      - The application ties the idea to something real (atoms and matter being stable, the learner's own body existing)\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T14:04:56.772Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "Nothing it states is wrong, and each check has one defensible answer. It omits the required physics of why the orbit picture is wrong (radiation and spiraling in), so the orbit is simply crossed out. The reason on the 'gira como um planeta' option is shallow.",
+              "score": 7,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook opens on a topic statement ('No átomo, o núcleo... atrai uma partícula'), not on something from everyday life. Most screens give the rule with no picturable example; only the sponge comparison helps, and there is no fan or cloud analogy. The tone is flat and encyclopedic.",
+              "score": 5,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short, but 'estado de menor energia' and 'arranjo mais estável' go unexplained. Why concentrating the electron costs energy is only named, never explained. The switch from orbit to cloud skips the reason the orbit fails.",
+              "score": 6,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks 4 and 6 have correct options that nearly repeat the screen-3 sentence, so they test recall rather than use. Some reasons are weak, such as 'A atração não precisa acabar...'. The application check has a null basis even though screen 3 clearly decides it.",
+              "score": 6,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "It uses the correct language variant, has no notation, follows the plan's screens, uses Jussara from the cast, and gives a one-sentence-per-idea summary. The hook is not grounded in everyday life. The phone application is generic and never ties stability to real matter or to the learner's own body.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "This is a correct but thin lesson in Brazilian Portuguese with no formulas. It follows the plan closely, yet it never says why the orbit picture fails: a circling charge would radiate and spiral inward. It is terse and textbook-like, and its checks mostly restate the screen-3 sentence.",
+          "score": 6.15
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 8606,
+        "outputTokens": 1203,
+        "reasoningTokens": 502
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All statements, checks, and feedback reasons are physically accurate for an overview level, though neither model mentions the classical radiation spiral from the top-level note because the screen briefs did not include it.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is warm and conversational ('Esqueça a bolinha...', 'como a do céu'), though screen 3 uses a generic comparison ('como algo que resiste a ficar confinado') instead of a concrete everyday object like a sponge, and the hook opens directly on the atom rather than an everyday scene.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Every term is explained simply as it arrives (including 'núcleo' and 'elétron' on screen 1), and sentences are short and easy to follow for an overview learner.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks test understanding with four well-crafted options and clear reasons, and screen 7 integrates all three required concepts (cloud, attraction, confinement cost) in the correct option. However, screen 6's basis quote only includes the sentence about attraction and omits the adjacent sentence about energy cost that decides the second half of the right answer, and screen 7 has a null basis when screen 5 clearly decides it.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows the overview level (no formulas), Brazilian Portuguese register, cast names (Kauã, Jussara), screen briefs, and one-sentence summary rules. However, the screen 7 application only mentions looking at a phone ('Kauã olha o celular') without naming a concrete place.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B is more conversational, engaging, and clearer for an overview learner, explaining terms like nucleus and electron right in the hook and contrasting the electron cloud with a cloud of water droplets in the sky. However, its screen 6 basis quote only captures half of the sentence needed to decide the full right answer, and like Model A, it follows the screen briefs closely rather than introducing the classical radiation spiral or a concrete everyday object on screen 3.",
+          "score": 8.45
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All physics explanations, options, and reasons are accurate for an overview level, though like Model B it follows the screen briefs and omits the classical radiation argument.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "While screen 3 nicely uses a concrete sponge comparison ('comprimir uma esponja'), most screens lift phrasing almost verbatim from the prompt briefs in a dry, textbook-like tone ('Alguém diz:', 'No átomo, o núcleo, que fica no centro, atrai uma partícula...').",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short and clear, though 'nuvem de matéria comum' on screen 2 and 'estado de menor energia' on screen 5 are left slightly more abstract than in Model B.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks have valid reasons and screen 6 has an exact basis quote that covers both parts of the correct answer. However, on screen 7 the question asks why electrons don't get squished rather than addressing the 'bolinhas' misconception in the correct option text, and screen 7 has a null basis.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the overview level and Brazilian Portuguese, uses a cast name (Jussara), and writes one-sentence summaries, but screen 7 lacks a concrete place and its correct option only covers attraction and cloud confinement without explicitly contrasting the 'bolinhas' picture.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A follows the screen briefs and includes a concrete comparison (a sponge) on screen 3, plus a complete basis quote on screen 6. However, its prose reads much closer to a dry textbook copy of the prompt briefs, and its final application check omits 'nuvem' from the correct option text while missing a concrete place.",
+          "score": 8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 8120,
+        "outputTokens": 1066,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "A explicação central da estabilidade e as respostas corretas são adequadas. Falta o mecanismo físico exigido para rejeitar a órbita clássica, e expressões como “o elétron é uma nuvem” enfraquecem a distinção entre o elétron e sua distribuição de probabilidade.",
+              "score": 7,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "O gancho começa descrevendo o átomo, não com uma cena cotidiana, e as explicações apresentam regras antes de exemplos concretos. “Algo que resiste a ficar confinado” não oferece uma comparação que o aprendiz consiga visualizar, embora a linguagem seja curta e direta.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "As telas são curtas e definem nuvem eletrônica de forma acessível. Entretanto, pedem que o aprendiz abandone a órbita sem explicar seu problema físico e aceite o custo de confinamento com uma comparação vaga, deixando lacunas importantes no encadeamento.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Há alternativas plausíveis, razões para todas elas e uma boa atividade de identificar o erro da repulsão. O primeiro teste apenas recupera a explicação anterior, várias justificativas descartam a órbita sem explicar por quê, e a aplicação tem basis nula apesar de a tela 5 fornecer uma frase decisiva.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Usa português brasileiro, evita fórmulas, mantém a ordem e os tipos de tela e encerra com uma frase por ideia no resumo. A aplicação ao celular é pertinente, mas o gancho não é uma cena cotidiana e falta a narrativa com comparações concretas exigida para este overview.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A sequência respeita as sete telas e apresenta corretamente a ideia central de atração versus custo de confinamento, com aplicação ao celular. Porém, falta explicar por que uma carga em órbita irradiaria energia e cairia em espiral, e a experiência permanece abstrata demais para uma introdução baseada em situações cotidianas.",
+          "score": 6.75
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 5548,
+        "outputTokens": 852,
+        "reasoningTokens": 314
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "pt-eletron-nucleo-overview-1"
+}

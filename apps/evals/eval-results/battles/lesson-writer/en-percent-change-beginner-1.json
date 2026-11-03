@@ -1,0 +1,473 @@
+{
+  "expectations": "\n      - MUST be in US English, for a beginner\n      - The plan's hook is a guess, and a beginner's hook is a scene: it turns the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) into a `hookText` of one or two sentences that ends on the question the lesson answers, with nothing to answer and no introduction\n      - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece\n      - Worked examples show every step with correct arithmetic, and the check after each one is a similar problem with less help\n      - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong\n      - The estimate-then-reveal activity makes the learner commit to a guess before the math, tied to the screen's idea\n      - The application is a realistic case (rent, salary, a sale) in a place the learner recognizes\n      - `exampleLineIdea` is set on the explanation that compares a change with the starting value, saying what in a learner's life it could connect to (a price they pay going up or down); a second one only on an explanation whose idea would need a different moment of their life, and none on the others\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T13:54:11.498Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All arithmetic is correct, and every check has one defensible answer. The mathCheck rounding and tolerance are fine.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "It uses a named learner, a sneaker scene and concrete dollars throughout. The voice is short and spoken, with a few formal titles.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "There is one idea per screen, and the recipe is explained piece by piece with a cents-per-dollar comparison. Steps are never skipped.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks include the divide-by-new trap and good reasons, and the activity checks the 25% answer. The second mathCheck misconception, a tenth of the change, is artificial.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The level is respected, the hook is a scene, and the application names a Seattle diner. exampleLineIdea is placed correctly, and the summary is clean.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "This is the most complete match to the plan. The hook is a scene with Leah that ends on a clean question, exampleLineIdea sits correctly on screen 3, and the activity commits the learner to a guess. The application is a Seattle diner, and its reasons explain each trap. The main weakness is one odd mathCheck distractor: \"(new − old) / 10\" is not a real misconception.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The math is correct throughout. The reverse-subtraction mistake yields +20 versus −20, which is a subtle distinction but defensible.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The examples are concrete, but the hook is a textbook-style word problem with no person or moment. Screen 3 is terse.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The core explanations are clear. The activity introduces \"percentage points\" with only a quick gloss, which adds a second new term late in the lesson.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Both traps are included, and the application has 4 good options. The mathCheck reasons are thin on why each mistake is tempting, and the activity's check tests a gap rather than the idea.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The level is fine, but the hook is barely a scene. The application says only \"a diner\" with no city.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "The explanations are solid and exampleLineIdea is placed correctly. However, the hook is a bare problem rather than a scene, and the application names no recognizable place. The activity's check drifts into \"percentage points\", a new term, instead of asking for the needed rise.",
+          "score": 7.25
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All calculations are correct, and each check has a single right answer.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The examples are concrete and the voice is friendly. The hook is wordy and closer to a yes/no problem statement than a scene.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The explanations are clear and complete, with a cents-per-dollar framing and a good drop-and-recovery screen.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The divide-by-new trap is present in both checks. The application gives away the intermediate steps, the 13% option is not a misconception, and the reasons rarely say why an option is tempting.",
+              "score": 6,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The application names Raleigh, but exampleLineIdea is misplaced, which breaks an explicit expectation. The plan's calculation brief for the application is not followed.",
+              "score": 6,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "The math is correct and the explanations are readable. However, exampleLineIdea is missing from the compare-with-start screen and placed on screen 8 instead. The application hands the learner the $2,700 and $2,970 steps rather than letting them calculate, and some distractors (13%) aren't real misconceptions.",
+          "score": 7.4
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 21017,
+        "outputTokens": 2217,
+        "reasoningTokens": 799
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All math, expressions, and option reasons are completely accurate. On Screen 8, it writes `50 ÷ 50 = 100%` without writing `× 100`, a small mathematical shorthand imprecision that caps the score at 8.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The voice is warm, conversational, and concrete throughout, anchoring the examples in Leah's everyday life without any cheesy filler or textbook stiffness.",
+              "score": 10,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Every step is explained clearly, and it proactively defines a 'share' on Screen 9 before using it. On Screen 8, it uses the phrase 'on a base of $50' without previously introducing 'base' as a synonym for starting value, capping clarity at 8.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks and distractor reasons are well-crafted, explaining both why wrong answers are tempting and why they fail. However, in the Screen 9 `guessReveal` activity, the follow-up check asks for the exact number (25%) that the activity's reveal just displayed, making it a pure recall check (capped at 8).",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows every plan brief and level constraint, including ending the `hookText` on the question, setting `exampleLineIdea` on the two appropriate explanation screens, and placing the application in a named Raleigh bakery.",
+              "score": 10,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model E is the strongest output across almost every dimension: it nails the beginner hook rule (ending directly on the question), sets `exampleLineIdea` on the two distinct explanation ideas, defines 'share' for a beginner, and grounds the application in a specific local workplace. Its only flaw is that the check inside the Screen 9 `guessReveal` activity asks for the exact same number (25%) that the reveal already showed.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All calculations, variables, and checks are mathematically sound. In Screen 9's activity JSON, `truth` includes an extra `\"explanation\":\"\"` field not in the template schema, and Screen 8 writes `$50 ÷ $50 = 100%` without `× 100`, warranting a minor deduction.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The tone is direct and engaging, using concrete examples throughout. However, Screen 1 ends with the cheesy/filler phrase 'Let's find out.' instead of stopping on the question.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Steps and formulas are broken down clearly, though Screen 3 drops the planned labeled visual for the formula and Screen 9 uses 'stock' without explaining what it is for a beginner.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Every check tests real understanding, includes the dividing-by-new-value trap with clear reasons explaining why it is tempting and wrong, and Screen 9's activity check gives a great transfer problem ($40 to $30).",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Violates the hook rule requiring `hookText` to end on the question the lesson answers (adds 'Let's find out.'), and misses the planned visual on Screen 3 and the highlighted $5 piece on Screen 2.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model B has the best follow-up check inside the Screen 9 activity, giving the learner a fresh transfer problem ($40 to $30) after the reveal. However, it violates the hook expectation by appending 'Let's find out.' after the question, misses the visual highlight on Screen 2 and the visual diagram on Screen 3, and leaves 'stock' unexplained for a beginner.",
+          "score": 8.15
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All arithmetic, formulas, and check answers are accurate, including writing `$50 ÷ $50 × 100 = 100%` completely on Screen 8.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The voice is noticeably drier and more impersonal than the other models, using generic items ('A movie ticket', 'A jacket', 'A video game') on most screens instead of building a lively scene.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "On Screen 3, the text describes the steps in words without actually showing `(new - old) ÷ old × 100` or explaining what `new - old` means in the text (leaving it only to the image). On Screen 9, it introduces a new technical distinction ('percentage points') inside the activity check.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "In Screen 5 and Screen 7, the wrong-option reasons state what the learner did ('You divided the change by the new salary, not the starting salary') without explaining why that trap is tempting, and Screen 9's check only asks the learner to subtract 20 from 25.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Ends the hook cleanly on the question, matches all visual briefs, and uses a realistic diner pay scenario on Screen 10.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model C follows the visual briefs and hook ending rule well, and its Screen 10 multiple-choice check nicely tests both the intermediate pay and the recovery percentage. However, it is much drier in tone, explains the formula in prose without showing the formula itself in the text of Screen 3, and introduces 'percentage points' inside the Screen 9 activity check just to ask a subtraction question.",
+          "score": 8.05
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 17693,
+        "outputTokens": 1537,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The calculations, correct answers, and explanations of the new-value denominator trap are accurate. The stock activity is explicitly labeled as an example.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The sneaker scene and ticket-versus-TV comparison make the lesson approachable and concrete. The recipe screen becomes more abstract instead of immediately connecting its cents-per-dollar explanation to the ticket's actual numbers.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Both worked examples explain the operations in order, and the recovery explanation explicitly includes multiplication by 100. However, the activity introduces a stock without explaining what that is to a beginner.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks require calculation, include the planned denominator traps, and provide useful corrective explanations. The activity's follow-up merely asks for the same 25% answer just revealed, limiting its evidence of understanding.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The two-sentence hook ends on its question, the screen sequence matches the plan, and the diner application tests both requested outcomes. The introduction would better meet the concrete-before-formula requirement by explaining the $5 change divided by the $20 starting price before presenting the general recipe.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-4-argon",
+          "reasoning": "A offers the strongest overall beginner experience, with a compliant scene-based hook, complete worked calculations, and a clear application that tests both the shortfall and the recovery percentage. Its main weaknesses are the abstract first introduction of the recipe and an activity check that repeats the revealed answer.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The numerical answers, generated calculation expressions, and recovery calculations are correct. The stock activity is labeled as example data, and each check has a defensible correct answer.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Leah's recurring examples and the cents-per-dollar interpretation give the lesson a friendly, concrete voice. The formula screen briefly shifts into a notation-led explanation rather than continuing with the ticket's actual dollars.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The formula explanation refers to a 'top' and 'bottom' although the displayed expression uses inline division, and the recovery calculation skips the bridge from a ratio of 1 to 100%. The unexplained stock terminology adds another avoidable beginner hurdle.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The salary and game checks target meaningful misconceptions, and the activity tests transfer with a new $40-to-$30 example. Some remediation anchors are weaker than available alternatives, particularly the final quote about the starting value changing rather than the sentence explaining the recovery calculation.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook has four sentences and ends with 'Let's find out' rather than the lesson's question. The application names a realistic workplace, but only asks for the recovery percentage instead of requiring the learner to find the intermediate pay and shortfall as planned.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "B is mathematically sound and has the strongest activity follow-up, which transfers the recovery idea to different numbers. It falls behind A because its hook violates the requested form and its formula explanation creates unnecessary beginner decoding work.",
+          "score": 8.15
+        },
+        {
+          "anonymousId": "Model E",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The arithmetic, denominator-trap explanations, and recovery percentages are correct. However, the invented share-price data is not explicitly labeled as an example, as required.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The recurring Leah examples, ticket-versus-TV comparison, and bakery setting make the lesson personable without forced enthusiasm. The initial recipe still arrives without a concrete numerical division connecting the dollar change to the starting price.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The worked examples are easy to follow, and the activity explains a share before using the idea. The recovery explanation compresses '50 ÷ 50 = 100%' instead of showing that the ratio is 1 and then converting it to a percent.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks include useful denominator, direction, and dollar-versus-percent misconceptions with relevant feedback. The activity follow-up repeats the exact revealed calculation rather than asking the learner to apply it to a new case.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook is three sentences rather than the required one or two, although it ends on the right question. The bakery application is realistic, but its question neither explicitly identifies the lowered pay as the recovery starting point nor asks the learner to find the intermediate amounts and shortfall.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "E is warm and accessible, with a particularly useful explanation of what a share is and a recognizable bakery application. Its activity lacks the required example-data labeling, and several small departures from the hook and application briefs keep it below the leaders.",
+          "score": 7.85
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The worked calculations, recovery percentages, and correct check answers are accurate. The activity explicitly identifies its numbers as example data.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The opening sale and ticket-versus-TV comparison are relatable. Later explanations become less situated: the recipe starts with the procedure, and the recovery screen switches to anonymous dollar amounts rather than returning clearly to the sneaker scene.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The worked ticket and jacket calculations are clear, but the introductory ticket screen omits the planned subtraction explanation. The recovery screen jumps from gaining $50 on $50 to 100% without showing the calculation, and the activity introduces 'base' without defining it.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The denominator traps are present, but the activity check simply repeats the revealed answer. The final 13% distractor has no clear misconception behind it, and its feedback only shows that it overshoots rather than explaining why a learner might choose it.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The hook meets the required scene-and-question form, and Raleigh supplies a concrete application setting. However, the required exampleLineIdea is missing from the starting-value explanation, and the application supplies the intermediate pay and shortfall instead of having the learner calculate them.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "google/gemini-3.8-flash",
+          "reasoning": "D preserves the required sequence and gets the mathematics right, but provides less instructional support at key transitions. It also omits the required primary exampleLineIdea, gives away much of the application, and has weaker activity and distractor feedback.",
+          "score": 7.75
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 18416,
+        "outputTokens": 3040,
+        "reasoningTokens": 1354
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "en-percent-change-beginner-1"
+}

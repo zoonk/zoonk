@@ -1,0 +1,215 @@
+{
+  "expectations": "\n      - MUST be in US English, for beginners\n      - The second screen's `explore` is a labeledDiagram whose `picture` is the heart seen from the front with no words in it, and whose parts are the right atrium, left atrium, right ventricle, left ventricle and septum, each named as the text names it\n      - The text explains that the heart is seen from the front, so its right side is on the viewer's left\n      - No screen has an `image`: the labeled diagram's picture is its own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T14:04:19.441Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All facts are correct, and each check has one defensible answer. The right ventricle's reason never says it pumps to the lungs, a small gap but nothing wrong is taught.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook states a fact instead of opening on something the learner has seen or felt. The explanation leads with definitions and has no everyday comparison, such as rooms or pumps. Apart from the leg and Naomi's ultrasound, the tone is textbook-like.",
+              "score": 5,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Atria, ventricles and septum all arrive on one screen with no everyday comparison. The text never says where the blood is received from or which side goes where. The front-view note is clear but brief.",
+              "score": 6,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Check 1 includes the planned tempting answer, but answering it largely means recalling the quoted sentence, and the right ventricle's reason doesn't explain where it actually pumps. Check 2 combines naming the wall with explaining why blood mixes, and its distractors are sensible. Both bases are correct.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The level and US English are fine, and the doctor ultrasound application is realistic. The hook drops the brief's guess of 2, 3 or 4 with a reveal of 4. The summary meets one sentence per idea.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "The content is accurate and follows the plan's structure. The front-view diagram, the right-on-your-left note and the septum application are all correct. However, the hook is a flat topic statement rather than the planned 2/3/4 guess, the explanation reads like a textbook with three new terms at once, and the first check mostly repeats a quoted sentence.",
+          "score": 6.55
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 8841,
+        "outputTokens": 1071,
+        "reasoningTokens": 440
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All biological facts, chamber names, locations, and check answers/reasons are completely accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Opens with a vivid everyday scene (Naomi's doctor pressing a stethoscope to her chest and hearing lub-dub) and compares chambers to 'hollow rooms' before introducing the technical terms.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Explains 'chambers' first as hollow rooms, clearly distinguishes top/bottom and left/right, and uses short, direct sentences appropriate for a beginner. Introduces multiple terms on screen 2 as required by the single-explanation plan, handling them as clearly as possible.",
+              "score": 9,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Both checks require applying the spatial and functional ideas rather than repeating text, and all distractor reasons directly address the underlying misconceptions. In Screen 3, the basis quote only covers the left/right reversal and misses the sentence stating the left ventricle pumps to the whole body.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Respects the beginner level, uses cast and place names naturally (Naomi, Caleb in Raleigh), and turns the hook into a `hookText` ending on the lesson's question. However, it violates the explicit constraint 'No screen has an `image`' (and Screen 3's `Visual: none` brief) by adding an `image` object on Screen 3.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B delivers a much warmer, more engaging beginner lesson that opens with a concrete scene (a stethoscope hearing lub-dub) and bridges technical terms with everyday analogies ('hollow rooms'). Its one notable flaw is including an image on Screen 3 when the task expectations and screen plan required no screen to have an `image`, though the image check itself is well-designed.",
+          "score": 8.95
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All anatomical facts, diagram labels, and check explanations are accurate and unambiguous.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Capped at 6 because it reads like a textbook: the hook opens with a dry topic statement ('Your heart has four spaces through which blood flows') instead of something from everyday life, and Screen 2 immediately lists definitions without an everyday analogy or concrete scene.",
+              "score": 6,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Sentences are short and clear, though it introduces 'chambers', 'atria', 'ventricles', and 'septum' all in one compact paragraph without an everyday comparison for chambers.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Capped at 8 because Screen 3 is nearly verbatim recall of the sentence 'The left ventricle pumps blood to the whole body' (adding only 'Your heart sends blood to your leg'). Screen 4's options are also overly telegraphic ('Septum: blood can cross the hole.').",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows all structural constraints including `image: null` across all screens, `hookText` ending on a question, and one-sentence summary points. However, Screen 4's application ('During a heart ultrasound, Naomi’s doctor...') fails to name a concrete place as required.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model A follows all structural constraints strictly, including keeping `image: null` on every screen and properly configuring the `labeledDiagram`. However, its tone is dry and textbook-like—opening with a flat statement rather than an everyday scene—and its first check borders on simple recall.",
+          "score": 8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 7632,
+        "outputTokens": 982,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The chamber locations, pumping roles, and septum explanation are correct, and both checks have one defensible answer. Saying a doctor finds a hole simply by listening overstates what a stethoscope establishes; it can detect a suggestive murmur.",
+              "score": 8,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Naomi's heartbeat exam provides a concrete opening, and the rooms comparison makes the anatomy approachable. The explanation then becomes a compressed list of anatomical facts rather than introducing the roles through a specific example.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The front-view reversal is explained plainly, and the rooms-and-wall comparison helps. However, one screen introduces chambers, atria, ventricles, and septum together, while the next screen changes the numbering of the same chambers, adding avoidable beginner confusion.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks require spatial identification and application of the septum's function, with useful misconception-based feedback. The first check's basis quotes only the viewing orientation, not the sentence identifying the left ventricle as the chamber that sends blood to the body.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The output follows the four-screen sequence, uses a noninteractive hook, and ends with one-sentence summary ideas; the Raleigh doctor scenario is concrete. However, screen three contains an explicitly prohibited image, and the hook delays the planned immediate reveal of four chambers until the explanation.",
+              "score": 7,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The lesson provides a relatable hook, mostly accurate anatomy, and a useful application about the septum. However, it violates the explicit no-image requirement, changes diagram numbering between screens, and gives the chamber question a basis that does not establish which chamber pumps blood to the body.",
+          "score": 7.65
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 5803,
+        "outputTokens": 784,
+        "reasoningTokens": 310
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "en-heart-chambers-explore-1"
+}

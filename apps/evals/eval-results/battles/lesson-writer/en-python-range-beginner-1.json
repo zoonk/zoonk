@@ -1,0 +1,215 @@
+{
+  "expectations": "\n      - MUST be in US English, for beginners who have written a line of Python but no loops yet\n      - range(start, stop) is explained as stopping before stop, with the count being stop minus start, before the learner is asked to use it\n      - The code runner's starter loop really stops one number early, the solution changes only the loop line, and the expected output is exactly what the solution prints (1 to 5, one per line)\n      - The runner's mistakes give feedback on what each likely wrong output means (0 to 4, or stopping at 4)\n      - Checks use the classic trap of counting the stop value, and the countdown application keeps the same rule\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - At `overview` and `beginner` without exams or class material, the hook is a `hookText` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    \n\nSCORE CATEGORIES:\n\n### Accuracy\n- Category ID: `accuracy`\n- Weight: 25%\n- Expectations: Audit accuracy like a subject expert. Every fact, number, calculation, formula and notation must be correct, every check must have exactly one defensible right answer, and every reason must match its option. Data must be real or labeled as an example. Score at most 6 for any error that teaches something wrong or marks a wrong answer right; at most 8 for a small imprecision a learner wouldn't notice.\n\n### Engaging, not a textbook\n- Category ID: `teacher`\n- Weight: 25%\n- Expectations: Audit how it feels to learn from, as a learner who would rather watch a great teacher on YouTube than read a textbook. The hook opens on something from everyday life the learner has seen, felt or done, not a definition or a topic statement. Each idea arrives through one brief, specific example the learner can picture (a named situation, real numbers, a familiar object or moment) before or with its rule, and hard ideas get an everyday comparison. The voice talks to the learner in spoken, everyday words and short sentences, and each screen gives a reason to read the next (a question, a surprise, a contrast). Warm and direct, never cheesy: no \"Great job!\", \"Let's dive in\", forced jokes or exclamation marks for energy. Score at most 6 when it reads like a textbook or an encyclopedia (definitions first, passive voice, abstract nouns, \"it is important to note\"); at most 7 when most screens state a rule before any example, or for cheesy filler; at most 8 for one stretch of textbook tone or one generic example (\"a company\", \"a person\", \"product X\") where a specific one would teach.\n\n### Clarity\n- Category ID: `clarity`\n- Weight: 20%\n- Expectations: Audit clarity for the stated level. Each screen teaches one idea in short sentences. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several; at most 6 when a learner at this level couldn't follow.\n\n### Checks & feedback\n- Category ID: `checks`\n- Weight: 15%\n- Expectations: Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick (\"you started with the right question\", \"you got it\"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.\n\n### Level, hook & application\n- Category ID: `fitAndApplication`\n- Weight: 15%\n- Expectations: Audit fit and relevance. The level is respected (overview: no formulas or notation; beginner: words a 12-year-old follows, a formula only after the intuition; advanced: precise and complete). The hook opens with the idea (no \"In this lesson\", no recap, no greeting). Examples come from the learner's world in the lesson's language and country. The application is a realistic situation naming a concrete place where the idea shows up. No filler, history or \"why this matters in general\". The lesson follows its plan's briefs. The summary states each idea in one sentence. Score at most 6 for formulas in an overview or wrong language variant; at most 8 for one slip; at most 7 for several.",
+  "judgedAt": "2026-11-03T14:04:18.694Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All facts are correct: range(2, 6) prints 2–5, and the starter code really prints 1–4. The solution changes only line 1, and the expected output matches what it prints. The answer stop - step = stop + 1 is correct for every allowed value.",
+              "score": 9,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The hook uses a named person and a concrete bug, ending on a question. The explanation, though, reads like compact rule text in one long paragraph, without spoken warmth or a hook to read on. The kitchen timer is a nice specific touch.",
+              "score": 7,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "One screen carries several new ideas: how a for-loop assigns n, the range() rule, 'stop', and the count rule. That is heavy for learners with no loop experience. The count rule ('subtract the start from the stop') gets no numeric example such as 6 − 1 = 5, and 'upward count by 1' hints at a step idea that hasn't been introduced yet.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The range(2, 6) check includes the named trap (6), and every option has an accurate reason. The runner gives specific feedback for both the 0–4 and 1–4 mistakes. The countdown applies the same rule with sensible distractors and a correct basis quote.",
+              "score": 8,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The lesson is in US English with a cast name and follows all five briefs in order. The hook has no greeting or recap, and the summary gives one sentence per idea. The kitchen-timer application is realistic, though it is a fairly thin setting.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "This is a correct, plan-faithful lesson with a solid code runner, accurate checks, and a parameterized countdown whose formula holds across all variable ranges. The explanation screen is dense and terse for a learner who hasn't seen loops yet. It squeezes the for-loop, range(), the stop, and the count rule into one paragraph, and the count rule gets no worked example.",
+          "score": 7.8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1447,
+        "inputTokens": 9240,
+        "outputTokens": 1304,
+        "reasoningTokens": 588
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All facts, code snippets, and mathCheck expressions (`stop - step` for `-1`) are accurate and work as expected.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screen 2 starts with the concrete example `for n in range(1, 5): print(n)` before stating the general rule, and uses a clear, direct tone throughout. The final sentence on screen 2 ('for an upward count by 1, subtract the start from the stop to find the count') is slightly dry compared to showing the subtraction with numbers.",
+              "score": 9,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "Because the learner has written a line of Python but no loops yet, Model B wisely briefly explains how `for n in range(1, 5): print(n)` works on screen 2 before testing it on screen 3. However, screen 2 packs both the `for` loop mechanics, the stop rule, and the count rule into three dense sentences without showing the subtraction `6 - 1 = 5` concretely.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks test prediction and debugging with well-chosen distractors and clear reasons, and the codeRunner mistake feedback directly addresses both likely wrong outputs.",
+              "score": 9,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Fits the beginner level well, uses US English ('1 through 5'), and grounds the countdown application in a kitchen timer.",
+              "score": 9,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra",
+          "reasoning": "Model B is better suited for a beginner who has never written a loop before because it explains what `for n in range(1, 5): print(n)` actually does on screen 2 before asking the learner to read loop syntax in the check. Model A jumps from `range(1, 5)` on screen 2 straight into `for n in range(2, 6): print(n)` on screen 3 without ever explaining `for` or `n`.",
+          "score": 9.05
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "All Python behavior, range bounds, outputs, and explanations are accurate.",
+              "score": 10,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "Screen 2 states the abstract rule (`range(start, stop) counts from start up to...`) before giving the concrete example (`range(1, 5)`). Tone is otherwise warm, direct, and concrete.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The target learner has written a line of Python but no loops yet. Screen 1 defines a loop in passing, and screen 2 only explains `range(1, 5)` without showing a `for` loop, so when `for n in range(2, 6): print(n)` appears on screen 3, the `for n in` syntax is an unexplained step.",
+              "score": 8,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "Checks and codeRunner feedback are well-targeted, explain why tempting wrong answers fail, and give exact feedback on `0 to 4` and `1 to 4` outputs.",
+              "score": 10,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "Follows the screen briefs, uses a New Year's Eve countdown for the application, and summarizes each idea in one sentence, though `exampleLineIdea` on screen 2 leaves meta-text ('the learner deals with').",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A has clean prose and shows the `6 - 1 = 5` calculation clearly, but it forgets that the learner has never seen a loop before: screen 2 only shows `range(1, 5)` and never introduces the `for n in ...:` syntax that appears cold in the check on screen 3. It also leaves raw prompt instructions in `exampleLineIdea`.",
+          "score": 8.8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 8108,
+        "outputTokens": 1029,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "accuracy",
+              "reasoning": "The examples, correct options, and countdown answer are mathematically correct. However, expectedOutput omits the final newline that Python prints, and the summary’s unrestricted claim that range gives stop minus start numbers is false for the countdown just introduced.",
+              "score": 6,
+              "label": "Accuracy",
+              "weight": 25
+            },
+            {
+              "categoryId": "teacher",
+              "reasoning": "The missing-number question creates curiosity, and the language is short and direct. However, the hook opens on writing code rather than a familiar everyday experience, and the explanation leads with notation and a rule instead of a concrete situation.",
+              "score": 8,
+              "label": "Engaging, not a textbook",
+              "weight": 25
+            },
+            {
+              "categoryId": "clarity",
+              "reasoning": "The excluded stop value, subtraction example, and countdown’s -1 are explained clearly. But beginners encounter for n in, print(n), and the indented loop body without an explanation of how n receives each number or how the repeated line works.",
+              "score": 7,
+              "label": "Clarity",
+              "weight": 20
+            },
+            {
+              "categoryId": "checks",
+              "reasoning": "The checks test prediction and transfer, include the classic inclusive-stop trap, and provide useful reasons with relevant earlier-screen references. The runner also diagnoses both requested mistakes, but its expected and mistake-output strings omit Python’s trailing newline, undermining the required exact-output matching.",
+              "score": 7,
+              "label": "Checks & feedback",
+              "weight": 15
+            },
+            {
+              "categoryId": "fitAndApplication",
+              "reasoning": "The output uses US English, preserves all five planned screen kinds and their order, supplies a noninteractive question-ending hook, and ends with one sentence per summary idea. The New Year’s Eve countdown is concrete and relevant, but the opening coding scenario does not provide the familiar everyday entry point expected for this beginner audience.",
+              "score": 8,
+              "label": "Level, hook & application",
+              "weight": 15
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The lesson follows the planned sequence and correctly teaches the excluded stop value through prediction, repair, and countdown tasks. Its main weaknesses are the runner’s nonexact output strings and insufficient explanation of loop syntax for learners who have never used loops.",
+          "score": 7.15
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 5861,
+        "outputTokens": 751,
+        "reasoningTokens": 272
+      }
+    }
+  ],
+  "taskId": "lesson-writer",
+  "testCaseId": "en-python-range-beginner-1"
+}
