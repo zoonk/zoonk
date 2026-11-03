@@ -32,6 +32,7 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.reduce
+import com.zoonk.android.feature.player.model.GuessOption
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -52,6 +53,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonMapIdeasInner
 import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -154,6 +156,8 @@ class LessonPlayerScreenshots {
             },
             "hook" to { at() },
             "hook-dont-know" to { at(LessonAction.DontKnow("hook")) },
+            "hook-drawing" to { played(listOf(DRAWING_HOOK, explanationStep("idea"))) },
+            "hook-four-options" to { played(listOf(FOUR_OPTION_HOOK, explanationStep("idea"))) },
             "map-stored" to { onMap(STORED_MAP, "Receitas regulares e eventuais") },
             "map-hub" to { onMap(HUB_MAP, "Características dos seres vivos") },
             "map-nested" to { onMap(NESTED_MAP, NESTED_TITLE) },
@@ -277,15 +281,23 @@ class LessonPlayerScreenshots {
         map: LessonMap,
         title: String,
         vararg actions: LessonAction,
+    ) = played(
+        listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title))),
+        LessonAction.Continue,
+        *actions,
+    )
+
+    private fun played(
+        lessonSteps: List<LessonStep>,
+        vararg actions: LessonAction,
     ): LessonPlayerState {
-        val read = listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title)))
         val started =
             reduce(
-                LessonPlayerState.initial(LESSON_ID, read, now = 0),
+                LessonPlayerState.initial(LESSON_ID, lessonSteps, now = 0),
                 LessonAction.RunStarted(RUN_ID, emptyList(), HyperdriveStart(emptySet(), 0), Instant.parse("2026-10-28T10:00:00Z")),
                 0,
             )
-        return (listOf(LessonAction.Continue) + actions).fold(started) { state, action -> reduce(state, action, 0) }
+        return actions.fold(started) { state, action -> reduce(state, action, 0) }
     }
 
     private fun completion(json: String) = ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), json)
@@ -440,6 +452,34 @@ private val NESTED_MAP =
     )
 
 private const val API_FILES = "http://localhost/v1/files"
+
+private val FOUR_OPTION_HOOK =
+    hookGuessStep("hook").let { step ->
+        val guess = (step.content as StepContent.Guess).content
+        step.copy(
+            content =
+                StepContent.Guess(
+                    guess.copy(
+                        question = "A food truck costs R$ 40,000 and its owner still owes R$ 30,000 on it. How much of it is really hers?",
+                        options =
+                            listOf("R$ 40,000", "R$ 10,000", "R$ 70,000", "R$ 30,000").mapIndexed { index, text ->
+                                GuessOption(
+                                    "o$index",
+                                    index == 1,
+                                    text,
+                                )
+                            },
+                    ),
+                ),
+            image = StepImage("scene", "$API_FILES/scene.png", "A food truck parked on a street", 1536, 1024),
+        )
+    }
+
+private val DRAWING_HOOK =
+    hookGuessStep("hook").copy(
+        imagePending = true,
+        picture = ScreenPicture(alt = "A food truck parked on a street", required = false),
+    )
 
 private val RIDERSHIP: StepVisual =
     ApiJson.decodeFromString(

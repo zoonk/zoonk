@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -202,22 +201,12 @@ internal fun GuessHookView(
                 )
             }
         },
-        dontKnow = {
-            if (part.showsTurn && result == null) {
-                GhostAction(
-                    R.drawable.ic_help,
-                    stringResource(R.string.player_dont_know_yet),
-                    enabled = !locked,
-                ) { actions.dontKnow(step.id) }
-            }
-        },
     )
 }
 
 /**
  * The hook's picture comes first. In one column of [viewHeight] it gives up height on a short view,
- * down to [MIN_YIELDED_PICTURE], so the question and its options stay in view. It always leaves room
- * for "I don't know yet", which the feedback takes once the answer shows.
+ * down to [MIN_YIELDED_PICTURE], so the question and its options stay in view.
  */
 @Composable
 private fun HookScene(
@@ -226,24 +215,19 @@ private fun HookScene(
     picture: @Composable () -> Unit,
     question: @Composable () -> Unit,
     options: @Composable () -> Unit,
-    dontKnow: @Composable () -> Unit,
 ) {
-    val actionRoom = LocalMinimumInteractiveComponentSize.current
-
-    Layout(listOf(chip, picture, question, options, dontKnow), Modifier.fillMaxWidth()) { slots, constraints ->
+    Layout(listOf(chip, picture, question, options), Modifier.fillMaxWidth()) { slots, constraints ->
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val partGap = QUESTION_PART_SPACING.roundToPx()
         val sceneGap = QUESTION_SPACING.roundToPx()
-        val (chips, pictures, questions, optionList, actions) = slots
-        val (chipParts, questionParts, optionParts, actionParts) =
-            listOf(chips, questions, optionList, actions).map { part -> part.map { it.measure(loose) } }
+        val (chips, pictures, questions, optionList) = slots
+        val (chipParts, questionParts, optionParts) = listOf(chips, questions, optionList).map { part -> part.map { it.measure(loose) } }
         val others =
-            chipParts.sumOf { it.height } + questionParts.sumOf { it.height } + optionParts.sumOf { it.height } +
-                partGap * 2 + sceneGap * 2 + actionRoom.roundToPx()
+            chipParts.sumOf { it.height } + questionParts.sumOf { it.height } + optionParts.sumOf { it.height } + partGap * 2 + sceneGap
         val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
         val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
         val rows =
-            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to sceneGap, actionParts to 0)
+            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to 0)
                 .filter { (parts, _) -> parts.any { it.height > 0 } }
         val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
 
@@ -525,7 +509,7 @@ internal fun TypedAnswerView(
                     if (!screen.canExplainFirst) {
                         GhostAction(R.drawable.ic_help, stringResource(R.string.player_dont_know_yet)) { actions.dontKnow(step.id) }
                     }
-                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), onClick = actions::skipWriting)
+                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), actions::skipWriting)
                 }
             }
         }
@@ -707,7 +691,7 @@ internal fun ExplainFirstButton(
     actions: StepActions,
 ) {
     if (screen.canExplainFirst) {
-        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), onClick = actions::explainFirst)
+        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), actions::explainFirst)
     }
 }
 
@@ -716,12 +700,11 @@ internal fun ExplainFirstButton(
 internal fun GhostAction(
     icon: Int,
     label: String,
-    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val inset = ButtonDefaults.TextButtonWithIconContentPadding.calculateStartPadding(LocalLayoutDirection.current)
 
-    TextButton(onClick = onClick, enabled = enabled, modifier = Modifier.offset(x = -inset)) {
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset)) {
         Icon(painterResource(icon), contentDescription = null, modifier = Modifier.padding(end = 8.dp))
         Text(label)
     }

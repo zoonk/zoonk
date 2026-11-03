@@ -81,14 +81,44 @@ class LessonPlayerReducerTest {
     @Test
     fun revealsTheGuessWithoutAPickOrAVerdictWhenTheLearnerDoesNotKnowYet() {
         val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
-        val shown = play(steps, LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")), LessonAction.DontKnow("hook"))
+        val shown = play(steps, LessonAction.DontKnow("hook"))
 
         assertEquals(LessonPhase.Feedback, shown.phase)
         assertNull(shown.answers["hook"])
         assertEquals(StepResult(isCorrect = false, correctAnswer = "No", feedback = "No, and here's why."), shown.results["hook"])
         assertEquals(emptyMap<String, Boolean>(), shown.firstVerdicts)
+        assertEquals(emptyList<Miss>(), shown.misses)
         assertEquals(emptyList<String>(), shown.skippedWritingStepIds)
+        assertEquals(Segment.Read, shown.screen().segments.first())
         assertEquals("e1", shown.then(LessonAction.Continue).currentId)
+    }
+
+    @Test
+    fun offersIDontKnowYetUntilAGuessIsPickedThenSeeTheAnswerThenContinue() {
+        val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
+        val fresh = play(steps)
+
+        assertEquals(PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet), fresh.screen().primary)
+
+        val picked = fresh.then(LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")))
+        assertEquals(PrimaryAction(isCheck = true, label = PrimaryLabel.SeeAnswer), picked.screen().primary)
+        assertEquals(
+            PrimaryLabel.DontKnowYet,
+            picked
+                .then(LessonAction.SelectAnswer("hook", null))
+                .screen()
+                .primary
+                ?.label,
+        )
+
+        assertEquals(
+            PrimaryLabel.Continue,
+            fresh
+                .then(LessonAction.DontKnow("hook"))
+                .screen()
+                .primary
+                ?.label,
+        )
     }
 
     @Test

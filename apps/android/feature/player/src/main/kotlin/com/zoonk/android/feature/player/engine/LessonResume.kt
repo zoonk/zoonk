@@ -66,7 +66,7 @@ internal fun LessonPlayerState.revealAnswer(stepId: String): LessonPlayerState {
 
         is StepContent.Guess -> {
             val answer = revealGuess(step, optionId = null) ?: return this
-            shown.copy(answers = answers - stepId, results = results + (stepId to answer))
+            shown.copy(results = results + (stepId to answer))
         }
 
         else -> {

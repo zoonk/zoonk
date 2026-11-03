@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -331,11 +333,14 @@ fun LessonPlayer(
                 }
 
                 override fun runPrimary() {
-                    viewModel.state.value
-                        ?.screen()
-                        ?.primary
-                        ?.takeIf { it.enabled }
-                        ?.let { if (it.isCheck) viewModel.check() else viewModel.dispatch(LessonAction.Continue) }
+                    val screen = viewModel.state.value?.screen() ?: return
+                    val primary = screen.primary?.takeIf { it.enabled } ?: return
+
+                    when {
+                        primary.label == PrimaryLabel.DontKnowYet -> screen.step?.let { dontKnow(it.id) }
+                        primary.isCheck -> viewModel.check()
+                        else -> viewModel.dispatch(LessonAction.Continue)
+                    }
                 }
 
                 override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
@@ -900,11 +905,21 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus)) {
+        val label: @Composable RowScope.() -> Unit = {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }
             Text(stringResource(primary.label.text()))
+        }
+        if (primary.label == PrimaryLabel.DontKnowYet) {
+            FilledTonalButton(
+                onClick = actions::runPrimary,
+                enabled = primary.enabled,
+                modifier = width.focusRequester(primaryFocus),
+                content = label,
+            )
+        } else {
+            Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus), content = label)
         }
         ask()
     }
@@ -916,6 +931,7 @@ private fun PrimaryLabel.text(): Int =
         PrimaryLabel.Checking -> R.string.player_action_checking
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
+        PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet
         PrimaryLabel.Next -> R.string.player_action_next
         PrimaryLabel.NextStep -> R.string.player_action_next_step
         PrimaryLabel.SeeAnswer -> R.string.player_action_see_answer
