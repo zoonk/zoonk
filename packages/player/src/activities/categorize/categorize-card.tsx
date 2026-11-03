@@ -2,6 +2,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
+import { handDragId } from "./categorize-drag-ids";
 
 function CategorizeCardFace({
   isHeld,
@@ -10,7 +11,10 @@ function CategorizeCardFace({
   isHeld: boolean;
   item: { id: string; text: string };
 }) {
-  const { dragProps, isDragging } = useActivityDraggable({ disabled: !isHeld, id: item.id });
+  const { dragProps, isDragging } = useActivityDraggable({
+    disabled: !isHeld,
+    id: handDragId(item.id),
+  });
 
   return (
     <p

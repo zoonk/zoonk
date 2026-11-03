@@ -191,4 +191,28 @@ describe("dragging activity items with a finger", () => {
       .element(sortedCard({ group: "New substance", item: "Burning wood" }))
       .toBeVisible();
   });
+
+  it("categorize: a number key that sorts the held last card before it lifts wins over the drag", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+
+    // Paused, the page's hold timer lifts the card only after the key has sorted it.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+    try {
+      const finger = await holdFinger(page.getByText("Burning wood", { exact: true }));
+      await pressOnPage("1");
+      vi.runOnlyPendingTimers();
+      await slideFinger(finger, page.getByRole("region", { name: "Same substance" }));
+      await liftFinger();
+      vi.runOnlyPendingTimers();
+    } finally {
+      vi.useRealTimers();
+    }
+
+    await expect
+      .element(sortedCard({ group: "New substance", item: "Burning wood" }))
+      .toBeVisible();
+  });
 });

@@ -13,6 +13,7 @@ import { Check, ChevronsUpDown, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
+import { rowDragId } from "./categorize-drag-ids";
 
 type Group = { id: string; label: string };
 
@@ -66,7 +67,7 @@ export function CategorizeMoveRow({
 }) {
   const { dragProps, isClickAfterDrag, isDragging } = useActivityDraggable({
     from: groupId,
-    id: itemId,
+    id: rowDragId(itemId),
   });
 
   return (

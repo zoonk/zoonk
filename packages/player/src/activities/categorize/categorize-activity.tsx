@@ -10,6 +10,7 @@ import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity
 import { ActivityDragDrop } from "../_components/activity-drag-drop";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
+import { handDragId, rowDragItem } from "./categorize-drag-ids";
 import {
   type SortState,
   placementsAnswer,
@@ -159,10 +160,12 @@ export function CategorizeActivity({
     document.querySelector<HTMLElement>(`#${CSS.escape(rowId(itemId))}`)?.focus();
   }
 
-  function drop(itemId: string, groupId: string, from: string | undefined) {
-    if (from) {
-      move(itemId, groupId);
-    } else if (itemId === card?.id) {
+  function drop(dragId: string, groupId: string) {
+    const rowItem = rowDragItem(dragId);
+
+    if (rowItem) {
+      move(rowItem, groupId);
+    } else if (card && dragId === handDragId(card.id)) {
       sort(groupId);
     }
   }

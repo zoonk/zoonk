@@ -4,7 +4,6 @@ import {
   type CollisionDetection,
   DndContext,
   type DragEndEvent,
-  type DragStartEvent,
   MouseSensor,
   TouchSensor,
   pointerWithin,
@@ -49,13 +48,11 @@ export function ActivityDragDrop({
   children: React.ReactNode;
   /** Lands no drop, even from a piece lifted before. */
   disabled?: boolean;
-  /** `from` is the target the piece sat on when it was lifted, if any; the piece may have moved since. */
-  onDrop: (itemId: string, targetId: string, from: string | undefined) => void;
+  onDrop: (itemId: string, targetId: string) => void;
   /** Ignores targets the piece only overlaps, for pieces so big that overlap isn't where the learner aims. */
   underPointerOnly?: boolean;
 }) {
   const id = useId();
-  const liftedFrom = useRef<string>(undefined);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: POINTER_DISTANCE } }),
@@ -64,16 +61,9 @@ export function ActivityDragDrop({
     }),
   );
 
-  function handleDragStart({ active }: DragStartEvent) {
-    const from: unknown = active.data.current?.from;
-    liftedFrom.current = typeof from === "string" ? from : undefined;
-  }
-
   function handleDragEnd({ active, over }: DragEndEvent) {
-    const from = liftedFrom.current;
-
-    if (!disabled && over && over.id !== from) {
-      onDrop(String(active.id), String(over.id), from);
+    if (!disabled && over && over.id !== active.data.current?.from) {
+      onDrop(String(active.id), String(over.id));
     }
   }
 
@@ -83,7 +73,6 @@ export function ActivityDragDrop({
       collisionDetection={underPointerOnly ? pointerWithin : dropUnderPointer}
       id={id}
       onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
       sensors={sensors}
     >
       {children}
