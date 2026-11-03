@@ -1867,14 +1867,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "Deux colonnes de cartes. Choisis une carte à gauche et une à droite pour les associer. {count, plural, =0 {} one {# carte n’a pas de correspondance.} other {# cartes n’ont pas de correspondance.}} {matched, plural, one {# paire associée sur {total}.} other {# paires associées sur {total}.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "Manquées au premier essai"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
 msgid "<left></left> goes with <right></right>, not <guess></guess>."
 msgstr "<left></left> va avec <right></right>, pas avec <guess></guess>."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "kzygtu"
+msgid "Missed on the first try"
+msgstr "Manquées au premier essai"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2784,14 +2784,14 @@ msgid "Step {current} of {total}."
 msgstr "Étape {current} sur {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5SURVE"
-msgid "Right:"
-msgstr "Bonne réponse :"
-
-#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "LjV93h"
 msgid "Your first pick: <choice></choice>"
 msgstr "Ton premier choix : <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
+msgctxt "5SURVE"
+msgid "Right:"
+msgstr "Bonne réponse :"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

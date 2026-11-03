@@ -1,6 +1,7 @@
 import { normalizeLatexCommands } from "./latex-source";
 import {
-  ATTACHED_MARKS,
+  ACCENTS,
+  type Accent,
   BINARY_OPERATORS,
   FUNCTIONS,
   MINUS,
@@ -12,17 +13,7 @@ import {
   UNSPOKEN_COMMANDS,
   toDoubleStruck,
 } from "./math-symbols";
-
-export type MathWords = {
-  cubed: string;
-  fraction: (parts: { denominator: string; numerator: string }) => string;
-  power: (exponent: string) => string;
-  root: (radicand: string) => string;
-  squared: string;
-  subscript: (index: string) => string;
-};
-
-type Script = "normal" | "subscript" | "superscript";
+import { type MathWords, type Script, spokenRoot, spokenScript } from "./math-words";
 
 /** `plain` is the formula as drawn, which decides where operators get their spaces. */
 type Piece = { plain: string; spoken: string };
@@ -35,7 +26,7 @@ const EMPTY: Piece = { plain: "", spoken: "" };
 const OPERATOR_GAP = "\u2005";
 const SPACES = /\s+/gu;
 const COMMAND_NAME = /^\p{L}*/u;
-const LEADING_SPACES = /^ */u;
+const LEADING_SPACES = /^[ \t\r\n]*/u;
 
 function symbol(text: string): Piece {
   return { plain: text, spoken: SPOKEN_SYMBOLS.get(text) ?? text };
@@ -108,66 +99,27 @@ function readTextArgument({ at, source }: { at: number; source: string }) {
   return { end: close + 1, text: source.slice(start + 1, close).replaceAll("\\", "") };
 }
 
-function readScriptArgument({
-  at,
-  reader,
-  style,
-}: {
-  at: number;
-  reader: Reader;
-  style: Script;
-}): Read {
-  const character = reader.source[at];
+function readArgument({ at, reader, style }: { at: number; reader: Reader; style: Script }): Read {
+  const start = skipSpaces({ at, source: reader.source });
+  const character = reader.source[start];
 
   if (character === undefined) {
-    return { end: at, piece: EMPTY };
+    return { end: start, piece: EMPTY };
   }
 
   if (character === "{") {
-    return readGroup({ from: at + 1, reader, style, until: "}" });
+    return readGroup({ from: start + 1, reader, style, until: "}" });
   }
 
   if (character === "\\") {
-    return readCommand({ at, reader, style });
+    return readCommand({ at: start, reader, style });
   }
 
-  return { end: at + 1, piece: symbol(character === "-" ? MINUS : character) };
-}
-
-function readArgument({ at, reader, style }: { at: number; reader: Reader; style: Script }): Read {
-  return readScriptArgument({ at: skipSpaces({ at, source: reader.source }), reader, style });
-}
-
-function spokenScript({
-  said,
-  style,
-  words,
-}: {
-  said: string;
-  style: Script;
-  words: MathWords;
-}): string {
-  if (said === "" || ATTACHED_MARKS.has(said)) {
-    return said;
-  }
-
-  if (style === "subscript") {
-    return ` ${words.subscript(said)} `;
-  }
-
-  if (said === "2") {
-    return ` ${words.squared} `;
-  }
-
-  if (said === "3") {
-    return ` ${words.cubed} `;
-  }
-
-  return ` ${words.power(said)} `;
+  return { end: start + 1, piece: symbol(character === "-" ? MINUS : character) };
 }
 
 function readScript({ at, reader, style }: { at: number; reader: Reader; style: Script }): Read {
-  const { end, piece } = readScriptArgument({ at, reader, style });
+  const { end, piece } = readArgument({ at, reader, style });
   const said = piece.spoken.trim();
 
   return {
@@ -191,11 +143,45 @@ function readFraction({ at, reader }: { at: number; reader: Reader }): Read {
   };
 }
 
-function readRoot({ at, reader, style }: { at: number; reader: Reader; style: Script }): Read {
-  const { end, piece } = readArgument({ at, reader, style });
-  const spoken = reader.words.root(piece.spoken.trim());
+function readRootIndex({ at, reader }: { at: number; reader: Reader }): Read | null {
+  const start = skipSpaces({ at, source: reader.source });
 
-  return { end, piece: { plain: `√${piece.plain}`, spoken: ` ${spoken} ` } };
+  return reader.source[start] === "["
+    ? readGroup({ from: start + 1, reader, style: "superscript", until: "]" })
+    : null;
+}
+
+function readRoot({ at, reader, style }: { at: number; reader: Reader; style: Script }): Read {
+  const index = readRootIndex({ at, reader });
+  const { end, piece } = readArgument({ at: index?.end ?? at, reader, style });
+
+  const spoken = spokenRoot({
+    index: index?.piece.spoken.trim() ?? "",
+    radicand: piece.spoken.trim(),
+    words: reader.words,
+  });
+
+  return {
+    end,
+    piece: { plain: `${index?.piece.plain ?? ""}√${piece.plain}`, spoken: ` ${spoken} ` },
+  };
+}
+
+function readAccented({
+  accent,
+  at,
+  reader,
+  style,
+}: {
+  accent: Accent;
+  at: number;
+  reader: Reader;
+  style: Script;
+}): Read {
+  const { end, piece } = readArgument({ at, reader, style });
+  const spoken = reader.words[accent](piece.spoken.trim());
+
+  return { end, piece: { plain: piece.plain, spoken: ` ${spoken} ` } };
 }
 
 function functionName({ end, name, source }: { end: number; name: string; source: string }) {
@@ -223,6 +209,12 @@ function readNamedCommand({
 
   if (STYLE_COMMANDS.has(name)) {
     return readArgument({ at: end, reader, style });
+  }
+
+  const accent = ACCENTS.get(name);
+
+  if (accent) {
+    return readAccented({ accent, at: end, reader, style });
   }
 
   switch (name) {
@@ -324,7 +316,7 @@ function readGroup({
   from: number;
   reader: Reader;
   style: Script;
-  until: "}" | null;
+  until: "]" | "}" | null;
 }): Read {
   const position = { at: from, piece: EMPTY };
 

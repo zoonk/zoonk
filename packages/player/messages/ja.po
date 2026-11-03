@@ -1867,14 +1867,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "カードが2列に並んでいます。左右の列から1枚ずつ選んで、ペアにします。{count, plural, =0 {} other {ペアにならないカードが#枚あります。}} {matched, plural, other {#組のペアができました（全{total}組）。}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "1回目に間違えた組み合わせ"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
 msgid "<left></left> goes with <right></right>, not <guess></guess>."
 msgstr "<left></left>と組になるのは<right></right>で、<guess></guess>ではありません。"
+
+#: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "kzygtu"
+msgid "Missed on the first try"
+msgstr "1回目に間違えた組み合わせ"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2784,14 +2784,14 @@ msgid "Step {current} of {total}."
 msgstr "{current}ステップ目です（全{total}ステップ）。"
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5SURVE"
-msgid "Right:"
-msgstr "正解："
-
-#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "LjV93h"
 msgid "Your first pick: <choice></choice>"
 msgstr "最初に選んだ答え：<choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
+msgctxt "5SURVE"
+msgid "Right:"
+msgstr "正解："
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

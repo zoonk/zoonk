@@ -1867,14 +1867,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "Kartlar iki sütun halinde. Eşleştirmek için soldan ve sağdan birer kart seç. {count, plural, =0 {} other {# kartın eşi yok.}} {matched, plural, other {# / {total} çift eşleştirildi.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "İlk denemede eşleşmeyenler"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
 msgid "<left></left> goes with <right></right>, not <guess></guess>."
 msgstr "<left></left> için doğru eşleşme <right></right>, <guess></guess> değil."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "kzygtu"
+msgid "Missed on the first try"
+msgstr "İlk denemede eşleşmeyenler"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2784,14 +2784,14 @@ msgid "Step {current} of {total}."
 msgstr "Adım: {current} / {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5SURVE"
-msgid "Right:"
-msgstr "Doğru:"
-
-#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "LjV93h"
 msgid "Your first pick: <choice></choice>"
 msgstr "İlk seçimin: <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
+msgctxt "5SURVE"
+msgid "Right:"
+msgstr "Doğru:"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

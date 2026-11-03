@@ -1,4 +1,5 @@
-import { type MathWords, speakMath } from "./math-speech";
+import { speakMath } from "./math-speech";
+import { type MathWords } from "./math-words";
 import { type RichInlineSegment } from "./rich-inline-segments";
 import { type RichBlock, parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
 

@@ -101,14 +101,20 @@ export const STYLE_COMMANDS = new Set([
   "mathsf",
   "mathtt",
   "mathscr",
-  "vec",
-  "hat",
-  "bar",
-  "overline",
-  "dot",
-  "tilde",
-  "widehat",
-  "overrightarrow",
+]);
+
+export type Accent = "bar" | "dot" | "hat" | "tilde" | "vector";
+
+/** Marks that change what a letter means: a mean (x̄), a vector (v⃗), a rate of change (ẋ). */
+export const ACCENTS = new Map<string, Accent>([
+  ["bar", "bar"],
+  ["dot", "dot"],
+  ["hat", "hat"],
+  ["overline", "bar"],
+  ["overrightarrow", "vector"],
+  ["tilde", "tilde"],
+  ["vec", "vector"],
+  ["widehat", "hat"],
 ]);
 
 const DOUBLE_STRUCK = new Map([

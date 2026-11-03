@@ -1,15 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { type MathWords } from "./math-speech";
+import { type MathWords } from "./math-words";
 import { parseRichBlocks } from "./rich-text-parser";
 import { speakRichBlocks, speakRichInline, speakSegments } from "./rich-text-speech";
 
 const words: MathWords = {
+  bar: (base) => `${base} bar`,
+  cubeRoot: (radicand) => `cube root of ${radicand}`,
   cubed: "cubed",
+  dot: (base) => `${base} dot`,
   fraction: ({ denominator, numerator }) => `${numerator} over ${denominator}`,
+  hat: (base) => `${base} hat`,
+  nthRoot: ({ index, radicand }) => `${index}th root of ${radicand}`,
   power: (exponent) => `to the power of ${exponent}`,
   root: (radicand) => `square root of ${radicand}`,
   squared: "squared",
   subscript: (index) => `sub ${index}`,
+  tilde: (base) => `${base} tilde`,
+  vector: (base) => `vector ${base}`,
 };
 
 function speak(text: string) {
@@ -66,6 +73,30 @@ describe(speakRichInline, () => {
     );
 
     expect(speak(String.raw`$v = 3\,\text{m/s}$`)).toBe("v = 3 m/s");
+  });
+
+  it("reads a script written with a space after its mark, as KaTeX draws it", () => {
+    expect(speak("$x^ 2 + a_ {1}$")).toBe("x squared + a sub 1");
+    expect(speak("$x^\t2$")).toBe("x squared");
+  });
+
+  it("names a root by its index", () => {
+    expect(speak(String.raw`$\sqrt[3]{8} = 2$`)).toBe("cube root of 8 = 2");
+
+    expect(speak(String.raw`$\sqrt[4]{16}$ and $\sqrt[n]{x}$`)).toBe(
+      "4th root of 16 and nth root of x",
+    );
+
+    expect(speak(String.raw`$\sqrt[2]{9}$`)).toBe("square root of 9");
+    expect(speak("$\\sqrt\t[3]{8}$")).toBe("cube root of 8");
+  });
+
+  it("says the accent that changes what a letter means", () => {
+    expect(
+      speak(String.raw`The mean $\bar{x}$ estimates $\mu$, and $\hat{p}$ estimates $p$.`),
+    ).toBe("The mean x bar estimates μ, and p hat estimates p.");
+
+    expect(speak(String.raw`$\vec{v} = \dot{x}$`)).toBe("vector v = x dot");
   });
 
   it("reads over-escaped commands from AI output as the formula drawn", () => {

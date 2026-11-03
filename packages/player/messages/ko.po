@@ -1867,14 +1867,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "카드가 두 열로 나뉘어 있어요. 왼쪽과 오른쪽에서 카드를 하나씩 골라 짝을 맞추세요. {count, plural, =0 {} other {짝이 없는 카드가 #개 있어요.}} {matched, plural, other {맞춘 짝은 #쌍이고, 전체는 {total}쌍이에요.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "첫 시도에서 틀린 짝"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
 msgid "<left></left> goes with <right></right>, not <guess></guess>."
 msgstr "<left></left>의 짝은 <right></right>이고, <guess></guess>은(는) 아니에요."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "kzygtu"
+msgid "Missed on the first try"
+msgstr "첫 시도에서 틀린 짝"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2784,14 +2784,14 @@ msgid "Step {current} of {total}."
 msgstr "현재 {current}단계예요(전체 {total}단계)."
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5SURVE"
-msgid "Right:"
-msgstr "정답:"
-
-#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "LjV93h"
 msgid "Your first pick: <choice></choice>"
 msgstr "처음 고른 답: <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
+msgctxt "5SURVE"
+msgid "Right:"
+msgstr "정답:"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"
