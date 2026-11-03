@@ -6222,65 +6222,6 @@
         }
       }
     },
-    "Guess first. It doesn't count." : {
-      "comment" : "Over a lesson's first question that asks for a guess",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rat erst mal. Das zählt nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero haz una suposición. No cuenta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essaie d’abord de deviner. Ça ne compte pas."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima prova a indovinare. Non conta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まずは予想してみてください。スコアには影響しません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "먼저 예상해 보세요. 점수에는 반영되지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najpierw zgadnij. Ten strzał się nie liczy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dê um palpite primeiro. Essa resposta não conta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce tahmin et. Sonucunu etkilemez."
-          }
-        }
-      }
-    },
     "Health" : {
       "comment" : "Course category for health.",
       "localizations" : {
@@ -6572,6 +6513,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kursu buradan itibaren kendi temponda, unutmadan önce tekrarlar yaparak sürdürmeni sağlar."
+          }
+        }
+      }
+    },
+    "Just a guess, it doesn't count" : {
+      "comment" : "Over a lesson's first question on its Library page, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur eine Vermutung, wird nicht gewertet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es solo una suposición, no cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste une supposition, ça ne compte pas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È solo un’ipotesi, non conta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予想なので、スコアには影響しません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예상일 뿐, 점수에는 반영되지 않아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To tylko strzał, nie wpływa na wynik"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só um palpite, não vale ponto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece bir tahmin, puanını etkilemez"
           }
         }
       }

@@ -7,6 +7,7 @@ namingStrategy: idiomatic
 # screen kind and activity template are index-named and far larger than what it reads.
 typeOverrides:
   schemas:
+    LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
     PlayableLibraryStep: LessonStep
 filter:

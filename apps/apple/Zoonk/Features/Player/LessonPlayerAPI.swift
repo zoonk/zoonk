@@ -8,7 +8,7 @@ struct PlayableLesson: Hashable, Sendable {
   let targetLanguage: String?
   let chapterTitle: String?
   let steps: [LessonStep]
-  let summaryIdeas: [String]
+  let summary: LessonSummary?
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
 }
 
@@ -104,7 +104,8 @@ struct LessonPlayerAPI: Sendable {
           PlayableLesson(
             id: lesson.id, title: lesson.title, language: lesson.language,
             targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapter?.title,
-            steps: lesson.steps, summaryIdeas: lesson.summaryIdeas,
+            steps: lesson.steps,
+            summary: lesson.summary?.value1,
             tutorSuggestions: ready.tutorSuggestions))
       case .case2(let outline):
         let lesson = outline.lesson

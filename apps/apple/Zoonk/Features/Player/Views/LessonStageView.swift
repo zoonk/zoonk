@@ -209,6 +209,7 @@ struct LessonStageView: View {
           \.lessonScreenHeight,
           proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
         )
+        .environment(\.lessonPageHeight, proxy.size.height)
         .environment(store.promptAudio)
         .onChange(of: pages != nil, initial: true) { _, isSpread in
           store.isSpread = isSpread
@@ -239,7 +240,7 @@ struct LessonStageView: View {
   }
 }
 
-private struct LessonPage<Content: View>: View {
+struct LessonPage<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
   let store: LessonPlayerStore
@@ -312,7 +313,8 @@ private struct LessonCheckNote: View {
 struct LessonActionBar: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
-  let step: LessonStep
+  /// Nil on the lesson map, which is read like a screen.
+  let step: LessonStep?
 
   @Environment(\.activityRenderers) private var activityRenderers
 
@@ -338,7 +340,7 @@ struct LessonActionBar: View {
         .keyboardShortcut(.leftArrow, modifiers: [])
       }
 
-      if step.isRead {
+      if let step, step.isRead {
         LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
@@ -352,13 +354,14 @@ struct LessonActionBar: View {
   @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-
-    Button {
+    let button = Button {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
       case .continueLesson:
         store.continueLesson()
+      case .dontKnow:
+        store.dontKnow()
       }
     } label: {
       HStack {
@@ -370,14 +373,19 @@ struct LessonActionBar: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.mainAction)
     .controlSize(.large)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
+
+    if primary.isProminent {
+      button.buttonStyle(.mainAction)
+    } else {
+      button.buttonStyle(.bordered)
+    }
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
-    guard case .activity(let content) = step.content else {
+    guard case .activity(let content) = step?.content else {
       return nil
     }
 
@@ -385,7 +393,7 @@ struct LessonActionBar: View {
   }
 
   private enum PrimaryKind {
-    case check, continueLesson
+    case check, continueLesson, dontKnow
   }
 
   private struct PrimaryAction {
@@ -393,9 +401,14 @@ struct LessonActionBar: View {
     let title: LocalizedStringResource
     var isBusy = false
     var isDisabled = false
+    var isProminent = true
   }
 
   private var primaryAction: PrimaryAction {
+    guard let step else {
+      return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
+    }
+
     switch state.phase {
     case .feedback:
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
@@ -406,7 +419,7 @@ struct LessonActionBar: View {
           "Checking your answer", table: "Player",
           comment: "The main button while a written answer is graded"),
         isBusy: true, isDisabled: true)
-    case .playing, .completed:
+    case .playing, .map, .completed:
       break
     }
 
@@ -423,7 +436,7 @@ struct LessonActionBar: View {
 
       return PrimaryAction(
         action: .continueLesson,
-        title: state.position == state.queue.count - 1
+        title: state.isLastScreen
           ? Self.continueTitle
           : LocalizedStringResource(
             "Next", table: "Player", comment: "Moves to the next screen of the lesson"))
@@ -452,6 +465,13 @@ struct LessonActionBar: View {
       }
     }
 
+    // The reveal often points at the picture, so it waits for one still being drawn, as the options do.
+    if state.revealsWithoutGuess {
+      return PrimaryAction(
+        action: .dontKnow, title: LessonWaysOut.dontKnowTitle,
+        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt), isProminent: false)
+    }
+
     let isReady = state.currentAnswer.map(isAnswerReady) ?? false
 
     return PrimaryAction(
@@ -472,7 +492,7 @@ struct LessonActionBar: View {
     case .reading(let words), .listening(let words):
       !words.isEmpty
     case .matchColumns(let pairs, _):
-      if case .language(let exercise, _) = step.content {
+      if case .language(let exercise, _) = step?.content {
         pairs.count == (exercise.content.pairs ?? []).count
       } else {
         false

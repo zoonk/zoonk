@@ -93,8 +93,10 @@ private struct CatalogLessonList: View {
           Label {
             if guess {
               Text(
-                "Guess first. It doesn't count.", tableName: "Courses",
-                comment: "Over a lesson's first question that asks for a guess")
+                "Just a guess, it doesn't count", tableName: "Courses",
+                comment:
+                  "Over a lesson's first question on its Library page, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points."
+              )
             } else {
               Text(
                 "Quick question", tableName: "Courses", comment: "Over a lesson's first question")
@@ -141,14 +143,14 @@ private struct CatalogLessonList: View {
       .listRowBackground(Color.clear)
 
       // Folded, as on main: an idea can answer the first question.
-      if !value.summaryIdeas.isEmpty {
+      if let ideas = value.summary?.ideas.map(\.text) {
         Section {
           DisclosureGroup {
-            ForEach(value.summaryIdeas, id: \.self) { CheckLine(text: $0) }
+            ForEach(ideas, id: \.self) { CheckLine(text: $0) }
           } label: {
             LabeledContent {
               Text(
-                "\(value.summaryIdeas.count) ideas", tableName: "Courses",
+                "\(ideas.count) ideas", tableName: "Courses",
                 comment: "How many ideas a lesson teaches")
             } label: {
               Text(

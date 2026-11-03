@@ -32,9 +32,7 @@ struct LessonWaysOut: View {
             store.dontKnow()
           } label: {
             Label {
-              Text(
-                "I don't know yet", tableName: "Player",
-                comment: "Shows a good answer to a written question")
+              Text(Self.dontKnowTitle)
             } icon: {
               Image(systemName: "questionmark.circle")
             }
@@ -57,6 +55,12 @@ struct LessonWaysOut: View {
     .buttonStyle(.borderless)
     .font(.subheadline)
   }
+
+  static let dontKnowTitle = LocalizedStringResource(
+    "I don't know yet", table: "Player",
+    comment:
+      "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+  )
 }
 
 struct LessonExampleLine: View {

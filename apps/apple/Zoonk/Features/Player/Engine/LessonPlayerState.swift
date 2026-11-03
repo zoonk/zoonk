@@ -6,6 +6,8 @@ struct LessonPlayerState: Equatable, Sendable {
     case playing
     case checking
     case feedback
+    /// Nothing is left to play: the lesson map shows before the lesson is saved.
+    case map
     case completed
   }
 
@@ -72,6 +74,7 @@ struct LessonPlayerState: Equatable, Sendable {
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
+  let hasMap: Bool
   private(set) var support: LessonSupport?
   private(set) var queue: [String]
   private(set) var position = 0
@@ -114,12 +117,13 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
-    lessonId: String, steps lessonSteps: [LessonStep], support: LessonSupport? = nil,
-    now: Date = .now
+    lessonId: String, steps lessonSteps: [LessonStep], hasMap: Bool = false,
+    support: LessonSupport? = nil, now: Date = .now
   ) {
     self.lessonId = lessonId
     steps = Dictionary(lessonSteps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     lessonOrder = lessonSteps.map(\.id)
+    self.hasMap = hasMap
     self.support = support
     queue = Self.orderOpening(lessonOrder, steps: steps, support: support)
     phase = lessonOrder.isEmpty ? .completed : .playing
@@ -169,17 +173,39 @@ struct LessonPlayerState: Equatable, Sendable {
     return false
   }
 
-  /// Previous is on every screen after the first while it's being played, not during "I know this".
+  /// Previous is on every screen after the first while it's being played, the map included, not
+  /// during "I know this". It returns only to a screen played in this sitting: a question answered
+  /// in an earlier one (a resumed run) or the earlier copy of one that came back has no result here,
+  /// so it would ask for an answer again.
   var canGoBack: Bool {
-    phase == .playing && position > 0 && quickCheck == nil && !isRefused
-      && !isEarlierCopy(at: position - 1)
+    guard phase == .playing || phase == .map, position > 0, quickCheck == nil, !isRefused else {
+      return false
+    }
+
+    let previous = queue[position - 1]
+    return results[previous] != nil || steps[previous]?.isRead == true
   }
 
-  /// A missed question that came back holds its attempt in the later copy, so the earlier one, its
-  /// result cleared, would show it unanswered and let the learner answer it twice.
-  private func isEarlierCopy(at index: Int) -> Bool {
-    let id = queue[index]
-    return results[id] == nil && queue[(index + 1)...].contains(id)
+  /// The opening guess with nothing picked: its main button is "I don't know yet", which reveals the
+  /// answer; a pick makes it "See the answer".
+  var revealsWithoutGuess: Bool {
+    guard phase == .playing, let step = currentStep, case .hook(let hook) = step.content,
+      hook.asksGuess
+    else {
+      return false
+    }
+
+    return answers[step.id] == nil
+  }
+
+  /// "I already know this" ends on the result: a learner who passed every check skips the map.
+  private var endsWithMap: Bool {
+    hasMap && quickCheck == nil
+  }
+
+  /// The screen whose Continue ends the lesson.
+  var isLastScreen: Bool {
+    position == queue.count - 1 && !endsWithMap
   }
 
   var progress: Double {
@@ -187,8 +213,9 @@ struct LessonPlayerState: Equatable, Sendable {
       return 1
     }
 
-    let done = phase == .completed ? queue.count : position + (phase == .feedback ? 1 : 0)
-    return Double(done) / Double(queue.count)
+    let total = queue.count + (endsWithMap ? 1 : 0)
+    let done = phase == .completed ? total : position + (phase == .feedback ? 1 : 0)
+    return Double(done) / Double(total)
   }
 
   var correctCount: Int { firstVerdicts.values.filter { $0 }.count }
@@ -289,6 +316,11 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
+    if phase == .map {
+      complete(status: .saving)
+      return
+    }
+
     guard phase == .playing, let step = currentStep else {
       return
     }
@@ -345,19 +377,29 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// "I don't know yet" on a written screen: its good answer shows, counted neither way, and it
-  /// doesn't come back at the end.
+  /// doesn't come back at the end. On the opening guess it reveals the answer, counted neither way and,
+  /// like a guess, never sent.
   mutating func dontKnow(_ stepId: String) {
-    guard phase == .playing, let step = currentStep, step.id == stepId,
-      case .typedAnswer(let content) = step.content
-    else {
+    guard phase == .playing, let step = currentStep, step.id == stepId else {
       return
     }
 
-    checkFailed = false
-    notice = nil
-    phase = .feedback
-    results[stepId] = .sampleAnswer(content.sampleAnswer)
-    addSkippedWriting([stepId])
+    switch step.content {
+    case .typedAnswer(let content):
+      checkFailed = false
+      notice = nil
+      phase = .feedback
+      results[stepId] = .sampleAnswer(content.sampleAnswer)
+      addSkippedWriting([stepId])
+    case .hook(let hook) where hook.asksGuess:
+      guard let reveal = LessonGrading.revealHook(hook) else {
+        return
+      }
+
+      resolve(stepId, result: LessonStepResult(reveal), counts: false)
+    default:
+      return
+    }
   }
 
   /// Number questions are kept. A lesson left with nothing to do as it opens (`opening`) waits for
@@ -684,6 +726,21 @@ struct LessonPlayerState: Equatable, Sendable {
     phase = .completed
   }
 
+  /// One rule for every way a lesson runs out of screens: the map, as a last screen after them,
+  /// then the save.
+  private mutating func end(_ status: Completion.Status, now: Date) {
+    guard endsWithMap else {
+      complete(status: status)
+      return
+    }
+
+    checkFailed = false
+    reviewing = false
+    phase = .map
+    position = queue.count
+    stepStartedAt = now
+  }
+
   private mutating func recordFirstVerdict(_ stepId: String, isCorrect: Bool, attemptId: String?) {
     firstVerdicts[stepId] = isCorrect
     firstVerdictAttemptIds[stepId] = attemptId
@@ -705,7 +762,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }.map(\.element)
 
     guard position + 1 < queue.count else {
-      complete(status: .saving)
+      end(.saving, now: now)
       return
     }
 
@@ -738,7 +795,7 @@ struct LessonPlayerState: Equatable, Sendable {
   private mutating func leaveOutAhead(
     _ isLeftOut: (String) -> Bool, completionStatus: Completion.Status, now: Date
   ) {
-    guard phase != .completed else {
+    guard phase != .completed, phase != .map else {
       return
     }
 
@@ -758,7 +815,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     if position >= queue.count {
-      complete(status: completionStatus)
+      end(completionStatus, now: now)
     } else {
       notice = nil
       enter(position, now: now)
@@ -908,7 +965,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
     guard let open else {
       position = max(queue.count - 1, 0)
-      complete(status: .ready)
+      end(.ready, now: .now)
       return
     }
 

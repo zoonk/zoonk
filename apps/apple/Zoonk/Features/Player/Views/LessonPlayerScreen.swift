@@ -66,7 +66,7 @@ private struct LessonPlayerContent: View {
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var store: LessonPlayerStore
   @State private var isLeaving = false
-  @State private var isShowingSummary = false
+  @State private var isShowingMap = false
   @State private var soundOwner = UUID().uuidString
 
   init(store: LessonPlayerStore) {
@@ -118,9 +118,11 @@ private struct LessonPlayerContent: View {
       LessonAskPanel(store: store, isBeside: false)
         .accessibilitySizeStyles()
     }
-    .sheet(isPresented: $isShowingSummary) {
-      LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
-        .accessibilitySizeStyles()
+    .sheet(isPresented: $isShowingMap) {
+      if let lesson = store.lesson, let summary = lesson.summary {
+        LessonMapSheet(title: lesson.title, summary: summary)
+          .accessibilitySizeStyles()
+      }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
     .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {
@@ -194,12 +196,14 @@ private struct LessonPlayerContent: View {
         } else if state.phase == .completed, let completion = state.completion {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,
-            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding
+            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding, lesson: store.lesson
           ) {
             Task { await store.finish() }
           } close: {
             dismiss()
           }
+        } else if state.phase == .map, let lesson = store.lesson, let summary = lesson.summary {
+          LessonMapStage(store: store, state: state, title: lesson.title, summary: summary)
         } else {
           LessonStageView(store: store, state: state)
             .onDisappear { sounds.stop() }
@@ -317,15 +321,14 @@ private struct LessonPlayerContent: View {
       }
     }
 
-    if state.phase == .completed, !(store.lesson?.summaryIdeas ?? []).isEmpty {
+    if state.phase == .completed, store.lesson?.summary != nil {
       Button {
-        isShowingSummary = true
+        isShowingMap = true
       } label: {
         Label {
-          Text(
-            "Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
+          Text(LessonMapView.name)
         } icon: {
-          Image(systemName: "list.bullet.rectangle")
+          Image(systemName: LessonMapView.symbol)
         }
       }
     }

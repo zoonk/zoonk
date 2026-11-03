@@ -619,6 +619,15 @@ private func check(id: String) -> String {
       """#)
 }
 
+private let guessHook = teaching(
+  "guess", kind: "hook",
+  content: #"""
+    {"variant": "guess", "question": "How many kinds of living things live in this pond?",
+     "options": [{"id": "right", "isCorrect": true, "text": "Four"},
+                 {"id": "wrong", "isCorrect": false, "text": "More than ten"}],
+     "reveal": "A capybara, a heron, a fish and a plant."}
+    """#)
+
 private let typedAnswer = teaching(
   "typed", kind: "typedAnswer",
   content:
@@ -715,8 +724,8 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.hyperdriveStreak(for: "d"), 4)
   }
 
-  func testIKnowThisPassingEveryCheckEndsTheLessonTestedOut() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+  func testIKnowThisPassingEveryCheckEndsTheLessonTestedOutWithoutTheMap() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson(), hasMap: true)
     state.continueLesson()
     XCTAssertTrue(state.canKnowThis)
 
@@ -804,6 +813,34 @@ final class LessonPlayerHelpTests: XCTestCase {
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .ready, "only a learner's Finish saves it")
+  }
+
+  func testTheOpeningGuessOffersTheRevealUntilSomethingIsPicked() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
+    XCTAssertTrue(state.revealsWithoutGuess, "\"I don't know yet\" with nothing picked")
+
+    state.select(.hookGuess(optionId: "wrong"), for: "guess")
+    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" once something is picked")
+  }
+
+  func testIDontKnowYetOnTheOpeningGuessRevealsTheAnswerAndCountsNothing() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
+
+    state.dontKnow("guess")
+
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertFalse(state.revealsWithoutGuess, "Continue")
+    XCTAssertNil(state.currentAnswer)
+    XCTAssertEqual(state.currentResult?.correctAnswer, "Four")
+    XCTAssertEqual(state.currentResult?.feedback, "A capybara, a heron, a fish and a plant.")
+    XCTAssertEqual(state.firstVerdicts, [:])
+    XCTAssertEqual(state.misses, [])
+    XCTAssertEqual(state.unsavedAnswers, [:], "a guess is never sent")
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "check")
   }
 
   func testIDontKnowYetShowsTheGoodAnswerWithoutAVerdict() throws {
@@ -1196,5 +1233,100 @@ final class LessonTodayChoicesTests: XCTestCase {
     let lateEvening = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-10-31T02:30:00Z"))
 
     XCTAssertEqual(LessonTodayChoices.day(of: lateEvening, in: saoPaulo), "2026-10-30")
+  }
+}
+
+final class LessonMapTests: XCTestCase {
+  func testMapsSavedBeforeLabelsAndNewOnesBothDecode() throws {
+    let stored = try summary(
+      #"{"shape": "hub", "ideas": [{"text": "Living things are made of cells."}]}"#)
+    let nested = try summary(
+      #"""
+      {"shape": "nested", "ideas": [
+        {"label": "Organism", "text": "One living thing, like a capybara."},
+        {"label": "Population", "text": "Capybaras of one area at one time."}]}
+      """#)
+
+    XCTAssertEqual(stored.shape, .hub)
+    XCTAssertEqual(stored.ideas.map(\.text), ["Living things are made of cells."])
+    XCTAssertEqual(stored.ideas.map(\.label), [nil])
+    XCTAssertEqual(nested.shape, .nested)
+    XCTAssertEqual(nested.ideas.map(\.label), ["Organism", "Population"])
+  }
+
+  func testTheMapComesAfterTheMissedQuestionsAndBeforeTheSave() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(explanation), try step(check(id: "check"))],
+      hasMap: true)
+    state.continueLesson()
+    try answer(&state, optionId: "wrong")
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, "check", "the missed question comes back first")
+    try answer(&state, optionId: "right")
+    state.continueLesson()
+
+    XCTAssertEqual(state.phase, .map)
+    XCTAssertNil(state.completion, "nothing is saved yet")
+    XCTAssertEqual(state.progress, 3 / 4, "the map is the last of four screens")
+
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .saving)
+  }
+
+  func testPreviousFromTheMapShowsTheLastScreenWithItsResult() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(explanation), try step(check(id: "check"))],
+      hasMap: true)
+    state.continueLesson()
+    try answer(&state, optionId: "right")
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .map)
+
+    XCTAssertTrue(state.canGoBack)
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .map)
+  }
+
+  func testARunWithEveryScreenAnsweredOpensOnTheMapAndItsContinueSaves() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(explanation), try step(check(id: "check"))],
+      hasMap: true)
+
+    state.startRun(
+      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+    XCTAssertEqual(state.phase, .map)
+    XCTAssertFalse(state.canGoBack, "its last question would ask for an answer again")
+
+    state.continueLesson()
+    XCTAssertEqual(state.completion?.status, .saving)
+  }
+
+  func testPreviousNeverReturnsToAQuestionAnsweredInAnEarlierSitting() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(check(id: "check")), try step(explanation)],
+      hasMap: true)
+    state.startRun(
+      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "explanation", "reading is safe to show again")
+    XCTAssertFalse(state.canGoBack, "the question would ask for its answer again")
+  }
+
+  private func answer(_ state: inout LessonPlayerState, optionId: String) throws {
+    let step = try XCTUnwrap(state.currentStep)
+    state.select(.check(optionId: optionId), for: step.id)
+    let grade = try XCTUnwrap(LessonGrading.grade(.check(optionId: optionId), step: step))
+    state.resolve(step.id, result: LessonStepResult(grade))
+  }
+
+  private func summary(_ json: String) throws -> LessonSummary {
+    try JSONDecoder().decode(LessonSummary.self, from: Data(json.utf8))
   }
 }

@@ -218,7 +218,8 @@ final class LessonPlayerStore {
     case .obsolete: return
     }
 
-    var state = LessonPlayerState(lessonId: lesson.id, steps: lesson.steps)
+    var state = LessonPlayerState(
+      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
 
     switch run {
     case .success(let run):

@@ -98,13 +98,19 @@ private struct HookStepView: View {
   @ViewBuilder
   private var screen: some View {
     if content.asksGuess, let question = content.question {
-      Text(
-        "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
-      )
+      Label {
+        Text(
+          "Just a guess, it doesn't count", tableName: "Player",
+          comment:
+            "Chip above the lesson's opening question, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points."
+        )
+      } icon: {
+        Image(systemName: "sparkles")
+      }
       .font(.caption.monospaced())
       .foregroundStyle(.secondary)
+      StepMedia(step: step, visual: content.visual, asks: true, opens: true)
       LessonQuestionText(text: question)
-      StepMedia(step: step, visual: content.visual, asks: true)
     } else {
       // A read screen leads with its picture; a spread has it on the facing page.
       if !isPaneSplit {
@@ -545,11 +551,12 @@ struct StepMedia: View {
   let visual: LessonVisual?
   var asks = false
   var hero = false
+  var opens = false
 
   var body: some View {
     LessonPictureView(
       image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: asks,
-      hero: hero)
+      hero: hero, opens: opens)
 
     if let visual {
       LessonVisualView(visual: visual)
