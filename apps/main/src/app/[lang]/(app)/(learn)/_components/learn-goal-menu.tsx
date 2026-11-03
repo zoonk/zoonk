@@ -3,7 +3,6 @@
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
-import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import {
   type LearnerSummaryGoal,
@@ -14,6 +13,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
 import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding-actions";
+import { useOnboardingNavigation } from "../../(onboarding)/start/use-onboarding-navigation";
 import { switchGoal } from "./switch-goal";
 
 type Placement = "bar" | "sidebar";
@@ -60,7 +60,7 @@ function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
 
 function GoalMenu({ placement }: { placement?: Placement }) {
   const learner = useFrameLearner();
-  const router = useRouter();
+  const navigation = useOnboardingNavigation();
 
   if (learner.status === "visitor") {
     return <PublicHomeLink />;
@@ -84,7 +84,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
     );
 
     if (outcome.status === "created") {
-      router.push(`/start/${outcome.goalId}`);
+      navigation.toSteps(outcome.goalId);
     }
   };
 

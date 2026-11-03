@@ -147,6 +147,7 @@ export function OnboardingStepScreen({
   onPlacementDone,
   pending,
   plan,
+  refreshPages,
   routes,
   run,
   step,
@@ -158,6 +159,7 @@ export function OnboardingStepScreen({
   onPlacementDone: () => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
+  refreshPages: () => void;
   routes: OnboardingRoutes;
   run: GenerationRun | null;
   step: OnboardingStep;
@@ -231,6 +233,7 @@ export function OnboardingStepScreen({
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
+          refreshPages={refreshPages}
           run={run}
           signUpHref={routes.signUp}
           todayHref={routes.today}

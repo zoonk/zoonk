@@ -204,6 +204,7 @@ export function StepsFlow({
                 isPending && sending !== null && (sending.open || sending.step === state.current)
               }
               plan={{ initialPlan: pagePlan, planActions }}
+              refreshPages={navigation.refreshPages}
               routes={routes}
               run={generation}
               step={state.current}
