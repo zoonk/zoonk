@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,6 +75,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
@@ -109,13 +112,15 @@ import com.zoonk.android.feature.player.language.promptAudioUrl
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.FillsView
+import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
+import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
-import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.rememberScreenWork
@@ -140,6 +145,7 @@ import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
+import com.zoonk.api.models.LessonMap
 import kotlin.math.abs
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
@@ -176,12 +182,14 @@ internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit)
 /**
  * A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next]
  * beside the way on. [withMoment] is whether its moment is on screen yet, which waits for the save.
+ * The lesson's [map] sits under what was done on a spread; one column keeps it behind ⋮.
  */
 @Composable
 internal fun LessonEndPages(
     withMoment: Boolean,
     done: @Composable ColumnScope.() -> Unit,
     next: @Composable ColumnScope.() -> Unit,
+    map: StepContent.Map? = null,
 ) {
     // The moment plays once: made again after a fold or a rotation, the end shows it as it finished.
     var played by rememberSaveable { mutableStateOf(false) }
@@ -203,7 +211,18 @@ internal fun LessonEndPages(
                     next()
                 }
             } else {
-                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End, done)
+                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End) {
+                    done()
+                    if (map != null) {
+                        HorizontalDivider()
+                        Text(
+                            stringResource(R.string.player_lesson_map),
+                            Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        LessonMapView(map.map, map.title)
+                    }
+                }
                 EndPage(
                     Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
                     nextScroll,
@@ -314,14 +333,17 @@ fun LessonPlayer(
                 }
 
                 override fun runPrimary() {
-                    viewModel.state.value
-                        ?.screen()
-                        ?.primary
-                        ?.takeIf { it.enabled }
-                        ?.let { if (it.isCheck) viewModel.check() else viewModel.dispatch(LessonAction.Continue) }
+                    val screen = viewModel.state.value?.screen() ?: return
+                    val primary = screen.primary?.takeIf { it.enabled } ?: return
+
+                    when {
+                        primary.label == PrimaryLabel.DontKnowYet -> screen.step?.let { dontKnow(it.id) }
+                        primary.isCheck -> viewModel.check()
+                        else -> viewModel.dispatch(LessonAction.Continue)
+                    }
                 }
 
-                override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.SkipWriting(stepId = stepId))
+                override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
 
                 override fun skipWriting() = viewModel.skipWriting()
 
@@ -558,18 +580,12 @@ private fun Segments(
 ) {
     val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
-    val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
+    val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
 
     LessonColumn(
         Modifier.padding(bottom = 8.dp).semantics {
             contentDescription = label
-            progressBarRangeInfo =
-                ProgressBarRangeInfo(
-                    done.toFloat(),
-                    0f..state.queue.size
-                        .coerceAtLeast(1)
-                        .toFloat(),
-                )
+            progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..segments.size.coerceAtLeast(1).toFloat())
         },
     ) {
         MeterParts(parts)
@@ -593,6 +609,7 @@ internal fun segmentParts(segments: List<Segment>): List<MeterPart> =
 private const val READ_ALPHA = 0.25f
 
 private const val SWIPE_DISTANCE = 96f
+private val STEP_PADDING = 16.dp
 private val REVEAL_MARGIN = 16.dp
 
 @Composable
@@ -693,11 +710,13 @@ private fun Content(
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
                             .onGloballyPositioned { reveal.viewport = it }
                             .verticalScroll(if (fold == null) scroll else turnScroll)
-                            .padding(vertical = 16.dp),
+                            .padding(vertical = STEP_PADDING),
                         align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
                         Notice(state, screen, viewModel, part)
-                        work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
+                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
+                            work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
+                        }
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause.
                         if (help != null && fold != null && step.teachesInText) {
                             help()
@@ -717,7 +736,7 @@ private fun Content(
                                     .fillMaxHeight()
                                     .semantics { isTraversalGroup = true }
                                     .verticalScroll(scroll)
-                                    .padding(vertical = 16.dp),
+                                    .padding(vertical = STEP_PADDING),
                                 align = Alignment.End,
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
@@ -886,11 +905,21 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus)) {
+        val label: @Composable RowScope.() -> Unit = {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }
             Text(stringResource(primary.label.text()))
+        }
+        if (primary.label == PrimaryLabel.DontKnowYet) {
+            FilledTonalButton(
+                onClick = actions::runPrimary,
+                enabled = primary.enabled,
+                modifier = width.focusRequester(primaryFocus),
+                content = label,
+            )
+        } else {
+            Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus), content = label)
         }
         ask()
     }
@@ -902,6 +931,7 @@ private fun PrimaryLabel.text(): Int =
         PrimaryLabel.Checking -> R.string.player_action_checking
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
+        PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet
         PrimaryLabel.Next -> R.string.player_action_next
         PrimaryLabel.NextStep -> R.string.player_action_next_step
         PrimaryLabel.SeeAnswer -> R.string.player_action_see_answer
@@ -917,7 +947,7 @@ private fun ScreenMenu(
     viewModel: LessonPlayerViewModel,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
-    var summaryOpen by rememberSaveable { mutableStateOf(false) }
+    var mapOpen by rememberSaveable { mutableStateOf(false) }
     val isDone = state?.phase == LessonPhase.Completed
 
     if (screen?.step == null && !isDone) return
@@ -944,34 +974,36 @@ private fun ScreenMenu(
                     leadingIcon = { Icon(painterResource(R.drawable.ic_bolt), contentDescription = null) },
                 )
             }
-            if (isDone && lesson.summaryIdeas.isNotEmpty()) {
+            if (isDone && lesson.map != null) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.player_lesson_summary)) },
+                    text = { Text(stringResource(R.string.player_lesson_map)) },
                     onClick = {
                         open = false
-                        summaryOpen = true
+                        mapOpen = true
                     },
-                    leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null) },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_lan), contentDescription = null) },
                 )
             }
         }
     }
 
-    if (summaryOpen && isDone) {
-        SummarySheet(lesson.summaryIdeas, onDismiss = { summaryOpen = false })
+    val map = lesson.map
+    if (mapOpen && isDone && map != null) {
+        LessonMapSheet(map, lesson.title, onDismiss = { mapOpen = false })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SummarySheet(
-    ideas: List<String>,
+private fun LessonMapSheet(
+    map: LessonMap,
+    title: String,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         LessonColumn(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
-            Text(stringResource(R.string.player_lesson_summary), style = MaterialTheme.typography.titleLarge)
-            SummaryIdeas(ideas)
+            Text(stringResource(R.string.player_lesson_map), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            LessonMapView(map, title)
         }
     }
 }

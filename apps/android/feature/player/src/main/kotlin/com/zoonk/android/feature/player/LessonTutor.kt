@@ -36,6 +36,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.lessonStepIds
 import com.zoonk.android.feature.player.engine.strugglePauseMs
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -130,9 +131,9 @@ internal fun ScreenHelp(
 
 private const val SCREEN_SUGGESTIONS = 2
 
-/** Text that teaches, which the buddy can explain another way: an explanation, or a hook's fact. */
+/** Text that teaches, which the buddy can explain another way: an explanation, a hook's fact, or the lesson's map. */
 internal val LessonStep.teachesInText: Boolean
-    get() = content is StepContent.Explanation || content is StepContent.Fact
+    get() = content is StepContent.Explanation || content is StepContent.Fact || content is StepContent.Map
 
 /** Main's struggle pause: no press, scroll or key on an explanation for its pause while the app shows. */
 @Composable
@@ -163,7 +164,7 @@ internal fun StrugglePause(
 
 /** What the buddy is asked about on [screen]: the learner's checked answer, the screen, or the lesson before its first screen. */
 internal fun LessonPlayerState.tutorScope(screen: LessonScreen): TutorScope {
-    val step = screen.step ?: return TutorScope.Lesson(lessonId, steps.keys.toList())
+    val step = screen.step?.takeUnless { it.kind == StepKind.LessonMap } ?: return TutorScope.Lesson(lessonId, lessonStepIds)
     val number = position + 1
     val checked = answers[step.id]?.takeIf { phase == LessonPhase.Feedback && step.id in results }?.toApi()
     return if (checked != null) TutorScope.Answer(lessonId, step.id, number, checked) else TutorScope.Step(lessonId, step.id, number)

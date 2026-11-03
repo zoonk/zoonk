@@ -18,9 +18,13 @@ sealed interface LessonAction {
 
     data object GoBack : LessonAction
 
-    /** "I don't know yet" on [stepId], or "Can't write now" for every writing screen ahead without one. */
+    /** "I don't know yet": the answer shown without a verdict. */
+    data class DontKnow(
+        val stepId: String,
+    ) : LessonAction
+
+    /** "Can't write now" for every writing screen ahead. */
     data class SkipWriting(
-        val stepId: String? = null,
         val opening: Boolean = false,
     ) : LessonAction
 
@@ -114,8 +118,12 @@ fun reduce(
             if (state.phase == LessonPhase.Playing) state.goBack(now) else state
         }
 
+        is LessonAction.DontKnow -> {
+            state.revealAnswer(action.stepId)
+        }
+
         is LessonAction.SkipWriting -> {
-            state.skipWriting(action, now)
+            if (state.phase == LessonPhase.Playing) state.skipWriting(action.opening, now) else state
         }
 
         LessonAction.RestoreWriting -> {
@@ -207,14 +215,6 @@ private fun LessonPlayerState.continueFrom(now: Long): LessonPlayerState {
     return this
 }
 
-private fun LessonPlayerState.skipWriting(
-    action: LessonAction.SkipWriting,
-    now: Long,
-): LessonPlayerState {
-    if (phase != LessonPhase.Playing) return this
-    return action.stepId?.let(::showSampleAnswer) ?: skipWriting(action.opening, now)
-}
-
 private fun LessonPlayerState.startChecking(): LessonPlayerState =
     if (phase == LessonPhase.Playing) copy(checkFailed = false, checkIssue = null, phase = LessonPhase.Checking) else this
 
@@ -245,7 +245,7 @@ private fun LessonPlayerState.resumeFrom(
 
     if (available.queue.isEmpty()) return this
 
-    val resumed = available.resume(answers).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailableStepIds)
+    val resumed = available.resume(answers, now).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailableStepIds)
     return if (restore != null) resumed.skipWriting(opening = true, now = now) else resumed
 }
 
@@ -269,6 +269,9 @@ private fun LessonPlayerState.startRun(
     return started.resumeFrom(answers, now)
 }
 
+private val LessonPlayerState.isAllAnswered: Boolean
+    get() = phase == LessonPhase.Completed || currentStep?.kind == StepKind.LessonMap
+
 private fun LessonPlayerState.resync(
     action: LessonAction.RunResynced,
     now: Long,
@@ -284,7 +287,7 @@ private fun LessonPlayerState.resync(
     val available = skipSteps(action.optionalStepIds, now)
     val missing = available.resumeFrom(action.answers, now)
 
-    if (missing.phase != LessonPhase.Completed) return missing.copy(notice = LessonNotice.AnswerNotSaved)
+    if (!missing.isAllAnswered) return missing.copy(notice = LessonNotice.AnswerNotSaved)
 
     val drawn = action.pictures.filterKeys { it in available.unavailableStepIds && it !in action.optionalStepIds }
 
@@ -297,7 +300,7 @@ private fun LessonPlayerState.resync(
         )
     val pictured = restored.resumeFrom(action.answers, now)
 
-    return if (pictured.phase == LessonPhase.Completed) {
+    return if (pictured.isAllAnswered) {
         withCompletion { it.copy(status = CompletionStatus.Failed) }
     } else {
         pictured.copy(notice = LessonNotice.PictureReady)

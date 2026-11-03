@@ -18,6 +18,7 @@ import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
@@ -33,19 +34,21 @@ private const val NEXT_LESSON_ID = "00000000-0000-4000-8000-0000000000cc"
 const val CHAPTER_ID = "00000000-0000-4000-8000-0000000000dd"
 private const val DONE_LESSON_ID = "00000000-0000-4000-8000-0000000000ff"
 
-fun playable(steps: List<LessonStep>) =
-    PlayableLesson(
-        id = LESSON_ID,
-        title = "Why clouds float",
-        description = "What keeps a cloud up.",
-        estimatedMinutes = 5,
-        language = "en",
-        targetLanguage = null,
-        chapterId = CHAPTER_ID,
-        steps = steps,
-        summaryIdeas = listOf("Clouds are tiny droplets."),
-        tutorSuggestions = emptyList(),
-    )
+fun playable(
+    steps: List<LessonStep>,
+    map: LessonMap? = null,
+) = PlayableLesson(
+    id = LESSON_ID,
+    title = "Why clouds float",
+    description = "What keeps a cloud up.",
+    estimatedMinutes = 5,
+    language = "en",
+    targetLanguage = null,
+    chapterId = CHAPTER_ID,
+    steps = steps,
+    map = map,
+    tutorSuggestions = emptyList(),
+)
 
 fun checkResult(
     isCorrect: Boolean,

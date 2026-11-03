@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,13 +34,15 @@ import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
 
 /**
- * Main's `LessonStepPicture`: the picture, a placeholder in its place while it's drawn, and on a
- * question whose picture never came, its description instead.
+ * Main's `LessonStepPicture`: the picture, centered when its frame keeps it narrower than the column,
+ * a placeholder in its place while it's drawn, and on a question whose picture never came, its
+ * description instead.
  */
 @Composable
 fun StepPicture(
@@ -48,10 +51,11 @@ fun StepPicture(
 ) {
     val image = step.image
     val picture = step.picture
+    val centered = Modifier.fillMaxWidth().wrapContentWidth()
 
     when {
-        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame)
-        step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question })
+        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame, centered, PictureShape.Landscape)
+        step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question }, centered)
         frame == PictureFrame.Question && picture != null -> DescribedPicture(picture.alt)
     }
 }
@@ -60,8 +64,9 @@ fun StepPicture(
 private fun StepPicturePending(
     frame: PictureFrame,
     alt: String?,
+    modifier: Modifier,
 ) {
-    PendingPicture(frame) {
+    PendingPicture(frame, modifier, PictureShape.Landscape) {
         Icon(painterResource(R.drawable.ic_image), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(
             stringResource(R.string.player_drawing_picture),

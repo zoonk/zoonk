@@ -1,14 +1,17 @@
 package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.feature.player.model.StepKind
 
 /** Main's `getAbandonEvent`: a started run left before its end; null otherwise. */
 fun LessonPlayerState.abandonEvent(): AnalyticsEvent.ActivityAbandoned? {
     if (run !is LessonRun.Started || phase == LessonPhase.Completed) return null
+    // Main's map isn't one of the lesson's screens, so leaving on it reports the last screen played.
+    val shown = if (currentStep?.kind == StepKind.LessonMap) position - 1 else position
     return AnalyticsEvent.ActivityAbandoned(
         lessonId = lessonId,
-        screen = position + 1,
-        stepKind = currentStep?.kind,
+        screen = shown + 1,
+        stepKind = queue.getOrNull(shown)?.let(steps::get)?.kind,
         wrongInARow = wrongInARow(),
     )
 }

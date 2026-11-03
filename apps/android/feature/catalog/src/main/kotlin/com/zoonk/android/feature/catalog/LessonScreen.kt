@@ -139,7 +139,11 @@ private fun lessonBlocks(
                             courseId,
                             place,
                             lessonId,
-                            page?.summaryIdeas.orEmpty(),
+                            page
+                                ?.summary
+                                ?.ideas
+                                ?.map { it.text }
+                                .orEmpty(),
                             chapterApart = layout.beside || layout.twoPages,
                             disclosures = layout.disclosures,
                         )

@@ -43,6 +43,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +59,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
@@ -86,6 +88,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.currentLocale
@@ -119,6 +122,8 @@ internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
 }
 
 private val QUESTION_SPACING = 24.dp
+private val QUESTION_PART_SPACING = 12.dp
+private val MIN_YIELDED_PICTURE = 140.dp
 
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
@@ -171,34 +176,70 @@ internal fun GuessHookView(
     part: StepPart,
 ) {
     val guess = content.content
-    val selectedId = (answer as? LessonAnswer.Hook)?.optionId
 
-    QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
-                StepPicture(step, PictureFrame.Question)
-                LessonStepVisual(guess.visual)
-                QuestionText(guess.question)
+    HookScene(
+        // Only a drawn picture gives up height: the placeholder and a picture's description need theirs.
+        viewHeight = LocalStepViewHeight.current.takeIf { step.image != null },
+        chip = { if (part.showsScreen) LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome) },
+        picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
+        question = {
+            if (part.showsScreen) {
+                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
+                    LessonStepVisual(guess.visual)
+                    QuestionText(guess.question)
+                }
             }
-        }
-
-        if (part.showsTurn) {
-            ChoiceOptions(
-                options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-                selectedId = selectedId,
-                isChecked = result != null,
-                isGuess = true,
-                locked = locked,
-                onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
-            )
-
-            if (result == null) {
-                Text(
-                    text = stringResource(R.string.player_guess_hint),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+        },
+        options = {
+            if (part.showsTurn) {
+                ChoiceOptions(
+                    options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                    selectedId = (answer as? LessonAnswer.Hook)?.optionId,
+                    isChecked = result != null,
+                    isGuess = true,
+                    locked = locked,
+                    onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
                 )
+            }
+        },
+    )
+}
+
+/**
+ * The hook's picture comes first. In one column of [viewHeight] it gives up height on a short view,
+ * down to [MIN_YIELDED_PICTURE], so the question and its options stay in view.
+ */
+@Composable
+private fun HookScene(
+    viewHeight: Dp?,
+    chip: @Composable () -> Unit,
+    picture: @Composable () -> Unit,
+    question: @Composable () -> Unit,
+    options: @Composable () -> Unit,
+) {
+    Layout(listOf(chip, picture, question, options), Modifier.fillMaxWidth()) { slots, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val partGap = QUESTION_PART_SPACING.roundToPx()
+        val sceneGap = QUESTION_SPACING.roundToPx()
+        val (chips, pictures, questions, optionList) = slots
+        val (chipParts, questionParts, optionParts) = listOf(chips, questions, optionList).map { part -> part.map { it.measure(loose) } }
+        val others =
+            chipParts.sumOf { it.height } + questionParts.sumOf { it.height } + optionParts.sumOf { it.height } + partGap * 2 + sceneGap
+        val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
+        val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
+        val rows =
+            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to 0)
+                .filter { (parts, _) -> parts.any { it.height > 0 } }
+        val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
+
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            rows.forEach { (parts, gap) ->
+                parts.forEach { part ->
+                    part.placeRelative(0, y)
+                    y += part.height
+                }
+                y += gap
             }
         }
     }
@@ -418,7 +459,7 @@ internal fun SummaryView(content: StepContent.Summary) {
 }
 
 @Composable
-fun SummaryIdeas(ideas: List<String>) {
+private fun SummaryIdeas(ideas: List<String>) {
     Column {
         ideas.forEachIndexed { index, idea ->
             if (index > 0) HorizontalDivider()
@@ -752,11 +793,19 @@ private fun PictureOption(
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when {
             image != null -> {
-                PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Question, Modifier.fillMaxWidth())
+                PrivatePicture(
+                    image.url,
+                    image.alt,
+                    image.width,
+                    image.height,
+                    PictureFrame.Question,
+                    Modifier.fillMaxWidth(),
+                    PictureShape.Square,
+                )
             }
 
             step.imagePending -> {
-                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth()) {
+                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth(), PictureShape.Square) {
                     Icon(
                         painterResource(R.drawable.ic_image),
                         contentDescription = stringResource(R.string.player_drawing_picture),

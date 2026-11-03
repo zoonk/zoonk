@@ -6,7 +6,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.writtenText
 
-enum class PrimaryLabel { Check, Checking, Confirm, Continue, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
+enum class PrimaryLabel { Check, Checking, Confirm, Continue, DontKnowYet, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
 
 @Immutable
 data class PrimaryAction(
@@ -43,7 +43,7 @@ private fun LessonAnswer?.isReady(): Boolean = this != null && (writtenText?.isN
 private fun LessonPlayerState.readLabel(step: LessonStep): PrimaryLabel {
     val worked = step.content as? StepContent.WorkedExample
     if (worked != null && (revealed[step.id] ?: 1) < worked.content.steps.size) return PrimaryLabel.NextStep
-    return if (position == queue.size - 1) PrimaryLabel.Continue else PrimaryLabel.Next
+    return if (position == queue.size - 1 && !isMapAhead) PrimaryLabel.Continue else PrimaryLabel.Next
 }
 
 private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
@@ -74,9 +74,15 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
         }
     }
 
+    val isGuess = step.content is StepContent.Guess
+
+    if (isGuess && step.id !in answers) {
+        return PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet, enabled = !step.isRequiredPictureDrawing)
+    }
+
     return PrimaryAction(
         isCheck = true,
-        label = if (step.content is StepContent.Guess) PrimaryLabel.SeeAnswer else PrimaryLabel.Check,
+        label = if (isGuess) PrimaryLabel.SeeAnswer else PrimaryLabel.Check,
         enabled = answers[step.id].isReady() && !step.isRequiredPictureDrawing,
     )
 }
@@ -100,7 +106,7 @@ private fun LessonPlayerState.segments(): List<Segment> =
             index == position -> Segment.Current
             else -> Segment.Ahead
         }
-    }
+    } + listOfNotNull(Segment.Ahead.takeIf { isMapAhead && phase != LessonPhase.Completed })
 
 fun LessonPlayerState.screen(): LessonScreen {
     val step = if (phase == LessonPhase.Completed) null else currentStep

@@ -6,6 +6,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonTutorSuggestion
 import com.zoonk.api.models.PlayableLibraryLessonResponse
 import com.zoonk.api.models.PlayableLibraryLessonResponseOneOf1Lesson
@@ -61,7 +62,7 @@ data class PlayableLesson(
     val targetLanguage: String?,
     val chapterId: String?,
     val steps: List<LessonStep>,
-    val summaryIdeas: List<String>,
+    val map: LessonMap?,
     val tutorSuggestions: List<LessonTutorSuggestion>,
 )
 
@@ -79,7 +80,7 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     targetLanguage = lesson.targetLanguage,
                     chapterId = lesson.chapter?.id?.toString(),
                     steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
-                    summaryIdeas = lesson.summaryIdeas,
+                    map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
                 ),
             )
@@ -105,9 +106,11 @@ fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
         targetLanguage = targetLanguage,
         chapterId = chapter?.id?.toString(),
         steps = steps.map(PlayableLibraryStep::toLessonStep),
-        summaryIdeas = summaryIdeas,
+        map = summary.withIdeas(),
         tutorSuggestions = emptyList(),
     )
+
+private fun LessonMap?.withIdeas() = this?.takeIf { it.ideas.isNotEmpty() }
 
 private fun PlayableLibraryLessonResponseOneOf1Lesson.toOutline() =
     LessonOutline(id = id.toString(), title = title, description = description, estimatedMinutes = estimatedMinutes)

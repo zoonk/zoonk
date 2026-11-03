@@ -407,7 +407,7 @@ internal fun FirstQuestion(
     Column(modifier) {
         LineWithIcon(
             icon = R.drawable.ic_auto_awesome,
-            text = stringResource(if (screen.guess) R.string.catalog_guess_first else R.string.catalog_quick_question),
+            text = stringResource(if (screen.guess) R.string.catalog_guess_chip else R.string.catalog_quick_question),
             style = MaterialTheme.typography.labelLarge,
         )
 

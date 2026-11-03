@@ -39,6 +39,7 @@ import com.zoonk.android.feature.player.engine.gradeOnDevice
 import com.zoonk.android.feature.player.engine.hasExampleLineSlot
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
+import com.zoonk.android.feature.player.engine.playedSteps
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.engine.round
@@ -489,7 +490,7 @@ class LessonPlayerViewModel(
                     }
 
                     is StartOutcome.Refused -> {
-                        val current = mutableState.value ?: LessonPlayerState.initial(lesson.id, lesson.steps, now = now())
+                        val current = mutableState.value ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = now())
                         mutableState.value = reduce(current, LessonAction.RunRefused(outcome.refusal), now())
                     }
                 }
@@ -520,7 +521,7 @@ class LessonPlayerViewModel(
         run: LibraryLessonRun,
     ): LessonPlayerState {
         val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started)
+        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, run.support?.toSupport(), started)
         state = reduce(state, run.toStartedAction(), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)

@@ -35,7 +35,7 @@
   "catalog_expand": "af1fa2c715a6bd10d9f63e9f12aa12b18a77c9cef51e819f722f0b8c86996358",
   "catalog_go_to_chapter": "e9f4dbe9cbe98615196392b2859eaee01c5f76618913aa2ff8a0aa119ad6378b",
   "catalog_goal_example": "1e04b73b5675cd54c962e36b3aebaa12855f9a374ef626f9ea283dbef183aabe",
-  "catalog_guess_first": "6b20c6d8f9f26e2af9d71d78b3347b67e7ec2803687d53a0dc23ca82e34c4eaa",
+  "catalog_guess_chip": "5cc405ec6ab43314d23e2a6e24b7704ccf2907c964c6bb45fb494732f0485663",
   "catalog_guess_note": "2e9b71899d2b6e8c220cdc11f86ca9471169620cab660d5f11f8adc93fe8553e",
   "catalog_ideas": "e758ae988b93c0ec40288cef0288ce6d512bb9cb239350cbf7e4ad5d3897c2fb",
   "catalog_left_out": "21ebc98e068169f841dee965811654f86dd3eb19e64fda1e41c90f459c707038",
@@ -184,7 +184,8 @@
     <string name="catalog_start_free">Ücretsiz başla, hesap gerekmez.</string>
     <string name="catalog_try_title">Bir ders dene · ücretsiz · %1$s</string>
     <string name="catalog_try_place">%1$s · ders %2$s</string>
-    <string name="catalog_guess_first">Önce tahmin et. Bu tahmin sayılmaz.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">Sadece bir tahmin, puanlanmaz</string>
     <string name="catalog_quick_question">Kısa bir soru</string>
     <string name="catalog_guess_note">Cevabın %1$s dakikalık dersi başlatır.</string>
     <string name="catalog_check_note">Seçimin %1$s dakikalık dersi açar. Cevabını orada kontrol et.</string>
