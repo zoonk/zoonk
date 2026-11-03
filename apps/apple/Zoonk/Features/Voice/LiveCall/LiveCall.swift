@@ -77,6 +77,8 @@ final class LiveCall {
   @ObservationIgnored private var transport: (any LiveCallTransport)?
   @ObservationIgnored private var connectionId: String?
   @ObservationIgnored private var attempt = 0
+  /// The learner chose to end their call that's open elsewhere.
+  @ObservationIgnored private var takesOver = false
   @ObservationIgnored private var closeConfirmed = false
   @ObservationIgnored private var endedAtDeadline = false
   @ObservationIgnored private var closing: Task<Bool, Never>?
@@ -110,11 +112,13 @@ final class LiveCall {
   }
 
   /// Leaving the screen or starting again cancels a start still on its way. A learner who said no
-  /// to the microphone stays on the intro, with nothing reserved.
+  /// to the microphone stays on the intro, with nothing reserved; choosing to type then still ends
+  /// the other call they chose to end.
   func start(takeover: Bool = false) async {
     attempt += 1
     let mine = attempt
     failure = nil
+    takesOver = takesOver || takeover
 
     if !micBlocked {
       let granted = await client.requestMicrophone()
@@ -131,7 +135,7 @@ final class LiveCall {
 
     phase = .connecting
 
-    let reservation = await reserve(takeover: takeover, isCurrent: { self.attempt == mine })
+    let reservation = await reserve(takeover: takesOver, isCurrent: { self.attempt == mine })
 
     guard attempt == mine, let reservation else {
       return

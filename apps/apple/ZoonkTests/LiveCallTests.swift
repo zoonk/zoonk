@@ -242,6 +242,18 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(server.microphoneRequests, 1)
   }
 
+  func testTakingOverAnotherCallHoldsWhenTheLearnerTypesInstead() async {
+    let server = FakeServer(microphone: false)
+    let call = LiveCall(conversation: .fixture(), client: server.client(FakeTransport()))
+
+    await call.start(takeover: true)
+    XCTAssertEqual(call.phase, .idle)
+    XCTAssertTrue(server.takeovers.isEmpty)
+
+    await call.startTyping()
+    XCTAssertEqual(server.takeovers, [true])
+  }
+
   func testARefusedReservationSaysWhy() async {
     let server = FakeServer(reservations: [
       .limit(CallLimit(period: .day, tier: .free))
@@ -835,6 +847,8 @@ private final class FakeServer {
   private let microphone: Bool
   private let talkSeconds: Int
   private(set) var connects = 0
+  /// Whether each reservation asked to end the learner's other call.
+  private(set) var takeovers: [Bool] = []
   private(set) var checks = 0
   private let holdsChecks: Bool
   private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
@@ -863,8 +877,9 @@ private final class FakeServer {
 
   func client(_ transport: FakeTransport) -> LiveCallClient {
     LiveCallClient(
-      connect: { _ in
+      connect: { takeover in
         self.connects += 1
+        self.takeovers.append(takeover)
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
         return next
           ?? .ready(
