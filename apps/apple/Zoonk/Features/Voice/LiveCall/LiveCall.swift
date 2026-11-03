@@ -39,6 +39,10 @@ final class LiveCall {
     case plusRequired
   }
 
+  enum Turn: Equatable {
+    case calling, reconnecting, goodbye, characterTalking, muted, typing, listening, yourTurn
+  }
+
   /// What the turn row and the wrap-up line show, as the call's clock runs.
   struct Signals: Equatable {
     var isCharacterTalking = false
@@ -109,6 +113,36 @@ final class LiveCall {
   /// The learner has said something out loud: until then the turn row tells them to.
   var hasLearnerSpoken: Bool {
     turns.contains { $0.speaker == .learner && $0.startMs != nil }
+  }
+
+  /// Whose turn the row shows, the first that applies. Until the character's first words the call
+  /// still reads as calling: the intro said the character answers first.
+  var turn: Turn {
+    if reconnecting {
+      return .reconnecting
+    }
+
+    if phase != .live || !turns.contains(where: { $0.speaker == .character }) {
+      return .calling
+    }
+
+    if signals.isSayingGoodbye, !signals.isLearnerSpeaking {
+      return .goodbye
+    }
+
+    if signals.isCharacterTalking {
+      return .characterTalking
+    }
+
+    if muted {
+      return .muted
+    }
+
+    if micBlocked {
+      return .typing
+    }
+
+    return signals.isLearnerSpeaking ? .listening : .yourTurn
   }
 
   /// Leaving the screen or starting again cancels a start still on its way. A learner who said no

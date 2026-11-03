@@ -242,6 +242,21 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(server.microphoneRequests, 1)
   }
 
+  func testTheCallStaysCallingUntilTheCharacterAnswers() async {
+    let transport = FakeTransport()
+    let call = LiveCall(conversation: .fixture(), client: FakeServer().client(transport))
+
+    await call.start()
+    XCTAssertEqual(call.turn, .calling)
+
+    // The session started, but the intro promised the character answers first.
+    transport.onEvent?(.started)
+    XCTAssertEqual(call.turn, .calling)
+
+    transport.onEvent?(.transcript(speaker: .character, delta: "Hello!", startMs: 0, endMs: 400))
+    XCTAssertEqual(call.turn, .characterTalking)
+  }
+
   func testTakingOverAnotherCallHoldsWhenTheLearnerTypesInstead() async {
     let server = FakeServer(microphone: false)
     let call = LiveCall(conversation: .fixture(), client: server.client(FakeTransport()))

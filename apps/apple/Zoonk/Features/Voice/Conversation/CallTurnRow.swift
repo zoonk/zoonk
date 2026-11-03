@@ -30,34 +30,8 @@ struct CallTurnRow: View {
     conversation.character.name
   }
 
-  private var state: TurnState {
-    let signals = call.signals
-
-    if call.reconnecting {
-      return .reconnecting
-    }
-
-    if call.phase != .live {
-      return .calling
-    }
-
-    if signals.isSayingGoodbye, !signals.isLearnerSpeaking {
-      return .goodbye
-    }
-
-    if signals.isCharacterTalking {
-      return .characterTalking
-    }
-
-    if call.muted {
-      return .muted
-    }
-
-    if call.micBlocked {
-      return .typing
-    }
-
-    return signals.isLearnerSpeaking ? .listening : .yourTurn
+  private var state: LiveCall.Turn {
+    call.turn
   }
 
   @ViewBuilder private var mark: some View {
@@ -176,10 +150,6 @@ struct CallTurnRow: View {
     }
 
     return Text("Tip: \(next.description)", tableName: "Voice", comment: "A hint for the next goal")
-  }
-
-  private enum TurnState {
-    case calling, reconnecting, goodbye, characterTalking, muted, typing, listening, yourTurn
   }
 }
 
