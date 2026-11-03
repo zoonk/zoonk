@@ -452,15 +452,16 @@ class LiveCall(
 
     /**
      * An exam's own cues follow its format, not the ending: none once the call says goodbye, and none
-     * twice. Of the cues that came due while the call was down, only the latest is sent.
+     * twice. Of the cues that came due while the call was down, only the latest is sent, once the
+     * character has spoken on this connection, so it follows the resume line. One the connection
+     * refused, as it was lost, stays due.
      */
     private fun sendExamCue(elapsed: Long) {
         val cues = task.examCues.orEmpty()
-        if (ending?.reason != null) return
+        if (ending?.reason != null || !mutableState.value.answered) return
         val due = cues.indexOfLast { it.atSeconds * 1000 <= elapsed }
         if (due < examCuesSent) return
-        send(LiveClientCommand.Append(LiveCallCue.Channel.INSTRUCTIONS, cues[due].say))
-        examCuesSent = due + 1
+        if (send(LiveClientCommand.Append(LiveCallCue.Channel.INSTRUCTIONS, cues[due].say))) examCuesSent = due + 1
     }
 
     /** Does what the ending says is due now, then shows where the call is. */
@@ -508,9 +509,9 @@ class LiveCall(
     /** Its acknowledgment starts the wait for a character who stays silent: a slow start isn't greeted twice. */
     private fun sendOpening(cue: LiveCallCue) = send(cue.command(eventId = UUID.randomUUID().toString().also(openingEvents::add)))
 
-    private fun send(command: LiveClientCommand) {
+    private fun send(command: LiveClientCommand): Boolean {
         gaps.cueSent()
-        transport?.send(command)
+        return transport?.send(command) == true
     }
 
     /** Every fragment waits for the transcript to settle again; a check still running holds the next. An exam's goal is graded at its end. */

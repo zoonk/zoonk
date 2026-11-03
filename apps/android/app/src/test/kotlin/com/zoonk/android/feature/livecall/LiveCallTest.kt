@@ -1363,19 +1363,43 @@ class LiveCallTest {
                         ),
                 )
             val first = live(call(exam))
+            transport.onEvent(characterSays("Empiece cuando quiera."))
             wait(10.seconds)
             assertEquals(listOf("First"), transport.instructions)
             transport.onLost()
             runCurrent()
             transports.clear()
 
-            // Called again 22 s into the talk time: the second and third cues came due meanwhile.
+            // Called again 22 s into the talk time: the second and third cues came due meanwhile, and
+            // the latest waits for the character's resume line.
             val call = call(exam, first.soFar)
             live(call, setup(talkSeconds = 278, continuesCall = true))
             wait(1.seconds)
+            assertTrue(transport.instructions.isEmpty())
+            transport.onEvent(characterSays("Perdone, se cortó."))
+            wait(LiveCall.TICK)
             assertEquals(listOf("Third"), transport.instructions)
             wait(18.seconds)
             assertEquals(listOf("Third", "Last"), transport.instructions)
+        }
+
+    @Test
+    fun anExamCueTheLostConnectionRefusedIsSentOnTheNextOne() =
+        runTest(dispatcher) {
+            val exam = task.copy(objectives = emptyList(), examCues = listOf(ExamSpeakingTaskCuesInner(10, "Move on")))
+            val first = live(call(exam))
+            transport.onEvent(characterSays("Empiece cuando quiera."))
+            transport.refusing = true
+            wait(10.seconds)
+            transport.onLost()
+            runCurrent()
+            transports.clear()
+
+            val call = call(exam, first.soFar)
+            live(call, setup(talkSeconds = 288, continuesCall = true))
+            transport.onEvent(characterSays("Perdone, se cortó."))
+            wait(LiveCall.TICK)
+            assertEquals(listOf("Move on"), transport.instructions)
         }
 
     private companion object {

@@ -85,14 +85,19 @@ class FakeTransport(
     var silenced = false
     var closed = false
 
+    /** The channel closing with a lost connection: it takes nothing. */
+    var refusing = false
+
     override suspend fun makeOffer(): String = "offer"
 
     override suspend fun accept(answer: String) {
         this.answer = answer
     }
 
-    override fun send(command: LiveClientCommand) {
+    override fun send(command: LiveClientCommand): Boolean {
+        if (refusing) return false
         sent += command
+        return true
     }
 
     override fun silence() {
