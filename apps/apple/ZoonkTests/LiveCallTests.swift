@@ -492,8 +492,6 @@ final class LiveCallTests: XCTestCase {
     run.chat(until: 100)
     run.learnerTalks(from: 100, to: 170)
 
-    // Steady noise is never quiet.
-    XCTAssertTrue(run.times(of: .checkIn).isEmpty)
     XCTAssertEqual(run.hangUp?.reason, .some(nil))
     XCTAssertEqual(run.hangUp?.at ?? 0, 165, accuracy: 0.11)
   }
@@ -592,6 +590,20 @@ final class LiveCallTests: XCTestCase {
 
     assertTimes(run.times(of: .checkIn), [46.2], accuracy: 0.11)
     assertTimes(run.times(of: .goodbye), [71.2], accuracy: 0.11)
+  }
+
+  func testNothingFiresWhileTheLearnerKeepsMakingSound() {
+    var run = EndingRun()
+    run.characterTalks(from: 1, to: 3)
+    run.learnerTalks(from: 5, to: 70)
+
+    XCTAssertFalse(run.isQuietLong)
+    XCTAssertTrue(run.times(of: .checkIn).isEmpty)
+    XCTAssertTrue(run.times(of: .goodbye).isEmpty)
+
+    // The microphone goes quiet at 71 s.
+    run.wait(until: 100)
+    assertTimes(run.times(of: .checkIn), [96], accuracy: 0.11)
   }
 
   func testACoughAfterTheCheckInStartsAStretchWithItsOwnCheckIn() {
