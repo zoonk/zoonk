@@ -154,11 +154,21 @@ fun OwnedCertificate.linkedInName(): String =
 /** Main's download name, "Ana Souza - Quantum physics from scratch - Zoonk.png", safe as a file name. */
 @Composable
 @ReadOnlyComposable
-fun OwnedCertificate.fileName(): String =
-    listOfNotNull(recipientName, naming.words(), stringResource(R.string.app_name))
-        .joinToString(" - ")
-        .replace(UNSAFE_FILE_CHARACTERS, " ")
-        .take(MAX_FILE_NAME) + ".png"
+fun OwnedCertificate.fileName(): String = pictureFileName(listOfNotNull(recipientName, naming.words(), stringResource(R.string.app_name)))
+
+/** Android's file names hold 255 bytes, and a CJK letter takes three, so the name is cut by bytes, whole letters only. */
+internal fun pictureFileName(parts: List<String>): String {
+    val name = parts.joinToString(" - ").replace(UNSAFE_FILE_CHARACTERS, " ")
+    var end = 0
+    var bytes = 0
+    while (end < name.length) {
+        val next = name.offsetByCodePoints(end, 1)
+        bytes += name.substring(end, next).encodeToByteArray().size
+        if (bytes > MAX_FILE_NAME_BYTES) break
+        end = next
+    }
+    return name.substring(0, end).trimEnd() + ".png"
+}
 
 /** Main's credential id, in groups of four: "K7QF-2M9X-HD4P". */
 fun formatCertificateCode(code: String): String = code.chunked(CODE_GROUP).joinToString("-")
@@ -173,5 +183,5 @@ fun normalizeCertificateCode(input: String): String =
 
 private const val MINUTES_PER_HOUR = 60
 private const val CODE_GROUP = 4
-private const val MAX_FILE_NAME = 120
+private const val MAX_FILE_NAME_BYTES = 200
 private val UNSAFE_FILE_CHARACTERS = Regex("[\\\\/:*?\"<>|\\p{Cc}]")
