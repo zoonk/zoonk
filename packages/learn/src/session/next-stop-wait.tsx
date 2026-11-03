@@ -10,6 +10,7 @@ import {
 } from "../_components/lesson-not-written-notice";
 import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
+import { toHeldRun } from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -54,7 +55,7 @@ function useWaitingCheck({
   const lessonId = block.kind === "learn" ? block.lessonId : null;
 
   return usePoll({
-    active: true,
+    active: lesson !== "ready",
     intervalMs: WAITING_CHECK_MS,
     key: `${lessonId ?? block.position}:${lesson}:${generationId ?? ""}`,
     onPoll: async (signal) => {
@@ -88,14 +89,27 @@ function useLooksStuck(lesson: NextStopLesson) {
   return stuckWhile === lesson;
 }
 
+/** A written lesson's page no longer names its run, so its held wait keeps the one it followed. */
+function useHeldRunId({ generationId, held }: { generationId: string | null; held: boolean }) {
+  const [followed, setFollowed] = useState(generationId);
+
+  if (!held && followed !== generationId) {
+    setFollowed(generationId);
+  }
+
+  return held ? followed : generationId;
+}
+
 function WritingProgress({
   actions,
   block,
   generationId,
+  held,
 }: {
   actions: NextStopActions;
   block: DayStep;
   generationId: string | null;
+  held: boolean;
 }) {
   const t = useExtracted();
 
@@ -108,10 +122,12 @@ function WritingProgress({
       restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
       {(run) => (
-        <GenerationWait kind="lesson" run={run}>
-          <GenerationTimelineDescription className="text-sm">
-            {t("This lesson is being written for you. It's usually ready in about two minutes.")}
-          </GenerationTimelineDescription>
+        <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run}>
+          {!held && (
+            <GenerationTimelineDescription className="text-sm">
+              {t("This lesson is being written for you. It's usually ready in about two minutes.")}
+            </GenerationTimelineDescription>
+          )}
         </GenerationWait>
       )}
     </FollowedRun>
@@ -129,7 +145,9 @@ export function Waiting({
   generationId: string | null;
   lesson: NextStopLesson;
 }) {
+  const held = lesson === "ready";
   const stuck = useLooksStuck(lesson);
+  const runId = useHeldRunId({ generationId, held });
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
@@ -144,7 +162,7 @@ export function Waiting({
           }}
         />
       ) : (
-        <WritingProgress actions={actions} block={block} generationId={generationId} />
+        <WritingProgress actions={actions} block={block} generationId={runId} held={held} />
       )}
     </div>
   );

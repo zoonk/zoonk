@@ -1,26 +1,22 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
+import { closeStepStream } from "../_shared/stream-status";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
-import { isBuiltBeforeResearch, waitForGraphInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, buildCurriculum } from "./goal-curriculum";
+import { isBuiltBeforeResearch } from "./goal-content-inputs";
 import { followPlanStart } from "./goal-lookahead";
 import { outlinePlanAhead } from "./goal-outlines";
 import { preparePlanPlacement } from "./goal-placement-items";
+import { buildPlan } from "./goal-plan-build";
 import { reconcileResearch, reconcileStoredPlan } from "./goal-research-reconcile";
 import { type GoalRunContext } from "./goal-run-context";
 import { setUpPlan } from "./plan-setup";
 import { isPlanPreparedStep, recordGoalBuildFailureStep } from "./steps/goal-build-outcome-steps";
-import {
-  decideGoalScopeStep,
-  keepMaterialPrivate,
-  loadGoalCurriculumStep,
-} from "./steps/goal-curriculum-steps";
+import { decideGoalScopeStep, loadGoalCurriculumStep } from "./steps/goal-curriculum-steps";
 import { listPlanSetupTasksStep, prepareCourseGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
@@ -43,9 +39,11 @@ export type GoalContentResult = {
 async function reportBuildFailure({
   context,
   goalId,
+  last = true,
 }: {
   context: GoalRunContext;
   goalId: string;
+  last?: boolean;
 }) {
   await Promise.all([
     goalProgressStep(
@@ -55,7 +53,7 @@ async function reportBuildFailure({
         status: "error",
         step: WORKFLOW_ERROR_STEP,
       },
-      { last: true },
+      { last },
     ),
     recordGoalBuildFailureStep(goalId),
     trackGenerationFailedStep({
@@ -134,41 +132,6 @@ async function prepareExistingPlan({
   return { goalId, speculativeLessonIds, status: "prepared" };
 }
 
-type BuiltPlan = {
-  curriculum: BuiltCurriculum;
-  inputs: GoalCurriculumInputs;
-  researchId: string | null;
-  scope: CurriculumScope;
-};
-
-async function buildPlan({
-  context,
-  initial,
-  input,
-}: {
-  context: GoalRunContext;
-  initial: GoalCurriculumInputs;
-  input: GoalContentInput;
-}): Promise<BuiltPlan | null> {
-  const rebuild = Boolean(input.rebuild);
-
-  const [inputs, decided] = await Promise.all([
-    waitForGraphInputs({ initial, researchId: input.researchId }),
-    decideGoalScopeStep({ ...context, inputs: initial }),
-    rebuild ? null : startPairLevelTest({ context, goal: initial.goal }),
-  ]);
-
-  if (!inputs || inputs.hasPlanGraph !== rebuild) {
-    return null;
-  }
-
-  const scope = keepMaterialPrivate({ inputs, scope: decided });
-  const researchId = input.researchId ?? null;
-  const curriculum = await buildCurriculum({ context, inputs, rebuild, researchId, scope });
-
-  return { curriculum, inputs, researchId, scope };
-}
-
 async function prepareAheadOfLearner({
   context,
   inputs,
@@ -179,17 +142,10 @@ async function prepareAheadOfLearner({
   rebuild: boolean;
 }): Promise<string[]> {
   const goalId = inputs.goal.id;
+
+  await goalProgressStep({ entityId: goalId, status: "started", step: "prepareFirstLessons" });
   const [speculativeLessonIds] = await prepareAhead({ context, inputs, rebuild });
-
-  await goalProgressStep(
-    { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
-    { last: true },
-  );
-
-  if (!rebuild) {
-    await followPlanStart({ context, inputs, started: speculativeLessonIds });
-  }
-
+  await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
   return speculativeLessonIds;
 }
 
@@ -205,30 +161,50 @@ async function buildGoal({
   const { goalId } = input;
   const rebuild = Boolean(input.rebuild);
 
-  const built = await buildPlan({ context, initial, input }).catch(async (error: unknown) => {
-    await reportBuildFailure({ context, goalId });
+  const { plan, warmUp } = buildPlan({ context, initial, input });
+
+  const built = await plan.catch(async (error: unknown) => {
+    try {
+      await reportBuildFailure({ context, goalId, last: false });
+    } finally {
+      await warmUp;
+      await closeStepStream();
+    }
+
     throw error;
   });
 
   if (!built) {
-    await goalProgressStep(
-      { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
-      { last: true },
-    );
+    try {
+      await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+    } finally {
+      await warmUp;
+      await closeStepStream();
+    }
 
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
   const { curriculum, inputs, researchId, scope } = built;
+  const prepared = prepareAheadOfLearner({ context, inputs, rebuild });
+  const closed = Promise.allSettled([prepared, warmUp]).then(() => closeStepStream());
 
-  await goalProgressStep({ entityId: goalId, status: "started", step: "prepareFirstLessons" });
+  try {
+    const [speculativeLessonIds] = await Promise.all([
+      prepared.then(async (started) => {
+        if (!rebuild) {
+          await followPlanStart({ context, inputs, started });
+        }
 
-  const [speculativeLessonIds] = await Promise.all([
-    prepareAheadOfLearner({ context, inputs, rebuild }),
-    rebuild ? null : reconcileResearch({ context, curriculum, inputs, researchId, scope }),
-  ]);
+        return started;
+      }),
+      rebuild ? null : reconcileResearch({ context, curriculum, inputs, researchId, scope }),
+    ]);
 
-  return { goalId, speculativeLessonIds, status: "built" };
+    return { goalId, speculativeLessonIds, status: "built" };
+  } finally {
+    await closed;
+  }
 }
 
 async function loadInitialCurriculum({
@@ -295,14 +271,12 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
 
   const { context, initial } = loaded;
 
-  const rebuild = Boolean(input.rebuild);
-
-  if (initial.hasPlanGraph && !rebuild) {
+  if (initial.hasPlanGraph && !input.rebuild) {
     return prepareExistingPlan({ context, inputs: initial, researchId: input.researchId });
   }
 
   // The first build is still running, and reads the new source when it gets to the graph.
-  if (!initial.hasPlanGraph && rebuild) {
+  if (!initial.hasPlanGraph && input.rebuild) {
     await goalProgressStep(
       { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
       { last: true },

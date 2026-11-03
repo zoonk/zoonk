@@ -23,7 +23,6 @@ import {
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
 import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
-import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { isRunActive } from "../../_shared/run-activity";
@@ -92,16 +91,11 @@ async function planLesson({
 
   const context = toContentAnalytics({ analytics, scope: inputs.scope, workflowRunId });
 
-  const reuse = await loadLessonReuse({
-    forExam: (inputs.prompt.exams?.length ?? 0) > 0,
-    lessonId,
-  });
-
   const { data, provenance } = await generateLessonSpec({
     ...inputs.prompt,
     analytics: context,
     model: getLessonSpecModel(inputs.scope),
-    serviceTier: chooseServiceTier({ reuse, wait }),
+    serviceTier: chooseServiceTier({ wait }),
   });
 
   const novice = readsNoviceRules(inputs.prompt);

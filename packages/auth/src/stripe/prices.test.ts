@@ -12,6 +12,7 @@ vi.mock("stripe", () => ({
 describe(getStripePrices, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_key");
   });
 
   afterEach(() => {
@@ -96,6 +97,7 @@ describe(getStripePrices, () => {
 describe(getStripePriceTable, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_key");
   });
 
   afterEach(() => {
@@ -133,6 +135,17 @@ describe(getStripePriceTable, () => {
 
   it("does not contact Stripe during E2E tests", async () => {
     vi.stubEnv("E2E_TESTING", "true");
+
+    const result = await getStripePriceTable(["plus_monthly"], ["usd", "brl"]);
+
+    expect(result).toStrictEqual({});
+    expect(mockList).not.toHaveBeenCalled();
+  });
+
+  it("lists no prices in a local run without a Stripe key", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "development");
+    vi.stubEnv("STRIPE_SECRET_KEY", "");
 
     const result = await getStripePriceTable(["plus_monthly"], ["usd", "brl"]);
 

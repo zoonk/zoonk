@@ -172,8 +172,10 @@ export function useWorkflowRun({
     clockOffsetMs: state.clockOffsetMs ?? undefined,
     failure: state.failure,
     retry: getRetry(),
+    skillName: state.skillName ?? undefined,
     status,
     stepTimes: state.stepTimes,
     steps: state.steps,
+    warmUpId: state.warmUpId ?? undefined,
   };
 }

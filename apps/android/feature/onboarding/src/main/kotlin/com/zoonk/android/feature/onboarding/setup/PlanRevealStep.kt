@@ -45,6 +45,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.READING_RUN
@@ -55,6 +57,8 @@ import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
+import com.zoonk.android.feature.warmup.ReadyHold
+import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
@@ -109,6 +113,10 @@ internal fun ColumnScope.PlanRevealStep(
     val state by resource.collectShown()
     val plan = state.value?.plan
     val readingNotice = plan?.notice == Plan.Notice.READING
+    val reading = plan?.ready == true && readingNotice
+    val read = plan?.ready == true && !readingNotice
+    // The documents' reading has its own hold, which only a guess on it can keep after they're read.
+    val readingHold = rememberReadyHold(ready = read)
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
     val poll = rememberPoll(active = polls, timeout = Duration.INFINITE) { resource.refreshed() }
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
@@ -139,62 +147,128 @@ internal fun ColumnScope.PlanRevealStep(
             StepLoading()
         }
 
-        plan?.ready != true -> {
-            PlanBuilding(run.withPoll(poll.stopped), onRetry = if (poll.stopped) poll::restart else onRetryRun) {
-                libraryCourse?.let { course ->
-                    LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
-                }
-            }
-        }
-
-        readingNotice && (poll.stopped || run.isStopped) -> {
-            PlanBuilding(run.withPoll(poll.stopped), onRetry = if (poll.stopped) poll::restart else onRetryRun)
-        }
-
-        readingNotice -> {
-            NoticeReading(plan.examDocument, lastEdition = plan.schedule.targetDateEstimated)
+        plan != null && (reading || (read && !readingHold.over)) -> {
+            NoticeReading(
+                plan.examDocument,
+                plan.schedule.targetDateEstimated,
+                run.warmUpId,
+                run.stoppedBy(pollFailed = poll.stopped),
+                onRetry = if (poll.stopped) poll::restart else onRetryRun,
+                readingHold,
+                PlanNext.Plan,
+            )
         }
 
         else -> {
-            val syllabus by plans.syllabus[goal.id].collectShown()
-            RevealBody(
-                plan = plan,
-                goal = goal,
-                syllabus = syllabus.value,
-                isGuest = isGuest,
-                starting = starting,
-                onStart = { opening = true },
-                // Adjust opens the Plan tab until the plan editor (F16) can open here.
-                onAdjust = {
-                    navigator.closeSection()
-                    navigator.open(AppRoute.Plan())
-                },
-                onChangeChoice = {
-                    navigator.closeSection()
-                    navigator.open(AppRoute.Plan(focus = ADJUST_CHOICES))
-                },
-                onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
-            )
+            // Lives only with the build's wait, so a guess there doesn't hold the reveal after an exam's documents are read.
+            val hold = rememberReadyHold(ready = plan?.ready == true)
+            if (plan == null || !hold.over) {
+                PlanBuilding(
+                    run.withPoll(poll.stopped),
+                    onRetry = if (poll.stopped) poll::restart else onRetryRun,
+                    hold = hold,
+                    next = PlanNext.Plan,
+                ) {
+                    libraryCourse?.let { course ->
+                        LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
+                    }
+                }
+            } else {
+                val syllabus by plans.syllabus[goal.id].collectShown()
+                RevealBody(
+                    plan = plan,
+                    goal = goal,
+                    syllabus = syllabus.value,
+                    isGuest = isGuest,
+                    starting = starting,
+                    onStart = { opening = true },
+                    // Adjust opens the Plan tab until the plan editor (F16) can open here.
+                    onAdjust = {
+                        navigator.closeSection()
+                        navigator.open(AppRoute.Plan())
+                    },
+                    onChangeChoice = {
+                        navigator.closeSection()
+                        navigator.open(AppRoute.Plan(focus = ADJUST_CHOICES))
+                    },
+                    onCreateAccount = { navigator.open(AppRoute.Login) },
+                    onSeePlus = { navigator.open(AppRoute.Subscription) },
+                )
+            }
         }
     }
 }
+
+/** Where the learner goes once the plan is ready: the time question, or the plan itself. */
+internal enum class PlanNext { TimeQuestion, Plan }
 
 @Composable
 internal fun PlanBuilding(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
+    hold: ReadyHold? = null,
+    next: PlanNext = PlanNext.Plan,
     offer: @Composable () -> Unit = {},
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
-            OnboardingHeading(
-                stringResource(R.string.onboarding_reveal_building_title),
-                stringResource(if (run.isStopped) R.string.onboarding_answers_saved else R.string.onboarding_reveal_building_description),
-            )
+    PlanWait(run.warmUpId, hold, next) {
+        if (hold?.holding == true) {
+            GenerationWait(GenerationKind.Curriculum, run.copy(status = GenerationRun.Status.Ready, failure = null), onRetry = null) {
+                PlanReadyHeading(next)
+            }
+        } else {
+            GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
+                OnboardingHeading(
+                    stringResource(R.string.onboarding_reveal_building_title),
+                    stringResource(
+                        if (run.isStopped) R.string.onboarding_answers_saved else R.string.onboarding_reveal_building_description,
+                    ),
+                )
+            }
         }
         offer()
     }
+}
+
+/**
+ * A wait for the plan. Given a [hold], the goal's guesses show under it; once the plan is ready and the learner is still
+ * guessing, it says so, and only the pinned button to what's [next] moves on.
+ */
+@Composable
+private fun PlanWait(
+    warmUpId: String?,
+    hold: ReadyHold?,
+    next: PlanNext,
+    content: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        content()
+        hold?.let { SetupWarmUpCard(warmUpId, AnalyticsEvent.WarmUpSurface.PlanWait, it) }
+    }
+
+    hold?.let {
+        PageHold(
+            it,
+            stringResource(
+                when (next) {
+                    PlanNext.Plan -> R.string.focustest_see_plan
+                    PlanNext.TimeQuestion -> R.string.onboarding_continue
+                },
+            ),
+        )
+    }
+}
+
+@Composable
+private fun PlanReadyHeading(next: PlanNext) {
+    OnboardingHeading(
+        stringResource(R.string.warm_up_plan_ready),
+        stringResource(
+            when (next) {
+                PlanNext.Plan -> R.string.warm_up_plan_ready_whenever
+                PlanNext.TimeQuestion -> R.string.warm_up_plan_ready_one_question
+            },
+        ),
+    )
 }
 
 @Composable
@@ -220,27 +294,50 @@ private fun LibraryCourseOffer(
     }
 }
 
-/** The plan exists; its exam's official documents are still being read, and the plan will follow them. */
+/**
+ * The plan exists; its exam's official documents are still being read, and the plan will follow them. A [failure] and
+ * its [onRetry] show in place of the bar, so the card keeps its place under them.
+ */
 @Composable
 internal fun NoticeReading(
     document: ExamDocument,
     lastEdition: Boolean,
+    warmUpId: String?,
+    failure: GenerationFailure?,
+    onRetry: (() -> Unit)?,
+    hold: ReadyHold,
+    next: PlanNext,
 ) {
-    GenerationWait(
-        kind = if (document == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
-        run = READING_RUN,
-        onRetry = null,
-    ) {
-        OnboardingHeading(
-            stringResource(if (lastEdition) R.string.onboarding_reveal_reading_last_title else R.string.onboarding_reveal_reading_title),
-            stringResource(
+    val holding = hold.holding
+
+    PlanWait(warmUpId, hold, next) {
+        GenerationWait(
+            kind = if (document == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
+            run =
                 when {
-                    lastEdition -> R.string.onboarding_reveal_reading_last
-                    document == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
-                    else -> R.string.onboarding_reveal_reading_notice
+                    holding -> READING_RUN.copy(status = GenerationRun.Status.Ready)
+                    failure != null -> READING_RUN.copy(status = GenerationRun.Status.Failed, failure = failure)
+                    else -> READING_RUN
                 },
-            ),
-        )
+            onRetry = onRetry,
+        ) {
+            if (holding) {
+                PlanReadyHeading(next)
+            } else {
+                OnboardingHeading(
+                    stringResource(
+                        if (lastEdition) R.string.onboarding_reveal_reading_last_title else R.string.onboarding_reveal_reading_title,
+                    ),
+                    stringResource(
+                        when {
+                            lastEdition -> R.string.onboarding_reveal_reading_last
+                            document == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
+                            else -> R.string.onboarding_reveal_reading_notice
+                        },
+                    ),
+                )
+            }
+        }
     }
 }
 

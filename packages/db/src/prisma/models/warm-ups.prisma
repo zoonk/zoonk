@@ -1,0 +1,25 @@
+enum WarmUpStatus {
+  writing
+  ready
+  failed
+}
+
+/// Shared content written only from normalized goal facts, never learner-authored details.
+model WarmUp {
+  id            String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language      String       @db.VarChar(10)
+  identityKey   String       @map("identity_key")
+  status        WarmUpStatus @default(writing)
+  cards         Json?
+  writerModel   String?      @map("writer_model")
+  checkerModel  String?      @map("checker_model")
+  promptVersion String?      @map("prompt_version")
+  runId         String       @map("run_id")
+  claimedAt     DateTime     @default(now()) @map("claimed_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at")
+  goals         Goal[]
+
+  @@unique([language, identityKey], name: "languageIdentity")
+  @@map("warm_ups")
+}

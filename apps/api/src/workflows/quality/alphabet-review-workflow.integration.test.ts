@@ -43,7 +43,7 @@ vi.mock("@vercel/blob", async (importOriginal) => ({
   })),
 }));
 
-const WAIT = { interval: 200, timeout: 30_000 };
+const WAIT = { interval: 200, timeout: 10_000 };
 
 const CYRILLIC: AlphabetLessonContent = {
   canDo: "Leia e pronuncie в, х e к.",

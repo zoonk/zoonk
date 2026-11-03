@@ -3023,6 +3023,12 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "짝을 모두 맞췄어요. 계속하려면 확인을 누르세요."
 
+#. Starts the explanation of why the learner's answer is wrong.
+#: src/components/not-quite-lead.tsx
+msgctxt "Ilqo6R"
+msgid "Not quite:"
+msgstr "정답은 아니에요:"
+
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -3052,55 +3058,6 @@ msgstr "재생"
 msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "이 뜻에 맞는 건 무엇인가요?"
-
-#. Verdict on an answer that is almost right.
-#: src/components/verdict-label.tsx
-msgctxt "Bk6B6r"
-msgid "Almost there"
-msgstr "거의 맞았어요"
-
-#: src/components/verdict-label.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "정답이에요!"
-
-#: src/components/verdict-label.tsx
-msgctxt "yuSMTV"
-msgid "Here's the answer"
-msgstr "정답은 이거예요"
-
-#: src/components/verdict-label.tsx
-msgctxt "WbwDD5"
-msgid "Good guess!"
-msgstr "예상이 맞았어요!"
-
-#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
-#: src/components/verdict-label.tsx
-msgctxt "--l7ni"
-msgid "Not quite"
-msgstr "정답은 아니에요"
-
-#: src/components/verdict-label.tsx
-msgctxt "pWC3pf"
-msgid "Here's a good answer"
-msgstr "이렇게 답하면 좋아요"
-
-#: src/components/verdict-label.tsx
-msgctxt "9DZ20y"
-msgid "Right, watch the spelling"
-msgstr "맞았어요, 철자만 확인해 보세요"
-
-#. Verdict when the learner's answer wasn't checked this time.
-#: src/components/verdict-label.tsx
-msgctxt "yRGkJi"
-msgid "Not checked this time"
-msgstr "이번에는 답을 확인하지 않았어요"
-
-#. Starts the explanation of why the learner's answer is wrong.
-#: src/components/verdict-label.tsx
-msgctxt "Ilqo6R"
-msgid "Not quite:"
-msgstr "정답은 아니에요:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"

@@ -1,0 +1,305 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The false first card triggers the maximum score of 4. It reverses the important warning about Mexican \"coger\" and invents a Brazilian insult meaning. Card 9 adds ambiguity through alternative verbs that can also denote driving, while its question incorrectly equates driving with taking a ride or strolling. Card 6 introduces an unsupported material restriction. These multiple substantive problems warrant a score below the cap.",
+          "score": 3,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "There are ten cards, and several cover useful beginner vocabulary and genuine Brazilian-Portuguese false friends. However, the opening hook is unusable, its distractors make the intended answer almost automatic, and the deck repeatedly uses the same translation-completion shape. The Mexico-heavy selection, regional \"¿Mande?\", and traffic-sign terminology are less well aligned with a general beginner Spanish pretest. The obvious-answer issue triggers the maximum score of 7.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "The questions are single sentences within the approximate length range. Each card has three short options, and the reveals use one or two concise sentences, begin with the selected answer, and avoid feedback about whether the learner guessed correctly. No concrete violation of this category's format requirements is apparent.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The surrounding prose is mostly natural Brazilian Portuguese, but target-language words repeatedly appear unquoted in options and reveals, including \"hielo\", \"helado\", \"empanada\", \"cruce peatonal\", and \"manejar\". This triggers the maximum score of 6 for mixing languages outside quoted target-language words. The otherwise accessible tone does not erase that repeated failure.",
+          "score": 6,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3600,
+          "outputTokens": 1005,
+          "reasoningTokens": 267
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 1 teaches a false regional contrast: \"coger\" commonly has a vulgar sexual meaning in Mexico, not an established Brazilian meaning as a heavy insult. Card 9 confuses driving with going for a ride or strolling, and its alternatives are not reliably exclusive: \"dirigir\" and \"guiar\" can also mean driving. Numerous Spanish words appear without quotation marks. The deck also overfocuses on Mexican usage and includes regional conversational language despite the expectations discouraging regional slang.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Card 6 says the attendant asks you for water but then asks what the attendant wants to hand you; it also unnecessarily specifies a glass drinking vessel, although \"vaso\" does not specify material. Card 2 describes particular sandwich fillings as though they define a Mexican \"torta\". Several distractors are implausible, especially a fruit or dance as meanings of a verb and headlights as a meaning of \"lentes\".",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Open with a trustworthy, high-impact false friend, vary the question shapes beyond vocabulary completion, and favor broadly useful beginner Spanish. Make regional examples occasional and explicitly bounded, and replace categorical descriptions of foods and objects with their essential meanings.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese for a Brazilian learning Spanish: false friends and cognates, first words and phrases, one grammar surprise, one usage note. Spanish words in quotes, written as in Spanish; everything else in Brazilian Portuguese. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Em espanhol, \"embarazada\" quer dizer… Envergonhada / Grávida ✓ / Cansada. Para dizer que está envergonhada, use \"avergonzada\".\n2. Se alguém na Espanha diz que a comida está \"exquisita\", essa pessoa achou a comida… Estranha / Deliciosa ✓.\n3. \"Polvo\", em espanhol, é… Povo / O animal de oito braços / Pó ✓. O animal se chama \"pulpo\", e povo é \"pueblo\".\n4. Quem trabalha numa \"oficina\" na Espanha trabalha num… Escritório ✓ / Conserto de carros. Oficina mecânica, em espanhol, é \"taller\".\n5. Uma \"calle larga\" é uma rua… Comprida ✓ / Larga. Para a largura, o espanhol usa \"ancho\".\n6. \"Espera un rato\" quer dizer… Cuidado com o rato / Espera um pouco ✓ / Espera rápido.\n7. \"Me gusta el café\", ao pé da letra, é… Eu gosto do café / O café me agrada ✓. Por isso, no plural, fica \"me gustan los libros\".\n8. \"Apellido\", em espanhol, é… Sobrenome ✓ / Apelido. Apelido, em espanhol, é \"apodo\".\nA false friend must hold in Brazilian Portuguese. Penalize usage that only holds in some Spanish-speaking countries shown as universal (for example \"coger\" as the neutral word for \"pegar\" everywhere), regional slang, and Portugal's Portuguese.",
+        "id": "pt-espanhol-1",
+        "userInput": {
+          "goal": "Espanhol",
+          "kind": "language",
+          "language": "pt",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The false universal tax claim in card 6 triggers the maximum score of 4 for factual errors. Card 9 incorrectly describes an electoral quotient belonging to a party; the electoral and party quotients are distinct concepts. Cards 6 and 9 also trigger the prohibited-topic cap of 6 through changeable tax and electoral rules, so the lower cap applies. Card 3 needs an explicit reference frame for the stone's velocity. The general thesis-writing card is not an Enem essay-rule card and does not trigger the exam-specific cap.",
+          "score": 4,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "There are ten cards, but six concern natural sciences and no card provides a genuine elementary mathematics test. Tax bases and electoral allocation are poor entry points for this beginner deck. Five consecutive physical-science cards create an unbalanced opening, while elementary photosynthesis appears last. Some distractors are implausible rather than useful beginner misconceptions, especially the speaker-generated vacuum. Everyday scenarios provide some hooks, but coverage and progression substantially weaken the pretest.",
+          "score": 6,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Several cards violate the option-length limit, including cards 1, 2, 3, 6, 7, and 8, triggering the cap of 7. Card 3 also uses two question sentences and considerably exceeds the suggested question length. Otherwise, each card supplies three options, and the reveals generally begin with the answer, remain brief, and avoid commenting on whether the learner guessed correctly.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses Brazilian Portuguese without language mixing, emoji, or forbidden introductory phrases. However, multiple passages sound like formal exam or administrative prose, particularly 'imposto retido', 'montante efetivamente cobrado na transação comercial', and the electoral explanation. This dry register triggers the tone cap of 7 despite more approachable bicycle, soda-can, and cooking examples elsewhere.",
+          "score": 7,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3810,
+          "outputTokens": 1269,
+          "reasoningTokens": 507
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 6 falsely presents the discounted purchase price as a universal tax base; tax treatment depends on the applicable tax and discount conditions. Card 9 confuses the electoral quotient with a party-specific threshold and oversimplifies seat allocation. Both cards introduce changeable tax or electoral rules, which are prohibited topics. The deck also substantially misses the requested area balance: six cards cover natural sciences, while none genuinely tests basic mathematics.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Numerous options exceed six words, and card 3 has a two-sentence question substantially longer than the requested range. Card 3 also fails to specify that the stone's throwing velocity is measured relative to the car. Several passages use bureaucratic or textbook-like language rather than an approachable teaching voice.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Rebalance the deck with elementary mathematics and accessible humanities concepts, place foundational ideas before more demanding ones, and replace implausible distractors such as molecules disappearing into a speaker-generated vacuum. For card 1, use a clearly specified heat-transfer comparison rather than presenting a condition-dependent cooling trick as the best method.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese on basic concepts from the Enem's areas (Linguagens, Ciências Humanas, Ciências da Natureza, Matemática), one or two per area. \"Enem\", never \"ENEM\". Amounts in reais written the Brazilian way. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Qual parte da célula vegetal faz a fotossíntese? Mitocôndria / Cloroplasto ✓ / Ribossomo.\n2. Um produto de R$ 80 está com 25% de desconto. Quanto você paga? R$ 55 / R$ 60 ✓ / R$ 64.\n3. O que a Lei Áurea, de 1888, fez? Proclamou a República / Declarou a independência / Aboliu a escravidão no Brasil ✓.\n4. Em \"Ele correu tanto que ficou sem fôlego\", a parte \"que ficou sem fôlego\" indica… Consequência ✓ / Causa / Condição.\n5. Por que o gelo boia na água? Tem ar preso dentro / É menos denso que a água líquida ✓ / É mais frio que a água.\n6. Qual bioma cobre a maior parte do território brasileiro? Cerrado / Mata Atlântica / Amazônia ✓.\n7. Num dia de sol, por que uma camiseta preta esquenta mais que uma branca? Absorve mais luz ✓ / Reflete mais luz / Conduz eletricidade.\n8. Uma receita para 4 pessoas usa 3 ovos. Para 8 pessoas, quantos ovos? 6 ✓ / 7 / 12.\nScore accuracy at most 6 when any card is about the Enem itself (dates, number of questions, scoring, the TRI, cutoffs, the essay's rules).",
+        "id": "pt-enem-1",
+        "userInput": {
+          "goal": "Enem",
+          "kind": "exam",
+          "language": "pt",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The false-card and second-right-option triggers impose a maximum of 4; the myth prohibition also applies, with its higher cap of 6. Multiple substantial errors warrant 3: entanglement is described as an immediate causal effect, compatible alternatives are marked wrong, vacuum fluctuations are explained using literal virtual-particle creation, half-life is confused with individual decay randomness, and temperature is incorrectly defined. The double-slit and qubit explanations also overstate what measurement and interaction imply.",
+          "score": 3,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The deck has the requested ten cards and a strong opening hook, but cards 1 and 10 substantially duplicate the photoelectric-effect idea, triggering the maximum of 7. Card 1 also reveals the photon-packet concept needed for card 10. Advanced vacuum-field language appears before the introduction to superposition, question shapes are repetitive, and several distractors are not credible beginner choices.",
+          "score": 6,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "The cards consistently use three short options and single-sentence questions approximately within the requested length. Reveals start with the selected answer, use two short sentences, stay within the approximate character limit, and avoid grading the learner's response. No several-cards format-limit trigger is present.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses consistent US English without prohibited catchphrases, emoji, or exclamation marks. Concrete phrases such as electrons that 'pop out' make parts approachable. However, unexplained terms such as 'zero-point energy,' 'decoherence,' and 'magnetic inversion' make portions less accessible than the requested everyday teacher voice. The tone is not consistently dry or childish enough to trigger the tone cap.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3151,
+          "outputTokens": 1299,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several cards teach incorrect or misleading physics. Card 4 presents entanglement as an instantaneous causal influence, and its supposedly wrong options do not exclude entanglement. Card 6 treats virtual particles literally popping into existence as established fact. Card 8 confuses a sample's half-life with an individual atom's unpredictable decay time; the decay rate also decreases as the sample decays. Card 9 incorrectly defines temperature as a measure of disruption to quantum states. Card 2 suggests that one electron's landing demonstrates interference, whereas the interference pattern emerges from many detections. Card 7 incorrectly implies that an interaction necessarily makes a qubit settle into a definite value.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cards 1 and 10 revisit the same photoelectric-effect/photon-energy idea, with card 1's explanation substantially giving away card 10. Several distractors, such as 'Decay into gravity' and 'Magnetic inversion,' are implausible rather than useful beginner misconceptions. The questions rely heavily on the same sentence-completion shape.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Keep the engaging photoelectric-effect opening, then introduce photon energy and superposition before uncertainty, tunneling, and entanglement. Replace the unreliable vacuum and temperature cards with distinct introductory concepts. Explain double-slit interference through repeated detections, and describe entanglement as correlated measurement outcomes without implying instantaneous signaling or a physical push.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English on the first ideas of quantum physics for a beginner, such as quantization of energy, photons, wave-particle duality, the double-slit experiment, superposition, the uncertainty principle, tunneling. Explanations stay true when simplified. Penalize popular myths stated as facts (that observation means a conscious observer, that entanglement sends messages faster than light, that the uncertainty principle is only about clumsy measurement), quotes (\"God does not play dice\", \"nobody understands quantum mechanics\") and claims about the latest quantum computers.",
+        "id": "en-quantum-physics-1",
+        "userInput": { "goal": "Quantum physics", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The accuracy cap of 4 applies: card 1 has a partly right alternative, and card 2's explanation of pegwood is inaccurate. The mainspring and click-spring cards also teach imprecise mechanical distinctions, while the cleaning reveals make overly categorical claims. The pendulum-length and escapement explanations are substantially correct, but they do not erase these failures.",
+          "score": 4,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The repeated old-lubricant concept triggers the cap of 7, particularly across cards 7 and 10. Most topics are appropriate for beginning restoration, and the opening cleaning mistake is a useful hook. However, some distractors are implausible, basic power-source material appears relatively late, and nearly every question uses the same completion shape.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions fit the requested approximate length and are single sentences. Every card has three short options, and the reveals begin with the selected answer, remain within the approximate length limit, and avoid commenting on the learner's performance. No concrete format violation is apparent.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck consistently uses US English and an accessible, concrete tone without prohibited catchphrases, emoji, or exclamation marks. Minor wording problems include \"hammered copper curved plates\" and less precise expressions such as \"stopping the gear train a tiny bit.\" These reduce clarity without making the tone exam-like or childish.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3126,
+          "outputTokens": 1235,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several cards need factual correction. Card 1's distractor, \"Restore the original shine,\" can also describe removing tarnish with steel wool, even though that treatment can damage the surface. Card 2 incorrectly explains pegging out as using wood to hold putty or solvents; sharpened pegwood mechanically removes residue from pivot holes. Card 3 should describe elastic bending of the mainspring rather than contrast vague \"steel tension\" with twisting. Card 9 conflates the click spring with the click and describes their function as speed control rather than preventing backward rotation of the winding arbor. Cards 7 and 10 overstate contamination as inevitably turning lubricant into paste or glue.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cards 2, 7, and 10 substantially overlap on old lubricant and cleaning, with card 7 helping answer card 10. Distractors such as magnetic fields, a worn-out dial face, and coating pivots in wax make several answers too easy. The language is generally natural US English, but \"hammered copper curved plates\" is awkward.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a shorter, more distinct deck rather than retaining overlapping cleaning cards. Vary the question shapes beyond sentence completions, move basic power-source concepts earlier, and use plausible misconceptions as distractors. Specify a pendulum clock in the rate-adjustment question.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cards in US English on what a beginner restoring antique mechanical clocks learns first, such as the escapement, the pendulum and why its length sets the rate, the mainspring, why old oil must be cleaned off before relubricating, the beat. It's a niche subject, so a short deck of true cards is better than 10 with doubtful ones. Penalize made-up historical dates, makers and exact figures.",
+        "id": "en-antique-clocks-1",
+        "userInput": { "goal": "Restoring antique clocks", "kind": "learn", "language": "en" }
+      }
+    }
+  ],
+  "taskId": "warm-up-cards"
+}

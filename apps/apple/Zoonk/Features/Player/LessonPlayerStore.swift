@@ -15,10 +15,17 @@ final class LessonPlayerStore {
     case playing
   }
 
+  struct WarmUp: Equatable {
+    let deckID: String
+    let outline: LessonOutline
+  }
+
   enum LessonWriting: Equatable {
     /// Nothing writes it yet: "Write this lesson" on a tap.
     case notStarted
     case writing
+    /// Written while its wait dealt warm-up cards: it opens once that wait moves on.
+    case written
     case failed
     case setAside
     case refused(LessonRunRefusal)
@@ -38,6 +45,7 @@ final class LessonPlayerStore {
   /// the app, a guest's lesson ends as a learner's.
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
+  private(set) var warmUp: WarmUp?
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
   private(set) var soundsEnabled = true
@@ -316,6 +324,10 @@ final class LessonPlayerStore {
     let lesson = await readiness(outline.id, identity: identity)
     guard isCurrent(identity) else { return }
 
+    if let deckID = lesson?.warmUpId {
+      warmUp = WarmUp(deckID: deckID, outline: outline)
+    }
+
     switch lesson?.status {
     case .generating: screen = .waiting(outline, .writing)
     case .ready: await load(refresh: true)
@@ -326,6 +338,15 @@ final class LessonPlayerStore {
     if case .waiting(_, .writing) = screen {
       await followWriting(outline, run: lesson?.generationId, identity: identity)
     }
+  }
+
+  /// Once a written lesson's wait moves on.
+  func open() async {
+    guard case .waiting(_, .written) = screen else {
+      return
+    }
+
+    await load(refresh: true)
   }
 
   /// Only on the learner's tap.
@@ -370,6 +391,7 @@ final class LessonPlayerStore {
     }
 
     switch lesson?.status {
+    case .ready where warmUp != nil: screen = .waiting(outline, .written)
     case .ready: await load(refresh: true)
     case .failed, nil: screen = .waiting(outline, .failed)
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)

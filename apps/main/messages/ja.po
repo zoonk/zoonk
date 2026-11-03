@@ -2482,6 +2482,16 @@ msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
 msgstr "{count, plural, other {#項目を復習する}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "レッスンの準備ができました"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aWuC4D"
+msgid "Your lesson is ready. Start it whenever you like."
+msgstr "レッスンの準備ができました。好きなときに始められます。"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"
 msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
 msgstr "通常1〜2分ほどかかります。準備ができ次第、ここでレッスンが開きます。"

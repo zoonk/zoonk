@@ -3,7 +3,6 @@ import {
   type PlacementSkillItems,
   generatePlacementItems,
 } from "@zoonk/ai/tasks/items/placement-items";
-import { getContentReuse } from "@zoonk/core/library/curriculum/scope";
 import { createItems } from "@zoonk/core/library/items/create";
 import { type PlacementChoice } from "@zoonk/core/lookahead/item-exam";
 import {
@@ -147,14 +146,7 @@ export async function writePlacementBatchStep({
     return 0;
   }
 
-  const serviceTier = chooseServiceTier({
-    reuse: getContentReuse({
-      forExam: first.exam !== null,
-      ownerId: first.ownerId,
-      targetLanguage: first.targetLanguage,
-    }),
-    wait,
-  });
+  const serviceTier = chooseServiceTier({ wait });
 
   const { data, provenance } = await generatePlacementItems({
     analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),

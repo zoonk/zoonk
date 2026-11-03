@@ -51,6 +51,7 @@ import com.zoonk.android.feature.plan.lineAdvice
 import com.zoonk.android.feature.plan.markedTimes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
+import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.TimeSelect
@@ -183,15 +184,33 @@ private fun ColumnScope.ScheduleTime(
     val answered = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
     val gate = answered ?: PlanGate(planReadiness.ready, planReadiness.readingNotice)
     val gateAnswer = if (dated) covering else timeAdvice
-    if (waitsForPlan(gate, answered != null, run)) {
-        val gateFailed = gateAnswer.status == PollStatus.Failed
-        if (gate.readingNotice && !gateFailed && !run.isStopped) {
-            val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
-            NoticeReading(document, lastEdition = false)
-        } else {
-            val retry = if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry
-            PlanBuilding(run.withPoll(gateFailed), retry)
-        }
+    val gateFailed = gateAnswer.status == PollStatus.Failed
+    val waits = waitsForPlan(gate, answered != null, run)
+    // The documents' reading has its own hold, which only a guess on it can keep after they're read.
+    val readingHold = rememberReadyHold(ready = !waits)
+    if ((waits && gate.readingNotice) || (!waits && !readingHold.over)) {
+        NoticeReading(
+            if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE,
+            lastEdition = false,
+            run.warmUpId,
+            run.stoppedBy(pollFailed = gateFailed),
+            if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry,
+            readingHold,
+            PlanNext.TimeQuestion,
+        )
+        return
+    }
+
+    // After the return above, so it lives only with the build's wait: a guess there doesn't hold the question after an
+    // exam's documents are read.
+    val hold = rememberReadyHold(ready = !waits)
+    if (!hold.over) {
+        PlanBuilding(
+            run.withPoll(gateFailed),
+            if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry,
+            hold = hold,
+            next = PlanNext.TimeQuestion,
+        )
         return
     }
 

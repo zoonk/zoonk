@@ -73,7 +73,7 @@ describe("lesson render read budgets", () => {
     expect(counts.result).toStrictEqual(expected[name]);
   });
 
-  it("reads alternatives while a lesson has not been generated", async () => {
+  it("reads alternatives and the goal's warm-up deck while a lesson has not been generated", async () => {
     await signedInCourseGoal();
     const lesson = await libraryLessonFixture();
 
@@ -81,7 +81,7 @@ describe("lesson render read budgets", () => {
       getLessonWaitingState({ lessonId: lesson.id }),
     );
 
-    assertReadBudget(counts, 5);
+    assertReadBudget(counts, 6);
     expect(counts.result).toMatchObject({ state: { status: "notStarted" }, status: "ready" });
   });
 });

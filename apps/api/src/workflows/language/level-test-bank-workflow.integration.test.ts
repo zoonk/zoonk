@@ -76,7 +76,7 @@ function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
   };
 }
 
-const OWNER_WRITING_MS = 30_000;
+const OWNER_WRITING_MS = 10_000;
 
 function uniquePair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };

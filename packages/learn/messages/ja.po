@@ -157,6 +157,8 @@ msgstr "1日の学習時間"
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
+#: src/onboarding/steps/placement-waiting.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -218,6 +220,11 @@ msgstr "復習や間違い直しは引き続き無料です。Plusでは、新�
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "試験対策の無料期間（1週間）が終了しました"
+
+#: src/_components/guess-hint.tsx
+msgctxt "CKdZQn"
+msgid "Getting it wrong now helps you remember later."
+msgstr "ここで間違えると、あとで覚えやすくなります。"
 
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
@@ -738,6 +745,57 @@ msgstr "1日の学習時間をおすすめの{time}にする"
 msgctxt "Nm3oG2"
 msgid "Use {time} a day"
 msgstr "1日{time}にする"
+
+#. Verdict on an answer that is almost right.
+#: src/_components/verdict-label.tsx
+msgctxt "Bk6B6r"
+msgid "Almost there"
+msgstr "惜しいです"
+
+#: src/_components/verdict-label.tsx
+#: src/checkpoints/checkpoint-duel-verdict.tsx
+#: src/questions/choice-question.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "正解です！"
+
+#: src/_components/verdict-label.tsx
+msgctxt "yuSMTV"
+msgid "Here's the answer"
+msgstr "答えはこちらです"
+
+#: src/_components/verdict-label.tsx
+msgctxt "WbwDD5"
+msgid "Good guess!"
+msgstr "予想が当たりました！"
+
+#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+#. Marks the learner's answer as wrong.
+#: src/_components/verdict-label.tsx
+#: src/checkpoints/checkpoint-duel-verdict.tsx
+#: src/checkpoints/checkpoint-review.tsx
+#: src/questions/choice-question.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "--l7ni"
+msgid "Not quite"
+msgstr "少し違います"
+
+#: src/_components/verdict-label.tsx
+msgctxt "pWC3pf"
+msgid "Here's a good answer"
+msgstr "回答例はこちらです"
+
+#: src/_components/verdict-label.tsx
+msgctxt "9DZ20y"
+msgid "Right, watch the spelling"
+msgstr "正解です。つづりに気をつけましょう"
+
+#. Verdict when the learner's answer wasn't checked this time.
+#: src/_components/verdict-label.tsx
+msgctxt "yRGkJi"
+msgid "Not checked this time"
+msgstr "今回は答え合わせをしていません"
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -1926,22 +1984,6 @@ msgstr "相手の盾が壊れました。勝利です！"
 msgctxt "NrKNlR"
 msgid "His shield held this time."
 msgstr "今回は相手の盾が耐えました。"
-
-#: src/checkpoints/checkpoint-duel-verdict.tsx
-#: src/questions/choice-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "正解です！"
-
-#. Marks the learner's answer as wrong.
-#: src/checkpoints/checkpoint-duel-verdict.tsx
-#: src/checkpoints/checkpoint-review.tsx
-#: src/questions/choice-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "--l7ni"
-msgid "Not quite"
-msgstr "少し違います"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -9258,6 +9300,12 @@ msgid "{document, select, notice {Your plan will follow the notice's subjects, t
 msgstr "{document, select, notice {要項の科目、トピック、日程に合わせて学習計画を立てます。} other {公式ガイドのパート、トピック、日程に合わせて学習計画を立てます。}}通常、数分かかります。"
 
 #: src/onboarding/steps/notice-reading.tsx
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "学習計画ができました"
+
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "O9QcuL"
 msgid "Your plan, from what you told us"
 msgstr "回答内容をもとにした学習計画"
@@ -9395,6 +9443,11 @@ msgid "Stop and see my plan"
 msgstr "終了して学習計画を見る"
 
 #: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "準備ができたら、いつでも始められます。"
+
+#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "追加した資料をもとに問題を作成しています。資料の読み取りには数分かかります。"
@@ -9405,6 +9458,11 @@ msgid "They come from the skills your goal needs. It usually takes a minute or t
 msgstr "目標に必要なスキルをもとに問題を作成しています。通常は1〜2分かかります。"
 
 #: src/onboarding/steps/placement-waiting.tsx
+msgctxt "QRwbAL"
+msgid "Your questions are ready"
+msgstr "問題の準備ができました"
+
+#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
 msgstr "今はスキップする"
@@ -9413,6 +9471,16 @@ msgstr "今はスキップする"
 msgctxt "8S9f9-"
 msgid "Your first sessions will ask a few of these instead."
 msgstr "代わりに、最初の数回の学習でこの中から数問出題します。"
+
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "JoLgk1"
+msgid "See it whenever you're ready."
+msgstr "好きなタイミングで学習計画を見られます。"
+
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "TTJuzU"
+msgid "One last question, then you'll see it."
+msgstr "最後の質問に答えると、学習計画が見られます。"
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "ni-x13"
@@ -9461,6 +9529,14 @@ msgstr "学習計画の作成が途中で止まりました"
 msgctxt "09Xo2h"
 msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "回答は保存されています。質問に答え終わるまでに学習計画ができるよう、もう一度試してください。"
+
+#: src/onboarding/steps/plan-wait.tsx
+#: src/plan/focus-test/focus-test-result.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "学習計画を見る"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
@@ -10073,13 +10149,6 @@ msgstr "これから重点的に学ぶ科目"
 msgctxt "fBkTTq"
 msgid "{count, plural, one {This subject counts a lot, and it's where you missed most.} other {These subjects count a lot, and they're where you missed most.}} Your plan now gives {count, plural, one {it} other {them}} more depth, and every other topic stays in it."
 msgstr "{count, plural, other {配点の割合が大きく、間違いが最も多かった科目です。}}学習計画では{count, plural, other {この科目}}をより深く学べるようにしました。ほかのトピックもすべて残しています。"
-
-#: src/plan/focus-test/focus-test-result.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "学習計画を見る"
 
 #: src/plan/focus-test/focus-test-screen.tsx
 #: src/questions/test-out-preparing.tsx
@@ -13584,6 +13653,21 @@ msgstr "{dateKind, select, month {{count} · {start}から} other {{count} · {s
 msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "レッスンを準備しています"
+
+#: src/warm-up/warm-up-card.tsx
+msgctxt "YW_xVV"
+msgid "That's all for now."
+msgstr "今回はここまでです。"
+
+#: src/warm-up/warm-up-card.tsx
+msgctxt "e4FgxF"
+msgid "Next guess"
+msgstr "次も予想する"
+
+#: src/warm-up/warm-up-card.tsx
+msgctxt "wPwGoj"
+msgid "Guess while you wait"
+msgstr "待っている間に予想してみましょう"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

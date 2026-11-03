@@ -124,6 +124,22 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
+  func testAFirstLessonWrittenDuringItsWarmUpWaitsForTheWaitBeforeItStarts() async {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let outline = LessonOutline(id: "lesson", title: "Swarms", description: "", estimatedMinutes: 5)
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .notGenerated(outline)
+    }
+    let store = player(cache: cache, content: content, transport: FirstLessonWritingTransport())
+
+    await store.load()
+
+    XCTAssertEqual(store.screen, .waiting(outline, .written))
+    XCTAssertEqual(
+      store.warmUp,
+      LessonPlayerStore.WarmUp(deckID: "019a482c-6a00-7000-8000-000000000001", outline: outline))
+  }
+
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport()
@@ -181,6 +197,40 @@ private struct OfflineLessonTransport: ClientTransport {
     _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     throw APIError.network
+  }
+}
+
+/// The goal's first lesson is being written, then is written; any other request, such as starting
+/// the lesson, fails the test.
+private actor FirstLessonWritingTransport: ClientTransport {
+  private var readinessReads = 0
+
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+
+    switch operationID {
+    case "getLibraryLessonReadiness":
+      readinessReads += 1
+      headerFields[.contentType] = "application/json"
+      let status = readinessReads == 1 ? "generating" : "ready"
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(
+          #"{"alternative": null, "generationId": "run-1", "setAside": false, "status": "\#(status)", "warmUpId": "019a482c-6a00-7000-8000-000000000001"}"#
+        )
+      )
+    case "streamGenerationEvents":
+      headerFields[.contentType] = "text/event-stream"
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(#"data: {"status":"completed","step":"lessonReady"}"# + "\n\n")
+      )
+    default:
+      XCTFail("Unexpected player request: \(operationID)")
+      throw APIError.network
+    }
   }
 }
 

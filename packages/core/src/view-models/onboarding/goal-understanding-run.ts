@@ -42,7 +42,7 @@ export type UnderstoodWords = { provenance: Provenance; result: GoalUnderstandin
 /** `exams` has one entry per goal, in order: null for a goal that names no exam. */
 export type GoalReading = { exams: (ExamLookup | null)[]; result: GoalUnderstanding };
 
-const SERVICE_TIER = chooseServiceTier({ reuse: "personal", small: true, wait: "learner" });
+const SERVICE_TIER = chooseServiceTier({ wait: "learner" });
 
 /** The draft a run reads; null when it's gone, with the learner's account. */
 export async function loadUnderstandingDraft(

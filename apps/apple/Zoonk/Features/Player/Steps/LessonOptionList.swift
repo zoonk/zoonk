@@ -161,7 +161,7 @@ private struct PictureOptionLabel: ViewModifier {
   }
 }
 
-private struct NumberShortcut: ViewModifier {
+struct NumberShortcut: ViewModifier {
   let index: Int
 
   func body(content: Content) -> some View {

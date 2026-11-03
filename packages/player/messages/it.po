@@ -3023,6 +3023,12 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Hai abbinato tutte le coppie. Premi Controlla per continuare."
 
+#. Starts the explanation of why the learner's answer is wrong.
+#: src/components/not-quite-lead.tsx
+msgctxt "Ilqo6R"
+msgid "Not quite:"
+msgstr "Non proprio:"
+
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -3052,55 +3058,6 @@ msgstr "Riproduci"
 msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "Quale ha questo significato?"
-
-#. Verdict on an answer that is almost right.
-#: src/components/verdict-label.tsx
-msgctxt "Bk6B6r"
-msgid "Almost there"
-msgstr "Ci sei quasi"
-
-#: src/components/verdict-label.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Esatto!"
-
-#: src/components/verdict-label.tsx
-msgctxt "yuSMTV"
-msgid "Here's the answer"
-msgstr "Ecco la risposta"
-
-#: src/components/verdict-label.tsx
-msgctxt "WbwDD5"
-msgid "Good guess!"
-msgstr "Hai indovinato!"
-
-#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
-#: src/components/verdict-label.tsx
-msgctxt "--l7ni"
-msgid "Not quite"
-msgstr "Non è la risposta giusta"
-
-#: src/components/verdict-label.tsx
-msgctxt "pWC3pf"
-msgid "Here's a good answer"
-msgstr "Ecco una buona risposta"
-
-#: src/components/verdict-label.tsx
-msgctxt "9DZ20y"
-msgid "Right, watch the spelling"
-msgstr "Giusto, attenzione all’ortografia"
-
-#. Verdict when the learner's answer wasn't checked this time.
-#: src/components/verdict-label.tsx
-msgctxt "yRGkJi"
-msgid "Not checked this time"
-msgstr "Non controllata questa volta"
-
-#. Starts the explanation of why the learner's answer is wrong.
-#: src/components/verdict-label.tsx
-msgctxt "Ilqo6R"
-msgid "Not quite:"
-msgstr "Non proprio:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"

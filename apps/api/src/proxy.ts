@@ -1,4 +1,5 @@
 import { errors } from "@/lib/api-errors";
+import { AUTH_BASE_PATH } from "@/lib/auth-base-path";
 import { isCorsAllowedOrigin } from "@zoonk/utils/origin";
 import { API_URL } from "@zoonk/utils/url";
 import { type NextRequest, NextResponse } from "next/server";
@@ -12,7 +13,6 @@ const corsHeaders = {
   "Access-Control-Max-Age": "86400",
 };
 
-const BETTER_AUTH_PATH = "/v1/auth";
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 const API_ORIGIN = new URL(API_URL).origin;
 
@@ -21,7 +21,7 @@ function requiresSameOrigin(request: NextRequest): boolean {
   const pathname = request.nextUrl.pathname;
 
   const isBetterAuthRoute =
-    pathname === BETTER_AUTH_PATH || pathname.startsWith(`${BETTER_AUTH_PATH}/`);
+    pathname === AUTH_BASE_PATH || pathname.startsWith(`${AUTH_BASE_PATH}/`);
 
   return !isBetterAuthRoute && !SAFE_METHODS.has(request.method) && request.headers.has("cookie");
 }

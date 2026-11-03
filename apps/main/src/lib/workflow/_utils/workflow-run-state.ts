@@ -33,8 +33,10 @@ export type WorkflowRunState = {
   ready: boolean;
   reconnectIn: number | null;
   replaced: string[];
+  skillName: string | null;
   steps: Partial<Record<string, GenerationStepState>>;
   stepTimes: Partial<Record<string, GenerationStepTimes>>;
+  warmUpId: string | null;
 };
 
 export type WorkflowRunAction =
@@ -58,8 +60,10 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   ready: false,
   reconnectIn: null,
   replaced: [],
+  skillName: null,
   stepTimes: {},
   steps: {},
+  warmUpId: null,
 };
 
 function isSettled(state: WorkflowRunState): boolean {
@@ -98,8 +102,10 @@ function recordStep(
 
   return {
     ...state,
+    skillName: message.skillName ?? state.skillName,
     stepTimes: recordStepTime(state, message),
     steps: { ...state.steps, [message.step]: status },
+    warmUpId: message.warmUpId ?? state.warmUpId,
   };
 }
 
@@ -196,10 +202,12 @@ export function workflowRunReducer(
         reconnectIn: null,
       };
     case "restart":
+      // The deck is the goal's, so its card stays through Try again.
       return {
         ...INITIAL_WORKFLOW_RUN_STATE,
         connection: state.connection + 1,
         replaced: [...state.replaced, ...action.runIds],
+        warmUpId: state.warmUpId,
       };
     default:
       return state;

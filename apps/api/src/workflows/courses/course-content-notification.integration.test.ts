@@ -54,7 +54,7 @@ describe("durable Main cache notification", () => {
     const run = await start(courseDetailsWorkflow, [{ courseId: course.id }]);
     await expect(run.returnValue).resolves.toMatchObject({ details: "written" });
     firstResponse.resolve(null);
-    await vi.waitFor(() => expect(deliveries).toHaveLength(2), { interval: 50, timeout: 15_000 });
+    await vi.waitFor(() => expect(deliveries).toHaveLength(2), { interval: 50, timeout: 10_000 });
     expect(deliveries[1]).toStrictEqual(deliveries[0]);
 
     await expect(

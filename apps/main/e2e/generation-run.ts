@@ -1,6 +1,12 @@
 import { type Page } from "@playwright/test";
 
-export type StreamEvent = { entityId?: string; reason?: string; status: string; step: string };
+export type StreamEvent = {
+  entityId?: string;
+  reason?: string;
+  status: string;
+  step: string;
+  warmUpId?: string;
+};
 
 /** The step stream is read afresh on every connection, so events pushed later arrive when the page reconnects. */
 export async function followRun({

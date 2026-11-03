@@ -16,8 +16,17 @@ struct PlanBuildingView: View {
       Section {
         ForEach(run.phases) { phase in
           Label {
-            Text(phase.title)
-              .foregroundStyle(phase.state == .todo ? .secondary : .primary)
+            VStack(alignment: .leading, spacing: 2) {
+              Text(phase.title)
+                .foregroundStyle(phase.state == .todo ? .secondary : .primary)
+
+              if let skillName = phase.skillName {
+                Text(skillName)
+                  .font(.footnote)
+                  .foregroundStyle(.secondary)
+                  .lineLimit(1)
+              }
+            }
           } icon: {
             if phase.state == .current {
               ProgressView()
@@ -149,16 +158,19 @@ struct PlanBuildingRun {
     let id: String
     let title: String
     var state: State
+    var skillName: String?
   }
 
   var generationId: String?
   var status = Status.waiting
   private var steps: [String: String] = [:]
+  private var skillName: String?
 
   var isPlanSaved: Bool { steps["createPlan"] == "completed" }
 
   mutating func record(_ event: GenerationEvent) {
     steps[event.step] = event.status
+    skillName = event.skillName ?? skillName
   }
 
   var phases: [Phase] {
@@ -188,7 +200,9 @@ struct PlanBuildingRun {
           .todo
         }
 
-      return Phase(id: id, title: Self.title(id), state: state)
+      return Phase(
+        id: id, title: Self.title(id), state: state,
+        skillName: id == "skills" && state == .current ? skillName : nil)
     }
   }
 
