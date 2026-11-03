@@ -29,6 +29,7 @@ export function useConnectCall({
   phaseRef,
   reserve,
   setPhase,
+  stopEnding,
   tappedAudio,
 }: {
   endAtDeadline: () => void;
@@ -43,6 +44,7 @@ export function useConnectCall({
   phaseRef: RefObject<LiveCallPhase>;
   reserve: Connection["reserve"];
   setPhase: (phase: LiveCallPhase) => void;
+  stopEnding: () => void;
   tappedAudio?: TappedCallAudio;
 }) {
   const attempt = useRef(0);
@@ -110,6 +112,7 @@ export function useConnectCall({
       opened.live.watchConnection({
         endedByServer,
         isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
+        onClosed: stopEnding,
         onEnded: endAtDeadline,
         onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
         session: created,
@@ -132,6 +135,7 @@ export function useConnectCall({
       phaseRef,
       reserve,
       setPhase,
+      stopEnding,
       tappedAudio,
     ],
   );

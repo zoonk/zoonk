@@ -155,11 +155,9 @@ export function useLiveCall({
     [hangUp, report],
   );
 
-  const recordCue = useCallback(() => report.record({ type: "cue" }), [report]);
-
   const ending = useCallEnding({
     examCues: conversation.examTask?.cues,
-    onCue: recordCue,
+    onCue: useCallback(() => report.record({ type: "cue" }), [report]),
     onHangUp: endAs,
   });
 
@@ -254,6 +252,7 @@ export function useLiveCall({
     phaseRef,
     reserve: connection.reserve,
     setPhase,
+    stopEnding,
     tappedAudio,
   });
 
