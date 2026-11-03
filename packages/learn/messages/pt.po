@@ -4166,6 +4166,7 @@ msgstr ", você está aqui"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr ", concluído"
