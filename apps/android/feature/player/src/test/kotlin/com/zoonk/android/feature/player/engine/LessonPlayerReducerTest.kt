@@ -94,6 +94,31 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun countsOnlyCountedAnswersInTheWrongStreakOfAnAbandonedLesson() {
+        val steps = listOf(hookGuessStep("hook"), checkStep("q1"), explanationStep("e1"))
+        val revealed = play(steps, started(), LessonAction.DontKnow("hook"))
+        val guessedWrong =
+            play(
+                steps,
+                started(),
+                LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")),
+                LessonAction.CheckResolved("hook", revealGuess(steps.first(), "yes")!!, counts = false),
+            )
+
+        assertEquals(0, revealed.abandonEvent()?.wrongInARow)
+        assertEquals(0, guessedWrong.abandonEvent()?.wrongInARow)
+        assertEquals(
+            1,
+            revealed
+                .then(LessonAction.Continue)
+                .let { onCheck ->
+                    answerCheck("q1", false).fold(onCheck, LessonPlayerState::then)
+                }.abandonEvent()
+                ?.wrongInARow,
+        )
+    }
+
+    @Test
     fun offersIDontKnowYetUntilAGuessIsPickedThenSeeTheAnswerThenContinue() {
         val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
         val fresh = play(steps)
