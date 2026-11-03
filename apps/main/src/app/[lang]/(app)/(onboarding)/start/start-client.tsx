@@ -38,6 +38,14 @@ export function StartClient({
   // The goal made here used the words and draft this page opened with.
   const opensEmpty = reset.key > 0;
   const { toExplanation, toSteps, ...navigation } = useOnboardingNavigation();
+
+  // Back comes to the empty box, not to the used draft's address: that redirects to its goal, and
+  // Next replays the redirect the next time this page opens (vercel/next.js#92767).
+  const leaveForGoal = () => {
+    reset.done();
+    navigation.showDraft(null);
+  };
+
   const routes = useWebOnboardingRoutes();
   // An unknown summary leaves answers without a buddy identity until the actual one arrives.
   const learner = useLearnerSummary();
@@ -57,11 +65,11 @@ export function StartClient({
         navigation={{
           ...navigation,
           toExplanation: (goalId) => {
-            reset.done();
+            leaveForGoal();
             toExplanation(goalId);
           },
           toSteps: (goalId) => {
-            reset.done();
+            leaveForGoal();
             toSteps(goalId);
           },
         }}
