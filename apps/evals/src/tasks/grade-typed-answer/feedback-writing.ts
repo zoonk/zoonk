@@ -1,45 +1,6 @@
+import { findMisaccentedPortugueseWord } from "@/lib/portuguese-accents";
+
 const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
-
-const QUOTED = /"[^"]*"|“[^”]*”|'[^']*'|‘[^’]*’|«[^»]*»/gu;
-
-const ACCENTED_WORDS = new Set([
-  "alem",
-  "apos",
-  "ate",
-  "entao",
-  "estao",
-  "ja",
-  "nao",
-  "numero",
-  "porem",
-  "possivel",
-  "sao",
-  "tambem",
-  "tres",
-  "voce",
-  "voces",
-]);
-
-const UNACCENTED_ENDING = /(?:cao|coes|encia|ancia)$/u;
-
-const DIAERESIS = /[äëïöü]/iu;
-
-function isMisaccented(word: string): boolean {
-  return (
-    ACCENTED_WORDS.has(word) ||
-    (word.length > 4 && UNACCENTED_ENDING.test(word)) ||
-    DIAERESIS.test(word)
-  );
-}
-
-function findMisaccentedWord(text: string): string | null {
-  const words = text
-    .replaceAll(QUOTED, " ")
-    .toLowerCase()
-    .split(/[^\p{L}]+/u);
-
-  return words.find((word) => isMisaccented(word)) ?? null;
-}
 
 export function findFeedbackWritingIssue({
   feedback,
@@ -56,7 +17,7 @@ export function findFeedbackWritingIssue({
     return "HTML entity in the text";
   }
 
-  const misaccented = language === "pt" ? findMisaccentedWord(feedback) : null;
+  const misaccented = language === "pt" ? findMisaccentedPortugueseWord(feedback) : null;
   return misaccented ? `"${misaccented}" written without its right accent` : null;
 }
 

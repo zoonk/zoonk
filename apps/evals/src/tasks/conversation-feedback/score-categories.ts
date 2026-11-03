@@ -14,7 +14,7 @@ export const CONVERSATION_FEEDBACK_SCORE_CATEGORIES = defineScoreCategories([
     weight: 25,
   },
   {
-    expectations: `"why", pronunciation tips and the encouragement are in the learner's language, natural in its variant; "better" and quoted phrases are in the target language and its variant. Judged against the learner's level: a simple correct sentence is a success at A2. Score at most 5 for a field in the wrong language.`,
+    expectations: `"why", pronunciation tips and the encouragement are in the learner's language, natural in its variant and spelled with every accent it needs, even when the learner wrote without them; "better" and quoted phrases are in the target language and its variant. Judged against the learner's level: a simple correct sentence is a success at A2. Score at most 5 for a field in the wrong language, and at most 6 when the learner's language is missing its accents ("voce", "disponivel").`,
     id: "language",
     label: "Right language and level",
     weight: 20,
