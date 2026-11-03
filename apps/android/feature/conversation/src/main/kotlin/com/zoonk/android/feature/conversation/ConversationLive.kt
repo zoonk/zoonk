@@ -1,12 +1,17 @@
 package com.zoonk.android.feature.conversation
 
+import android.animation.ValueAnimator
 import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +21,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -26,17 +33,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -49,18 +63,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.livecall.EndingReason
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.WORDS_MARK
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationSetup.EndsAtLimit
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.SpeakingTask
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 
 /** What the learner can do during the call. */
 internal class LiveCallActions(
@@ -68,13 +87,22 @@ internal class LiveCallActions(
     val onHelp: () -> Unit,
     val onMute: () -> Unit,
     val onSend: (String) -> Unit,
+    val onTyping: () -> Unit,
+)
+
+/** A call that ended, while what it saves is written: its status takes the controls' place. */
+internal class EndedCall(
+    val save: CallSave,
+    val grading: Boolean,
+    val onRetry: () -> Unit,
+    val onClose: () -> Unit,
 )
 
 /**
- * Main's live call: who's talking, the transcript, the call's status, then the goals (turning
- * blue as they're met), a tip for the next one and, after Help, phrases to lean on. Back and the
- * close action ask before ending a live call, which End does at once; while it connects, they go
- * back to the intro as End does.
+ * Main's live call: who's talking and the goals over the transcript, which follows the newest words;
+ * the bar under it says whose turn it is, takes typed replies and holds Help, Mute and End. Back and
+ * the close action ask before ending a live call, which End does at once; while it connects, they go
+ * back to the intro as End does. Once it ends the transcript stays, and the bar says how its save goes.
  */
 @Composable
 internal fun ConversationLive(
@@ -82,20 +110,16 @@ internal fun ConversationLive(
     call: LiveCallState,
     usedHelp: Boolean,
     actions: LiveCallActions,
+    ended: EndedCall? = null,
 ) {
     val listState = rememberLazyListState()
     val examTask = conversation.examTask
-    val next = if (examTask == null) conversation.objectives.firstOrNull { it.label !in call.metLabels } else null
     val metCount = conversation.objectives.count { it.label in call.metLabels }
     val goalsMeta = stringResource(R.string.conversation_goals_met, metCount, conversation.objectives.size)
     val character = conversation.character
-    // Help's phrases come last on a phone (after the character, goals, turns, status and tip), or they'd
-    // land below a long transcript; beside an aside the list is shorter and this scrolls to its end.
-    val phrasesIndex = 2 + call.turns.size + 2
-    LaunchedEffect(usedHelp) { if (usedHelp) listState.scrollToItem(phrasesIndex) }
 
-    val live = call.phase == LiveCallPhase.Live
-    BackHandler(enabled = !live, onBack = actions.onEnd)
+    val live = call.phase == LiveCallPhase.Live && ended == null
+    BackHandler(enabled = !live && ended == null, onBack = actions.onEnd)
     val endFirst =
         if (live) {
             TaskExitConfirmation(
@@ -108,25 +132,26 @@ internal fun ConversationLive(
             null
         }
 
-    // The newest words stay in view, unless the learner scrolled up to read earlier ones.
     val said =
         call.turns.size to
             call.turns
                 .lastOrNull()
                 ?.text
                 ?.length
-    LaunchedEffect(said) { listState.followEnd() }
+    LaunchedEffect(said) { listState.followEnd(animate = ValueAnimator.areAnimatorsEnabled()) }
     // The keyboard opening shrinks the list: the line being answered stays in view.
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.viewportSize }.drop(1).collect { listState.followEnd() }
+        snapshotFlow { listState.layoutInfo.viewportSize }.drop(1).collect { listState.followEnd(animate = false) }
     }
 
     CallFrame(
         title = { CallTitle(conversation.title) },
-        onClose = actions.onEnd,
+        onClose = ended?.onClose ?: actions.onEnd,
         listState = listState,
         exitConfirmation = endFirst,
-        bottomBar = { LiveBar(call, actions) },
+        header = { CallClock(call) },
+        floating = { ScrollToLatest(listState) },
+        bottomBar = { LiveBar(conversation, call, actions, ended) },
         aside = {
             if (examTask == null) {
                 Column {
@@ -136,7 +161,6 @@ internal fun ConversationLive(
             } else {
                 SpeakingCardView(examTask.card, conversation.targetLanguage, compact = true)
             }
-            CallTip(call.limitNear, next?.description)
             if (usedHelp) Phrases(conversation)
         },
     ) { beside ->
@@ -147,7 +171,7 @@ internal fun ConversationLive(
                 } else {
                     stringResource(R.string.conversation_character_detail, character.role, character.place)
                 }
-            CharacterRow(character.name, detail, Modifier.callItem(), talking = call.characterTalking)
+            CharacterRow(character.name, detail, Modifier.callItem())
         }
         if (!beside && examTask != null) {
             item(key = "card") { SpeakingCardView(examTask.card, conversation.targetLanguage, Modifier.callItem(), compact = true) }
@@ -166,25 +190,53 @@ internal fun ConversationLive(
                 Turn(turn.speaker, turn.text, conversation, Modifier.callItem())
             }
         }
-        item(key = "status") { CallStatus(call, character.name, Modifier.callItem()) }
-        if (!beside) {
-            item(key = "tip") { CallTip(call.limitNear, next?.description, Modifier.callItem()) }
-            if (usedHelp) item(key = "phrases") { Phrases(conversation, Modifier.callItem()) }
+    }
+}
+
+/** Main's header detail and task bar: the time talked, and a bar filling toward the call's length; neither shows before it connects. */
+@Composable
+private fun CallClock(call: LiveCallState) {
+    val started = call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle
+    val share = if (call.talkSeconds > 0) call.elapsedSeconds.toFloat() / call.talkSeconds else 0f
+    Column(
+        Modifier.callItem().padding(top = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(
+            Modifier.alpha(if (started) 1f else 0f).then(if (started) Modifier else Modifier.clearAndSetSemantics {}),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val live = call.phase == LiveCallPhase.Live
+            Box(
+                Modifier
+                    .size(8.dp)
+                    .background(if (live) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outlineVariant, CircleShape),
+            )
+            Text(
+                formatClock(call.elapsedSeconds * 1000),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            )
         }
+        Meter(if (started) share else 0f, contentDescription = stringResource(R.string.conversation_call_time))
     }
 }
 
 @Composable
-private fun CallClock(call: LiveCallState) {
-    val live = call.phase == LiveCallPhase.Live
-    val clock = stringResource(R.string.conversation_clock, formatClock(call.elapsedSeconds * 1000), formatClock(call.limitSeconds * 1000))
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            Modifier
-                .size(8.dp)
-                .background(if (live) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outlineVariant, CircleShape),
-        )
-        Text(clock, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+private fun BoxScope.ScrollToLatest(listState: LazyListState) {
+    val away by remember(listState) { derivedStateOf { !listState.isNearEnd() } }
+    val scope = rememberCoroutineScope()
+    if (!away) return
+    val label = stringResource(R.string.conversation_scroll_to_latest)
+    SmallFloatingActionButton(
+        onClick = { scope.launch { listState.scrollToEnd(animate = ValueAnimator.areAnimatorsEnabled()) } },
+        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
+        Icon(painterResource(R.drawable.ic_arrow_downward), contentDescription = label)
     }
 }
 
@@ -225,69 +277,6 @@ private fun Turn(
 }
 
 @Composable
-private fun CallStatus(
-    call: LiveCallState,
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    val status =
-        when {
-            call.phase == LiveCallPhase.Connecting || call.phase == LiveCallPhase.Idle -> {
-                stringResource(if (call.reconnecting) R.string.conversation_reconnecting else R.string.conversation_calling)
-            }
-
-            call.micBlocked -> {
-                stringResource(R.string.conversation_microphone_off)
-            }
-
-            call.muted -> {
-                stringResource(R.string.conversation_muted)
-            }
-
-            call.characterTalking -> {
-                stringResource(R.string.conversation_talking, name)
-            }
-
-            else -> {
-                stringResource(R.string.conversation_listening)
-            }
-        }
-    Text(
-        status,
-        modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall,
-    )
-}
-
-@Composable
-private fun CallTip(
-    limitNear: EndsAtLimit?,
-    nextGoal: String?,
-    modifier: Modifier = Modifier,
-) {
-    when {
-        limitNear != null -> {
-            val text =
-                stringResource(
-                    if (limitNear ==
-                        EndsAtLimit.MONTH
-                    ) {
-                        R.string.conversation_almost_up_month
-                    } else {
-                        R.string.conversation_almost_up_day
-                    },
-                )
-            CallNote(text, R.drawable.ic_schedule, modifier, announce = true)
-        }
-
-        nextGoal != null -> {
-            CallNote(stringResource(R.string.conversation_tip, nextGoal), R.drawable.ic_lightbulb, modifier)
-        }
-    }
-}
-
-@Composable
 private fun Phrases(
     conversation: LanguageConversation,
     modifier: Modifier = Modifier,
@@ -305,15 +294,201 @@ private fun Phrases(
     }
 }
 
+/** Beside an aside, Help's phrases join it; on a phone they open in a sheet, so the transcript keeps its place. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LiveBar(
+    conversation: LanguageConversation,
     call: LiveCallState,
     actions: LiveCallActions,
+    ended: EndedCall?,
 ) {
+    if (ended != null) {
+        EndedStatus(ended)
+        return
+    }
+    val beside = taskAsideBeside()
+    var phrasesOpen by rememberSaveable { mutableStateOf(false) }
+    val next = if (conversation.examTask == null) conversation.objectives.firstOrNull { it.label !in call.metLabels } else null
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        CallClock(call)
-        TypedReply(call.isOpen, actions.onSend)
-        CallControls(call, actions)
+        CallTurn(call, conversation.character.name, next?.description)
+        TypedReply(call.isOpen, actions.onSend, actions.onTyping)
+        CallControls(
+            call,
+            actions,
+            onHelp = {
+                actions.onHelp()
+                if (!beside) phrasesOpen = true
+            },
+        )
+    }
+    if (phrasesOpen && !beside) {
+        ModalBottomSheet(onDismissRequest = { phrasesOpen = false }) {
+            Phrases(conversation, Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp))
+        }
+    }
+}
+
+private enum class TurnState { Calling, Reconnecting, Goodbye, Character, Muted, Typed, Listening, Yours }
+
+/**
+ * Main's turn row: whose turn it is, and what to do. It's read when TalkBack reaches it; only the
+ * wrap-up line and reconnecting announce themselves, since every other change is already heard.
+ */
+@Composable
+private fun CallTurn(
+    call: LiveCallState,
+    name: String,
+    nextGoal: String?,
+) {
+    val state =
+        when {
+            call.phase != LiveCallPhase.Live -> if (call.reconnecting) TurnState.Reconnecting else TurnState.Calling
+            call.sayingGoodbye && !call.learnerSpeaking -> TurnState.Goodbye
+            call.characterTalking -> TurnState.Character
+            call.muted -> TurnState.Muted
+            call.micBlocked -> TurnState.Typed
+            call.learnerSpeaking -> TurnState.Listening
+            else -> TurnState.Yours
+        }
+    val wrapUp = wrapUpLine(call, name)
+    val firstTurn = call.turns.none { it.speaker == Speaker.LEARNER }
+    val title =
+        when (state) {
+            TurnState.Calling -> stringResource(R.string.conversation_calling, name)
+            TurnState.Reconnecting -> stringResource(R.string.conversation_reconnecting)
+            TurnState.Goodbye -> stringResource(R.string.conversation_saying_goodbye, name)
+            TurnState.Character -> stringResource(R.string.conversation_talking, name)
+            TurnState.Muted -> stringResource(R.string.conversation_muted)
+            TurnState.Typed, TurnState.Yours -> stringResource(R.string.conversation_your_turn)
+            TurnState.Listening -> stringResource(R.string.conversation_listening)
+        }
+    val detail =
+        when (state) {
+            TurnState.Calling -> stringResource(R.string.conversation_answers_first, name)
+            TurnState.Reconnecting, TurnState.Goodbye -> null
+            TurnState.Character -> wrapUp ?: stringResource(R.string.conversation_listen_then_answer).takeIf { firstTurn }
+            TurnState.Muted -> wrapUp ?: stringResource(R.string.conversation_muted_detail)
+            TurnState.Typed -> wrapUp ?: stringResource(R.string.conversation_type_below)
+            TurnState.Listening -> wrapUp
+            TurnState.Yours -> wrapUp ?: yourTurnDetail(call, name, nextGoal)
+        }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        TurnMark(state, name)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                title,
+                Modifier.semantics { if (state == TurnState.Reconnecting) liveRegion = LiveRegionMode.Polite },
+                style = MaterialTheme.typography.titleSmall,
+            )
+            detail?.let {
+                Text(
+                    it,
+                    Modifier.semantics { if (it == wrapUp) liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun yourTurnDetail(
+    call: LiveCallState,
+    name: String,
+    nextGoal: String?,
+): String? =
+    when {
+        call.quietHint -> stringResource(R.string.conversation_take_your_time)
+        !call.learnerSpoke -> stringResource(R.string.conversation_answer_out_loud, name)
+        nextGoal != null -> stringResource(R.string.conversation_tip, nextGoal)
+        else -> null
+    }
+
+/** From the talk time, or once every goal is met, until the goodbye: the character says goodbye after the learner's answer. */
+@Composable
+private fun wrapUpLine(
+    call: LiveCallState,
+    name: String,
+): String? {
+    if (call.sayingGoodbye) return null
+    return when (call.ending) {
+        EndingReason.Time -> {
+            stringResource(
+                when (call.endsAtLimit) {
+                    EndsAtLimit.DAY -> R.string.conversation_wrap_up_day
+                    EndsAtLimit.MONTH -> R.string.conversation_wrap_up_month
+                    null -> R.string.conversation_wrap_up_time
+                },
+                name,
+            )
+        }
+
+        EndingReason.Done -> {
+            stringResource(R.string.conversation_wrap_up_done, name)
+        }
+
+        EndingReason.Goodbye, EndingReason.Quiet, null -> {
+            null
+        }
+    }
+}
+
+/** The turn row's mark: the character's avatar with its talking ring, the learner's microphone, or the phone while it calls. */
+@Composable
+private fun TurnMark(
+    state: TurnState,
+    name: String,
+) {
+    when (state) {
+        TurnState.Calling, TurnState.Reconnecting -> {
+            Box(contentAlignment = Alignment.Center) {
+                MarkDisc(R.drawable.ic_call, MaterialTheme.colorScheme.surfaceContainerHigh)
+                if (ValueAnimator.areAnimatorsEnabled()) {
+                    CircularProgressIndicator(Modifier.size(MARK_SIZE), strokeWidth = 2.dp)
+                }
+            }
+        }
+
+        TurnState.Goodbye, TurnState.Character -> {
+            CharacterAvatar(name, talking = true)
+        }
+
+        TurnState.Muted -> {
+            MarkDisc(R.drawable.ic_mic_off, MaterialTheme.colorScheme.surfaceContainerHigh)
+        }
+
+        TurnState.Typed -> {
+            MarkDisc(R.drawable.ic_keyboard, MaterialTheme.colorScheme.surfaceContainerHigh)
+        }
+
+        TurnState.Listening -> {
+            MarkDisc(
+                R.drawable.ic_mic,
+                MaterialTheme.colorScheme.surfaceContainerHigh,
+                ring = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = HEARD_RING_ALPHA)),
+            )
+        }
+
+        TurnState.Yours -> {
+            MarkDisc(R.drawable.ic_mic, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
+        }
+    }
+}
+
+@Composable
+private fun MarkDisc(
+    @DrawableRes icon: Int,
+    color: Color,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    ring: BorderStroke? = null,
+) {
+    Surface(shape = CircleShape, color = color, contentColor = contentColor, border = ring, modifier = Modifier.size(MARK_SIZE)) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(20.dp))
+        }
     }
 }
 
@@ -321,6 +496,7 @@ private fun LiveBar(
 private fun TypedReply(
     canSend: Boolean,
     onSend: (String) -> Unit,
+    onTyping: () -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val send = {
@@ -332,7 +508,10 @@ private fun TypedReply(
     val label = stringResource(R.string.conversation_type_reply)
     OutlinedTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = {
+            text = it
+            onTyping()
+        },
         modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
         enabled = canSend,
         placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
@@ -351,12 +530,14 @@ private fun TypedReply(
 private fun CallControls(
     call: LiveCallState,
     actions: LiveCallActions,
+    onHelp: () -> Unit,
 ) {
     val canMute = call.phase == LiveCallPhase.Live && !call.micBlocked
     val off = call.micBlocked || call.muted
+    val calling = call.phase != LiveCallPhase.Live
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
-            FilledTonalIconButton(onClick = actions.onHelp, modifier = Modifier.size(CONTROL_SIZE)) {
+            FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE)) {
                 Icon(painterResource(R.drawable.ic_support), contentDescription = label)
             }
         }
@@ -376,7 +557,7 @@ private fun CallControls(
                 Icon(painterResource(if (off) R.drawable.ic_mic_off else R.drawable.ic_mic), contentDescription = label)
             }
         }
-        Control(R.string.conversation_end, Modifier.weight(1f)) { label ->
+        Control(if (calling) R.string.conversation_cancel else R.string.conversation_end, Modifier.weight(1f)) { label ->
             FilledIconButton(
                 onClick = actions.onEnd,
                 modifier = Modifier.size(CONTROL_SIZE),
@@ -406,12 +587,76 @@ private fun Control(
     }
 }
 
-private suspend fun LazyListState.followEnd() {
+/** A call's feedback takes a few seconds, an exam's grade 13 to 33 s (about 23 for most). */
+@Composable
+private fun EndedStatus(ended: EndedCall) {
+    if (ended.save == CallSave.Saving) {
+        val slow by produceState(false) {
+            delay(if (ended.grading) SLOW_GRADE_MS else SLOW_FEEDBACK_MS)
+            value = true
+        }
+        val line =
+            when {
+                ended.grading && slow -> R.string.conversation_rating_slow
+                ended.grading -> R.string.conversation_rating
+                slow -> R.string.conversation_writing_feedback_slow
+                else -> R.string.conversation_writing_feedback
+            }
+        Row(
+            Modifier.fillMaxWidth().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(stringResource(R.string.conversation_call_ended), style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(line), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        return
+    }
+
+    val message = if (ended.save == CallSave.Closing) R.string.conversation_still_closing else R.string.conversation_save_failed
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            stringResource(message),
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Button(onClick = ended.onRetry, modifier = Modifier.barAction()) { Text(stringResource(R.string.conversation_try_again)) }
+    }
+}
+
+/** Within a few items of the end, as the newest words arrive; further up, the learner is reading earlier ones. */
+private fun LazyListState.isNearEnd(): Boolean {
     val info = layoutInfo
-    val nearEnd = (info.visibleItemsInfo.lastOrNull()?.index ?: 0) >= info.totalItemsCount - TRANSCRIPT_TAIL
-    if (nearEnd && info.totalItemsCount > 0) scrollToItem(info.totalItemsCount - 1)
+    val last = info.visibleItemsInfo.lastOrNull()?.index ?: return true
+    return last >= info.totalItemsCount - TRANSCRIPT_TAIL
+}
+
+private suspend fun LazyListState.followEnd(animate: Boolean) {
+    if (isNearEnd()) scrollToEnd(animate)
+}
+
+private suspend fun LazyListState.scrollToEnd(animate: Boolean) {
+    val info = layoutInfo
+    val total = info.totalItemsCount
+    if (total == 0) return
+    val last = info.visibleItemsInfo.lastOrNull()
+    if (last == null || last.index < total - 1) {
+        if (animate) animateScrollToItem(total - 1) else scrollToItem(total - 1)
+        return
+    }
+    // The newest turn grows past the bottom: scroll by what's left of it.
+    val rest = (last.offset + last.size + info.afterContentPadding - info.viewportEndOffset).toFloat()
+    if (rest <= 0f) return
+    if (animate) animateScrollBy(rest) else scrollBy(rest)
 }
 
 private const val BUBBLE_SHARE = 0.8f
 private val CONTROL_SIZE = 56.dp
+private val MARK_SIZE = 40.dp
+private const val HEARD_RING_ALPHA = 0.4f
 private const val TRANSCRIPT_TAIL = 3
+private const val SLOW_FEEDBACK_MS = 20_000L
+private const val SLOW_GRADE_MS = 45_000L

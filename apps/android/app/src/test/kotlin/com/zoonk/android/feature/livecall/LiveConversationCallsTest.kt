@@ -6,6 +6,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.startOnLoopback
+import com.zoonk.api.ApiJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -67,9 +68,6 @@ class LiveConversationCallsTest {
         }
 
     private companion object {
-        val SETUP =
-            """
-            {"connectionId":"$CONNECTION","deadlineAt":"2026-10-29T12:05:00Z","endsAtLimit":null,"seconds":300,"sessionUrl":"","voice":"marin"}
-            """.trimIndent()
+        val SETUP = ApiJson.encodeToString(setup())
     }
 }

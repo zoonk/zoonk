@@ -96,6 +96,34 @@ sealed class AnalyticsEvent(
             ),
         )
 
+    /** Once per connection, however it ended; a reply gap with nothing to measure is left out, as main sends it null. */
+    data class CallEnded(
+        val reason: String,
+        val conversationKind: String,
+        val talkSeconds: Long,
+        val durationSeconds: Long,
+        val learnerTurns: Int,
+        val unansweredTurns: Int,
+        val replyGapMedianMs: Long?,
+        val replyGapMaxMs: Long?,
+        val slowReplies: Int,
+        val delegations: Int,
+    ) : AnalyticsEvent(
+            "Call Ended",
+            listOfNotNull(
+                "reason" to reason,
+                "conversation_kind" to conversationKind,
+                "talk_seconds" to talkSeconds,
+                "duration_seconds" to durationSeconds,
+                "learner_turns" to learnerTurns,
+                "unanswered_turns" to unansweredTurns,
+                replyGapMedianMs?.let { "reply_gap_median_ms" to it },
+                replyGapMaxMs?.let { "reply_gap_max_ms" to it },
+                "slow_replies" to slowReplies,
+                "delegations" to delegations,
+            ).toMap(),
+        )
+
     data object SubscriptionGateShown : AnalyticsEvent("Subscription Gate Shown")
 
     data class SubscriptionCheckoutStarted(

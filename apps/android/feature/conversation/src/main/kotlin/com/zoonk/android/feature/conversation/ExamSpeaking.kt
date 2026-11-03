@@ -37,6 +37,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichTable
@@ -258,6 +259,7 @@ internal fun ExamTaskIntro(
                 Text(
                     joinSentences(
                         stringResource(R.string.conversation_opens_and_card, name),
+                        stringResource(R.string.conversation_ends_after, formatMinutes(conversation.minutes.toInt(), locale)),
                         stringResource(R.string.conversation_rated_on, criteria),
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

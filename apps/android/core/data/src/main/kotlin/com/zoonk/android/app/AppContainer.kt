@@ -282,7 +282,7 @@ class AppContainer private constructor(
     val alphabet = AlphabetStore(LiveAlphabetApi(api), cache)
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
-        LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }
+        LiveCallTransports { microphone, signals -> WebRtcLiveCallTransport(context, microphone, signals) }
 
     val onboarding =
         OnboardingStore(

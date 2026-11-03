@@ -13,23 +13,25 @@ import livekit.org.webrtc.MediaConstraints
 import livekit.org.webrtc.MediaStream
 import livekit.org.webrtc.PeerConnection
 import livekit.org.webrtc.PeerConnectionFactory
+import livekit.org.webrtc.RTCStats
 import livekit.org.webrtc.SdpObserver
 import livekit.org.webrtc.SessionDescription
 import livekit.org.webrtc.audio.JavaAudioDeviceModule
 import java.nio.ByteBuffer
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.math.sqrt
 
 /**
  * GPT-Live's events come on the `oai-events` data channel. The peer is created per call and
  * released when it closes; WebRTC calls its observers on its own threads, so each is posted to the
- * main thread.
+ * main thread. The learner's voice is read from the microphone's level after echo cancellation, in
+ * the peer's stats.
  */
 class WebRtcLiveCallTransport(
     context: Context,
     private val microphone: Boolean,
-    private val onEvent: (LiveServerEvent) -> Unit,
-    private val onLost: () -> Unit,
+    private val signals: LiveCallSignals,
 ) : LiveCallTransport {
     private val context = context.applicationContext
     private val main = Handler(Looper.getMainLooper())
@@ -41,6 +43,17 @@ class WebRtcLiveCallTransport(
     private val gathered = CompletableDeferred<Unit>()
     private val opened = CompletableDeferred<Unit>()
     private val lostAfterGrace = Runnable { if (connection?.connectionState() == PeerConnection.PeerConnectionState.DISCONNECTED) lose() }
+    private var energy: MicrophoneEnergy? = null
+    private val listen =
+        object : Runnable {
+            override fun run() {
+                connection?.getStats { report ->
+                    val source = report.statsMap.values.firstOrNull { it.type == "media-source" && it.members["kind"] == "audio" }
+                    if (source != null) onMain { hear(source) }
+                }
+                main.postDelayed(this, VOICE_SAMPLE_MS)
+            }
+        }
     private var closed = false
 
     override suspend fun makeOffer(): String {
@@ -74,6 +87,7 @@ class WebRtcLiveCallTransport(
         check(peer != null && !closed) { "The call closed" }
         peer.describe { setRemoteDescription(it, SessionDescription(SessionDescription.Type.ANSWER, answer)) }
         if (channel?.state() != DataChannel.State.OPEN) opened.await()
+        if (microphone) main.post(listen)
     }
 
     override fun send(command: LiveClientCommand) {
@@ -90,6 +104,7 @@ class WebRtcLiveCallTransport(
         if (closed) return
         closed = true
         main.removeCallbacks(lostAfterGrace)
+        main.removeCallbacks(listen)
         gathered.complete(Unit)
         opened.completeExceptionally(IllegalStateException("The call closed"))
         channel?.run {
@@ -110,7 +125,14 @@ class WebRtcLiveCallTransport(
     private fun lose() {
         if (closed) return
         opened.completeExceptionally(IllegalStateException("The call was lost"))
-        onLost()
+        signals.onLost()
+    }
+
+    private fun hear(source: RTCStats) {
+        val current = MicrophoneEnergy(source.number("totalAudioEnergy"), source.number("totalSamplesDuration"))
+        val level = energy?.levelUntil(current) ?: source.number("audioLevel")
+        energy = current
+        if (level != null && level >= SPEECH_LEVEL) signals.onVoice()
     }
 
     private fun onMain(block: () -> Unit) {
@@ -188,7 +210,7 @@ class WebRtcLiveCallTransport(
                 if (buffer.binary) return
                 // The buffer is WebRTC's only while this runs.
                 val text = ByteArray(buffer.data.remaining()).also(buffer.data::get).decodeToString()
-                onMain { LiveServerEvent.parse(text)?.let(onEvent) }
+                onMain { LiveServerEvent.parse(text)?.let(signals.onEvent) }
             }
 
             override fun onBufferedAmountChange(previousAmount: Long) = Unit
@@ -197,8 +219,30 @@ class WebRtcLiveCallTransport(
     private companion object {
         /** A disconnected peer gets this long to come back before the call counts as lost. */
         const val DISCONNECT_GRACE_MS = 5000L
+
+        const val VOICE_SAMPLE_MS = 200L
+
+        /**
+         * WebRTC's level is the loudest sample of each 10 ms, from 0 to 1 after echo cancellation and
+         * noise suppression. Speech peaks well above this; a quiet room stays under it.
+         */
+        const val SPEECH_LEVEL = 0.03
     }
 }
+
+/** The microphone's running totals in the stats: its level over an interval is √(Δenergy ÷ Δduration). */
+private class MicrophoneEnergy(
+    val energy: Double?,
+    val duration: Double?,
+) {
+    fun levelUntil(next: MicrophoneEnergy): Double? {
+        val energyDelta = (next.energy ?: return null) - (energy ?: return null)
+        val durationDelta = (next.duration ?: return null) - (duration ?: return null)
+        return if (durationDelta > 0) sqrt(energyDelta.coerceAtLeast(0.0) / durationDelta) else null
+    }
+}
+
+private fun RTCStats.number(key: String) = (members[key] as? Number)?.toDouble()
 
 /** One factory and audio device for the process, made on the first call. */
 private class WebRtc private constructor(

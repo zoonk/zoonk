@@ -5,16 +5,30 @@
     <string name="conversation_unit_challenge">Unit challenge</string>
     <string name="conversation_ielts_mock">IELTS speaking mock</string>
     <string name="conversation_toefl_mock">TOEFL speaking mock</string>
-    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
-    <string name="conversation_intro_meta">%1$s · Level %2$s</string>
+    <!-- About how long the call lasts and its language level, such as "About 5 min · Level A2". -->
+    <string name="conversation_intro_meta">About %1$s · Level %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
     <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">What to get across</string>
-    <string name="conversation_mic_note">Speak or type. The microphone is used only during the call.</string>
+    <string name="conversation_how_it_works">How the call works</string>
+    <!-- The first step of how the call works; the character's name. -->
+    <string name="conversation_how_answers_first">%1$s answers and speaks first.</string>
+    <string name="conversation_how_your_turn">Then it\'s your turn: answer out loud, or type if you can\'t talk.</string>
+    <!-- The last step of how the call works: about how long it lasts (such as "2 min"), then the character's name. -->
+    <string name="conversation_how_it_ends">When you\'ve done everything, or after about %1$s, %2$s says goodbye and the call ends.</string>
+    <string name="conversation_sound_note">Turn your sound on. The microphone is on only during the call.</string>
+    <!-- About how long an exam's call lasts before it ends by itself, such as "2 min". -->
+    <string name="conversation_ends_after">It ends on its own after about %1$s.</string>
+    <!-- Starts a phone call with the character, whose name follows. -->
+    <string name="conversation_call">Call %1$s</string>
     <string name="conversation_start">Start the call</string>
     <string name="conversation_starting">Starting…</string>
     <string name="conversation_start_failed">The call didn\'t start. Try again in a moment.</string>
     <string name="conversation_challenge_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
+    <!-- The microphone permission was denied; the character's name. -->
+    <string name="conversation_mic_off">Allow the microphone in Settings to talk with %1$s, or do this call by typing.</string>
+    <!-- Starts the call without the microphone, answering by typing. -->
+    <string name="conversation_type_instead">Type instead</string>
     <string name="conversation_not_found_title">We couldn\'t find this call</string>
     <string name="conversation_not_found_description">The link may be old or mistyped.</string>
 
@@ -26,23 +40,41 @@
     <string name="conversation_type_reply_hint">Or type your reply</string>
     <string name="conversation_send">Send</string>
     <string name="conversation_phrases">Phrases you can use</string>
-    <string name="conversation_almost_up_month">Your call time for this month is almost up.</string>
-    <string name="conversation_almost_up_day">Your call time for today is almost up.</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">Tip: %1$s</string>
-    <!-- The call's clock: time talked, then the call's length, such as "1:05 / 5:00". -->
-    <string name="conversation_clock">%1$s / %2$s</string>
+    <!-- Names the bar under the call's clock, which fills toward the call's length. -->
+    <string name="conversation_call_time">Call time</string>
+    <string name="conversation_scroll_to_latest">Scroll to latest</string>
     <string name="conversation_goals">Goals of the call</string>
     <!-- How many of the call's goals the learner has met, such as "1 of 3". -->
     <string name="conversation_goals_met">%1$s of %2$s</string>
     <string name="conversation_goal_done">Done</string>
     <string name="conversation_goal_not_yet">Not yet</string>
     <string name="conversation_reconnecting">Reconnecting…</string>
-    <string name="conversation_calling">Calling…</string>
-    <string name="conversation_microphone_off">Microphone off</string>
+    <!-- The call is connecting; the character's name. -->
+    <string name="conversation_calling">Calling %1$s…</string>
+    <string name="conversation_answers_first">%1$s answers first.</string>
+    <!-- Ends a call that hasn't connected yet. -->
+    <string name="conversation_cancel">Cancel</string>
     <string name="conversation_muted">Muted</string>
-    <string name="conversation_talking">%1$s is talking…</string>
+    <string name="conversation_muted_detail">Unmute to answer out loud, or type your reply.</string>
+    <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->
+    <string name="conversation_talking">%1$s is talking</string>
+    <string name="conversation_listen_then_answer">Listen, then answer.</string>
+    <string name="conversation_saying_goodbye">%1$s is saying goodbye</string>
+    <!-- The learner is speaking and the app hears them. -->
     <string name="conversation_listening">Listening…</string>
+    <string name="conversation_your_turn">Your turn</string>
+    <string name="conversation_type_below">Type your reply below.</string>
+    <string name="conversation_take_your_time">Take your time.</string>
+    <string name="conversation_answer_out_loud">Answer %1$s out loud.</string>
+    <!-- The call reached its length: the character says goodbye once the learner answers. -->
+    <string name="conversation_wrap_up_time">Almost time. %1$s will say goodbye after your answer.</string>
+    <string name="conversation_wrap_up_day">Your call time for today is almost up. %1$s will say goodbye after your answer.</string>
+    <string name="conversation_wrap_up_month">Your call time for this month is almost up. %1$s will say goodbye after your answer.</string>
+    <!-- The learner did every goal of the call: the character ends the call once they answer. -->
+    <string name="conversation_wrap_up_done">All goals done. %1$s will wrap up after your answer.</string>
+    <string name="conversation_call_ended">Call ended</string>
     <string name="conversation_help">Help</string>
     <!-- Asked when the learner goes back or closes the screen during a call. -->
     <string name="conversation_end_title">End the call?</string>

@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -78,6 +79,8 @@ internal fun CallFrame(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     exitConfirmation: TaskExitConfirmation? = null,
+    header: (@Composable () -> Unit)? = null,
+    floating: (@Composable BoxScope.() -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
@@ -102,13 +105,19 @@ internal fun CallFrame(
         aside = aside?.let { TaskAside(content = it) },
     ) { padding ->
         val beside = taskAsideBeside()
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize().padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) { content(beside) }
+        Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
+            header?.invoke()
+            Box(Modifier.weight(1f)) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) { content(beside) }
+                floating?.invoke(this)
+            }
+        }
     }
 }
 
@@ -167,28 +176,9 @@ internal fun CharacterRow(
     name: String,
     detail: String,
     modifier: Modifier = Modifier,
-    talking: Boolean = false,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            border = BorderStroke(2.dp, if (talking) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.secondaryContainer),
-            modifier = Modifier.clearAndSetSemantics {},
-        ) {
-            // A circle at any text size: the initial's line plus room around it, never under 40dp.
-            val side =
-                with(LocalDensity.current) {
-                    maxOf(
-                        AVATAR_MIN,
-                        MaterialTheme.typography.titleSmall.lineHeight
-                            .toDp() + 16.dp,
-                    )
-                }
-            Box(Modifier.size(side), contentAlignment = Alignment.Center) {
-                Text(name.trim().take(1).uppercase(), style = MaterialTheme.typography.titleSmall, textAlign = TextAlign.Center)
-            }
-        }
+        CharacterAvatar(name)
         Text(
             buildAnnotatedString {
                 withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) { append(name) }
@@ -198,6 +188,33 @@ internal fun CharacterRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
+    }
+}
+
+/** The character's initial in a circle; [talking] rings it. */
+@Composable
+internal fun CharacterAvatar(
+    name: String,
+    talking: Boolean = false,
+) {
+    Surface(
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        border = BorderStroke(2.dp, if (talking) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.secondaryContainer),
+        modifier = Modifier.clearAndSetSemantics {},
+    ) {
+        // A circle at any text size: the initial's line plus room around it, never under 40dp.
+        val side =
+            with(LocalDensity.current) {
+                maxOf(
+                    AVATAR_MIN,
+                    MaterialTheme.typography.titleSmall.lineHeight
+                        .toDp() + 16.dp,
+                )
+            }
+        Box(Modifier.size(side), contentAlignment = Alignment.Center) {
+            Text(name.trim().take(1).uppercase(), style = MaterialTheme.typography.titleSmall, textAlign = TextAlign.Center)
+        }
     }
 }
 
