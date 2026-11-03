@@ -420,14 +420,16 @@ private fun CourseGrid(
                     CourseCell(app, course, list.category) { navigator.open(AppRoute.CatalogCourse(course.id.toString())) }
                 }
 
-                item(key = "more", span = { GridItemSpan(maxLineSpan) }) {
-                    LoadMoreFooter(
-                        isLoading = isLoadingMore,
-                        failed = loadMoreFailed,
-                        loadingLabel = stringResource(R.string.catalog_loading_more),
-                        failedText = stringResource(R.string.catalog_load_more_failed),
-                        onRetry = loadMore,
-                    )
+                if (state.value.nextCursor != null) {
+                    item(key = "more", span = { GridItemSpan(maxLineSpan) }) {
+                        LoadMoreFooter(
+                            isLoading = isLoadingMore,
+                            failed = loadMoreFailed,
+                            loadingLabel = stringResource(R.string.catalog_loading_more),
+                            failedText = stringResource(R.string.catalog_load_more_failed),
+                            onRetry = loadMore,
+                        )
+                    }
                 }
             }
         }
