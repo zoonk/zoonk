@@ -68,7 +68,7 @@ describe("any-subject activities", () => {
 
     const prompt = page.getByRole("heading", { name: /How many Greenlands fit in/u });
 
-    await expectMathVisible(prompt.getByRole("math"));
+    await expectMathVisible(prompt.getByRole("math", { includeHidden: true }));
     await expect.element(prompt).not.toMatchTextContent("$");
 
     await valueInput().fill("14");
