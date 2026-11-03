@@ -7,12 +7,13 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { ArrowRightIcon, SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type Ref, useEffect, useId, useRef, useState } from "react";
+import { type KeyboardEvent, type Ref, useEffect, useId, useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { type AnswerOptionResult } from "../_components/answer-tone";
 import { GuessHint } from "../_components/guess-hint";
 import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
+import { isFocusLost } from "../_utils/is-focus-lost";
 import { useLearnAnalytics } from "../learn-context";
 
 type Dealt = { pickedId: string | null; position: number };
@@ -28,6 +29,16 @@ function readPosition(deckId: string): number {
 /** The server can't know the tab's place, so the card shows once the page is in the browser. */
 function useStoredPosition(deckId: string): number | null {
   return useIsMounted() ? readPosition(deckId) : null;
+}
+
+/**
+ * Answers are radios, and Enter on a radio goes on to the screen's main button (it submits a
+ * player's picked answer). Here a press picks the answer, so Enter on one stays with it.
+ */
+function keepEnter(event: KeyboardEvent) {
+  if (event.key === "Enter") {
+    event.stopPropagation();
+  }
 }
 
 function getResult({
@@ -166,6 +177,14 @@ export function WarmUpCard({
     (nextRef.current ?? questionRef.current)?.focus();
   });
 
+  // A hold takes "Next guess" away, so focus on it stays in the card; a main button that takes
+  // lost focus first (the session's Start) keeps it.
+  useEffect(() => {
+    if (holding && isFocusLost(document.activeElement)) {
+      questionRef.current?.focus({ preventScroll: true });
+    }
+  }, [holding]);
+
   useNumberKeys({
     count: card?.options.length ?? 0,
     enabled: hasCard && !answered,
@@ -221,6 +240,7 @@ export function WarmUpCard({
               key={option.id}
               marker={index + 1}
               onClick={() => pick(option.id)}
+              onKeyDown={keepEnter}
               picked={picked}
               result={getResult({ answered, correct: option.correct, picked })}
             >
