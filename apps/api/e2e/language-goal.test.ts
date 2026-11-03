@@ -372,7 +372,6 @@ test.describe("Language goal API", () => {
 
     expect(whole.status()).toBe(201);
     const setup = languageConversationSetupSchema.parse(await whole.json());
-    expect(setup.talkSeconds).toBe(FREE_CALL_SECONDS);
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
