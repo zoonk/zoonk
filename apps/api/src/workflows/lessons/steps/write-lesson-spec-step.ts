@@ -102,12 +102,14 @@ async function planLesson({
     serviceTier: chooseServiceTier({ reuse, wait }),
   });
 
+  const novice = readsNoviceRules(inputs.prompt);
+
   return {
     analytics: context,
     homeChapterId: inputs.homeChapterId,
     lessonId,
-    novice: readsNoviceRules(inputs.prompt),
-    pictures: listPlannedPictures(data.lessons),
+    novice,
+    pictures: listPlannedPictures({ novice, specs: data.lessons }),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,

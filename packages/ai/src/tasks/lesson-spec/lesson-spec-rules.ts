@@ -87,10 +87,12 @@ type LessonSpecIssueCode =
   | "checkGap"
   | "earlyCheck"
   | "hook"
+  | "hookPicture"
   | "screenCount"
   | "skillCount"
   | "skillReference"
   | "supportMode"
+  | "teachingVisual"
   | "tooLong"
   | "unpracticedSkill"
   | "untaughtSkill"
@@ -175,6 +177,27 @@ function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
   return before.filter((screen) => isTeachingScreen(screen.kind)).length;
 }
 
+function hasTeachingVisual(screens: readonly LessonScreen[]): boolean {
+  return screens.some(
+    (screen) => isTeachingScreen(screen.kind) && (screen.visual || screen.activityTemplate),
+  );
+}
+
+/** A floor for new learners, not a share to fill: the hook's picture and one more visual. */
+function getNoviceVisualIssues(screens: readonly LessonScreen[]) {
+  return [
+    screens[0]?.kind === "hook" &&
+      !screens[0].visual && {
+        code: "hookPicture" as const,
+        detail: "The hook has no picture of the lesson's main example.",
+      },
+    !hasTeachingVisual(screens) && {
+      code: "teachingVisual" as const,
+      detail: "No explanation or worked example shows a picture or a template to explore.",
+    },
+  ].filter((issue) => issue !== false);
+}
+
 function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
@@ -207,6 +230,7 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
+    ...(novice ? getNoviceVisualIssues(screens) : []),
   ].filter((issue) => issue !== false);
 }
 

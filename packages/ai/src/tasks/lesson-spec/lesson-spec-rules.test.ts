@@ -40,6 +40,10 @@ const validScreens = [
   screen("application"),
 ];
 
+const illustratedScreens = validScreens.map((item, index) =>
+  index === 0 || index === 1 ? { ...item, visual: `Picture ${index}` } : item,
+);
+
 function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
   return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
 }
@@ -142,7 +146,24 @@ describe(getLessonSpecIssues, () => {
 
     expect(getCodes(early, "beginner", true)).toContain("earlyCheck");
     expect(getCodes(early)).not.toContain("earlyCheck");
-    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
+  });
+
+  it("asks a new learner's lesson for its hook's picture and one more visual", () => {
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([
+      "hookPicture",
+      "teachingVisual",
+    ]);
+
+    expect(getCodes(spec(validScreens))).toStrictEqual([]);
+
+    const explored = validScreens.map((item, index) =>
+      index === 0 ? { ...item, visual: "The shop" } : item,
+    );
+
+    explored[2] = screen("explanation", [0], { activityTemplate: "formulaModel" });
+
+    expect(getCodes(spec(explored), "beginner", true)).toStrictEqual([]);
   });
 
   it("checks the support mode against the screen after the hook", () => {

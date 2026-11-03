@@ -57,7 +57,10 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
   return {
     canDo: "Read a thermometer",
     description: "Temperatures below zero.",
-    screens: kinds.map((kind) => rawScreen(kind, kind === "hook" ? [] : [1])),
+    screens: kinds.map((kind, index) => ({
+      ...rawScreen(kind, kind === "hook" ? [] : [1]),
+      visual: index < 2 ? "A thermometer below zero" : null,
+    })),
     skills: [rawSkill("Temperature")],
     supportMode: "explanationFirst",
     title,
