@@ -20,6 +20,7 @@ enum class StudyPlace(
     val icon: PlaceIcon,
 ) {
     Mistakes(AppRoute.Mistakes, R.string.navigation_mistakes, PlaceIcon.Mistakes),
+    CompletedLessons(AppRoute.CompletedLessons, R.string.navigation_completed_lessons, PlaceIcon.CompletedLessons),
     Exam(AppRoute.Exam, R.string.navigation_exam, PlaceIcon.Exam),
     Speaking(AppRoute.Speaking(), R.string.navigation_speaking, PlaceIcon.Speaking),
     MindMaps(AppRoute.MindMaps(), R.string.navigation_mind_maps, PlaceIcon.MindMaps),

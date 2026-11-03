@@ -2,6 +2,7 @@ import { request } from "@playwright/test";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
+import { E2E_MAIN_APP_URL } from "./main-app-url";
 
 const TEST_EMAIL = `e2e-trusted-${Date.now()}@zoonk.test`;
 const TRUSTED_CROSS_ORIGIN = "http://localhost:3000";
@@ -19,7 +20,7 @@ test.describe("Trusted Origin Validation", () => {
     const redirectTo = `${TRUSTED_CROSS_ORIGIN}/auth/callback?state=login-state`;
     await page.goto(`/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`);
 
-    await page.waitForURL(/\/auth\/login\?/u);
+    await page.waitForURL(/\/auth\/en\/login\?/u);
     expect(new URL(page.url()).searchParams.get("redirectTo")).toBe(redirectTo);
 
     await expect(
@@ -32,7 +33,7 @@ test.describe("Trusted Origin Validation", () => {
 
     await page.getByLabel(/email/iu).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const otp = await getOTPForEmail(TEST_EMAIL);
 
@@ -43,14 +44,14 @@ test.describe("Trusted Origin Validation", () => {
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
 
-    await page.waitForURL(/\/auth\/untrusted-origin/u);
+    await page.waitForURL(/\/auth\/en\/untrusted-origin/u);
 
     await expect(page.getByRole("heading", { name: /unable to redirect/iu })).toBeVisible();
 
     await expect(page.getByRole("link", { name: /continue to zoonk/iu })).toBeVisible();
 
     const link = page.getByRole("link", { name: /continue to zoonk/iu });
-    await expect(link).toHaveAttribute("href", "http://localhost:49153");
+    await expect(link).toHaveAttribute("href", E2E_MAIN_APP_URL);
   });
 
   test("allows Better Auth trusted-origin cookie operations", async () => {

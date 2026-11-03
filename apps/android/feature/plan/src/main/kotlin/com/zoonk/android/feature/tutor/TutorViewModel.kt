@@ -38,7 +38,8 @@ import kotlin.time.TimeSource
 
 @Immutable
 data class TutorConversationState(
-    val asking: Boolean = false,
+    /** Shown as the learner's own question until the server's turn takes its place. */
+    val sending: SendingQuestion? = null,
     val answeringId: String? = null,
     val askFailure: TutorFailure? = null,
     val answerFailures: Map<String, TutorFailure> = emptyMap(),
@@ -54,8 +55,16 @@ data class TutorConversationState(
     /** An answer streamed here links nothing until its saved, checked text arrives. */
     val streamed: Set<String> = emptySet(),
 ) {
+    val asking: Boolean get() = sending != null
+
+    /** Suggestions wait for the first question, which counts from the moment it's sent. */
+    fun isEmpty(thread: TutorThread): Boolean = sending == null && thread.turns.isEmpty() && !thread.hasMore
+
     /** Nothing can be asked until it resets, so it takes the composer's place. */
     fun limit(turns: List<TutorTurn>): Limit? = askFailure?.helpLimit ?: turns.lastOrNull()?.let { answerFailures[it.id]?.helpLimit }
+
+    /** A lost question is sent again before anything new, so a suggestion would only resend it. */
+    fun offersSuggestions(turns: List<TutorTurn>): Boolean = limit(turns) == null && unresolvedQuestion == null
 
     /** Every earlier question needs its answer first; a failed one is retried first, as on main. */
     fun canAsk(turns: List<TutorTurn>): Boolean =
@@ -87,10 +96,14 @@ class TutorViewModel internal constructor(
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
 
-    /** The question being written, which comes back with the suggestion it started from after Android closes the app in the background. */
-    val draft = TextFieldState(saved.get<String>(DRAFT).orEmpty())
+    /**
+     * The question being written, which comes back with the suggestion it started from after Android
+     * closes the app in the background, even while it was being sent.
+     */
+    val draft = TextFieldState(saved.get<String>(DRAFT).orEmpty().ifEmpty { saved.get<String>(SENT_DRAFT).orEmpty() })
 
     init {
+        saved.remove<String>(SENT_DRAFT)
         viewModelScope.launch { snapshotFlow { draft.text.toString() }.collect { saved[DRAFT] = it } }
     }
 
@@ -244,20 +257,31 @@ class TutorViewModel internal constructor(
             unresolved?.takeIf { it.session == session } ?: PendingAsk(question, suggestion, UUID.randomUUID().toString(), scope, session)
         if (pending.question.isEmpty() || !state.value.canAsk(turns)) return
         unresolved = pending
-        mutableState.update { it.copy(asking = true, askFailure = null, unresolvedQuestion = null) }
+        // The composer's text leaves with the question it says, and comes back if asking fails or Android closes the app first.
+        val written =
+            draft.text
+                .toString()
+                .takeIf { it.trim() == pending.question }
+                .orEmpty()
+        saved[SENT_DRAFT] = written
+        if (written.isNotEmpty()) draft.clearText()
+        mutableState.update {
+            it.copy(sending = SendingQuestion(pending.question, pending.scope.about), askFailure = null, unresolvedQuestion = null)
+        }
 
         viewModelScope.launch {
             val result =
                 cache.mutate { session ->
                     api.ask(pending.scope, pending.question, pending.suggestion, pending.requestId, session) to session
                 }
-            mutableState.update { it.copy(asking = false) }
+            mutableState.update { it.copy(sending = null) }
+            saved.remove<String>(SENT_DRAFT)
+            if (result !is MutationResult.Done && draft.text.isEmpty()) draft.setTextAndPlaceCursorAtEnd(written)
 
             when (result) {
                 is MutationResult.Done -> {
                     val (asked, session) = result.value
                     unresolved = null
-                    draft.clearText()
                     // Replacing cancels an older read still in flight, which would drop the new question.
                     thread.state.value.value?.let { page ->
                         thread.replace(page.copy(turns = page.turns.filterNot { it.id == asked.turn.id } + asked.turn))
@@ -441,6 +465,12 @@ class TutorViewModel internal constructor(
     )
 }
 
+@Immutable
+data class SendingQuestion(
+    val question: String,
+    val about: TutorTurn.About,
+)
+
 /** A suggested question; a lesson's own carries its [id] so its shared answer is reused. */
 @Immutable
 data class TutorSuggestion(
@@ -458,6 +488,7 @@ internal fun pollDelay(
 }
 
 private const val DRAFT = "draft"
+private const val SENT_DRAFT = "sentDraft"
 private const val OFFERED_LABEL = "offeredLabel"
 private const val OFFERED_ID = "offeredId"
 private const val MAX_POLLS = 8

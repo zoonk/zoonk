@@ -1,5 +1,6 @@
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 
@@ -69,5 +70,19 @@ export function SetupSubmit({ children, ...props }: React.ComponentProps<"button
     <SubmitButton className="h-11 font-[560]" full {...props}>
       {children}
     </SubmitButton>
+  );
+}
+
+export function SetupFormSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-4">
+      <div className="grid gap-3">
+        <Skeleton className="h-4 w-16 rounded-md" />
+        <Skeleton className="h-11 w-full rounded-lg" />
+      </div>
+
+      <Skeleton className="my-3 h-5 w-56 rounded-md" />
+      <Skeleton className="h-11 w-full rounded-lg" />
+    </div>
   );
 }

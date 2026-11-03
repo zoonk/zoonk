@@ -17,7 +17,7 @@ async function signInToSetup({
   await page.goto(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   await page.getByLabel(/email/iu).fill(email);
   await page.getByRole("button", { name: /^continue$/iu }).click();
-  await page.waitForURL(/\/auth\/otp/u);
+  await page.waitForURL(/\/auth\/en\/otp/u);
 
   const otp = await getOTPForEmail(email);
 
@@ -27,7 +27,7 @@ async function signInToSetup({
 
   await page.getByRole("textbox", { name: "Code from the email" }).fill(otp);
 
-  await page.waitForURL(/\/auth\/setup/u);
+  await page.waitForURL(/\/auth\/en\/setup/u);
 }
 
 test.describe("Profile Setup Flow", () => {
@@ -55,7 +55,7 @@ test.describe("Profile Setup Flow", () => {
     await submit.click();
 
     await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
-    await expect(page).toHaveURL(/\/auth\/setup/u);
+    await expect(page).toHaveURL(/\/auth\/en\/setup/u);
 
     await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
     await page.getByRole("button", { name: "Change username" }).click();
@@ -113,7 +113,7 @@ test.describe("Profile Setup Flow", () => {
     );
 
     await page.goto(callback);
-    await page.waitForURL(/\/auth\/setup/u);
+    await page.waitForURL(/\/auth\/en\/setup/u);
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
       unnamed,

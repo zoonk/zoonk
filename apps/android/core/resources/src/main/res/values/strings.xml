@@ -6,6 +6,8 @@
     <string name="navigation_buddy">Buddy</string>
     <string name="navigation_study">Study</string>
     <string name="navigation_mistakes">Mistakes notebook</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">Completed lessons</string>
     <string name="navigation_exam">Exam</string>
     <string name="navigation_speaking">Speaking</string>
     <string name="navigation_mind_maps">Mind maps</string>

@@ -513,8 +513,8 @@
   "plan_time_none": "faac9fab42ee6f6a0df5d370e408feb2756a3711e8471a634b9cff3b34f37b50",
   "plan_time_none_month": "334a131f53e6b1b7943c2e35de2942c59850ebfe6848df3eb9b26d77f7c6eb2c",
   "plan_time_on_weekends": "59dec620e3b2e76eaefdcc4c7e8b2360b16598c7e48bb685e06800b202ebb120",
-  "plan_time_past_date": "c030d75871a13896851a18c55284e47fec4e84320164f8de1b4e42123abcaa4b",
-  "plan_time_past_date_month": "de0e9f6e0be250f2735d790a78fcaa8ea178afa3e2c19ddb56b29098dc7e3057",
+  "plan_time_past_date": "2397f6db55923653e2e56564fa96d76938d6319b530771b4a6956e4dbc59b995",
+  "plan_time_past_date_month": "6c5d8e88e8681ab6e47960a5ef41994dc6c2368789cc959eb719cc81e8c71f25",
   "plan_time_share_exam": "6e3384a3cfd3131d4687512c8e1fb194a700748053355672ee4b5c429d355ec0",
   "plan_time_share_exam_month": "a59665e60a54c3a4e54dcf588b860de14e8794af4a4c7233e93b0299bb098fc8",
   "plan_time_share_goal": "ecb4ca74a195cc8508da560d57e95c4762ba1ecbcdaa44292ef012b416352ee9",
@@ -1359,9 +1359,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">%1$sまでに目標に必要な内容をすべて学びます。</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">設定した%1$sは過ぎています。次の画面で新しい日付を選べます。</string>
+    <string name="plan_time_past_date">設定した期日（%1$s）を過ぎました。</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">設定した%1$sは過ぎています。次の画面で新しい日付を選べます。</string>
+    <string name="plan_time_past_date_month">設定した期日（%1$s）を過ぎました。</string>
     <string name="plan_time_finish_unknown">このスケジュールでは完了日を予測できません。学習時間か学習する日を増やしてみてください。</string>
     <string name="plan_time_finish_failed">いつ終わるか計算できませんでした。</string>
     <string name="plan_time_no_days">学習する日を1日以上選んでください。</string>

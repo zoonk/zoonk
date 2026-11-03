@@ -513,8 +513,8 @@
   "plan_time_none": "5b92955d839f373d303ebff56f17bdee6d6e1aaf23cf447f740f1577e2d48f95",
   "plan_time_none_month": "4806490657aac2bf72291a8eb82779942d5a2bde59770486e8b823b7bcf9286b",
   "plan_time_on_weekends": "9889e6bb0cc87842edb6d80d715a534406315d983f3039694165b664603ac28d",
-  "plan_time_past_date": "b0f90680d50b13ec5baab60e03c6955668abb1a1fd54085682790e921ac9e70b",
-  "plan_time_past_date_month": "71e04fb991e7263158759451e7b8c8fe98ce513341dc2616e4be0c63678de6b5",
+  "plan_time_past_date": "4b08a26f1d2fb4ddc66b7d008efbde0f5458f40221f701c3f9757b03146e9560",
+  "plan_time_past_date_month": "70c7fe0ae1b13701274d7e64a4b3a6568c1d8b6940940a1ac15882d6c97c18a8",
   "plan_time_share_exam": "ac2e97763235aee0036c9a9b43ca9db93e34a7cfbd0df11fb04f02dbf8e4ebf5",
   "plan_time_share_exam_month": "3025423bcbc1d20c16d066f2e6c19e17a43000bf72531abdfdd5043d1bf2f238",
   "plan_time_share_goal": "6745b5b2ecdb6dd89150e16d73bd590474a3d959c48e7635b6dbbfd9df7738f1",
@@ -1441,9 +1441,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Deckt bis %1$s alle Inhalte für dein Ziel ab.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">Dein Termin am %1$s ist schon vorbei. Auf der nächsten Seite kannst du einen neuen wählen.</string>
+    <string name="plan_time_past_date">Dein Zieldatum (%1$s) ist vorbei.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">Dein Termin im %1$s ist schon vorbei. Auf der nächsten Seite kannst du einen neuen wählen.</string>
+    <string name="plan_time_past_date_month">Dein Zieldatum (%1$s) ist vorbei.</string>
     <string name="plan_time_finish_unknown">Für diesen Zeitplan können wir kein Abschlussdatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen.</string>
     <string name="plan_time_finish_failed">Wir konnten nicht berechnen, wann du fertig wärst.</string>
     <string name="plan_time_no_days">Wähle mindestens einen Lerntag.</string>

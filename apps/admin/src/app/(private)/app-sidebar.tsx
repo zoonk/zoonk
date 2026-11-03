@@ -50,24 +50,12 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
 function AdminSidebarContent({
   account,
   onNavigate,
-  search,
-  toggle,
 }: {
   account: AdminAccount;
   onNavigate?: () => void;
-  search?: React.ReactNode;
-  toggle?: React.ReactNode;
 }) {
   return (
     <>
-      <SidebarHeader className="gap-4">
-        <SidebarHeaderRow>
-          <span className="flex h-8 items-center px-2 text-sm font-semibold">Zoonk Admin</span>
-          {toggle}
-        </SidebarHeaderRow>
-        {search}
-      </SidebarHeader>
-
       <AdminNav onNavigate={onNavigate} />
 
       <SidebarFooter>
@@ -80,11 +68,14 @@ function AdminSidebarContent({
 export function AppSidebar({ account }: { account: AdminAccount }) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-4">
-      <AdminSidebarContent
-        account={account}
-        search={<SidebarSearch label="Search…" onClick={openCommandPalette} />}
-        toggle={<SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />}
-      />
+      <SidebarHeader className="gap-4">
+        <SidebarHeaderRow>
+          <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
+        </SidebarHeaderRow>
+        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+      </SidebarHeader>
+
+      <AdminSidebarContent account={account} />
     </Sidebar>
   );
 }

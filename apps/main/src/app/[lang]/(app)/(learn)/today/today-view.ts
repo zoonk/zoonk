@@ -1,4 +1,5 @@
 import "server-only";
+import { hasCompletedLessons } from "@/lib/learn/has-completed-lessons";
 import { type LearnerBuddy, getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -29,6 +30,7 @@ type TodayStep = { ref: DayBlockRef; screen: DayBlockScreen };
 export type TodayScreenData = {
   brainPower: number | null;
   buddy: LearnerBuddy;
+  completedLessons: boolean;
   language: LanguageTodayView | null;
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
@@ -122,16 +124,18 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, planEnd, readAt, mocks, mistakes, language, syllabus, belt] = await Promise.all([
-    getLearnerBuddy(),
-    loadPlanEnd(today),
-    getReadAt(),
-    loadTodayMocks(today.goal),
-    countOpenMistakes(today.goal.id),
-    loadLanguageToday(today.goal),
-    loadSyllabus(today.goal.id),
-    getBeltLevel(),
-  ]);
+  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, syllabus, belt] =
+    await Promise.all([
+      getLearnerBuddy(),
+      loadPlanEnd(today),
+      getReadAt(),
+      loadTodayMocks(today.goal),
+      countOpenMistakes(today.goal.id),
+      hasCompletedLessons(today.goal.id),
+      loadLanguageToday(today.goal),
+      loadSyllabus(today.goal.id),
+      getBeltLevel(),
+    ]);
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -142,6 +146,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
     data: {
       brainPower: belt?.totalBrainPower ?? 0,
       buddy,
+      completedLessons,
       language,
       mistakes,
       mocks,

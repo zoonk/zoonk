@@ -99,7 +99,7 @@ class LanguageStepsFlowTest {
                 sessions = session,
                 choices = TodayChoices(drafts),
                 drafts = drafts,
-                isGuest = { false },
+                endsAsGuest = { false },
                 activeGoalId = { null },
                 saved = SavedStateHandle(),
             )

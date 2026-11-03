@@ -12,8 +12,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -30,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -44,6 +49,8 @@ import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.bleed
@@ -66,6 +73,7 @@ class PlanLinks(
 ) {
     val hasExam: Boolean get() = page.isExam
     val hasMindMaps: Boolean get() = page.summary.places.mindMaps
+    val hasCompletedLessons: Boolean get() = page.summary.places.completedLessons
 
     fun chapter(chapterId: String) =
         open(
@@ -83,6 +91,8 @@ class PlanLinks(
     fun exam() = open(AppRoute.Exam)
 
     fun mindMaps() = open(AppRoute.MindMaps())
+
+    fun completedLessons() = open(AppRoute.CompletedLessons)
 
     fun logbook() = open(AppRoute.Logbook)
 
@@ -343,6 +353,8 @@ internal fun PlanContent(
         }
 
     val hasSuggestion = hasSlotItem(page, edits, slot, slotState)
+    // The drawer lists it where there's one, as main's sidebar does from `lg`.
+    val completedLessonsRow = links.hasCompletedLessons && LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
     var pathOpen by rememberSaveable { mutableStateOf(false) }
     val list = rememberLazyListState()
     val main =
@@ -370,6 +382,9 @@ internal fun PlanContent(
                 if (!asideBeside) {
                     item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
                     if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
+                }
+                if (completedLessonsRow) {
+                    item(key = "completed-lessons", contentType = "completed-lessons") { CompletedLessonsRow(links) }
                 }
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") {
@@ -436,6 +451,16 @@ private fun PathSheet(
 }
 
 internal val PAGE_MARGIN = 16.dp
+
+@Composable
+private fun CompletedLessonsRow(links: PlanLinks) {
+    ListRow(
+        headline = { Text(stringResource(R.string.navigation_completed_lessons)) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = links::completedLessons,
+        leading = { Icon(painterResource(R.drawable.ic_history), contentDescription = null) },
+    )
+}
 
 @Composable
 private fun NextAndMore(

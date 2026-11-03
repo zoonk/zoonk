@@ -82,6 +82,27 @@ async function playLesson(page: Page) {
   );
 }
 
+async function replayFromToday(page: Page, lesson: { id: string; title: string }) {
+  await page.getByRole("link", { name: `${lesson.title}, done` }).click();
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?from=%2Ftoday$`, "u"));
+  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+  await page.keyboard.press("2");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expectMoment(page, "Lesson complete");
+  await page.getByRole("link", { name: /^Continue/u }).click();
+  await expect(page).toHaveURL(/\/today$/u);
+
+  await page.getByRole("link", { name: "Completed lessons" }).click();
+  const today = page.getByRole("region", { name: "Today" });
+
+  await expect(today.getByRole("link", { name: lesson.title })).toHaveAttribute(
+    "href",
+    `/learn/${lesson.id}?from=%2Fcompleted-lessons`,
+  );
+}
+
 async function playPractice(page: Page) {
   await expect(page).toHaveURL((url) => url.pathname === "/session");
   await answerRight(page, /^Practice one/u);
@@ -150,10 +171,10 @@ test("reopening a fully answered block waits for Finish before completing the se
 });
 
 test.describe("Today's session", () => {
-  test("plays a full day by keyboard: placement, capsules, the lesson, practice and the summary", async ({
+  test("plays a full day by keyboard: placement, capsules, the lesson, practice, the summary and the lesson again", async ({
     browser,
   }) => {
-    const { user } = await createFirstWeekDay();
+    const { lesson, user } = await createFirstWeekDay();
     const page = await openAs(browser, user);
     await page.goto("/today");
 
@@ -177,6 +198,7 @@ test.describe("Today's session", () => {
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
+    await replayFromToday(page, lesson);
     await page.context().close();
   });
 

@@ -22,6 +22,7 @@ import {
   findLessonRun,
   findResumableRun,
   getRunStudySessionId,
+  hasFinishedLessonBefore,
   loadProgressAnswers,
   loadProgressRuns,
 } from "./_utils/lesson-runs";
@@ -127,14 +128,22 @@ async function readRun({
   run: LearningEvent;
   userId: string;
 }): Promise<LibraryLessonRun | null> {
-  const [progress, hyperdrive, support] = await Promise.all([
+  const [progress, hyperdrive, support, replay] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
     getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
     getRunLessonSupport(run) ?? loadLessonSupport({ lessonId, userId }),
+    hasFinishedLessonBefore(prisma, { lessonId, runId: run.id, userId }),
   ]);
 
   return progress
-    ? { ...progress, hyperdrive, runId: run.id, startedAt: run.startedAt.toISOString(), support }
+    ? {
+        ...progress,
+        hyperdrive,
+        replay,
+        runId: run.id,
+        startedAt: run.startedAt.toISOString(),
+        support,
+      }
     : null;
 }
 

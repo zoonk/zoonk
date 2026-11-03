@@ -513,8 +513,8 @@
   "plan_time_none": "bf753a1c6218a9115a53770f543d238189aafd13718b358f98a3044c7d87df9e",
   "plan_time_none_month": "a1e6d9beecbb2fe72f32a142b55e4fba30a44c9fd9aeca7c055cdefbda638013",
   "plan_time_on_weekends": "ff06b8ffc00cb74969363458c456d89289ec8cae6db307b4a1dd1ba8f3f5fb1a",
-  "plan_time_past_date": "18f4a693e3b48955feac0901972bb6fac9e2fd556c2cf79c22a4d0c5dbbfe805",
-  "plan_time_past_date_month": "48e31506352df95d8d7dfd7db63fc6ce13a17a416b0119bf59d0a3810d4e17cf",
+  "plan_time_past_date": "199f210f2b11e3523cca314279f744cfc50099dea0f845086262ba0b1edabb8e",
+  "plan_time_past_date_month": "2e8d188e5ec3f71c096b991d4df25eb7ef733ef39a7f1e30d566cc9ef65a624a",
   "plan_time_share_exam": "8a434d1f4dc2b1ac0277e973d7b68785c2ca87988296d19bee53290953f223d7",
   "plan_time_share_exam_month": "f2e34d3893778f56af1ccff69a2427e4f6e94654842cc0677139394814b5b178",
   "plan_time_share_goal": "26b288287c6e126d7d9056c59a4b743a597cf6578d399aae42df48f32d5a427a",
@@ -1359,9 +1359,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">목표의 전체 범위를 %1$s까지 다뤄요.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">정해 둔 날짜인 %1$s이 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.</string>
+    <string name="plan_time_past_date">목표 날짜(%1$s)가 지났어요.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">정해 둔 날짜인 %1$s이 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.</string>
+    <string name="plan_time_past_date_month">목표 날짜(%1$s)가 지났어요.</string>
     <string name="plan_time_finish_unknown">이 일정으로는 언제 마칠지 예상할 수 없어요. 학습 시간이나 학습하는 날을 늘려 보세요.</string>
     <string name="plan_time_finish_failed">언제 마칠지 계산하지 못했어요.</string>
     <string name="plan_time_no_days">학습할 요일을 하나 이상 선택하세요.</string>

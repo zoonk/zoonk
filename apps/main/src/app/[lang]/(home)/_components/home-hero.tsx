@@ -1,105 +1,118 @@
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
-import { VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
+import { NUMERIC_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { ProductWindow } from "@/components/public/product-window";
+import { getAppLocale } from "@/i18n/locale";
+import { DaySegment } from "@zoonk/learn/day-segments";
+import { MeterParts } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { HeroStage } from "./hero-stage";
+import { ExampleCardHead, ExampleDay, getExampleDailyTime } from "./example-card";
+import { toExampleSteps } from "./example-steps";
+import { getHomeHeadline } from "./home-headline";
 import { HERO_GOAL_ID } from "./home-ids";
-import {
-  DEFAULT_EXAMPLE_GOAL,
-  EXAMPLE_GOALS,
-  type ExampleGoal,
-  GOAL_SWITCH,
-  getExampleSet,
-} from "./landing-examples";
+import { getExampleSet } from "./landing-examples";
 import { LandingGoalBox } from "./landing-goal-box";
 
-const GOAL_CHIP_CLASS = cn(
-  "ring-input hover:bg-muted inline-flex min-h-11 min-w-0 items-center justify-center rounded-[0.625rem] px-1 text-[0.90625rem] font-medium whitespace-nowrap ring-1 transition-colors ring-inset sm:px-4 sm:text-[0.9375rem]",
-  "has-checked:bg-selected-tint has-checked:ring-selected has-checked:ring-2",
-  "has-focus-visible:outline-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2",
-);
+const TITLE_ID = "home-title";
+
+const PHASES = [
+  { id: "foundations", weight: 3 },
+  { id: "gaps", weight: 4 },
+  { id: "practice", weight: 4 },
+  { id: "finalStretch", weight: 2 },
+];
+
+const PLAN_DAY = 3;
 
 function renderLine(chunks: React.ReactNode) {
   return <span className="block text-balance">{chunks}</span>;
 }
 
-async function GoalChips() {
-  const t = await getExtracted();
-  const set = await getExampleSet();
+function renderMore(chunks: React.ReactNode) {
+  return <span className="text-muted-foreground block text-balance">{chunks}</span>;
+}
 
-  const labels: Record<ExampleGoal, string> = {
-    exam: set.exam.name,
-    job: t({
-      description: "A chip naming a career change as an example goal: one short word.",
-      message: "Career",
-    }),
-    move: set.move === "mexico-city" ? t("Spanish") : t("English"),
-  };
+async function ExamPlan() {
+  const t = await getExtracted();
+  const tPhases = await getExtracted("planPhases");
+  const { exam } = await getExampleSet();
+  const steps = toExampleSteps(exam.day);
+  const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <VariantSwitch
-      aria-label={t("Example goals")}
-      className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap"
-      defaultValue={DEFAULT_EXAMPLE_GOAL}
-      name={GOAL_SWITCH}
-      values={EXAMPLE_GOALS}
-    >
-      {EXAMPLE_GOALS.map((goal) => (
-        <VariantSwitchOption
-          className={GOAL_CHIP_CLASS}
-          defaultValue={DEFAULT_EXAMPLE_GOAL}
-          key={goal}
-          name={GOAL_SWITCH}
-          value={goal}
-        >
-          {labels[goal]}
-        </VariantSwitchOption>
-      ))}
-    </VariantSwitch>
+    <ProductWindow className="mt-18 lg:mt-0 lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/22%)] dark:lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/70%)]">
+      <div className="px-5 pt-5 pb-4">
+        <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={exam.headline} />
+
+        <MeterParts className="mt-4">
+          {PHASES.map((phase, index) => (
+            <DaySegment
+              key={phase.id}
+              minutes={phase.weight}
+              state={index === 0 ? "current" : "ahead"}
+            />
+          ))}
+        </MeterParts>
+
+        <p className="mt-2 flex justify-between gap-3 text-xs">
+          <span>
+            <b className="font-[550]">{tPhases("Foundations")}</b>
+            <span className="text-muted-foreground">
+              {` · ${t("day {number, number}", { number: PLAN_DAY })}`}
+            </span>
+          </span>
+          <span className={cn(NUMERIC_CLASS, "text-muted-foreground")}>
+            {t({
+              description:
+                "Which of the example plan's phases it's in, under a meter of its phases.",
+              message: "{number, number} of {total, number}",
+              values: { number: 1, total: PHASES.length },
+            })}
+          </span>
+        </p>
+      </div>
+
+      <div className="border-t px-5 pt-4 pb-1.5">
+        <ExampleDay steps={steps} />
+      </div>
+    </ProductWindow>
   );
 }
 
 export async function HomeHero({ startPath }: { startPath: string }) {
   const t = await getExtracted();
+  const locale = await getAppLocale();
 
   return (
     <section
-      aria-labelledby="home-title"
+      aria-labelledby={TITLE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "grid grid-cols-1 gap-6 pt-2 pb-16 sm:pt-6 lg:grid-cols-2 lg:gap-12 lg:pt-9 lg:pb-24 xl:grid-cols-[minmax(0,35.5rem)_minmax(0,1fr)] xl:gap-16",
+        "pt-3 pb-26 sm:pt-8 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pt-14 lg:pb-38 xl:grid-cols-[minmax(0,1fr)_26rem]",
       )}
     >
-      <div className="flex min-w-0 flex-col lg:self-center">
+      <div className="@container min-w-0">
         <h1
-          className="text-[clamp(2.5rem,10.4vw,4.5rem)] leading-[0.98] font-[680] tracking-tighter lg:text-[clamp(3.75rem,5.3vw,4.875rem)]"
-          id="home-title"
+          className="text-[min(10.6cqi,5.25rem)] leading-none font-[680] tracking-[-0.045em] lg:leading-[0.98]"
+          id={TITLE_ID}
         >
-          {t.rich({
-            description:
-              "The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”",
-            message: "<line>Stop deciding what to study.</line> <line>Just study.</line>",
-            values: { line: renderLine },
-          })}
+          {await getHomeHeadline({ line: renderLine, locale, more: renderMore })}
         </h1>
 
-        <p className="text-lead mt-3 max-w-[31em] lg:mt-5 lg:text-xl lg:leading-normal">
+        <p className="text-lead mt-5 max-w-[31em] lg:mt-7 lg:text-xl lg:leading-[1.85rem]">
           {t({
             description:
-              "The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”",
+              "The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”",
             message:
-              "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time.",
+              "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know.",
           })}
         </p>
 
-        <div className="mt-5 flex flex-col gap-3 lg:mt-8">
-          <LandingGoalBox action={startPath} fillsFromChips id={HERO_GOAL_ID} />
-          <GoalChips />
-          <p className="text-muted-foreground text-sm">{t("Start free, no account needed.")}</p>
+        <div className="mt-7 max-w-148 lg:mt-9">
+          <LandingGoalBox action={startPath} example="exam" id={HERO_GOAL_ID} />
         </div>
       </div>
 
-      <HeroStage />
+      <ExamPlan />
     </section>
   );
 }

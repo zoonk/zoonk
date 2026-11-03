@@ -1,9 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { mapGoalSkills } from "./onboarding-fixtures";
+import { openAs } from "./study-day";
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
@@ -121,4 +128,92 @@ test.describe("Onboarding from a typed goal", () => {
       memoryEnabled: true,
     });
   });
+});
+
+test("a learner who starts another goal from Today lands on it, never on the goal before it", async ({
+  browser,
+}) => {
+  const user = await createE2EUser(getBaseURL());
+  const tag = `a${randomUUID().slice(0, 6)}`;
+  const previousLesson = `Atoms ${tag}`;
+  const words = `i want to understand quantum physics ${tag}`;
+
+  const [previous, { lesson }] = await Promise.all([
+    goalFixture({ timezone: "UTC", title: `Learn chemistry ${tag}`, userId: user.id }),
+    playableLessonFixture({ lesson: { title: previousLesson }, steps: ["check"] }),
+    goalUnderstandingFixture({ goal: words, result: QUANTUM, userId: user.id }),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
+  ]);
+
+  await Promise.all([
+    learningProfileFixture({ activeGoalId: previous.id, userId: user.id }),
+    planFixture({ goalId: previous.id, items: [{ lessonId: lesson.id }] }),
+  ]);
+
+  const page = await openAs(browser, user);
+  await page.goto("/today");
+  await expect(page.getByRole("main").getByText(previousLesson).first()).toBeVisible();
+
+  const switcher = page.getByRole("button", { name: /^Learn chemistry.*Switch goal$/u });
+  await expectHydrated(switcher);
+  await switcher.click();
+  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+
+  await page.getByRole("textbox", { name: "I want to" }).fill(words);
+  await page.getByRole("button", { name: "Build my plan" }).click();
+  await page.getByRole("button", { name: "Looks right" }).click();
+  await expect(page).toHaveURL(GOAL_URL);
+  const created = await prisma.goal.findFirstOrThrow({ where: { prompt: words } });
+
+  await page.getByRole("radio", { name: /Change careers/u }).click();
+  await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
+  await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await page.getByRole("button", { name: "No date" }).click();
+  await page.getByRole("radio", { name: /^The basics/u }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+
+  await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
+  await mapGoalSkills({ goalId: created.id });
+
+  await expect(
+    page.getByRole("heading", { name: "How much time can you study each day?" }),
+  ).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
+
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+
+  await page.evaluate((text) => {
+    const showsPrevious = () =>
+      [...document.querySelectorAll("main *")].some(
+        (node) =>
+          node.childElementCount === 0 &&
+          node.textContent?.includes(text) &&
+          node.checkVisibility(),
+      );
+
+    new MutationObserver(() => {
+      if (showsPrevious()) {
+        document.documentElement.dataset.sawPrevious = "true";
+      }
+    }).observe(document.body, {
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+  }, previousLesson);
+
+  await page.getByRole("link", { name: "Start" }).press("Enter");
+  await expect(page).toHaveURL(/\/today$/u);
+  await expect(page.getByRole("main").getByText("Nothing new for today.")).toBeVisible();
+
+  await expect(
+    page.getByRole("button", { name: /^Understand quantum physics.*Switch goal$/u }),
+  ).toBeVisible();
+
+  await expect(page.locator("html")).not.toHaveAttribute("data-saw-previous");
+  await page.context().close();
 });

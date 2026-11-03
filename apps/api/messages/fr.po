@@ -6,229 +6,229 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Message-Key: msgctxt\n"
 
-#: src/app/auth/layout.tsx
+#: src/app/auth/[locale]/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
 msgstr "Se connecter à Zoonk"
 
-#: src/app/auth/login/email-login-form.tsx
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "vO6NBp"
 msgid "Temporary email addresses aren't supported. Use another email or a privacy alias."
 msgstr "Les adresses e-mail temporaires ne sont pas acceptées. Utilise une autre adresse ou un alias de confidentialité."
 
-#: src/app/auth/login/email-login-form.tsx
-#: src/app/auth/login/social-login.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
+#: src/app/auth/[locale]/login/social-login.tsx
 msgctxt "pN2p0t"
 msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
 msgstr "Une erreur s’est produite lors de la connexion. Réessaie ou contacte hello@zoonk.com"
 
-#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "YRe93Y"
 msgid "Enter a valid email address"
 msgstr "Saisis une adresse e-mail valide"
 
-#: src/app/auth/login/email-login-form.tsx
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "hUjCDW"
 msgid "Too many tries. Wait a minute, then try again."
 msgstr "Trop de tentatives. Attends une minute, puis réessaie."
 
-#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Adresse e-mail"
 
 #. An example address shown in the empty email field. Keep it as written, like the app's other example addresses.
-#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "apQW0E"
 msgid "me@gmail.com"
 msgstr "me@gmail.com"
 
-#: src/app/auth/login/email-login-form.tsx
-#: src/app/auth/otp/otp-form.tsx
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/login/email-login-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
 
-#: src/app/auth/login/page.tsx
+#: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "eN8MTJ"
 msgid "Sign in or create an account"
 msgstr "Se connecter ou créer un compte"
 
-#: src/app/auth/login/page.tsx
+#: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "o_pwJP"
 msgid "That sign-in expired. Try again."
 msgstr "Cette tentative de connexion a expiré. Réessaie."
 
-#: src/app/auth/login/page.tsx
+#: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "4wpUNc"
 msgid "Or"
 msgstr "Ou"
 
-#: src/app/auth/login/page.tsx
+#: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "Ju9oB-"
 msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 msgstr "En cliquant sur Continuer, tu acceptes nos <terms>Conditions d’utilisation</terms> et notre <privacy>Politique de confidentialité</privacy>."
 
-#: src/app/auth/login/social-login.tsx
+#: src/app/auth/[locale]/login/social-login.tsx
 msgctxt "FJ6r9E"
 msgid "Continue with Google"
 msgstr "Continuer avec Google"
 
-#: src/app/auth/login/social-login.tsx
+#: src/app/auth/[locale]/login/social-login.tsx
 msgctxt "BmecBA"
 msgid "Continue with Apple"
 msgstr "Continuer avec Apple"
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "_8e0dn"
 msgid "Something went wrong. Try again in a moment."
 msgstr "Une erreur s’est produite. Réessaie dans un instant."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
 msgstr "Ce code a expiré. Demande-en un nouveau."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "P-D93T"
 msgid "Too many wrong tries with this code. Get a new one."
 msgstr "Trop de tentatives incorrectes avec ce code. Demande-en un nouveau."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "AFMAKd"
 msgid "That code isn't right. Check the email and try again."
 msgstr "Ce code n’est pas correct. Vérifie l’e-mail et réessaie."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "U2LhAf"
 msgid "We sent a new code to {email}."
 msgstr "Nous avons envoyé un nouveau code à {email}."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "E05GNf"
 msgid "Wait a minute before asking for another code."
 msgstr "Attends une minute avant de demander un autre code."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "bWxjFV"
 msgid "We couldn't send a new code. Try again."
 msgstr "Nous n’avons pas pu envoyer de nouveau code. Réessaie."
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "5UeJRL"
 msgid "Code from the email"
 msgstr "Code reçu par e-mail"
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "gdlGkp"
 msgid "Send a new code"
 msgstr "Envoyer un nouveau code"
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "X1bhjS"
 msgid "Didn't get it?"
 msgstr "Tu ne l’as pas reçu ?"
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "qs4xBq"
 msgid "Send again"
 msgstr "Renvoyer"
 
-#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "ChATeO"
 msgid "Change email"
 msgstr "Changer d’adresse e-mail"
 
-#: src/app/auth/otp/page.tsx
-msgctxt "zx7CKB"
-msgid "Check your email"
-msgstr "Consulte tes e-mails"
-
-#: src/app/auth/otp/page.tsx
+#: src/app/auth/[locale]/otp/page.tsx
 msgctxt "AmelVC"
 msgid "Enter the code we sent to {email}."
 msgstr "Saisis le code que nous avons envoyé à {email}."
 
-#: src/app/auth/setup/page.tsx
+#: src/app/auth/[locale]/otp/page.tsx
+msgctxt "zx7CKB"
+msgid "Check your email"
+msgstr "Consulte tes e-mails"
+
+#: src/app/auth/[locale]/setup/page.tsx
 msgctxt "CjpGzJ"
 msgid "Create your profile"
 msgstr "Crée ton profil"
 
-#: src/app/auth/setup/page.tsx
+#: src/app/auth/[locale]/setup/page.tsx
 msgctxt "SmuYUd"
 msgid "What should we call you?"
 msgstr "Comment doit-on t’appeler ?"
 
 #. “it” is the name and username the learner picks on this screen.
-#: src/app/auth/setup/page.tsx
+#: src/app/auth/[locale]/setup/page.tsx
 msgctxt "y9wzAs"
 msgid "You can change it later in your profile."
 msgstr "Tu pourras les modifier plus tard dans ton profil."
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "Vérification…"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "9N4_rz"
 msgid "{username} is available"
 msgstr "{username} est disponible"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username} est déjà pris"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "wubfpa"
 msgid "3-30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3 à 30 caractères. Lettres de a à z, chiffres et tirets bas uniquement."
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "9j8lDu"
 msgid "Your username: @{username}"
 msgstr "Ton nom d’utilisateur : @{username}"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "UJWPJj"
 msgid "Change username"
 msgstr "Modifier le nom d’utilisateur"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "BY343C"
 msgid "Change"
 msgstr "Modifier"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nom"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Nom d’utilisateur"
 
-#: src/app/auth/setup/setup-form.tsx
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "bz5AYp"
 msgid "We couldn't save your profile. Try again."
 msgstr "Nous n’avons pas pu enregistrer ton profil. Réessaie."
 
-#: src/app/auth/untrusted-origin/page.tsx
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "1vqX2W"
 msgid "Unable to redirect"
 msgstr "Redirection impossible"
 
-#: src/app/auth/untrusted-origin/page.tsx
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "83K2kN"
 msgid "The destination URL is not recognized as a trusted Zoonk application."
 msgstr "L’URL de destination n’est pas reconnue comme une application Zoonk de confiance."
 
-#: src/app/auth/untrusted-origin/page.tsx
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
 msgstr "Continuer vers Zoonk"

@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { CompletedLessonsRow } from "../completed-lessons/completed-lessons-row";
 import { MistakesRow } from "../mistakes/mistakes-row";
 import { useTodayScreen } from "./today-context";
 
@@ -16,11 +17,13 @@ const PRACTICE_TITLE_ID = "today-practice-title";
  */
 export function TodayPractice({
   className,
+  completedLessons,
   mistakes,
   mockEntry,
   speakingEntry,
 }: {
   className?: string;
+  completedLessons: boolean;
   mistakes: MistakeAvailability;
   mockEntry: React.ReactNode;
   speakingEntry: React.ReactNode;
@@ -42,6 +45,7 @@ export function TodayPractice({
         {mockEntry}
         {speakingEntry}
         <MistakesRow availability={mistakes} href={actions.mistakesHref} />
+        {completedLessons && <CompletedLessonsRow href={actions.completedLessonsHref} />}
       </ListGroup>
     </PageSection>
   );

@@ -124,6 +124,12 @@ export const libraryLessonRunSchema = z
           "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
       }),
     optionalStepIds: z.array(z.uuid()).optional().describe("Questions with late numbered pictures"),
+    replay: z
+      .boolean()
+      .meta({
+        description:
+          "True when the learner already finished this lesson: its end offers no next lesson",
+      }),
     runId: z.uuid().meta({ description: "Send it with every answer and with the completion" }),
     startedAt: z.iso.datetime(),
     support: lessonSupportSchema.nullable().describe("Lesson opening; null keeps its order"),

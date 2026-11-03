@@ -196,6 +196,47 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.answer, "Yes.")
   }
 
+  func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
+    let api = TutorAPIStub(askFailures: [APIError.network, APIError.network])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    api.beforeAsk = {
+      XCTAssertEqual(conversation.asking?.question, "Is it saved?")
+      XCTAssertEqual(conversation.draft, "")
+    }
+
+    conversation.draft = "Is it saved? "
+    await conversation.send()
+
+    XCTAssertNil(conversation.asking)
+    XCTAssertEqual(conversation.draft, "Is it saved? ")
+
+    api.beforeAsk = { conversation.draft = "Never mind" }
+    await conversation.send()
+
+    XCTAssertEqual(api.requestIDs.count, 2)
+    XCTAssertEqual(conversation.draft, "Never mind", "what the learner typed meanwhile stays")
+  }
+
+  func testALostSuggestionWaitsInTheComposerToBeSentAgain() async {
+    let api = TutorAPIStub(askFailures: [APIError.network])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+
+    await conversation.send(simpler)
+
+    XCTAssertTrue(conversation.hasUnsentQuestion, "no other suggestion is offered meanwhile")
+    XCTAssertEqual(conversation.draft, "Explain it more simply")
+
+    await conversation.send()
+
+    XCTAssertFalse(conversation.hasUnsentQuestion)
+    XCTAssertEqual(Set(api.requestIDs).count, 1, "sent again as the same question")
+    XCTAssertEqual(api.suggestions, ["simpler", "simpler"])
+  }
+
   func testReplacedProposalsSayTheyWereReplaced() async {
     let earlier = TutorTurn.fixture(id: "earlier", planChange: .fixture(id: "change-1"))
     let api = TutorAPIStub(
@@ -383,6 +424,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var decideFailure: Error?
   var questionFailure: Error?
   var questionStatus = TutorTurn.Status.completed
+  var beforeAsk: (@MainActor () async -> Void)?
   var beforeQuestion: (@MainActor () async -> Void)?
   var beforeAnswer: (@MainActor () async -> Void)?
   private(set) var requestIDs: [String] = []
@@ -409,6 +451,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   ) async throws -> TutorAskedQuestion {
     requestIDs.append(requestId)
     suggestions.append(suggestion)
+    await beforeAsk?()
 
     if !askFailures.isEmpty {
       throw askFailures.removeFirst()

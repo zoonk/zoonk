@@ -5470,6 +5470,65 @@
         }
       }
     },
+    "Change date" : {
+      "comment" : "Opens the date question from the daily time question, for a goal with a date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termin ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar fecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier la date"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia data"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付を変更する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 바꾸기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień datę"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar data"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihi değiştir"
+          }
+        }
+      }
+    },
     "Chapters" : {
       "comment" : "Header over a new plan's chapters",
       "localizations" : {
@@ -5648,7 +5707,7 @@
       }
     },
     "Choose a date" : {
-      "comment" : "Shows the goal's date picker",
+      "comment" : "Opens the date question from the daily time question, for a goal without a date\nShows the goal's date picker",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27044,7 +27103,7 @@
       }
     },
     "Your date, %@, has passed." : {
-      "comment" : "Above the date question when the goal's date has passed",
+      "comment" : "Above the date question when the goal's date has passed\nThe goal's date has passed; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27102,120 +27161,61 @@
         }
       }
     },
-    "Your date, %@, has passed. You can choose a new one on the next screen." : {
-      "comment" : "The goal's date has passed; the argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Termin am %@ ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fecha de tu objetivo, %@, ya pasó. Puedes elegir otra en la siguiente pantalla."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La date choisie, le %@, est passée. Tu peux en choisir une autre à l’écran suivant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La data che hai scelto, %@, è passata. Puoi sceglierne una nuova nella prossima schermata."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標日の%@は過ぎています。次の画面で新しい日付を選べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표 날짜인 %@이 지났어요. 다음 화면에서 새 날짜를 고를 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybrany termin (%@) już minął. Na następnym ekranie możesz wybrać nowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A data que você escolheu, %@, já passou. Você pode escolher outra na próxima tela."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Belirlediğin %@ tarihi geçti. Sonraki ekranda yeni bir tarih seçebilirsin."
-          }
-        }
-      }
-    },
-    "Your date, the start of %@, has passed. You can choose a new one on the next screen." : {
+    "Your date, the start of %@, has passed." : {
       "comment" : "The goal's date has passed; the argument is the month the learner named, like 'May 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Termin Anfang %@ ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen."
+            "value" : "Dein Termin Anfang %@ ist vorbei."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha de tu objetivo, al inicio de %@, ya pasó. Puedes elegir otra en la siguiente pantalla."
+            "value" : "La fecha que elegiste, el inicio de %@, ya pasó."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date choisie, début %@, est passée. Tu peux en choisir une autre à l’écran suivant."
+            "value" : "La date choisie, début %@, est passée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La data che hai scelto, l’inizio di %@, è passata. Puoi sceglierne una nuova nella prossima schermata."
+            "value" : "La data che hai scelto, a inizio %@, è passata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目標日は%@の初めでしたが、すでに過ぎています。次の画面で新しい日付を選べます。"
+            "value" : "目標日に指定した%@の初めは、すでに過ぎています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "목표 날짜로 정한 %@의 첫날이 지났어요. 다음 화면에서 새 날짜를 고를 수 있어요."
+            "value" : "목표 날짜인 %@의 첫날이 지났어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Początek wybranego miesiąca (%@) już minął. Na następnym ekranie możesz wybrać nowy termin."
+            "value" : "Wybrany termin (początek miesiąca: %@) już minął."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data que você escolheu, o início de %@, já passou. Você pode escolher outra na próxima tela."
+            "value" : "A data que você escolheu, o início de %@, já passou."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ayının başı için belirlediğin tarih geçti. Sonraki ekranda yeni bir tarih seçebilirsin."
+            "value" : "Belirlediğin tarih (%@ başı) geçti."
           }
         }
       }

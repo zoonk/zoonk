@@ -68,6 +68,7 @@ fun TimeAnswer(
     split: DaySplit? = null,
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
+    action: (@Composable () -> Unit)? = null,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed || noteStatus == NoteStatus.Failed
     val offered = offer?.takeUnless { failed }
@@ -80,39 +81,41 @@ fun TimeAnswer(
     val tooLong = stringResource(R.string.plan_time_too_long).takeIf { note == FullTimeNote.TooLong }
     val shared = split?.let { splitWords(it) }
 
-    Column(
-        modifier
-            .heightIn(min = 48.dp)
-            .alpha(if (updating) UPDATING_ALPHA else 1f)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                if (busy) stateDescription = busyWords
-            },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        noteWords?.let { Text(it, color = muted, style = style) }
-        Text(
-            buildAnnotatedString {
-                append(lineWords)
-                tooLong?.let { append(spaceAfterSentence(lineWords.text) + it) }
-                shared?.let { append(spaceAfterSentence(tooLong ?: lineWords.text) + it) }
-            },
-            color = muted,
-            style = style,
-        )
-        when {
-            failed -> {
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.plan_try_again)) }
-            }
+    Column(modifier.heightIn(min = 48.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            Modifier
+                .alpha(if (updating) UPDATING_ALPHA else 1f)
+                .semantics {
+                    liveRegion = LiveRegionMode.Polite
+                    if (busy) stateDescription = busyWords
+                },
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            noteWords?.let { Text(it, color = muted, style = style) }
+            Text(
+                buildAnnotatedString {
+                    append(lineWords)
+                    tooLong?.let { append(spaceAfterSentence(lineWords.text) + it) }
+                    shared?.let { append(spaceAfterSentence(tooLong ?: lineWords.text) + it) }
+                },
+                color = muted,
+                style = style,
+            )
+            when {
+                failed -> {
+                    TextButton(onClick = onRetry) { Text(stringResource(R.string.plan_try_again)) }
+                }
 
-            offered != null && offerAsButton -> {
-                OutlinedButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
-            }
+                offered != null && offerAsButton -> {
+                    OutlinedButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
+                }
 
-            offered != null -> {
-                TextButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
+                offered != null -> {
+                    TextButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
+                }
             }
         }
+        action?.invoke()
     }
 }
 

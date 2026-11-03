@@ -134,7 +134,16 @@ internal fun LazyListScope.todaySession(
         sessionQueue(model, next, viewModel, actions, folds, wide)
     } else {
         items(day.steps, key = { "step-${it.position}" }, contentType = { "step" }) { step ->
-            StepRow(model, step, isNext = false, opens = false, busy = false, onOpen = {}, Modifier.pageItem())
+            val replay = step.lessonToReplay
+            StepRow(
+                model,
+                step,
+                isNext = false,
+                opens = replay != null,
+                busy = false,
+                onOpen = { replay?.let { actions.navigate(AppRoute.Lesson(it.toString())) } },
+                Modifier.pageItem(),
+            )
         }
         plusLessons(day.plusLessons, actions, visible = day.plusLessons.size)
     }
@@ -235,13 +244,14 @@ private fun LazyListScope.sessionQueue(
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
         val isNext = step.position == next.position
+        val replay = step.lessonToReplay
         StepRow(
             model = model,
             step = step,
             isNext = isNext,
-            opens = !step.isFinished && step.waitReason == null,
+            opens = replay != null || (!step.isFinished && step.waitReason == null),
             busy = pending == step.position || (isNext && viewModel.pending == TodayTap.Continue),
-            onOpen = { actions.open(step) },
+            onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
             modifier = Modifier.pageItem(),
             onNavigate = actions.navigate,
             divider = index != beforeNext,

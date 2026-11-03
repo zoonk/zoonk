@@ -4,6 +4,7 @@ import {
   type CourseStartOutcome,
   startCourseAction,
 } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
+import { useOnboardingNavigation } from "@/app/[lang]/(app)/(onboarding)/start/use-onboarding-navigation";
 import { useRouter } from "@/i18n/navigation";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
@@ -30,6 +31,7 @@ export function useCourseStart({
   initialFailure?: CourseStartFailure | null;
 }) {
   const router = useRouter();
+  const navigation = useOnboardingNavigation();
   const [failure, setFailure] = useState<CourseStartFailure | null>(initialFailure);
   const [pending, startTransition] = useTransition();
 
@@ -72,7 +74,7 @@ export function useCourseStart({
         return;
       }
 
-      router.push(`/start/${outcome.goalId}`);
+      navigation.toSteps(outcome.goalId);
     });
 
   return {

@@ -19,6 +19,7 @@
   "today_coming_stalled": "2f72e720cc3e53a7c3015fb195d9dc0aa372923211b6dff4636a03d25432763d",
   "today_coming_title": "06649bf6267e030097bf4ab1ec723ba2f4821f747d1681f1782a0c66c7b8fd74",
   "today_coming_writing": "33a517aec335b0d1f4945ff3464f22753287c4cc8dfef15fd5ea69d3a707efa2",
+  "today_completed_lessons_detail": "ebea24d9a41fd29cb09c75dc5bcd18f9be5cecfd17bfcf395f77740472df52ea",
   "today_connection_lost": "b60ea619073fb9a5dcb25313ffda3661d4514b650dee315341c66159d1dcfb4a",
   "today_connection_lost_detail": "b5157dbcad13a79d923e8741e31de9c505a1adec869aeb8445858846c89ef87a",
   "today_continue_explanation": "c9b79aa9ac48b2c31ec3f79229b2671fbd7fbc4b0d0ef77ae4a9b4d83127e566",
@@ -390,6 +391,8 @@
     <string name="today_practice_anytime">언제든 연습하기</string>
     <string name="today_mistakes_notebook">오답 노트</string>
     <string name="today_mistakes_redo">틀린 문제 다시 풀기</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">완료한 레슨을 골라 다시 해 보세요</string>
     <string name="today_mistakes_return_tomorrow">오늘 틀린 문제는 내일 다시 나와요</string>
     <plurals name="today_mistakes_ready">
         <item quantity="other">%d개 연습 가능</item>

@@ -11,39 +11,24 @@ import {
 } from "@zoonk/learn/onboarding/goal-field";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import {
-  type ReactNode,
-  useEffect,
-  useEffectEvent,
-  useId,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { type ReactNode, useId, useRef, useState, useTransition } from "react";
 import { useSendGoal } from "./use-send-goal";
 
 const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
 
-type ExampleChoices = { examples: Readonly<Record<string, string>>; name: string };
-
 /**
  * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
- * starts from a tap. The button sits beside the words only when the longest example fits there on
- * one line, and what the visitor types never moves it. Screen readers hear the example from a copy
- * of their own, so a page with hidden variants reads only the one shown. Picking one of
- * `exampleChoices`' radios writes its example into the box when the box is empty or still holds an
- * earlier pick, never over the visitor's words.
+ * starts from a tap. The button sits beside the words only when the example fits there on one line,
+ * and what the visitor types never moves it.
  */
 export function GoalForm({
   action,
   example,
-  exampleChoices,
   id,
   note,
 }: {
   action: string;
   example: ReactNode;
-  exampleChoices?: ExampleChoices;
   id: string;
   note?: ReactNode;
 }) {
@@ -53,43 +38,10 @@ export function GoalForm({
   const exampleId = useId();
   const lineId = useId();
   const fieldRef = useRef<HTMLTextAreaElement>(null);
-  const filledRef = useRef("");
   const [hinted, setHinted] = useState(false);
   const send = useSendGoal();
   const [sending, startSending] = useTransition();
   const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
-  const choicesName = exampleChoices?.name;
-
-  const fillExample = useEffectEvent((event: Event) => {
-    const field = fieldRef.current;
-    const choice = event.target;
-
-    if (!field || !(choice instanceof HTMLInputElement) || choice.name !== choicesName) {
-      return;
-    }
-
-    const picked = exampleChoices?.examples[choice.value];
-
-    if (picked && (field.value.trim() === "" || field.value === filledRef.current)) {
-      field.value = picked;
-      filledRef.current = picked;
-      setHinted(false);
-    }
-  });
-
-  useEffect(() => {
-    if (!choicesName) {
-      return;
-    }
-
-    document.addEventListener("change", fillExample);
-    document.addEventListener("click", fillExample);
-
-    return () => {
-      document.removeEventListener("change", fillExample);
-      document.removeEventListener("click", fillExample);
-    };
-  }, [choicesName]);
 
   return (
     <div className="flex w-full flex-col gap-4">

@@ -63,6 +63,20 @@ val TutorScope.goalId: String?
             else -> null
         }
 
+/** What the server labels a question asked in this scope. */
+val TutorScope.about: TutorTurn.About
+    get() =
+        when (this) {
+            is TutorScope.Plan -> TutorTurn.About.Plan
+            is TutorScope.Subject -> TutorTurn.About.Subject
+            is TutorScope.Chapter -> TutorTurn.About.Chapter
+            is TutorScope.Mock -> TutorTurn.About.Mock
+            is TutorScope.Lesson -> TutorTurn.About.Lesson
+            is TutorScope.Step -> TutorTurn.About.Step
+            is TutorScope.Answer -> TutorTurn.About.Answer
+            is TutorScope.Item -> if (answered) TutorTurn.About.Answer else TutorTurn.About.Item
+        }
+
 /** One conversation per learner and thread: a lesson keeps one for itself and one per screen. */
 sealed interface TutorThreadKey {
     data class Plan(

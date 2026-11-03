@@ -855,9 +855,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Covers your whole goal by %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <string name="plan_time_past_date">Your date, %1$s, has passed.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <string name="plan_time_past_date_month">Your date, %1$s, has passed.</string>
     <string name="plan_time_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
     <string name="plan_time_finish_failed">We couldn\'t work out when you\'d finish.</string>
     <string name="plan_time_no_days">Choose at least one study day.</string>

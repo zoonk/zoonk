@@ -1,9 +1,11 @@
 import { readFile } from "node:fs/promises";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
+import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
+import { extractQuestionFormats } from "@zoonk/ai/tasks/research/extract-question-formats";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -20,6 +22,16 @@ vi.mock("@zoonk/ai/tasks/research/extract-exam-blueprint", async (importOriginal
 vi.mock("@zoonk/ai/tasks/research/check-cited-facts", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   checkCitedFacts: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/research/extract-question-formats", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  extractQuestionFormats: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/research/check-exam-reading", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  checkExamReading: vi.fn(),
 }));
 
 describe("blueprint extraction durability", () => {
@@ -39,6 +51,12 @@ describe("blueprint extraction durability", () => {
       ...taskResult(extraction),
       formatsProvenance: null,
     });
+
+    vi.mocked(extractQuestionFormats).mockResolvedValue(taskResult(extraction.formats));
+
+    vi.mocked(checkExamReading).mockResolvedValue(
+      taskResult({ missingSubjects: [], statedCounts: [] }),
+    );
 
     vi.mocked(checkCitedFacts).mockRejectedValue(new Error("Fact check unavailable"));
     const blueprint = await examBlueprintFixture({ sourceId: source.id });

@@ -28,7 +28,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const input = page.getByRole("textbox", { name: "Code from the email" });
 
@@ -50,7 +50,7 @@ test.describe("OTP Login Flow", () => {
 
     await expect(input).toHaveValue(otp);
 
-    await page.waitForURL(/\/auth\/setup/u);
+    await page.waitForURL(/\/auth\/en\/setup/u);
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
     await cleanupVerifications(email);
@@ -64,7 +64,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const code = await getOTPForEmail(email);
     const wrongCode = code === "000000" ? "111111" : "000000";
@@ -112,7 +112,7 @@ test.describe("OTP Login Flow", () => {
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
 
-    await page.waitForURL(/\/auth\/setup/u);
+    await page.waitForURL(/\/auth\/en\/setup/u);
 
     await cleanupVerifications(email);
   });
@@ -125,7 +125,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const code = (await getOTPForEmail(email)) ?? "";
     const wrongCode = code === "000000" ? "111111" : "000000";
@@ -156,7 +156,7 @@ test.describe("OTP Login Flow", () => {
     await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode, code]);
     await checks[2]?.continue();
 
-    await page.waitForURL(/\/auth\/setup/u);
+    await page.waitForURL(/\/auth\/en\/setup/u);
 
     await cleanupVerifications(email);
   });
@@ -167,7 +167,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const code = await getOTPForEmail(email);
 
@@ -190,7 +190,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/iu).fill(email);
     await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
+    await page.waitForURL(/\/auth\/en\/otp/u);
 
     const firstCode = (await getOTPForEmail(email)) ?? "";
     const wrongCode = firstCode === "000000" ? "111111" : "000000";
@@ -234,7 +234,7 @@ test.describe("OTP Login Flow", () => {
 
     await input.fill(newCode ?? "");
 
-    await page.waitForURL(/\/auth\/setup/u);
+    await page.waitForURL(/\/auth\/en\/setup/u);
 
     await cleanupVerifications(email);
   });
