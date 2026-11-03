@@ -4492,28 +4492,28 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "The lesson consistently teaches one idea: identifying accounting-information users and connecting them to decisions. Its single skill is a verb-first action with a canonical topic, a one-sentence description, a concrete example, and a real-life use. The title, description, and can-do line are aligned.",
+          "reasoning": "The lesson consistently teaches one idea: identifying users of accounting information and their decisions. Its single skill starts with an action verb and includes a canonical topic, a one-sentence description, a concrete example, and a real-life use. The title and can-do line fit that scope.",
           "score": 10,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "Explanation-first support and two explanations before the first check meet the ordering requirements. The final application is realistic and appropriately avoids treating limited evidence as forcing a decision. However, the hook asks a question despite the explicit prohibition, and the checks mostly repeat taught associations: the manager check supplies its answer in the setup, and matching reproduces earlier examples. The mostly-recall cap of 7 applies.",
+          "reasoning": "The hook is a noninteractive scene ending in a relevant question, and two explanations precede the first explicit check. However, it does not establish the specified owner-pricing, bank-loan, and tax-office scenario. Checks mostly reproduce previously taught associations: Fábio is a user, the bank and owner can both be users, and each group matches its stated purpose. This triggers the cap of 7 for checks mostly asking for recall. The final application is realistic but its amounts do not affect the answer.",
           "score": 7,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "The hook has a relevant picture, the user–decision tables are appropriately specified with visual null, and matchPairs fits the association task. However, there is no picture showing the main example's changed situation, no drawn amounts or steps, and no table or chart showing the final sales/debt comparison. These are several visualization omissions, triggering the cap of 7.",
+          "reasoning": "The plan does provide pictures beyond the hook, including a changed situation with Fábio meeting the bank, and explicitly requests app-drawn tables with exact amounts. It therefore avoids an all-text teaching plan. However, the government-and-employees screen leaves both concrete uses unpictured, while processOrder is a poorly justified interaction attached to an explanation rather than a clearly specified activity. These multiple weaknesses trigger the cap of 7. The matching template itself fits its task.",
           "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The text is Brazilian Portuguese, stays within the lesson's scope, and avoids formulas and neighboring lessons' content. Most wording is accessible, and 'credor' is explained. However, the investor/government explanation combines a new user type with unexplained 'apuração de tributos', weakening the one-new-term-per-screen pacing for a total beginner. This level slip triggers the cap of 8.",
+          "reasoning": "The content is in Brazilian Portuguese, stays within accounting users and purposes, and avoids formulas and neighboring lessons' subject matter. Most wording is accessible. The government-and-employees screen is a beginner-level slip: it combines two unfamiliar uses and relies on 'tributos' without translating it into everyday language such as 'impostos'. This triggers the cap of 8 for one level slip.",
           "score": 8,
           "label": "Level, scope & language",
           "weight": 25
@@ -4531,30 +4531,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 8379,
-          "outputTokens": 949,
-          "reasoningTokens": 246
+          "inputTokens": 8501,
+          "outputTokens": 931,
+          "reasoningTokens": 242
         }
       },
       "steps": [
         {
-          "conclusion": "The hook explicitly ends with a question, violating the requirement that it ask nothing. The teaching visuals also fall short: Fábio reappears, but the picture does not show his situation changing; the later fall in sales and rise in debt remain text-only. The tables list users and decisions rather than showing amounts or steps drawn by the app.",
+          "conclusion": "The main example does not fully match the required scenario: the owner considers buying equipment rather than deciding a price, and the hook does not establish the bank and tax-office perspectives. Most checks then repeat user–decision associations already stated rather than testing their use in a meaningfully changed situation.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The first check names the manager and the manager's decision before asking who uses the information, and the matching activity largely repeats the preceding tables. These mostly test recall rather than identifying users from fresh situations. The investor/government screen also introduces unexplained tax vocabulary such as 'apuração de tributos' alongside a new user type, making it less accessible to a total beginner.",
+          "conclusion": "The processOrder template is attached to an explanation and requests an obvious sequence without explaining why reconstructing it helps. The government-and-employees explanation introduces two purposes together, leaves 'tributos' unexplained, and provides no picture of either example for a total beginner.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Carry Fábio's business through the teaching examples: show the owner considering a price, the bank reviewing a loan request, and the tax authority checking declared information. Explain how each user interprets the same simple figures differently, then test those distinctions with new cases rather than repeated user–decision pairs.",
+          "conclusion": "Make the final application depend on its data or remove the unused sales amount. Use a fresh decision request whose intended user must be inferred, rather than another version of whether both the owner and bank are users.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene that asks nothing, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
         "expected": { "pictures": "some" },
         "id": "pt-usuarios-contabilidade-cold-start-1",
         "userInput": {
@@ -4782,29 +4782,29 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "The lesson consistently teaches separation of the business from its owner. Personal spending, reimbursable business spending, withdrawals, and contributions are closely linked applications rather than unrelated topics. The single skill is verb-first and includes a canonical topic, a one-sentence description, a concrete example, and a practical use.",
-          "score": 9,
+          "reasoning": "The lesson has one coherent idea: separating the business from its owner while recognizing transfers between them. Its single skill begins with an action verb and includes a canonical topic, a one-sentence description, a concrete example and a real-life use. Contributions and withdrawals support that same idea rather than creating unrelated lessons.",
+          "score": 10,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The hook violates the task-specific requirement by asking whether the home expense belongs to the workshop, triggering the weak-hook cap of 8. Otherwise, explanation-first support is appropriate, two explanations precede the first check, checks name plausible misconceptions, and the R$ 120 worked example has a similar R$ 180 follow-up. The final application uses realistic transactions with explicit amounts.",
+          "reasoning": "The noninteractive hook ends with a relevant question, and two explanations precede the first check. Checks require classification and name plausible wrong answers. The worked contribution example has a similar, less-supported follow-up, and the final screen applies the skill realistically. However, the first explanation introduces two new accounting terms, and the hook leaves the required home bill unspecified. These are concrete weaknesses in an otherwise usable plan.",
           "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "Several visual weaknesses trigger the cap of 7: the hook does not show the cash-versus-home-bill situation clearly, the next picture does not depict separation, and no later picture shows the main example changing. Tables appropriately present classifications and monetary amounts, and categorize fits the sorting task. However, the decisionTree is presented as an explanation rather than a clearly specified interactive case.",
+          "reasoning": "Several missing visual supports trigger the cap of 7. The main cash-and-bill scene is not revisited pictorially in a changed state, and the monetary worked example lacks an app-drawn table or step display. The ownership table is useful but does not meet the separate requirement to show amounts or steps. The withdrawal explanation also leaves the beginner to imagine the transfer. The decision-tree template is suitable for guided classification, and the tool and machine pictures have instructional purposes.",
           "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The content uses Brazilian Portuguese, familiar small-business situations, and manageable amounts without unnecessary formulas or accounting notation. The accounting treatments are accurate under the stated withdrawal and reimbursement conditions. The lesson stays within entity separation and does not reteach or expand into the neighboring lessons' topics.",
-          "score": 9,
+          "reasoning": "The content is in Brazilian Portuguese, stays within entity-owner separation and does not reteach the neighboring lessons. The examples are accessible, and treating an explicitly designated withdrawal as something other than a business expense is appropriate. However, introducing 'entidade' and 'patrimônio' together without separately establishing the latter creates a terminology-loading slip for a total beginner, triggering the cap of 8.",
+          "score": 8,
           "label": "Level, scope & language",
           "weight": 25
         },
@@ -4821,30 +4821,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 8592,
-          "outputTokens": 1024,
-          "reasoningTokens": 355
+          "inputTokens": 8464,
+          "outputTokens": 1012,
+          "reasoningTokens": 315
         }
       },
       "steps": [
         {
-          "conclusion": "The hook explicitly asks a question, violating the requirement for a scene that asks nothing, and its picture does not establish the business's cash alongside the owner's home bill. Beyond the hook, no picture shows that main situation changing: the only subsequent illustration shows Renan standing in the workshop. The required numerical tables are present, but they do not replace the required changed-scene picture.",
+          "conclusion": "The teaching visuals do not satisfy the required progression: the shop-cash/personal-bill situation never reappears in a picture showing what changes when the bill is paid. The R$ 1,000 worked transfer is text only; the ownership table shows neither amounts nor procedural steps. Also, the first explanation introduces both 'entidade' and 'patrimônio', violating the one-new-term-per-screen requirement.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The first explanation's picture shows the owner and equipment without making the separation between owner and business visible. The decisionTree template is attached to an explanation screen, and its brief describes a classification tree without specifying a case for the learner to walk through; the intended interaction is therefore unclear.",
+          "conclusion": "The hook specifies only a 'conta pessoal', rather than the owner's home bill, and its picture does not identify what the bill is for. This makes the intended business-versus-household contrast less concrete.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Carry the original home-bill example through the teaching sequence: show the workshop paying it, then identify the payment as an owner withdrawal rather than a business expense. For the decision tree, specify the branching questions and a case to classify, or replace it with a simple explanatory comparison if learner interaction adds nothing.",
+          "conclusion": "Make the decision-tree branches explicit about transfers already identified as investment or withdrawal, so direction alone is not mistaken for a universal classification rule. Specify the intended treatment of each operation in the final application to make the writer's task more reliable.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene that asks nothing, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
         "expected": { "pictures": "some" },
         "id": "pt-entidade-contabil-cold-start-1",
         "userInput": {
@@ -5072,28 +5072,28 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "The lesson has one coherent focus: identifying goods and rights and deciding whether the shop controls them as assets. Its single skill is verb-first and includes a canonical topic, a one-sentence description, a concrete example, and a practical use. No unrelated idea or unnecessary split appears.",
+          "reasoning": "The lesson consistently teaches identifying goods and receivables that qualify as the entity's assets. Its single skill starts with an action verb and includes a canonical topic, a one-sentence description, a concrete example, and a practical use. Distinguishing personal property and third-party goods supports that same idea rather than introducing an unrelated topic. No scope-boundary cap applies.",
           "score": 9,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "Explanation-first support and two explanations before the first learner task satisfy the ordering requirement. Checks require classification and identify plausible errors, and the final application is realistic. However, the hook asks a question despite the explicit prohibition and omits cash from the required scene. This triggers the weak-hook cap of 8. The decision-tree brief also needs clearer implementation details.",
+          "reasoning": "The hook is a noninteractive scene ending in a relevant question, but it omits the required cash component, triggering the weak-hook cap of 8. Several explanations precede the first check. Checks require classification and name plausible wrong answers, and the final screen applies the idea to realistic shop resources. However, the asset criteria are introduced abstractly rather than through a fully worked classification, and the decision-tree brief lacks a concrete case to follow.",
           "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "The categorization activity fits the skill, and the shop and warehouse pictures have instructional relevance. However, several visual needs remain unmet: no picture shows the main situation changing, the receivable explanation is text-only, and the warehouse image does not identify ownership or control through labels. There is no concrete monetary table or chart, while the proposed decision tree supplies only questions and one successful path. Multiple missing or underspecified visuals trigger the cap of 7.",
+          "reasoning": "The shop pictures and sorting activity are relevant, but several visual supports are missing or underspecified, triggering the cap of 7. Cash is absent from the hook picture; there is no concrete app-drawn numerical or worked-step representation; and the decisionTree lacks the case and branch answers its template needs. The software-license example is also not actually depicted. The sale picture provides some progression of the shop scene, so this is not a lesson with no meaningful visuals.",
           "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The prose is Brazilian Portuguese, and the lesson stays within assets rather than teaching liabilities, equity, or the accounting equation. The accounting distinctions are broadly accurate. However, the asset-definition screen concentrates abstract expressions such as economic resource, present control, past event, and potential economic benefits before unpacking them in everyday language. This is a beginner-level slip, triggering the cap of 8.",
+          "reasoning": "The prose is Brazilian Portuguese, and most examples use accessible everyday situations. The lesson avoids teaching the later equity and accounting-equation topics; unpaid equipment is used appropriately to clarify asset control. However, the formal asset definition introduces unexplained economic terminology too abruptly for a total beginner, triggering the single-level-slip cap of 8.",
           "score": 8,
           "label": "Level, scope & language",
           "weight": 25
@@ -5111,30 +5111,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 8484,
-          "outputTokens": 1010,
-          "reasoningTokens": 319
+          "inputTokens": 8625,
+          "outputTokens": 1058,
+          "reasoningTokens": 303
         }
       },
       "steps": [
         {
-          "conclusion": "The hook explicitly asks a question, contrary to the requirement that it ask nothing, and omits the shop's cash from both the scene and picture. Beyond the hook, the plan never pictures the main example undergoing a change. It also leaves important beginner concepts, especially the outstanding customer payment, to text alone. These failures materially weaken the required concrete, visual introduction.",
+          "conclusion": "The hook omits the shop's cash from both its scene and picture, contrary to the explicitly required main example. Beyond the hook, the plan supplies shop pictures but no concrete amounts or worked steps presented in an app-drawn table, chart, or usable template. The decisionTree screen lists abstract criteria without a case and its answers, so it does not adequately supply that missing teaching support.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The asset-definition screen uses dense accounting language for a total beginner. The decisionTree is attached to an explanation rather than an activity screen, and its brief provides only a successful path, leaving the other branches and outcomes unspecified. The warehouse picture also lacks labels that would establish which goods the shop controls.",
+          "conclusion": "The asset explanation uses dense terminology such as 'recurso econômico presente' and 'benefícios econômicos' before unpacking it for a total beginner. Some pictures do not show the distinction being taught: the goods screen mentions a software license but depicts only merchandise and a computer, while the credit-sale picture does not specify a visible unpaid-payment label.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use a customer payment to connect the examples: picture the same shop before and after payment, and show a small app-drawn table with exact cash and receivable amounts. This would make the distinction between money already received and money still owed easier to understand without introducing another accounting topic.",
+          "conclusion": "Carry the same shop example through a clearly pictured change, such as a customer paying an existing debt: show cash increasing and the amount owed decreasing, with exact values in an app-drawn before-and-after table. Introduce the asset criteria through one fully worked concrete case before asking learners to apply them. Give the decision tree a specific case, branch answers, and outcome if it is retained.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene that asks nothing, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
         "expected": { "pictures": "some" },
         "id": "pt-bens-direitos-cold-start-1",
         "userInput": {
@@ -5352,29 +5352,29 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "The lesson consistently teaches applying the accounting equation through calculating missing amounts and checking consistency. Its single skill starts with an action verb and includes a canonical topic, a one-sentence idea, a correct example, and a practical use. No split is needed.",
+          "reasoning": "The lesson consistently addresses applying the accounting equation. Its single skill is verb-first, generic and supported by a canonical topic, a clear idea, a concrete example and a practical use. Finding different missing totals and checking equality are closely linked applications of that idea.",
           "score": 10,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The hook asks a question despite the explicit scene-only requirement, triggering the weak-hook cap of 8. Otherwise, the sequence is concrete and writable: two explanations and a worked example precede the first check, the worked calculation has a similar less-supported follow-up, tempting wrong answers are named, and the final screen applies the equation to realistic records. The arithmetic and the warning that balance alone does not prove correctness are accurate.",
+          "reasoning": "Explanation-first support is appropriate, and three teaching screens precede the first check. A worked addition example is followed by a similar calculation with less help. Checks use meaningful numerical distractors, and the final task realistically asks learners to correct a known erroneous liability. However, the hook omits the owner's residual share and the required side-by-side records, making it a weak hook under the task-specific expectations and triggering the cap of 8.",
           "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "Several visual requirements are missed, triggering the cap of 7. The hook picture does not specify the three required groups side by side or depict the owner's share, and no later picture shows the main example changing. Exact-value tables and formula models provide useful drawn numerical representations, so the lesson is not entirely text-based. However, the model assigned to an explanation screen has unclear interaction routing, and the later model task could do more than reveal a supplied-input calculation.",
+          "reasoning": "The initial table specifies exact amounts, and formulaModel appropriately represents linked values. However, the hook visual does not depict the required records comparison, and no subsequent picture shows Débora's business changing. These are multiple missing visual requirements, triggering the cap of 7. The numerical models do not replace the explicitly required pictured situation.",
           "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The content uses Brazilian Portuguese and accessible monetary examples. The equation follows a concrete table rather than appearing before its intuition. Previously encountered accounting terms are briefly recalled rather than taught from scratch; zero and negative equity are used to test the same equation. No supplied neighboring case is reused, and there are no filler or summary screens.",
-          "score": 9,
+          "reasoning": "The text is Brazilian Portuguese, the arithmetic is correct, and the equation follows a concrete numerical example, which suits beginners. The meaningful scope weakness is the extended return to calculating patrimônio líquido, a skill assigned to an earlier lesson, rather than limiting that prior content to context. This triggers the cap of 8 for a scope slip.",
+          "score": 8,
           "label": "Level, scope & language",
           "weight": 25
         },
@@ -5391,30 +5391,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 8573,
-          "outputTokens": 1085,
-          "reasoningTokens": 403
+          "inputTokens": 8593,
+          "outputTokens": 946,
+          "reasoningTokens": 256
         }
       },
       "steps": [
         {
-          "conclusion": "The hook violates the explicit requirement to ask nothing: it ends with a question. Its picture also fails to specify the business's records side by side, including the owner's residual share. Beyond the hook, no picture revisits Débora's business in a changed situation, despite that being explicitly required. The tables and formula models satisfy the drawn-data requirement but do not replace the required changed-scene picture.",
+          "conclusion": "The required visual storyline is missing. The hook picture shows Débora, objects and a notebook, but not the business's records side by side showing what it has, owes and leaves for its owner. No later teaching screen pictures that same business in a changed situation. The table and formula models provide useful numerical representations but do not satisfy the separate requirement for a changing pictured example.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The first formulaModel is assigned an explanation kind even though its brief specifies interactive controls, leaving its intended presentation unclear. The later activity mainly asks learners to set supplied inputs and report the displayed output; a prediction before adjustment would give the interaction more educational value.",
+          "conclusion": "The lesson spends an explanation and an activity teaching patrimônio líquido = ativo − passivo, overlapping the preceding lesson's stated skill of calculating owners' residual interest. The negative-value extension is mathematically correct, but the sequence should focus more clearly on applying and checking the accounting equation rather than reteaching that calculation.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Keep Débora's business as the running example through the worked calculation and follow-up. Explicitly request an app-drawn calculation table for the worked example, and use a concrete business event to connect changes in the model to changes in the records.",
+          "conclusion": "Give the adjustable model a concrete business event, such as Débora borrowing R$ 1.000 and retaining the money, so learners understand why assets and liabilities increase together while equity stays fixed. In the final application, explicitly specify a comparison table and the corrected liability of R$ 9.000, distinguishing it from the R$ 2.000 discrepancy.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene that asks nothing, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a total beginner in accounting\n      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its `visual` shows that scene in a picture\n      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good\n      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
         "expected": { "pictures": "some" },
         "id": "pt-equacao-patrimonial-cold-start-1",
         "userInput": {

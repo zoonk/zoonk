@@ -149,6 +149,33 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
   });
 
+  it("asks a new learner's lesson for a visual on one teaching screen in three, rounded up", () => {
+    const longLesson = [
+      screen("hook", [], { visual: "The shop" }),
+      screen("explanation"),
+      screen("explanation"),
+      screen("check"),
+      screen("explanation"),
+      screen("explanation"),
+      screen("check"),
+      screen("explanation"),
+      screen("explanation"),
+      screen("check"),
+      screen("explanation"),
+      screen("application"),
+    ];
+
+    const showing = (shown: number[]) =>
+      spec(
+        longLesson.map((item, index) =>
+          shown.includes(index) ? { ...item, visual: `Picture ${index}` } : item,
+        ),
+      );
+
+    expect(getCodes(showing([1, 4]), "beginner", true)).toStrictEqual(["teachingVisual"]);
+    expect(getCodes(showing([1, 4, 8]), "beginner", true)).toStrictEqual([]);
+  });
+
   it("asks a new learner's lesson for its hook's picture and one more visual", () => {
     expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([
       "hookPicture",
