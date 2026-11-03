@@ -32,8 +32,8 @@ struct RichTextBlocks: View {
             .fixedSize(horizontal: false, vertical: true)
         case .list(let items, let ordered):
           list(items, ordered: ordered, mark: mark)
-        case .table(let header, let rows):
-          table(header: header, rows: rows)
+        case .table(let header, let alignments, let rows):
+          table(header: header, alignments: alignments, rows: rows)
         }
       }
     }
@@ -68,12 +68,16 @@ struct RichTextBlocks: View {
     return marked
   }
 
-  private func table(header: [String], rows: [[String]]) -> some View {
+  private func table(
+    header: [String], alignments: [RichTextBlock.ColumnAlignment], rows: [[String]]
+  ) -> some View {
     ScrollView(.horizontal) {
       Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
         GridRow {
-          ForEach(Array(header.enumerated()), id: \.offset) { _, cell in
-            Text(inline(cell)).font(.subheadline.weight(.semibold))
+          ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
+            Text(inline(cell))
+              .font(.subheadline.weight(.semibold))
+              .gridColumnAlignment(alignments[index].horizontal)
           }
         }
 
@@ -81,8 +85,9 @@ struct RichTextBlocks: View {
 
         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
           GridRow {
-            ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-              Text(inline(cell)).font(.subheadline)
+            ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
+              Text(inline(cell))
+                .font(alignments[index] == .leading ? .subheadline : .subheadline.monospacedDigit())
             }
           }
         }
@@ -94,9 +99,15 @@ struct RichTextBlocks: View {
 }
 
 enum RichTextBlock: Equatable {
+  enum ColumnAlignment: Equatable {
+    case leading
+    case center
+    case trailing
+  }
+
   case paragraph(lines: [String])
   case list(items: [String], ordered: Bool)
-  case table(header: [String], rows: [[String]])
+  case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
 
   /// Mirrors main's `parseRichBlocks`.
   static func parse(_ text: String) -> [RichTextBlock] {
@@ -107,7 +118,8 @@ enum RichTextBlock: Equatable {
 
     while index < lines.count {
       if let table = Table(lines: lines, at: index) {
-        blocks.append(.table(header: table.header, rows: table.rows))
+        blocks.append(
+          .table(header: table.header, alignments: table.alignments, rows: table.rows))
         previous = nil
         index = table.end
         continue
@@ -203,6 +215,7 @@ enum RichTextBlock: Equatable {
 
   private struct Table {
     let header: [String]
+    let alignments: [ColumnAlignment]
     let rows: [[String]]
     let end: Int
 
@@ -228,11 +241,20 @@ enum RichTextBlock: Equatable {
       }
 
       self.header = header
+      self.alignments = delimiter.map(Self.alignment)
       self.rows = lines[(index + 2)..<end].map { line in
         let cells = Self.cells(line)
         return header.indices.map { $0 < cells.count ? cells[$0] : "" }
       }
       self.end = end
+    }
+
+    private static func alignment(_ delimiter: String) -> ColumnAlignment {
+      switch (delimiter.hasPrefix(":"), delimiter.hasSuffix(":")) {
+      case (true, true): .center
+      case (false, true): .trailing
+      default: .leading
+      }
     }
 
     private static func cells(_ line: String) -> [String] {
@@ -246,6 +268,16 @@ enum RichTextBlock: Equatable {
         .map {
           $0.replacingOccurrences(of: "\u{FFFC}", with: "|").trimmingCharacters(in: .whitespaces)
         }
+    }
+  }
+}
+
+extension RichTextBlock.ColumnAlignment {
+  fileprivate var horizontal: HorizontalAlignment {
+    switch self {
+    case .leading: .leading
+    case .center: .center
+    case .trailing: .trailing
     }
   }
 }
