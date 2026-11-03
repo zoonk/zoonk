@@ -7,9 +7,10 @@ import { createEmailSignInCode } from "@zoonk/auth/native-sessions";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getOtpHref } from "../_utils/auth-redirect";
+import { getOtpHref, readRedirectToParam } from "../../_utils/auth-redirect";
 
 type VerificationOTPState = {
   email?: string;
@@ -44,9 +45,25 @@ function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPSt
   return statusCode >= CLIENT_ERROR && statusCode < SERVER_ERROR ? { status: "error" } : null;
 }
 
+/** A form sent before the page's script loaded has no address of its own; the Referer names the page. */
+function readSenderRedirectTo(requestHeaders: Headers): string | null {
+  const referer = requestHeaders.get("referer");
+
+  if (!referer || !URL.canParse(referer)) {
+    return null;
+  }
+
+  return readRedirectToParam(new URL(referer).searchParams);
+}
+
 /** A Server Action has no request URL; Better Auth resolves its host from the headers. */
-async function sendSignInCode(email: string) {
-  const requestHeaders = await headers();
+async function sendSignInCode({
+  email,
+  requestHeaders,
+}: {
+  email: string;
+  requestHeaders: Headers;
+}) {
   const protocol = isLocalhostSupported() ? "http" : "https";
 
   await createEmailSignInCode({
@@ -61,14 +78,15 @@ export async function sendVerificationOTPAction(
   formData: FormData,
 ): Promise<VerificationOTPState> {
   const email = parseFormField(formData, "email");
-  const redirectTo = parseFormField(formData, "redirectTo");
+  const requestHeaders = await headers();
+  const locale = getSupportedLocaleFromLanguage(parseFormField(formData, "locale") ?? "");
 
   if (!email) {
     return { status: "invalidEmail" };
   }
 
   // Through Better Auth's handler, as the apps' route is, so its BotID check and rate limit apply.
-  const { error } = await safeAsync(() => sendSignInCode(email));
+  const { error } = await safeAsync(() => sendSignInCode({ email, requestHeaders }));
 
   if (error) {
     const expectedState = getExpectedVerificationOTPErrorState(error);
@@ -80,5 +98,6 @@ export async function sendVerificationOTPAction(
     throw error;
   }
 
-  redirect(getOtpHref({ email, redirectTo }));
+  const redirectTo = parseFormField(formData, "redirectTo") || readSenderRedirectTo(requestHeaders);
+  redirect(getOtpHref({ email, locale, redirectTo }));
 }

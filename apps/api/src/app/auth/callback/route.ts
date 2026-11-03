@@ -1,15 +1,18 @@
-import { getAppLocale } from "@/i18n/locale";
+import { getBrowserLocale } from "@/i18n/locale";
 import { trackSignInCompleted } from "@/lib/server-track-events";
 import { getRouterPayloadFallback } from "@zoonk/core/navigation/document-route";
 import { getSession } from "@zoonk/core/users/session";
 import { MAIN_URL } from "@zoonk/utils/url";
 import { type NextRequest } from "next/server";
-import { getLoginHref, getSetupHref, readRedirectTo } from "../_utils/auth-redirect";
+import {
+  getLoginHref,
+  getSetupHref,
+  getUntrustedOriginHref,
+  readRedirectTo,
+} from "../_utils/auth-redirect";
 import { createOneTimeTokenUrl, isTrustedRedirect } from "./handoff";
 
 const MAIN_APP_LOGIN_URL = new URL("/login", MAIN_URL).toString();
-
-const UNTRUSTED_ORIGIN_PATH = "/auth/untrusted-origin";
 
 function redirectTo(location: string): Response {
   return new Response(null, {
@@ -33,18 +36,18 @@ export async function GET(request: NextRequest) {
     request.nextUrl.searchParams.get("redirectTo") ?? undefined,
   );
 
-  const session = await getSession();
+  const [session, locale] = await Promise.all([getSession(), getBrowserLocale()]);
 
   if (!session) {
-    return redirectTo(getLoginHref(redirectTarget));
+    return redirectTo(getLoginHref({ locale, redirectTo: redirectTarget }));
   }
 
   if (redirectTarget && !(await isTrustedRedirect(redirectTarget))) {
-    return redirectTo(UNTRUSTED_ORIGIN_PATH);
+    return redirectTo(getUntrustedOriginHref(locale));
   }
 
   if (!session.user.username || !session.user.name) {
-    return redirectTo(getSetupHref(redirectTarget));
+    return redirectTo(getSetupHref({ locale, redirectTo: redirectTarget }));
   }
 
   if (!redirectTarget) {
@@ -54,10 +57,10 @@ export async function GET(request: NextRequest) {
   const handoff = await createOneTimeTokenUrl(redirectTarget);
 
   if (!handoff.success) {
-    return redirectTo(UNTRUSTED_ORIGIN_PATH);
+    return redirectTo(getUntrustedOriginHref(locale));
   }
 
-  await trackSignInCompleted({ locale: await getAppLocale(), userId: session.user.id });
+  await trackSignInCompleted({ locale, userId: session.user.id });
 
   return redirectTo(handoff.url);
 }

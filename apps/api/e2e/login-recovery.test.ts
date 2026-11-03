@@ -32,7 +32,7 @@ test("central login keeps its form on an error and rejects a revoked cached sess
     await prisma.session.deleteMany({ where: { userId: user.id } });
     await page.goto("/auth/login");
     await expect(page.getByLabel("Email")).toBeVisible();
-    await expect(page).toHaveURL(/\/auth\/login$/u);
+    await expect(page).toHaveURL(/\/auth\/en\/login$/u);
   } finally {
     await context.close();
     await apiContext.dispose();

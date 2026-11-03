@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { describe, expect, it, vi } from "vitest";
-import { sendVerificationOTP } from "../../../../../../packages/auth/src/plugins/otp";
+import { sendVerificationOTP } from "../../../../../../../packages/auth/src/plugins/otp";
 import { sendVerificationOTPAction } from "./actions";
 
 vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
-vi.mock("../../../../../../packages/auth/src/plugins/otp", () => ({
+vi.mock("../../../../../../../packages/auth/src/plugins/otp", () => ({
   sendVerificationOTP: vi.fn(),
 }));
 
@@ -15,18 +15,19 @@ vi.mock("@zoonk/auth", async () => {
   const { createRequire } = await import("node:module");
   /** Better Auth belongs to the auth workspace; don't add it to API just for this harness. */
   const authRequire = createRequire(
-    new URL("../../../../../../packages/auth/package.json", import.meta.url),
+    new URL("../../../../../../../packages/auth/package.json", import.meta.url),
   );
 
   const { betterAuth } = await import(authRequire.resolve("better-auth/minimal"));
 
   const { baseAuthConfig, baseAuthPlugins } =
-    await import("../../../../../../packages/auth/src/server");
+    await import("../../../../../../../packages/auth/src/server");
 
-  const { botCheckPlugin } = await import("../../../../../../packages/auth/src/plugins/bot-check");
+  const { botCheckPlugin } =
+    await import("../../../../../../../packages/auth/src/plugins/bot-check");
 
   const { createEmailOTPPlugin } =
-    await import("../../../../../../packages/auth/src/email-otp-plugin");
+    await import("../../../../../../../packages/auth/src/email-otp-plugin");
 
   return {
     auth: betterAuth({
@@ -69,6 +70,26 @@ describe(sendVerificationOTPAction, () => {
     await expect(requestCode(email)).resolves.toStrictEqual({ email, status: "rateLimited" });
     expect(sendVerificationOTP).toHaveBeenCalledTimes(3);
     expect(redirect).toHaveBeenCalledTimes(3);
+  });
+
+  it("keeps the app's return address when the form was sent before the page's script loaded", async () => {
+    const appCallback = "https://www.zoonk.com/auth/callback?next=%2Fpt%2Fstart";
+    const sender = `http://localhost:9002/auth/login?locale=pt&redirectTo=${encodeURIComponent(appCallback)}`;
+    const requestHeaders = browserHeaders();
+    requestHeaders.set("referer", sender);
+    vi.mocked(headers).mockResolvedValue(requestHeaders as Awaited<ReturnType<typeof headers>>);
+
+    const email = `web-code-${randomUUID()}@example.test`;
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("locale", "pt");
+    formData.set("redirectTo", "");
+
+    await sendVerificationOTPAction({ status: "idle" }, formData);
+
+    expect(redirect).toHaveBeenLastCalledWith(
+      `/auth/pt/otp?${new URLSearchParams({ email, redirectTo: appCallback }).toString()}`,
+    );
   });
 
   it("asks for a valid address when Better Auth rejects one", async () => {

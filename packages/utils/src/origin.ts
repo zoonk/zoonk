@@ -28,6 +28,7 @@ export function getBaseUrl(): string {
   );
 }
 
+/** @public */
 export const AUTH_LOGIN_EXPIRED_ERROR = "expired";
 
 export function buildAuthLoginUrl({

@@ -17,7 +17,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { getCallbackHref } from "../_utils/auth-redirect";
+import { getCallbackHref, type getLoginHref } from "../../_utils/auth-redirect";
 import { ChangeEmailLink } from "./change-email-link";
 
 const TOO_MANY_REQUESTS = 429;
@@ -160,7 +160,15 @@ function useResendCode(email: string) {
   return { resend, status };
 }
 
-export function OTPForm({ email, redirectTo }: { email: string; redirectTo: string | null }) {
+export function OTPForm({
+  email,
+  loginHref,
+  redirectTo,
+}: {
+  email: string;
+  loginHref: ReturnType<typeof getLoginHref>;
+  redirectTo: string | null;
+}) {
   const t = useExtracted();
   const formRef = useRef<HTMLFormElement>(null);
   /**
@@ -277,7 +285,7 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
           </>
         )}
 
-        <ChangeEmailLink redirectTo={redirectTo}>{t("Change email")}</ChangeEmailLink>
+        <ChangeEmailLink href={loginHref}>{t("Change email")}</ChangeEmailLink>
       </OTPLinks>
     </OTPFormContainer>
   );

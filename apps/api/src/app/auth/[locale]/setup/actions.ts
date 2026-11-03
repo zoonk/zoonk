@@ -7,7 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
 import { redirect } from "next/navigation";
-import { getCallbackHref } from "../_utils/auth-redirect";
+import { getCallbackHref } from "../../_utils/auth-redirect";
 
 type SetupState = { status: "error" | "idle" | "usernameTaken" };
 

@@ -1,11 +1,15 @@
+import { getBrowserLocale } from "@/i18n/locale";
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
 import { type TutorAnswerRun } from "@zoonk/core/lesson-questions/tutor-answer";
+import { getContentLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 
 const LINE_BREAK = "\n\n";
 
 export async function loadConfirmationWords(language: string) {
-  const t = await getExtracted({ locale: language });
+  const t = await getExtracted({
+    locale: getContentLocale(language) ?? (await getBrowserLocale()),
+  });
 
   return {
     chapterTest: (chapter: string) =>

@@ -31,7 +31,7 @@ test("shows a recoverable disposable-email error and accepts an Apple privacy al
   await page.getByLabel("Email", { exact: true }).fill(disposableEmail);
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-  await expect(page).toHaveURL(/\/auth\/login/u);
+  await expect(page).toHaveURL(/\/auth\/en\/login/u);
   await expect(page.getByLabel("Email", { exact: true })).toHaveAttribute("aria-invalid", "true");
 
   await expect(
@@ -41,7 +41,7 @@ test("shows a recoverable disposable-email error and accepts an Apple privacy al
   await page.getByLabel("Email", { exact: true }).fill(appleEmail);
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-  await expect(page).toHaveURL(/\/auth\/otp\?/u);
+  await expect(page).toHaveURL(/\/auth\/en\/otp\?/u);
 });
 
 test("returns a stable API error before creating an OTP for a new disposable account", async ({

@@ -2,10 +2,11 @@
 
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { useAppLocale } from "@zoonk/learn/locale";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { useSearchParams } from "next/navigation";
 import { type ComponentProps, Suspense } from "react";
 
-type LoginLinkProps = Omit<ComponentProps<"a">, "href">;
+type LoginLinkProps = Omit<ComponentProps<typeof PendingLink>, "href">;
 
 function CurrentPageLink(props: LoginLinkProps) {
   const locale = useAppLocale();
@@ -17,24 +18,14 @@ function CurrentPageLink(props: LoginLinkProps) {
   const query = searchParams.toString();
   const next = query ? `${returnPath}?${query}` : returnPath;
 
-  return (
-    <a {...props} href={`${loginPath}?next=${encodeURIComponent(next)}`}>
-      {props.children}
-    </a>
-  );
+  return <PendingLink {...props} href={`${loginPath}?next=${encodeURIComponent(next)}`} />;
 }
 
 export function CurrentPageLoginLink(props: LoginLinkProps) {
   const locale = useAppLocale();
 
   return (
-    <Suspense
-      fallback={
-        <a {...props} href={getPathname({ href: "/login", locale })}>
-          {props.children}
-        </a>
-      }
-    >
+    <Suspense fallback={<PendingLink {...props} href={getPathname({ href: "/login", locale })} />}>
       <CurrentPageLink {...props} />
     </Suspense>
   );
