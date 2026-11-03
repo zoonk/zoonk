@@ -11,6 +11,7 @@ import {
 } from "../../components/player-choice-scene";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { useOptionPicture } from "./lesson-pictures";
+import { LessonRichText } from "./lesson-rich-text";
 import { LessonStepImage, PICTURE_FRAME_CLASS } from "./lesson-step-image";
 
 type PictureOption = {
@@ -31,7 +32,7 @@ function PictureOptionContent({
 }) {
   const t = useExtracted();
   const { image, pending } = useOptionPicture(step, option.id);
-  const alt = option.picture?.alt ?? option.text;
+  const pictureText = option.picture?.alt ?? <LessonRichText text={option.text} />;
 
   function picture() {
     if (image) {
@@ -54,7 +55,7 @@ function PictureOptionContent({
             <span className="sr-only" role="status">
               {t("Drawing the picture…")}
             </span>
-            <p className="px-3 text-sm leading-snug">{alt}</p>
+            <p className="px-3 text-sm leading-snug">{pictureText}</p>
           </div>
         </div>
       );
@@ -62,7 +63,7 @@ function PictureOptionContent({
 
     return (
       <p className="bg-muted/50 text-muted-foreground flex aspect-square w-full items-center rounded-lg p-3 text-sm leading-snug">
-        {alt}
+        {pictureText}
       </p>
     );
   }
@@ -73,7 +74,9 @@ function PictureOptionContent({
 
       {isChecked && (
         <PlayerChoiceSceneOptionText>
-          <span className="block px-1 pb-1 text-center font-medium">{option.text}</span>
+          <span className="block px-1 pb-1 text-center font-medium">
+            <LessonRichText text={option.text} />
+          </span>
         </PlayerChoiceSceneOptionText>
       )}
     </div>

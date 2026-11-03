@@ -24,6 +24,13 @@ data class MathWords(
     val subscript: (index: String) -> String,
     val fraction: (numerator: String, denominator: String) -> String,
     val root: (radicand: String) -> String,
+    val cubeRoot: (radicand: String) -> String,
+    val nthRoot: (index: String, radicand: String) -> String,
+    val bar: (base: String) -> String,
+    val dot: (base: String) -> String,
+    val hat: (base: String) -> String,
+    val tilde: (base: String) -> String,
+    val vector: (base: String) -> String,
 ) {
     companion object {
         fun from(resources: Resources): MathWords =
@@ -34,6 +41,13 @@ data class MathWords(
                 subscript = { resources.getString(R.string.richtext_math_subscript, it) },
                 fraction = { numerator, denominator -> resources.getString(R.string.richtext_math_fraction, numerator, denominator) },
                 root = { resources.getString(R.string.richtext_math_root, it) },
+                cubeRoot = { resources.getString(R.string.richtext_math_cube_root, it) },
+                nthRoot = { index, radicand -> resources.getString(R.string.richtext_math_nth_root, index, radicand) },
+                bar = { resources.getString(R.string.richtext_math_bar, it) },
+                dot = { resources.getString(R.string.richtext_math_dot, it) },
+                hat = { resources.getString(R.string.richtext_math_hat, it) },
+                tilde = { resources.getString(R.string.richtext_math_tilde, it) },
+                vector = { resources.getString(R.string.richtext_math_vector, it) },
             )
     }
 }
@@ -162,7 +176,7 @@ private class MathParser(
     }
 
     private fun script(style: Script): Piece {
-        val piece = scriptArgument(style)
+        val piece = argument(style)
         val said = piece.spoken.trim()
 
         val spoken =
@@ -193,13 +207,36 @@ private class MathParser(
         return run(if (character == '-') "\u2212" else character.toString(), style, italic = character.isLetter())
     }
 
+    private fun skipWhitespace() {
+        while (index < source.length && source[index] in " \t\r\n") index++
+    }
+
+    /** A root's optional index (`\sqrt[3]{8}`), set raised before the radical: ³√8. */
+    private fun rootIndex(): Piece {
+        skipWhitespace()
+        if (index >= source.length || source[index] != '[') return Piece.Empty
+
+        index++
+        return parse(until = ']', style = Script.Superscript)
+    }
+
+    private fun spokenRoot(
+        rootIndex: String,
+        radicand: String,
+    ): String =
+        when (rootIndex) {
+            "", "2" -> words.root(radicand)
+            "3" -> words.cubeRoot(radicand)
+            else -> words.nthRoot(rootIndex, radicand)
+        }
+
     private fun argument(style: Script): Piece {
-        while (index < source.length && source[index] == ' ') index++
+        skipWhitespace()
         return scriptArgument(style)
     }
 
     private fun textArgument(): String {
-        while (index < source.length && source[index] == ' ') index++
+        skipWhitespace()
         if (index >= source.length || source[index] != '{') return ""
 
         index++
@@ -272,19 +309,30 @@ private class MathParser(
             }
 
             "sqrt" -> {
+                val rootIndex = rootIndex()
                 val radicand = argument(style)
-                val open = run("√", style, italic = false)
+                val open = rootIndex + run("√", style, italic = false)
                 val text =
                     if (radicand.plain.length > 1) {
                         open + run("(", style, italic = false) + radicand + run(")", style, italic = false)
                     } else {
                         open + radicand
                     }
-                Piece(text.text, " ${words.root(radicand.spoken.trim())} ")
+                Piece(text.text, " ${spokenRoot(rootIndex.spoken.trim(), radicand.spoken.trim())} ")
             }
 
             "vec", "hat", "bar", "overline", "dot", "tilde", "widehat", "overrightarrow" -> {
-                accented(argument(style), ACCENTS.getValue(name))
+                val base = argument(style)
+                val said = base.spoken.trim()
+                val spoken =
+                    when (name) {
+                        "vec", "overrightarrow" -> words.vector(said)
+                        "hat", "widehat" -> words.hat(said)
+                        "bar", "overline" -> words.bar(said)
+                        "dot" -> words.dot(said)
+                        else -> words.tilde(said)
+                    }
+                Piece(accented(base, ACCENTS.getValue(name)).text, " $spoken ")
             }
 
             "begin", "end" -> {
@@ -302,8 +350,9 @@ private class MathParser(
 
             in FUNCTIONS -> {
                 val next = source.drop(index).trimStart().firstOrNull()
-                val gap = if (next != null && (next.isLetterOrDigit() || next == '\\')) FUNCTION_GAP else ""
-                run(name + gap, style, italic = false)
+                val isApplied = next != null && (next.isLetterOrDigit() || next in "\\{")
+                val function = run(name, style, italic = false)
+                if (isApplied) function + run(FUNCTION_GAP, style, italic = false).copy(spoken = " ") else function
             }
 
             else -> {

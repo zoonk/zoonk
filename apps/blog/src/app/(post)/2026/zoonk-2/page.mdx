@@ -1,0 +1,258 @@
+import {
+  BriefcaseBusinessIcon,
+  GraduationCapIcon,
+  LanguagesIcon,
+  LightbulbIcon,
+} from "lucide-react";
+import { CardLink, CardLinks } from "@/components/card-links";
+import { Cover } from "@/components/cover";
+import { Cta, CtaLink, CtaNote, CtaText, CtaTitle } from "@/components/cta";
+import { PostMeta } from "@/components/post-meta";
+import { Screen, Screens } from "@/components/screens";
+
+export const metadata = {
+  description:
+    "Zoonk 2.0 turns an exam, a move abroad, a new job, or plain curiosity into a plan for every day until your date. Here's how it works and why we built it this way.",
+  title: "Zoonk 2.0: a daily plan for your goal",
+};
+
+# Zoonk 2.0: a daily plan for your goal
+
+<PostMeta date="November 3, 2026" authorId="will" />
+
+<Cover
+  alt="Three Zoonk screens on a phone: today's study session for an ENEM plan, a lesson about inflation with a picture of a grocery basket, and a mock exam result with an estimated score of 460 to 560."
+  darkSrc="/blog/2026/zoonk-2/cover-dark.webp"
+  src="/blog/2026/zoonk-2/cover.webp"
+/>
+
+In October, I wrote that we were [rebuilding Zoonk around your goals](/2026/operating-system-for-education). That new version is live, and we're calling it Zoonk 2.0.
+
+The first Zoonk gave you a course. You typed "Spanish" and got chapters from zero to fluent. But most people I talked to were preparing for an exam, moving to another country, starting a new job, or trying to keep up with a class. A course didn't tell them what to study today, or whether they'd be ready in time.
+
+So Zoonk 2.0 starts with your goal. You tell it what you're working toward, in your own words, and it gives you a plan for every day until your date.
+
+<CardLinks label="Jump to your goal">
+  <CardLink href="#exams" icon={GraduationCapIcon}>
+    Pass an exam
+  </CardLink>
+  <CardLink href="#languages" icon={LanguagesIcon}>
+    Speak a language
+  </CardLink>
+  <CardLink href="#career" icon={BriefcaseBusinessIcon}>
+    Get a new job
+  </CardLink>
+  <CardLink href="#anything" icon={LightbulbIcon}>
+    Learn anything
+  </CardLink>
+</CardLinks>
+
+## From your goal to a plan
+
+You write your goal the way you'd say it to a friend: "get my first job as a UX designer" or "pass the IELTS in March so I can study in London." Zoonk only asks what it can't figure out on its own, like your level or whether there's a date.
+
+Then it checks what you already know, which takes about two minutes. "I don't know yet" is a fine answer, and your plan skips what you show you already know, so you don't spend your first weeks on it.
+
+Last, you choose how much time you have each day. If you have a date, Zoonk shows how much time a day it takes to cover everything by then. When that's 13 hours a day, we say so, suggest a time you can keep up, and put what matters most first. Then you pick. I'd rather you know where you stand on day one than find out the week before your exam.
+
+Every day after that starts on Today, the screen with the day's session: usually a quick review, new lessons, then practice. It also says whether you're keeping pace, ahead, or behind. If you miss a day, what's left comes first the next day. Small adjustments happen on their own, and Today only asks you something when the decision is yours, like when your date no longer fits the time you have.
+
+You can change your plan whenever you want, and every change comes with an Undo. If you already know a chapter, take a short test: score 80% or more, and the plan skips the lessons on what you showed you know.
+
+<Screens>
+  <Screen
+    alt="The start screen. The goal box reads: I want to get my first job as a UX designer. I work in customer support today."
+    darkSrc="/blog/2026/zoonk-2/goal-dark.webp"
+    src="/blog/2026/zoonk-2/goal.webp"
+  >
+    Write your goal
+  </Screen>
+  <Screen
+    alt="The daily time question for the goal Become a UX designer: at 1 hour a day, the plan covers about 39% of the goal in depth by May 3, 2027, starting with what matters most, with a button to use 2 hours 25 minutes a day to cover everything."
+    darkSrc="/blog/2026/zoonk-2/time-dark.webp"
+    src="/blog/2026/zoonk-2/time.webp"
+  >
+    An honest answer about time
+  </Screen>
+  <Screen
+    alt="Today's screen for the same goal: keeping pace, the minutes left today, a list of 3-minute lessons and a Start session button."
+    darkSrc="/blog/2026/zoonk-2/today-dark.webp"
+    src="/blog/2026/zoonk-2/today.webp"
+  >
+    Then just follow each day
+  </Screen>
+</Screens>
+
+<h2 id="exams">Pass an exam</h2>
+
+For an exam, Zoonk starts from its official documents, like the syllabus and the dates. Your plan follows the exam's own subjects and topics, gives each one time based on how much it's worth, and marks the ones past exams asked most. If your test has no official documents, like your teacher's biology test on Friday, upload the slides, your notes, or the list of topics, and the plan follows them.
+
+The plan also tells you how much your time covers. At 45 minutes a day, the sample plan below, for ENEM, Brazil's university entrance exam, covers about 49% of the topics in depth by exam day, starting with what matters most.
+
+Mock exams are built like the real one: sections, breaks, a timer, and listening you can only play as many times as on exam day, so the real day feels familiar. You can take a full exam day, half of one, or a single subject, and Zoonk tells you when part of the exam can't be included yet. Afterwards, you see where you stand in each area and what's still missing, and for exams like ENEM, an estimated score range.
+
+Essays are graded on the exam's official rubric, like ENEM's five competencies, and then you can rewrite yours and grade it again. For IELTS and TOEFL, an AI examiner runs a speaking mock and gives you an estimated band range. For DELE, DELF, Goethe, and Cambridge, it runs the speaking tasks with you.
+
+Wrong answers go into your mistakes notebook, and Zoonk tries to tell why: you didn't know it yet, you misread the question, you fell for a trap, you ran out of time, or you guessed. Each reason gets its own kind of practice, because misreading a question needs a different fix than not knowing the content.
+
+<Screens>
+  <Screen
+    alt="An ENEM plan: preparation at 13%, on pace at 45 minutes a day, a note that the plan covers about 49% of the exam topics in depth by the exam date, and the exam's subjects with their progress."
+    darkSrc="/blog/2026/zoonk-2/exam-plan-dark.webp"
+    src="/blog/2026/zoonk-2/exam-plan.webp"
+  >
+    What your time covers, by subject
+  </Screen>
+  <Screen
+    alt="A mock exam result: an estimated score of 460 to 560, with 21 right, 9 wrong and 0 blank, the score range for each area and what the mock exam showed."
+    darkSrc="/blog/2026/zoonk-2/mock-result-dark.webp"
+    src="/blog/2026/zoonk-2/mock-result.webp"
+  >
+    A score range after an ENEM mock
+  </Screen>
+</Screens>
+
+<h2 id="languages">Speak a language</h2>
+
+A language plan is made of the situations you'll face, like getting through immigration, renting an apartment, or a job interview, ordered by level and starting from yours. The grammar comes inside those situations.
+
+Every new word comes with audio and a "sounds like" spelling, and lessons explain things in your own language. You say sentences out loud and write your own, and if you're somewhere you can't talk, one tap switches that screen to listening.
+
+You can also practice calls with an AI character from your unit, like the officer at the airport or the person renting you a room. You speak or type, and you can ask for help in the middle of the call. Afterwards, you see what went well, what to improve, and which words to practice saying. By the time you're at the real airport, you've had that conversation before.
+
+Zoonk watches for patterns in your mistakes. If you keep writing "I live here since 2020," it shows you the rule behind it, the two versions side by side, and a five-question drill. Words you mispronounce come back the next day, then after three days, then after a week, until you say them right.
+
+The screenshots below are from a sample plan for a Portuguese speaker learning English to move to Toronto, so the explanations are in Portuguese.
+
+<Screens>
+  <Screen
+    alt="A language lesson screen with the English word stay, a button to play it, its pronunciation spelled out as STEI and its meaning in Portuguese."
+    darkSrc="/blog/2026/zoonk-2/language-word-dark.webp"
+    src="/blog/2026/zoonk-2/language-word.webp"
+  >
+    Every word with audio
+  </Screen>
+  <Screen
+    alt="A mistake pattern about since and for: the wrong sentence I live here since 2020 next to I've lived here since 2020, the rule explained in Portuguese and a Practice this button."
+    darkSrc="/blog/2026/zoonk-2/language-pattern-dark.webp"
+    src="/blog/2026/zoonk-2/language-pattern.webp"
+  >
+    The mistakes you keep making
+  </Screen>
+</Screens>
+
+<h2 id="career">Get a new job</h2>
+
+For a new career, Zoonk plans what you'll need on your first day in the new role, and skips what you already know. It always includes the two parts people tend to put off: a portfolio, with projects you start in the first weeks and write up as case studies, and the job search, from your résumé to interviews and hiring tests. When time is short, Zoonk keeps those two first and trims depth elsewhere, because they're what you'll show when you apply.
+
+If the job uses specific tools, lessons follow the ones you use, like Excel or Google Sheets, Python or R.
+
+<Screens>
+  <Screen
+    alt="The modules of a plan to become a UX designer, at 1 hour a day: Portfolio projects and UX job search are in the plan, while Product teamwork and measurement is marked Not in your plan."
+    darkSrc="/blog/2026/zoonk-2/career-plan-dark.webp"
+    src="/blog/2026/zoonk-2/career-plan.webp"
+  >
+    The portfolio and job search stay in
+  </Screen>
+</Screens>
+
+<h2 id="anything">Learn anything</h2>
+
+If you're learning for fun, start with whatever you're curious about, like quantum physics, how inflation works, or the Roman Empire. Without a date, you study at your own pace, and Zoonk estimates when you'll finish. If you only have one question, you can get a short explanation written for you that takes about five minutes to read.
+
+<Screens>
+  <Screen
+    alt="A plan for learning quantum physics from scratch: five phases, progress, pace, and the chapters of the first phase."
+    darkSrc="/blog/2026/zoonk-2/learn-plan-dark.webp"
+    src="/blog/2026/zoonk-2/learn-plan.webp"
+  >
+    Quantum physics from scratch, in five phases
+  </Screen>
+</Screens>
+
+## Lessons you can finish on the bus
+
+A lesson takes about three minutes and covers one idea. It uses everyday language and real-life examples, plus a picture, a chart, or a diagram when that's what makes the idea click. Some let you play with the idea, like running code or exploring a map.
+
+You answer something every couple of screens. When you get it wrong, you see why, and the question comes back at the end of the lesson. Later, reviews bring each idea back before you forget it, and you can replay any lesson you've finished.
+
+AI writes the lessons. Automatic checks catch problems before a lesson reaches you, and other models review many lessons after they're published, especially for exams and subjects like math, science, health, and law. It can still get things wrong, so if you spot a mistake, tap "Report a problem" in the lesson.
+
+<Screens>
+  <Screen
+    alt="A lesson called How Inflation Works, with a picture of a grocery basket between last year's receipt for $50 and this year's for $65."
+    darkSrc="/blog/2026/zoonk-2/lesson-picture-dark.webp"
+    src="/blog/2026/zoonk-2/lesson-picture.webp"
+  >
+    A picture when it helps
+  </Screen>
+  <Screen
+    alt="A chart question answered wrong, with the right answer marked, a short explanation of the mistake and a note that it was saved to the learner's mistakes."
+    darkSrc="/blog/2026/zoonk-2/lesson-mistake-dark.webp"
+    src="/blog/2026/zoonk-2/lesson-mistake.webp"
+  >
+    Wrong answers explained
+  </Screen>
+</Screens>
+
+## Stuck? Ask Zu
+
+Zu is your study buddy. On any lesson screen, you can ask Zu to explain it more simply, go deeper, or give you another example. Zu knows your plan too, so you can ask "Why am I studying this today?" or say "I want to study less this week." When you ask for a change, Zu shows it on a card first, and nothing changes until you tap Apply.
+
+Zu remembers things about you, like your job or why you're learning, and uses them to make examples that fit your life. You can see everything it remembers in your settings, change or delete any of it, or turn memory off.
+
+<Screens>
+  <Screen
+    alt="Zu answering a question about a lesson screen in simpler words."
+    darkSrc="/blog/2026/zoonk-2/zu-lesson-dark.webp"
+    src="/blog/2026/zoonk-2/zu-lesson.webp"
+  >
+    Help on any screen
+  </Screen>
+  <Screen
+    alt="Zu's tab, where the learner asked to study less this week and Zu proposes a change to the plan on a card with an Apply button."
+    darkSrc="/blog/2026/zoonk-2/zu-plan-dark.webp"
+    src="/blog/2026/zoonk-2/zu-plan.webp"
+  >
+    Change your plan by asking
+  </Screen>
+</Screens>
+
+## Progress that doesn't punish you
+
+I don't like streaks. You miss one day, the number you've protected for months goes back to zero, and it feels like you failed.
+
+In Zoonk, Brain Power only goes up, and it moves you through ten belts, from white to black, while your buddy grows up with you. Energy shows how you've been doing lately: it rises as you study, and wrong answers and days away lower it a little. At the end of each phase, you can take on the Trickster in a challenge with no hints, and if you lose, you get a couple of short lessons and a rematch.
+
+<Screens>
+  <Screen
+    alt="The Level page: level 4, yellow belt, 4,340 Brain Power that never goes down, 160 Brain Power to level 5, and the ten belts from white to black."
+    darkSrc="/blog/2026/zoonk-2/level-dark.webp"
+    src="/blog/2026/zoonk-2/level.webp"
+  >
+    Brain Power never goes down
+  </Screen>
+</Screens>
+
+## Free and Plus
+
+You can start without an account. With a free account, you follow one goal at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan, and the first week are free, and after that, reviews and fixing your mistakes stay free.
+
+Plus unlocks every goal and every lesson, the full plan up to exam day, mock exams, Zu whenever you need it, and longer practice calls. You can see your whole plan before you pay, and cancel anytime. Prices are on our [pricing page](https://www.zoonk.com/pricing).
+
+Zoonk works in your phone's or computer's browser, in ten languages. The iPhone and Android apps are coming soon.
+
+---
+
+Most of what's in 2.0 came from emails with people who tried the first version. If something feels off, or Zoonk doesn't handle your goal well yet, write to us at [hello@zoonk.com](mailto:hello@zoonk.com). Schools come next.
+
+<Cta>
+  <CtaTitle>What's your goal?</CtaTitle>
+  <CtaText>
+    Tell us in your own words and answer a few quick questions. You'll see your whole plan before
+    you pay.
+  </CtaText>
+  <CtaLink href="https://www.zoonk.com/start">Start free</CtaLink>
+  <CtaNote>No account needed.</CtaNote>
+</Cta>

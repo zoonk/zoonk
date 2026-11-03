@@ -1,18 +1,17 @@
 "use client";
 
 import { getActivityExpected } from "@zoonk/core/library/activities/expected";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { Suspense, useId } from "react";
+import { useId } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
 import { ActivityBadge } from "./_components/activity-badge";
-import { ActivityCanvasSkeleton } from "./_components/activity-canvas";
 import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
 import { ActivityFeedback } from "./_components/activity-feedback";
 import { ActivityNumericCheck } from "./_components/activity-numeric-check";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
+import { BrowserCanvas } from "./browser-canvas";
 
 function ActivityCheckArea({
   answer,
@@ -57,8 +56,7 @@ export function ActivityStep({
   picture,
 }: ActivityStepProps) {
   const labelId = useId();
-  const isMounted = useIsMounted();
-  const { badge, Canvas, checkFirst } = activityRenderers[content.template];
+  const { badge, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const isCheckFirst = checkFirst(content);
 
@@ -83,20 +81,14 @@ export function ActivityStep({
       {isCheckFirst && checkArea}
 
       <fieldset className="flex min-w-0 flex-col gap-2" disabled={isLocked} inert={isLocked}>
-        {isMounted ? (
-          <Suspense fallback={<ActivityCanvasSkeleton />}>
-            <Canvas
-              answer={answer}
-              content={content}
-              expected={expected}
-              labelId={labelId}
-              onAnswerChange={onAnswerChange}
-              phase={phase}
-            />
-          </Suspense>
-        ) : (
-          <ActivityCanvasSkeleton />
-        )}
+        <BrowserCanvas
+          answer={answer}
+          content={content}
+          expected={expected}
+          labelId={labelId}
+          onAnswerChange={onAnswerChange}
+          phase={phase}
+        />
 
         <ActivityDataNote content={content} />
       </fieldset>

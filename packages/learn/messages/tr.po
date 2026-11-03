@@ -11867,6 +11867,84 @@ msgctxt "Ib7UhK"
 msgid "We already read this document. Upload a different one."
 msgstr "Bu belgeyi daha önce okuduk. Başka bir belge yükle."
 
+#. Screen reader words for a letter with a bar over it, such as a mean: "x bar".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "PlBsGt"
+msgid "{base} bar"
+msgstr "üstü çizgili {base}"
+
+#. Screen reader words for a cube root: "cube root of 8".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "-nS0NQ"
+msgid "cube root of {radicand}"
+msgstr "küp kök {radicand}"
+
+#. Screen reader words for a formula, said after its base: "x cubed".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JvZTF3"
+msgid "cubed"
+msgstr "küpü"
+
+#. Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "TJGSDv"
+msgid "{base} dot"
+msgstr "üstü noktalı {base}"
+
+#. Screen reader words for a fraction: "1 over 4".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "U6yBXR"
+msgid "{numerator} over {denominator}"
+msgstr "{numerator} bölü {denominator}"
+
+#. Screen reader words for a letter with a hat over it, such as an estimate: "p hat".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "IDhChJ"
+msgid "{base} hat"
+msgstr "şapkalı {base}"
+
+#. Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "1NhIND"
+msgid "{index}th root of {radicand}"
+msgstr "{index}. dereceden kök {radicand}"
+
+#. Screen reader words for an exponent, said after its base: "2 to the power of 10".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "r6b-ph"
+msgid "to the power of {exponent}"
+msgstr "üzeri {exponent}"
+
+#. Screen reader words for a square root: "square root of 2".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "AikD8O"
+msgid "square root of {radicand}"
+msgstr "karekök {radicand}"
+
+#. Screen reader words for a formula, said after its base: "x squared".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JpnUIb"
+msgid "squared"
+msgstr "karesi"
+
+#. Screen reader words for an index, said after its base: "x sub 1".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "P4MIjF"
+msgid "sub {index}"
+msgstr "alt indis {index}"
+
+#. Screen reader words for a letter with a tilde over it: "x tilde".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "K4VLy9"
+msgid "{base} tilde"
+msgstr "tildeli {base}"
+
+#. Screen reader words for a letter with an arrow over it, a vector: "vector v".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "WIPDp7"
+msgid "vector {base}"
+msgstr "{base} vektörü"
+
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"

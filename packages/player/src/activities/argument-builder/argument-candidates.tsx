@@ -1,5 +1,6 @@
 "use client";
 
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
 import { ArgumentCandidate, type ArgumentPart } from "./argument-parts";
@@ -19,6 +20,7 @@ export function ArgumentCandidates({
   reasoning: readonly Reasoning[];
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
 
   if (part === "evidence") {
     return (
@@ -32,7 +34,7 @@ export function ArgumentCandidates({
             key={item.id}
             label={t("Use as evidence: {quote}, {citation}", {
               citation: item.citation,
-              quote: item.quote,
+              quote: spoken.inline(item.quote),
             })}
             onChoose={() => onChoose(item.id)}
             text={item.quote}
@@ -50,7 +52,7 @@ export function ArgumentCandidates({
           disabled={false}
           id={item.id}
           key={item.id}
-          label={t("Use as reasoning: {text}", { text: item.text })}
+          label={t("Use as reasoning: {text}", { text: spoken.inline(item.text) })}
           onChoose={() => onChoose(item.id)}
           text={item.text}
         />

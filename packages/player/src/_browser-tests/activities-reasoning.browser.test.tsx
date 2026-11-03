@@ -109,6 +109,49 @@ describe("reasoning activities", () => {
       .toBeVisible();
   });
 
+  it("match pairs: a screen reader hears math cards in words, not LaTeX", async () => {
+    openActivity({
+      content: {
+        ...activityContentFixtures.matchPairs,
+        fields: {
+          distractors: [
+            {
+              side: "right",
+              text: "1.2",
+              why: String.raw`$\frac{1}{2}$ is one divided by two, not the digits 1 and 2.`,
+            },
+          ],
+          pairs: [
+            { id: "half", left: String.raw`$\frac{1}{2}$`, right: "0.5" },
+            { id: "square", left: "$3^2$", right: "9" },
+          ],
+        },
+        prompt: "Match each expression to its value.",
+      },
+      template: "matchPairs",
+    });
+
+    await matchCards("1 over 2", "1.2");
+
+    await expect
+      .element(
+        page.getByText(
+          "1 over 2 and 1.2 don't go together. “1.2” has no match. 1 over 2 is one divided by two, not the digits 1 and 2.",
+          { exact: true },
+        ),
+      )
+      .toBeInTheDocument();
+
+    await matchCards("1 over 2", "0.5");
+
+    await expect
+      .element(page.getByText("Matched 1 over 2 with 0.5. 1 of 2 pairs matched.", { exact: true }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: "1 over 2, matched" })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: "3 squared" })).toBeEnabled();
+  });
+
   it("argument builder: the strong quote and reasoning are right", async () => {
     openActivity({ template: "argumentBuilder" });
     await page.getByRole("button", { name: /Use as evidence: It is too rash/u }).click();

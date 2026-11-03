@@ -53,7 +53,7 @@ test.describe("Sending a goal", () => {
 });
 
 test.describe("Sending a goal from another page", () => {
-  test("the catalog's goal box goes on to /start, which shows what was understood", async ({
+  test("the catalog's goal box goes on to /start, which shows what was understood, and is empty again on Back", async ({
     page,
   }) => {
     const goal = uniqueWords("understand quantum physics, from the catalog");
@@ -70,6 +70,10 @@ test.describe("Sending a goal from another page", () => {
     await expect(page).toHaveURL(DRAFT_URL);
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
     await expect(page.getByText(goal, { exact: true })).toBeVisible();
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\/courses$/u);
+    await expect(box).toHaveValue("");
   });
 });
 
