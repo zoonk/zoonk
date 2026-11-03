@@ -57,9 +57,7 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   return checks.filter((check): check is LimitCheck => check !== false);
 }
 
-export type CallTimePeriod = "day" | "month";
-
-export type CallTimeLeft = { limit: number; period: CallTimePeriod; seconds: number };
+export type CallTimeLeft = { limit: number; period: "day" | "month"; seconds: number };
 
 /** Null means uncapped; an exhausted monthly cap takes precedence because tomorrow cannot reset it. */
 export function getCallTimeLeft({
