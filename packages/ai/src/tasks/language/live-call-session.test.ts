@@ -168,9 +168,13 @@ describe(hangUpLiveCallSession, () => {
     [404, "<html><body>Not Found</body></html>"],
     [500, JSON.stringify({ error: { message: "Server error", type: "error" } })],
     [429, JSON.stringify({ error: { message: "Too many requests", type: "error" } })],
-  ])("rejects a %i answer, since the session may still run", async (status, body) => {
-    respond(status, body);
+    [503, ""],
+  ])(
+    "rejects a %i answer with what it said, since the session may still run",
+    async (status, body) => {
+      respond(status, body);
 
-    await expect(hangUpLiveCallSession("live_123")).rejects.toThrow(String(status));
-  });
+      await expect(hangUpLiveCallSession("live_123")).rejects.toThrow(`(${status}): ${body}`);
+    },
+  );
 });

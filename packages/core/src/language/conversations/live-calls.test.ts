@@ -38,6 +38,7 @@ const TWO_MINUTES = 120;
 const WRAP_UP = LIVE_CALL_WRAP_UP_SECONDS;
 const DAY_SECONDS = 24 * 60 * 60;
 const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
+const UNCONFIRMED_CLEANUP_SECONDS = 30;
 
 function advance(seconds: number) {
   vi.setSystemTime(new Date(Date.now() + seconds * SECOND_MS));
@@ -126,6 +127,13 @@ async function costMicrosSpent(userId: string): Promise<number | null> {
   });
 
   return _sum.costMicros;
+}
+
+/** What OpenAI's hangup has answered for sessions it had already closed. */
+function unconfirmedHangUp() {
+  vi.mocked(hangUpLiveCallSession).mockRejectedValueOnce(
+    new Error("The provider didn't hang up the Live session (503)"),
+  );
 }
 
 function pendingCreation() {
@@ -233,6 +241,7 @@ describe("live calls", () => {
     await expect(connection(setup.connectionId)).resolves.toMatchObject({
       costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP + 20),
       endReason: "deadline",
+      endUnconfirmed: false,
       state: "ended",
     });
 
@@ -572,6 +581,56 @@ describe("live calls", () => {
     });
   });
 
+  it("[2] connects the learner again after a hangup OpenAI didn't confirm, ending the old call unconfirmed at a bounded cost", async () => {
+    const { conversation, user } = await learner();
+    const first = await live(conversation.id);
+
+    advance(30);
+    unconfirmedHangUp();
+
+    await expect(reserve(conversation.id)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(connection(first.connectionId)).resolves.toMatchObject({
+      costMicros: getLiveCallCostMicros(30 + UNCONFIRMED_CLEANUP_SECONDS),
+      endReason: "reconnect",
+      endUnconfirmed: true,
+      state: "ended",
+    });
+
+    await expect(
+      usage({ connectionId: first.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: 30 });
+
+    const other = await anotherLiveConversation({ userId: user.id });
+    unconfirmedHangUp();
+
+    await expect(reserve(other.id, { takeover: true })).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("[2] ends a call at its deadline when OpenAI doesn't confirm the hangup, without trying again", async () => {
+    const { conversation, user } = await learner();
+    const setup = await live(conversation.id);
+
+    advance(setup.seconds);
+    unconfirmedHangUp();
+
+    await expect(
+      endLiveCall({ connectionId: setup.connectionId, reason: "deadline" }),
+    ).resolves.toStrictEqual({ status: "ended" });
+
+    expect(hangUpLiveCallSession).toHaveBeenCalledOnce();
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costMicros: getLiveCallCostMicros(setup.seconds + UNCONFIRMED_CLEANUP_SECONDS),
+      endUnconfirmed: true,
+      state: "ended",
+    });
+
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: TWO_MINUTES });
+  });
+
   it("[2] settles refused and unanswered creations", async () => {
     const { conversation, user } = await learner();
 
@@ -679,7 +738,7 @@ describe("live calls", () => {
     ).resolves.toMatchObject({ costMicros: 0, seconds: 0 });
   });
 
-  it("[2] settles a call abandoned for a month after its hangups failed, at most a session's longest life", async () => {
+  it("[2] settles a call left open for a month at most a session's longest life", async () => {
     const { conversation } = await learner({ plus: true });
     const setup = await live(conversation.id);
 

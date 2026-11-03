@@ -134,8 +134,8 @@ async function isAlreadyEnded(response: Response): Promise<boolean> {
 export type LiveCallHangup = "alreadyEnded" | "hungUp";
 
 /**
- * Resolves once the session is over, saying whether it already was; rejects when that isn't known,
- * so the caller keeps the call open and tries again.
+ * Resolves once the session is over, saying whether it already was; rejects with the provider's
+ * status and body when its answer doesn't say.
  */
 export async function hangUpLiveCallSession(providerSessionId: string): Promise<LiveCallHangup> {
   // The SDK has no hangup helper: the session's REST path sits beside its WebSocket one.
@@ -153,9 +153,10 @@ export async function hangUpLiveCallSession(providerSessionId: string): Promise<
     return "hungUp";
   }
 
-  if (await isAlreadyEnded(response)) {
+  if (await isAlreadyEnded(response.clone())) {
     return "alreadyEnded";
   }
 
-  throw new Error(`The provider didn't hang up the Live session (${response.status})`);
+  const body = await response.text().catch(() => "");
+  throw new Error(`The provider didn't hang up the Live session (${response.status}): ${body}`);
 }

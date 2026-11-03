@@ -150,7 +150,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("keeps an End OpenAI didn't confirm retryable, with the connection still open", async () => {
+  it("ends a call whose hangup OpenAI didn't confirm, marked unconfirmed", async () => {
     const { conversationId } = await authenticatedCallFixture();
 
     const setup = await setupOf(reserveCall(conversationId));
@@ -158,16 +158,11 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
     vi.mocked(hangUpLiveCallSession).mockRejectedValue(new Error("OpenAI is unavailable"));
     const response = await endCall(conversationId, setup.connectionId);
-    expect(response.status).toBe(409);
-    expect(response.headers.get("Retry-After")).toBe("5");
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: "PREVIOUS_CONNECTION_CLOSING" },
-    });
+    expect(response.status).toBe(200);
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-    ).resolves.toMatchObject({ state: "live" });
+    ).resolves.toMatchObject({ endReason: "learner", endUnconfirmed: true, state: "ended" });
   });
 
   it("rejects malformed request bodies and connection IDs before spending", async () => {

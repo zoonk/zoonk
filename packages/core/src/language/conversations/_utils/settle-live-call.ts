@@ -5,6 +5,7 @@ export async function settleLiveCall({
   connection,
   costMicros,
   endReason,
+  endUnconfirmed = false,
   learnerSeconds,
   now,
   transaction,
@@ -12,6 +13,7 @@ export async function settleLiveCall({
   connection: LiveCallConnection;
   costMicros: number;
   endReason: LiveCallEndReason;
+  endUnconfirmed?: boolean;
   learnerSeconds: number;
   now: Date;
   transaction: TransactionClient;
@@ -24,6 +26,7 @@ export async function settleLiveCall({
     data: {
       costMicros,
       endReason: connection.endReason ?? endReason,
+      endUnconfirmed,
       endedAt: now,
       state: "ended",
     },
