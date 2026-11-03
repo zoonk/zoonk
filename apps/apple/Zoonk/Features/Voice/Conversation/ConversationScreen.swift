@@ -213,7 +213,6 @@ private struct LiveCallRun: View {
   @Environment(\.dismiss) private var dismiss
   @State private var call: LiveCall?
   @State private var saving: LiveCallSaveState?
-  @State private var usedHelp = false
   let conversation: LanguageConversation
   @Binding var isInCall: Bool
   @State var callsRightAway: Bool
@@ -241,14 +240,15 @@ private struct LiveCallRun: View {
     }
   }
 
-  private func makeCall() {
+  private func makeCall(soFar: CallSoFar? = nil) {
     guard call == nil else {
       return
     }
 
     let created = LiveCall(
       conversation: conversation,
-      client: .live(conversationId: conversation.id, voice: voice, api: voice.liveCalls))
+      client: .live(conversationId: conversation.id, voice: voice, api: voice.liveCalls),
+      soFar: soFar)
     call = created
 
     if callsRightAway {
@@ -256,13 +256,14 @@ private struct LiveCallRun: View {
     }
   }
 
+  /// The call so far goes on, as calling someone back does; the server says when it's a new call.
   private func restart(takeover: Bool = false, callNow: Bool = true) {
+    let soFar = call?.soFar
     call?.leave()
     saving = nil
-    usedHelp = false
     callsRightAway = callNow && !takeover
     call = nil
-    makeCall()
+    makeCall(soFar: soFar)
 
     if takeover, let call {
       Task { await call.start(takeover: true) }
@@ -297,7 +298,7 @@ private struct LiveCallRun: View {
       }
     } else {
       ConversationLiveView(
-        call: call, conversation: conversation, usedHelp: $usedHelp, saving: saving,
+        call: call, conversation: conversation, saving: saving,
         onEnd: {
           // A call that hasn't connected yet has nothing to save: cancelling it goes back to the
           // intro.
@@ -339,13 +340,11 @@ private struct LiveCallRun: View {
 
     saving = .saving
 
-    guard var input = await call.finish() else {
+    guard let completionInput = await call.finish() else {
       saving = .closing
       return
     }
 
-    input.usedHelp = usedHelp
-    let completionInput = input
     let api = voice.liveCalls
     let conversationId = conversation.id
     let completion = await voice.cache.mutate { identity in

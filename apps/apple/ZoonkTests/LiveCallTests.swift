@@ -370,6 +370,92 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(call.phase, .failed)
   }
 
+  func testCallingAgainCarriesOnTheCallSoFar() async {
+    let dropped = FakeTransport()
+    let first = LiveCall(conversation: .fixture(), client: FakeServer().client(dropped))
+
+    await first.start()
+    dropped.onEvent?(.started)
+    dropped.onEvent?(.transcript(speaker: .character, delta: "Hi!", startMs: 0, endMs: 500))
+    dropped.onEvent?(.transcript(speaker: .learner, delta: "Hello", startMs: 1000, endMs: 3000))
+    dropped.onEvent?(
+      .transcript(speaker: .character, delta: " How are you?", startMs: 3500, endMs: 4000))
+    first.useHelp()
+    dropped.onLost?()
+    await settle { first.phase == .failed }
+
+    let earlier: [ConversationTurn] = [
+      .init(speaker: .character, text: "Hi!"), .init(speaker: .learner, text: "Hello"),
+      .init(speaker: .character, text: "How are you?"),
+    ]
+    let transport = FakeTransport()
+    let server = FakeServer(talkSeconds: 90, continuesCall: true)
+    let call = LiveCall(
+      conversation: .fixture(), client: server.client(transport), soFar: first.soFar)
+    XCTAssertEqual(call.turns.conversationTurns, earlier)
+
+    await call.start()
+    XCTAssertEqual(server.redeemedTurns, [earlier])
+    // A 2-minute call with 90 s of talk time left has run 30 s.
+    XCTAssertEqual(call.elapsed(at: .now), 30, accuracy: 1)
+
+    transport.onEvent?(.started)
+    XCTAssertEqual(call.turn, .calling)
+    // The new session's timeline starts again at 0: its words never join an earlier turn.
+    transport.onEvent?(
+      .transcript(speaker: .character, delta: "Sorry, we got cut off.", startMs: 0, endMs: 900))
+    transport.onEvent?(.transcript(speaker: .learner, delta: "Fine", startMs: 1000, endMs: 2000))
+    transport.onEvent?(.closed)
+
+    let summary = await call.finish()
+    XCTAssertEqual(
+      summary?.turns,
+      earlier + [
+        .init(speaker: .character, text: "Sorry, we got cut off."),
+        .init(speaker: .learner, text: "Fine"),
+      ])
+    XCTAssertEqual(summary?.spokenSeconds, 3)
+    XCTAssertEqual(summary?.usedHelp, true)
+  }
+
+  func testANewCallStartsFromNothing() async {
+    var soFar = CallSoFar.newCall(.fixture())
+    soFar.turns = [.init(speaker: .learner, text: "Hello", startMs: 0, endMs: 1000)]
+    soFar.metLabels = ["Is it free?"]
+    soFar.usedHelp = true
+    let server = FakeServer(continuesCall: false)
+    let call = LiveCall(
+      conversation: .fixture(), client: server.client(FakeTransport()), soFar: soFar)
+
+    await call.start()
+
+    XCTAssertEqual(server.redeemedTurns, [[]])
+    XCTAssertTrue(call.turns.isEmpty)
+    XCTAssertEqual(call.metLabels, [])
+    XCTAssertFalse(call.usedHelp)
+    XCTAssertEqual(call.elapsed(at: .now), 0, accuracy: 1)
+  }
+
+  func testHelpUsedBeforeTheSetupCountsForTheNewCall() async {
+    let call = LiveCall(conversation: .fixture(), client: FakeServer().client(FakeTransport()))
+
+    call.useHelp()
+    await call.start()
+
+    XCTAssertTrue(call.usedHelp)
+  }
+
+  func testAnExamCueComesDueOnceAndOnlyTheLatestAfterADrop() {
+    let times = [60, 120, 240]
+
+    XCTAssertNil(LiveCall.examCueDue(at: 59, times: times, sent: 0))
+    XCTAssertEqual(LiveCall.examCueDue(at: 60, times: times, sent: 0), 0)
+    XCTAssertNil(LiveCall.examCueDue(at: 100, times: times, sent: 1))
+    // Back after a drop at 250 s: the 120 s cue is stale, and only the 240 s one goes out.
+    XCTAssertEqual(LiveCall.examCueDue(at: 250, times: times, sent: 1), 2)
+    XCTAssertNil(LiveCall.examCueDue(at: 400, times: times, sent: 3))
+  }
+
   // MARK: The ending, on a fake clock: a 2-minute call that the server hangs up 45 s later.
 
   func testAtTheTalkTimeALearnerAnsweringGetsTheGoodbyeCueAtOnce() {
@@ -957,6 +1043,7 @@ private final class FakeServer {
   private let confirmsHangup: Bool
   private let microphone: Bool
   private let talkSeconds: Int
+  private let continuesCall: Bool
   private(set) var connects = 0
   /// Whether each reservation asked to end the learner's other call.
   private(set) var takeovers: [Bool] = []
@@ -965,13 +1052,16 @@ private final class FakeServer {
   private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
   private(set) var microphoneRequests = 0
   private(set) var redeemed: [String] = []
+  /// The earlier turns each redeem sent.
+  private(set) var redeemedTurns: [[ConversationTurn]] = []
   private(set) var ended: [String] = []
 
   init(
     reservations: [CallReservation?] = [], endedAtDeadline: Bool = false,
     confirmsHangup: Bool = true, microphone: Bool = true, talkSeconds: Int = 120,
-    holdsChecks: Bool = false
+    continuesCall: Bool = false, holdsChecks: Bool = false
   ) {
+    self.continuesCall = continuesCall
     self.holdsChecks = holdsChecks
     self.reservations = reservations
     self.endedAtDeadline = endedAtDeadline
@@ -994,10 +1084,13 @@ private final class FakeServer {
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
         return next
           ?? .ready(
-            .fixture(connectionId: "connection-\(self.connects)", talkSeconds: self.talkSeconds))
+            .fixture(
+              connectionId: "connection-\(self.connects)", talkSeconds: self.talkSeconds,
+              continuesCall: self.continuesCall))
       },
-      redeem: { connectionId, _ in
+      redeem: { connectionId, _, turns in
         self.redeemed.append(connectionId)
+        self.redeemedTurns.append(turns)
         return "answer"
       },
       end: { connectionId in
@@ -1024,13 +1117,16 @@ private final class FakeServer {
 }
 
 extension Components.Schemas.LanguageConversationSetup {
-  fileprivate static func fixture(connectionId: String, talkSeconds: Int = 120) -> Self {
+  fileprivate static func fixture(
+    connectionId: String, talkSeconds: Int = 120, continuesCall: Bool = false
+  ) -> Self {
     func cue(_ channel: LiveCallCue.ChannelPayload, _ text: String) -> LiveCallCue {
       .init(channel: channel, text: text)
     }
 
     return .init(
-      connectionId: connectionId, deadlineAt: .now.addingTimeInterval(165),
+      connectionId: connectionId, continuesCall: continuesCall,
+      deadlineAt: .now.addingTimeInterval(165),
       script: .init(
         cues: .init(
           checkIn: cue(.commentary, "Ask if they're there."),

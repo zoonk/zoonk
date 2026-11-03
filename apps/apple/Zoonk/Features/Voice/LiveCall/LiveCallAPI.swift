@@ -189,12 +189,16 @@ struct LiveCallAPI: Sendable {
     conversationId: String,
     connectionId: String,
     offer: String,
+    turns: [ConversationTurn],
     token: String
   ) async throws -> String {
     try await clients.perform(token: token) { client in
       let output = try await client.redeemLanguageConversationSdp(
         path: .init(conversationId: conversationId, connectionId: connectionId),
-        body: .json(.init(sdp: offer)))
+        body: .json(
+          .init(
+            sdp: offer,
+            sessionConfig: .init(providerOptions: .init(zoonk: .init(turns: turns))))))
 
       switch output {
       case .created(let response):
