@@ -1,5 +1,5 @@
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
-import { keepTeachingPictures } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
@@ -77,7 +77,7 @@ function writeSteps() {
 describe("lesson content redrafts", () => {
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-    vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
+    vi.mocked(judgePicture).mockResolvedValue(true);
 
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
       taskResult(recordedDraft, params.model ?? SOL),

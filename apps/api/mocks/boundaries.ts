@@ -42,7 +42,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/conversation-scenario": { generateConversationScenario: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },
-  "@zoonk/ai/tasks/lesson-spec/picture-need": { keepTeachingPictures: vi.fn() },
+  "@zoonk/ai/tasks/lesson-spec/picture-need": { judgePicture: vi.fn() },
   "@zoonk/ai/tasks/lesson-writer": { writeLessonDraft: vi.fn() },
   "@zoonk/ai/tasks/lesson-writer/fix": { fixLessonDraft: vi.fn() },
   "@zoonk/ai/tasks/lessons/question": { streamLessonQuestionAnswer: vi.fn() },

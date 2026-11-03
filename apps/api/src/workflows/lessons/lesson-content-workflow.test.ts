@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
-import { keepTeachingPictures } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
@@ -35,6 +35,7 @@ import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
+import { saveLessonSpecStep } from "./steps/write-lesson-spec-step";
 
 vi.mock("../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
@@ -76,7 +77,7 @@ function runOwner({ active }: { active: boolean }) {
 describe(lessonContentWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-    vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
+    vi.mocked(judgePicture).mockResolvedValue(true);
     vi.mocked(writeLessonDraft).mockResolvedValue(taskResult(recordedDraft));
 
     vi.mocked(checkLessonQuality).mockResolvedValue(
@@ -251,6 +252,83 @@ describe(lessonContentWorkflow, () => {
         plan: expect.objectContaining({ lesson: recordedDraft, review: true, version: 1 }),
       },
     ]);
+  });
+
+  it("judges each planned picture once and saves the spec without the ones it calls decorative", async () => {
+    const lesson = await outlinedLesson();
+    const planned = recordedSpec.lessons[0]?.screens ?? [];
+
+    const decorative = planned.findIndex(
+      (screen) => screen.kind === "explanation" && screen.visual,
+    );
+
+    vi.mocked(judgePicture).mockImplementation(
+      async ({ picture }) => picture !== planned[decorative]?.visual,
+    );
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    const stored = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+
+    const visuals = (stored.spec as RecordedSpec["lessons"][number]).screens.map(
+      (screen) => screen.visual,
+    );
+
+    expect(judgePicture).toHaveBeenCalledTimes(planned.filter((screen) => screen.visual).length);
+
+    expect(visuals).toStrictEqual(
+      planned.map((screen, index) => (index === decorative ? null : screen.visual)),
+    );
+
+    expect(vi.mocked(judgePicture).mock.calls[1]?.[0]).toMatchObject({
+      level: "overview",
+      previousPicture: planned[0]?.visual,
+    });
+  });
+
+  it("saves no spec when the picture judge can't answer, so its step retries", async () => {
+    const lesson = await outlinedLesson();
+    vi.mocked(judgePicture).mockRejectedValue(new Error("Gateway unavailable"));
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).rejects.toThrow(
+      "Gateway unavailable",
+    );
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ specStatus: "failed" });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+    expect(writeLessonDraft).not.toHaveBeenCalled();
+  });
+
+  it("reports the spec ready when its save step runs again after saving, without saving again", async () => {
+    const lesson = await outlinedLesson();
+    await lessonContentWorkflow({ lessonId: lesson.id });
+    const saved = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+
+    await expect(
+      saveLessonSpecStep({
+        judged: [],
+        planned: {
+          analytics: { contentScope: "shared", traceId: "test-run-id" },
+          homeChapterId: lesson.homeChapterId,
+          lessonId: lesson.id,
+          level: "overview",
+          pictures: [],
+          provenance: { generatedAt: "", model: "", promptVersion: "", runId: "" },
+          scope: { generalGoal: null, language: "en", ownerId: null, targetLanguage: null },
+          specs: [],
+          workflowRunId: "test-run-id",
+        },
+      }),
+    ).resolves.toStrictEqual({ tags: [], value: "ready" });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toStrictEqual(saved);
   });
 
   it("plans a skill's quick lesson as a quick one, on its own, and writes it like any lesson", async () => {

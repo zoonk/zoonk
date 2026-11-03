@@ -1,10 +1,8 @@
 import "server-only";
-import { safeAsync } from "@zoonk/utils/error";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
-import { type LessonSpec } from "./lesson-spec-rules";
 import instructions from "./picture-need.prompt.md";
 
 /** The picture-need eval's runner-up after Jev (8 Oct 2026). */
@@ -47,55 +45,21 @@ export const pictureNeedClassifier = {
   }),
 };
 
-/** Native visuals (tables, charts, timelines) aren't pictures and stay as planned. */
-export async function keepTeachingPictures({
+type PictureNeedInput = Parameters<typeof pictureNeedClassifier.toInput>[0];
+
+/** Throws when neither model answers, so the caller's workflow step retries it. */
+export async function judgePicture({
   analytics,
-  level,
-  spec,
-}: {
-  analytics?: AiGenerationContext;
-  level: CourseLevel;
-  spec: LessonSpec;
-}): Promise<LessonSpec> {
-  const verdicts = await Promise.all(
-    spec.screens.map(async (screen, index) => {
-      const picture = screen.visual;
+  ...input
+}: PictureNeedInput & { analytics?: AiGenerationContext }): Promise<boolean> {
+  const run = await evaluateQuestions({
+    analytics,
+    fallbackModel,
+    input: pictureNeedClassifier.toInput(input),
+    keepInput: true,
+    questions: { teaches: pictureNeedClassifier.question },
+    task: "picture-need",
+  });
 
-      if (!picture) {
-        return true;
-      }
-
-      const run = await safeAsync(() =>
-        evaluateQuestions({
-          analytics,
-          fallbackModel,
-          input: pictureNeedClassifier.toInput({
-            lesson: spec.title,
-            level,
-            picture,
-            previousPicture: spec.screens[index - 1]?.visual ?? null,
-            screen,
-          }),
-          keepInput: true,
-          questions: { teaches: pictureNeedClassifier.question },
-          task: "picture-need",
-        }),
-      );
-
-      // A check that can't run keeps the picture: the plan asked for it.
-      return run.error
-        ? true
-        : decideBoolean({
-            probability: run.data.answers.teaches.probability,
-            threshold: TEACHES_AT,
-          });
-    }),
-  );
-
-  return {
-    ...spec,
-    screens: spec.screens.map((screen, index) =>
-      verdicts[index] ? screen : { ...screen, visual: null },
-    ),
-  };
+  return decideBoolean({ probability: run.answers.teaches.probability, threshold: TEACHES_AT });
 }

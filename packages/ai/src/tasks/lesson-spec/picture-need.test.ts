@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
-import { type LessonScreen, type LessonSpec } from "./lesson-spec-rules";
-import { keepTeachingPictures } from "./picture-need";
+import { judgePicture } from "./picture-need";
 
 vi.mock("server-only", () => ({}));
 vi.mock("./picture-need.prompt.md", () => ({ default: "Decide whether the picture teaches." }));
@@ -18,70 +17,42 @@ function verdict(probability: number) {
   } as unknown as Awaited<ReturnType<typeof evaluateQuestions>>;
 }
 
-function screen(overrides: Partial<LessonScreen>): LessonScreen {
-  return {
-    activityTemplate: null,
-    brief: "Brief",
-    kind: "explanation",
-    skills: [0],
-    visual: null,
-    ...overrides,
-  };
-}
-
-function spec(screens: LessonScreen[]): LessonSpec {
-  return {
-    canDo: "Name the chambers of the heart",
-    description: "The heart's four chambers.",
-    estimatedMinutes: 3,
-    screens,
-    skills: [],
-    supportMode: "explanationFirst",
-    title: "The chambers of the heart",
-  };
-}
-
-const TRAY = "A shallow tray of water in the sun.";
 const HEART = "The heart from the front with its four chambers labeled.";
-const CHART = "A chart of balances";
+const TRAY = "A shallow tray of water in the sun.";
 
-describe(keepTeachingPictures, () => {
+const input = {
+  lesson: "The chambers of the heart",
+  level: "beginner" as const,
+  picture: HEART,
+  previousPicture: TRAY,
+  screen: { brief: "The four chambers and where blood enters.", kind: "explanation" },
+};
+
+describe(judgePicture, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("drops a picture judged decorative and keeps one that teaches, asking once per picture", async () => {
+  it("keeps a picture above the threshold and drops one below it, asking with the level", async () => {
     vi.mocked(evaluateQuestions)
-      .mockResolvedValueOnce(verdict(0.2))
-      .mockResolvedValueOnce(verdict(0.9));
+      .mockResolvedValueOnce(verdict(0.9))
+      .mockResolvedValueOnce(verdict(0.2));
 
-    const planned = spec([
-      screen({ kind: "hook", skills: [], visual: TRAY }),
-      screen({ visual: HEART }),
-      screen({ activityTemplate: "chartReader", brief: CHART }),
-    ]);
+    await expect(judgePicture(input)).resolves.toBe(true);
+    await expect(judgePicture(input)).resolves.toBe(false);
 
-    const kept = await keepTeachingPictures({ level: "beginner", spec: planned });
-
-    expect(kept.screens.map((item) => item.visual)).toStrictEqual([null, HEART, null]);
-    expect(kept.screens[2]?.activityTemplate).toBe("chartReader");
-    expect(evaluateQuestions).toHaveBeenCalledTimes(2);
-
-    expect(vi.mocked(evaluateQuestions).mock.calls[1]?.[0].input).toMatchObject({
+    expect(vi.mocked(evaluateQuestions).mock.calls[0]?.[0].input).toStrictEqual({
+      LESSON: "The chambers of the heart",
       LEVEL: "beginner",
       PICTURE: HEART,
       PREVIOUS_PICTURE: TRAY,
+      SCREEN: "explanation: The four chambers and where blood enters.",
     });
   });
 
-  it("keeps a picture whose check can't run", async () => {
+  it("throws when the judge can't answer, so its workflow step retries", async () => {
     vi.mocked(evaluateQuestions).mockRejectedValueOnce(new Error("Gateway unavailable"));
 
-    const kept = await keepTeachingPictures({
-      level: "beginner",
-      spec: spec([screen({ visual: HEART })]),
-    });
-
-    expect(kept.screens[0]?.visual).toBe(HEART);
+    await expect(judgePicture(input)).rejects.toThrow("Gateway unavailable");
   });
 });

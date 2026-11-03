@@ -1,4 +1,5 @@
-import { type generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
+import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
+import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -11,6 +12,16 @@ import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
+vi.mock("@zoonk/ai/tasks/lesson-spec", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  generateLessonSpec: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/lesson-spec/picture-need", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  judgePicture: vi.fn(),
+}));
+
 vi.mock("@zoonk/ai/tasks/lesson-writer", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   writeLessonDraft: vi.fn(),
@@ -22,7 +33,9 @@ vi.mock("@zoonk/ai/tasks/lesson-writer/fix", async (importOriginal) => ({
 }));
 
 type Draft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
+type Spec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 const recorded = recordedOutput<Draft>("lesson-draft");
+const recordedSpec = recordedOutput<Spec>("lesson-spec");
 
 const heldBack: Draft = {
   ...recorded,
@@ -48,9 +61,7 @@ describe("lesson draft durability", () => {
 
       const [chapter, owner] = await Promise.all([libraryChapterFixture(), userFixture()]);
 
-      const spec =
-        recordedOutput<Awaited<ReturnType<typeof generateLessonSpec>>["data"]>("lesson-spec")
-          .lessons[0];
+      const spec = recordedSpec.lessons[0];
 
       const lesson = await recordedLessonFixture({
         homeChapterId: chapter.id,
@@ -74,4 +85,36 @@ describe("lesson draft durability", () => {
       expect(fixLessonDraft).toHaveBeenCalledTimes(failedFix + 3);
     },
   );
+
+  it("retries only the picture judgment that failed, never planning the lesson again", async () => {
+    const pictures = (recordedSpec.lessons[0]?.screens ?? []).flatMap((screen) =>
+      screen.visual ? [screen.visual] : [],
+    );
+
+    const [failing] = pictures;
+    vi.mocked(generateLessonSpec).mockReset().mockResolvedValue(taskResult(recordedSpec));
+
+    vi.mocked(judgePicture)
+      .mockReset()
+      .mockImplementation(async ({ picture }) => {
+        if (picture === failing) {
+          throw new Error("Judge unavailable");
+        }
+
+        return true;
+      });
+
+    const chapter = await libraryChapterFixture();
+    const lesson = await recordedLessonFixture({ homeChapterId: chapter.id });
+    await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
+
+    const run = await start(lessonContentWorkflow, [{ lessonId: lesson.id }]);
+    await expect(run.returnValue).rejects.toThrow("Judge unavailable");
+
+    const calls = vi.mocked(judgePicture).mock.calls.map(([input]) => input.picture);
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+    expect(calls.filter((picture) => picture === failing)).toHaveLength(4);
+    expect(calls.filter((picture) => picture !== failing)).toHaveLength(pictures.length - 1);
+  });
 });
