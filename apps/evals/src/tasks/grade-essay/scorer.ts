@@ -1,4 +1,5 @@
 import { createFixedScore } from "@/lib/score";
+import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer, type TestCase } from "@/lib/types";
 import {
   type EnemInterventionElements,
@@ -11,74 +12,7 @@ const SCORE_RANGE = 4;
 
 const MIN_QUOTED_SHARE = 0.6;
 
-const LANGUAGE_WORDS = {
-  en: new Set([
-    "the",
-    "and",
-    "you",
-    "your",
-    "to",
-    "of",
-    "is",
-    "that",
-    "with",
-    "for",
-    "this",
-    "it",
-    "are",
-    "but",
-    "not",
-    "by",
-    "be",
-    "how",
-    "what",
-    "or",
-  ]),
-  pt: new Set([
-    "de",
-    "que",
-    "não",
-    "para",
-    "uma",
-    "com",
-    "você",
-    "seu",
-    "sua",
-    "os",
-    "da",
-    "dos",
-    "das",
-    "em",
-    "mais",
-    "mas",
-    "ao",
-    "na",
-    "é",
-    "por",
-    "como",
-    "ou",
-    "isso",
-    "sem",
-  ]),
-};
-
 type Check = { name: string; passed: boolean; detail: string };
-
-function detectLanguage(text: string): "en" | "pt" | null {
-  const tokens = text
-    .replaceAll(/["“][^"”]*["”]/gu, " ")
-    .toLowerCase()
-    .split(/[^\p{L}]+/u);
-
-  const en = tokens.filter((token) => LANGUAGE_WORDS.en.has(token)).length;
-  const pt = tokens.filter((token) => LANGUAGE_WORDS.pt.has(token)).length;
-
-  if (en === pt) {
-    return null;
-  }
-
-  return en > pt ? "en" : "pt";
-}
 
 function getBandLabel({ band, total }: { band: GradeEssayExpected["totalBand"]; total: number }) {
   if (total < band.min) {

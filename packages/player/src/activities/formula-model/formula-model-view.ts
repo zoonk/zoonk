@@ -1,4 +1,4 @@
-import { useFormatNumber } from "@zoonk/learn/format-number";
+import { displayDigits, roundForDisplay, useFormatNumber } from "@zoonk/learn/format-number";
 import { type NumericDomain } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import {
@@ -19,6 +19,16 @@ type Variable = Fields["variables"][number];
 export type Output = Fields["outputs"][number];
 
 type Baseline = { kind: "start" | "whatIf"; values: ModelValues };
+
+/** A difference keeps the decimals both readouts show, as in measurement arithmetic, and never fewer than its own size needs. */
+type Change = { amount: number; digits: number };
+
+type Readout = {
+  before: number | null;
+  change: Change | null;
+  output: Output;
+  value: number | null;
+};
 
 function eventsOff(fields: Fields): Record<string, number> {
   return Object.fromEntries((fields.events ?? []).map((event) => [event.name, 0]));
@@ -69,6 +79,22 @@ function baselineValues({
     : null;
 }
 
+function shownChange(output: Output, value: number | null, before: number | null): Change | null {
+  if (value === null || before === null) {
+    return null;
+  }
+
+  const { unit } = output;
+  const amount = roundForDisplay(value, unit) - roundForDisplay(before, unit);
+  const shared = Math.min(displayDigits(value, unit), displayDigits(before, unit));
+
+  return amount === 0 ? null : { amount, digits: Math.max(displayDigits(amount, unit), shared) };
+}
+
+export function changeFormat(change: Change, unit?: string) {
+  return { maximumFractionDigits: change.digits, signed: true, unit };
+}
+
 function readoutBaselineValues({
   baseline,
   events,
@@ -99,9 +125,9 @@ export type ModelView = {
   chartedNow: number | null;
   compared: { x: number; y: number } | null;
   current: PlotPoint[];
-  delta: number;
-  now: ModelValues;
+  delta: Change | null;
   readoutBaseline: Baseline | null;
+  readouts: Readout[];
   x: number;
   yDomain: NumericDomain;
 };
@@ -137,6 +163,14 @@ export function modelView({
     (combination) => curveAt({ ...sliders, ...combination }),
   );
 
+  const readoutBaseline = readoutBaselineValues({ baseline, events, fields, sliders });
+
+  const readouts = fields.outputs.map((output) => {
+    const value = outputAt(output, now);
+    const before = readoutBaseline ? outputAt(output, readoutBaseline.values) : null;
+    return { before, change: shownChange(output, value, before), output, value };
+  });
+
   const comparedY =
     fields.compareAt === undefined
       ? null
@@ -155,12 +189,9 @@ export function modelView({
         ? null
         : { x: fields.compareAt, y: comparedY },
     current: curveAt(now),
-    delta:
-      baseline?.kind === "whatIf" && chartedNow !== null && chartedBefore !== null
-        ? chartedNow - chartedBefore
-        : 0,
-    now,
-    readoutBaseline: readoutBaselineValues({ baseline, events, fields, sliders }),
+    delta: baseline?.kind === "whatIf" ? shownChange(charted, chartedNow, chartedBefore) : null,
+    readoutBaseline,
+    readouts,
     x,
     yDomain: stableDomain([...everyCurve, baselineCurve ?? []]),
   };
@@ -169,39 +200,32 @@ export function modelView({
 export function useModelReadouts({
   charted,
   formatOutput,
-  outputAt,
-  outputs,
   view,
 }: {
   charted: Output;
   formatOutput: (output: Output, value: number | null) => string;
-  outputAt: (output: Output, at: ModelValues) => number | null;
-  outputs: readonly Output[];
   view: ModelView;
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const baseline = view.readoutBaseline;
 
-  function changeNote(output: Output, value: number, before: number) {
-    return baseline?.kind === "whatIf"
+  function changeNote({ before, change, output }: Readout) {
+    if (!change) {
+      return null;
+    }
+
+    return view.readoutBaseline?.kind === "whatIf"
       ? t("{value} before", { value: formatOutput(output, before) })
       : t("{change} from the start", {
-          change: format(value - before, { signed: true, unit: output.unit }),
+          change: format(change.amount, changeFormat(change, output.unit)),
         });
   }
 
-  return outputs.map((output) => {
-    const value = outputAt(output, view.now);
-    const before = baseline ? outputAt(output, baseline.values) : null;
-    const hasChanged = value !== null && before !== null && value !== before;
-
-    return {
-      id: output.id,
-      isPrimary: output.id === charted.id,
-      label: output.label,
-      note: hasChanged ? changeNote(output, value, before) : null,
-      value: formatOutput(output, value),
-    };
-  });
+  return view.readouts.map((readout) => ({
+    id: readout.output.id,
+    isPrimary: readout.output.id === charted.id,
+    label: readout.output.label,
+    note: changeNote(readout),
+    value: formatOutput(readout.output, readout.value),
+  }));
 }

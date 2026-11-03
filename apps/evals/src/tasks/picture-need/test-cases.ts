@@ -14,18 +14,20 @@ export type PictureNeedExpected = { teaches: boolean };
 function pictureCase({
   decorative,
   id,
+  language,
   ...input
-}: PictureNeedInput & { decorative: boolean; id: string }): TestCase<
+}: PictureNeedInput & { decorative: boolean; id: string; language: "en" | "pt" }): TestCase<
   PictureNeedExpected,
   PictureNeedInput
 > {
-  return { expected: { teaches: !decorative }, id, userInput: input };
+  return { expected: { teaches: !decorative }, id, language, userInput: input };
 }
 
 export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-en-particle-in-a-box-advanced-1",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture: "Two impenetrable walls with a particle in the space between them.",
@@ -39,6 +41,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-en-particle-in-a-box-advanced-2",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -53,6 +56,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-2",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -67,6 +71,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-3",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -82,6 +87,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-5",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -96,6 +102,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-2",
+    language: "en",
     lesson: "The lobes of the brain",
     level: "beginner",
     picture:
@@ -111,6 +118,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-5",
+    language: "en",
     lesson: "The lobes of the brain",
     level: "beginner",
     picture:
@@ -126,6 +134,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-9",
+    language: "en",
     lesson: "The lobes of the brain",
     level: "beginner",
     picture:
@@ -141,6 +150,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-comparar-pinturas-1",
+    language: "pt",
     lesson: "Renascimento e Barroco: comparando pinturas",
     level: "beginner",
     picture:
@@ -155,6 +165,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-comparar-pinturas-4",
+    language: "pt",
     lesson: "Renascimento e Barroco: comparando pinturas",
     level: "beginner",
     picture:
@@ -170,6 +181,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-water-cycle-1",
+    language: "en",
     lesson: "The water cycle",
     level: "beginner",
     picture:
@@ -184,6 +196,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-water-cycle-2",
+    language: "en",
     lesson: "The water cycle",
     level: "beginner",
     picture:
@@ -199,6 +212,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-mapa-imperio-romano-1",
+    language: "pt",
     lesson: "A expansão do Império Romano",
     level: "beginner",
     picture:
@@ -213,6 +227,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-mapa-imperio-romano-5",
+    language: "pt",
     lesson: "A expansão do Império Romano",
     level: "beginner",
     picture:
@@ -228,6 +243,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-lever-1",
+    language: "en",
     lesson: "How a lever multiplies force",
     level: "beginner",
     picture:
@@ -242,6 +258,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-lever-7",
+    language: "en",
     lesson: "How a lever multiplies force",
     level: "beginner",
     picture:
@@ -257,6 +274,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-syntax-tree-6",
+    language: "en",
     lesson: "Syntax trees",
     level: "intermediate",
     picture:
@@ -271,6 +289,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-syntax-tree-8",
+    language: "en",
     lesson: "Syntax trees",
     level: "intermediate",
     picture:
@@ -286,6 +305,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-ligacao-covalente-1",
+    language: "pt",
     lesson: "Ligação covalente",
     level: "beginner",
     picture:
@@ -300,6 +320,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-ligacao-covalente-2",
+    language: "pt",
     lesson: "Ligação covalente",
     level: "beginner",
     picture:
@@ -315,6 +336,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-ligacao-covalente-6",
+    language: "pt",
     lesson: "Ligação covalente",
     level: "beginner",
     picture:
@@ -330,6 +352,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-soccer-formation-2",
+    language: "en",
     lesson: "The 4-3-3 formation",
     level: "overview",
     picture:
@@ -345,6 +368,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-soccer-formation-5",
+    language: "en",
     lesson: "The 4-3-3 formation",
     level: "overview",
     picture:
@@ -360,6 +384,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-earth-mars-5",
+    language: "en",
     lesson: "Earth and Mars compared",
     level: "beginner",
     picture:
@@ -374,6 +399,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-1",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
     picture: "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
@@ -387,6 +413,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-2",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
     picture: "Camelo inteiro de lado, com a corcova destacada e identificada.",
@@ -400,6 +427,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-3",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
     picture:
@@ -414,6 +442,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-5",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
     picture:
@@ -428,6 +457,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-1",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     level: "beginner",
     picture:
@@ -442,6 +472,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-4",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     level: "beginner",
     picture:
@@ -457,6 +488,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-7",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     level: "beginner",
     picture:
@@ -472,6 +504,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-1",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -486,6 +519,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-2",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -501,6 +535,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-particle-in-a-box-advanced-5",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -515,6 +550,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-7",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -529,6 +565,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-particle-in-a-box-advanced-11",
+    language: "en",
     lesson: "Particle in a box",
     level: "advanced",
     picture:
@@ -543,6 +580,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-1",
+    language: "en",
     lesson: "Percent change",
     level: "beginner",
     picture:
@@ -557,6 +595,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-2",
+    language: "en",
     lesson: "Percent change",
     level: "beginner",
     picture:
@@ -572,6 +611,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-3",
+    language: "en",
     lesson: "Percent change",
     level: "beginner",
     picture:
@@ -587,6 +627,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-6",
+    language: "en",
     lesson: "Percent change",
     level: "beginner",
     picture:
@@ -601,6 +642,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-8",
+    language: "en",
     lesson: "Percent change",
     level: "beginner",
     picture:
@@ -615,6 +657,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-1",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -629,6 +672,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-2",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -644,6 +688,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-3",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -659,6 +704,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-5",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",
     picture:
@@ -673,6 +719,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-pt-regra-de-tres-intermediate-3",
+    language: "pt",
     lesson: "Regra de três simples e composta",
     level: "intermediate",
     picture:
@@ -687,6 +734,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-python-range-beginner-2",
+    language: "en",
     lesson: "Count with range() in Python",
     level: "beginner",
     picture: "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
@@ -700,6 +748,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-tree-key-beginner-2",
+    language: "en",
     lesson: "Name a tree from one leaf",
     level: "beginner",
     picture:
@@ -714,6 +763,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-camaras-do-coracao-beginner-2",
+    language: "pt",
     lesson: "As quatro câmaras do coração",
     level: "beginner",
     picture:
@@ -728,6 +778,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-compound-interest-beginner-2",
+    language: "en",
     lesson: "Compound interest",
     level: "beginner",
     picture:
@@ -742,6 +793,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-imagens-e-legendas-beginner-1",
+    language: "en",
     lesson: "Imagens e legendas",
     level: "beginner",
     picture: "Danilo standing at a door, holding a closed red umbrella; no rain.",
@@ -755,6 +807,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-imagens-e-legendas-beginner-5",
+    language: "en",
     lesson: "Imagens e legendas",
     level: "beginner",
     picture:

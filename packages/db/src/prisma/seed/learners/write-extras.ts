@@ -5,7 +5,7 @@ import { type LearnerScope, planItemId } from "./write-goal";
 
 const NOTICED_CONFIDENCE = 0.8;
 
-async function writeMemory({ learner, now, prisma, userId }: LearnerScope) {
+async function writeMemory({ learner, now, prisma, userId }: LearnerScope, goalId: string) {
   await Promise.all(
     learner.memory.map((fact, index) => {
       const id = seedId(`learner:${learner.key}:memory:${index}`);
@@ -15,7 +15,10 @@ async function writeMemory({ learner, now, prisma, userId }: LearnerScope) {
         confidence: fact.origin === "noticed" ? NOTICED_CONFIDENCE : null,
         createdAt: daysFrom(now, -index - 1),
         origin: fact.origin,
-        sourceRef: { kind: fact.origin === "said" ? "onboarding" : "activity" },
+        sourceRef:
+          fact.origin === "said"
+            ? { id: goalId, kind: "onboarding" }
+            : { id: null, kind: "session" },
         statement: fact.statement,
         userId,
         ...(fact.origin === "noticed" ? SEED_PROVENANCE : {}),
@@ -55,6 +58,6 @@ async function writeMilestones(scope: LearnerScope) {
   );
 }
 
-export async function writeLearnerExtras(scope: LearnerScope): Promise<void> {
-  await Promise.all([writeMemory(scope), writeMilestones(scope)]);
+export async function writeLearnerExtras(scope: LearnerScope, goalId: string): Promise<void> {
+  await Promise.all([writeMemory(scope, goalId), writeMilestones(scope)]);
 }
