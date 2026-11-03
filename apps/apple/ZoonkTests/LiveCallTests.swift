@@ -517,11 +517,55 @@ final class LiveCallTests: XCTestCase {
     gaps.characterSpoke(at: at(11))
     gaps.learnerSpoke(at: at(13))
     gaps.learnerSpoke(at: at(20))
-    gaps.callEnded(at: at(25))
+    gaps.callEnded()
 
     XCTAssertEqual(gaps.gaps, [2.5])
     XCTAssertEqual(gaps.medianMs, 2500)
     XCTAssertEqual(gaps.unansweredTurns, 2)
+  }
+
+  func testATypedReplyAfterTheTalkTimeWaitsForItsAnswerOverALateTranscript() {
+    var run = EndingRun(talk: 20, hardStop: 65)
+    run.characterTalks(from: 15, to: 18)
+    run.learnerComposes(from: 19.5, to: 21)
+    run.learnerSends(at: 21.1)
+    run.learnerHeard(at: 21.4)
+    run.wait(until: 35)
+
+    // Unanswered, the reply holds the goodbye until the answer wait passes.
+    assertTimes(run.times(of: .goodbye), [29.1], accuracy: 0.11)
+  }
+
+  func testTheTalkTimeEndingStartsBeforeTheOpeningIsSentAgain() {
+    var run = EndingRun(talk: 5, hardStop: 50)
+    run.acknowledgeOpening(at: 0)
+    run.wait(until: 10)
+
+    XCTAssertTrue(run.times(of: .opening).isEmpty)
+    assertTimes(run.times(of: .goodbye), [8], accuracy: 0.11)
+  }
+
+  func testReplyGapsCountAFastReplyAndATurnTheHangUpCutOff() {
+    func at(_ seconds: TimeInterval) -> Date {
+      Date(timeIntervalSinceReferenceDate: seconds)
+    }
+
+    var fast = LiveCallReplyGaps()
+    fast.learnerSpoke(at: at(1.6))
+    fast.learnerSpoke(at: at(1.8))
+    fast.learnerSpoke(at: at(2))
+    fast.characterSpoke(at: at(2.6))
+    fast.callEnded()
+
+    XCTAssertEqual(fast.medianMs, 600)
+    XCTAssertEqual(fast.unansweredTurns, 0)
+
+    var cutOff = LiveCallReplyGaps()
+    cutOff.learnerSpoke(at: at(9.6))
+    cutOff.learnerSpoke(at: at(9.8))
+    cutOff.callEnded()
+
+    XCTAssertEqual(cutOff.unansweredTurns, 1)
   }
 
   func testTheFirstWordsAfterAPauseGetASpace() {

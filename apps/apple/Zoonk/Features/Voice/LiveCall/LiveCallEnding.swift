@@ -194,12 +194,13 @@ struct LiveCallEnding {
 
     var actions: [Action] = []
 
-    if openingToRetry(at: now) {
-      actions.append(.send(.opening))
-    }
-
+    // Before the opening retry: a call whose talk time is up doesn't greet again.
     if now >= talkEndsAt {
       arm(.time, at: now)
+    }
+
+    if openingToRetry(at: now) {
+      actions.append(.send(.opening))
     }
 
     if armed == nil, let silenceFrom {
@@ -293,17 +294,18 @@ struct LiveCallEnding {
       return false
     }
 
+    // Measured: a goodbye sent with a typed reply was answered as part of the reply and never
+    // said, so it waits for the character to answer the reply, whatever the microphone or a late
+    // transcript says meanwhile.
+    if let lastSentAt, let armedAt, lastSentAt >= armedAt {
+      return lastCharacterAt.map { $0 > lastSentAt } ?? false
+        || now.timeIntervalSince(lastSentAt) >= answerWait
+    }
+
     if armed == .quiet || isLearnerSpeaking(at: now)
       || isRecent(lastHeardAt, at: now, within: characterQuiet)
     {
       return true
-    }
-
-    // Measured: a goodbye sent with a typed reply was answered as part of the reply and never
-    // said, so it waits for the character to answer the reply.
-    if let lastSentAt, let armedAt, lastSentAt >= armedAt {
-      return lastCharacterAt.map { $0 > lastSentAt } ?? false
-        || now.timeIntervalSince(lastSentAt) >= answerWait
     }
 
     let characterStop = lastCharacterAt?.addingTimeInterval(characterQuiet) ?? liveAt

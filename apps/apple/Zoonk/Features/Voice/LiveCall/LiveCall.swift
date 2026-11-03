@@ -637,7 +637,7 @@ final class LiveCall {
     }
 
     tracked = true
-    replyGaps.callEnded(at: .now)
+    replyGaps.callEnded()
 
     UsageAnalytics.track(
       .callEnded(
