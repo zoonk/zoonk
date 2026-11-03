@@ -20,6 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -35,26 +36,30 @@ function useSortableAnnouncements(items: readonly SortableItem[]): {
   instructions: ScreenReaderInstructions;
 } {
   const t = useExtracted();
-  const labelOf = (id: string | number) => items.find((item) => item.id === String(id))?.label;
+  const spoken = useSpokenText();
+
+  const labelOf = (id: string | number) =>
+    spoken.inline(items.find((item) => item.id === String(id))?.label ?? "");
+
   const positionOf = (id: string | number) => items.findIndex((item) => item.id === String(id)) + 1;
 
   return {
     announcements: {
       onDragCancel: ({ active }) =>
-        t("Stopped moving {item}. It stays where it was.", { item: labelOf(active.id) ?? "" }),
+        t("Stopped moving {item}. It stays where it was.", { item: labelOf(active.id) }),
       onDragEnd: ({ active, over }) =>
         t("{item} dropped at position {position}.", {
-          item: labelOf(active.id) ?? "",
+          item: labelOf(active.id),
           position: String(positionOf(over?.id ?? active.id)),
         }),
       onDragOver: ({ active, over }) =>
         t("{item} is over position {position}.", {
-          item: labelOf(active.id) ?? "",
+          item: labelOf(active.id),
           position: String(positionOf(over?.id ?? active.id)),
         }),
       onDragStart: ({ active }) =>
         t("Picked up {item} at position {position}.", {
-          item: labelOf(active.id) ?? "",
+          item: labelOf(active.id),
           position: String(positionOf(active.id)),
         }),
     },

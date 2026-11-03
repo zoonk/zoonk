@@ -1,5 +1,7 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
+import { speakMath } from "./math-speech";
+import { useMathWords } from "./use-spoken-text";
 
 export type RichInlineSegment = (
   | { kind: "bold"; text: string }
@@ -17,7 +19,14 @@ function mathClassName(segment: MathSegment) {
 }
 
 function MathSource({ segment }: { segment: MathSegment }) {
-  return <span className={mathClassName(segment)}>{segment.text}</span>;
+  const words = useMathWords();
+
+  return (
+    <span className={mathClassName(segment)}>
+      <span aria-hidden="true">{segment.text}</span>
+      <span className="sr-only">{speakMath({ latex: segment.text, words })}</span>
+    </span>
+  );
 }
 
 function MathView({ segment }: { segment: MathSegment }) {

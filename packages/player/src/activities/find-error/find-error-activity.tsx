@@ -1,6 +1,7 @@
 "use client";
 
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -56,12 +57,23 @@ function FindErrorStep({
   verdict: StepVerdict;
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
+  const number = String(index + 1);
+
+  const label =
+    verdict === "error"
+      ? t({
+          description: "A worked answer's wrong step, read with its correction once checked.",
+          message: "Step {number}: {text}. Corrected: {correction}",
+          values: { correction: spoken.inline(correction), number, text: spoken.inline(text) },
+        })
+      : t("Step {number}: {text}", { number, text: spoken.inline(text) });
 
   return (
     <button
       aria-checked={isPicked}
       aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
-      aria-label={t("Step {number}: {text}", { number: String(index + 1), text })}
+      aria-label={label}
       className={cn(
         "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none select-none focus-visible:ring-[3px] sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",

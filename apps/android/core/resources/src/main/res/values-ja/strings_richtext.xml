@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_math_bar": "4538a48dcc63da59741ee931ef4ac7609f8bae7a190a985b0b391ba27fe7ec5e",
+  "richtext_math_cube_root": "dc1f58d9fe9fab42e209436edce5e4b0cc968fe7f92a14e48161bd3548d278a3",
   "richtext_math_cubed": "d8d0019d7c28f4dd6a50e0ec5ada663c129ee920ba735ce9192d7b2abd2fdb7c",
+  "richtext_math_dot": "712e603fc272cadc38f7a8994ec65e3b0eb3e384fc33c6163f9339941a8f3d1e",
   "richtext_math_fraction": "3694850e6339b19abd87861d24bf269fe5fb31656795e269f49dd995f1fdf6ac",
+  "richtext_math_hat": "bde67e2d78122e30aa51fb3d8e02c35a3858cb1120d6b4289e2635fc84b335ec",
+  "richtext_math_nth_root": "9d0dbcd9bcadc51e02edc4376dbb279b5ab43c38034cd2118fa78cd34f0f32ca",
   "richtext_math_power": "1ea7c85aa8ae320db3bea2b32b9a2e3f143aa28dbc37ae7ec70859839032fade",
   "richtext_math_root": "f9640faca4bebec75a4b30e7e4995c6254de58760a2a35c339a02ec29adae9e5",
   "richtext_math_squared": "3817917a58968fac2e4bc165e714168c57db98e175d1d50b6e129e74982a967c",
-  "richtext_math_subscript": "95fbe9d72baed3a8322654ef9de5db5077a1cfcdc53b345933ccdd014b14e524"
+  "richtext_math_subscript": "95fbe9d72baed3a8322654ef9de5db5077a1cfcdc53b345933ccdd014b14e524",
+  "richtext_math_tilde": "51403357b90ca6376b4afb9deddc8462840af9e24be0036f73929b0ecbef221a",
+  "richtext_math_vector": "94ea197afeedb95738ffb833f2e013a83a8c29962c2dacbb96edf0b74e8eb1cf"
 }
 -->
 <resources>
@@ -22,4 +29,18 @@
     <string name="richtext_math_fraction">分子%1$s、分母%2$s</string>
     <!-- Screen reader words for a square root: "square root of 2". -->
     <string name="richtext_math_root">%1$sの平方根</string>
+    <!-- Screen reader words for a cube root: "cube root of 8". -->
+    <string name="richtext_math_cube_root">%1$sの立方根</string>
+    <!-- Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x". -->
+    <string name="richtext_math_nth_root">%1$s乗根、根号の中は%2$s</string>
+    <!-- Screen reader words for a letter with a bar over it, such as a mean: "x bar". -->
+    <string name="richtext_math_bar">%1$sバー</string>
+    <!-- Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot". -->
+    <string name="richtext_math_dot">%1$sドット</string>
+    <!-- Screen reader words for a letter with a hat over it, such as an estimate: "p hat". -->
+    <string name="richtext_math_hat">%1$sハット</string>
+    <!-- Screen reader words for a letter with a tilde over it: "x tilde". -->
+    <string name="richtext_math_tilde">%1$sチルダ</string>
+    <!-- Screen reader words for a letter with an arrow over it, a vector: "vector v". -->
+    <string name="richtext_math_vector">ベクトル%1$s</string>
 </resources>

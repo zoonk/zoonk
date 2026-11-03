@@ -1171,6 +1171,12 @@ msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "{between} wartości mieści się między {from} a {to}, {below} poniżej, a {above} powyżej."
 
+#. A worked answer's wrong step, read with its correction once checked.
+#: src/activities/find-error/find-error-activity.tsx
+msgctxt "UPlDiJ"
+msgid "Step {number}: {text}. Corrected: {correction}"
+msgstr "Krok {number}: {text}. Poprawnie: {correction}"
+
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
 msgid "Step {number}: {text}"
@@ -1861,14 +1867,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "Dwie kolumny kart. Wybierz kartę po lewej i jedną po prawej, aby połączyć je w parę. {count, plural, =0 {} one {# karta nie ma pary.} few {# karty nie mają pary.} many {# kart nie ma pary.} other {# karty nie ma pary.}} {matched, plural, other {Dopasowano # z {total} par.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "rnH_6_"
+msgid "<left></left> goes with <right></right>, not <guess></guess>."
+msgstr "<left></left> i <right></right> to para. <guess></guess> tu nie pasuje."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "Błędy przy pierwszej próbie"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "prxLRA"
-msgid "{left} goes with {right}, not {guess}."
-msgstr "Parę tworzą: {left} i {right}, a nie {guess}."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2778,14 +2784,14 @@ msgid "Step {current} of {total}."
 msgstr "Krok {current} z {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
+msgctxt "LjV93h"
+msgid "Your first pick: <choice></choice>"
+msgstr "Twój pierwszy wybór: <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "5SURVE"
 msgid "Right:"
 msgstr "Poprawna odpowiedź:"
-
-#: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5nqose"
-msgid "Your first pick: {choice}"
-msgstr "Twój pierwszy wybór: {choice}"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"
