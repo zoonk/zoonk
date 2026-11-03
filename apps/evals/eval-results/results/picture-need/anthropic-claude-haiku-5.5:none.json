@@ -23,6 +23,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "spec-en-particle-in-a-box-advanced-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -36,19 +37,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-en-particle-in-a-box-advanced-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -75,6 +77,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -88,19 +91,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-3-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -127,6 +131,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-5-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -153,6 +158,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
           "level": "beginner",
@@ -179,6 +185,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-5-1",
+        "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
           "level": "beginner",
@@ -192,19 +199,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-9-1",
+        "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
           "level": "beginner",
@@ -231,6 +239,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
           "level": "beginner",
@@ -244,19 +253,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-4-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
           "level": "beginner",
@@ -283,6 +293,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "The water cycle",
           "level": "beginner",
@@ -309,6 +320,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "The water cycle",
           "level": "beginner",
@@ -322,19 +334,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "A expansão do Império Romano",
           "level": "beginner",
@@ -348,19 +361,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-5-1",
+        "language": "pt",
         "userInput": {
           "lesson": "A expansão do Império Romano",
           "level": "beginner",
@@ -387,6 +401,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-lever-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "How a lever multiplies force",
           "level": "beginner",
@@ -395,32 +410,6 @@
           "screen": {
             "brief": "Show a board resting on a block, with a rock at one end. Ask which hand position would make the rock easiest to lift: near the block, at the far end of the board, or either position equally. Reveal “at the far end” immediately after the choice; leave the reason for the next screen.",
             "kind": "hook"
-          }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
-      "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": { "teaches": true },
-        "id": "spec-visual-en-lever-7-1",
-        "userInput": {
-          "lesson": "How a lever multiplies force",
-          "level": "beginner",
-          "picture": "A lever with a 60-pound load 2 inches to one side of the labeled fulcrum and a downward hand push 6 inches to the other side.",
-          "previousPicture": "A lever with the fulcrum between a rock labeled “80-pound weight” and a downward hand push; label the distances from the fulcrum “3 inches” on the rock side and “12 inches” on the hand side.",
-          "screen": {
-            "brief": "Give a 60-pound load 2 inches from the fulcrum and a hand 6 inches away. Ask for the push needed to start lifting it: 20 pounds, 60 pounds, or 180 pounds; 180 pounds is the tempting answer from reversing the distance ratio.",
-            "kind": "check"
           }
         }
       }
@@ -438,7 +427,35 @@
       ],
       "testCase": {
         "expected": { "teaches": true },
+        "id": "spec-visual-en-lever-7-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "How a lever multiplies force",
+          "level": "beginner",
+          "picture": "A lever with a 60-pound load 2 inches to one side of the labeled fulcrum and a downward hand push 6 inches to the other side.",
+          "previousPicture": "A lever with the fulcrum between a rock labeled “80-pound weight” and a downward hand push; label the distances from the fulcrum “3 inches” on the rock side and “12 inches” on the hand side.",
+          "screen": {
+            "brief": "Give a 60-pound load 2 inches from the fulcrum and a hand 6 inches away. Ask for the push needed to start lifting it: 20 pounds, 60 pounds, or 180 pounds; 180 pounds is the tempting answer from reversing the distance ratio.",
+            "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "steps": [
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected teaches; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-6-1",
+        "language": "en",
         "userInput": {
           "lesson": "Syntax trees",
           "level": "intermediate",
@@ -465,6 +482,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-8-1",
+        "language": "en",
         "userInput": {
           "lesson": "Syntax trees",
           "level": "intermediate",
@@ -478,19 +496,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
           "level": "beginner",
@@ -517,6 +536,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
           "level": "beginner",
@@ -543,6 +563,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-6-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
           "level": "beginner",
@@ -569,6 +590,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "The 4-3-3 formation",
           "level": "overview",
@@ -595,6 +617,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-5-1",
+        "language": "en",
         "userInput": {
           "lesson": "The 4-3-3 formation",
           "level": "overview",
@@ -621,6 +644,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-earth-mars-5-1",
+        "language": "en",
         "userInput": {
           "lesson": "Earth and Mars compared",
           "level": "beginner",
@@ -647,6 +671,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
           "level": "beginner",
@@ -673,6 +698,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
           "level": "beginner",
@@ -699,6 +725,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-3-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
           "level": "beginner",
@@ -725,6 +752,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-5-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
           "level": "beginner",
@@ -738,19 +766,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
           "level": "beginner",
@@ -777,6 +806,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-4-1",
+        "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
           "level": "beginner",
@@ -803,6 +833,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-7-1",
+        "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
           "level": "beginner",
@@ -829,6 +860,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -855,6 +887,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -889,6 +922,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-5-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -902,19 +936,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-7-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -928,19 +963,28 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-11-1",
+        "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
           "level": "advanced",
@@ -975,6 +1019,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "Percent change",
           "level": "beginner",
@@ -1009,6 +1054,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Percent change",
           "level": "beginner",
@@ -1043,6 +1089,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-3-1",
+        "language": "en",
         "userInput": {
           "lesson": "Percent change",
           "level": "beginner",
@@ -1077,6 +1124,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-6-1",
+        "language": "en",
         "userInput": {
           "lesson": "Percent change",
           "level": "beginner",
@@ -1090,19 +1138,28 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-8-1",
+        "language": "en",
         "userInput": {
           "lesson": "Percent change",
           "level": "beginner",
@@ -1129,6 +1186,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -1155,6 +1213,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -1181,6 +1240,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-3-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -1207,6 +1267,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-5-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
           "level": "overview",
@@ -1220,19 +1281,28 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-pt-regra-de-tres-intermediate-3-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Regra de três simples e composta",
           "level": "intermediate",
@@ -1267,6 +1337,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-python-range-beginner-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Count with range() in Python",
           "level": "beginner",
@@ -1280,19 +1351,20 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": { "teaches": true },
+        "expected": { "teaches": false },
         "id": "plan-en-tree-key-beginner-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Name a tree from one leaf",
           "level": "beginner",
@@ -1319,6 +1391,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-camaras-do-coracao-beginner-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "As quatro câmaras do coração",
           "level": "beginner",
@@ -1353,6 +1426,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-en-compound-interest-beginner-2-1",
+        "language": "en",
         "userInput": {
           "lesson": "Compound interest",
           "level": "beginner",
@@ -1379,6 +1453,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
           "level": "beginner",
@@ -1387,32 +1462,6 @@
           "screen": {
             "brief": "Guess first: a picture shows Danilo standing at a door holding a closed red umbrella. Which caption fits: he holds a closed red umbrella; he walks in the rain under an open red umbrella; he holds a red backpack.",
             "kind": "hook"
-          }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "teaches", "predicted": "decorative" },
-      "steps": [
-        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": { "teaches": true },
-        "id": "plan-pt-imagens-e-legendas-beginner-5-1",
-        "userInput": {
-          "lesson": "Imagens e legendas",
-          "level": "beginner",
-          "picture": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
-          "previousPicture": null,
-          "screen": {
-            "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
-            "kind": "application"
           }
         }
       }
@@ -1430,7 +1479,35 @@
       ],
       "testCase": {
         "expected": { "teaches": true },
+        "id": "plan-pt-imagens-e-legendas-beginner-5-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "Imagens e legendas",
+          "level": "beginner",
+          "picture": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
+            "kind": "application"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "decorative" },
+      "steps": [
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected teaches; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
         "id": "plan-pt-patrimonio-liquido-beginner-0-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Patrimônio líquido",
           "level": "beginner",
@@ -1457,6 +1534,7 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-niveis-ecologicos-beginner-2-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Níveis de organização ecológica",
           "level": "beginner",
@@ -1491,6 +1569,7 @@
       "testCase": {
         "expected": { "teaches": false },
         "id": "plan-pt-receitas-regulares-overview-1-1",
+        "language": "pt",
         "userInput": {
           "lesson": "Receitas regulares e eventuais",
           "level": "overview",

@@ -745,8 +745,9 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
       kind: "explanation",
     },
   }),
+  // A key asked one question at a time is a decision the app's decisionTree template shows.
   pictureCase({
-    decorative: false,
+    decorative: true,
     id: "plan-en-tree-key-beginner-2",
     language: "en",
     lesson: "Name a tree from one leaf",

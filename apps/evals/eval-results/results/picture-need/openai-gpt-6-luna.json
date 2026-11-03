@@ -2,14 +2,22 @@
   "modelId": "openai/gpt-6-luna",
   "results": [
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -18,6 +26,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "Two impenetrable walls with a particle in the space between them.",
           "previousPicture": null,
           "screen": {
@@ -44,6 +53,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "A one-dimensional box with walls labeled x = 0 and x = L, the interior labeled V = 0, the exterior labeled V = ∞, and ψ marked zero at both walls.",
           "previousPicture": "Two impenetrable walls with a particle in the space between them.",
           "screen": {
@@ -70,6 +80,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "Um átomo com o núcleo destacado no centro e uma região difusa ao redor, identificada como a região onde o elétron pode ser encontrado.",
           "previousPicture": null,
           "screen": {
@@ -96,6 +107,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "O núcleo dentro de uma nuvem eletrônica difusa, com dois pontos separados marcando lugares possíveis para encontrar o elétron; nenhuma trajetória liga os pontos.",
           "previousPicture": "Um átomo com o núcleo destacado no centro e uma região difusa ao redor, identificada como a região onde o elétron pode ser encontrado.",
           "screen": {
@@ -122,6 +134,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "Dois desenhos do mesmo núcleo, identificados como 1 e 2: no 1, uma nuvem eletrônica espalhada ao redor dele; no 2, uma nuvem muito comprimida junto a ele.",
           "previousPicture": null,
           "screen": {
@@ -148,6 +161,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
+          "level": "beginner",
           "picture": "Side view of a brain facing left, divided into four differently colored sections at the front, upper middle, lower side, and back; sections are not yet named.",
           "previousPicture": "Side view of a brain facing left, with only the area at the very back shaded; no lobe names.",
           "screen": {
@@ -174,6 +188,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
+          "level": "beginner",
           "picture": "Side view of the whole brain facing left, with the frontal lobe labeled at the front and the parietal lobe labeled at the upper middle.",
           "previousPicture": "Side view of the whole brain facing left, with the parietal lobe highlighted and labeled at the upper middle; the frontal lobe remains labeled for orientation.",
           "screen": {
@@ -184,14 +199,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -200,6 +215,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The lobes of the brain",
+          "level": "beginner",
           "picture": "Side view of the whole brain facing left, with four distinct regions numbered: 1 at the front (frontal), 2 at the upper middle (parietal), 3 on the lower side (temporal), and 4 at the back (occipital); no lobe names shown.",
           "previousPicture": "Side view of the whole brain facing left, with all four lobes labeled in their positions.",
           "screen": {
@@ -226,6 +242,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
+          "level": "beginner",
           "picture": "Duas pinturas lado a lado: 1, «A Escola de Atenas», de Rafael, com figuras distribuídas sob arcos claros; 2, «A Vocação de São Mateus», de Caravaggio, com figuras em uma sala escura atingidas por um feixe de luz.",
           "previousPicture": null,
           "screen": {
@@ -252,6 +269,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Renascimento e Barroco: comparando pinturas",
+          "level": "beginner",
           "picture": "Duas pinturas lado a lado: 1, «A Entrega das Chaves a São Pedro», com edifício central e grupos distribuídos dos dois lados; 2, «A Elevação da Cruz», com a cruz e os corpos inclinados em diagonal.",
           "previousPicture": "«O Casamento da Virgem», de Rafael, inteiro, com o edifício ao centro e os grupos de pessoas dos dois lados visíveis.",
           "screen": {
@@ -262,30 +280,23 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got decorative.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected decorative; got decorative.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected decorative; got decorative.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-1-1",
         "language": "en",
         "userInput": {
           "lesson": "The water cycle",
+          "level": "beginner",
           "picture": "A shallow tray in sunlight, with a lower water level marked and salt left at the bottom.",
           "previousPicture": null,
           "screen": {
@@ -312,6 +323,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The water cycle",
+          "level": "beginner",
           "picture": "The ocean under the sun, with an upward arrow from its surface showing invisible water entering the air; label the arrow “evaporation.”",
           "previousPicture": "A shallow tray in sunlight, with a lower water level marked and salt left at the bottom.",
           "screen": {
@@ -338,6 +350,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "A expansão do Império Romano",
+          "level": "beginner",
           "picture": "Mapa sem territórios coloridos, mostrando Europa, África e Índia, com Roma e as três áreas das opções marcadas.",
           "previousPicture": null,
           "screen": {
@@ -364,6 +377,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "A expansão do Império Romano",
+          "level": "beginner",
           "picture": "Mapa das ilhas Britânicas em 117, com Britânia e Irlanda identificadas e apenas a parte da Britânia sob domínio romano colorida.",
           "previousPicture": "Ampliação da parte ocidental do mapa de 117, com Mediterrâneo, Roma e Cartago identificados; a margem africana em Cartago aparece dentro da área romana colorida.",
           "screen": {
@@ -390,6 +404,7 @@
         "language": "en",
         "userInput": {
           "lesson": "How a lever multiplies force",
+          "level": "beginner",
           "picture": "A board resting on a block near a rock at one end, with two hand positions labeled “near the block” and “far end”; show where the rock will rise.",
           "previousPicture": null,
           "screen": {
@@ -400,14 +415,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -416,6 +431,7 @@
         "language": "en",
         "userInput": {
           "lesson": "How a lever multiplies force",
+          "level": "beginner",
           "picture": "A lever with a 60-pound load 2 inches to one side of the labeled fulcrum and a downward hand push 6 inches to the other side.",
           "previousPicture": "A lever with the fulcrum between a rock labeled “80-pound weight” and a downward hand push; label the distances from the fulcrum “3 inches” on the rock side and “12 inches” on the hand side.",
           "screen": {
@@ -442,11 +458,39 @@
         "language": "en",
         "userInput": {
           "lesson": "Syntax trees",
+          "level": "intermediate",
           "picture": "A complete branching tree for “The bell rang”: S at the top; NP and VP beneath it; “The” and “bell” beneath NP, and “rang” beneath VP.",
           "previousPicture": null,
           "screen": {
             "brief": "Introduce a syntax tree as a branching drawing of which words belong together. Show “The bell rang” with S at the top, branching to NP above “The bell” and VP above “rang”; define S as sentence, and point back to the two phrase names already learned.",
             "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "spec-visual-en-syntax-tree-8-1",
+        "language": "en",
+        "userInput": {
+          "lesson": "Syntax trees",
+          "level": "intermediate",
+          "picture": "Two trees labeled 1 and 2 for “The small engine rattled loudly,” each showing S, NP, VP, and every word; tree 1 has the correct grouping, while tree 2 places “loudly” under NP.",
+          "previousPicture": "A complete branching tree for “The shy drummer played loudly”: S branches to NP over “The shy drummer” and VP over “played loudly,” with each word shown beneath its phrase.",
+          "screen": {
+            "brief": "Ask which of two trees correctly groups “The small engine rattled loudly.” The tempting wrong tree puts “loudly” under NP and leaves only “rattled” under VP; the correct tree puts “The small engine” under NP and “rattled loudly” under VP.",
+            "kind": "check"
           }
         }
       }
@@ -464,36 +508,11 @@
       ],
       "testCase": {
         "expected": { "teaches": true },
-        "id": "spec-visual-en-syntax-tree-8-1",
-        "language": "en",
-        "userInput": {
-          "lesson": "Syntax trees",
-          "picture": "Two trees labeled 1 and 2 for “The small engine rattled loudly,” each showing S, NP, VP, and every word; tree 1 has the correct grouping, while tree 2 places “loudly” under NP.",
-          "previousPicture": "A complete branching tree for “The shy drummer played loudly”: S branches to NP over “The shy drummer” and VP over “played loudly,” with each word shown beneath its phrase.",
-          "screen": {
-            "brief": "Ask which of two trees correctly groups “The small engine rattled loudly.” The tempting wrong tree puts “loudly” under NP and leaves only “rattled” under VP; the correct tree puts “The small engine” under NP and “rattled loudly” under VP.",
-            "kind": "check"
-          }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
-      "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": { "teaches": false },
         "id": "spec-visual-pt-ligacao-covalente-1-1",
         "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
+          "level": "beginner",
           "picture": "Dois átomos de hidrogênio separados, identificados por H, cada um com um elétron representado por um ponto.",
           "previousPicture": null,
           "screen": {
@@ -520,6 +539,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
+          "level": "beginner",
           "picture": "Dois desenhos lado a lado: à esquerda, dois H separados com um ponto cada; à direita, os dois H com os dois pontos entre eles.",
           "previousPicture": "Dois átomos de hidrogênio separados, identificados por H, cada um com um elétron representado por um ponto.",
           "screen": {
@@ -546,6 +566,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Ligação covalente",
+          "level": "beginner",
           "picture": "Dois átomos de flúor separados, identificados por F, cada um com sete pontos externos; um ponto de cada átomo está voltado para o outro.",
           "previousPicture": "Dois desenhos lado a lado: no primeiro, dois Cl com sete pontos externos cada; no segundo, Cl e Cl unidos por um par de pontos destacado entre eles, com os demais pontos ao redor, e a representação Cl—Cl abaixo.",
           "screen": {
@@ -572,6 +593,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The 4-3-3 formation",
+          "level": "overview",
           "picture": "The whole field from above, with both goals labeled and ten outfield players in rows of four, three, and three; the four nearest their own goal are highlighted and labeled “defenders.”",
           "previousPicture": "A top-down soccer field with each goal labeled “your goal” or “opponent’s goal”; groups of four, three, and three dots wait outside the field, with none placed yet.",
           "screen": {
@@ -582,14 +604,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -598,6 +620,7 @@
         "language": "en",
         "userInput": {
           "lesson": "The 4-3-3 formation",
+          "level": "overview",
           "picture": "A top-down field with the opponent’s goal on the left and your goal on the right; three players are near the left goal, three in the middle, and four near the right goal.",
           "previousPicture": "The full-field lineup with the front row of three highlighted and labeled “forwards”; both goals and the other two rows remain visible.",
           "screen": {
@@ -624,6 +647,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Earth and Mars compared",
+          "level": "beginner",
           "picture": "Earth and Mars side by side, labeled, each surrounded by a schematic air layer; many air dots surround Earth and far fewer surround Mars.",
           "previousPicture": null,
           "screen": {
@@ -634,22 +658,23 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-1-1",
         "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
+          "level": "beginner",
           "picture": "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
           "previousPicture": null,
           "screen": {
@@ -660,22 +685,23 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-2-1",
         "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
+          "level": "beginner",
           "picture": "Camelo inteiro de lado, com a corcova destacada e identificada.",
           "previousPicture": "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
           "screen": {
@@ -702,6 +728,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
+          "level": "beginner",
           "picture": "Cabeça de um camelo durante uma ventania de areia, com olhos, cílios e narinas identificados; as narinas aparecem fechadas.",
           "previousPicture": "Camelo inteiro de lado, com a corcova destacada e identificada.",
           "screen": {
@@ -728,6 +755,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Adaptações do camelo ao deserto",
+          "level": "beginner",
           "picture": "Camelo inteiro sobre areia fofa, com os pés destacados; um detalhe ampliado mostra um pé largo apoiado na areia.",
           "previousPicture": null,
           "screen": {
@@ -754,6 +782,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
+          "level": "beginner",
           "picture": "Two church exteriors labeled 1 and 2: church 1 has rounded doorway arches, broad stretches of stone wall, and small windows; church 2 has pointed doorway arches and tall, large windows.",
           "previousPicture": null,
           "screen": {
@@ -780,6 +809,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
+          "level": "beginner",
           "picture": "A new stone church entrance with a clearly rounded arch, shown with enough surrounding wall to identify it as part of a church.",
           "previousPicture": "A Gothic church exterior with a pointed doorway arch and tall, large windows; the arch's two curved sides and peak are clearly visible.",
           "screen": {
@@ -806,6 +836,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Romanesque and Gothic churches",
+          "level": "beginner",
           "picture": "One church with a small rounded-arch side doorway and, across its much larger main section, pointed arches and tall windows; the doorway and main section are both clearly shown.",
           "previousPicture": "A new church side wall with several tall, large windows and narrow stretches of stone between them; no doorway or arch is visible.",
           "screen": {
@@ -832,6 +863,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
           "previousPicture": null,
           "screen": {
@@ -858,6 +890,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L.",
           "previousPicture": "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
           "screen": {
@@ -892,6 +925,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis.",
           "previousPicture": null,
           "screen": {
@@ -902,14 +936,14 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -918,6 +952,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
           "previousPicture": null,
           "screen": {
@@ -928,14 +963,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -944,6 +987,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Particle in a box",
+          "level": "advanced",
           "picture": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue.",
           "previousPicture": null,
           "screen": {
@@ -954,14 +998,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -970,6 +1022,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Percent change",
+          "level": "beginner",
           "picture": "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
           "previousPicture": null,
           "screen": {
@@ -980,14 +1033,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -996,6 +1057,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Percent change",
+          "level": "beginner",
           "picture": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
           "previousPicture": "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
           "screen": {
@@ -1030,6 +1092,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Percent change",
+          "level": "beginner",
           "picture": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'.",
           "previousPicture": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
           "screen": {
@@ -1064,6 +1127,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Percent change",
+          "level": "beginner",
           "picture": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'.",
           "previousPicture": null,
           "screen": {
@@ -1098,6 +1162,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Percent change",
+          "level": "beginner",
           "picture": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
           "previousPicture": null,
           "screen": {
@@ -1124,6 +1189,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
           "previousPicture": null,
           "screen": {
@@ -1150,6 +1216,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
           "previousPicture": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
           "screen": {
@@ -1176,6 +1243,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia.",
           "previousPicture": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
           "screen": {
@@ -1186,22 +1254,23 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": false },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-5-1",
         "language": "pt",
         "userInput": {
           "lesson": "Por que o elétron não cai no núcleo",
+          "level": "overview",
           "picture": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva.",
           "previousPicture": null,
           "screen": {
@@ -1212,14 +1281,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1228,6 +1305,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "Regra de três simples e composta",
+          "level": "intermediate",
           "picture": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes.",
           "previousPicture": null,
           "screen": {
@@ -1262,6 +1340,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Count with range() in Python",
+          "level": "beginner",
           "picture": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
           "previousPicture": null,
           "screen": {
@@ -1272,22 +1351,31 @@
       }
     },
     {
-      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Expected teaches; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "teaches": true },
+        "expected": { "teaches": false },
         "id": "plan-en-tree-key-beginner-2-1",
         "language": "en",
         "userInput": {
           "lesson": "Name a tree from one leaf",
+          "level": "beginner",
           "picture": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes.",
           "previousPicture": null,
           "screen": {
@@ -1314,6 +1402,7 @@
         "language": "pt",
         "userInput": {
           "lesson": "As quatro câmaras do coração",
+          "level": "beginner",
           "picture": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio.",
           "previousPicture": null,
           "screen": {
@@ -1324,14 +1413,22 @@
       }
     },
     {
-      "classification": { "expected": "decorative", "predicted": "teaches" },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
-        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
-          "conclusion": "Expected decorative; got teaches.",
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1340,6 +1437,7 @@
         "language": "en",
         "userInput": {
           "lesson": "Compound interest",
+          "level": "beginner",
           "picture": "A curve of the balance growing year by year: $1,000 at the start, $1,100, $1,210 and $1,331 after 3 years.",
           "previousPicture": null,
           "screen": {
@@ -1363,9 +1461,10 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
+          "level": "beginner",
           "picture": "Danilo standing at a door, holding a closed red umbrella; no rain.",
           "previousPicture": null,
           "screen": {
@@ -1389,14 +1488,104 @@
       "testCase": {
         "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-5-1",
-        "language": "pt",
+        "language": "en",
         "userInput": {
           "lesson": "Imagens e legendas",
+          "level": "beginner",
           "picture": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
           "previousPicture": null,
           "screen": {
             "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
             "kind": "application"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "plan-pt-patrimonio-liquido-beginner-0-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Patrimônio líquido",
+          "level": "beginner",
+          "picture": "A oficina de Davi com suas ferramentas, um cliente que ainda vai pagar e um documento de dívida com o banco, sem valores.",
+          "previousPicture": null,
+          "screen": {
+            "brief": "Mostre a oficina de Davi: ferramentas, um cliente que ainda vai pagar e uma dívida com o banco. Termine com a pergunta da aula, sem pedir resposta: quanto da oficina é de Davi de verdade?",
+            "kind": "hook"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "teaches", "predicted": "teaches" },
+      "steps": [
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected teaches; got teaches.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": true },
+        "id": "plan-pt-niveis-ecologicos-beginner-2-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Níveis de organização ecológica",
+          "level": "beginner",
+          "picture": "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
+          "previousPicture": "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
+          "screen": {
+            "brief": "Explique que uma população reúne os organismos de uma mesma espécie que vivem em uma área ao mesmo tempo. No lago, todos os sapos-cururus formam uma população.",
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "decorative", "predicted": "decorative" },
+      "steps": [
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected decorative; got decorative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "teaches": false },
+        "id": "plan-pt-receitas-regulares-overview-1-1",
+        "language": "pt",
+        "userInput": {
+          "lesson": "Receitas regulares e eventuais",
+          "level": "overview",
+          "picture": "No local de trabalho, Igor recebendo dinheiro pelo seu trabalho, com o dinheiro em destaque.",
+          "previousPicture": "Igor recebendo um pagamento no local de trabalho, com um calendário na parede.",
+          "screen": {
+            "brief": "Explique que receita é o dinheiro que uma pessoa recebe. O pagamento que entra para Igor pelo seu trabalho é um exemplo.",
+            "kind": "explanation"
           }
         }
       }
