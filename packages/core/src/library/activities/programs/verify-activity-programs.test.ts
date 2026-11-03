@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import { type ActivityStepContent, activityContentSchema } from "../activity-templates";
 import { verifyActivityPrograms } from "./verify-activity-programs";
 
-const PYTHON_TEST_TIMEOUT_MS = 30_000;
-
 function content(value: object): ActivityStepContent {
   return activityContentSchema.parse(value);
 }
@@ -69,31 +67,27 @@ describe(verifyActivityPrograms, () => {
     ).resolves.toStrictEqual([[], [], [], []]);
   });
 
-  it(
-    "passes Python programs and traces that match their runs, and holds back a trace that loops without end",
-    async () => {
-      await expect(
-        verifyActivityPrograms([
-          content(fixtures.codeRunner),
-          pythonTracer,
-          withFields(pythonTracer, {
-            code: "total = 0\nfor n in [2, 3]:\n    total += n\nwhile True:\n    pass",
-          }),
-        ]),
-      ).resolves.toStrictEqual([
-        [],
-        [],
-        [
-          {
-            code: "programFails",
-            message: "The code runs more than 1000 lines; trace a shorter program",
-            path: "fields.code",
-          },
-        ],
-      ]);
-    },
-    PYTHON_TEST_TIMEOUT_MS,
-  );
+  it("passes Python programs and traces that match their runs, and holds back a trace that loops without end", async () => {
+    await expect(
+      verifyActivityPrograms([
+        content(fixtures.codeRunner),
+        pythonTracer,
+        withFields(pythonTracer, {
+          code: "total = 0\nfor n in [2, 3]:\n    total += n\nwhile True:\n    pass",
+        }),
+      ]),
+    ).resolves.toStrictEqual([
+      [],
+      [],
+      [
+        {
+          code: "programFails",
+          message: "The code runs more than 1000 lines; trace a shorter program",
+          path: "fields.code",
+        },
+      ],
+    ]);
+  });
 
   it("holds back a code runner whose expected output isn't what the solution prints", async () => {
     const [issues] = await verifyActivityPrograms([
