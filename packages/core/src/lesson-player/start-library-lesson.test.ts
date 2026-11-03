@@ -236,6 +236,25 @@ describe(startLibraryLesson, () => {
     ).resolves.toBe(1);
   });
 
+  it("marks a run a replay once the learner finished the lesson, resumed or not", async () => {
+    const { lesson } = await setupPlayableLesson();
+
+    const first = await start(lesson.id);
+    const resumed = await start(lesson.id);
+    const firstRunId = first.status === "started" ? first.run.runId : "";
+
+    await prisma.learningEvent.update({ data: { endedAt: new Date() }, where: { id: firstRunId } });
+
+    const replay = await start(lesson.id);
+    const replayResumed = await start(lesson.id);
+
+    expect(
+      [first, resumed, replay, replayResumed].map(
+        (outcome) => outcome.status === "started" && outcome.run.replay,
+      ),
+    ).toStrictEqual([false, false, true, true]);
+  });
+
   it("starts a session block inside its session and continues the session's Hyperdrive", async () => {
     const { lesson, user } = await setupPlayableLesson();
     const earlier = await playableLessonFixture();

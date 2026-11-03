@@ -71168,6 +71168,10 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
           },
+          "replay": {
+            "type": "boolean",
+            "description": "True when the learner already finished this lesson: its end offers no next lesson"
+          },
           "runId": {
             "type": "string",
             "format": "uuid",
@@ -71192,6 +71196,7 @@
         "required": [
           "answers",
           "hyperdrive",
+          "replay",
           "runId",
           "startedAt",
           "support"
