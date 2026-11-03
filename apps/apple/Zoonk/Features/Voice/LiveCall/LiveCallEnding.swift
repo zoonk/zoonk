@@ -89,11 +89,6 @@ struct LiveCallEnding {
     isRecent(lastMicAt, at: now, within: Self.micHangover)
   }
 
-  /// The learner spoke, was heard or typed since then.
-  func hasLearnerActed(after date: Date) -> Bool {
-    lastLearnerAt.map { $0 > date } ?? false
-  }
-
   /// "Take your time." on screen: the learner has left the character unanswered a while.
   func isQuietLong(at now: Date) -> Bool {
     silenceFrom.map { now.timeIntervalSince($0) >= seconds(timing.quietHintMs) } ?? false
@@ -166,19 +161,33 @@ struct LiveCallEnding {
     }
   }
 
-  mutating func goalsMet(at now: Date) {
-    arm(.done, at: now)
-  }
+  /// An objective check's answer for the transcript as it was at `snapshotAt`. True when its
+  /// progress note should go out.
+  ///
+  /// A mutual goodbye leaves only the hang-up: an ending that already started keeps its reason and
+  /// skips its own goodbye, so the character doesn't say it twice, unless that cue already went
+  /// out. A goodbye the learner has talked past since the snapshot isn't the end.
+  mutating func checked(at now: Date, snapshotAt: Date, goodbye: Bool, allGoalsMet: Bool) -> Bool {
+    if goodbye, !(lastLearnerAt.map { $0 > snapshotAt } ?? false) {
+      arm(.goodbye, at: now)
 
-  /// The learner said goodbye and the character said it back: it only remains to hang up. An
-  /// ending that already started keeps its reason and skips its own goodbye, so the character
-  /// doesn't say it twice; once that cue went out, its own goodbye is the one to wait for.
-  mutating func saidGoodbye(at now: Date) {
-    arm(.goodbye, at: now)
+      if cueSentAt == nil {
+        isGoodbyeSaid = true
+      }
 
-    if cueSentAt == nil {
-      isGoodbyeSaid = true
+      return false
     }
+
+    guard armed == nil else {
+      return false
+    }
+
+    if allGoalsMet {
+      arm(.done, at: now)
+      return false
+    }
+
+    return true
   }
 
   /// What to do now. Call it after every event and on a steady tick.

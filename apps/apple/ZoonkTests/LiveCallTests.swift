@@ -385,6 +385,19 @@ final class LiveCallTests: XCTestCase {
     // The cue already went out: its own goodbye is the one to wait for.
     assertTimes(sent.times(of: .goodbye), [120], accuracy: 0.11)
     XCTAssertNil(sent.hangUp)
+
+    var stale = EndingRun()
+    stale.chat(until: 110)
+    stale.learnerTalks(from: 112, to: 114)
+    stale.characterTalks(from: 115, to: 121)
+    // The learner spoke again after the transcript the check read.
+    stale.learnerTalks(from: 121.5, to: 122)
+    // It answers while the character is still talking, before the cue could go out.
+    stale.saidGoodbye(at: 122.2, snapshotAt: 121.2)
+    stale.wait(until: 130)
+
+    assertTimes(stale.times(of: .goodbye), [122.5], accuracy: 0.11)
+    XCTAssertNil(stale.hangUp)
   }
 
   func testAQuietLearnerIsCheckedOnOnceThenTheCallSaysGoodbye() {
@@ -840,12 +853,19 @@ private struct EndingRun {
     }
   }
 
+  /// An objective check found every goal met in the transcript as it was when the check returned.
   mutating func goalsMet(at seconds: TimeInterval) {
-    once(at: seconds) { $0.goalsMet(at: $1) }
+    once(at: seconds) {
+      _ = $0.checked(at: $1, snapshotAt: $1, goodbye: false, allGoalsMet: true)
+    }
   }
 
-  mutating func saidGoodbye(at seconds: TimeInterval) {
-    once(at: seconds) { $0.saidGoodbye(at: $1) }
+  /// An objective check found a mutual goodbye in the transcript as it was at `snapshotAt`.
+  mutating func saidGoodbye(at seconds: TimeInterval, snapshotAt: TimeInterval? = nil) {
+    once(at: seconds) { ending, now in
+      let snapshot = Self.start.addingTimeInterval(snapshotAt ?? seconds)
+      _ = ending.checked(at: now, snapshotAt: snapshot, goodbye: true, allGoalsMet: false)
+    }
   }
 
   private mutating func once(
