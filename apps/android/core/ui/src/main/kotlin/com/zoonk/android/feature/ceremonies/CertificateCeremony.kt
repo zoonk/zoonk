@@ -48,8 +48,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -69,6 +67,7 @@ import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
 import com.zoonk.android.feature.certificates.rememberCertificateActions
 import com.zoonk.android.feature.certificates.words
+import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.celebrates
@@ -117,10 +116,7 @@ fun CertificateCeremony(
         onClose()
     }
 
-    Dialog(
-        onDismissRequest = ::close,
-        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
-    ) {
+    FullScreenDialog(onDismissRequest = ::close) {
         Surface(Modifier.fillMaxSize()) {
             Column(
                 Modifier
