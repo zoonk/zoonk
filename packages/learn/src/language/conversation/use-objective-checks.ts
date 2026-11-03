@@ -7,8 +7,12 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LiveCallCue } from "./live-call-script";
-
-const REPLY_SETTLED_MS = 1500;
+import {
+  type CheckTimingEvent,
+  NO_CHECK_TIMING,
+  REPLY_SETTLED_MS,
+  stepCheckTiming,
+} from "./objective-check-timing";
 
 /** What a check found, for the transcript as it was at `snapshotAt`. */
 export type ObjectiveCheckResult = {
@@ -42,8 +46,7 @@ function useObjectiveChecks({
   const met = useRef(metLabels);
   const running = useRef(false);
   const again = useRef(false);
-  const learnerSpoke = useRef(false);
-  const answerStartMs = useRef<number | null>(null);
+  const timing = useRef(NO_CHECK_TIMING);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const check = useCallback(async () => {
@@ -80,44 +83,36 @@ function useObjectiveChecks({
     }
   }, []);
 
-  const settleExchange = useCallback(() => {
-    clearSettle();
+  const hear = useCallback(
+    (event: CheckTimingEvent) => {
+      const step = stepCheckTiming(timing.current, event);
+      timing.current = step.timing;
 
-    settle.current = setTimeout(() => {
-      learnerSpoke.current = false;
-      void check();
-    }, REPLY_SETTLED_MS);
-  }, [check, clearSettle]);
-
-  /**
-   * `startMs` is where spoken words fall on the session's timeline. Their transcript comes back
-   * late, often after the character's answer: words said before it settle with that answer
-   * instead of waiting for another one.
-   */
-  const onLearnerTurn = useCallback(
-    (startMs?: number) => {
-      const answered = answerStartMs.current;
-
-      if (settle.current && startMs !== undefined && answered !== null && startMs < answered) {
-        settleExchange();
-        return;
+      if (step.settle === "cancel") {
+        clearSettle();
       }
 
-      learnerSpoke.current = true;
-      clearSettle();
+      if (step.settle === "restart") {
+        clearSettle();
+
+        settle.current = setTimeout(() => {
+          settle.current = null;
+          timing.current = stepCheckTiming(timing.current, { type: "checked" }).timing;
+          void check();
+        }, REPLY_SETTLED_MS);
+      }
     },
-    [clearSettle, settleExchange],
+    [check, clearSettle],
+  );
+
+  const onLearnerTurn = useCallback(
+    (startMs?: number) => hear({ startMs, type: "learner" }),
+    [hear],
   );
 
   const onCharacterTurn = useCallback(
-    (startMs: number) => {
-      answerStartMs.current = startMs;
-
-      if (learnerSpoke.current) {
-        settleExchange();
-      }
-    },
-    [settleExchange],
+    (startMs: number) => hear({ startMs, type: "character" }),
+    [hear],
   );
 
   useEffect(() => clearSettle, [clearSettle]);
