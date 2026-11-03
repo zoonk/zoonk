@@ -186,7 +186,7 @@ private fun Certificate(
                     ActionRow(
                         R.drawable.ic_link,
                         stringResource(R.string.certificates_copy_link),
-                    ) { actions.copy(certificate.url.toString()) }
+                    ) { actions.copy(certificate.url.toString(), R.string.certificates_link_copied) }
                     HorizontalDivider(Modifier.padding(vertical = 8.dp))
                     if (renaming) {
                         CertificateNameField(

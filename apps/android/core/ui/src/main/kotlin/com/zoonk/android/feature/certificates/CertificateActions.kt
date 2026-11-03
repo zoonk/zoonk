@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
@@ -106,11 +107,14 @@ class CertificateActions internal constructor(
         }
     }
 
-    fun copy(text: String) {
+    /** [copied] confirms it below Android 13, which confirms a copy on its own. */
+    fun copy(
+        text: String,
+        @StringRes copied: Int = R.string.certificates_copied,
+    ) {
         scope.launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(text, text)))
-            // Android 13 confirms a copy on its own.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) app.snackbars.show(R.string.certificates_copied)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) app.snackbars.show(copied)
         }
     }
 
