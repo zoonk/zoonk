@@ -18,8 +18,6 @@ import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -80,7 +78,7 @@ class CompletedLessonsScreenshots {
             }
         return ApiJson.decodeFromString(
             CompletedLessonList.serializer(),
-            """{"data":[${data.joinToString(",")}],"pagination":{"hasMore":${!empty},"nextCursor":${if (empty) "null" else "\"c1\""}}}""",
+            """{"data":[${data.joinToString(",")}],"pagination":{"hasMore":false,"nextCursor":null}}""",
         )
     }
 
@@ -93,7 +91,7 @@ class CompletedLessonsScreenshots {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val store =
             CompletedLessonsStore(
-                { _, _, cursor -> if (cursor == null) list(empty) else throw ApiException(ApiError.Network) },
+                { _, _, _ -> list(empty) },
                 AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
                 session,
             )
