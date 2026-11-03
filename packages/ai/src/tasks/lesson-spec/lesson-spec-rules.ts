@@ -49,6 +49,8 @@ export type LessonSpec = {
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
   estimatedMinutes: number;
+  /** Set on each lesson after the first that the code split off one plan: the plan's guess stays in the first. */
+  laterPart?: boolean;
 };
 
 export const LESSON_SIZE = {
@@ -202,11 +204,15 @@ function getEarlyCheckIssue({
  * Every lesson tries before it's taught: one guess right after the first explanation or worked
  * example, about what the screen after it explains.
  */
-function getGuessIssue(screens: readonly LessonScreen[]) {
+function getGuessIssue({ laterPart, screens }: LessonSpec) {
   const guesses = screens.filter((screen) => screen.kind === "guess").length;
   const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
   const at = screens.findIndex((screen) => screen.kind === "guess");
   const next = screens[at + 1];
+
+  if (laterPart && guesses === 0) {
+    return false;
+  }
 
   return (
     (guesses !== 1 || at !== firstTeaching + 1 || !next || !isTeachingScreen(next.kind)) && {
@@ -249,7 +255,7 @@ function getShapeIssues({
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
-    getGuessIssue(screens),
+    getGuessIssue(spec),
     ...getVisualFloorIssues({ screens, visualFloor }),
   ].filter((issue) => issue !== false);
 }

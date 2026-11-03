@@ -252,6 +252,7 @@ function buildPart({
     canDo: lead?.name ?? spec.canDo,
     description: lead?.description ?? spec.description,
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
+    ...(index > 0 && { laterPart: true }),
     screens,
     skills,
     title: formatTopics({ language, topics: skills.map((skill) => skill.topic) }),
