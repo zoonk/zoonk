@@ -48,7 +48,7 @@ type CommonView = {
 type KindView = {
   covered:
     | { kind: "readouts"; readouts: Readout[] }
-    | { kind: "topics"; label: string; more: string | null; topics: string[] }
+    | { kind: "topics"; label: string; topics: string[]; total: number }
     | null;
   facts: Readout[];
   finePrint: string;
@@ -260,17 +260,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
     getCourseMeta({ locale, zones }),
   ]);
 
-  const { hidden, shown } = getShownTopics(facts.topics);
-
-  const more =
-    hidden > 0
-      ? t({
-          description:
-            "After “Topics covered” when the certificate lists only the first six topics.",
-          message: "and {count} more",
-          values: { count: formatCount({ count: hidden, locale }) },
-        })
-      : null;
+  const shown = getShownTopics(facts.topics);
 
   const label = t({
     description: "Above the topics a finished course covered, on its certificate.",
@@ -278,7 +268,10 @@ async function getCourseView(input: KindInput): Promise<KindView> {
   });
 
   return {
-    covered: shown.length > 0 ? { kind: "topics", label, more, topics: shown } : null,
+    covered:
+      shown.length > 0
+        ? { kind: "topics", label, topics: shown, total: facts.topics.length }
+        : null,
     facts: studyFacts,
     finePrint: t({
       description: "The fine print on a course certificate.",

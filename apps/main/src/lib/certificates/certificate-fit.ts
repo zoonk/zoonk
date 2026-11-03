@@ -1,4 +1,6 @@
 import "server-only";
+import { getExtracted } from "next-intl/server";
+import { formatCount } from "./certificate-format";
 import {
   type SheetCovered,
   type SheetGraphKind,
@@ -158,7 +160,40 @@ function getSheetGraphKind(view: CertificateView): SheetGraphKind {
   return view.graph.zones.some((zone) => zone.chapters > 0) ? "labelledRoute" : "route";
 }
 
-export type FittedSheet = { covered: SheetCovered; name: ShapedText; title: ShapedText };
+export type FittedSheet = {
+  covered: SheetCovered;
+  moreTopics: string | null;
+  name: ShapedText;
+  title: ShapedText;
+};
+
+/** Counted after fitting, which can list fewer topics than the view offered. */
+async function getMoreTopics({
+  covered,
+  locale,
+  view,
+}: {
+  covered: SheetCovered;
+  locale: string;
+  view: CertificateView;
+}): Promise<string | null> {
+  const hidden =
+    covered?.kind === "topics" && view.covered?.kind === "topics"
+      ? view.covered.total - covered.topics.length
+      : 0;
+
+  if (hidden <= 0) {
+    return null;
+  }
+
+  const t = await getExtracted({ locale });
+
+  return t({
+    description: "After “Topics covered” when the certificate lists only the first six topics.",
+    message: "and {count} more",
+    values: { count: formatCount({ count: hidden, locale }) },
+  });
+}
 
 export async function fitSheet({
   locale,
@@ -178,7 +213,7 @@ export async function fitSheet({
     shapeSpec({ ...title, scale: shaping.scale, spec: SHEET.title }),
   ]);
 
-  const overflow = (parts: FittedSheet) =>
+  const overflow = (parts: Omit<FittedSheet, "moreTopics">) =>
     getSheetOverflow({
       covered: parts.covered,
       finePrint: view.finePrint,
@@ -206,7 +241,12 @@ export async function fitSheet({
     shaped: nameShaped,
   });
 
-  return { covered, name: fittedName, title: fittedTitle };
+  return {
+    covered,
+    moreTopics: await getMoreTopics({ covered, locale, view }),
+    name: fittedName,
+    title: fittedTitle,
+  };
 }
 
 export type FittedShare = { name: ShapedText; title: ShapedText };

@@ -3468,6 +3468,12 @@ msgctxt "BBu_dn"
 msgid "Courses in {category}"
 msgstr "{category}を学べるコース"
 
+#. After “Topics covered” when the certificate lists only the first six topics.
+#: src/lib/certificates/certificate-fit.ts
+msgctxt "oDI_Rp"
+msgid "and {count} more"
+msgstr "ほか{count}トピック"
+
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "1TOMnj"
 msgid "Listening"
@@ -3590,12 +3596,6 @@ msgstr "{level}レベル"
 msgctxt "LZF2Ia"
 msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
 msgstr "{from, select, overview {概要} beginner {初級} intermediate {中級} other {上級}}から{to, select, overview {概要} beginner {初級} intermediate {中級} other {上級}}まで"
-
-#. After “Topics covered” when the certificate lists only the first six topics.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "oDI_Rp"
-msgid "and {count} more"
-msgstr "ほか{count}トピック"
 
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts

@@ -62,8 +62,8 @@ export function formatCount({ count, locale }: { count: number; locale: string }
   return getNumberFormatter(locale, {}).format(count);
 }
 
-export function getShownTopics(topics: readonly string[]): { hidden: number; shown: string[] } {
-  return { hidden: Math.max(0, topics.length - MAX_TOPICS), shown: topics.slice(0, MAX_TOPICS) };
+export function getShownTopics(topics: readonly string[]): string[] {
+  return topics.slice(0, MAX_TOPICS);
 }
 
 const HALF_STEPS_PER_BAND = 2;

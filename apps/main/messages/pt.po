@@ -3468,6 +3468,12 @@ msgctxt "BBu_dn"
 msgid "Courses in {category}"
 msgstr "Cursos de {category}"
 
+#. After “Topics covered” when the certificate lists only the first six topics.
+#: src/lib/certificates/certificate-fit.ts
+msgctxt "oDI_Rp"
+msgid "and {count} more"
+msgstr "e mais {count}"
+
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "1TOMnj"
 msgid "Listening"
@@ -3590,12 +3596,6 @@ msgstr "Nível {level}"
 msgctxt "LZF2Ia"
 msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
 msgstr "{from, select, overview {Da visão geral} beginner {Do iniciante} intermediate {Do intermediário} other {Do avançado}} {to, select, overview {à visão geral} beginner {ao iniciante} intermediate {ao intermediário} other {ao avançado}}"
-
-#. After “Topics covered” when the certificate lists only the first six topics.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "oDI_Rp"
-msgid "and {count} more"
-msgstr "e mais {count}"
 
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts

@@ -60,14 +60,10 @@ describe(getLadderFill, () => {
 });
 
 describe(getShownTopics, () => {
-  it("shows the first six topics and counts the rest", () => {
+  it("shows the first six topics", () => {
     const topics = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
-    expect(getShownTopics(topics)).toStrictEqual({
-      hidden: 2,
-      shown: ["a", "b", "c", "d", "e", "f"],
-    });
-
-    expect(getShownTopics(["a"])).toStrictEqual({ hidden: 0, shown: ["a"] });
+    expect(getShownTopics(topics)).toStrictEqual(["a", "b", "c", "d", "e", "f"]);
+    expect(getShownTopics(["a"])).toStrictEqual(["a"]);
   });
 });

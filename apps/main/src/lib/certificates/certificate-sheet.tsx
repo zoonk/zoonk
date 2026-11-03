@@ -62,10 +62,12 @@ function SheetReadouts({
 
 function SheetTopics({
   covered,
+  moreTopics,
   px,
   view,
 }: {
   covered: FittedSheet["covered"];
+  moreTopics: FittedSheet["moreTopics"];
   px: Scale;
   view: CertificateView;
 }) {
@@ -87,9 +89,7 @@ function SheetTopics({
         }}
       >
         <span>{view.covered.label}</span>
-        {view.covered.more && (
-          <span style={{ color: CERTIFICATE_COLORS.faint }}>{`· ${view.covered.more}`}</span>
-        )}
+        {moreTopics && <span style={{ color: CERTIFICATE_COLORS.faint }}>{`· ${moreTopics}`}</span>}
       </div>
 
       <div
@@ -305,7 +305,7 @@ export function CertificateSheet({
       <ShapedImage above={px(SHEET.title.above)} text={fitted.title} />
       <SheetMeta px={px} view={view} />
       <SheetReadouts covered={fitted.covered} px={px} view={view} />
-      <SheetTopics covered={fitted.covered} px={px} view={view} />
+      <SheetTopics covered={fitted.covered} moreTopics={fitted.moreTopics} px={px} view={view} />
 
       <div style={{ display: "flex", marginTop: "auto", paddingTop: px(SHEET.graph.above) }}>
         <CertificateGraph
