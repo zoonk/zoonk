@@ -1,5 +1,5 @@
 import "server-only";
-import { type LearningEventKind, type TransactionClient } from "@zoonk/db";
+import { type LearningEventKind, type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-results";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -13,6 +13,7 @@ import { readBlockPayload } from "../../../sessions/block-payload";
 import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
+import { type SkillEvidence, addSkillEvidence } from "../../levels/record-language-evidence";
 import { getConversationBrainPower } from "../conversation-rules";
 import { type WrittenFeedback } from "./conversation-feedback";
 import { type ConversationRow, getCheckpointOutcome } from "./conversation-view";
@@ -32,6 +33,7 @@ type ConversationSettlement = {
   objectives: number;
   objectivesMet: string[];
   row: ConversationRow;
+  speakingEvidence: SkillEvidence | null;
   spokenSeconds: number;
   reviewRunId: string;
   timeZone: string;
@@ -63,6 +65,23 @@ async function findBlockContext(tx: TransactionClient, studyBlockId: string | nu
 function readPlanItemId(payload: unknown): string | null {
   const planItemId = isJsonObject(payload) ? payload.planItemId : null;
   return typeof planItemId === "string" ? planItemId : null;
+}
+
+function getLedgerContentIds({
+  block,
+  planItemId,
+  row,
+}: {
+  block: StudySessionBlock | null;
+  planItemId: string | null;
+  row: ConversationRow;
+}): Record<string, string> {
+  return {
+    conversationId: row.id,
+    ...(row.chapterId ? { chapterId: row.chapterId } : {}),
+    ...(planItemId ? { planItemId } : {}),
+    ...(block ? { studySessionBlockId: block.id, studySessionId: block.sessionId } : {}),
+  };
 }
 
 /** Settles once; returns no progress when another request already completed the call. */
@@ -126,12 +145,7 @@ export async function settleConversation(
 
     await recordLearningEvent(tx, {
       brainPower,
-      contentIds: {
-        conversationId: row.id,
-        ...(row.chapterId ? { chapterId: row.chapterId } : {}),
-        ...(planItemId ? { planItemId } : {}),
-        ...(block ? { studySessionBlockId: block.id, studySessionId: block.sessionId } : {}),
-      },
+      contentIds: getLedgerContentIds({ block, planItemId, row }),
       correctAnswers: objectivesMet.length,
       endedAt: lock.completedAt,
       energyDelta: getAnswersEnergyDelta({ correct: objectivesMet.length, incorrect: missed }),
@@ -162,6 +176,10 @@ export async function settleConversation(
 
     if (planItemId && checkpoint?.passed) {
       await completePlanItem(tx, { now: lock.completedAt, planItemId, userId });
+    }
+
+    if (input.speakingEvidence) {
+      await addSkillEvidence(tx, input.speakingEvidence);
     }
 
     return progress;

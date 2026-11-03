@@ -12,18 +12,20 @@ export type PictureNeedExpected = { teaches: boolean };
 function pictureCase({
   decorative,
   id,
+  language,
   ...input
-}: PictureNeedInput & { decorative: boolean; id: string }): TestCase<
+}: PictureNeedInput & { decorative: boolean; id: string; language: "en" | "pt" }): TestCase<
   PictureNeedExpected,
   PictureNeedInput
 > {
-  return { expected: { teaches: !decorative }, id, userInput: input };
+  return { expected: { teaches: !decorative }, id, language, userInput: input };
 }
 
 export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-en-particle-in-a-box-advanced-1",
+    language: "en",
     lesson: "Particle in a box",
     picture: "Two impenetrable walls with a particle in the space between them.",
     previousPicture: null,
@@ -36,6 +38,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-en-particle-in-a-box-advanced-2",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "A one-dimensional box with walls labeled x = 0 and x = L, the interior labeled V = 0, the exterior labeled V = ∞, and ψ marked zero at both walls.",
@@ -49,6 +52,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-2",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "Um átomo com o núcleo destacado no centro e uma região difusa ao redor, identificada como a região onde o elétron pode ser encontrado.",
@@ -62,6 +66,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-3",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "O núcleo dentro de uma nuvem eletrônica difusa, com dois pontos separados marcando lugares possíveis para encontrar o elétron; nenhuma trajetória liga os pontos.",
@@ -76,6 +81,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-pt-eletron-nucleo-overview-5",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "Dois desenhos do mesmo núcleo, identificados como 1 e 2: no 1, uma nuvem eletrônica espalhada ao redor dele; no 2, uma nuvem muito comprimida junto a ele.",
@@ -89,6 +95,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-2",
+    language: "en",
     lesson: "The lobes of the brain",
     picture:
       "Side view of a brain facing left, divided into four differently colored sections at the front, upper middle, lower side, and back; sections are not yet named.",
@@ -103,6 +110,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-5",
+    language: "en",
     lesson: "The lobes of the brain",
     picture:
       "Side view of the whole brain facing left, with the frontal lobe labeled at the front and the parietal lobe labeled at the upper middle.",
@@ -117,6 +125,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-brain-lobes-9",
+    language: "en",
     lesson: "The lobes of the brain",
     picture:
       "Side view of the whole brain facing left, with four distinct regions numbered: 1 at the front (frontal), 2 at the upper middle (parietal), 3 on the lower side (temporal), and 4 at the back (occipital); no lobe names shown.",
@@ -131,6 +140,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-comparar-pinturas-1",
+    language: "pt",
     lesson: "Renascimento e Barroco: comparando pinturas",
     picture:
       "Duas pinturas lado a lado: 1, «A Escola de Atenas», de Rafael, com figuras distribuídas sob arcos claros; 2, «A Vocação de São Mateus», de Caravaggio, com figuras em uma sala escura atingidas por um feixe de luz.",
@@ -144,6 +154,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-comparar-pinturas-4",
+    language: "pt",
     lesson: "Renascimento e Barroco: comparando pinturas",
     picture:
       "Duas pinturas lado a lado: 1, «A Entrega das Chaves a São Pedro», com edifício central e grupos distribuídos dos dois lados; 2, «A Elevação da Cruz», com a cruz e os corpos inclinados em diagonal.",
@@ -158,6 +169,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-visual-en-water-cycle-1",
+    language: "en",
     lesson: "The water cycle",
     picture:
       "A shallow tray in sunlight, with a lower water level marked and salt left at the bottom.",
@@ -171,6 +183,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-water-cycle-2",
+    language: "en",
     lesson: "The water cycle",
     picture:
       "The ocean under the sun, with an upward arrow from its surface showing invisible water entering the air; label the arrow “evaporation.”",
@@ -185,6 +198,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-mapa-imperio-romano-1",
+    language: "pt",
     lesson: "A expansão do Império Romano",
     picture:
       "Mapa sem territórios coloridos, mostrando Europa, África e Índia, com Roma e as três áreas das opções marcadas.",
@@ -198,6 +212,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-mapa-imperio-romano-5",
+    language: "pt",
     lesson: "A expansão do Império Romano",
     picture:
       "Mapa das ilhas Britânicas em 117, com Britânia e Irlanda identificadas e apenas a parte da Britânia sob domínio romano colorida.",
@@ -212,6 +227,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-lever-1",
+    language: "en",
     lesson: "How a lever multiplies force",
     picture:
       "A board resting on a block near a rock at one end, with two hand positions labeled “near the block” and “far end”; show where the rock will rise.",
@@ -225,6 +241,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-lever-7",
+    language: "en",
     lesson: "How a lever multiplies force",
     picture:
       "A lever with a 60-pound load 2 inches to one side of the labeled fulcrum and a downward hand push 6 inches to the other side.",
@@ -239,6 +256,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-syntax-tree-6",
+    language: "en",
     lesson: "Syntax trees",
     picture:
       "A complete branching tree for “The bell rang”: S at the top; NP and VP beneath it; “The” and “bell” beneath NP, and “rang” beneath VP.",
@@ -252,6 +270,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-syntax-tree-8",
+    language: "en",
     lesson: "Syntax trees",
     picture:
       "Two trees labeled 1 and 2 for “The small engine rattled loudly,” each showing S, NP, VP, and every word; tree 1 has the correct grouping, while tree 2 places “loudly” under NP.",
@@ -266,6 +285,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-visual-pt-ligacao-covalente-1",
+    language: "pt",
     lesson: "Ligação covalente",
     picture:
       "Dois átomos de hidrogênio separados, identificados por H, cada um com um elétron representado por um ponto.",
@@ -279,6 +299,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-ligacao-covalente-2",
+    language: "pt",
     lesson: "Ligação covalente",
     picture:
       "Dois desenhos lado a lado: à esquerda, dois H separados com um ponto cada; à direita, os dois H com os dois pontos entre eles.",
@@ -293,6 +314,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-ligacao-covalente-6",
+    language: "pt",
     lesson: "Ligação covalente",
     picture:
       "Dois átomos de flúor separados, identificados por F, cada um com sete pontos externos; um ponto de cada átomo está voltado para o outro.",
@@ -307,6 +329,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-soccer-formation-2",
+    language: "en",
     lesson: "The 4-3-3 formation",
     picture:
       "The whole field from above, with both goals labeled and ten outfield players in rows of four, three, and three; the four nearest their own goal are highlighted and labeled “defenders.”",
@@ -321,6 +344,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-soccer-formation-5",
+    language: "en",
     lesson: "The 4-3-3 formation",
     picture:
       "A top-down field with the opponent’s goal on the left and your goal on the right; three players are near the left goal, three in the middle, and four near the right goal.",
@@ -335,6 +359,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-earth-mars-5",
+    language: "en",
     lesson: "Earth and Mars compared",
     picture:
       "Earth and Mars side by side, labeled, each surrounded by a schematic air layer; many air dots surround Earth and far fewer surround Mars.",
@@ -348,6 +373,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-visual-pt-camelo-adaptacoes-1",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     picture: "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
     previousPicture: null,
@@ -360,6 +386,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "spec-visual-pt-camelo-adaptacoes-2",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     picture: "Camelo inteiro de lado, com a corcova destacada e identificada.",
     previousPicture: "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
@@ -372,6 +399,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-3",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     picture:
       "Cabeça de um camelo durante uma ventania de areia, com olhos, cílios e narinas identificados; as narinas aparecem fechadas.",
@@ -385,6 +413,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-5",
+    language: "pt",
     lesson: "Adaptações do camelo ao deserto",
     picture:
       "Camelo inteiro sobre areia fofa, com os pés destacados; um detalhe ampliado mostra um pé largo apoiado na areia.",
@@ -398,6 +427,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-1",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     picture:
       "Two church exteriors labeled 1 and 2: church 1 has rounded doorway arches, broad stretches of stone wall, and small windows; church 2 has pointed doorway arches and tall, large windows.",
@@ -411,6 +441,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-4",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     picture:
       "A new stone church entrance with a clearly rounded arch, shown with enough surrounding wall to identify it as part of a church.",
@@ -425,6 +456,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "spec-visual-en-gothic-romanesque-7",
+    language: "en",
     lesson: "Romanesque and Gothic churches",
     picture:
       "One church with a small rounded-arch side doorway and, across its much larger main section, pointed arches and tall windows; the doorway and main section are both clearly shown.",
@@ -439,6 +471,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-1",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
@@ -452,6 +485,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-2",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L.",
@@ -466,6 +500,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-particle-in-a-box-advanced-5",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis.",
@@ -479,6 +514,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-particle-in-a-box-advanced-7",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
@@ -492,6 +528,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-particle-in-a-box-advanced-11",
+    language: "en",
     lesson: "Particle in a box",
     picture:
       "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue.",
@@ -505,6 +542,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-1",
+    language: "en",
     lesson: "Percent change",
     picture:
       "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
@@ -518,6 +556,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-2",
+    language: "en",
     lesson: "Percent change",
     picture:
       "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
@@ -532,6 +571,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-3",
+    language: "en",
     lesson: "Percent change",
     picture:
       "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'.",
@@ -546,6 +586,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-6",
+    language: "en",
     lesson: "Percent change",
     picture:
       "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'.",
@@ -559,6 +600,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-percent-change-beginner-8",
+    language: "en",
     lesson: "Percent change",
     picture:
       "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
@@ -572,6 +614,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-1",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
@@ -585,6 +628,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-2",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
@@ -599,6 +643,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-eletron-nucleo-overview-3",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia.",
@@ -613,6 +658,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-pt-eletron-nucleo-overview-5",
+    language: "pt",
     lesson: "Por que o elétron não cai no núcleo",
     picture:
       "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva.",
@@ -626,6 +672,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-pt-regra-de-tres-intermediate-3",
+    language: "pt",
     lesson: "Regra de três simples e composta",
     picture:
       "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes.",
@@ -639,6 +686,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-python-range-beginner-2",
+    language: "en",
     lesson: "Count with range() in Python",
     picture: "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
     previousPicture: null,
@@ -651,6 +699,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-en-tree-key-beginner-2",
+    language: "en",
     lesson: "Name a tree from one leaf",
     picture:
       "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes.",
@@ -664,6 +713,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-camaras-do-coracao-beginner-2",
+    language: "pt",
     lesson: "As quatro câmaras do coração",
     picture:
       "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio.",
@@ -677,6 +727,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-en-compound-interest-beginner-2",
+    language: "en",
     lesson: "Compound interest",
     picture:
       "A curve of the balance growing year by year: $1,000 at the start, $1,100, $1,210 and $1,331 after 3 years.",
@@ -690,6 +741,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-imagens-e-legendas-beginner-1",
+    language: "en",
     lesson: "Imagens e legendas",
     picture: "Danilo standing at a door, holding a closed red umbrella; no rain.",
     previousPicture: null,
@@ -702,6 +754,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-imagens-e-legendas-beginner-5",
+    language: "en",
     lesson: "Imagens e legendas",
     picture:
       "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",

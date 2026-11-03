@@ -2,11 +2,14 @@ package com.zoonk.android.feature.activities.math
 
 import com.zoonk.android.feature.activities.ActivityExpression
 import com.zoonk.android.ui.components.niceDomain
+import com.zoonk.android.ui.format.displayDigits
+import com.zoonk.android.ui.format.roundForDisplay
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOfInputsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFieldsOutputsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfFieldsVariablesInner
 import kotlin.math.max
+import kotlin.math.min
 
 internal typealias FormulaFields = PlayableLibraryStepAnyOfContentOneOfFields
 internal typealias ModelOutput = PlayableLibraryStepAnyOfContentOneOfFieldsOutputsInner
@@ -21,6 +24,19 @@ internal data class Baseline(
     val values: ModelValues,
 )
 
+/** Main's `Change`: how far a readout moved, with the decimals both readouts show and never fewer than its own size needs. */
+internal data class Change(
+    val amount: Double,
+    val digits: Int,
+)
+
+internal data class ModelReadout(
+    val output: ModelOutput,
+    val value: Double?,
+    val before: Double?,
+    val change: Change?,
+)
+
 /** Main's `ModelView`: what the chart, the readouts and the text alternative show for the sliders and what-ifs. */
 internal data class ModelView(
     val activeLabels: List<String>,
@@ -30,9 +46,9 @@ internal data class ModelView(
     val chartedNow: Double?,
     val compared: Pair<Double, Double>?,
     val current: PlotPoints,
-    val delta: Double,
-    val now: ModelValues,
+    val delta: Change?,
     val readoutBaseline: Baseline?,
+    val readouts: List<ModelReadout>,
     val x: Double,
     val yDomain: ClosedFloatingPointRange<Double>,
 )
@@ -93,6 +109,18 @@ internal fun chartedOutput(
 internal fun chartAxis(fields: FormulaFields): ModelVariable? =
     fields.variables.find { it.name == fields.plot?.x } ?: fields.variables.firstOrNull()
 
+private fun shownChange(
+    output: ModelOutput,
+    value: Double?,
+    before: Double?,
+): Change? {
+    if (value == null || before == null) return null
+    val unit = output.unit
+    val amount = roundForDisplay(value, unit) - roundForDisplay(before, unit)
+    val shared = min(displayDigits(value, unit), displayDigits(before, unit))
+    return if (amount == 0.0) null else Change(amount, max(displayDigits(amount, unit), shared))
+}
+
 internal fun modelView(
     fields: FormulaFields,
     axis: ModelVariable,
@@ -122,6 +150,12 @@ internal fun modelView(
     val chartedNow = outputAt(charted, now)
     val chartedBefore = baseline?.let { outputAt(charted, it.values + (axis.name to x)) }
     val everyCurve = eventCombinations(fields.events.orEmpty().map { it.name }).map { curveAt(sliders + it) }
+    val readouts =
+        fields.outputs.map { output ->
+            val value = outputAt(output, now)
+            val before = readoutBaseline?.let { outputAt(output, it.values) }
+            ModelReadout(output, value, before, shownChange(output, value, before))
+        }
     val compared = fields.compareAt?.let { at -> outputAt(charted, now + (axis.name to at))?.let { at to it } }
 
     return ModelView(
@@ -136,16 +170,9 @@ internal fun modelView(
         chartedNow = chartedNow,
         compared = compared,
         current = curveAt(now),
-        delta =
-            if (baseline?.kind == BaselineKind.WhatIf && chartedNow != null &&
-                chartedBefore != null
-            ) {
-                chartedNow - chartedBefore
-            } else {
-                0.0
-            },
-        now = now,
+        delta = if (baseline?.kind == BaselineKind.WhatIf) shownChange(charted, chartedNow, chartedBefore) else null,
         readoutBaseline = readoutBaseline,
+        readouts = readouts,
         x = x,
         yDomain = niceDomain((everyCurve + listOfNotNull(baselineCurve)).flatMap { curve -> curve.map { it.second } }),
     )

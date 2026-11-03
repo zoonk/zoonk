@@ -8,6 +8,7 @@ import android.icu.text.NumberFormat
 import android.icu.text.PluralRules
 import android.icu.util.Currency
 import android.icu.util.ULocale
+import java.math.RoundingMode
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.floor
@@ -15,6 +16,7 @@ import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import java.math.BigDecimal as JvmDecimal
 
 /**
  * A value with the unit content gives it, as main's `useFormatNumber` writes it: money in the
@@ -39,7 +41,21 @@ fun formatAmount(
     return withUnit(number, unit)
 }
 
+fun displayDigits(
+    value: Double,
+    unit: String? = null,
+): Int = if (moneyUnit(unit) != null) moneyFractionDigits(value) else fractionDigitsFor(value)
+
+/** ICU rounds a double's shortest decimal half up, as [JvmDecimal.valueOf] reads it, so this is the number [formatAmount] writes. */
+fun roundForDisplay(
+    value: Double,
+    unit: String? = null,
+): Double = JvmDecimal.valueOf(value).setScale(displayDigits(value, unit), RoundingMode.HALF_UP).toDouble()
+
 /** Cents show only when there are some and the amount is small ($3.50, $200, $103,449). */
+fun moneyFractionDigits(value: Double): Int =
+    if (abs(value) >= WHOLE_MONEY_FROM || isWhole(value, MONEY_FRACTION_DIGITS)) 0 else MONEY_FRACTION_DIGITS
+
 fun formatMoney(
     value: Double,
     currency: String,
@@ -48,8 +64,7 @@ fun formatMoney(
     maximumFractionDigits: Int? = null,
     signed: Boolean = false,
 ): String {
-    val whole = abs(value) >= WHOLE_MONEY_FROM || isWhole(value, MONEY_FRACTION_DIGITS)
-    val digits = maximumFractionDigits ?: if (whole) 0 else MONEY_FRACTION_DIGITS
+    val digits = maximumFractionDigits ?: moneyFractionDigits(value)
     val minimum = if (isWhole(value, digits)) 0 else min(digits, MONEY_FRACTION_DIGITS)
     val format = currencyFormat(currency, locale, minimum, max(digits, minimum))
     val text =

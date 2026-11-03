@@ -187,12 +187,41 @@ struct FormulaModelView {
     }
   }
 
-  var delta: Double {
-    guard baseline?.kind == .whatIf, let now = chartedNow, let before = chartedBefore else {
-      return 0
+  /// Main's `Change`: how far a readout moved, with the decimals both readouts show and never
+  /// fewer than its own size needs.
+  struct ShownChange: Equatable {
+    let amount: Double
+    let digits: Int
+
+    func label(unit: String?) -> String {
+      ActivityNumberFormat.format(amount, unit: unit, signed: true, digits: digits)
+    }
+  }
+
+  var delta: ShownChange? {
+    baseline?.kind == .whatIf ? shownChange(charted, chartedNow, chartedBefore) : nil
+  }
+
+  private func shownChange(_ output: FormulaModelFields.Output, _ value: Double?, _ before: Double?)
+    -> ShownChange?
+  {
+    guard let value, let before else {
+      return nil
     }
 
-    return now - before
+    let unit = output.unit
+    let amount =
+      ActivityNumberFormat.roundedForDisplay(value, unit: unit)
+      - ActivityNumberFormat.roundedForDisplay(before, unit: unit)
+    let shared = min(
+      ActivityNumberFormat.displayDigits(value, unit: unit),
+      ActivityNumberFormat.displayDigits(before, unit: unit))
+
+    return amount == 0
+      ? nil
+      : ShownChange(
+        amount: amount,
+        digits: max(ActivityNumberFormat.displayDigits(amount, unit: unit), shared))
   }
 
   struct Change {
@@ -204,16 +233,14 @@ struct FormulaModelView {
   /// Left out under 1/11 of the chart's height, as on the web, where the dots would cover it. Once
   /// checked, the right answer's label takes the change label's place; the readouts still say it.
   func change(in domain: ClosedRange<Double>, showsAnswer: Bool) -> Change? {
-    guard abs(delta) >= (domain.upperBound - domain.lowerBound) / 11, let before = chartedBefore,
-      let now = chartedNow
+    guard let delta, abs(delta.amount) >= (domain.upperBound - domain.lowerBound) / 11,
+      let before = chartedBefore, let now = chartedNow
     else {
       return nil
     }
 
     return Change(
-      before: before, now: now,
-      label: showsAnswer
-        ? nil : ActivityNumberFormat.format(delta, unit: charted.unit, signed: true))
+      before: before, now: now, label: showsAnswer ? nil : delta.label(unit: charted.unit))
   }
 
   var compared: (x: Double, y: Double)? {
@@ -249,9 +276,10 @@ struct FormulaModelView {
     fields.outputs.map { output in
       let value = outputAt(output, now)
       let before = readoutBaseline.flatMap { outputAt(output, $0.values) }
+      let change = shownChange(output, value, before)
       var note: String?
 
-      if let value, let before, value != before {
+      if let before, let change {
         note =
           readoutBaseline?.kind == .whatIf
           ? String(
@@ -260,7 +288,7 @@ struct FormulaModelView {
             comment: "An output's value before the what-ifs, like $1,200 before")
           : String(
             localized:
-              "\(ActivityNumberFormat.format(value - before, unit: output.unit, signed: true)) from the start",
+              "\(change.label(unit: output.unit)) from the start",
             table: "ActivitiesCharts",
             comment: "How much an output changed, like +$300 from the start")
       }

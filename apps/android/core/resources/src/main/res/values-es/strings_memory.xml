@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "memory_category_background": "1c9e7f076ce249e3e93d927e0f4c7998e85abd08c9619af4fbeda71eba87b7c6",
+  "memory_category_background": "705e6c3ad0265c972c4715c3d0d1c85b8a5bc15b48f5337236ac5fc017714f4e",
   "memory_category_context": "032165d5bdcde5cd18487e727c04a42e8e6053d620edfe1ff3ac8e6ea365f14c",
   "memory_category_goals": "afae04e7242d4a1f564169d10969ed8bc9f734491d30d4e13473d8a97159f74a",
-  "memory_category_learning": "dc560a0769ec1bf2953ff7a009cfa1c36524d6313b3b2d3c6381963a6a3d4b06",
+  "memory_category_learning": "117c8de18730b11c28cfed5aeac6ca95812b126e72aad13baecab5a2697945a7",
   "memory_category_preferences": "3f5c1de5bf5c0363dc6bddcaf8ae822999a2f3680f84c45bc60df11d2cec1e55",
   "memory_category_routine": "78a7d729f48491efb3cbd7ff9f6741660ed6c49dda7ae3a68ed861701ff46b03",
   "memory_change_undone": "8a2a8d9632da119fb58dc8f7197addb9a3a032eba770c1e159810e822dbdc3cc",
   "memory_delete": "d2eee84a7a858fe344fb3fdf114fd880537244957410a4cfa48aad5a2c36c91e",
   "memory_description": "ed4353cf61582f8a66e5a2b6956da7a02bd2ffbbd62c6d7f655d86decca40af9",
   "memory_download": "523221b6a42906c5d0fa53ab883970912f80843caed1b2f025ece2036648453f",
-  "memory_download_description": "d2baabe1ef0dd13b7c5d1ec08a0e5534529f3b47dcf40aef4344a9edd9f9990b",
+  "memory_download_description": "9098854cedc42f5ac403c31bca2c71ba5215a5a8eb9a7c2fdba94dd44b5c7369",
   "memory_edit": "fcc46ba6574aa21e7c065af88a874447638e5f9754b5c1f17922619e4ef2a007",
   "memory_edit_description": "4a97284edbd3224a2a0f13016b75a2ebdbf0c5a8f0a7091b61d9298e492639ff",
   "memory_edit_label": "0da017f33127fea44259e03408ff8e9f247e680d5845756112ce4a7fbe0a1c19",
   "memory_edit_title": "787abad11b3beaeaca9cd0ad7b1fc4fb0a5301c3dda3473a60d9c3ab2c472fe1",
   "memory_empty_off": "f39f592578c14bbc11573e0a80f3d954ef69e07864b7bc22b15e651fa0a48590",
   "memory_empty_on": "03b4320ce500b86cc18f4e147f2dfb26bcf0f17eab07fc4497394f5d82193607",
-  "memory_fact_options": "b29fd7252922d221a9b9799675a7f7643d8bd8449c529b60a45432ad14441c48",
+  "memory_fact_options": "5cd20bcb69f5c3887bf52ac6d06f8a9ba0dfa9cb081e53340b74e741cb36bd0d",
   "memory_fact_source": "ea89c2ba316d63868b8de220db424e3f03b942c1f9caa714a9e43f404201a03a",
   "memory_save_failed": "70d14e88cd2dc39731fe880eca698cb0e0dbfaef3a96a2069cfcb7fe74d2f9ef",
   "memory_sensitive_note": "1f61173af6480b821550c3a40291eda706328c20ace7d24c33eb8c098b459aee",
@@ -47,10 +47,10 @@
     <string name="memory_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <string name="memory_category_goals">Objetivos</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
-    <string name="memory_category_background">Contexto personal</string>
+    <string name="memory_category_background">Perfil</string>
     <string name="memory_category_routine">Rutina</string>
     <string name="memory_category_preferences">Preferencias</string>
-    <string name="memory_category_learning">Aprendiendo</string>
+    <string name="memory_category_learning">Aprendizaje</string>
     <string name="memory_category_context">Contexto</string>
     <string name="memory_source_noticed">Lo notamos por tu actividad</string>
     <string name="memory_source_you">Nos lo contaste</string>
@@ -62,7 +62,7 @@
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
     <!-- %1$s is the fact, like "Studies after work". -->
-    <string name="memory_fact_options">Opciones de “%1$s”</string>
+    <string name="memory_fact_options">Opciones para “%1$s”</string>
     <string name="memory_edit">Editar</string>
     <string name="memory_delete">Eliminar</string>
     <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
@@ -71,7 +71,7 @@
     <string name="memory_edit_label">Lo que Zoonk recuerda</string>
     <string name="memory_download">Descargar mi memoria</string>
     <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Todo lo que recordamos de ti, en un solo archivo</string>
+    <string name="memory_download_description">Toda tu memoria en un solo archivo</string>
     <string name="memory_sensitive_note">Zoonk no guarda datos sobre tu salud, religión u otros temas sensibles a menos que se lo pidas.</string>
     <string name="memory_updated">Memoria actualizada:</string>
     <plurals name="memory_updated_more">
