@@ -37,7 +37,7 @@ interface LiveCallClient {
     /** Has the server hang up: whether it already had at the call's deadline, null if unconfirmed. */
     suspend fun end(connectionId: UUID): Boolean?
 
-    /** Every goal met so far, from what was said; null when the check didn't run. */
+    /** What was said checked against the goals: every goal met so far, a mutual goodbye, and what to tell the character; null when it didn't run. */
     suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck?
 }
 

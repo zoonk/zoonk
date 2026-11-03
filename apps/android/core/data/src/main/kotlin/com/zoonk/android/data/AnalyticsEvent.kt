@@ -96,7 +96,10 @@ sealed class AnalyticsEvent(
             ),
         )
 
-    /** Once per connection, however it ended; a reply gap with nothing to measure is left out, as main sends it null. */
+    /**
+     * Once per connection, however it ended. A reply gap with nothing to measure is left out where main
+     * sends it null: PostHog reads a missing property as null, and its capture takes no null values.
+     */
     data class CallEnded(
         val reason: String,
         val conversationKind: String,

@@ -223,8 +223,9 @@ class WebRtcLiveCallTransport(
         const val VOICE_SAMPLE_MS = 200L
 
         /**
-         * WebRTC's level is the loudest sample of each 10 ms, from 0 to 1 after echo cancellation and
-         * noise suppression. Speech peaks well above this; a quiet room stays under it.
+         * Compared with the root mean square, over the 200 ms between samples, of WebRTC's level for
+         * each frame (its loudest sample, from 0 to 1, after echo cancellation and noise suppression).
+         * Speech rises well above this; a quiet room stays under it.
          */
         const val SPEECH_LEVEL = 0.03
     }
