@@ -1,12 +1,13 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { planFixture } from "@zoonk/testing/fixtures/goals";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { createGoalLearner } from "./checkpoint-fixtures";
 import { type Page, expect, test } from "./fixtures";
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -82,8 +83,11 @@ async function answerSpokenByTyping(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-async function createChapterLearner(browser: Browser) {
-  const { goal, user } = await createGoalLearner();
+async function createChapterGuest(browser: Browser) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const userId = await ensureGuest(page);
+  const goal = await goalFixture({ timezone: "UTC", title: "Understand atoms", userId });
 
   const [chapter, skill, first, second] = await Promise.all([
     libraryChapterFixture({ title: "Inside the atom" }),
@@ -109,15 +113,13 @@ async function createChapterLearner(browser: Browser) {
         skillId: skill.id,
       })),
     }),
+    learningProfileFixture({ activeGoalId: goal.id, userId }),
     ...lessons.flatMap((lesson, position) => [
       chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
       lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
       prisma.lesson.update({ data: { homeChapterId: chapter.id }, where: { id: lesson.id } }),
     ]),
   ]);
-
-  const context = await browser.newContext({ storageState: user.storageState });
-  const page = await context.newPage();
 
   // The click asks the separate API for readiness, which isn't running here.
   await Promise.all(
@@ -171,10 +173,10 @@ test.describe("Library lesson player", () => {
       .toStrictEqual({ correctAnswers: 3 });
   });
 
-  test("a plan lesson played from its chapter, outside any session, counts for the plan and closes to the chapter", async ({
+  test("a guest's plan lesson played from its chapter, outside any session, counts for the plan and closes to the chapter", async ({
     browser,
   }) => {
-    const { chapterId, context, first, firstItemId, page } = await createChapterLearner(browser);
+    const { chapterId, context, first, firstItemId, page } = await createChapterGuest(browser);
 
     try {
       await page.goto(`/content/chapters/${chapterId}`);

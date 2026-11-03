@@ -148,7 +148,10 @@ async function getRouting({
   return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
-/** A guest opening a lesson from Today or Completed lessons already has a goal: no visitor's ending. */
+/**
+ * The visitor's ending ("Build my plan") is only for a lesson opened from a public catalog page; a
+ * guest who opened it inside the app (Today, Completed lessons, their chapters) already has a goal.
+ */
 function isGuestLesson({
   origin,
   session,
@@ -158,7 +161,9 @@ function isGuestLesson({
   session: Awaited<ReturnType<typeof getSession>>;
   studySessionId: string | null;
 }): boolean {
-  return Boolean(session?.user.isAnonymous) && studySessionId === null && origin?.kind !== "app";
+  return (
+    Boolean(session?.user.isAnonymous) && studySessionId === null && origin?.kind === "catalog"
+  );
 }
 
 /**
