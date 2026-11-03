@@ -1,6 +1,53 @@
-import { findMisaccentedPortugueseWord } from "@/lib/portuguese-accents";
-
 const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
+
+/** A single quote between two letters is an apostrophe ("I've"), never where a quote opens or closes. */
+const QUOTED =
+  /"[^"]*"|“[^”]*”|«[^»]*»|(?<!\p{L})'(?:[^']|(?<=\p{L})'(?=\p{L}))*'(?!\p{L})|‘(?:[^’]|(?<=\p{L})’(?=\p{L}))*’/gu;
+
+const ACCENTED_WORDS = new Set([
+  "alem",
+  "apos",
+  "ate",
+  "ciencia",
+  "competencia",
+  "consequencia",
+  "entao",
+  "estao",
+  "frequencia",
+  "importancia",
+  "ja",
+  "nao",
+  "numero",
+  "porem",
+  "possivel",
+  "resistencia",
+  "sao",
+  "tambem",
+  "tres",
+  "voce",
+  "voces",
+]);
+
+const UNACCENTED_ENDING = /(?:cao|coes)$/u;
+
+const DIAERESIS = /[äëïöü]/iu;
+
+function isMisaccented(word: string): boolean {
+  return (
+    ACCENTED_WORDS.has(word) ||
+    (word.length > 4 && UNACCENTED_ENDING.test(word)) ||
+    DIAERESIS.test(word)
+  );
+}
+
+function findMisaccentedWord(text: string): string | null {
+  const words = text
+    .replaceAll(QUOTED, " ")
+    .toLowerCase()
+    .split(/[^\p{L}]+/u);
+
+  return words.find((word) => isMisaccented(word)) ?? null;
+}
 
 export function findFeedbackWritingIssue({
   feedback,
@@ -17,7 +64,7 @@ export function findFeedbackWritingIssue({
     return "HTML entity in the text";
   }
 
-  const misaccented = language === "pt" ? findMisaccentedPortugueseWord(feedback) : null;
+  const misaccented = language === "pt" ? findMisaccentedWord(feedback) : null;
   return misaccented ? `"${misaccented}" written without its right accent` : null;
 }
 

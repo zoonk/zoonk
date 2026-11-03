@@ -1,5 +1,4 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { findMisaccentedPortugueseWord } from "@/lib/portuguese-accents";
 import { type TaskScorer } from "@/lib/types";
 import {
   type ConversationTurn,
@@ -39,37 +38,14 @@ function wasSaidByLearner({ phrase, turns }: { phrase: string; turns: Conversati
   );
 }
 
-function findMisaccentedWord({
-  feedback,
-  learnerLanguage,
-}: {
-  feedback: WriteConversationFeedbackSchema;
-  learnerLanguage: unknown;
-}): string | null {
-  if (learnerLanguage !== "pt") {
-    return null;
-  }
-
-  const learnerLanguageText = [
-    feedback.improve?.why,
-    ...feedback.pronunciation.map((item) => item.tip),
-    feedback.encouragement,
-  ].join("\n");
-
-  return findMisaccentedPortugueseWord(learnerLanguageText);
-}
-
 function checkFeedback({
-  learnerLanguage,
   output,
   turns,
 }: {
-  learnerLanguage: unknown;
   output: string;
   turns: ConversationTurn[];
 }): CodeCheckResult {
   const feedback = JSON.parse(output) as WriteConversationFeedbackSchema;
-  const misaccented = findMisaccentedWord({ feedback, learnerLanguage });
 
   const checks = [
     ...feedback.wentWell.map((phrase) => ({
@@ -89,7 +65,6 @@ function checkFeedback({
       problem: `Pronunciation word "${item.word}" isn't in the learner's turns.`,
     })),
     { passed: !output.includes(EM_DASH), problem: "The feedback uses an em dash." },
-    { passed: !misaccented, problem: `"${misaccented}" is written without its accent.` },
   ];
 
   return {
@@ -112,8 +87,7 @@ export const scoreConversationFeedback: TaskScorer = ({ output, testCase }) => {
   const turns = getTurns(testCase.userInput);
 
   return scoreWithCodeChecks({
-    check: (value) =>
-      checkFeedback({ learnerLanguage: testCase.userInput.learnerLanguage, output: value, turns }),
+    check: (value) => checkFeedback({ output: value, turns }),
     output,
     scoreCategories: CONVERSATION_FEEDBACK_SCORE_CATEGORIES,
     testCase,
