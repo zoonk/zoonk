@@ -198,6 +198,16 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun reportsTheMapAsItsOwnScreenWhenTheLessonIsLeftThere() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), lessonMapStep())
+        val onMap = play(steps, started(), LessonAction.Continue, *answerCheck("q1", true), LessonAction.Continue)
+
+        assertEquals(LESSON_MAP_STEP_ID, onMap.currentId)
+        assertEquals(3, onMap.abandonEvent()?.screen)
+        assertEquals("map", onMap.abandonEvent()?.properties?.get("step_kind"))
+    }
+
+    @Test
     fun goesBackOneScreenAtATimeShowingAnAnsweredQuestionsResultAgain() {
         val steps = listOf(checkStep("quiz"), explanationStep("a"), explanationStep("b"))
         val atB = play(steps, *answerCheck("quiz", true), LessonAction.Continue, LessonAction.Continue)

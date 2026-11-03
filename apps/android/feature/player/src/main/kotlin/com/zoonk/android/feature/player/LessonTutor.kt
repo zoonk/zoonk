@@ -164,7 +164,7 @@ internal fun StrugglePause(
 
 /** What the buddy is asked about on [screen]: the learner's checked answer, the screen, or the lesson before its first screen. */
 internal fun LessonPlayerState.tutorScope(screen: LessonScreen): TutorScope {
-    val step = screen.step?.takeUnless { it.kind == StepKind.LessonMap } ?: return TutorScope.Lesson(lessonId, lessonStepIds)
+    val step = screen.step?.takeUnless { it.kind == StepKind.Map } ?: return TutorScope.Lesson(lessonId, lessonStepIds)
     val number = position + 1
     val checked = answers[step.id]?.takeIf { phase == LessonPhase.Feedback && step.id in results }?.toApi()
     return if (checked != null) TutorScope.Answer(lessonId, step.id, number, checked) else TutorScope.Step(lessonId, step.id, number)
