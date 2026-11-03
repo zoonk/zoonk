@@ -1,11 +1,11 @@
 /**
- * When the call's objectives are checked: once the transcript has been still for 1.5 s, if it
- * holds learner words no check read and the character answered them. The learner's words come
- * back 1.3 to 1.8 s late, often after that answer, so who spoke last is read from the session's
- * timeline (`startMs`), not from when the words arrived.
+ * When the call's objectives are checked: once the transcript has been still for 2 s, if it holds
+ * learner words no check read and the character answered them. The learner's words come back 1.3
+ * to 1.8 s late (measured), often after that answer, so the wait outlasts that lag, and who spoke
+ * last is read from the session's timeline (`startMs`), not from when the words arrived.
  */
 
-export const REPLY_SETTLED_MS = 1500;
+export const REPLY_SETTLED_MS = 2000;
 
 type Speaker = "character" | "learner";
 
