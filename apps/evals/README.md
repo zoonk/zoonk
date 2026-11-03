@@ -113,7 +113,10 @@ pnpm --filter evals eval:run --task course-intent --model typesafe-ai/jev --mode
 - `--case` keeps only cases whose id contains one of the given texts, such as `--case :parallel` for the production search tool in `find-official-sources`.
 - `--fresh` regenerates the sampled cases even if saved outputs exist, so every model's latency is measured the same way. Without it, only cases with no saved output are generated.
 - `--saved` prints the same table from saved results without calling any model.
-- `--battle` writes the sampled cases with every `--model`, then ranks them with the battle judges instead of scoring each output with the single judge, and prints each model's average, its score from each judge and per category, and how many cases it failed to write. A model's score from a judge that also scored another model compares the two directly; the average mixes judges.
+- `--battle` writes the sampled cases with every `--model`, then ranks them with the battle judges instead of scoring each output with the single judge. It prints each model's average, its score from each judge and per category, the task's code checks when its scorer runs them, how many cases it failed to write, and a head-to-head table that compares two models only through a judge that scored both (the average mixes judges' severities). A saved judgment is reused only for the same outputs, models, rubric and order.
+  - `--runs <n>` writes and judges each case `n` times; the head-to-head averages a case's runs before its cases.
+  - `--swap` has each judge rank the outputs in both orders and averages the two, to cancel position bias.
+  - With `--saved`, it reports saved outputs and judgments without calling any model, and lists the case-runs that have no saved judgment for them.
 
 Generation runs at most four calls at a time so a model's own requests don't slow each other down. "Spent" is what the sampled cases' saved outputs and judge calls cost, including ones generated in earlier runs. Search tool fees (`find-official-sources`) are billed per search and aren't included.
 

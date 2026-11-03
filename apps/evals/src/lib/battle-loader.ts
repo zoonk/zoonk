@@ -184,6 +184,27 @@ export async function getBattleJudgeCost(taskId: string): Promise<number> {
   return sumJudgeCost(await getBattleMatchups(taskId));
 }
 
+function sumCodeChecks(
+  matchups: BattleMatchup[],
+  modelId: string,
+): BattleLeaderboardEntry["codeChecks"] {
+  const checks = matchups.flatMap((matchup) => matchup.codeChecks?.[modelId] ?? []);
+
+  if (checks.length === 0) {
+    return undefined;
+  }
+
+  return {
+    passed: sum(checks.map((check) => check.passed)),
+    problems: sum(checks.map((check) => check.problems.length)),
+    total: sum(checks.map((check) => check.total)),
+  };
+}
+
+/**
+ * Latency and cost come from `allOutputs`, so a report on some cases passes only those cases'
+ * outputs.
+ */
 export function buildBattleLeaderboard({
   allOutputs,
   matchups,
@@ -195,7 +216,8 @@ export function buildBattleLeaderboard({
 
   const entries = [...modelScores.entries()].flatMap(([modelId, scores]) => {
     const entry = buildLeaderboardEntry({ allOutputs, modelId, prices: GATEWAY_PRICES, scores });
-    return entry ? [entry] : [];
+    const codeChecks = sumCodeChecks(matchups, modelId);
+    return entry ? [codeChecks ? { ...entry, codeChecks } : entry] : [];
   });
 
   return entries.toSorted((a, b) => b.averageScore - a.averageScore);

@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { checkWrittenLesson } from "@zoonk/core/library/quality/code-checks";
@@ -24,10 +24,8 @@ function findInLesson({
   ];
 }
 
-async function checkLesson(
-  output: string,
-  input: WriteLessonDraftParams,
-): Promise<CodeCheckResult> {
+export const checkLessonWriterOutput: TaskCodeChecks = async ({ output, testCase }) => {
+  const input = testCase.userInput as WriteLessonDraftParams;
   const lesson = JSON.parse(output) as WrittenLesson;
 
   const result = checkWrittenLesson({
@@ -66,11 +64,11 @@ async function checkLesson(
     ),
     total,
   };
-}
+};
 
 export const scoreLessonWriter: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkLesson(value, testCase.userInput as WriteLessonDraftParams),
+    check: (value) => checkLessonWriterOutput({ output: value, testCase }),
     output,
     scoreCategories: LESSON_WRITER_SCORE_CATEGORIES,
     testCase,
