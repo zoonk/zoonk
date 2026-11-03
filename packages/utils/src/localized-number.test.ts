@@ -1,10 +1,34 @@
+import {
+  assert,
+  boolean,
+  constant,
+  constantFrom,
+  double,
+  integer,
+  oneof,
+  pre,
+  property,
+  record,
+  tuple,
+} from "fast-check";
 import { describe, expect, it } from "vitest";
+import { SUPPORTED_LOCALES } from "./locale";
 import {
   exactFractionDigitsFor,
   formatLocalizedNumber,
   fractionDigitsFor,
   parseLocalizedNumber,
 } from "./localized-number";
+
+const locales = constantFrom(...SUPPORTED_LOCALES);
+const decimals = integer({ max: 10, min: 0 });
+
+const digits = oneof(
+  integer({ max: 9999, min: -9999 }),
+  integer({ max: 999_999_999, min: -999_999_999 }),
+);
+
+const typedNumber = tuple(digits, decimals).map(([whole, places]) => whole / 10 ** places);
 
 describe(formatLocalizedNumber, () => {
   it("formats in the learner's language and rounds float noise for display", () => {
@@ -28,6 +52,22 @@ describe(formatLocalizedNumber, () => {
     expect(formatLocalizedNumber({ locale: "en", value: -0.0001 })).toBe("0");
     expect(formatLocalizedNumber({ compact: true, locale: "en", value: -0 })).toBe("0");
     expect(formatLocalizedNumber({ locale: "en", value: -0.5 })).toBe("−0.5");
+  });
+
+  it("shows a minus sign exactly when the number it writes reads as negative", () => {
+    assert(
+      property(
+        locales,
+        double({ noDefaultInfinity: true, noNaN: true }),
+        decimals,
+        (locale, value, maximumFractionDigits) => {
+          const text = formatLocalizedNumber({ locale, maximumFractionDigits, value });
+          const shown = parseLocalizedNumber({ locale, text }) ?? Number.NaN;
+
+          expect(text.startsWith("−")).toBe(shown < 0);
+        },
+      ),
+    );
   });
 });
 
@@ -95,6 +135,40 @@ describe(exactFractionDigitsFor, () => {
     expect(format(input.value)).not.toBe(format(input.expected));
   });
 
+  it("never shows a wrong typed answer the same as the expected one", () => {
+    const closeAnswers = tuple(digits, integer({ max: 1000, min: -1000 }), decimals).map(
+      ([whole, miss, places]) => ({
+        expected: whole / 10 ** places,
+        value: (whole + miss) / 10 ** places,
+      }),
+    );
+
+    const tolerances = oneof(
+      record({ kind: constant("absolute" as const), value: double({ max: 10, min: 0 }) }),
+      record({ kind: constant("relative" as const), value: double({ max: 0.1, min: 0 }) }),
+    );
+
+    assert(
+      property(
+        oneof(closeAnswers, record({ expected: typedNumber, value: typedNumber })),
+        tolerances,
+        ({ expected, value }, tolerance) => {
+          const allowed =
+            tolerance.kind === "absolute" ? tolerance.value : tolerance.value * Math.abs(expected);
+
+          pre(Math.abs(value - expected) > allowed);
+
+          const maximumFractionDigits = exactFractionDigitsFor({ expected, tolerance, value });
+
+          const format = (number: number) =>
+            formatLocalizedNumber({ locale: "en", maximumFractionDigits, value: number });
+
+          expect(format(value)).not.toBe(format(expected));
+        },
+      ),
+    );
+  });
+
   it("keeps the expected value precise before an answer and rounds accepted float noise", () => {
     const tolerance = { kind: "absolute" as const, value: 0.00001 };
     const expected = 0.12543;
@@ -119,6 +193,36 @@ describe(exactFractionDigitsFor, () => {
 });
 
 describe(parseLocalizedNumber, () => {
+  it("reads back every number written in any language as the number it shows", () => {
+    assert(
+      property(
+        locales,
+        typedNumber,
+        decimals,
+        boolean(),
+        boolean(),
+        (locale, value, maximumFractionDigits, grouping, signed) => {
+          const text = formatLocalizedNumber({
+            grouping,
+            locale,
+            maximumFractionDigits,
+            signed,
+            value,
+          });
+
+          const plain = formatLocalizedNumber({
+            grouping: false,
+            locale: "en",
+            maximumFractionDigits,
+            value,
+          });
+
+          expect(parseLocalizedNumber({ locale, text })).toBe(Number(plain.replace("−", "-")));
+        },
+      ),
+    );
+  });
+
   it("reads a decimal point or comma in any language", () => {
     expect(parseLocalizedNumber({ locale: "en", text: "3.5" })).toBe(3.5);
     expect(parseLocalizedNumber({ locale: "en", text: "3,5" })).toBe(3.5);

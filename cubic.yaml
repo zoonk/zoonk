@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://cubic.dev/schema/cubic-repository-config.schema.json
+version: 1
+
+reviews:
+  custom_instructions: |
+    Report an issue only when you can show how it happens: the entry point (a route, a server action, a tap, a workflow step), the callers it passes through, and what goes wrong for a learner, their data or our costs, with a file and line at each hop. Before reporting a race, stale state or a missing guard, check what already prevents it, such as a learner lock, a unique constraint, a transaction, a component remounted by its key, or a single caller. Skip an issue whose worst outcome is harmless.

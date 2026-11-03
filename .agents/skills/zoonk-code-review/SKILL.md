@@ -27,6 +27,15 @@ Classify concerns before reporting:
 - **Behavior-dependent:** The outcome depends on an unverified product rule, caller, environment, or deployment condition. State that condition and keep it separate from confirmed findings.
 - **Non-bug:** Intentional, unreachable, speculative, or preference-only. Explain rejected supplied comments briefly; omit them from findings.
 
+## Evidence before findings
+
+Try to break the change rather than read it for flaws. A concern becomes a finding only with evidence:
+
+- **Shown:** a request, a command or a screen in the running app that shows it, or a failing test. A read-only review puts the test in the finding, for the author to run and keep as the regression test.
+- **Traced:** when it can't run here (a deploy window, a race only production timing hits), the path from an entry point (a route, an action, a tap, a workflow step) through each caller to the consequence, with a file and line at each hop.
+
+Before reporting a race, stale state or a missing guard, look for what already prevents it: a lock, a unique constraint, a transaction, a component remounted by its key, the only caller. A concern with neither kind of evidence is behavior-dependent at best.
+
 ## Follow the changed behavior
 
 Choose the relevant areas below rather than running a fixed audit of every subsystem:
@@ -54,6 +63,6 @@ Start from `pnpm verify:diff --base <base>`, which lists the lines a principal e
 
 Lead with actionable findings ordered by impact: P0 for immediate catastrophic impact, P1 for high-impact failures, P2 for functional or architectural defects, and P3 for small real defects. Severity describes impact, not certainty, and does not excuse leaving an authorized confirmed fix unfinished.
 
-Each finding needs a concise title, tight file/line reference, reachable trigger, consequence, and the simplest fix direction when it is not obvious. Include a regression-coverage gap only when it adds information. Keep unsupported conditions separate.
+Each finding needs a concise title, tight file/line reference, reachable trigger, consequence, its evidence, and the simplest fix direction when it is not obvious. Include a regression-coverage gap only when it adds information. Keep unsupported conditions separate.
 
 End with a brief account of what was traced or exercised, which relevant checks passed or failed, and material limitations. If there are no findings, say so without implying exhaustive proof of correctness.

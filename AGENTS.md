@@ -56,12 +56,13 @@ Delegate a big task, or one that spans several areas (code, design, UX, accessib
 
 ### Cross-model review
 
-Before committing or pushing any code change beyond a typo or a small, obvious fix:
+Before opening a PR with any code change beyond a typo or a small, obvious fix:
 
 1. Ask yourself: "Am I over-engineering this? Is there a simpler way to do it?"
-2. Have a subagent from the other model family review it adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request and the diff, not your reasoning, and fix what holds up.
+2. Have a subagent from the other model family review the branch adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request, the diff and the checkout to run it in, with the running app's URL when there is one, but not your reasoning. It tries to break the change and reports only what it can show ([evidence before findings](.agents/skills/zoonk-code-review/SKILL.md#evidence-before-findings)). Fix what holds up.
+3. A further round reviews only the fixes, and the rounds stop once one finds nothing new it can show. After the PR opens, a fix gets its own review only when it changes behavior.
 
-Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. This applies to every agent that commits, subagents included: one that can't delegate hands back before committing so its lead gets the review. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
+Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. A reviewer that only reads the code drifts into style notes and guards for paths nobody reaches; one that has to show each failure reports what's real. The agent that opens the PR runs this review, so a subagent that hands its work to a lead leaves it to the lead. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
 
 ### PR verification gate
 
