@@ -39,17 +39,14 @@ type FirstQuestionProps = {
   minutes: number;
   origin: string;
   playerPath: string;
-  questionId: string;
   screen: FirstChoiceScreen;
 };
 
-/** `questionId` names the options' group, so it must be unique on its page. */
 async function QuestionScreen({
   lessonId,
   minutes,
   origin,
   playerPath,
-  questionId,
   screen,
 }: FirstQuestionProps) {
   const t = await getExtracted();
@@ -69,19 +66,17 @@ async function QuestionScreen({
         />
       )}
 
-      <div
+      <RichTextBlocks
         className="mt-2 mb-5 text-[19px] leading-snug font-[560] tracking-[-0.015em] text-balance"
-        id={questionId}
-      >
-        <RichTextBlocks text={screen.question} />
-      </div>
+        text={screen.question}
+      />
 
       <FirstScreenChoices
         action={playerPath}
         lessonId={lessonId}
         options={screen.options}
         origin={origin}
-        questionId={questionId}
+        question={screen.question}
       />
 
       <StartNote>

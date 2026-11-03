@@ -1,7 +1,6 @@
 import { COURSE_TITLE_CLASS, LESSON_LEAD_CLASS } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import { JsonLd } from "@/components/public/json-ld";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
@@ -9,7 +8,6 @@ import { getCourseHref } from "@/data/courses/course-href";
 import { getLessonUrls } from "@/lib/public/public-canonical";
 import { getChapterHref, getLessonHref, getLessonPlayerPath } from "@/lib/public/public-hrefs";
 import { getLevelLabels } from "@/lib/public/public-labels";
-import { breadcrumbJsonLd, lessonJsonLd } from "@/lib/public/structured-data";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { Page } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
@@ -19,6 +17,7 @@ import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { LessonChapterAside } from "./lesson-chapter-aside";
 import { LessonFirstScreen } from "./lesson-first-screen";
+import { LessonJsonLd } from "./lesson-json-ld";
 import { LessonMore } from "./lesson-more";
 import { LessonPlanDay } from "./lesson-plan-day";
 
@@ -81,24 +80,22 @@ export async function LibraryLessonPage({
         <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
           <PublicViewTracker contentId={lesson.id} page="lesson" />
 
-          <JsonLd
-            items={[
-              lessonJsonLd({
-                course: { name: course.title, url: urls.course },
-                description: lesson.description,
-                language: course.language,
-                level: levelLabels[chapter.level],
-                minutes: lesson.estimatedMinutes,
-                name: lesson.title,
-                teaches: lesson.summaryIdeas,
-                url: urls.canonical,
-              }),
-              breadcrumbJsonLd([
-                { name: course.title, url: urls.course },
-                { name: chapter.title, url: urls.chapter },
-                { name: lesson.title, url: urls.current },
-              ]),
+          <LessonJsonLd
+            breadcrumbs={[
+              { name: course.title, url: urls.course },
+              { name: chapter.title, url: urls.chapter },
+              { name: lesson.title, url: urls.current },
             ]}
+            lesson={{
+              course: { name: course.title, url: urls.course },
+              description: lesson.description,
+              language: course.language,
+              level: levelLabels[chapter.level],
+              minutes: lesson.estimatedMinutes,
+              name: lesson.title,
+              teaches: lesson.summaryIdeas,
+              url: urls.canonical,
+            }}
           />
 
           <article aria-labelledby={titleId} className="max-w-column flex flex-col">
