@@ -12,7 +12,7 @@ Each brief is the plan for its screen:
 - Keep the brief's order inside the screen: a concrete case or everyday comparison planned before a formula or notation comes first.
 - Keep each idea on its own screen: don't explain a later screen's idea early and don't leave part of a brief for a later screen.
 
-Only two things change a brief's details, never its idea or its tempting wrong answer: a case or numbers an already-taught lesson in `CHAPTER_LESSONS` used (see "The chapter's other lessons"), and a check that would ask an earlier check's question again (see "Check").{{#novice}} At this level you may also change how a brief presents its screen so it follows the rules below (a hook planned as a guess becomes a scene, a long sentence becomes two short ones), but everything it names, its learning move and its tempting wrong answer stay.{{/novice}}
+Only two things change a brief's details, never its idea or its tempting wrong answer: a case or numbers an already-taught lesson in `CHAPTER_LESSONS` used (see "The chapter's other lessons"), and a check that would ask an earlier check's question again (see "Check").{{#novice}} At this level you may also change how a brief presents its screen so it follows the rules below (a hook planned as a guess becomes a scene of the same example, a long sentence becomes two short ones), but everything it names, its learning move and its tempting wrong answer stay.{{/novice}}
 
 # Voice
 
@@ -44,7 +44,7 @@ The first screen opens with the idea. No introduction, no "In this lesson…", n
 - `hookText`: a surprising fact or a real situation, in two or three sentences, that makes the learner want the idea.
 {{/experienced}}
 {{#novice}}
-At this level the hook is always a `hookText` and asks nothing the learner answers: the lesson's main example as a short scene, in one or two sentences of everyday words, ending on the question the lesson answers, posed for the learner to wonder about ("Lia plucks the same guitar string twice, the second time pressing it halfway along. Why does the second note sound higher?"). No term the lesson explains later, and no answer: the next screens give it. Its picture shows the scene.
+At this level the hook is always a `hookText` and asks nothing the learner answers: the lesson's main example as a short scene, in one or two sentences of everyday words, ending on the question the lesson answers, posed for the learner to wonder about ("Lia plucks the same guitar string twice, the second time pressing it halfway along. Why does the second note sound higher?"). It's an open question, never one with choices to pick from in words ("is it A, B or C?"): a guess its plan had becomes the question the lesson answers, without its options and without its answer, which the next screens give. No term the lesson explains later. Its picture shows the scene.
 {{/novice}}
 
 ## Explanation (`explanation`)
@@ -160,7 +160,7 @@ Text fields use plain sentences with light Markdown: **bold** for the one key te
 
 `summary`: a small map of what the lesson taught, which the app draws on the lesson's last card.
 
-- `shape`: `nested` only when each idea is a level that contains the one before it (the smallest first, like an organism, its population, its community); otherwise `hub`, which the app draws under the lesson's title.
+- `shape`: `nested` whenever each idea is a level that contains the one before it, the smallest first (a cell inside a tissue inside an organ), so the app draws them as boxes inside boxes; otherwise `hub`, which the app draws under the lesson's title.
 - `ideas`: 2 to 5, in teaching order. `label` names the idea in 1 to 4 words, with the lesson's own term or case. `text` states it in one complete sentence that names its subject, so it reads on its own without the label.
 - Only what the hook, explanations and worked examples stated, in words those screens used, so a learner can study the card on its own. Each idea is exactly as precise as the lesson: a summary that simplifies a rule until it's wrong is worse than none.
 

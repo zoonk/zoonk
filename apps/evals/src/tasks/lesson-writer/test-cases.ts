@@ -199,7 +199,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for
       - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions
       - No screen is a \`typedAnswer\`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)
-      - The application keeps Iara's diagram from the brief and asks what she adds and where, with short options (the cytoplasm, filling the space between the membrane and the genetic material) and the why in each option's reason, the second-membrane trap and a reason on every option
+      - The application keeps Iara's diagram from the brief and asks what she adds, where and why, with short options (the cytoplasm, filling the space between the membrane and the genetic material), the second-membrane trap and a reason on every option
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -668,7 +668,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for total beginners
-      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` showing the pond in one or two everyday sentences that end on the question the lesson answers, with nothing to answer and its picture of the pond
+      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` showing the pond in one or two everyday sentences that end on an open question the lesson answers (how its living things fit together), never the guess's choices in words, and its picture of the pond
       - Each explanation has at most one term in bold, two or three short sentences: on the screen about espécie, only espécie is bold, and organismo, taught in an earlier lesson, is recalled in plain words
       - A species is living beings alike enough to reproduce together and have fertile offspring, never just "related living beings"
       - Every picture is one scene of the same pond, its \`alt\` describing that same scene, the people in it adults
@@ -679,6 +679,16 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-niveis-ecologicos-one-term",
     userInput: toInput({
+      chapterLessons: [
+        {
+          canDo: "Relacionar células, tecidos, órgãos e organismos",
+          ideas: [
+            "A célula é uma pequena unidade viva que compõe os seres vivos; um organismo é um ser vivo inteiro.",
+          ],
+          order: "before",
+          title: "Organização dos organismos",
+        },
+      ],
       chapterTitle: "Organização da vida",
       courseTitle: "Biologia",
       language: "pt",
@@ -689,7 +699,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for total beginners in accounting
-      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` about Davi's workshop that ends on the question the lesson answers, with nothing to answer and no term the lesson explains
+      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` about Davi's workshop that ends on an open question the lesson answers, never the guess's choices in words, and no term the lesson explains
       - The first explanation, whose brief packs a definition, a caveat and a formula to explore, is two or three short sentences with one bold term (patrimônio líquido); bens, direitos and obrigações are recalled in plain words, never bold or defined again; the caveat (a book value, not a sale price) stays, briefly
       - Every number in the worked example, the checks, the explore and the application matches the plan and adds up
       - Options are short; the why goes in each option's reason
@@ -710,7 +720,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for an overview: plain words, light checks
       - The plan's hook is a guess, and an overview's hook is a scene: a \`hookText\` about Igor's repair work in one or two sentences that ends on the question the lesson answers, with nothing to answer
-      - The check about a weekly payment whose amount changes keeps its learning move and its tempting wrong answer (the amount changing makes it irregular), with short options such as "Sim, é regular" and "Não, é eventual" and the why in each option's reason, never "Não, porque o valor muda" as an option
+      - The check about a weekly payment whose amount changes keeps its learning move and its tempting wrong answer (the amount changing makes it irregular), with short options; an option may carry a short reason ("Não, porque o valor muda") only because choosing the right explanation is what this check practices, and each reason is one short sentence
       - The application keeps its two choices and their meaning, as short options
       - The summary card is a \`hub\` whose sentences each name their subject ("Uma receita regular…"), never a fragment such as "Repete-se em intervalos definidos"
 
