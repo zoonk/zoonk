@@ -512,6 +512,11 @@ test.describe("Live call server states", () => {
 
       await expect.poll(() => actions.complete.length).toBe(1);
       expect(actions.end).toContain(connection.id);
+
+      await expect(
+        prisma.liveCallConnection.findUnique({ where: { id: connection.id } }),
+      ).resolves.toMatchObject({ endReason: "learner", endUnconfirmed: true, state: "ended" });
+
       expect(actions.complete[0]?.connectionId).toBe(connection.id);
 
       expect(actions.complete[0]?.turns).toEqual(
