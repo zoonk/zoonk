@@ -1,14 +1,8 @@
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { listNoticeGoals, proposeNoticeChange } from "@zoonk/core/plans/notice-change";
-import { claimNoticeLanding, endNoticeWait, startNoticeWait } from "@zoonk/core/plans/notice-wait";
+import { claimNoticeLanding, endNoticeWait } from "@zoonk/core/plans/notice-wait";
 import { logError } from "@zoonk/utils/logger";
-
-export async function startNoticeWaitStep(goalId: string): Promise<void> {
-  "use step";
-
-  await startNoticeWait({ goalId });
-}
 
 export async function claimNoticeLandingStep(goalId: string): Promise<boolean> {
   "use step";
