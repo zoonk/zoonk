@@ -1,6 +1,8 @@
 "use client";
 
+import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ImageIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
@@ -9,7 +11,7 @@ import {
 } from "../../components/player-choice-scene";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { useOptionPicture } from "./lesson-pictures";
-import { LessonStepImage } from "./lesson-step-image";
+import { LessonStepImage, PICTURE_FRAME_CLASS } from "./lesson-step-image";
 
 type PictureOption = {
   id: string;
@@ -33,12 +35,19 @@ function PictureOptionContent({
 
   function picture() {
     if (image) {
-      return <LessonStepImage className="w-full" frame="question" image={image} kind="option" />;
+      return <LessonStepImage className="mx-auto" frame="question" image={image} kind="option" />;
     }
 
     if (pending) {
       return (
-        <div className="text-muted-foreground relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg">
+        <div
+          className={cn(
+            "text-muted-foreground relative mx-auto flex items-center justify-center overflow-hidden rounded-lg",
+            PICTURE_BOX_CLASS,
+            PICTURE_FRAME_CLASS.question,
+          )}
+          style={pictureBoxStyle(DRAWN_PICTURE_SIZE.option)}
+        >
           <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
           <div className="relative flex items-center">
             <ImageIcon aria-hidden="true" className="size-5" />
