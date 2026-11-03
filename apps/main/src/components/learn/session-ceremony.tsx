@@ -9,7 +9,6 @@ import { MilestoneCeremony } from "@zoonk/learn/ceremony";
 import { CertificateMoment } from "@zoonk/learn/certificates/moment";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { type EarnedMoments } from "@zoonk/learn/session/moment-ceremony";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { getCertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState } from "react";
 import { markCertificateShownAction, saveCertificateNameAction } from "./certificate-actions";
@@ -31,11 +30,11 @@ export function SessionCertificates({
 }) {
   const locale = useAppLocale();
   const learner = useLearnerSummary();
-  const mounted = useIsMounted();
   const isGuest = learner.status === "ready" && learner.summary.identity.isAnonymous;
 
-  // A finished mock's page can arrive with them; its links need the browser's origin.
-  if (!mounted) {
+  // A guest is offered an account, never the name field or sharing, so it waits to know who's
+  // looking. The server never knows, so the links built from the browser's origin never render there.
+  if (learner.status === "not-loaded") {
     return null;
   }
 
