@@ -22,6 +22,7 @@ if (process.env.NODE_ENV !== "production") {
 export type {
   AnswerExplanation,
   Attempt,
+  Certificate,
   Chapter,
   ChapterLesson,
   ChapterMindMap,
@@ -88,6 +89,7 @@ export type {
 export {
   BuddyGlasses,
   BuddyKind,
+  CertificateKind,
   CourseFormat,
   CourseLevel,
   FeedbackContentKind,

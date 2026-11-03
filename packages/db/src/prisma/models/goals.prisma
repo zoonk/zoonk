@@ -102,6 +102,7 @@ model Goal {
   questionThreads       LessonQuestionThread[] @relation("GoalQuestionThreads")
   subjectThreads        LessonQuestionThread[] @relation("SubjectQuestionThreads")
   tutorQuestions        LessonQuestion[]       @relation("TutorQuestionGoal")
+  certificates          Certificate[]
 
   @@index([userId, status])
   @@index([examBlueprintId])

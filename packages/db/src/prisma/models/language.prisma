@@ -36,6 +36,9 @@ model LanguageSkillLevel {
   windowTotal   Int           @default(0) @map("window_total")
   /// A window can't lift the level more than half a step above it.
   windowCeiling Float?        @map("window_ceiling")
+  /// The first time evidence raised the score; never cleared. Certificates count only raised
+  /// skills, and a level test leaves them alone.
+  raisedAt      DateTime?     @map("raised_at")
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
 

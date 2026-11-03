@@ -1135,6 +1135,294 @@
         }
       }
     },
+    "/certificates/{code}": {
+      "get": {
+        "description": "What a certificate's public link shows anyone, signed in or not: the learner's profile name, what they completed and when, and the pictures to show or share. Nothing else about the learner. Not for indexing.",
+        "operationId": "getCertificate",
+        "security": [],
+        "summary": "Get a certificate",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+            },
+            "required": true,
+            "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Certificate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/certificates": {
+      "post": {
+        "description": "Awards the goal's course certificate, or returns it when it exists. Learn and exam goals earn one when every lesson of the plan is studied or tested out, at least one of them studied, and every phase challenge is won; an exam's mocks don't count. Use it where the goal map says `certificate.code` is null. Show its award moment while `shownAt` is null.",
+        "operationId": "claimCourseCertificate",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Claim a goal's course certificate",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnedCertificate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "`COURSE_NOT_FINISHED`: the course isn't finished yet, or the goal is one that earns no course certificate (language and explain goals)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/certificates": {
+      "get": {
+        "description": "The learner's certificates, newest first: finished courses, finished language levels and placement results. Reading them never marks one shown.",
+        "operationId": "listCertificates",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List the current learner's certificates",
+        "tags": [
+          "Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "The learner's certificates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/certificates/{code}/views": {
+      "post": {
+        "description": "Records that a certificate's award moment was closed, so completion results stop returning it. Showing it again keeps the first time.",
+        "operationId": "markCertificateShown",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Mark a certificate as shown",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+            },
+            "required": true,
+            "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Marked as shown"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/challenges/{planItemId}": {
       "get": {
         "description": "A plan's phase boss or the week's Big Challenge (an exam's mock), by its plan item, before its day and on it: when it is, what it asks (questions, minutes, a mock's sections and start time), what it's worth, whether it can move to Monday, and where it stands today. On its day, start it to open its block of today's session.",
@@ -31095,6 +31383,473 @@
           "title",
           "lessonCount",
           "lessons"
+        ],
+        "additionalProperties": false
+      },
+      "Certificate": {
+        "type": "object",
+        "properties": {
+          "answered": {
+            "nullable": true,
+            "description": "Placement: the test's questions the learner answered",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "canDo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Language level: what the learner can do, in the certificate's words"
+          },
+          "category": {
+            "nullable": true,
+            "description": "Course: the course's first category, for its subject mark",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day it was earned"
+          },
+          "courseId": {
+            "nullable": true,
+            "description": "Course: the course while it's public, for a link to its page",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "courseLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateCourseLevel"
+            },
+            "description": "Course: each level of the course the plan held, in order, so \"Python · Beginner\" and \"Python · Intermediate\" read apart"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "course",
+              "languageLevel",
+              "placement"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "description": "The locale the certificate's own words are in"
+          },
+          "lessonsStudied": {
+            "nullable": true,
+            "description": "Course and language level",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsTestedOut": {
+            "nullable": true,
+            "description": "Course: lessons passed by test",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "level": {
+            "nullable": true,
+            "description": "Language level: the level finished. Placement: the level measured",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "measuredLevel": {
+            "nullable": true,
+            "description": "Placement: the measured skills' average in half steps, such as \"A2+\", which its ladder fills to; `level` is its band",
+            "type": "string"
+          },
+          "minutes": {
+            "nullable": true,
+            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "recipientName": {
+            "nullable": true,
+            "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
+            "type": "string"
+          },
+          "skillLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateSkillLevel"
+            },
+            "description": "Language level: each skill the learner's answers raised, at its level when earned. Placement: each skill the test measured"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "Language kinds: the language",
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "description": "Course: its title, as written. Null for language kinds, named from the language",
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Course: what the plan covered, in plan order"
+          },
+          "imageUrls": {
+            "$ref": "#/components/schemas/CertificateImageUrls"
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Opens LinkedIn's form to add the certificate to the learner's profile; LinkedIn may not prefill it, so also show the name, issuer, issue date, ID and URL to copy"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate's public verification page"
+          }
+        },
+        "required": [
+          "answered",
+          "canDo",
+          "category",
+          "code",
+          "completedOn",
+          "courseId",
+          "courseLevels",
+          "kind",
+          "language",
+          "lessonsStudied",
+          "lessonsTestedOut",
+          "level",
+          "measuredLevel",
+          "minutes",
+          "recipientName",
+          "skillLevels",
+          "targetLanguage",
+          "title",
+          "topics",
+          "imageUrls",
+          "linkedInUrl",
+          "url"
+        ],
+        "additionalProperties": false,
+        "description": "A certificate as anyone with its link sees it, with its page and pictures"
+      },
+      "CertificateCourseLevel": {
+        "type": "object",
+        "properties": {
+          "chapters": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Chapters of this level the plan held"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "overview",
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          }
+        },
+        "required": [
+          "chapters",
+          "level"
+        ],
+        "additionalProperties": false
+      },
+      "CertificateSkillLevel": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The skill's level, such as \"B1\" or \"B2+\""
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "reading",
+              "listening",
+              "speaking",
+              "writing"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "skill"
+        ],
+        "additionalProperties": false
+      },
+      "CertificateImageUrls": {
+        "type": "object",
+        "properties": {
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "1200 × 630, the picture a shared link unfurls with"
+          },
+          "post": {
+            "type": "string",
+            "format": "uri",
+            "description": "1080 × 1350, to upload as a social post"
+          },
+          "print": {
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate itself, landscape, for print and saving"
+          }
+        },
+        "required": [
+          "link",
+          "post",
+          "print"
+        ],
+        "additionalProperties": false,
+        "description": "PNG pictures of the certificate, public (no auth header). They change when the learner's name changes"
+      },
+      "OwnedCertificate": {
+        "type": "object",
+        "properties": {
+          "answered": {
+            "nullable": true,
+            "description": "Placement: the test's questions the learner answered",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "canDo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Language level: what the learner can do, in the certificate's words"
+          },
+          "category": {
+            "nullable": true,
+            "description": "Course: the course's first category, for its subject mark",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day it was earned"
+          },
+          "courseId": {
+            "nullable": true,
+            "description": "Course: the course while it's public, for a link to its page",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "courseLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateCourseLevel"
+            },
+            "description": "Course: each level of the course the plan held, in order, so \"Python · Beginner\" and \"Python · Intermediate\" read apart"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "course",
+              "languageLevel",
+              "placement"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "description": "The locale the certificate's own words are in"
+          },
+          "lessonsStudied": {
+            "nullable": true,
+            "description": "Course and language level",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsTestedOut": {
+            "nullable": true,
+            "description": "Course: lessons passed by test",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "level": {
+            "nullable": true,
+            "description": "Language level: the level finished. Placement: the level measured",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "measuredLevel": {
+            "nullable": true,
+            "description": "Placement: the measured skills' average in half steps, such as \"A2+\", which its ladder fills to; `level` is its band",
+            "type": "string"
+          },
+          "minutes": {
+            "nullable": true,
+            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "recipientName": {
+            "nullable": true,
+            "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
+            "type": "string"
+          },
+          "skillLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateSkillLevel"
+            },
+            "description": "Language level: each skill the learner's answers raised, at its level when earned. Placement: each skill the test measured"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "Language kinds: the language",
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "description": "Course: its title, as written. Null for language kinds, named from the language",
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Course: what the plan covered, in plan order"
+          },
+          "shownAt": {
+            "nullable": true,
+            "description": "When its award moment was closed (POST /me/certificates/{code}/views); null until then",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "imageUrls": {
+            "$ref": "#/components/schemas/CertificateImageUrls"
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Opens LinkedIn's form to add the certificate to the learner's profile; LinkedIn may not prefill it, so also show the name, issuer, issue date, ID and URL to copy"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate's public verification page"
+          }
+        },
+        "required": [
+          "answered",
+          "canDo",
+          "category",
+          "code",
+          "completedOn",
+          "courseId",
+          "courseLevels",
+          "kind",
+          "language",
+          "lessonsStudied",
+          "lessonsTestedOut",
+          "level",
+          "measuredLevel",
+          "minutes",
+          "recipientName",
+          "skillLevels",
+          "targetLanguage",
+          "title",
+          "topics",
+          "shownAt",
+          "imageUrls",
+          "linkedInUrl",
+          "url"
+        ],
+        "additionalProperties": false,
+        "description": "One of the learner's own certificates"
+      },
+      "CertificateList": {
+        "type": "object",
+        "properties": {
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificate"
+            },
+            "description": "Newest first; empty until the learner earns one"
+          }
+        },
+        "required": [
+          "certificates"
         ],
         "additionalProperties": false
       },
