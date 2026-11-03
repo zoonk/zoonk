@@ -85,13 +85,13 @@ describe(getLessonRewriteModel, () => {
       "anthropic/claude-opus-5.5",
     );
 
-    expect(getLessonRewriteModel(["google/gemini-3.8-flash", "google/gemini-3.8-flash"])).toBe(
+    expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
       "openai/gpt-6.1-terra",
     );
 
     // A fallback wrote one of them: both families are left out.
     expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
-      "google/gemini-3.8-flash",
+      "google/gemini-4-argon",
     );
   });
 });
@@ -183,7 +183,7 @@ describe(writeLessonDraft, () => {
     );
   });
 
-  it("falls back from Gemini to Sol before Opus", async () => {
+  it("falls back to the chain's other models, each from another family", async () => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({ screens: [], summary: EMPTY_MAP }),
     );
@@ -197,17 +197,15 @@ describe(writeLessonDraft, () => {
       spec: spec([screen("hook"), screen("check")]),
     } satisfies Parameters<typeof writeLessonDraft>[0];
 
-    await writeLessonDraft({ ...params, model: "google/gemini-3.8-flash" });
-    const gemini = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
+    await writeLessonDraft({ ...params, model: "anthropic/claude-opus-5.5" });
+    const opus = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
     await writeLessonDraft(params);
     const terra = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
-    expect(gemini).toMatchObject({ models: ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] });
+    expect(opus).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
 
-    expect(terra).toMatchObject({
-      models: ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"],
-    });
+    expect(terra).toMatchObject({ models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"] });
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {

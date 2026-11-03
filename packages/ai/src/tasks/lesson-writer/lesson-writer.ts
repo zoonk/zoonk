@@ -26,19 +26,21 @@ const lessonOutput = schemaInPrompt(writtenLessonSchema);
 
 /**
  * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct
- * 2026); Gemini, Opus and Luna taught more. Fallbacks come from other families, so an outage at one
- * provider doesn't stop lessons.
+ * 2026). In a battle where no judge scored its own family (3 Nov 2026, 6 cases), Opus 5.5 ranked
+ * first under both judges that scored it, at Terra's accuracy and about 9 times its cost, and Gemini
+ * 4 Argon beat 3.8 Flash, which failed a case. Each model falls back to the others, all from other
+ * families, so an outage at one provider doesn't stop lessons.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const WRITER_MODELS = [
+  "openai/gpt-6.1-terra",
+  "anthropic/claude-opus-5.5",
+  "google/gemini-4-argon",
+] as const;
 
-/**
- * Gemini 3.8 Flash rejects the writer's schema as too large (9 Oct 2026), so it falls back to Terra.
- */
-const geminiFallbackModels = [defaultModel, "anthropic/claude-opus-5.5"] as const;
+const [defaultModel] = WRITER_MODELS;
 
-function getFallbackModels(model: string): readonly string[] {
-  return getModelFamily(model) === "google" ? geminiFallbackModels : fallbackModels;
+function getFallbackModels(model: string): string[] {
+  return WRITER_MODELS.filter((candidate) => candidate !== model);
 }
 
 export type WriteLessonDraftParams = LessonWritingContext & {
@@ -52,17 +54,13 @@ export type WriteLessonDraftParams = LessonWritingContext & {
 };
 
 /**
- * The first model of the writer's chain from a family that wrote none of the held-back drafts; a
- * shared lesson Terra drafted goes to Opus rather than Gemini, which taught wrong ideas in the writer
- * eval. The reviewer follows the writer, so it stays from another family.
+ * The first model of the writer's chain from a family that wrote none of the held-back drafts. The
+ * reviewer follows the writer, so it stays from another family.
  */
 export function getLessonRewriteModel(heldBackModels: readonly string[]): string {
   const families = new Set(heldBackModels.map((model) => getModelFamily(model)));
 
-  return (
-    [defaultModel, ...fallbackModels].find((model) => !families.has(getModelFamily(model))) ??
-    defaultModel
-  );
+  return WRITER_MODELS.find((model) => !families.has(getModelFamily(model))) ?? defaultModel;
 }
 
 const FIND_ERROR_TEMPLATE = "findError";

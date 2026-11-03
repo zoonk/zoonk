@@ -24,8 +24,8 @@ import {
 
 /**
  * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
- * of 5 cases and Terra all 5 (30 Oct 2026). Gemini rejects the screens' schema as too large, so
- * it's no fallback.
+ * of 5 cases and Terra all 5 (30 Oct 2026). Opus, the writer's other family, fixed every flagged
+ * screen in all 5 too (3 Nov 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
