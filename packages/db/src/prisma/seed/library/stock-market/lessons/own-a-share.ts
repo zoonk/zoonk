@@ -17,27 +17,11 @@ export const ownAShareLesson: SeedLesson = {
   steps: [
     {
       content: {
-        options: [
-          guess("slice", t("A small piece of the company", "Um pedacinho da empresa"), true),
-          guess(
-            "loan",
-            t("A loan you made to the company", "Um empréstimo que você fez à empresa"),
-          ),
-          guess(
-            "voucher",
-            t("Credit to spend on its products", "Crédito para gastar nos produtos dela"),
-          ),
-          guess("nothing", t("Nothing, until the price goes up", "Nada, até o preço subir")),
-        ],
-        question: t(
-          "You buy one share of a big bakery chain. What do you own?",
-          "Você compra uma ação de uma grande rede de padarias. Do que você passa a ser dono?",
+        text: t(
+          "Rafa buys one share of the bakery chain on his corner. Next morning he asks for a free croissant: “I'm an owner now.” The cashier laughs. Is Rafa an owner or not?",
+          "Rafa compra uma ação da rede de padarias da esquina. Na manhã seguinte, pede um croissant de graça: “Agora sou dono.” A caixa ri. Rafa é dono ou não?",
         ),
-        reveal: t(
-          "A small piece of the company itself: of its profits, its ovens, its brand and its future. Lending money to a company is a different investment, called a bond.",
-          "De um pedacinho da própria empresa: dos lucros, dos fornos, da marca e do futuro dela. Emprestar dinheiro a uma empresa é outro investimento, chamado debênture.",
-        ),
-        variant: "guess",
+        variant: "text",
       },
       kind: "hook",
     },
@@ -51,6 +35,32 @@ export const ownAShareLesson: SeedLesson = {
       },
       kind: "explanation",
       skill: "share-ownership",
+    },
+    {
+      content: {
+        options: [
+          guess("account", t("It lands in his bank account", "Cai na conta dele")),
+          guess(
+            "his",
+            t(
+              "It's his, but the company decides how much to pay out",
+              "É dele, mas a empresa decide quanto pagar",
+            ),
+            true,
+          ),
+          guess("exchange", t("It goes to the stock exchange", "Vai para a bolsa")),
+        ],
+        question: t(
+          "The bakery chain made $50 million in profit, and Rafa owns 1,000 of its 10 million shares. What happens to his part of the profit?",
+          "A rede de padarias lucrou R$ 50 milhões, e Rafa tem 1.000 das 10 milhões de ações. O que acontece com a parte dele no lucro?",
+        ),
+        reveal: t(
+          "It's his, but the company decides how much to pay out. The next screen works out how big his part is.",
+          "É dele, mas a empresa decide quanto pagar. A próxima tela calcula o tamanho da parte dele.",
+        ),
+        variant: "guess",
+      },
+      kind: "hook",
     },
     {
       content: {

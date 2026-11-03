@@ -17,25 +17,11 @@ export const wherePriceComesFromLesson: SeedLesson = {
   steps: [
     {
       content: {
-        options: [
-          guess("company", t("The company", "A empresa")),
-          guess("exchange", t("The stock exchange", "A bolsa de valores")),
-          guess(
-            "trade",
-            t(
-              "The last buyer and seller who agreed on a deal",
-              "O último comprador e vendedor que fecharam negócio",
-            ),
-            true,
-          ),
-          guess("government", t("The government", "O governo")),
-        ],
-        question: t("Who sets the price of a share?", "Quem define o preço de uma ação?"),
-        reveal: t(
-          "Nobody sets it. The price on your screen is simply the price at which the most recent buyer and seller agreed.",
-          "Ninguém define. O preço na sua tela é só o valor em que o último comprador e o último vendedor concordaram.",
+        text: t(
+          "Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it shows $20.12. Nobody at the company did anything. So who just changed the price?",
+          "Lia abre o app da corretora: a ação da rede de padarias mostra R$ 20,10. Um segundo depois, R$ 20,12. Ninguém na empresa fez nada. Então quem mudou o preço?",
         ),
-        variant: "guess",
+        variant: "text",
       },
       kind: "hook",
     },
@@ -52,41 +38,25 @@ export const wherePriceComesFromLesson: SeedLesson = {
     },
     {
       content: {
-        basis: null,
         options: [
-          option(
-            "ask",
-            t("$20.12", "R$ 20,12"),
-            t(
-              "To trade now, you accept the best ask: the lowest price a seller will take.",
-              "Para negociar agora, você aceita a melhor venda: o menor preço que um vendedor aceita.",
-            ),
-            true,
-          ),
-          option(
-            "bid",
-            t("$20.10", "R$ 20,10"),
-            t(
-              "That's what buyers are offering. No seller has agreed to it yet.",
-              "Esse é o valor que os compradores oferecem. Nenhum vendedor aceitou ainda.",
-            ),
-          ),
-          option(
-            "middle",
-            t("$20.11", "R$ 20,11"),
-            t(
-              "Trades happen at a price someone posted. Nobody meets you halfway unless they post that price.",
-              "O negócio sai num preço que alguém anunciou. Ninguém te encontra no meio do caminho sem anunciar esse preço.",
-            ),
+          guess("same", t("$20.12 too", "R$ 20,12 também")),
+          guess("next", t("The next ask, $20.15", "A próxima oferta de venda, R$ 20,15"), true),
+          guess(
+            "wait",
+            t("Nothing until a new seller shows up", "Nada, até aparecer um novo vendedor"),
           ),
         ],
         question: t(
-          "The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?",
-          "A melhor oferta de compra é R$ 20,10 e a melhor de venda é R$ 20,12. Você quer comprar agora. Quanto paga por ação?",
+          "Lia buys 300 shares at the market price, but only 200 are for sale at $20.12. What does she pay for the other 100?",
+          "Lia compra 300 ações a mercado, mas só há 200 à venda a R$ 20,12. Quanto ela paga pelas outras 100?",
         ),
+        reveal: t(
+          "The next ask, $20.15. The next screen works out what she pays in total.",
+          "A próxima oferta de venda, R$ 20,15. A próxima tela calcula quanto ela paga no total.",
+        ),
+        variant: "guess",
       },
-      kind: "check",
-      skill: "order-book",
+      kind: "hook",
     },
     {
       content: {
@@ -125,6 +95,44 @@ export const wherePriceComesFromLesson: SeedLesson = {
         ),
       },
       kind: "workedExample",
+      skill: "order-book",
+    },
+    {
+      content: {
+        basis: null,
+        options: [
+          option(
+            "ask",
+            t("$20.12", "R$ 20,12"),
+            t(
+              "To trade now, you accept the best ask: the lowest price a seller will take.",
+              "Para negociar agora, você aceita a melhor venda: o menor preço que um vendedor aceita.",
+            ),
+            true,
+          ),
+          option(
+            "bid",
+            t("$20.10", "R$ 20,10"),
+            t(
+              "That's what buyers are offering. No seller has agreed to it yet.",
+              "Esse é o valor que os compradores oferecem. Nenhum vendedor aceitou ainda.",
+            ),
+          ),
+          option(
+            "middle",
+            t("$20.11", "R$ 20,11"),
+            t(
+              "Trades happen at a price someone posted. Nobody meets you halfway unless they post that price.",
+              "O negócio sai num preço que alguém anunciou. Ninguém te encontra no meio do caminho sem anunciar esse preço.",
+            ),
+          ),
+        ],
+        question: t(
+          "The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?",
+          "A melhor oferta de compra é R$ 20,10 e a melhor de venda é R$ 20,12. Você quer comprar agora. Quanto paga por ação?",
+        ),
+      },
+      kind: "check",
       skill: "order-book",
     },
     {
