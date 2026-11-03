@@ -6,7 +6,7 @@ An `activity` step's content is `{ template, prompt, fields, check, data? }` fro
 
 - `activity-step.tsx`: `ActivityStep`, what the player renders for a step of kind `activity`.
 - `activity-renderer.ts`: the types below.
-- `activity-registry.ts`: `activityRenderers`, one lazily loaded renderer per template. Areas with several renderers can keep their entries in an `activity-registry-<area>.ts` file spread into it (`activity-registry-languages.ts`, `activity-registry-music.ts`), typed with `ActivityRendererMap<ids>` so each `load` is checked against its template, so the registry stays readable.
+- `activity-registry.ts`: `activityRenderers`, one renderer per template, each in its own chunk. The lesson player loads the chunks of every canvas a lesson draws when it opens (`usePreloadActivityCanvases`), so a step draws its canvas at once instead of a skeleton. Areas with several renderers can keep their entries in an `activity-registry-<area>.ts` file spread into it (`activity-registry-languages.ts`, `activity-registry-music.ts`), typed with `ActivityRendererMap<ids>` so each `load` is checked against its template, so the registry stays readable.
 - `<template-in-kebab-case>/<template-in-kebab-case>-activity.tsx`: one folder per template (`formula-model/formula-model-activity.tsx` exports `FormulaModelActivity`), with its helpers and `*.test.ts` for non-trivial pure helpers.
 - `_components/`, `_utils/`: building blocks every renderer reuses (see below).
 
@@ -26,7 +26,7 @@ type ActivityStepProps = {
 };
 ```
 
-It renders, top to bottom: a neutral chip naming what the learner does (its verb's icon and words, no color), the prompt (an `h2`, whose id labels the canvas), the canvas inside `Suspense` with a skeleton, the data note (the cited source, or "Example numbers, not real data"), and the check area:
+It renders, top to bottom: a neutral chip naming what the learner does (its verb's icon and words, no color), the prompt (an `h2`, whose id labels the canvas), the canvas inside `Suspense` with a skeleton (seen only while its chunk is still loading, as when a lesson opens on an activity), the data note (the cited source, or "Example numbers, not real data"), and the check area:
 
 - `choice`: the question and the player's option cards under the canvas (number keys pick an option). The canvas is free exploration and never answers. Templates registered with `checkFirst` (predict first, then see) put the options above the canvas instead.
 - `numeric`: the question and a number input. The canvas produces the number as the learner moves (`onAnswerChange({ kind: "numeric", value })`) and the input shows it; typing is the keyboard and screen reader alternative. A renderer may leave the number to the input when drawing it would give the answer away (the area model shows its parts, and the learner adds them).
