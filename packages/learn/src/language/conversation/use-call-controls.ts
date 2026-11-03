@@ -5,12 +5,8 @@ import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { sendLiveCallCue, setLiveCallMuted } from "./live-call-commands";
 import { type LiveCallScript, toTypedReplyCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
-import {
-  type TranscriptTurn,
-  addTypedReply,
-  getSpokenSeconds,
-  toConversationTurns,
-} from "./live-call-transcript";
+import { type CallSoFar } from "./live-call-so-far";
+import { type TranscriptTurn, addTypedReply, toConversationTurns } from "./live-call-transcript";
 
 export type LiveCallPhase = "connecting" | "ended" | "failed" | "idle" | "live";
 
@@ -26,9 +22,9 @@ export function useCallPhase() {
   return { phase: current, phaseRef, setPhase };
 }
 
-export function useCallTranscript() {
-  const [turns, setTurns] = useState<TranscriptTurn[]>([]);
-  const turnsRef = useRef<TranscriptTurn[]>([]);
+export function useCallTranscript(earlier: TranscriptTurn[]) {
+  const [turns, setTurns] = useState(earlier);
+  const turnsRef = useRef(earlier);
   const getTurns = useCallback(() => toConversationTurns(turnsRef.current), []);
   const savedTurns = useMemo(() => toConversationTurns(turns), [turns]);
 
@@ -106,20 +102,20 @@ export function useCallMute(liveSession: LiveCallSession | null) {
   return { muted, mutedRef, toggleMute };
 }
 
-type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
+type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone">;
 
 /**
  * Returns what it saves whether or not the hangup went through: completing hangs the call up
  * itself, and the deadline does if that fails too.
  */
 export function useCallFinish({
+  getCallSoFar,
   getConnectionId,
   release,
-  turnsRef,
 }: {
+  getCallSoFar: () => CallSoFar;
   getConnectionId: () => string | null;
   release: () => Promise<boolean>;
-  turnsRef: RefObject<TranscriptTurn[]>;
 }) {
   return useCallback(async (): Promise<LiveCallSummary | null> => {
     const connectionId = getConnectionId();
@@ -129,11 +125,8 @@ export function useCallFinish({
     }
 
     await release();
+    const { spokenSeconds, turns, usedHelp } = getCallSoFar();
 
-    return {
-      connectionId,
-      spokenSeconds: getSpokenSeconds(turnsRef.current),
-      turns: toConversationTurns(turnsRef.current),
-    };
-  }, [getConnectionId, release, turnsRef]);
+    return { connectionId, spokenSeconds, turns: toConversationTurns(turns), usedHelp };
+  }, [getCallSoFar, getConnectionId, release]);
 }

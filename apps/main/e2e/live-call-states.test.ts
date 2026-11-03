@@ -4,7 +4,7 @@ import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { test as base, expect } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
-import { answerLiveCalls } from "./live-peer";
+import { CHARACTER_REPLY, CHARACTER_RESUME, answerLiveCalls } from "./live-peer";
 
 type Learner = Awaited<ReturnType<typeof createLanguageLearner>>;
 
@@ -529,6 +529,59 @@ test.describe("Live call server states", () => {
           timeout: 20_000,
         })
         .toMatchObject({ status: "completed" });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("calling again after a drop carries the call on: its turns stay, the character picks up and the save covers the whole call", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      const transcript = page.getByRole("log", { name: "Conversation" });
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+      await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await page.getByRole("button", { name: "Call again" }).click();
+
+      await expect(transcript.getByText("Is it still free?")).toBeVisible();
+      await expect(transcript.getByText(CHARACTER_RESUME)).toBeVisible();
+      await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toHaveCount(1);
+
+      const earlierTurns = [
+        { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+        { speaker: "learner", text: "Is it still free?" },
+        { speaker: "character", text: CHARACTER_REPLY },
+      ];
+
+      expect(actions.sdp).toMatchObject([
+        { sessionConfig: { providerOptions: { zoonk: { turns: [] } } } },
+        { sessionConfig: { providerOptions: { zoonk: { turns: earlierTurns } } } },
+      ]);
+
+      const reconnected = await connectionFor(call.id);
+      expect(reconnected.continuesCall).toBe(true);
+
+      await page.getByRole("button", { exact: true, name: "End" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: reconnected.id,
+        turns: [...earlierTurns, { speaker: "character", text: CHARACTER_RESUME }],
+      });
     } finally {
       await owned.cleanup();
     }

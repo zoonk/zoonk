@@ -5,27 +5,24 @@ import {
   type LanguageConversationObjectiveCheck,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type RefObject, useCallback, useEffect, useMemo, useState } from "react";
+import { type RefObject, useCallback, useMemo, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLength } from "./live-call-clock";
 import { type CallEndingEvent } from "./live-call-ending";
 import {
   type LiveCallError,
   useCallProblem,
   useCallRelease,
   useCallSession,
+  useEndCallOnLeave,
 } from "./live-call-lifecycle";
 import { type ReplyGapEvent } from "./live-call-report";
 import { type LiveCallSession } from "./live-call-session";
+import { type CallSoFar } from "./live-call-so-far";
 import { type SpeechSample } from "./speech-activity";
 import { type CallConnectionActions, useCallConnection } from "./use-call-connection";
-import {
-  useCallFinish,
-  useCallMute,
-  useCallPhase,
-  useCallTranscript,
-  useTypedReplies,
-} from "./use-call-controls";
-import { type CallLength, useCallEnding } from "./use-call-ending";
+import { useCallFinish, useCallMute, useCallPhase, useTypedReplies } from "./use-call-controls";
+import { useCallEnding } from "./use-call-ending";
 import { useCallEvents } from "./use-call-events";
 import {
   type MicrophoneProblem,
@@ -33,6 +30,7 @@ import {
   useCallMicrophone,
 } from "./use-call-microphone";
 import { type CallEndReason, type CallReport, useCallReport } from "./use-call-report";
+import { useCallSoFar } from "./use-call-so-far";
 import { useConnectCall } from "./use-connect-call";
 import { useCallObjectives } from "./use-objective-checks";
 
@@ -128,21 +126,28 @@ function useLiveCallEvents({
   });
 }
 
+/**
+ * `earlier` is the call so far, which this connection continues or, when the server says it opens
+ * a new call, drops.
+ */
 export function useLiveCall({
   actions,
   conversation,
+  earlier,
   tappedAudio,
 }: {
   actions: LiveCallActions;
   conversation: LanguageConversationView;
+  earlier: CallSoFar;
   tappedAudio?: TappedCallAudio;
 }) {
+  const soFar = useCallSoFar({ earlier, minutes: conversation.minutes });
+  const { carry, getConnectionTurns, getTurns, turnsRef, updateTurns } = soFar;
   const { keepSession, session, sessionRef } = useCallSession();
   const { phase, phaseRef, setPhase } = useCallPhase();
-  const { getTurns, savedTurns, turnsRef, updateTurns } = useCallTranscript();
   const microphone = useCallMicrophone();
   const connection = useCallConnection(actions);
-  const report = useCallReport({ kind: conversation.kind, turnsRef });
+  const report = useCallReport({ getConnectionTurns, kind: conversation.kind });
 
   const { hangUp, release } = useCallRelease({
     endConnection: connection.end,
@@ -161,6 +166,7 @@ export function useLiveCall({
 
   const ending = useCallEnding({
     examCues: conversation.examTask?.cues,
+    examCuesSent: soFar.examCuesSent,
     onCue: useCallback(() => report.record({ type: "cue" }), [report]),
     onHangUp: endAs,
   });
@@ -179,6 +185,7 @@ export function useLiveCall({
     checkObjectives: actions.checkObjectives,
     conversation,
     getTurns,
+    metBefore: earlier.metLabels,
     onResult: ending.checked,
   });
 
@@ -249,29 +256,23 @@ export function useLiveCall({
     onMicrophoneProblem: setMicrophoneProblem,
     onReserved: report.reserved,
     phaseRef,
+    prepare: soFar.prepare,
     reserve: connection.reserve,
     setPhase,
     stopEnding,
     tappedAudio,
   });
 
-  const finish = useCallFinish({ getConnectionId: connection.getConnectionId, release, turnsRef });
+  const { metLabels } = objectives;
+  const getCallSoFar = useCallback(() => carry(metLabels), [carry, metLabels]);
 
-  // Leaving ends the call; a screen kept hidden in an Activity shows it dropped when it's back.
-  useEffect(
-    () => () => {
-      // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start,
-      // so they cancel nothing.
-      cancelStart();
+  const finish = useCallFinish({
+    getCallSoFar,
+    getConnectionId: connection.getConnectionId,
+    release,
+  });
 
-      if (phaseRef.current === "connecting" || phaseRef.current === "live") {
-        fail(phaseRef.current === "live" ? "dropped" : "connect");
-      } else {
-        void release();
-      }
-    },
-    [cancelStart, fail, phaseRef, release],
-  );
+  useEndCallOnLeave({ cancelStart, fail, phaseRef, release });
 
   return {
     /** The learner stopped a call that was still ringing. */
@@ -279,9 +280,11 @@ export function useLiveCall({
     elapsedSeconds: ending.elapsedSeconds,
     error: problem.error,
     finish,
+    getCallSoFar,
     hangUp: () => endFromOutside("learnerEnded"),
     limit: problem.limit,
-    metLabels: objectives.metLabels,
+    markHelpUsed: soFar.markHelpUsed,
+    metLabels,
     micBlocked: microphone.blocked,
     /** A call started again without the intro couldn't use the microphone: ask the learner. */
     microphoneProblem,
@@ -291,10 +294,10 @@ export function useLiveCall({
     reconnecting: connection.reconnecting,
     sendText,
     start,
-    talkSeconds: ending.callLength?.talkSeconds ?? null,
     toggleMute,
     turn: ending.view,
-    turns: savedTurns,
+    turns: soFar.savedTurns,
+    usedHelp: soFar.usedHelp,
   };
 }
 

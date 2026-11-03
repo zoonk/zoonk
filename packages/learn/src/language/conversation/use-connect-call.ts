@@ -1,25 +1,27 @@
 "use client";
 
+import { type ConversationTurn } from "@zoonk/core/language/conversations/contract";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 import { type RefObject, useCallback, useRef } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLength } from "./live-call-clock";
 import { type LiveCallError, openCall, toConnectionError } from "./live-call-lifecycle";
 import { type LiveCallSession } from "./live-call-session";
 import { type SpeechSample } from "./speech-activity";
-import { type useCallConnection } from "./use-call-connection";
+import { type LiveCallSetup, type useCallConnection } from "./use-call-connection";
 import { type LiveCallPhase } from "./use-call-controls";
-import { type CallLength } from "./use-call-ending";
 import {
   type CallAudio,
   type MicrophoneProblem,
   type TappedCallAudio,
 } from "./use-call-microphone";
 
-const MS_PER_SECOND = 1000;
-
 type Connection = ReturnType<typeof useCallConnection>;
 
-/** `cancelStart` drops a start still on its way, whatever it was waiting for. */
+/**
+ * `cancelStart` drops a start still on its way, whatever it was waiting for. `prepare` turns the
+ * server's answer into the call's length and the turns its offer carries.
+ */
 export function useConnectCall({
   endAtDeadline,
   endedByServer,
@@ -31,6 +33,7 @@ export function useConnectCall({
   onMicrophoneProblem,
   onReserved,
   phaseRef,
+  prepare,
   reserve,
   setPhase,
   stopEnding,
@@ -46,6 +49,10 @@ export function useConnectCall({
   onMicrophoneProblem: (problem: MicrophoneProblem) => void;
   onReserved: (talkSeconds: number) => void;
   phaseRef: RefObject<LiveCallPhase>;
+  prepare: (
+    setup: LiveCallSetup,
+    answeredAt: number,
+  ) => { length: CallLength; turns: ConversationTurn[] };
   reserve: Connection["reserve"];
   setPhase: (phase: LiveCallPhase) => void;
   stopEnding: () => void;
@@ -97,20 +104,13 @@ export function useConnectCall({
       }
 
       const { setup } = answer;
-      const answeredAt = Date.now();
       onReserved(setup.talkSeconds);
-
-      // `seconds` is when the server hangs up; `talkSeconds` when the call starts ending.
-      const length: CallLength = {
-        hardStopAt: answeredAt + setup.seconds * MS_PER_SECOND,
-        script: setup.script,
-        talkEndsAt: answeredAt + setup.talkSeconds * MS_PER_SECOND,
-        talkSeconds: setup.talkSeconds,
-      };
+      const { length, turns } = prepare(setup, Date.now());
 
       const created: LiveCallSession = opened.live.createLiveCallSession({
         onEvent: (event) => handleEvent(created, event, length),
         sessionUrl: setup.sessionUrl,
+        turns,
       });
 
       opened.live.watchConnection({
@@ -137,6 +137,7 @@ export function useConnectCall({
       onMicrophoneProblem,
       onReserved,
       phaseRef,
+      prepare,
       reserve,
       setPhase,
       stopEnding,

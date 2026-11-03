@@ -83,7 +83,12 @@ async function watchLiveCall(endedByServer: () => Promise<boolean>) {
   const stream = installWebRTC();
   const call = { phase: "connecting" };
   const closed = vi.fn();
-  const session = createLiveCallSession({ onEvent: () => null, sessionUrl: "/live-session" });
+
+  const session = createLiveCallSession({
+    onEvent: () => null,
+    sessionUrl: "/live-session",
+    turns: [],
+  });
 
   watchConnection({
     endedByServer,
@@ -112,6 +117,39 @@ async function closedWithoutConfirmation(endedByServer: () => Promise<boolean>) 
 
   return call.phase;
 }
+
+describe(createLiveCallSession, () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("posts the call so far with its offer, where the server reads it", async () => {
+    const stream = installWebRTC();
+
+    const turns = [
+      { speaker: "character" as const, text: "Hi, this is Sarah." },
+      { speaker: "learner" as const, text: "Is the flat free?" },
+    ];
+
+    const session = createLiveCallSession({
+      onEvent: () => null,
+      sessionUrl: "/live-session",
+      turns,
+    });
+
+    await session.connect({ stream });
+    const [url, init] = vi.mocked(fetch).mock.calls[0] ?? [];
+    const body = typeof init?.body === "string" ? init.body : "";
+
+    expect(url).toBe("/live-session");
+
+    expect(JSON.parse(body)).toMatchObject({
+      sessionConfig: { providerOptions: { zoonk: { turns } } },
+    });
+
+    session.dispose();
+  });
+});
 
 describe(watchConnection, () => {
   afterEach(() => {

@@ -29,20 +29,16 @@ const skipObjectiveChecks = () => Promise.resolve(null);
 
 function useObjectiveChecks({
   checkObjectives,
-  conversation,
   getTurns,
+  metBefore,
   onChecked,
 }: {
   checkObjectives: CheckObjectives;
-  conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
+  metBefore: string[];
   onChecked: (check: ObjectiveCheck & { snapshotAt: number }) => void;
 }) {
-  const [metLabels, setMetLabels] = useState(() =>
-    conversation.objectives
-      .filter((objective) => objective.met)
-      .map((objective) => objective.label),
-  );
+  const [metLabels, setMetLabels] = useState(metBefore);
 
   const met = useRef(metLabels);
   const running = useRef(false);
@@ -117,11 +113,13 @@ export function useCallObjectives({
   checkObjectives,
   conversation,
   getTurns,
+  metBefore,
   onResult,
 }: {
   checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
+  metBefore: string[];
   onResult: (result: ObjectiveCheckResult) => void;
 }) {
   const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
@@ -138,5 +136,5 @@ export function useCallObjectives({
   );
 
   const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
-  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChecked });
+  return useObjectiveChecks({ checkObjectives: check, getTurns, metBefore, onChecked });
 }

@@ -4,9 +4,15 @@ import { type LanguageConversationSetup } from "@zoonk/core/language/conversatio
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 
-type LiveCallSetup = Pick<
+export type LiveCallSetup = Pick<
   LanguageConversationSetup,
-  "connectionId" | "deadlineAt" | "script" | "seconds" | "sessionUrl" | "talkSeconds"
+  | "connectionId"
+  | "continuesCall"
+  | "deadlineAt"
+  | "script"
+  | "seconds"
+  | "sessionUrl"
+  | "talkSeconds"
 >;
 
 export type ConversationConnection =
