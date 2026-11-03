@@ -289,7 +289,7 @@ export const languageConversationObjectiveCheckSchema = z
       .boolean()
       .meta({
         description:
-          "The transcript sent ends with the learner and the character saying goodbye to each other: end the call without a goodbye cue, unless the learner spoke or typed after sending it",
+          "This check read the transcript sent and found it ending with the learner and the character saying goodbye to each other: end the call without a goodbye cue, unless the learner spoke or typed after sending it. False when it found none or read nothing new",
       }),
     objectivesMet: z
       .array(z.string())
