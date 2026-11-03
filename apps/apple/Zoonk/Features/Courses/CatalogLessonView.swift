@@ -93,8 +93,10 @@ private struct CatalogLessonList: View {
           Label {
             if guess {
               Text(
-                "Guess first. It doesn't count.", tableName: "Courses",
-                comment: "Over a lesson's first question that asks for a guess")
+                "Just a guess, it doesn't count", tableName: "Courses",
+                comment:
+                  "Over a lesson's first question on its Library page, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points."
+              )
             } else {
               Text(
                 "Quick question", tableName: "Courses", comment: "Over a lesson's first question")

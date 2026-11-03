@@ -354,13 +354,14 @@ struct LessonActionBar: View {
   @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-
-    Button {
+    let button = Button {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
       case .continueLesson:
         store.continueLesson()
+      case .dontKnow:
+        store.dontKnow()
       }
     } label: {
       HStack {
@@ -372,10 +373,15 @@ struct LessonActionBar: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.mainAction)
     .controlSize(.large)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
+
+    if primary.isProminent {
+      button.buttonStyle(.mainAction)
+    } else {
+      button.buttonStyle(.bordered)
+    }
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
@@ -387,7 +393,7 @@ struct LessonActionBar: View {
   }
 
   private enum PrimaryKind {
-    case check, continueLesson
+    case check, continueLesson, dontKnow
   }
 
   private struct PrimaryAction {
@@ -395,6 +401,7 @@ struct LessonActionBar: View {
     let title: LocalizedStringResource
     var isBusy = false
     var isDisabled = false
+    var isProminent = true
   }
 
   private var primaryAction: PrimaryAction {
@@ -456,6 +463,13 @@ struct LessonActionBar: View {
             "Confirm", table: "Player", comment: "Confirms a decision in a challenge"),
           isDisabled: pending == nil)
       }
+    }
+
+    // The reveal often points at the picture, so it waits for one still being drawn, as the options do.
+    if state.revealsWithoutGuess {
+      return PrimaryAction(
+        action: .dontKnow, title: LessonWaysOut.dontKnowTitle,
+        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt), isProminent: false)
     }
 
     let isReady = state.currentAnswer.map(isAnswerReady) ?? false

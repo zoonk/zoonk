@@ -120,7 +120,7 @@ struct LessonPictureView: View {
   @Environment(\.lessonPageHeight) private var pageHeight
   @Environment(\.isPaneSplit) private var isPaneSplit
   /// What the opening guess's page holds besides its picture: the chip, a three-line question,
-  /// three options, "I don't know yet" and the action bar.
+  /// three options and the action bar.
   @ScaledMetric(relativeTo: .title2) private var openingReserve: CGFloat = 520
   @Environment(SessionStore.self) private var session
 
@@ -236,12 +236,12 @@ struct LessonPicturePlaceholder: View {
 }
 
 extension View {
-  /// A picture's shape at the width it's offered, no taller than `maxHeight`; whatever holds its
-  /// place gets the same frame.
+  /// A picture's shape at the width it's offered, no taller than `maxHeight` and centered when that
+  /// makes it narrower; whatever holds its place gets the same frame.
   func pictureFrame(aspectRatio: CGFloat, maxHeight: CGFloat = .infinity) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
       .clipShape(.rect(cornerRadius: 16))
-      .frame(maxWidth: .infinity, alignment: .leading)
+      .frame(maxWidth: .infinity)
   }
 }
 

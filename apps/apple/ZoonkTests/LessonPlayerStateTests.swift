@@ -815,15 +815,24 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.completion?.status, .ready, "only a learner's Finish saves it")
   }
 
+  func testTheOpeningGuessOffersTheRevealUntilSomethingIsPicked() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
+    XCTAssertTrue(state.revealsWithoutGuess, "\"I don't know yet\" with nothing picked")
+
+    state.select(.hookGuess(optionId: "wrong"), for: "guess")
+    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" once something is picked")
+  }
+
   func testIDontKnowYetOnTheOpeningGuessRevealsTheAnswerAndCountsNothing() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
-    state.select(.hookGuess(optionId: "wrong"), for: "guess")
 
     state.dontKnow("guess")
 
     XCTAssertEqual(state.phase, .feedback)
-    XCTAssertNil(state.currentAnswer, "the pick made before it is dropped")
+    XCTAssertFalse(state.revealsWithoutGuess, "Continue")
+    XCTAssertNil(state.currentAnswer)
     XCTAssertEqual(state.currentResult?.correctAnswer, "Four")
     XCTAssertEqual(state.currentResult?.feedback, "A capybara, a heron, a fish and a plant.")
     XCTAssertEqual(state.firstVerdicts, [:])

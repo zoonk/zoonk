@@ -21,10 +21,6 @@ struct LessonStepView: View {
     switch step.content {
     case .hook(let content):
       HookStepView(step: step, content: content, context: context, part: part)
-
-      if part == .turn, content.asksGuess {
-        LessonWaysOut(state: state, store: store, step: step)
-      }
     case .explanation(let content):
       ExplanationStepView(step: step, content: content, part: part)
     case .workedExample(let content):

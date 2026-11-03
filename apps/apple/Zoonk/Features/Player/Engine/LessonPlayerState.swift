@@ -186,6 +186,18 @@ struct LessonPlayerState: Equatable, Sendable {
     return results[previous] != nil || steps[previous]?.isRead == true
   }
 
+  /// The opening guess with nothing picked: its main button is "I don't know yet", which reveals the
+  /// answer; a pick makes it "See the answer".
+  var revealsWithoutGuess: Bool {
+    guard phase == .playing, let step = currentStep, case .hook(let hook) = step.content,
+      hook.asksGuess
+    else {
+      return false
+    }
+
+    return answers[step.id] == nil
+  }
+
   /// "I already know this" ends on the result: a learner who passed every check skips the map.
   private var endsWithMap: Bool {
     hasMap && quickCheck == nil
@@ -365,8 +377,8 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// "I don't know yet" on a written screen: its good answer shows, counted neither way, and it
-  /// doesn't come back at the end. On the opening guess it reveals the answer as a guess without a
-  /// pick would, and like a guess it's never sent.
+  /// doesn't come back at the end. On the opening guess it reveals the answer, counted neither way and,
+  /// like a guess, never sent.
   mutating func dontKnow(_ stepId: String) {
     guard phase == .playing, let step = currentStep, step.id == stepId else {
       return
@@ -384,7 +396,6 @@ struct LessonPlayerState: Equatable, Sendable {
         return
       }
 
-      answers[stepId] = nil
       resolve(stepId, result: LessonStepResult(reveal), counts: false)
     default:
       return
