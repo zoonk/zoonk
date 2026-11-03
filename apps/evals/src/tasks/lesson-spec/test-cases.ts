@@ -1173,4 +1173,27 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     id: "pt-registros-financeiros-guess",
     userInput: budgetLesson("pt-registros-financeiros-beginner"),
   },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner organizing the household's money
+      - The visuals mix kinds, as the idea on each screen needs: sorting expenses into categories is a template to explore or an activity (\`categorize\`), and a picture shows the story's object where seeing it helps (a receipt with items of different kinds); a plan where every visual is a table fails (a regression: an earlier plan used tables for 13 of 17 visuals across this course)
+      - Two teaching screens in a row never show tables with the same columns (a regression: an earlier plan showed an item-to-category table on three teaching screens in a row)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-categorias-despesas-visual-mix",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "O dinheiro que entra e sai de casa",
+      courseTitle: "Orçamento doméstico",
+      language: "pt",
+      lessonCanDo: "Agrupar despesas em categorias úteis",
+      lessonDescription:
+        "Aprenda a agrupar despesas por finalidade para enxergar para onde o dinheiro vai.",
+      lessonTitle: "Categorias de despesas",
+      level: "beginner",
+      skills: ["Classificar despesas domésticas"],
+    },
+  },
 ];
