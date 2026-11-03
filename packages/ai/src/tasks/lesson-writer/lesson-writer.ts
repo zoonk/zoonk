@@ -1,7 +1,7 @@
 import "server-only";
-import { Output, generateText } from "ai";
+import { generateText } from "ai";
 import { getModelFamily } from "../../_utils/model-family";
-import { acceptOmittedNulls } from "../../_utils/omitted-nulls";
+import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
@@ -21,6 +21,8 @@ import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema
 const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
   typedQuestionRules.trim().replaceAll(/^/gmu, "  "),
 );
+
+const lessonOutput = schemaInPrompt(writtenLessonSchema);
 
 /**
  * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct
@@ -103,7 +105,7 @@ ${formatLessonProblems(problems)}
 /** Callers run the lesson checks in `@zoonk/core` and send what fails to `fixLessonDraft`. */
 export async function writeLessonDraft(params: WriteLessonDraftParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
-  const instructions = buildSystemPrompt(params);
+  const instructions = `${buildSystemPrompt(params)}\n\n${lessonOutput.outputRules}`;
   const userPrompt = formatWriterPrompt(params);
 
   const providerOptions = buildProviderOptions({
@@ -119,7 +121,7 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
       generateText({
         instructions,
         model,
-        output: Output.object({ schema: acceptOmittedNulls(writtenLessonSchema) }),
+        output: lessonOutput.output,
         prompt: userPrompt,
         providerOptions,
         reasoning,

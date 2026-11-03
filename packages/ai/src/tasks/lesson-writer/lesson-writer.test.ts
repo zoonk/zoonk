@@ -6,6 +6,9 @@ import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-r
 import { getLessonRewriteModel, writeLessonDraft } from "./lesson-writer";
 import type * as Ai from "ai";
 
+/** Where the schema the answer follows starts, after the writer's rules. */
+const OUTPUT_FORMAT = "\n\n# Output format";
+
 vi.mock("server-only", () => ({}));
 
 vi.mock("./lesson-writer.prompt.md", () => ({
@@ -126,41 +129,44 @@ describe(writeLessonDraft, () => {
         writeLessonDraft({ ...params, shortAnswers: true }),
       ]);
 
-    expect(regular.systemPrompt).toBe(
+    expect(regular.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(beginner.systemPrompt).toBe(
+    expect(beginner.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
     );
 
-    expect(beginnerExam.systemPrompt).toBe(
+    expect(beginnerExam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(spotAi.systemPrompt).toBe(
+    expect(spotAi.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(material.systemPrompt).toBe(
+    expect(material.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it from the material.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(sources.systemPrompt).toBe(
+    expect(sources.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it from the sources.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(exam.systemPrompt).toBe(
+    expect(exam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
     );
 
-    expect(setup.systemPrompt).toBe(
+    expect(setup.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite the setup.\nCheck it.",
     );
 
-    expect(written.systemPrompt).toBe(
+    expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite typed answers.\nCheck it.",
     );
+
+    // The schema travels in the system prompt, since no provider but OpenAI takes it as a grammar.
+    expect(regular.systemPrompt).toContain('"const":"hookGuess"');
 
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
@@ -205,8 +211,8 @@ describe(writeLessonDraft, () => {
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {
-    // Opus 5.5 rewrote a held-back lesson (9 Oct 2026) without strict decoding, since the writer's
-    // schema has more nullable fields than Anthropic's strict mode takes, and left out `picture`.
+    // Opus 5.5 rewrote a held-back lesson (9 Oct 2026) without strict decoding and left out
+    // `picture`; no model writes the lesson under strict decoding now.
     const draft = {
       screens: [
         {

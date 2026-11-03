@@ -6,6 +6,9 @@ import { fixLessonDraft } from "./lesson-fix";
 import { type WrittenLesson, type WrittenScreen } from "./written-lesson-schema";
 import type * as Ai from "ai";
 
+/** Where the schema the answer follows starts, after the fix's rules. */
+const OUTPUT_FORMAT = "\n\n# Output format";
+
 vi.mock("server-only", () => ({}));
 
 vi.mock("./lesson-fix.prompt.md", () => ({
@@ -90,8 +93,8 @@ describe(fixLessonDraft, () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         screens: [
-          { content: explanation("Two, shorter"), screen: 2 },
-          { content: explanation("Out of the plan"), screen: 9 },
+          { ...explanation("Two, shorter"), screen: 2 },
+          { ...explanation("Out of the plan"), screen: 9 },
         ],
         summary: null,
       }),
@@ -126,7 +129,7 @@ describe(fixLessonDraft, () => {
   it("fills a planned screen the draft left out and takes a new summary, repaired", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
-        screens: [{ content: explanation("Four"), screen: 4 }],
+        screens: [{ ...explanation("Four"), screen: 4 }],
         summary: {
           ideas: [{ label: "**Clearer** idea.", text: " A clearer idea. " }],
           shape: "nested",
@@ -155,7 +158,10 @@ describe(fixLessonDraft, () => {
       fix({ screenCount: 3, shortAnswers: true }),
     ]);
 
-    expect(picked.systemPrompt).toBe("Fix the lesson.\nKeep the rest.");
-    expect(written.systemPrompt).toBe("Fix the lesson.\nFix typed answers.\nKeep the rest.");
+    expect(picked.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe("Fix the lesson.\nKeep the rest.");
+
+    expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
+      "Fix the lesson.\nFix typed answers.\nKeep the rest.",
+    );
   });
 });

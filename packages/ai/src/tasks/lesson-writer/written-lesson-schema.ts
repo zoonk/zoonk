@@ -141,16 +141,26 @@ export const WRITTEN_SCREEN_SCHEMAS = {
   workedExample: workedExampleScreen,
 } as const;
 
-export const writtenScreenSchema = z.union([
-  hookGuessScreen,
-  hookTextScreen,
-  explanationScreen,
-  workedExampleScreen,
-  checkScreenWithBasis,
-  mathCheckScreenWithBasis,
-  typedAnswerScreenWithBasis,
-  activityScreen,
-]);
+function screenUnion<LEAD extends z.ZodRawShape>(lead: LEAD) {
+  const withLead = <SHAPE extends z.ZodRawShape>(screen: z.ZodObject<SHAPE>) =>
+    z.object({ ...lead, ...screen.shape });
+
+  return z.union([
+    withLead(hookGuessScreen),
+    withLead(hookTextScreen),
+    withLead(explanationScreen),
+    withLead(workedExampleScreen),
+    withLead(checkScreenWithBasis),
+    withLead(mathCheckScreenWithBasis),
+    withLead(typedAnswerScreenWithBasis),
+    withLead(activityScreen),
+  ]);
+}
+
+export const writtenScreenSchema = screenUnion({});
+
+/** A screen with its number first, the shape the fix reads its lesson in and answers in. */
+export const numberedScreenSchema = screenUnion({ screen: z.number().int() });
 
 export const writtenLessonSchema = z.object({
   screens: z.array(writtenScreenSchema),
