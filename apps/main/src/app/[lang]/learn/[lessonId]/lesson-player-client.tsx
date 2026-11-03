@@ -32,7 +32,7 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useMemo, useState } from "react";
+import { type RefObject, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
 
@@ -52,17 +52,51 @@ function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots
   };
 }
 
+/**
+ * Next keeps a page's state while it's hidden and shows it again on the next visit, so a finished
+ * lesson left and opened again starts over instead of showing its last end.
+ */
+function useFreshAfterFinish() {
+  const finished = useRef(false);
+  const [visit, setVisit] = useState(0);
+
+  useLayoutEffect(
+    () => () => {
+      if (finished.current) {
+        finished.current = false;
+        setVisit((count) => count + 1);
+      }
+    },
+    [],
+  );
+
+  return { finished, visit };
+}
+
 function createAdapters({
+  finished,
   lessonId,
   studySessionId,
 }: {
+  finished: RefObject<boolean>;
   lessonId: string;
   studySessionId: string | null;
 }): LessonPlayerAdapters {
   return {
     checkStep: checkLessonStep,
-    completeLesson: (input) =>
-      completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
+    completeLesson: async (input) => {
+      const outcome = await completeLibraryLessonAction({
+        ...input,
+        lessonId,
+        timeZone: getLocalTimeZone(),
+      });
+
+      if (outcome.status === "completed") {
+        finished.current = true;
+      }
+
+      return outcome;
+    },
     explainAnswer: requestAnswerExplanation,
     getExampleLine,
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
@@ -120,9 +154,11 @@ export function LessonPlayerClient({
 
   void setReopenedBlockId;
 
+  const { finished, visit } = useFreshAfterFinish();
+
   const adapters = useMemo(
-    () => createAdapters({ lessonId: lesson.id, studySessionId }),
-    [lesson.id, studySessionId],
+    () => createAdapters({ finished, lessonId: lesson.id, studySessionId }),
+    [finished, lesson.id, studySessionId],
   );
 
   const { buddy, canAsk, goalId } = tutorViewer;
@@ -156,6 +192,7 @@ export function LessonPlayerClient({
   return (
     <LessonPlayerProvider
       adapters={adapters}
+      key={visit}
       challengeTeam={challengeTeam}
       firstAnswer={firstAnswer}
       lesson={lesson}
