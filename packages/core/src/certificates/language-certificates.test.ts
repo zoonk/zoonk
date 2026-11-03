@@ -16,7 +16,6 @@ import {
 
 const WINDOW = 20;
 
-/** The write every answer and every call settlement runs, so it covers both. */
 async function recordSkillEvidence(input: Omit<SkillEvidence, "startScore">) {
   const evidence = await loadLanguageSkillEvidence(input);
   await prisma.$transaction((tx) => addSkillEvidence(tx, evidence));
