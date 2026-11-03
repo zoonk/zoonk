@@ -59,6 +59,14 @@ class LessonPlayerFlowTest {
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
 
+    @Test
+    fun aPracticedLearnerReadsTheExplanationBeforeTheCheckEvenWhenTheRunSaysQuestionFirst() {
+        play(listOf(explanationStep("idea"), checkStep("quiz"))) { support = "\"questionFirst\"" }
+
+        assertTrue(viewModel.state.value?.run is LessonRun.Started)
+        assertEquals(listOf("idea", "quiz"), viewModel.state.value?.queue)
+    }
+
     /** Android closing the app in the background keeps a typed answer the learner hasn't checked. */
     @Test
     fun aTypedAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {

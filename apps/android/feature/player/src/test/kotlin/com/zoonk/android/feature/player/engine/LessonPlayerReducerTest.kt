@@ -668,13 +668,6 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun opensWithTheFirstExplanationBeforeTheFirstCheckEvenForALearnerWhoPracticedTheSkill() {
-        val steps = listOf(hookGuessStep("hook"), explanationStep("e1", "s"), checkStep("q1", "s"))
-
-        assertEquals(listOf("hook", "e1", "q1"), LessonPlayerState.initial("lesson", steps, now = 0).queue)
-    }
-
-    @Test
     fun showsHyperdriveFromThreeNewRightAnswersInARow() {
         val steps = listOf(checkStep("a"), checkStep("b"), checkStep("c"), checkStep("d"))
         val state =
