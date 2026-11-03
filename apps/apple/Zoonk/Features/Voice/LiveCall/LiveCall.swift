@@ -644,9 +644,9 @@ final class LiveCall {
     UsageAnalytics.track(
       .callEnded(
         .init(
-          conversationKind: conversation.kind.analyticsName, delegations: delegations,
+          conversationKind: conversation.kind, delegations: delegations,
           durationSeconds: liveSince.map { Int(Date.now.timeIntervalSince($0).rounded()) } ?? 0,
-          learnerTurns: turns.filter { $0.speaker == .learner }.count, reason: reason.rawValue,
+          learnerTurns: turns.filter { $0.speaker == .learner }.count, reason: reason,
           replyGapMaxMs: replyGaps.maxMs, replyGapMedianMs: replyGaps.medianMs,
           slowReplies: replyGaps.slowReplies, talkSeconds: talkSeconds,
           unansweredTurns: replyGaps.unansweredTurns)))
@@ -685,18 +685,6 @@ extension LiveCall {
       case .goodbye: self = .goodbye
       case .quiet: self = .quiet
       }
-    }
-  }
-}
-
-extension LanguageConversation.KindPayload {
-  /// Core's `ConversationKind` in analytics.
-  fileprivate var analyticsName: String {
-    switch self {
-    case .practice: "practice"
-    case .checkpoint: "checkpoint"
-    case .speakingMock: "speaking_mock"
-    case .examSpeaking: "exam_speaking"
     }
   }
 }

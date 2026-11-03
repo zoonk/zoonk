@@ -26,11 +26,11 @@ enum AnalyticsEvent: Equatable {
   /// A reply gap runs from the learner's microphone going quiet to the next character transcript
   /// arriving: a proxy for the wait the learner heard.
   struct CallEnded: Equatable {
-    let conversationKind: String
+    let conversationKind: LanguageConversation.KindPayload
     let delegations: Int
     let durationSeconds: Int
     let learnerTurns: Int
-    let reason: String
+    let reason: LiveCall.EndReason
     let replyGapMaxMs: Int?
     let replyGapMedianMs: Int?
     let slowReplies: Int
@@ -83,9 +83,9 @@ enum AnalyticsEvent: Equatable {
       ["lesson_id": lessonID, "template": template]
     case .callEnded(let call):
       [
-        "conversation_kind": call.conversationKind, "delegations": call.delegations,
+        "conversation_kind": call.conversationKind.analyticsName, "delegations": call.delegations,
         "duration_seconds": call.durationSeconds, "learner_turns": call.learnerTurns,
-        "reason": call.reason, "reply_gap_max_ms": orNull(call.replyGapMaxMs),
+        "reason": call.reason.rawValue, "reply_gap_max_ms": orNull(call.replyGapMaxMs),
         "reply_gap_median_ms": orNull(call.replyGapMedianMs), "slow_replies": call.slowReplies,
         "talk_seconds": call.talkSeconds, "unanswered_turns": call.unansweredTurns,
       ]
@@ -163,6 +163,18 @@ extension AnalyticsEvent.Insight {
     case .planChange: self = .planChange
     case .scheduleIdea: self = .schedule
     case .tip: self = .tip
+    }
+  }
+}
+
+extension LanguageConversation.KindPayload {
+  /// Core's `ConversationKind` in analytics.
+  fileprivate var analyticsName: String {
+    switch self {
+    case .practice: "practice"
+    case .checkpoint: "checkpoint"
+    case .speakingMock: "speaking_mock"
+    case .examSpeaking: "exam_speaking"
     }
   }
 }
