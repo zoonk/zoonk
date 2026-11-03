@@ -3,6 +3,7 @@ import { type ChapterLesson, formatChapterLessons } from "../_utils/chapter-less
 import { formatLocalContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
@@ -52,19 +53,34 @@ function formatSkill(skill: LessonSpecSkill, index: number): string {
   ].join("\n");
 }
 
+/** A beginner's lesson opens with a scene to read, never a guess to answer. */
+function getAllowedKinds({
+  kind,
+  novice,
+  shortAnswers,
+}: {
+  kind: LessonScreen["kind"];
+  novice: boolean;
+  shortAnswers: boolean;
+}) {
+  return novice && kind === "hook" ? ["hookText"] : getWrittenKinds({ kind, shortAnswers });
+}
+
 function formatScreen({
+  novice,
   screen,
   skills,
   position,
   shortAnswers,
 }: {
+  novice: boolean;
   screen: LessonScreen;
   skills: readonly LessonSpecSkill[];
   position: number;
   shortAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((index) => skills[index]?.name ?? []);
-  const kinds = getWrittenKinds({ kind: screen.kind, shortAnswers });
+  const kinds = getAllowedKinds({ kind: screen.kind, novice, shortAnswers });
 
   return [
     `${position}. ${screen.kind}, written as: ${kinds.join(" or ")}`,
@@ -103,9 +119,11 @@ function getToday(): string {
 
 export function formatLessonPlan(context: LessonWritingContext): string {
   const { spec } = context;
+  const novice = readsNoviceRules(context);
 
   const screens = spec.screens.map((screen, index) =>
     formatScreen({
+      novice,
       position: index + 1,
       screen,
       shortAnswers: Boolean(context.shortAnswers),

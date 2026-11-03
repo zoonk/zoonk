@@ -66,12 +66,15 @@ export function getLessonRewriteModel(heldBackModels: readonly string[]): string
 const FIND_ERROR_TEMPLATE = "findError";
 
 function buildSystemPrompt(params: WriteLessonDraftParams): string {
+  const novice = readsNoviceRules(params);
+
   return selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
+      experienced: !novice,
       material: Boolean(params.material),
-      novice: readsNoviceRules(params),
+      novice,
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
