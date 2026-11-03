@@ -181,6 +181,7 @@ filter:
     - listCourseCategoryCounts
     - listCourseChapters
     - listCourses
+    - listCurrentUserCompletedLessons
     - listCurrentUserMilestones
     - listCurrentUserMistakes
     - listEarlierQuestions

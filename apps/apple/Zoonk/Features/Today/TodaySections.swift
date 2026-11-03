@@ -1056,6 +1056,25 @@ struct TodayPracticeSection: View {
         }
       }
 
+      if places?.completedLessons == true {
+        NavigationLink(value: AppRoute.completedLessons) {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(
+                "Completed lessons", tableName: "Today",
+                comment: "Opens the page of the lessons the learner finished")
+              Text(
+                "Go back to any lesson you've finished", tableName: "Today",
+                comment: "The completed lessons page's line"
+              )
+              .font(.footnote)
+              .foregroundStyle(.secondary)
+            }
+          } icon: {
+            KindMark(kind: .lesson)
+          }
+        }
+      }
     } header: {
       Text("Practice anytime", tableName: "Today", comment: "Practice section header")
     }

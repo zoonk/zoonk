@@ -8,6 +8,7 @@ enum AppRoute: Hashable, Identifiable {
   case exam
   case mockChooser
   case mistakes
+  case completedLessons
   case speaking
   case earlierQuestions
   case statistics
@@ -55,8 +56,8 @@ enum AppRoute: Hashable, Identifiable {
 
   var presentation: Presentation {
     switch self {
-    case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking,
-      .earlierQuestions, .statistics, .catalog, .course:
+    case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes,
+      .completedLessons, .speaking, .earlierQuestions, .statistics, .catalog, .course:
       .push
     default:
       .task
@@ -67,7 +68,7 @@ enum AppRoute: Hashable, Identifiable {
   /// `AuthGateScreen`).
   var requirement: Requirement {
     switch self {
-    case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
+    case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .completedLessons, .speaking:
       .goal
     case .chapter, .languageUnit, .earlierQuestions, .statistics:
       .account
