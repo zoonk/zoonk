@@ -763,7 +763,7 @@ describe("language conversations", () => {
   it("records a call's speaking evidence when the settle that wrote it failed and the call is finished again", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const { conversationId } = await connectPractice(renting.id);
 
     const level = await prisma.languageSkillLevel.create({
       data: { language: "en", score: 2, skill: "speaking", startScore: 2, userId: user.id },
