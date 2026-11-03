@@ -1,6 +1,6 @@
 import { deleteUserDependenciesBeforeAuthDelete } from "@zoonk/auth/account-deletion";
 import { prisma } from "@zoonk/db";
-import { isLocalDevelopmentDatabase } from "@zoonk/db/local-database";
+import { getDatabaseUrl, isLocalDevelopmentDatabase } from "@zoonk/db/local-database";
 import { listSeedEmails } from "@zoonk/db/seed/emails";
 import { getEnvironment } from "@zoonk/utils/environment";
 
@@ -16,13 +16,12 @@ export const ONBOARDED_PREFIX = "onboarded-";
  */
 export function getTestLearnerRefusal(): string | null {
   const environment = getEnvironment();
-  const databaseUrl = process.env.DATABASE_URL;
 
   if (environment !== "development") {
     return `this is the ${environment} environment, not development.`;
   }
 
-  if (!databaseUrl || !isLocalDevelopmentDatabase(databaseUrl)) {
+  if (!isLocalDevelopmentDatabase(getDatabaseUrl())) {
     return "DATABASE_URL isn't the local development database (zoonk on localhost).";
   }
 

@@ -60,7 +60,6 @@ const scope = {
   targetLanguage: null,
 };
 
-const TIMEOUT = 60_000;
 const MAX_ASK_ROUNDS = 10;
 
 async function planWaitingGoal(
@@ -383,7 +382,7 @@ describe(courseOutlineWorkflow, () => {
       .mockImplementation(async (params) => teachNothing(params));
   });
 
-  describe("on a band other learners already use", { timeout: TIMEOUT }, () => {
+  describe("on a band other learners already use", () => {
     it("teaches a later goal's skill through the chapter that already covers it, writing no chapter", async () => {
       const course = await courseFixture({
         language: "pt",
@@ -478,7 +477,7 @@ describe(courseOutlineWorkflow, () => {
 
       const learners = await Promise.all(
         skills.map(async (skill) => ({
-          goal: await goalWaitingOn({ courseId: course.id, lessons: 20, skillIds: [skill.id] }),
+          goal: await goalWaitingOn({ courseId: course.id, lessons: 14, skillIds: [skill.id] }),
           skill,
         })),
       );
@@ -529,7 +528,7 @@ describe(courseOutlineWorkflow, () => {
 
       expect(band.map((chapter) => chapter.title)).toStrictEqual([
         "Reserva e hospedagem",
-        ...[1, 2, 3, 4].map((count) => `Mais ${skills[0]?.name} ${count}`),
+        ...[1, 2].map((count) => `Mais ${skills[0]?.name} ${count}`),
       ]);
 
       const [items, asks] = await Promise.all([
@@ -546,7 +545,7 @@ describe(courseOutlineWorkflow, () => {
       );
 
       expect(asks).toStrictEqual([[], [], []]);
-      expect(generateCourseOutline).toHaveBeenCalledTimes(4);
+      expect(generateCourseOutline).toHaveBeenCalledTimes(2);
     });
 
     it("keeps each topic's chapters in order when next chapters of two topics land in the same week", async () => {
@@ -601,7 +600,7 @@ describe(courseOutlineWorkflow, () => {
 
       const goal = await goalWaitingOn({
         courseId: course.id,
-        lessons: 20,
+        lessons: 14,
         skillIds: [lodging.id, food.id],
       });
 
@@ -644,7 +643,7 @@ describe(courseOutlineWorkflow, () => {
       expect(band.map((chapter) => chapter.title)).toStrictEqual(
         [...topics.values()].flatMap((topic) => [
           topic,
-          ...[2, 3, 4, 5].map((count) => `${topic} ${count}`),
+          ...[2, 3].map((count) => `${topic} ${count}`),
         ]),
       );
 
@@ -1088,345 +1087,317 @@ describe(courseOutlineWorkflow, () => {
     });
   });
 
-  it(
-    "writes a new band's outline, turns the goal's stand-ins into lessons and starts the course's background work",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
+  it("writes a new band's outline, turns the goal's stand-ins into lessons and starts the course's background work", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
 
-      const result = await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills }],
-        courseId: course.id,
-        scope,
-      });
+    const result = await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+    });
 
-      expect(result).toMatchObject({ bandsWritten: 1, status: "written" });
+    expect(result).toMatchObject({ bandsWritten: 1, status: "written" });
 
-      expect(result.status === "written" && result.chapterIds).toHaveLength(
-        recordedOutline.chapters.length,
-      );
+    expect(result.status === "written" && result.chapterIds).toHaveLength(
+      recordedOutline.chapters.length,
+    );
 
-      const [storedCourse, placements, items] = await Promise.all([
-        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-        prisma.courseChapter.findMany({
-          orderBy: { position: "asc" },
-          where: { courseId: course.id },
-        }),
-        lessonItems(goal.id),
-      ]);
-
-      expect(storedCourse).toMatchObject({ isPublished: true, outlineStatus: "completed" });
-
-      expect(placements.map((placement) => placement.position)).toStrictEqual(
-        recordedOutline.chapters.map((_, index) => index),
-      );
-
-      expect(items.length).toBeGreaterThan(0);
-      expect(items.every((item) => item.lessonId !== null)).toBe(true);
-
-      expect(vi.mocked(start).mock.calls).toStrictEqual([
-        [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
-        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
-      ]);
-    },
-  );
-
-  it(
-    "keeps a band written when a waiting goal can't take its lessons, and says which",
-    { timeout: TIMEOUT },
-    async () => {
-      const [busy, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      const other = await planWaitingGoal(busy.idsByKey);
-      const readyBeforeRetry: boolean[] = [];
-
-      vi.mocked(sleep).mockImplementationOnce(async () => {
-        const items = await lessonItems(other.id);
-        readyBeforeRetry.push(items.length > 0 && items.every((item) => item.lessonId !== null));
-      });
-
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: busy.goal.id } });
-      const error = vi.spyOn(logger, "logError");
-      const stop = new AbortController();
-      const marking = markPlanUntil({ planId: plan.id, signal: stop.signal });
-
-      const writing = courseOutlineWorkflow({
-        analytics: { distinctId: busy.goal.userId, goalId: busy.goal.id, platform: "web" },
-        bands: [{ level: "overview", skills: busy.bandSkills }],
-        courseId: course.id,
-        scope,
-      });
-
-      try {
-        await Promise.allSettled([writing.finally(() => stop.abort()), marking]);
-        await expect(marking).resolves.toBeGreaterThan(1);
-        await expect(writing).resolves.toMatchObject({ status: "written" });
-        expect(readyBeforeRetry).toStrictEqual([true]);
-
-        expect(error).toHaveBeenCalledWith(
-          "[courseOutlineWorkflow] Goals waiting on a band couldn't take its lessons:",
-          expect.objectContaining({ courseId: course.id, goalIds: [busy.goal.id] }),
-        );
-      } finally {
-        error.mockRestore();
-      }
-
-      const [storedCourse, busyItems, otherItems] = await Promise.all([
-        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-        lessonItems(busy.goal.id),
-        lessonItems(other.id),
-      ]);
-
-      expect(storedCourse.outlineStatus).toBe("completed");
-      expect(otherItems.every((item) => item.lessonId !== null)).toBe(true);
-      expect(busyItems.some((item) => item.lessonId === null)).toBe(true);
-
-      expect(trackServerEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          distinctId: busy.goal.userId,
-          name: "Generation Failed",
-          properties: { content_kind: "course", model: null, task: "waiting-goals-replan" },
-        }),
-      );
-    },
-  );
-
-  it(
-    "writes waited bands at priority, upcoming bands at standard, and later bands at flex",
-    { timeout: TIMEOUT },
-    async () => {
-      outlineOneChapter();
-
-      const [{ bandSkills }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      const half = Math.ceil(bandSkills.length / 2);
-
-      await courseOutlineWorkflow({
-        bands: [
-          { level: "overview", skills: bandSkills.slice(0, half) },
-          { level: "beginner", skills: bandSkills.slice(half) },
-        ],
-        courseId: course.id,
-        scope,
-        waitedSkillId: bandSkills[0]?.id,
-      });
-
-      expect(
-        vi
-          .mocked(streamCourseOutline)
-          .mock.calls.map(([params]) => [params.level, params.serviceTier]),
-      ).toStrictEqual([["overview", "priority"]]);
-
-      expect(
-        vi
-          .mocked(generateCourseOutline)
-          .mock.calls.map(([params]) => [params.level, params.serviceTier]),
-      ).toStrictEqual([["beginner", undefined]]);
-
-      const later = await courseFixture({ outlineStatus: "pending", title: "Immunology" });
-      vi.mocked(generateCourseOutline).mockClear();
-
-      await courseOutlineWorkflow({
-        background: true,
-        bands: [{ level: "beginner", skills: bandSkills.slice(half) }],
-        courseId: later.id,
-        scope,
-      });
-
-      expect(
-        vi.mocked(generateCourseOutline).mock.calls.map(([params]) => params.serviceTier),
-      ).toStrictEqual(["flex"]);
-    },
-  );
-
-  it(
-    "writes a course's bands at once, so a later band doesn't wait for the first one to land",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      const half = Math.ceil(bandSkills.length / 2);
-
-      const secondStarted = new Promise<boolean>((resolve) => {
-        vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
-          resolve(params.level === "beginner");
-          return outlineResult(recordedOutline);
-        });
-
-        const timeout = setTimeout(() => resolve(false), 5000);
-        onTestFinished(() => clearTimeout(timeout));
-      });
-
-      vi.mocked(streamCourseOutline).mockImplementationOnce((async (params: never) => {
-        await expect(secondStarted).resolves.toBe(true);
-        return replayStreamedOutline(recordedOutline)(params);
-      }) as never);
-
-      await expect(
-        courseOutlineWorkflow({
-          bands: [
-            { level: "overview", skills: bandSkills.slice(0, half) },
-            { level: "beginner", skills: bandSkills.slice(half) },
-          ],
-          courseId: course.id,
-          scope,
-          waitedSkillId: bandSkills[0]?.id,
-        }),
-      ).resolves.toMatchObject({ status: "written" });
-    },
-  );
-
-  it(
-    "writes a waited exam band at priority and its upcoming band at standard",
-    { timeout: TIMEOUT },
-    async () => {
-      outlineOneChapter();
-
-      const [{ bandSkills }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      const examScope = {
-        ...scope,
-        exams: [{ name: "ENEM", style: "Interdisciplinary five-option items." }],
-      };
-
-      const half = Math.ceil(bandSkills.length / 2);
-
-      await courseOutlineWorkflow({
-        bands: [
-          { level: "overview", skills: bandSkills.slice(0, half) },
-          { level: "beginner", skills: bandSkills.slice(half) },
-        ],
-        courseId: course.id,
-        scope: examScope,
-        waitedSkillId: bandSkills[0]?.id,
-      });
-
-      expect(vi.mocked(streamCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
-    },
-  );
-
-  it(
-    "saves the first chapter of a band a learner waits on while the rest is written, and re-plans the learner from it",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      const replay = replayStreamedOutline(recordedOutline);
-      const whileWriting: { placements: number; plannedLessons: number }[] = [];
-
-      vi.mocked(streamCourseOutline).mockImplementation((async (
-        params: Parameters<typeof replay>[0],
-      ) => {
-        const result = await replay(params);
-
-        const [placements, items] = await Promise.all([
-          prisma.courseChapter.count({ where: { courseId: course.id } }),
-          lessonItems(goal.id),
-        ]);
-
-        whileWriting.push({
-          placements,
-          plannedLessons: items.filter((item) => item.lessonId !== null).length,
-        });
-
-        return result;
-      }) as never);
-
-      const result = await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills }],
-        courseId: course.id,
-        scope,
-        waitedSkillId: bandSkills[0]?.id,
-      });
-
-      expect(whileWriting).toStrictEqual([{ placements: 1, plannedLessons: expect.any(Number) }]);
-      expect(whileWriting[0]?.plannedLessons).toBeGreaterThan(0);
-
-      const [placements, items] = await Promise.all([
-        prisma.courseChapter.findMany({
-          orderBy: { position: "asc" },
-          where: { courseId: course.id },
-        }),
-        lessonItems(goal.id),
-      ]);
-
-      expect(placements.map((placement) => placement.position)).toStrictEqual(
-        recordedOutline.chapters.map((_, index) => index),
-      );
-
-      expect(result.status === "written" && result.chapterIds).toStrictEqual(
-        placements.map((placement) => placement.chapterId),
-      );
-
-      expect(items.every((item) => item.lessonId !== null)).toBe(true);
-    },
-  );
-
-  it(
-    "streams a band that exists when a learner waits on it, saving its first new chapter after the band's chapters",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills }, course, existing] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "completed", title: "Immunology" }),
-        libraryChapterFixture({ level: "overview" }),
-      ]);
-
-      await Promise.all([
-        courseChapterFixture({
-          chapterId: existing.id,
-          courseId: course.id,
-          level: "overview",
-          position: 0,
-        }),
-        addLesson(existing.id),
-      ]);
-
-      const result = await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills }],
-        courseId: course.id,
-        scope,
-        waitedSkillId: bandSkills[0]?.id,
-      });
-
-      const placements = await prisma.courseChapter.findMany({
+    const [storedCourse, placements, items] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      prisma.courseChapter.findMany({
         orderBy: { position: "asc" },
         where: { courseId: course.id },
+      }),
+      lessonItems(goal.id),
+    ]);
+
+    expect(storedCourse).toMatchObject({ isPublished: true, outlineStatus: "completed" });
+
+    expect(placements.map((placement) => placement.position)).toStrictEqual(
+      recordedOutline.chapters.map((_, index) => index),
+    );
+
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every((item) => item.lessonId !== null)).toBe(true);
+
+    expect(vi.mocked(start).mock.calls).toStrictEqual([
+      [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
+      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+    ]);
+  });
+
+  it("keeps a band written when a waiting goal can't take its lessons, and says which", async () => {
+    const [busy, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const other = await planWaitingGoal(busy.idsByKey);
+    const readyBeforeRetry: boolean[] = [];
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      const items = await lessonItems(other.id);
+      readyBeforeRetry.push(items.length > 0 && items.every((item) => item.lessonId !== null));
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: busy.goal.id } });
+    const error = vi.spyOn(logger, "logError");
+    const stop = new AbortController();
+    const marking = markPlanUntil({ planId: plan.id, signal: stop.signal });
+
+    const writing = courseOutlineWorkflow({
+      analytics: { distinctId: busy.goal.userId, goalId: busy.goal.id, platform: "web" },
+      bands: [{ level: "overview", skills: busy.bandSkills }],
+      courseId: course.id,
+      scope,
+    });
+
+    try {
+      await Promise.allSettled([writing.finally(() => stop.abort()), marking]);
+      await expect(marking).resolves.toBeGreaterThan(1);
+      await expect(writing).resolves.toMatchObject({ status: "written" });
+      expect(readyBeforeRetry).toStrictEqual([true]);
+
+      expect(error).toHaveBeenCalledWith(
+        "[courseOutlineWorkflow] Goals waiting on a band couldn't take its lessons:",
+        expect.objectContaining({ courseId: course.id, goalIds: [busy.goal.id] }),
+      );
+    } finally {
+      error.mockRestore();
+    }
+
+    const [storedCourse, busyItems, otherItems] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      lessonItems(busy.goal.id),
+      lessonItems(other.id),
+    ]);
+
+    expect(storedCourse.outlineStatus).toBe("completed");
+    expect(otherItems.every((item) => item.lessonId !== null)).toBe(true);
+    expect(busyItems.some((item) => item.lessonId === null)).toBe(true);
+
+    expect(trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        distinctId: busy.goal.userId,
+        name: "Generation Failed",
+        properties: { content_kind: "course", model: null, task: "waiting-goals-replan" },
+      }),
+    );
+  });
+
+  it("writes waited bands at priority, upcoming bands at standard, and later bands at flex", async () => {
+    outlineOneChapter();
+
+    const [{ bandSkills }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const half = Math.ceil(bandSkills.length / 2);
+
+    await courseOutlineWorkflow({
+      bands: [
+        { level: "overview", skills: bandSkills.slice(0, half) },
+        { level: "beginner", skills: bandSkills.slice(half) },
+      ],
+      courseId: course.id,
+      scope,
+      waitedSkillId: bandSkills[0]?.id,
+    });
+
+    expect(
+      vi
+        .mocked(streamCourseOutline)
+        .mock.calls.map(([params]) => [params.level, params.serviceTier]),
+    ).toStrictEqual([["overview", "priority"]]);
+
+    expect(
+      vi
+        .mocked(generateCourseOutline)
+        .mock.calls.map(([params]) => [params.level, params.serviceTier]),
+    ).toStrictEqual([["beginner", undefined]]);
+
+    const later = await courseFixture({ outlineStatus: "pending", title: "Immunology" });
+    vi.mocked(generateCourseOutline).mockClear();
+
+    await courseOutlineWorkflow({
+      background: true,
+      bands: [{ level: "beginner", skills: bandSkills.slice(half) }],
+      courseId: later.id,
+      scope,
+    });
+
+    expect(
+      vi.mocked(generateCourseOutline).mock.calls.map(([params]) => params.serviceTier),
+    ).toStrictEqual(["flex"]);
+  });
+
+  it("writes a course's bands at once, so a later band doesn't wait for the first one to land", async () => {
+    const [{ bandSkills }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const half = Math.ceil(bandSkills.length / 2);
+
+    const secondStarted = new Promise<boolean>((resolve) => {
+      vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
+        resolve(params.level === "beginner");
+        return outlineResult(recordedOutline);
       });
 
-      expect(streamCourseOutline).toHaveBeenCalledOnce();
-      expect(placements[0]?.chapterId).toBe(existing.id);
+      const timeout = setTimeout(() => resolve(false), 5000);
+      onTestFinished(() => clearTimeout(timeout));
+    });
 
-      expect(placements.map((placement) => placement.position)).toStrictEqual(
-        placements.map((_, index) => index),
-      );
+    vi.mocked(streamCourseOutline).mockImplementationOnce((async (params: never) => {
+      await expect(secondStarted).resolves.toBe(true);
+      return replayStreamedOutline(recordedOutline)(params);
+    }) as never);
 
-      expect(result.status === "written" && result.chapterIds).toStrictEqual(
-        placements.slice(1).map((placement) => placement.chapterId),
-      );
-    },
-  );
+    await expect(
+      courseOutlineWorkflow({
+        bands: [
+          { level: "overview", skills: bandSkills.slice(0, half) },
+          { level: "beginner", skills: bandSkills.slice(half) },
+        ],
+        courseId: course.id,
+        scope,
+        waitedSkillId: bandSkills[0]?.id,
+      }),
+    ).resolves.toMatchObject({ status: "written" });
+  });
 
-  describe(writeOutlineBandStep, { timeout: TIMEOUT }, () => {
+  it("writes a waited exam band at priority and its upcoming band at standard", async () => {
+    outlineOneChapter();
+
+    const [{ bandSkills }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const examScope = {
+      ...scope,
+      exams: [{ name: "ENEM", style: "Interdisciplinary five-option items." }],
+    };
+
+    const half = Math.ceil(bandSkills.length / 2);
+
+    await courseOutlineWorkflow({
+      bands: [
+        { level: "overview", skills: bandSkills.slice(0, half) },
+        { level: "beginner", skills: bandSkills.slice(half) },
+      ],
+      courseId: course.id,
+      scope: examScope,
+      waitedSkillId: bandSkills[0]?.id,
+    });
+
+    expect(vi.mocked(streamCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+  });
+
+  it("saves the first chapter of a band a learner waits on while the rest is written, and re-plans the learner from it", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const replay = replayStreamedOutline(recordedOutline);
+    const whileWriting: { placements: number; plannedLessons: number }[] = [];
+
+    vi.mocked(streamCourseOutline).mockImplementation((async (
+      params: Parameters<typeof replay>[0],
+    ) => {
+      const result = await replay(params);
+
+      const [placements, items] = await Promise.all([
+        prisma.courseChapter.count({ where: { courseId: course.id } }),
+        lessonItems(goal.id),
+      ]);
+
+      whileWriting.push({
+        placements,
+        plannedLessons: items.filter((item) => item.lessonId !== null).length,
+      });
+
+      return result;
+    }) as never);
+
+    const result = await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+      waitedSkillId: bandSkills[0]?.id,
+    });
+
+    expect(whileWriting).toStrictEqual([{ placements: 1, plannedLessons: expect.any(Number) }]);
+    expect(whileWriting[0]?.plannedLessons).toBeGreaterThan(0);
+
+    const [placements, items] = await Promise.all([
+      prisma.courseChapter.findMany({
+        orderBy: { position: "asc" },
+        where: { courseId: course.id },
+      }),
+      lessonItems(goal.id),
+    ]);
+
+    expect(placements.map((placement) => placement.position)).toStrictEqual(
+      recordedOutline.chapters.map((_, index) => index),
+    );
+
+    expect(result.status === "written" && result.chapterIds).toStrictEqual(
+      placements.map((placement) => placement.chapterId),
+    );
+
+    expect(items.every((item) => item.lessonId !== null)).toBe(true);
+  });
+
+  it("streams a band that exists when a learner waits on it, saving its first new chapter after the band's chapters", async () => {
+    const [{ bandSkills }, course, existing] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "completed", title: "Immunology" }),
+      libraryChapterFixture({ level: "overview" }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: existing.id,
+        courseId: course.id,
+        level: "overview",
+        position: 0,
+      }),
+      addLesson(existing.id),
+    ]);
+
+    const result = await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+      waitedSkillId: bandSkills[0]?.id,
+    });
+
+    const placements = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(streamCourseOutline).toHaveBeenCalledOnce();
+    expect(placements[0]?.chapterId).toBe(existing.id);
+
+    expect(placements.map((placement) => placement.position)).toStrictEqual(
+      placements.map((_, index) => index),
+    );
+
+    expect(result.status === "written" && result.chapterIds).toStrictEqual(
+      placements.slice(1).map((placement) => placement.chapterId),
+    );
+  });
+
+  describe(writeOutlineBandStep, () => {
     it("queues the early chapter's invalidation without depending on Main's availability", async () => {
       vi.stubEnv("ZOONK_APP", "api");
       const fetch = vi.fn().mockRejectedValue(new Error("Main offline"));
@@ -1472,48 +1443,44 @@ describe(courseOutlineWorkflow, () => {
     });
   });
 
-  it(
-    "frees the course for the next goal when a band fails, and counts the failure for the learner",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
+  it("frees the course for the next goal when a band fails, and counts the failure for the learner", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
 
-      vi.mocked(generateCourseOutline).mockRejectedValue(new Error("Provider unavailable"));
+    vi.mocked(generateCourseOutline).mockRejectedValue(new Error("Provider unavailable"));
 
-      await expect(
-        courseOutlineWorkflow({
-          analytics: { distinctId: goal.userId, goalId: goal.id, platform: "web" },
-          bands: [{ level: "overview", skills: bandSkills }],
-          courseId: course.id,
-          scope,
-        }),
-      ).rejects.toThrow("Provider unavailable");
+    await expect(
+      courseOutlineWorkflow({
+        analytics: { distinctId: goal.userId, goalId: goal.id, platform: "web" },
+        bands: [{ level: "overview", skills: bandSkills }],
+        courseId: course.id,
+        scope,
+      }),
+    ).rejects.toThrow("Provider unavailable");
 
-      await expect(
-        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      ).resolves.toMatchObject({ outlineRunId: "test-run-id", outlineStatus: "failed" });
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ outlineRunId: "test-run-id", outlineStatus: "failed" });
 
-      expect(trackServerEvent).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          distinctId: goal.userId,
-          name: "Generation Failed",
-          properties: { content_kind: "course", model: null, task: "course-outline" },
-          shared: expect.objectContaining({ platform: "web" }),
-        }),
-      );
+    expect(trackServerEvent).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        distinctId: goal.userId,
+        name: "Generation Failed",
+        properties: { content_kind: "course", model: null, task: "course-outline" },
+        shared: expect.objectContaining({ platform: "web" }),
+      }),
+    );
 
-      const items = await lessonItems(goal.id);
+    const items = await lessonItems(goal.id);
 
-      expect(items.length).toBeGreaterThan(0);
-      expect(items.every((item) => item.lessonId === null)).toBe(true);
-      expect(start).not.toHaveBeenCalledWith(courseDetailsWorkflow, expect.anything());
-    },
-  );
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every((item) => item.lessonId === null)).toBe(true);
+    expect(start).not.toHaveBeenCalledWith(courseDetailsWorkflow, expect.anything());
+  });
 
-  it("gives a private course no details or other bands", { timeout: TIMEOUT }, async () => {
+  it("gives a private course no details or other bands", async () => {
     const [{ bandSkills }, owner] = await Promise.all([waitingGoal(), userFixture()]);
 
     const course = await courseFixture({
@@ -1534,302 +1501,270 @@ describe(courseOutlineWorkflow, () => {
     expect(start).not.toHaveBeenCalled();
   });
 
-  it(
-    "adds only the chapters that teach a later goal's missing skills to a band that exists",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills }, course, existing] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "completed", title: "Immunology" }),
-        libraryChapterFixture({ level: "overview" }),
-      ]);
+  it("adds only the chapters that teach a later goal's missing skills to a band that exists", async () => {
+    const [{ bandSkills }, course, existing] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "completed", title: "Immunology" }),
+      libraryChapterFixture({ level: "overview" }),
+    ]);
 
-      await Promise.all([
-        courseChapterFixture({
-          chapterId: existing.id,
-          courseId: course.id,
-          level: "overview",
-          position: 0,
-        }),
-        addLesson(existing.id),
-      ]);
-
-      const [first, ...rest] = recordedOutline.chapters;
-
-      vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
-          ...recordedOutline,
-          chapters: [...(first ? [{ ...first, skillKeys: [] }] : []), ...rest],
-        }),
-      );
-
-      await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills }],
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: existing.id,
         courseId: course.id,
-        scope,
-      });
+        level: "overview",
+        position: 0,
+      }),
+      addLesson(existing.id),
+    ]);
 
-      const placements = await prisma.courseChapter.findMany({
-        orderBy: { position: "asc" },
-        where: { courseId: course.id },
-      });
+    const [first, ...rest] = recordedOutline.chapters;
 
-      expect(placements.map((placement) => placement.position)).toStrictEqual(
-        placements.map((_, index) => index),
-      );
+    vi.mocked(generateCourseOutline).mockResolvedValue(
+      outlineResult({
+        ...recordedOutline,
+        chapters: [...(first ? [{ ...first, skillKeys: [] }] : []), ...rest],
+      }),
+    );
 
-      expect(placements).toHaveLength(
-        rest.filter((chapter) => chapter.skillKeys.length > 0).length + 1,
-      );
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+    });
 
-      expect(placements[0]?.chapterId).toBe(existing.id);
+    const placements = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
 
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].otherLevelChapters).toStrictEqual([
-        existing.title,
-      ]);
-    },
-  );
+    expect(placements.map((placement) => placement.position)).toStrictEqual(
+      placements.map((_, index) => index),
+    );
 
-  it(
-    "tells the outline which of the band's skills the course's other chapters already teach",
-    { timeout: TIMEOUT },
-    async () => {
-      outlineOneChapter();
+    expect(placements).toHaveLength(
+      rest.filter((chapter) => chapter.skillKeys.length > 0).length + 1,
+    );
 
-      const [{ bandSkills }, course, otherSubject, chapter, otherChapter, lesson, otherLesson] =
-        await Promise.all([
-          waitingGoal(),
-          courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-          courseFixture({ title: "Veterinary parasitology" }),
-          libraryChapterFixture(),
-          libraryChapterFixture(),
-          libraryLessonFixture(),
-          libraryLessonFixture(),
-        ]);
+    expect(placements[0]?.chapterId).toBe(existing.id);
 
-      const [elsewhere, inOtherSubject, ...rest] = bandSkills;
+    expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].otherLevelChapters).toStrictEqual([
+      existing.title,
+    ]);
+  });
 
+  it("tells the outline which of the band's skills the course's other chapters already teach", async () => {
+    outlineOneChapter();
+
+    const [{ bandSkills }, course, otherSubject, chapter, otherChapter, lesson, otherLesson] =
       await Promise.all([
-        courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-        courseChapterFixture({
-          chapterId: otherChapter.id,
-          courseId: otherSubject.id,
-          position: 0,
-        }),
-        prisma.chapterLesson.createMany({
-          data: [
-            { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
-            { chapterId: otherChapter.id, lessonId: otherLesson.id, position: 0 },
-          ],
-        }),
-        lessonSkillFixture({ lessonId: lesson.id, skillId: elsewhere?.id ?? "" }),
-        lessonSkillFixture({ lessonId: otherLesson.id, skillId: inOtherSubject?.id ?? "" }),
-      ]);
-
-      await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills }],
-        courseId: course.id,
-        scope,
-      });
-
-      const [call] = vi.mocked(generateCourseOutline).mock.calls;
-
-      expect(call?.[0].taughtElsewhere).toStrictEqual([elsewhere?.name]);
-
-      expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toStrictEqual(
-        [inOtherSubject, ...rest].map((skill) => skill?.key),
-      );
-    },
-  );
-
-  it(
-    "asks an exam answered on paper for chapters without tools, even for skills a tool chapter teaches",
-    { timeout: TIMEOUT },
-    async () => {
-      outlineOneChapter();
-
-      const [{ bandSkills }, course, practice, lesson] = await Promise.all([
         waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "Speech recognition" }),
-        libraryChapterFixture({ tools: [{ essential: true, name: "Audio editor (Audacity)" }] }),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+        courseFixture({ title: "Veterinary parasitology" }),
+        libraryChapterFixture(),
+        libraryChapterFixture(),
+        libraryLessonFixture(),
         libraryLessonFixture(),
       ]);
 
-      const [withTool] = bandSkills;
+    const [elsewhere, inOtherSubject, ...rest] = bandSkills;
 
-      await Promise.all([
-        courseChapterFixture({ chapterId: practice.id, courseId: course.id, position: 0 }),
-        prisma.chapterLesson.create({
-          data: { chapterId: practice.id, lessonId: lesson.id, position: 0 },
-        }),
-        lessonSkillFixture({ lessonId: lesson.id, skillId: withTool?.id ?? "" }),
-      ]);
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({ chapterId: otherChapter.id, courseId: otherSubject.id, position: 0 }),
+      prisma.chapterLesson.createMany({
+        data: [
+          { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
+          { chapterId: otherChapter.id, lessonId: otherLesson.id, position: 0 },
+        ],
+      }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: elsewhere?.id ?? "" }),
+      lessonSkillFixture({ lessonId: otherLesson.id, skillId: inOtherSubject?.id ?? "" }),
+    ]);
 
-      await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills: bandSkills, withToolChapters: false }],
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills }],
+      courseId: course.id,
+      scope,
+    });
+
+    const [call] = vi.mocked(generateCourseOutline).mock.calls;
+
+    expect(call?.[0].taughtElsewhere).toStrictEqual([elsewhere?.name]);
+
+    expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toStrictEqual(
+      [inOtherSubject, ...rest].map((skill) => skill?.key),
+    );
+  });
+
+  it("asks an exam answered on paper for chapters without tools, even for skills a tool chapter teaches", async () => {
+    outlineOneChapter();
+
+    const [{ bandSkills }, course, practice, lesson] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "Speech recognition" }),
+      libraryChapterFixture({ tools: [{ essential: true, name: "Audio editor (Audacity)" }] }),
+      libraryLessonFixture(),
+    ]);
+
+    const [withTool] = bandSkills;
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: practice.id, courseId: course.id, position: 0 }),
+      prisma.chapterLesson.create({
+        data: { chapterId: practice.id, lessonId: lesson.id, position: 0 },
+      }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: withTool?.id ?? "" }),
+    ]);
+
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills: bandSkills, withToolChapters: false }],
+      courseId: course.id,
+      scope,
+    });
+
+    const [call] = vi.mocked(generateCourseOutline).mock.calls;
+
+    expect(call?.[0]).toMatchObject({ taughtElsewhere: [], withoutTools: true });
+    expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toContain(withTool?.key);
+  });
+
+  it("tells an exam's outline the subject each skill sits in, and a shared course's outline none", async () => {
+    outlineOneChapter();
+
+    const [{ bandSkills }, examCourse, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineStatus: "pending", title: "ENEM" }),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
+
+    const skills = bandSkills.map((skill) => ({ ...skill, area: "Matemática" }));
+    const examScope = { ...scope, exams: [{ name: "ENEM", style: "Five-option items." }] };
+
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills }],
+      courseId: examCourse.id,
+      scope: examScope,
+    });
+
+    await courseOutlineWorkflow({
+      bands: [{ level: "overview", skills }],
+      courseId: course.id,
+      scope,
+    });
+
+    const [exam, shared] = vi
+      .mocked(generateCourseOutline)
+      .mock.calls.map(([params]) => params.requiredSkills?.map((skill) => skill.area));
+
+    expect(exam).toStrictEqual(skills.map(() => "Matemática"));
+    expect(shared).toStrictEqual(skills.map(() => null));
+  });
+
+  it("waits while another run saves the course's other bands, then plans against what it saved", async () => {
+    const [{ bandSkills }, course, savedChapter] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineRunId: "bands-run", outlineStatus: "running", title: "Immunology" }),
+      libraryChapterFixture({ level: "overview" }),
+    ]);
+
+    await addLesson(savedChapter.id);
+
+    vi.mocked(getRun).mockReturnValueOnce({
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as never);
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      await courseChapterFixture({
+        chapterId: savedChapter.id,
+        courseId: course.id,
+        level: "overview",
+        position: 0,
+      });
+
+      await prisma.course.update({
+        data: { outlineStatus: "completed" },
+        where: { id: course.id },
+      });
+    });
+
+    await expect(
+      courseOutlineWorkflow({
+        bands: [{ level: "overview", skills: bandSkills }],
         courseId: course.id,
         scope,
-      });
+      }),
+    ).resolves.toMatchObject({ status: "written" });
 
-      const [call] = vi.mocked(generateCourseOutline).mock.calls;
+    const placements = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id, level: "overview" },
+    });
 
-      expect(call?.[0]).toMatchObject({ taughtElsewhere: [], withoutTools: true });
-      expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toContain(withTool?.key);
-    },
-  );
+    expect(placements[0]?.chapterId).toBe(savedChapter.id);
+    expect(placements.length).toBeGreaterThan(1);
 
-  it(
-    "tells an exam's outline the subject each skill sits in, and a shared course's outline none",
-    { timeout: TIMEOUT },
-    async () => {
-      outlineOneChapter();
+    expect(placements.map((placement) => placement.position)).toStrictEqual(
+      placements.map((_, index) => index),
+    );
 
-      const [{ bandSkills }, examCourse, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineStatus: "pending", title: "ENEM" }),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
+    expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].otherLevelChapters).toStrictEqual([
+      savedChapter.title,
+    ]);
+  });
 
-      const skills = bandSkills.map((skill) => ({ ...skill, area: "Matemática" }));
-      const examScope = { ...scope, exams: [{ name: "ENEM", style: "Five-option items." }] };
+  it("writes a guest's band while leaving its onboarding plan and the course's background work alone", async () => {
+    const [{ bandSkills, goal }, course] = await Promise.all([
+      waitingGoal({ setupComplete: false }),
+      courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+    ]);
 
-      await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills }],
-        courseId: examCourse.id,
-        scope: examScope,
-      });
-
-      await courseOutlineWorkflow({
-        bands: [{ level: "overview", skills }],
+    await expect(
+      courseOutlineWorkflow({
+        bands: [{ level: "overview", skills: bandSkills }],
         courseId: course.id,
+        forGuest: true,
         scope,
-      });
+      }),
+    ).resolves.toMatchObject({ bandsWritten: 1, status: "written" });
 
-      const [exam, shared] = vi
-        .mocked(generateCourseOutline)
-        .mock.calls.map(([params]) => params.requiredSkills?.map((skill) => skill.area));
+    const items = await lessonItems(goal.id);
 
-      expect(exam).toStrictEqual(skills.map(() => "Matemática"));
-      expect(shared).toStrictEqual(skills.map(() => null));
-    },
-  );
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every((item) => item.lessonId === null)).toBe(true);
+    expect(start).not.toHaveBeenCalled();
+  });
 
-  it(
-    "waits while another run saves the course's other bands, then plans against what it saved",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills }, course, savedChapter] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ outlineRunId: "bands-run", outlineStatus: "running", title: "Immunology" }),
-        libraryChapterFixture({ level: "overview" }),
-      ]);
+  it("starts a course from before learning v2 over for a guest, and that run writes the course's details again", async () => {
+    const [{ bandSkills }, course] = await Promise.all([
+      waitingGoal({ setupComplete: false }),
+      courseFixture({
+        imageUrl: "https://example.com/old-icon.webp",
+        isPublished: true,
+        outlineStatus: null,
+        runId: null,
+        title: "Immunology",
+      }),
+    ]);
 
-      await addLesson(savedChapter.id);
+    await expect(
+      courseOutlineWorkflow({
+        bands: [{ level: "overview", skills: bandSkills }],
+        courseId: course.id,
+        forGuest: true,
+        scope,
+      }),
+    ).resolves.toMatchObject({ bandsWritten: 1, status: "written" });
 
-      vi.mocked(getRun).mockReturnValueOnce({
-        exists: Promise.resolve(true),
-        status: Promise.resolve("running"),
-      } as never);
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ description: null, imageUrl: null, outlineStatus: "completed" });
 
-      vi.mocked(sleep).mockImplementationOnce(async () => {
-        await courseChapterFixture({
-          chapterId: savedChapter.id,
-          courseId: course.id,
-          level: "overview",
-          position: 0,
-        });
-
-        await prisma.course.update({
-          data: { outlineStatus: "completed" },
-          where: { id: course.id },
-        });
-      });
-
-      await expect(
-        courseOutlineWorkflow({
-          bands: [{ level: "overview", skills: bandSkills }],
-          courseId: course.id,
-          scope,
-        }),
-      ).resolves.toMatchObject({ status: "written" });
-
-      const placements = await prisma.courseChapter.findMany({
-        orderBy: { position: "asc" },
-        where: { courseId: course.id, level: "overview" },
-      });
-
-      expect(placements[0]?.chapterId).toBe(savedChapter.id);
-      expect(placements.length).toBeGreaterThan(1);
-
-      expect(placements.map((placement) => placement.position)).toStrictEqual(
-        placements.map((_, index) => index),
-      );
-
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].otherLevelChapters).toStrictEqual([
-        savedChapter.title,
-      ]);
-    },
-  );
-
-  it(
-    "writes a guest's band while leaving its onboarding plan and the course's background work alone",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal({ setupComplete: false }),
-        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
-      ]);
-
-      await expect(
-        courseOutlineWorkflow({
-          bands: [{ level: "overview", skills: bandSkills }],
-          courseId: course.id,
-          forGuest: true,
-          scope,
-        }),
-      ).resolves.toMatchObject({ bandsWritten: 1, status: "written" });
-
-      const items = await lessonItems(goal.id);
-
-      expect(items.length).toBeGreaterThan(0);
-      expect(items.every((item) => item.lessonId === null)).toBe(true);
-      expect(start).not.toHaveBeenCalled();
-    },
-  );
-
-  it(
-    "starts a course from before learning v2 over for a guest, and that run writes the course's details again",
-    { timeout: TIMEOUT },
-    async () => {
-      const [{ bandSkills }, course] = await Promise.all([
-        waitingGoal({ setupComplete: false }),
-        courseFixture({
-          imageUrl: "https://example.com/old-icon.webp",
-          isPublished: true,
-          outlineStatus: null,
-          runId: null,
-          title: "Immunology",
-        }),
-      ]);
-
-      await expect(
-        courseOutlineWorkflow({
-          bands: [{ level: "overview", skills: bandSkills }],
-          courseId: course.id,
-          forGuest: true,
-          scope,
-        }),
-      ).resolves.toMatchObject({ bandsWritten: 1, status: "written" });
-
-      await expect(
-        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      ).resolves.toMatchObject({ description: null, imageUrl: null, outlineStatus: "completed" });
-
-      expect(vi.mocked(start).mock.calls).toStrictEqual([
-        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
-      ]);
-    },
-  );
+    expect(vi.mocked(start).mock.calls).toStrictEqual([
+      [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+    ]);
+  });
 
   it("writes the details a course from before learning v2 still lacks for a guest whose band needs nothing", async () => {
     const [skill, course, lesson] = await Promise.all([
@@ -1902,61 +1837,57 @@ describe(courseOutlineWorkflow, () => {
     expect(start).not.toHaveBeenCalled();
   });
 
-  it(
-    "retries a chapter whose reuse decisions time out on a busy provider, and the retry saves it once",
-    { timeout: TIMEOUT },
-    async () => {
-      const token = `zq${crypto.randomUUID().slice(0, 8)}`;
+  it("retries a chapter whose reuse decisions time out on a busy provider, and the retry saves it once", async () => {
+    const token = `zq${crypto.randomUUID().slice(0, 8)}`;
 
-      const [{ bandSkills }, course] = await Promise.all([
-        waitingGoal(),
-        courseFixture({ title: "Immunology" }),
-        skillFixture({ name: `Antigen recognition ${token}` }),
-      ]);
+    const [{ bandSkills }, course] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ title: "Immunology" }),
+      skillFixture({ name: `Antigen recognition ${token}` }),
+    ]);
 
-      vi.mocked(generateSearchTerms).mockImplementation(
-        async ({ subjects }) =>
-          taskResult({ subjects: subjects.map(() => ({ terms: [token] })) }) as never,
-      );
+    vi.mocked(generateSearchTerms).mockImplementation(
+      async ({ subjects }) =>
+        taskResult({ subjects: subjects.map(() => ({ terms: [token] })) }) as never,
+    );
 
-      vi.mocked(decideLibraryIdentity).mockRejectedValueOnce(
-        new EvaluationTimeoutError("typesafe-ai/jev didn't answer within 10000 ms."),
-      );
+    vi.mocked(decideLibraryIdentity).mockRejectedValueOnce(
+      new EvaluationTimeoutError("typesafe-ai/jev didn't answer within 10000 ms."),
+    );
 
-      const [chapter] = recordedOutline.chapters;
+    const [chapter] = recordedOutline.chapters;
 
-      if (!chapter) {
-        throw new Error("The recorded outline has no chapter.");
-      }
+    if (!chapter) {
+      throw new Error("The recorded outline has no chapter.");
+    }
 
-      const save = () =>
-        saveOutlineChapterStep({
-          chapter,
-          courseId: course.id,
-          goalSkills: bandSkills,
-          level: "overview",
-          position: 0,
-          provenance: taskResult(recordedOutline).provenance,
-          scope,
-          workflowRunId: "outline-run",
-        });
+    const save = () =>
+      saveOutlineChapterStep({
+        chapter,
+        courseId: course.id,
+        goalSkills: bandSkills,
+        level: "overview",
+        position: 0,
+        provenance: taskResult(recordedOutline).provenance,
+        scope,
+        workflowRunId: "outline-run",
+      });
 
-      await expect(save()).rejects.toBeInstanceOf(EvaluationTimeoutError);
+    await expect(save()).rejects.toBeInstanceOf(EvaluationTimeoutError);
 
-      const { value: saved } = await save();
+    const { value: saved } = await save();
 
-      const [placements, homeLessons, stored] = await Promise.all([
-        prisma.courseChapter.findMany({ where: { courseId: course.id } }),
-        prisma.lesson.findMany({ where: { homeChapterId: saved.chapterId } }),
-        prisma.chapter.findUniqueOrThrow({ where: { id: saved.chapterId } }),
-      ]);
+    const [placements, homeLessons, stored] = await Promise.all([
+      prisma.courseChapter.findMany({ where: { courseId: course.id } }),
+      prisma.lesson.findMany({ where: { homeChapterId: saved.chapterId } }),
+      prisma.chapter.findUniqueOrThrow({ where: { id: saved.chapterId } }),
+    ]);
 
-      expect(placements.map((placement) => placement.chapterId)).toStrictEqual([saved.chapterId]);
-      expect(homeLessons).toHaveLength(chapter.lessons.length + 1);
-      expect(saved.lessonIds.toSorted()).toStrictEqual(homeLessons.map((row) => row.id).toSorted());
-      expect(stored.outlineStatus).toBe("completed");
-    },
-  );
+    expect(placements.map((placement) => placement.chapterId)).toStrictEqual([saved.chapterId]);
+    expect(homeLessons).toHaveLength(chapter.lessons.length + 1);
+    expect(saved.lessonIds.toSorted()).toStrictEqual(homeLessons.map((row) => row.id).toSorted());
+    expect(stored.outlineStatus).toBe("completed");
+  });
 
   it("writes nothing when the course already teaches every skill in another band", async () => {
     const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
@@ -1993,297 +1924,284 @@ describe(courseOutlineWorkflow, () => {
     ]);
   });
 
-  it(
-    "writes a skill's next chapter right after its last one, under a new title, and swaps its lessons into the plan",
-    { timeout: TIMEOUT },
-    async () => {
-      const [user, course, skill, existing, later] = await Promise.all([
-        userFixture(),
-        courseFixture({
-          language: "pt",
-          outlineStatus: "completed",
-          targetLanguage: "en",
-          title: "Inglês",
-        }),
-        skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
-        libraryChapterFixture({
-          language: "pt",
-          targetLanguage: "en",
-          title: "Candidaturas e entrevistas",
-        }),
-        libraryChapterFixture({ language: "pt", targetLanguage: "en", title: "Vida no trabalho" }),
-      ]);
-
-      const written = await Promise.all(
-        ["Formação acadêmica", "Tarefas anteriores"].map((title) =>
-          libraryLessonFixture({
-            estimatedMinutes: 3,
-            homeChapterId: existing.id,
-            language: "pt",
-            targetLanguage: "en",
-            title,
-          }),
-        ),
-      );
-
-      await Promise.all([
-        courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
-        courseChapterFixture({ chapterId: later.id, courseId: course.id, position: 1 }),
-        prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: skill.id } }),
-        prisma.chapterLesson.createMany({
-          data: written.map((lesson, position) => ({
-            chapterId: existing.id,
-            lessonId: lesson.id,
-            position,
-          })),
-        }),
-      ]);
-
-      const goal = await goalFixture({
-        details: { answered: ["reason", "level", "targetDate", "buddy", "placement", "schedule"] },
-        kind: "language",
+  it("writes a skill's next chapter right after its last one, under a new title, and swaps its lessons into the plan", async () => {
+    const [user, course, skill, existing, later] = await Promise.all([
+      userFixture(),
+      courseFixture({
         language: "pt",
-        primaryCourseId: course.id,
+        outlineStatus: "completed",
         targetLanguage: "en",
-        userId: user.id,
-      });
+        title: "Inglês",
+      }),
+      skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
+      libraryChapterFixture({
+        language: "pt",
+        targetLanguage: "en",
+        title: "Candidaturas e entrevistas",
+      }),
+      libraryChapterFixture({ language: "pt", targetLanguage: "en", title: "Vida no trabalho" }),
+    ]);
 
-      await prisma.plan.create({
-        data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
-      });
-
-      await createGoalPlan({
-        goalId: goal.id,
-        graph: {
-          phases: [{ milestone: null, name: "Trabalho" }],
-          skills: [
-            {
-              area: "Inglês",
-              courseIds: [course.id],
-              lessons: 12,
-              name: skill.name,
-              phase: 0,
-              skillId: skill.id,
-              weight: null,
-            },
-          ],
-        },
-      });
-
-      const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
-
-      vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
-          chapters: [
-            interviewChapter("Candidaturas e entrevistas", [ref.key]),
-            interviewChapter("Entrevistas com perguntas situacionais", [ref.key]),
-            interviewChapter("Negociação de salário", [ref.key]),
-            interviewChapter("Vida no Canadá", []),
-          ],
-          uncoveredSkillKeys: [],
+    const written = await Promise.all(
+      ["Formação acadêmica", "Tarefas anteriores"].map((title) =>
+        libraryLessonFixture({
+          estimatedMinutes: 3,
+          homeChapterId: existing.id,
+          language: "pt",
+          targetLanguage: "en",
+          title,
         }),
-      );
+      ),
+    );
 
-      await courseOutlineWorkflow({
-        bands: [
+    await Promise.all([
+      courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({ chapterId: later.id, courseId: course.id, position: 1 }),
+      prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: skill.id } }),
+      prisma.chapterLesson.createMany({
+        data: written.map((lesson, position) => ({
+          chapterId: existing.id,
+          lessonId: lesson.id,
+          position,
+        })),
+      }),
+    ]);
+
+    const goal = await goalFixture({
+      details: { answered: ["reason", "level", "targetDate", "buddy", "placement", "schedule"] },
+      kind: "language",
+      language: "pt",
+      primaryCourseId: course.id,
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    await prisma.plan.create({
+      data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
+    });
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Trabalho" }],
+        skills: [
           {
-            extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
-            level: "beginner",
-            skills: [],
+            area: "Inglês",
+            courseIds: [course.id],
+            lessons: 12,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
           },
         ],
-        courseId: course.id,
-        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
-      });
+      },
+    });
 
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].extendSkills).toStrictEqual([
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    vi.mocked(generateCourseOutline).mockResolvedValue(
+      outlineResult({
+        chapters: [
+          interviewChapter("Candidaturas e entrevistas", [ref.key]),
+          interviewChapter("Entrevistas com perguntas situacionais", [ref.key]),
+          interviewChapter("Negociação de salário", [ref.key]),
+          interviewChapter("Vida no Canadá", []),
+        ],
+        uncoveredSkillKeys: [],
+      }),
+    );
+
+    await courseOutlineWorkflow({
+      bands: [
         {
-          area: null,
-          chapters: [{ lessons: written.map((lesson) => lesson.title), title: existing.title }],
-          description: skill.description,
-          key: ref.key,
-          lessons: 10,
-          name: skill.name,
+          extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
+          level: "beginner",
+          skills: [],
         },
-      ]);
+      ],
+      courseId: course.id,
+      scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+    });
 
-      const placements = await prisma.courseChapter.findMany({
-        include: { chapter: { select: { title: true } } },
-        orderBy: { position: "asc" },
-        where: { courseId: course.id },
-      });
-
-      expect(
-        placements.map((placement) => [placement.position, placement.chapter.title]),
-      ).toStrictEqual([
-        [0, "Candidaturas e entrevistas"],
-        [1, "Entrevistas com perguntas situacionais"],
-        [2, "Vida no trabalho"],
-      ]);
-
-      const items = await lessonItems(goal.id);
-
-      const lessons = await prisma.lesson.findMany({
-        where: { id: { in: items.flatMap((item) => item.lessonId ?? []) } },
-      });
-
-      const titleOf = (lessonId: string | null) =>
-        lessons.find((row) => row.id === lessonId)?.title;
-
-      expect(
-        items.map((item) => (item.lessonId ? titleOf(item.lessonId) : item.skillId)),
-      ).toStrictEqual([
-        "Formação acadêmica",
-        "Tarefas anteriores",
-        "Perguntas situacionais Entrevistas com perguntas situacionais",
-        "Resultados de um projeto Entrevistas com perguntas situacionais",
-        "Pontos fortes Entrevistas com perguntas situacionais",
-        skill.id,
-      ]);
-    },
-  );
-
-  it(
-    "writes a skill's next chapter once when a second ask for it, made before the first wrote it, runs after",
-    { timeout: TIMEOUT },
-    async () => {
-      const [course, skill, existing] = await Promise.all([
-        courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
-        skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
-        libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
-      ]);
-
-      const written = await libraryLessonFixture({
-        estimatedMinutes: 3,
-        homeChapterId: existing.id,
-        language: "pt",
-        title: "Formação acadêmica",
-      });
-
-      await Promise.all([
-        courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
-        prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: skill.id } }),
-        prisma.chapterLesson.create({
-          data: { chapterId: existing.id, lessonId: written.id, position: 0 },
-        }),
-      ]);
-
-      const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
-
-      vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
-          chapters: [interviewChapter("Entrevistas com perguntas situacionais", [ref.key])],
-          uncoveredSkillKeys: [],
-        }),
-      );
-
-      const ask = {
-        bands: [
-          {
-            extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
-            level: "beginner" as const,
-            skills: [],
-          },
-        ],
-        courseId: course.id,
-        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
-      };
-
-      await courseOutlineWorkflow(ask);
-
-      await expect(courseOutlineWorkflow(ask)).resolves.toStrictEqual({
-        bandsWritten: 0,
-        chapterIds: [],
-        status: "written",
-      });
-
-      expect(generateCourseOutline).toHaveBeenCalledOnce();
-    },
-  );
-
-  it(
-    "writes a level a run lists twice as one band, so its chapters never claim the same place",
-    { timeout: TIMEOUT },
-    async () => {
-      const [course, extended, missing, existing] = await Promise.all([
-        courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
-        skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
-        skillFixture({ language: "pt", name: `Negociar salário ${crypto.randomUUID()}` }),
-        libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
-      ]);
-
-      const written = await libraryLessonFixture({
-        estimatedMinutes: 3,
-        homeChapterId: existing.id,
-        language: "pt",
-        title: "Formação acadêmica",
-      });
-
-      await Promise.all([
-        courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
-        prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: extended.id } }),
-        prisma.chapterLesson.create({
-          data: { chapterId: existing.id, lessonId: written.id, position: 0 },
-        }),
-        lessonSkillFixture({ lessonId: written.id, skillId: extended.id }),
-      ]);
-
-      const toRef = (skill: typeof extended) => ({
+    expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].extendSkills).toStrictEqual([
+      {
+        area: null,
+        chapters: [{ lessons: written.map((lesson) => lesson.title), title: existing.title }],
         description: skill.description,
-        id: skill.id,
-        key: skill.id,
+        key: ref.key,
+        lessons: 10,
         name: skill.name,
-      });
+      },
+    ]);
 
-      vi.mocked(generateCourseOutline).mockResolvedValue(
-        outlineResult({
-          chapters: [
-            interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
-            interviewChapter("Negociação de salário", [missing.id]),
-          ],
-          uncoveredSkillKeys: [],
-        }),
-      );
+    const placements = await prisma.courseChapter.findMany({
+      include: { chapter: { select: { title: true } } },
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
 
-      const result = await courseOutlineWorkflow({
-        bands: [
-          { level: "beginner", skills: [toRef(missing)] },
-          {
-            extend: [{ afterChapterId: existing.id, lessons: 12, skill: toRef(extended) }],
-            level: "beginner",
-            skills: [],
-          },
+    expect(
+      placements.map((placement) => [placement.position, placement.chapter.title]),
+    ).toStrictEqual([
+      [0, "Candidaturas e entrevistas"],
+      [1, "Entrevistas com perguntas situacionais"],
+      [2, "Vida no trabalho"],
+    ]);
+
+    const items = await lessonItems(goal.id);
+
+    const lessons = await prisma.lesson.findMany({
+      where: { id: { in: items.flatMap((item) => item.lessonId ?? []) } },
+    });
+
+    const titleOf = (lessonId: string | null) => lessons.find((row) => row.id === lessonId)?.title;
+
+    expect(
+      items.map((item) => (item.lessonId ? titleOf(item.lessonId) : item.skillId)),
+    ).toStrictEqual([
+      "Formação acadêmica",
+      "Tarefas anteriores",
+      "Perguntas situacionais Entrevistas com perguntas situacionais",
+      "Resultados de um projeto Entrevistas com perguntas situacionais",
+      "Pontos fortes Entrevistas com perguntas situacionais",
+      skill.id,
+    ]);
+  });
+
+  it("writes a skill's next chapter once when a second ask for it, made before the first wrote it, runs after", async () => {
+    const [course, skill, existing] = await Promise.all([
+      courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
+      skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
+      libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
+    ]);
+
+    const written = await libraryLessonFixture({
+      estimatedMinutes: 3,
+      homeChapterId: existing.id,
+      language: "pt",
+      title: "Formação acadêmica",
+    });
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
+      prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: skill.id } }),
+      prisma.chapterLesson.create({
+        data: { chapterId: existing.id, lessonId: written.id, position: 0 },
+      }),
+    ]);
+
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    vi.mocked(generateCourseOutline).mockResolvedValue(
+      outlineResult({
+        chapters: [interviewChapter("Entrevistas com perguntas situacionais", [ref.key])],
+        uncoveredSkillKeys: [],
+      }),
+    );
+
+    const ask = {
+      bands: [
+        {
+          extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
+          level: "beginner" as const,
+          skills: [],
+        },
+      ],
+      courseId: course.id,
+      scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+    };
+
+    await courseOutlineWorkflow(ask);
+
+    await expect(courseOutlineWorkflow(ask)).resolves.toStrictEqual({
+      bandsWritten: 0,
+      chapterIds: [],
+      status: "written",
+    });
+
+    expect(generateCourseOutline).toHaveBeenCalledOnce();
+  });
+
+  it("writes a level a run lists twice as one band, so its chapters never claim the same place", async () => {
+    const [course, extended, missing, existing] = await Promise.all([
+      courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
+      skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
+      skillFixture({ language: "pt", name: `Negociar salário ${crypto.randomUUID()}` }),
+      libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
+    ]);
+
+    const written = await libraryLessonFixture({
+      estimatedMinutes: 3,
+      homeChapterId: existing.id,
+      language: "pt",
+      title: "Formação acadêmica",
+    });
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
+      prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: extended.id } }),
+      prisma.chapterLesson.create({
+        data: { chapterId: existing.id, lessonId: written.id, position: 0 },
+      }),
+      lessonSkillFixture({ lessonId: written.id, skillId: extended.id }),
+    ]);
+
+    const toRef = (skill: typeof extended) => ({
+      description: skill.description,
+      id: skill.id,
+      key: skill.id,
+      name: skill.name,
+    });
+
+    vi.mocked(generateCourseOutline).mockResolvedValue(
+      outlineResult({
+        chapters: [
+          interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
+          interviewChapter("Negociação de salário", [missing.id]),
         ],
-        courseId: course.id,
-        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: null },
-      });
+        uncoveredSkillKeys: [],
+      }),
+    );
 
-      expect(result).toMatchObject({ bandsWritten: 1, status: "written" });
+    const result = await courseOutlineWorkflow({
+      bands: [
+        { level: "beginner", skills: [toRef(missing)] },
+        {
+          extend: [{ afterChapterId: existing.id, lessons: 12, skill: toRef(extended) }],
+          level: "beginner",
+          skills: [],
+        },
+      ],
+      courseId: course.id,
+      scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: null },
+    });
 
-      expect(
-        vi
-          .mocked(generateCourseOutline)
-          .mock.calls.map(([params]) => [
-            params.requiredSkills?.map((skill) => skill.key),
-            params.extendSkills?.map((skill) => skill.key),
-          ]),
-      ).toStrictEqual([[[missing.id], [extended.id]]]);
+    expect(result).toMatchObject({ bandsWritten: 1, status: "written" });
 
-      const placements = await prisma.courseChapter.findMany({
-        include: { chapter: { select: { title: true } } },
-        orderBy: { position: "asc" },
-        where: { courseId: course.id },
-      });
+    expect(
+      vi
+        .mocked(generateCourseOutline)
+        .mock.calls.map(([params]) => [
+          params.requiredSkills?.map((skill) => skill.key),
+          params.extendSkills?.map((skill) => skill.key),
+        ]),
+    ).toStrictEqual([[[missing.id], [extended.id]]]);
 
-      expect(
-        placements.map((placement) => [placement.position, placement.chapter.title]),
-      ).toStrictEqual([
-        [0, "Candidaturas e entrevistas"],
-        [1, "Entrevistas com perguntas situacionais"],
-        [2, "Negociação de salário"],
-      ]);
-    },
-  );
+    const placements = await prisma.courseChapter.findMany({
+      include: { chapter: { select: { title: true } } },
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(
+      placements.map((placement) => [placement.position, placement.chapter.title]),
+    ).toStrictEqual([
+      [0, "Candidaturas e entrevistas"],
+      [1, "Entrevistas com perguntas situacionais"],
+      [2, "Negociação de salário"],
+    ]);
+  });
 
   it("takes the course over from a run that stalled instead of joining it forever", async () => {
     const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);

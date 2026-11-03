@@ -44,6 +44,12 @@ import { stripeRowsOnly } from "./stripe/stripe-rows-only";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
+/**
+ * `pnpm start` and E2E builds run with `NODE_ENV=production`, where Better Auth refuses its own default.
+ * Deployments set `BETTER_AUTH_SECRET`; local runs without one share this, so sessions survive restarts.
+ */
+const LOCAL_AUTH_SECRET = "zoonk-local-auth-secret-for-development-and-e2e-only";
+
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   advanced: AUTH_ADVANCED_OPTIONS,
   appName: "Zoonk",
@@ -92,6 +98,8 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     },
   },
   hooks: { before: validateEmailBeforeOTP },
+  secret:
+    process.env.BETTER_AUTH_SECRET || (isLocalhostSupported() ? LOCAL_AUTH_SECRET : undefined),
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,

@@ -1,11 +1,12 @@
 import { config } from "dotenv";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
+import { getUnpooledDatabaseUrl } from "./src/local-database";
 
 config();
 
 // Prisma's CLI gives up connecting after 5 s by default, sooner than an idle Neon compute or a busy local server can answer:
 // https://neon.com/docs/guides/prisma
-const url = new URL(env("DATABASE_URL_UNPOOLED"));
+const url = new URL(getUnpooledDatabaseUrl());
 url.searchParams.set("connect_timeout", "30");
 
 /** @internal */

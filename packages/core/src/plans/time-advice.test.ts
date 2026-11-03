@@ -79,18 +79,28 @@ async function setup(lessons = 6, dailyMinutes = 5) {
   return { goal, library, user };
 }
 
+async function readCoverage(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
+  const result = await getPlanTimeAdvice({ goalId, input: { studyDays, ...week } });
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected the time advice, got ${result.status}`);
+  }
+
+  return result.advice;
+}
+
 async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
   const [coverage, found] = await Promise.all([
-    getPlanTimeAdvice({ goalId, input: { studyDays, ...week } }),
+    readCoverage(goalId, studyDays, week),
     findPlanTimeToCover({ goalId, input: { studyDays, weekendMinutes: week.weekendMinutes } }),
   ]);
 
-  if (coverage.status !== "ready" || found.status !== "ready") {
-    throw new Error(`Expected the time advice, got ${coverage.status} and ${found.status}`);
+  if (found.status !== "ready") {
+    throw new Error(`Expected the time that covers everything, got ${found.status}`);
   }
 
   return {
-    ...coverage.advice,
+    ...coverage,
     recommendedMinutes: found.time.recommendedMinutes,
     suggested: found.time.suggested,
   };
@@ -104,6 +114,16 @@ async function readPlanTime(goalId: string) {
   }
 
   return result.time;
+}
+
+async function readSavedDates(goalId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+  const settings = parsePlanSettings(plan.settings);
+
+  return {
+    funded: settings.mockFunding.map((entry) => entry.date),
+    overflowing: settings.checkpointOverflow.map((entry) => entry.date),
+  };
 }
 
 async function readFeasibility(goalId: string) {
@@ -225,15 +245,24 @@ describe(getPlanTimeAdvice, () => {
 
     const studyDays = [0];
     const advice = await readAdvice(goal.id, studyDays);
-    const preview55 = await readAdvice(goal.id, studyDays, { dailyMinutes: 55 });
-    const preview65 = await readAdvice(goal.id, studyDays, { dailyMinutes: 65 });
-    const preview70 = await readAdvice(goal.id, studyDays, { dailyMinutes: 70 });
+
+    const [preview55, preview65, preview70] = await Promise.all([
+      readCoverage(goal.id, studyDays, { dailyMinutes: 55 }),
+      readCoverage(goal.id, studyDays, { dailyMinutes: 65 }),
+      readCoverage(goal.id, studyDays, { dailyMinutes: 70 }),
+    ]);
 
     expect(preview55.coveredShare).toBe(1);
     expect(preview65.coveredShare).toBe(1);
     expect(preview70.coveredShare).toBe(0.91);
 
-    for (const dailyMinutes of Array.from({ length: 10 }, (_, index) => (index + 1) * 5)) {
+    const shortOfFitting = [
+      { dailyMinutes: 5, funded: [], overflowing: ["2020-10-04", "2020-10-11"] },
+      { dailyMinutes: 25, funded: ["2020-10-11"], overflowing: [] },
+      { dailyMinutes: 50, funded: ["2020-10-11"], overflowing: ["2020-10-04"] },
+    ];
+
+    for (const { dailyMinutes, ...savedDates } of shortOfFitting) {
       // eslint-disable-next-line no-await-in-loop -- Each candidate reads the previous accepted state.
       const preview = await readAdvice(goal.id, studyDays, { dailyMinutes });
       expect(preview.coveredShare).toBeLessThan(1);
@@ -252,6 +281,8 @@ describe(getPlanTimeAdvice, () => {
       // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
       const savedTime = await readPlanTime(goal.id);
       expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([55, 55]);
+      // eslint-disable-next-line no-await-in-loop -- What the accepted time funds and overflows.
+      await expect(readSavedDates(goal.id)).resolves.toStrictEqual(savedDates);
     }
 
     await expect(
@@ -261,11 +292,7 @@ describe(getPlanTimeAdvice, () => {
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 55 });
 
-    const at65 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-    expect(parsePlanSettings(at65.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
     const higher = await updateGoal({
       goalId: goal.id,
@@ -277,12 +304,10 @@ describe(getPlanTimeAdvice, () => {
     const time70 = await readPlanTime(goal.id);
     expect(saved70?.fits).toBe(false);
     expect(saved70?.coveredShare).toBe(preview70.coveredShare);
-    const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    expect(parsePlanSettings(at70.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-04",
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({
+      funded: ["2020-10-04", "2020-10-11"],
+    });
 
     const accepted = await updateGoal({
       goalId: goal.id,
@@ -290,11 +315,7 @@ describe(getPlanTimeAdvice, () => {
     });
 
     expect(accepted.status).toBe("updated");
-    const at55 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-    expect(parsePlanSettings(at55.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
     const plan = await getGoalPlan(goal.id);
 
@@ -310,12 +331,9 @@ describe(getPlanTimeAdvice, () => {
 
     expect([
       advice.recommendedMinutes,
-      preview55.recommendedMinutes,
-      preview65.recommendedMinutes,
-      preview70.recommendedMinutes,
       time70.recommendedMinutes,
       planTime.recommendedMinutes,
-    ]).toStrictEqual([55, 55, 55, 55, 55, 55]);
+    ]).toStrictEqual([55, 55, 55]);
   });
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
@@ -378,8 +396,8 @@ describe(getPlanTimeAdvice, () => {
       });
 
       const [ownAsDay, wholeDay] = await Promise.all([
-        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: own }),
-        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: day }),
+        readCoverage(goal.id, EVERY_DAY, { dailyMinutes: own }),
+        readCoverage(goal.id, EVERY_DAY, { dailyMinutes: day }),
       ]);
 
       expect(ownAsDay.coveredShare).toBeLessThan(1);
@@ -537,7 +555,7 @@ describe(getPlanTimeAdvice, () => {
       throw new Error("Expected a daily-time recommendation");
     }
 
-    const picked = await readAdvice(goal.id, EVERY_DAY, {
+    const picked = await readCoverage(goal.id, EVERY_DAY, {
       dailyMinutes: recommended,
       weekendMinutes: 30,
     });
@@ -566,7 +584,7 @@ describe(getPlanTimeAdvice, () => {
       }
 
       const input = { dailyMinutes, studyDays, weekendMinutes };
-      const picked = await readAdvice(goal.id, studyDays, input);
+      const picked = await readCoverage(goal.id, studyDays, input);
       const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
       expect(result.status).toBe("updated");
 
@@ -598,7 +616,10 @@ describe(getPlanTimeAdvice, () => {
       const recommended = advice.recommendedMinutes ?? goal.dailyMinutes;
       const promisedCoverage = advice.recommendedMinutes === null ? advice.coveredShare : 1;
 
-      const picked = await readAdvice(goal.id, studyDays, { ...input, dailyMinutes: recommended });
+      const picked = await readCoverage(goal.id, studyDays, {
+        ...input,
+        dailyMinutes: recommended,
+      });
 
       const result = await updateGoal({
         goalId: goal.id,
@@ -667,7 +688,7 @@ describe(getPlanTimeAdvice, () => {
     });
 
     const input = { dailyMinutes: 20, studyDays: WEEKDAYS };
-    const picked = await readAdvice(goal.id, WEEKDAYS, input);
+    const picked = await readCoverage(goal.id, WEEKDAYS, input);
     const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
     expect(result.status).toBe("updated");
 
