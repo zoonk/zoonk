@@ -18,7 +18,7 @@ const slots =
   Number(process.env.ZOONK_QUEUE_SLOTS) ||
   Math.max(1, Math.floor(totalmem() / GIGABYTE / GIGABYTES_PER_JOB));
 
-type QueueTurn = { environment: { ZOONK_QUEUE_TICKET: string }; release: () => void };
+export type QueueTurn = { environment: { ZOONK_QUEUE_TICKET: string }; release: () => void };
 
 type Ticket = { createdAt: number; name: string };
 
@@ -90,6 +90,7 @@ export async function waitForTurn(): Promise<QueueTurn | undefined> {
   function release(): void {
     clearInterval(heartbeat);
     rmSync(path, { force: true });
+    process.off("exit", release);
   }
 
   process.once("exit", release);
