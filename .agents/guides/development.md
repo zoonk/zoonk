@@ -4,20 +4,20 @@ Read the relevant section when starting local services, signing in, or choosing 
 
 ## Commands
 
-Run commands from the repository root with the Node.js and pnpm versions in `.tool-versions` (with mise, prefix `mise x --` when your shell doesn't activate it). Read package scripts to select supported commands. Commits require the change's relevant checks and reported results. Before opening a PR (including a draft), marking it ready for review, or merging it, the [root PR verification gate](../../AGENTS.md#pr-verification-gate) requires the full PR and `main` CI quality checks:
+Run commands from the repository root with the Node.js and pnpm versions in `.tool-versions` (with mise, prefix `mise x --` when your shell doesn't activate it). Read package scripts to select supported commands. Commits and PRs require the change's relevant checks and reported results; CI runs the full suites on every PR push ([root PR verification gate](../../AGENTS.md#pr-verification-gate)):
 
-| Change                            | Relevant checks                                                                                          |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                 |
-| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, root `pnpm lint` |
-| Module boundaries or dependencies | `pnpm knip --production`                                                                                 |
-| App runtime or build integration  | `pnpm --filter <app> build`                                                                              |
-| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                     |
-| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                               |
-| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                      |
-| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                         |
-| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                       |
-| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
+| Change                            | Relevant checks                                                                                                                        |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                                               |
+| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm format <files>` then `pnpm lint <files>` |
+| Module boundaries or dependencies | `pnpm knip --production`                                                                                                               |
+| App runtime or build integration  | `pnpm --filter <app> build`                                                                                                            |
+| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
+| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
+| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                                                    |
+| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                       |
+| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                     |
+| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                                                       |
 
 - Builds, test suites and E2E runs take turns through `pnpm dev:queue`, one per 20 GB of the machine's memory (`ZOONK_QUEUE_SLOTS` overrides it), so parallel agents don't push the machine into swap. `pnpm start`'s build, `pnpm build`, `pnpm test`, the E2E builds and runs, the device launchers' builds (`pnpm iphone`, `pnpm android:phone`) and the Apple and Android Makefiles already queue; prefix other heavy commands, such as `pnpm dev:queue pnpm --filter @zoonk/core test`, and run `pnpm dev:queue` alone before booting a simulator or emulator, so the boot waits while every slot is busy. A job started inside a queued job runs at once, and CI skips the queue.
 - Turbo shares task results through Vercel Remote Cache, so typecheck, lint and test runs replay what CI or another checkout already ran for unchanged packages. Link a machine once with `pnpm exec turbo login` and `pnpm exec turbo link` (it needs access to Zoonk's Vercel team); runs then print "Remote caching enabled". Only builds hash the database URL, which differs between CI, the primary checkout and each worktree.
