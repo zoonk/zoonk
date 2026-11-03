@@ -41,6 +41,10 @@ function flowCodes(
     .map((problem) => [problem.screen, problem.code]);
 }
 
+function lengths(lesson: WrittenLesson) {
+  return flowCodes(lesson).filter(([, code]) => code === "screenLength");
+}
+
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
   return {
     exampleLineIdea: null,
@@ -179,7 +183,7 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(withScreens({ 4: japanese }))).toStrictEqual([[4, "screenLength"]]);
   });
 
-  it("measures each step of a worked example and a check's context with its question", () => {
+  it("counts a worked example's problem, steps and result together, and a check's context with its question", () => {
     const { screens } = writtenTemperatureLesson();
     const worked = screens[2];
     const check = screens[3];
@@ -188,16 +192,48 @@ describe("checkWrittenLesson's flow checks", () => {
       throw new Error("Screens 3 and 4 are a worked example and a calculation.");
     }
 
-    const longStep = {
-      ...worked,
-      steps: [...worked.steps.slice(0, 1), { math: null, text: "b".repeat(260) }],
-    };
-
+    const steps = ["a", "b", "c"].map((letter) => ({ math: null, text: letter.repeat(90) }));
+    const shortSteps = { ...worked, problem: "p", result: "r", steps: steps.slice(0, 2) };
+    const pilingSteps = { ...worked, problem: "p", result: "r", steps };
     const longCheck = { ...check, context: "c".repeat(200), question: "d".repeat(60) };
 
-    expect(flowCodes(withScreens({ 2: longStep, 3: longCheck }))).toStrictEqual([
+    expect(lengths(withScreens({ 2: shortSteps }))).toStrictEqual([]);
+
+    expect(lengths(withScreens({ 2: pilingSteps, 3: longCheck }))).toStrictEqual([
       [2, "screenLength"],
       [3, "screenLength"],
+    ]);
+  });
+
+  it("measures each later moment too: a guess's reveal, each reason and an activity's prompt with its question", () => {
+    const { screens } = writtenTemperatureLesson();
+    const activity = screens[5];
+    const check = screens[6];
+
+    if (activity?.kind !== "activity" || check?.kind !== "check") {
+      throw new Error("Screens 6 and 7 are an activity and a check.");
+    }
+
+    const revealing = { ...guess("Where does the ice form first?", ["On top", "At the bottom"]) };
+    const longReveal = { ...revealing, reveal: "r".repeat(260) };
+    const content: unknown = JSON.parse(activity.content);
+    const japanesePrompt = JSON.stringify({ ...(content as object), prompt: "水".repeat(130) });
+
+    const longReason = {
+      ...check,
+      options: check.options.map((option, index) =>
+        index === 0 ? { ...option, reason: "w".repeat(260) } : option,
+      ),
+    };
+
+    expect(
+      flowCodes(
+        withScreens({ 1: longReveal, 5: { ...activity, content: japanesePrompt }, 6: longReason }),
+      ).filter(([, code]) => code === "screenLength"),
+    ).toStrictEqual([
+      [1, "screenLength"],
+      [5, "screenLength"],
+      [6, "screenLength"],
     ]);
   });
 

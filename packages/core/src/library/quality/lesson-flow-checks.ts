@@ -104,7 +104,7 @@ function getVisualProblems({
 function getWordingProblems({ lesson }: { lesson: WrittenLesson }): LessonFlowProblem[] {
   const long = findLongScreens(lesson.screens).map(({ characters, part, screen }) => ({
     code: "screenLength" as const,
-    problem: `${part ? `Its ${part} has` : "Has"} ${characters} characters to read besides its tables; a screen holds one idea in a tweet, at most ${MAX_SCREEN_CHARACTERS}. Keep that idea and its example, put detail in the screen's table or visual, and cut the rest.`,
+    problem: `${part ? `Its ${part}` : "What it asks"} reads as ${characters} characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most ${MAX_SCREEN_CHARACTERS}. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.`,
     screen,
   }));
 
