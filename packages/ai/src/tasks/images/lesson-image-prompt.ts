@@ -5,14 +5,14 @@ import styleBlock from "./image-style.prompt.md";
 
 const LAYOUT_RULES: Record<ImageScene["layout"], string> = {
   comparison:
-    "Two things compared, one above the other with a thin horizontal divider between them: the focal object in the top half and the first supporting object in the bottom half, each drawn once, so what differs between them is easy to see.",
+    "Two things compared side by side with a thin vertical divider between them: the focal object in the left half and the first supporting object in the right half, each drawn once, so what differs between them is easy to see.",
   sequence:
-    "A before and an after (or a cause and its effect) one above the other, linked by one thin dashed arrow pointing down.",
-  single: "One object, or one whole with its parts, in the center.",
+    "A before and an after (or a cause and its effect) side by side, linked by one thin dashed arrow pointing right.",
+  single: "One object, one whole with its parts, or one small scene of one place, in the center.",
 };
 
 const CANVAS_RULE =
-  "Portrait canvas (4:5). Keep everything inside the canvas with comfortable margins.";
+  "Landscape canvas (3:2). Keep everything inside the canvas with comfortable margins.";
 
 function formatPalette(palette: ImagePalette): string {
   return `Soft colors: ${palette.colors.join(", ")}. Accent: ${palette.accent}.`;

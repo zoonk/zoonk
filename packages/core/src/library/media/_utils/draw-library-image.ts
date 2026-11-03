@@ -13,6 +13,7 @@ export type ImageAnalytics = ImageSceneParams["analytics"];
 
 export type LibraryImageRequest = {
   request: string;
+  alt?: string | null;
   screenText?: string | null;
   context?: string | null;
   language: string;
@@ -34,6 +35,7 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
 
 /** The caller must dispatch the background image check when the returned picture is newly drawn. */
 export async function drawLibraryImage({
+  alt,
   analytics,
   category,
   context,
@@ -51,6 +53,7 @@ export async function drawLibraryImage({
   const parts = numberedParts ?? [];
 
   const { data: planned } = await generateImageScene({
+    alt,
     analytics,
     context,
     language,

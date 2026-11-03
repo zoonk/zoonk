@@ -90,6 +90,7 @@ export async function drawItemImage({
 
   return drawLibraryImage({
     ...scope,
+    alt: request.alt,
     analytics,
     language,
     request: request.prompt,
