@@ -48,13 +48,13 @@ import { hasTakenChallenge } from "./taken-challenge";
 export type ComputedPlan = {
   bases: PlanBases;
   built: BuiltPlan;
-  /** Each written lesson's place in the order its courses teach them. */
   courseRanks: ReadonlyMap<string, number>;
   effect: PlanEffect;
   feasibility: PlanFeasibility;
   inputsKey: string;
   itemFacts: ReadonlyMap<string, SelectedItemFacts>;
   keptPhaseEnds: ReadonlyMap<number, Date> | undefined;
+  mode: PlanningMode;
   pace: Pace;
   standInLessons: Map<string, number>;
   state: PlanState;
@@ -305,6 +305,7 @@ export async function computePlan({
     }),
     itemFacts: listSelectedItemFacts({ built, input: builtInput }),
     keptPhaseEnds: input.phaseEnds,
+    mode,
     pace: settings.pace,
     get selected() {
       return selected();

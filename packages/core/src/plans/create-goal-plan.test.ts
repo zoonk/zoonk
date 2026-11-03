@@ -470,6 +470,70 @@ describe(createGoalPlan, () => {
     expect(changed.version).toBe(before.version + 1);
   });
 
+  it("keeps this week's lessons when planning again finds only a later week out of course order", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    mockClock();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const endOfWeek = new Date("2020-10-04T00:00:00Z");
+
+    const lessonItems = () =>
+      prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+      });
+
+    const planned = await lessonItems();
+    const onDay = (day: string) => planned.find((item) => item.scheduledFor?.toISOString() === day);
+    const later = planned.filter((item) => item.scheduledFor && item.scheduledFor > endOfWeek);
+
+    const pairs = [
+      [onDay("2020-09-29T00:00:00.000Z"), onDay("2020-09-30T00:00:00.000Z")],
+      [later[0], later[1]],
+    ];
+
+    await prisma.$transaction(
+      pairs.flatMap(([first, second]) => {
+        if (!first || !second) {
+          throw new Error("The plan needs lessons on Tuesday, on Wednesday and after this week.");
+        }
+
+        return [
+          prisma.planItem.update({
+            data: { lessonId: second.lessonId, titleSnapshot: second.titleSnapshot },
+            where: { id: first.id },
+          }),
+          prisma.planItem.update({
+            data: { lessonId: first.lessonId, titleSnapshot: first.titleSnapshot },
+            where: { id: second.id },
+          }),
+        ];
+      }),
+    );
+
+    const thisWeek = (items: typeof planned) =>
+      items
+        .filter((item) => item.scheduledFor && item.scheduledFor <= endOfWeek)
+        .map((item) => ({ lessonId: item.lessonId, scheduledFor: item.scheduledFor }));
+
+    const before = thisWeek(await lessonItems());
+
+    await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
+      status: "unchanged",
+    });
+
+    expect(thisWeek(await lessonItems())).toStrictEqual(before);
+  });
+
   it("checks off a lesson the learner finished before the plan existed, from when it ended", async () => {
     const { goal, library, plan, user } = await setup();
     const [finished] = library.lessons;

@@ -113,8 +113,9 @@ function restoresCourseOrder({
 /**
  * Days aren't compared: the same work planned again can land on other days, and moving what the
  * learner saw when nothing changed is churn. The one order compared is a chapter's within an area
- * after this week: a saved layout holding a lesson there ahead of one the course teaches first,
- * which the planner now lays out in course order, is laid out again.
+ * after this week, and only for an automatic layout, which keeps this week as saved: a saved layout
+ * holding a lesson there ahead of one the course teaches first, which the planner now lays out in
+ * course order, is laid out again.
  */
 export function isPlanUnchanged({
   computed,
@@ -134,6 +135,6 @@ export function isPlanUnchanged({
     isDeepStrictEqual(state.settings, context.state.settings) &&
     hasSameWorkload({ computed, context }) &&
     isDeepStrictEqual(listWork(computed.built.items), listWork(toKeyedItems(context))) &&
-    !restoresCourseOrder({ computed, context })
+    (computed.mode !== "automatic" || !restoresCourseOrder({ computed, context }))
   );
 }

@@ -129,7 +129,6 @@ describe(refreshGoalPlan, () => {
 
     const planned = await lessonItems();
 
-    // What a planner from before course order saved: a chapter's later lesson ahead of an earlier one.
     const [first, second] = planned.filter(
       (item) => item.scheduledFor !== null && item.scheduledFor > endOfWeek,
     );
