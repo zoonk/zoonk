@@ -15,7 +15,7 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
 
-Every push to `main` runs its checks right away, alongside any earlier push's. Staging only takes `main`'s newest commit: a run whose commit `main` has moved past by the time its checks pass skips staging, and a newer commit's staging deploy cancels an older one still running, along with the Vercel builds it started. Rerunning an older commit's staging job fails instead of deploying it.
+Every push to `main` runs its checks right away, alongside any earlier push's. Staging only takes `main`'s newest commit: a run whose commit `main` has moved past by the time its checks pass skips staging, and a newer commit's staging deploy cancels an older one still running, along with the Vercel builds it started. Rerunning only the staging job skips it, since its check of `main` belongs to the first attempt; to redeploy, re-run all jobs.
 
 ## Configuration contract
 

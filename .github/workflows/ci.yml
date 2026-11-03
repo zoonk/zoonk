@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      newest: ${{ steps.main.outputs.newest }}
+      attempt: ${{ steps.main.outputs.attempt }}
     steps:
       - id: main
         env:
@@ -79,15 +79,15 @@ jobs:
           head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
 
           if [[ "$head" == "$GITHUB_SHA" ]]; then
-            echo "newest=true" >> "$GITHUB_OUTPUT"
+            echo "attempt=$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
           else
             echo "::notice::Skipping staging: main is now at $head"
-            echo "newest=false" >> "$GITHUB_OUTPUT"
           fi
 
   staging:
     needs: newest-commit
-    if: needs.newest-commit.outputs.newest == 'true'
+    # Rerunning only this job keeps the first attempt's check, which may be stale by then.
+    if: needs.newest-commit.outputs.attempt == github.run_attempt
     concurrency:
       group: staging
       cancel-in-progress: true
@@ -105,17 +105,6 @@ jobs:
       NEON_ROLE: ${{ vars.NEON_ROLE }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
-      # Rerunning only this job reuses the newest-commit verdict from the run's first attempt.
-      - name: Refuse a commit main has moved past
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
-
-          if [[ "$head" != "$GITHUB_SHA" ]]; then
-            echo "::error::main is now at $head, so this run can't deploy staging"
-            exit 1
-          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
       # whose slow downloads time jobs out.
