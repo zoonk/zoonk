@@ -88,7 +88,7 @@ export async function writeLessonContent({
   const context = toWritingContext(inputs);
   const taskAnalytics = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
 
-  const writer = pickDraftWriter({ heldBackDrafts: inputs.heldBackDrafts });
+  const writer = pickDraftWriter({ heldBackDrafts: inputs.heldBackDrafts, reuse });
 
   const draft = await writeLessonDraft({
     ...context,
