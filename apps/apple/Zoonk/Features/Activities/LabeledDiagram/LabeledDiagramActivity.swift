@@ -129,7 +129,7 @@ private struct LabeledDiagramCanvas: View {
       Text(name)
     }
     .buttonStyle(ActivityTileStyle(mark: .plain))
-    .draggable(name)
+    .draggable(ActivityDragItem(id: name))
     .accessibilityLabel(
       activeNumber.map {
         Text(
@@ -202,8 +202,8 @@ private struct LabeledDiagramCanvas: View {
         RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
       }
     }
-    .dropDestination(for: String.self) { items, _ in
-      guard !isChecked, let name = items.first, names.contains(name) else {
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard !isChecked, let name = dropped.first?.id, names.contains(name) else {
         return false
       }
 
