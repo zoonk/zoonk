@@ -27,7 +27,7 @@ import {
 import { getCallExposureMicros } from "./_utils/live-call-money";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { connectLanguageConversation } from "./connect-language-conversation";
-import { type LanguageConversationSetup } from "./conversation-contract";
+import { type ConversationTurn, type LanguageConversationSetup } from "./conversation-contract";
 import { endLanguageConversationConnection } from "./end-language-conversation-connection";
 import { endLiveCall } from "./end-live-call";
 import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
@@ -64,8 +64,25 @@ async function reserved(conversationId: string): Promise<LanguageConversationSet
   return result.setup;
 }
 
-function offer({ connectionId }: LanguageConversationSetup, conversationId: string) {
-  return redeemLiveCallSdp({ connectionId, conversationId, input: { sdp: "test-offer" } });
+function offer(
+  { connectionId }: LanguageConversationSetup,
+  conversationId: string,
+  turns?: ConversationTurn[],
+) {
+  return redeemLiveCallSdp({
+    connectionId,
+    conversationId,
+    input: { sdp: "test-offer", sessionConfig: { providerOptions: { zoonk: { turns } } } },
+  });
+}
+
+const CALL_SO_FAR: ConversationTurn[] = [
+  { speaker: "character", text: "Hi, this is Sarah. How can I help?" },
+  { speaker: "learner", text: "Is the apartment still available?" },
+];
+
+function lastCreation() {
+  return vi.mocked(createLiveCallSession).mock.lastCall?.[0];
 }
 
 async function live(conversationId: string): Promise<LanguageConversationSetup> {
@@ -249,6 +266,61 @@ describe("live calls", () => {
     await expect(connection(reconnected.connectionId)).resolves.toMatchObject({
       continuesCall: true,
     });
+  });
+
+  it("[1] carries a reconnected call on from the turns sent with its offer, without the opening line", async () => {
+    const { conversation } = await learner();
+    await live(conversation.id);
+
+    advance(30);
+    const reconnected = await reserved(conversation.id);
+
+    await expect(offer(reconnected, conversation.id, CALL_SO_FAR)).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(reconnected.script.cues.opening.text).toContain("you got cut off");
+
+    expect(lastCreation()).toMatchObject({
+      greeting: reconnected.script.cues.opening.text,
+      instructions: expect.stringContaining("The call dropped and the learner called you back."),
+      turns: CALL_SO_FAR,
+    });
+
+    expect(lastCreation()?.instructions).not.toContain("Start the conversation with this line");
+  });
+
+  it("[1] carries a reconnected call on with no turns when none came with its offer", async () => {
+    const { conversation } = await learner();
+    await live(conversation.id);
+
+    advance(30);
+    const reconnected = await live(conversation.id);
+
+    expect(lastCreation()).toMatchObject({
+      greeting: reconnected.script.cues.opening.text,
+      instructions: expect.stringContaining("The call dropped and the learner called you back."),
+      turns: [],
+    });
+  });
+
+  it("[1] ignores turns sent with the offer of a call that starts anew", async () => {
+    const { conversation } = await learner();
+    const first = await reserved(conversation.id);
+
+    await expect(offer(first, conversation.id, CALL_SO_FAR)).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(first.script.cues.opening.text).toContain("Greet the caller now");
+
+    expect(lastCreation()).toMatchObject({
+      greeting: first.script.cues.opening.text,
+      instructions: expect.stringContaining("Start the conversation with this line"),
+      turns: [],
+    });
+
+    expect(lastCreation()?.instructions).not.toContain("The call dropped");
   });
 
   it("[1] opens no talk window for a session OpenAI refused to create, so the next call is a new start", async () => {

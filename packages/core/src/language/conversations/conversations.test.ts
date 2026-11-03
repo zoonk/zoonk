@@ -289,6 +289,7 @@ describe("language conversations", () => {
       greeting: reserved.setup.script.cues.opening.text,
       instructions: expect.stringContaining(RENTING_SCENARIO.character.name),
       sdp: "test-offer",
+      turns: [],
       voice: "marin",
     });
 
