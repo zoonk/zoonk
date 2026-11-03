@@ -64,15 +64,15 @@ test("a Plus learner's written challenge creates its call only on Start", async 
 
   await page.goto(`/challenge/${boss.id}`);
   await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
-  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
   await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
   await expect(prisma.aiCall.count({ where: { userId: user.id } })).resolves.toBe(0);
   await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
 
   await page.reload();
-  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
   await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
-  await page.getByRole("button", { name: "Start the call" }).click();
+  await page.getByRole("button", { name: "Call Linda" }).click();
 
   await expect(
     page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling"),
@@ -105,7 +105,7 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
   await answerLiveCalls(page, "answers");
   await watchMicrophone(page);
   await page.goto(`/checkpoint/${block.id}`);
-  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
 
   const held = Promise.withResolvers<Request>();
   const release = Promise.withResolvers<null>();
@@ -139,7 +139,7 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
   });
 
   try {
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Call Linda" }).click();
     await held.promise;
     await page.getByRole("link", { name: "Leave" }).click();
     await expect(page).toHaveURL(/\/today$/u);
@@ -149,7 +149,7 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
       .toStrictEqual([{ active: true, tracks: ["ended"] }]);
 
     await page.goBack();
-    await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
 
     release.resolve(null);
     await delivered.promise;
@@ -169,8 +169,8 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
 
     await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(0);
 
-    await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
+    await page.getByRole("button", { name: "Call Linda" }).click();
     await secondStart.promise;
     expect(requests.starts).toBe(2);
 

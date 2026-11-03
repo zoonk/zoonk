@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
+import { SpokenMath } from "../rich-text/spoken-math";
 
 function getCellClass(align: MarkdownTableAlign | undefined) {
   return cn(
@@ -7,6 +8,20 @@ function getCellClass(align: MarkdownTableAlign | undefined) {
     align === "right" && "text-right tabular-nums",
     align === "center" && "text-center tabular-nums",
     (align === "left" || !align) && "text-left",
+  );
+}
+
+function ColumnHeader({
+  align,
+  children,
+}: {
+  align: MarkdownTableAlign | undefined;
+  children: React.ReactNode;
+}) {
+  return (
+    <th className={cn(getCellClass(align), "font-semibold hyphens-auto")} scope="col">
+      <SpokenMath>{children}</SpokenMath>
+    </th>
   );
 }
 
@@ -47,13 +62,9 @@ export function RichTable<TCell>({
                 const key = `head-${index}`;
 
                 return (
-                  <th
-                    className={cn(getCellClass(align[index]), "font-semibold hyphens-auto")}
-                    key={key}
-                    scope="col"
-                  >
+                  <ColumnHeader align={align[index]} key={key}>
                     {renderCell(cell)}
-                  </th>
+                  </ColumnHeader>
                 );
               })}
             </tr>

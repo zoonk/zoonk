@@ -12,7 +12,132 @@ const ENEM_EXAM = {
     "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
 };
 
-export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores", WalkLesson> = {
+export const WALK_LESSONS: Record<
+  "pt-grupos-de-animais" | "pt-piramide-energia" | "pt-precisao-sensores",
+  WalkLesson
+> = {
+  "pt-grupos-de-animais": {
+    chapterTitle: "Dados de biodiversidade e classificação",
+    courseTitle: "ENEM",
+    exams: [ENEM_EXAM],
+    language: "pt",
+    level: "intermediate",
+    spec: {
+      canDo: "Distinguir grupos animais por traços do corpo, não pelo habitat",
+      description:
+        "Compara simetria, sustentação e estruturas do corpo para distinguir grandes grupos animais em registros de biodiversidade.",
+      estimatedMinutes: 5,
+      screens: [
+        {
+          activityTemplate: null,
+          brief:
+            "Edson encontrou um caranguejo no litoral. Pergunte com qual animal ele deve agrupá-lo pelos traços do corpo: A) caracol-marinho, B) camarão, C) estrela-do-mar, D) peixe, E) água-viva. Revele imediatamente B: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+          kind: "hook",
+          skills: [],
+          visual: null,
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Apresente os poríferos por uma esponja presa à rocha: a água entra por muitos poros, como em um filtro, e sai por uma abertura maior. Mostre que seu corpo não apresenta metades regularmente espelhadas, ao contrário do corpo de muitos outros animais.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Esponja inteira presa a uma rocha, com poros pequenos distribuídos pelo corpo, abertura maior no alto e setas mostrando a entrada e a saída da água.",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Apresente os cnidários com uma água-viva: seus tentáculos têm células que picam, como minúsculos ferrões, e suas partes se distribuem em torno de um centro. Contraste esses traços com os poros por onde a água atravessa uma esponja.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Água-viva inteira, com centro do corpo, tentáculos distribuídos ao redor e detalhe ampliado de uma célula que pica em um tentáculo.",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Davi observa um animal de água doce preso a uma pedra, com tentáculos que capturam presas e picam; a água não atravessa seu corpo por poros. Peça que o classifique como cnidário ou porífero e escolha o traço decisivo. Inclua como erro tentador classificá-lo como porífero apenas por estar preso à pedra.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Apresente os artrópodes por um caranguejo: a cobertura rígida protege por fora como uma armadura, mas as pernas se dobram nas juntas. Explique que essa combinação, e não o ambiente aquático, também permite reconhecer insetos e aranhas.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Caranguejo inteiro com a cobertura rígida destacada e juntas marcadas em duas pernas; as demais pernas permanecem visíveis.",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Apresente os vertebrados por um peixe: ossos internos sustentam o corpo, e uma coluna de ossos percorre as costas como a viga de uma estrutura. Compare a posição desse suporte com a cobertura rígida externa do caranguejo; ambos vivem na água, mas não pertencem ao mesmo grupo.",
+          kind: "explanation",
+          skills: [0],
+          visual:
+            "Peixe visto de lado, com contorno do corpo, ossos internos e coluna ao longo das costas destacados.",
+        },
+        {
+          activityTemplate: "categorize",
+          brief:
+            "Raíssa organiza quatro registros pelos grupos e critérios vistos: animal fixo de água doce atravessado pela água por poros → poríferos; animal marinho com tentáculos que picam → cnidários; animal terrestre com cobertura rígida e pernas com juntas → artrópodes; animal aquático com coluna de ossos interna → vertebrados. Peça que arraste cada registro ao grupo correspondente e escolha qual registro não pode ser classificado apenas pelo habitat.",
+          kind: "activity",
+          skills: [0],
+          visual: null,
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Apresente os moluscos ao resolver passo a passo um registro de Fábio: o animal marinho tem corpo mole, uma concha, nenhuma coluna de ossos e nenhuma perna com juntas. Compare esses indícios com os de um caranguejo; conclua que é um molusco, pois ter uma proteção dura, sozinho, não o torna artrópode.",
+          kind: "workedExample",
+          skills: [0],
+          visual:
+            "Dois desenhos lado a lado, identificados como 1 e 2: animal de corpo mole dentro de uma concha, sem pernas; caranguejo com cobertura rígida e pernas com juntas.",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Cíntia recebe o registro de um polvo: corpo mole, sem concha, sem coluna de ossos e sem pernas com juntas. Peça que identifique o grupo e justifique por que a ausência de concha não impede a classificação como molusco. Inclua como alternativa tentadora excluí-lo dos moluscos porque o exemplo anterior tinha concha.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Igor revisa um inventário costeiro que colocou no mesmo grupo um caracol-marinho de corpo mole com concha e um caranguejo de cobertura rígida com pernas articuladas, porque ambos têm uma proteção dura e vivem no mar. Peça que decida se mantém ou corrige o registro, atribua o grupo de cada animal e indique quais traços pesam mais que concha e habitat compartilhados. Inclua a decisão tentadora de manter o agrupamento pela proteção dura.",
+          kind: "application",
+          skills: [0],
+          visual: null,
+        },
+      ],
+      skills: [
+        {
+          description:
+            "Comparar poros, tentáculos, sustentação e partes articuladas permite distinguir grupos animais mesmo quando compartilham habitat ou aparência.",
+          example:
+            "Um caranguejo e um caracol-marinho têm proteção dura, mas só o caranguejo tem pernas com juntas e cobertura rígida externa.",
+          hard: true,
+          name: "Comparar planos corporais de animais",
+          topic: "Grupos de animais",
+          useCase: "Revisar a classificação de animais em um levantamento de biodiversidade.",
+        },
+      ],
+      supportMode: "questionFirst",
+      title: "Grupos de animais",
+    },
+  },
   "pt-piramide-energia": {
     chapterTitle: "Relações ecológicas e ciclos da matéria",
     courseTitle: "Ciências da Natureza",

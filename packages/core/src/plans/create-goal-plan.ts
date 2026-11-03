@@ -17,7 +17,7 @@ import { ensureQuickBaseLessons, hasQuickBases } from "./_utils/quick-bases";
 import { planOnRecommendedBases } from "./_utils/recommended-bases";
 import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
-import { checkNoticeLanding } from "./notice-wait";
+import { checkNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
 import { withPlanRetry } from "./plan-conflict";
 import { listPlanSetupTasks } from "./plan-setup";
 import { toIsoDate } from "./planner/plan-calendar";
@@ -121,9 +121,16 @@ type GraphPlanning = {
   goalId: string;
   graph: PlanGraph;
   provenance: Provenance | null;
+  waitsForNotice: boolean;
 };
 
-async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphPlanning) {
+async function planFromGraph({
+  followNotice,
+  goalId,
+  graph,
+  provenance,
+  waitsForNotice,
+}: GraphPlanning) {
   const context = await loadPlanAtToken(goalId);
 
   if (!context) {
@@ -167,7 +174,11 @@ async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphP
       ]
     : [];
 
-  const plan = { ...provenance, ...(isFirst ? { setupTasks } : {}) };
+  const plan = {
+    ...provenance,
+    ...(isFirst ? { setupTasks } : {}),
+    ...(isFirst && waitsForNotice ? { noticeWaitUntil: getNoticeWaitEnd(new Date()) } : {}),
+  };
 
   await commitPlan({
     change: null,
@@ -229,6 +240,7 @@ export async function createGoalPlan({
   graph,
   platform,
   provenance = null,
+  waitsForNotice = false,
 }: {
   /**
    * The notice was read before the learner saw the plan, so a date taken from it follows its new
@@ -240,6 +252,11 @@ export async function createGoalPlan({
   graph: PlanGraph;
   platform?: AnalyticsPlatform | null;
   provenance?: Provenance | null;
+  /**
+   * Built before research read the exam's notice: the new plan reads as waiting for that reading
+   * from the write that makes it ready, so no reveal shows it first.
+   */
+  waitsForNotice?: boolean;
 }): Promise<GoalPlanCreation> {
   const goal = await prisma.goal.findUnique({ select: { id: true }, where: { id: goalId } });
 
@@ -251,7 +268,13 @@ export async function createGoalPlan({
   await prisma.plan.createMany({ data: [{ goalId }], skipDuplicates: true });
 
   const built = await withPlanRetry(() =>
-    planFromGraph({ followNotice, goalId, graph: planGraphSchema.parse(graph), provenance }),
+    planFromGraph({
+      followNotice,
+      goalId,
+      graph: planGraphSchema.parse(graph),
+      provenance,
+      waitsForNotice,
+    }),
   );
 
   if (!built) {

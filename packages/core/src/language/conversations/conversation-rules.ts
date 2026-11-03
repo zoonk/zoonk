@@ -3,8 +3,8 @@ import { getPassMark, hasPassedCheckpoint } from "../../checkpoints/checkpoint-r
 import { EMPTY_OUTCOME, getOutcomeBonus } from "../../sessions/brain-power";
 
 const CHECKPOINT_MINUTES: Readonly<Record<CefrLevel, number>> = {
-  A1: 1,
-  A2: 1,
+  A1: 2,
+  A2: 2,
   B1: 2,
   B2: 2,
   C1: 3,

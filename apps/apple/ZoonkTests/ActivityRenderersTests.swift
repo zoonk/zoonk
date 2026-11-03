@@ -98,13 +98,22 @@ final class ActivityRenderersTests: XCTestCase {
     let items = try content(categorizeJSON).fields(as: CategorizeFields.self).items
 
     XCTAssertNil(CategorizePlacements.answer(items, ["i1": "chemical", "i2": "physical"]))
-    XCTAssertEqual(
-      CategorizePlacements.nextUnplacedId(items, placedId: "i3", placements: ["i3": "chemical"]),
-      "i1",
-      "focus wraps around to the first item left")
-    XCTAssertNil(
-      CategorizePlacements.nextUnplacedId(
-        items, placedId: "i3", placements: ["i1": "a", "i2": "b", "i3": "c"]))
+  }
+
+  func testCategorizeUndoPutsTheLastCardSortedBackInHand() throws {
+    let items = try content(categorizeJSON).fields(as: CategorizeFields.self).shuffledItems
+    var sorting = CategorizeSorting(placements: [:])
+
+    sorting.sort(try XCTUnwrap(sorting.cardInHand(from: items)).id, into: "physical")
+    sorting.sort(try XCTUnwrap(sorting.cardInHand(from: items)).id, into: "physical")
+    XCTAssertEqual(sorting.cardInHand(from: items)?.id, "i1")
+
+    XCTAssertEqual(sorting.undo(), "i3")
+    XCTAssertEqual(sorting.cardInHand(from: items)?.id, "i3")
+    XCTAssertEqual(sorting.placements, ["i2": "physical"])
+    XCTAssertEqual(sorting.undo(), "i2")
+    XCTAssertEqual(sorting.cardInHand(from: items)?.id, "i2")
+    XCTAssertNil(sorting.undo())
   }
 
   func testProcessOrderTheTrueOrderIsRightAndTheShuffleNeverIs() throws {

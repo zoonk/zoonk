@@ -150,7 +150,9 @@ private struct PictureOptionLabel: ViewModifier {
 
   func body(content: Content) -> some View {
     if isPicture {
-      content.accessibilityLabel(Text(isChecked ? option.text : option.pictureAlt ?? option.text))
+      let spoken = LessonRichText.spoken(option.text)
+      content.accessibilityLabel(
+        Text(verbatim: isChecked ? spoken : option.pictureAlt ?? spoken))
     } else {
       content
     }

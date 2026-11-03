@@ -617,6 +617,7 @@ msgid "Split both sides into {count} equal groups"
 msgstr "Podziel obie strony na równe grupy, po {count} na stronę"
 
 #: src/activities/balance/balance-controls.tsx
+#: src/activities/categorize/categorize-sorting.tsx
 #: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
@@ -674,64 +675,84 @@ msgid "{times} times more"
 msgstr "{times} razy więcej"
 
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "VOcx64"
-msgid "{item} is in {group}. {sorted} of {total} sorted."
-msgstr "{item} jest w grupie: {group}. Posortowano {sorted} z {total}."
+msgctxt "COrd83"
+msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
+msgstr "Przyporządkuj {total, plural, one {# kartę} many {# kart} other {# karty}} do grup: {groups}, po jednej karcie."
 
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "OnWRsG"
-msgid "right group"
-msgstr "właściwa grupa"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "4xT_96"
-msgid "wrong group"
-msgstr "niewłaściwa grupa"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "xsV8g3"
-msgid "To sort"
-msgstr "Do posortowania"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "htRVos"
-msgid "All sorted. Check when you're ready."
-msgstr "Wszystko posortowane. Sprawdź, kiedy chcesz."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "6BdpHo"
-msgid "{sorted} of {total} sorted"
-msgstr "Posortowano {sorted} z {total}"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "p97Ob6"
-msgid "Sort {total} items into {groups}. Pick an item, then pick its group. {sorted} of {total} sorted."
-msgstr "Podziel elementy ({total}) na grupy: {groups}. Wybierz element, a potem jego grupę. Posortowano {sorted} z {total}."
-
+#. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "gYfi1i"
-msgid "Put {item} in {group}"
-msgstr "Umieść element „{item}” w grupie: {group}"
+msgctxt "jNJRxP"
+msgid "+{count}"
+msgstr "+{count}"
 
+#. A group that holds no cards once every card is sorted.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "N91Eq1"
-msgid "Put it here"
-msgstr "Umieść tutaj"
+msgctxt "7CMfs1"
+msgid "No cards here"
+msgstr "Nie ma tu kart"
 
-#: src/activities/categorize/categorize-group.tsx
-msgctxt "KjR3ZD"
-msgid "Nothing here yet"
-msgstr "Na razie nic tu nie ma"
+#: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "Element „<item></item>” należy do grupy: <group></group>."
 
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "{right} z {total} we właściwej grupie"
 
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "Element „{item}” należy do grupy: {group}."
+#. Title of the menu that moves a sorted card to another group.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "AfxJ0y"
+msgid "Move to"
+msgstr "Przenieś do"
+
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "HWVgRM"
+msgid ", right group"
+msgstr ", właściwa grupa"
+
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "NTZ7fO"
+msgid ", wrong group"
+msgstr ", niewłaściwa grupa"
+
+#. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "-oG-_W"
+msgid "All sorted. Choose a card to move it."
+msgstr "Wszystko posortowane. Wybierz kartę, aby ją przenieść."
+
+#. Progress while sorting: how many of the cards already have a group.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "6BdpHo"
+msgid "{sorted} of {total} sorted"
+msgstr "Posortowano {sorted} z {total}"
+
+#. Under the card being sorted, above the groups to choose from.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "c5muiH"
+msgid "Which group does it belong in?"
+msgstr "Do której grupy należy ta karta?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} jest w grupie: {group}."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} jest w grupie: {group}. Następna karta: {next}."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "Cofnięto kartę: {item}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
@@ -1170,6 +1191,12 @@ msgstr "Rozkład jednostajny: {label}. Zakres od {min} do {max}."
 msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "{between} wartości mieści się między {from} a {to}, {below} poniżej, a {above} powyżej."
+
+#. A worked answer's wrong step, read with its correction once checked.
+#: src/activities/find-error/find-error-activity.tsx
+msgctxt "UPlDiJ"
+msgid "Step {number}: {text}. Corrected: {correction}"
+msgstr "Krok {number}: {text}. Poprawnie: {correction}"
 
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
@@ -1861,14 +1888,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "Dwie kolumny kart. Wybierz kartę po lewej i jedną po prawej, aby połączyć je w parę. {count, plural, =0 {} one {# karta nie ma pary.} few {# karty nie mają pary.} many {# kart nie ma pary.} other {# karty nie ma pary.}} {matched, plural, other {Dopasowano # z {total} par.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "rnH_6_"
+msgid "<left></left> goes with <right></right>, not <guess></guess>."
+msgstr "<left></left> i <right></right> to para. <guess></guess> tu nie pasuje."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "Błędy przy pierwszej próbie"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "prxLRA"
-msgid "{left} goes with {right}, not {guess}."
-msgstr "Parę tworzą: {left} i {right}, a nie {guess}."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2778,14 +2805,14 @@ msgid "Step {current} of {total}."
 msgstr "Krok {current} z {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
+msgctxt "LjV93h"
+msgid "Your first pick: <choice></choice>"
+msgstr "Twój pierwszy wybór: <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "5SURVE"
 msgid "Right:"
 msgstr "Poprawna odpowiedź:"
-
-#: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5nqose"
-msgid "Your first pick: {choice}"
-msgstr "Twój pierwszy wybór: {choice}"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

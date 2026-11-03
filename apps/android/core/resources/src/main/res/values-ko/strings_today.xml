@@ -171,7 +171,7 @@
   "today_time_left": "37764ecb120707fd415d38366b54ce9334272ba8c621177fc9b060575813684f",
   "today_time_studied": "73913864f7b1827e7f796592916f14840c4126b76f6196599ecc0a73edbc64bc",
   "today_title": "719025c4339875f2d1bd6e752656015e789f87ef5af3ed78c00a2b97039d94d8",
-  "today_undo": "dc57405900b45be24753176eb9540a8a7b975a10d3a67030e9e2cdc83ae8944f",
+  "today_undo": "9631335eaaa3cda6e2f70ce96f80d08a20d9b48341ba0b0687044d68c73f1297",
   "today_up_next": "989522126e11780a87ae7bc195efaddcddff5e8e6ae6c9b7b481029c4848712b",
   "today_waiting": "5740fd39040f8797db8c02d660b253ca4cb911568ee654d808df51aad8ae9b17",
   "today_waiting_detail": "3f2a6ca098f1699fc840538fbecf94ac28a4aea576a9aa39c39495805f2ea820",
@@ -429,7 +429,7 @@
     <string name="today_insight_time_stays">학습 시간대는 그대로예요.</string>
     <string name="today_plan_stays">계획은 그대로예요.</string>
     <string name="today_noted">확인했어요.</string>
-    <string name="today_undo">되돌리기</string>
+    <string name="today_undo">실행 취소</string>
     <string name="today_notice_exam_choice">시험 선택</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_question">%1$s: 어떤 과목을 선택할까요?</string>

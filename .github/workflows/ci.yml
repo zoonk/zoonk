@@ -6,11 +6,6 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-concurrency:
-  group: ci-${{ github.ref }}
-  queue: max
-  cancel-in-progress: false
-
 permissions:
   contents: read
   actions: read
@@ -67,9 +62,35 @@ jobs:
     uses: ./.github/workflows/vitest.yml
     secrets: inherit
 
-  staging:
+  # Only main's newest commit deploys staging. This check is its own job because a job entering the
+  # staging group cancels the deploy running there, which must never be a newer commit's.
+  newest-commit:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [quality, vitest, main-e2e, api-e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      attempt: ${{ steps.main.outputs.attempt }}
+    steps:
+      - id: main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+
+          if [[ "$head" == "$GITHUB_SHA" ]]; then
+            echo "attempt=$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Skipping staging: main is now at $head"
+          fi
+
+  staging:
+    needs: newest-commit
+    # Rerunning only this job keeps the first attempt's check, which may be stale by then.
+    if: needs.newest-commit.outputs.attempt == github.run_attempt
+    concurrency:
+      group: staging
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
@@ -101,3 +122,6 @@ jobs:
         run: pnpm --filter @zoonk/db db:deploy
       - name: Deploy staging apps
         run: pnpm deploy staging
+      - name: Cancel remote builds when this workflow is canceled or fails
+        if: cancelled() || failure()
+        run: pnpm deploy cancel-run

@@ -9,7 +9,7 @@ export async function withConversationAccess(conversation: LanguageConversationV
   }
 
   const locked =
-    isPlusOnlyLiveCall(conversation.kind) &&
+    isPlusOnlyLiveCall(conversation) &&
     (conversation.status === "ready" || conversation.kind === "checkpoint") &&
     !(await hasActiveSubscription());
 

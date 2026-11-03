@@ -24,7 +24,7 @@ async function checkObjectives(
     return languageError(result.status, "Conversation not found");
   }
 
-  return NextResponse.json({ objectivesMet: result.objectivesMet });
+  return NextResponse.json(result.check);
 }
 
 export const POST = withApiErrorBoundary(checkObjectives);

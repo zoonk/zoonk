@@ -36,7 +36,6 @@ const apartmentCall: LiveConversationInstructionsParams = {
   kind: "unit",
   learnerLanguage: "pt",
   level: "A2",
-  minutes: 3,
   scenario: {
     character: { name: "Sarah", place: "Queen Street", role: "proprietária" },
     characterBrief: "Friendly landlord. Rent is $1,200 a month. Viewings on Saturday at 10am.",
@@ -65,7 +64,8 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).toContain("clarification in Português Brasileiro");
     expect(instructions).toContain("The learner is at A2.");
     expect(instructions).toMatch(/Delegate to the backend when:\s+- Never\./u);
-    expect(instructions).toContain("about 3 minutes");
+    expect(instructions).toContain("The app tells you when it's time to end the call.");
+    expect(instructions).not.toMatch(/\d minutes?/u);
   });
 
   it("runs a speaking mock as an examiner without the role-play hints", () => {
@@ -74,7 +74,6 @@ describe(buildLiveConversationInstructions, () => {
       exam: "ielts",
       kind: "speakingMock",
       level: "B1",
-      minutes: 1,
     });
 
     expect(instructions).not.toContain("{{");
@@ -84,16 +83,10 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).not.toContain("Is the apartment still available?");
     expect(instructions).toContain("Never use Português Brasileiro");
     expect(instructions).not.toContain("clarification in");
-    expect(instructions).toContain("about 1 minute.");
   });
 
   it("runs a TOEFL mock with Listen and Repeat, then the interview, the same at every level", () => {
-    const toeflMock = {
-      ...apartmentCall,
-      exam: "toefl",
-      kind: "speakingMock",
-      minutes: 5,
-    } as const;
+    const toeflMock = { ...apartmentCall, exam: "toefl", kind: "speakingMock" } as const;
 
     const instructions = buildLiveConversationInstructions({ ...toeflMock, level: "A2" });
 
@@ -136,7 +129,6 @@ describe(buildLiveConversationInstructions, () => {
       },
       kind: "examTask",
       level: "B2",
-      minutes: 7,
       targetLanguage: "es",
     });
 
@@ -149,7 +141,6 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).toContain("Speak only Español de España");
     expect(instructions).toContain("Keep the exam's standard wording at every level");
     expect(instructions).not.toContain("You are the other candidate");
-    expect(instructions).toContain("about 7 minutes");
   });
 
   it("plays the other candidate of a paired Cambridge task in British English, at the exam's level", () => {
@@ -170,7 +161,6 @@ describe(buildLiveConversationInstructions, () => {
       },
       kind: "examTask",
       level: "B2",
-      minutes: 4,
     });
 
     expect(instructions).not.toContain("{{");

@@ -167,6 +167,8 @@
     "./rich-text/math-provider": "./src/rich-text/math-markup-context.tsx",
     "./rich-text/preload-math": "./src/rich-text/use-preload-math.ts",
     "./rich-text/parser": "./src/rich-text/rich-text-parser.ts",
+    "./rich-text/speech": "./src/rich-text/use-spoken-text.ts",
+    "./rich-text/spoken-math": "./src/rich-text/spoken-math.tsx",
     "./rich-text/typography": "./src/rich-text/rich-text-typography.ts"
   },
   "scripts": {

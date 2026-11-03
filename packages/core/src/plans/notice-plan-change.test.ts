@@ -7,12 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listGoalChangeNotices } from "../library/sources/source-change-notices";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { followNoticeReading } from "./_test-utils/notice-landing";
+import { followNoticeReading, noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposeNoticeChange } from "./notice-plan-change";
-import { claimNoticeLanding, isNoticeLandingExpiredError, startNoticeWait } from "./notice-wait";
+import { claimNoticeLanding, isNoticeLandingExpiredError } from "./notice-wait";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { type PlanGraph, parsePlanGraph } from "./planner/plan-state";
 
@@ -301,7 +301,7 @@ describe(proposeNoticeChange, () => {
       where: { id: blueprint.id },
     });
 
-    await startNoticeWait({ goalId: goal.id });
+    await noticeWaitFixture({ goalId: goal.id });
     await expect(claimNoticeLanding({ goalId: goal.id })).resolves.toBe(true);
 
     const [before, date] = await Promise.all([

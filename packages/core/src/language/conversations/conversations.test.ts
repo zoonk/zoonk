@@ -30,6 +30,7 @@ import {
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
+import { LIVE_CALL_WRAP_UP_SECONDS } from "../../entitlements/limits";
 import { writeTestCall } from "./_test-utils/write-test-call";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
@@ -65,6 +66,12 @@ const TURNS = [
   { speaker: "learner" as const, text: "Can I see it on Saturday?" },
 ];
 
+const GOODBYE_TURNS = [
+  ...TURNS,
+  { speaker: "learner" as const, text: "Thank you, bye!" },
+  { speaker: "character" as const, text: "Bye, see you Saturday!" },
+];
+
 const COMPLETION = {
   spokenSeconds: 42,
   timeZone: "America/Sao_Paulo",
@@ -77,9 +84,9 @@ const PRACTICE_SECONDS = 120;
 const TEN_MINUTES_MS = 600_000;
 const DAY_MS = 86_400_000;
 
-function objectivesAnswer(labels: string[]) {
+function objectivesAnswer(labels: string[], { goodbye = false } = {}) {
   return {
-    data: { met: labels.map((label) => ({ label, learnerWords: "It is available?" })) },
+    data: { goodbye, met: labels.map((label) => ({ label, learnerWords: "It is available?" })) },
     provenance: PROVENANCE,
     systemPrompt: "",
     usage: undefined as never,
@@ -236,8 +243,8 @@ describe("language conversations", () => {
       setup: {
         connectionId: expect.any(String),
         deadlineAt: expect.any(String),
-        endsAtLimit: null,
-        seconds: PRACTICE_SECONDS,
+        seconds: PRACTICE_SECONDS + LIVE_CALL_WRAP_UP_SECONDS,
+        talkSeconds: PRACTICE_SECONDS,
         voice: "marin",
       },
       status: "ready",
@@ -273,7 +280,13 @@ describe("language conversations", () => {
       status: "ready",
     });
 
+    expect(reserved.setup.script.cues.opening).toStrictEqual({
+      channel: "commentary",
+      text: expect.stringContaining(JSON.stringify(RENTING_SCENARIO.openingLine)),
+    });
+
     expect(createLiveCallSession).toHaveBeenCalledExactlyOnceWith({
+      greeting: reserved.setup.script.cues.opening.text,
       instructions: expect.stringContaining(RENTING_SCENARIO.character.name),
       sdp: "test-offer",
       voice: "marin",
@@ -291,7 +304,7 @@ describe("language conversations", () => {
     expect(row.startedAt).not.toBeNull();
   });
 
-  it("starts a dropped call over when it connects again, keeping what the dropped one ran", async () => {
+  it("connects a dropped call again for what's left of its talk time, keeping what the dropped one ran", async () => {
     freezeClock();
 
     const { renting, user } = await languageGoalFixture();
@@ -310,7 +323,7 @@ describe("language conversations", () => {
 
     const second = await reserveTestCall(conversationId);
 
-    expect(second).toMatchObject({ setup: { endsAtLimit: null, seconds: 60 }, status: "ready" });
+    expect(second).toMatchObject({ setup: { talkSeconds: 30 }, status: "ready" });
 
     const records = await prisma.usageRecord.findMany({
       orderBy: { createdAt: "asc" },
@@ -319,7 +332,7 @@ describe("language conversations", () => {
 
     expect(records).toMatchObject([
       { seconds: 30, targetId: first.setup.connectionId },
-      { seconds: 60, targetId: second.status === "ready" ? second.setup.connectionId : "" },
+      { seconds: 30, targetId: second.status === "ready" ? second.setup.connectionId : "" },
     ]);
   });
 
@@ -335,31 +348,13 @@ describe("language conversations", () => {
     });
 
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { seconds: PRACTICE_SECONDS },
+      setup: { talkSeconds: PRACTICE_SECONDS },
       status: "ready",
     });
 
     await expect(
       prisma.usageRecord.findFirstOrThrow({ where: { kind: "conversation", userId: user.id } }),
     ).resolves.toMatchObject({ createdAt: new Date(), seconds: PRACTICE_SECONDS });
-  });
-
-  it("ends a call early at the day's call time, and says so", async () => {
-    const { renting, user } = await languageGoalFixture();
-    mockSession(user.id);
-    const conversationId = await startPractice(renting.id);
-
-    await usageRecordsFixture({
-      count: 1,
-      kind: "conversation",
-      seconds: FREE_CALL_SECONDS - 90,
-      userId: user.id,
-    });
-
-    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: "day", seconds: 90 },
-      status: "ready",
-    });
   });
 
   it("stops at the free plan's daily call time without creating a provider session", async () => {
@@ -370,7 +365,7 @@ describe("language conversations", () => {
     await usageRecordsFixture({
       count: 1,
       kind: "conversation",
-      seconds: FREE_CALL_SECONDS - 30,
+      seconds: FREE_CALL_SECONDS,
       userId: user.id,
     });
 
@@ -442,7 +437,19 @@ describe("language conversations", () => {
 
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns } }),
-    ).resolves.toStrictEqual({ objectivesMet: ["Is it available?"], status: "ready" });
+    ).resolves.toStrictEqual({
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?"],
+        progress: {
+          channel: "thinking",
+          text: expect.stringContaining(
+            'achieved "Is it available?". Still to do: "Book a viewing", "Ask about the deposit".',
+          ),
+        },
+      },
+      status: "ready",
+    });
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Book a viewing"]),
@@ -451,7 +458,11 @@ describe("language conversations", () => {
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
     ).resolves.toStrictEqual({
-      objectivesMet: ["Is it available?", "Book a viewing"],
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?", "Book a viewing"],
+        progress: expect.objectContaining({ channel: "thinking" }),
+      },
       status: "ready",
     });
 
@@ -568,9 +579,9 @@ describe("language conversations", () => {
     writer.release();
     await writer.done;
 
-    await expect(Promise.all([first, second])).resolves.toStrictEqual([
-      { objectivesMet: ["Is it available?"], status: "ready" },
-      { objectivesMet: ["Is it available?"], status: "ready" },
+    await expect(Promise.all([first, second])).resolves.toMatchObject([
+      { check: { objectivesMet: ["Is it available?"] }, status: "ready" },
+      { check: { objectivesMet: ["Is it available?"] }, status: "ready" },
     ]);
 
     await expect(
@@ -590,7 +601,51 @@ describe("language conversations", () => {
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns: longer } }),
     ).resolves.toStrictEqual({
-      objectivesMet: ["Is it available?", "Book a viewing"],
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?", "Book a viewing"],
+        progress: null,
+      },
+      status: "ready",
+    });
+  });
+
+  it("says when the call ended with a goodbye, and sends no progress once every goal is met", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
+      objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"], {
+        goodbye: true,
+      }),
+    );
+
+    await expect(
+      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
+    ).resolves.toStrictEqual({
+      check: {
+        goodbye: true,
+        objectivesMet: ["Is it available?", "Book a viewing", "Ask about the deposit"],
+        progress: null,
+      },
+      status: "ready",
+    });
+  });
+
+  it("sends no progress with a goodbye, though goals are left: the character has already said goodbye", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
+      objectivesAnswer(["Is it available?"], { goodbye: true }),
+    );
+
+    await expect(
+      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
+    ).resolves.toStrictEqual({
+      check: { goodbye: true, objectivesMet: ["Is it available?"], progress: null },
       status: "ready",
     });
   });
@@ -827,7 +882,7 @@ describe("language conversations", () => {
     });
 
     expect(result).toMatchObject({
-      conversation: { kind: "checkpoint", minutes: 1, result: { passed: true, stars: 3 } },
+      conversation: { kind: "checkpoint", minutes: 2, result: { passed: true, stars: 3 } },
     });
 
     const [savedBlock, item, event] = await Promise.all([

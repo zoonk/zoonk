@@ -8,13 +8,14 @@ import { getBudgetForGoal } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
+import { noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
-import { endNoticeWait, startNoticeWait } from "./notice-wait";
+import { endNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
@@ -876,8 +877,7 @@ describe(getPlanTimeAdvice, () => {
 
   it("waits while the plan waits for its exam's notice reading, then recommends the plan's time", async () => {
     const { goal, library } = await setup();
-    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
-    await startNoticeWait({ goalId: goal.id, now: NOW });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph, waitsForNotice: true });
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
       readingNotice: true,
@@ -899,7 +899,7 @@ describe(getPlanTimeAdvice, () => {
   it("recommends the plan's time once its wait for the notice runs out without a reading", async () => {
     const { goal, library } = await setup();
     await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
-    await startNoticeWait({ goalId: goal.id, now: new Date(NOW.getTime() - 7 * 60_000) });
+    await noticeWaitFixture({ goalId: goal.id, now: new Date(NOW.getTime() - 7 * 60_000) });
 
     const advice = await readAdvice(goal.id, EVERY_DAY);
 

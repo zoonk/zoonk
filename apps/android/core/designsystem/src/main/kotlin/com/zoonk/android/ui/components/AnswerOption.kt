@@ -2,6 +2,7 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,9 +46,10 @@ fun AnswerOptionGroup(
 /**
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words and, once checked, the word its result shows. An option among several
- * picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place). A [glyph]
- * marks the key in place of its number, as main's net-scored statements (✓, ✗, –). The key sits on
- * the words' first line, or at the top with [keyAtTop].
+ * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
+ * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
+ * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
+ * [keyAtTop].
  */
 @Composable
 fun AnswerOption(
@@ -75,10 +77,10 @@ fun AnswerOption(
                 .background(tone.container)
                 .border(tone.border, shape)
                 .then(
-                    if (role == Role.Checkbox) {
-                        Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
-                    } else {
-                        Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
+                    when (role) {
+                        Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
+                        Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
+                        else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
                 ).padding(horizontal = 14.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

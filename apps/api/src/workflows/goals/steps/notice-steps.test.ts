@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { claimNoticeLandingStep, endNoticeWaitStep, startNoticeWaitStep } from "./notice-steps";
+import { claimNoticeLandingStep, endNoticeWaitStep } from "./notice-steps";
 
 const UNWRITABLE_GOAL_ID = "not-a-goal-id";
 
 describe("notice wait steps", () => {
   it.each([
-    ["starting the wait", startNoticeWaitStep],
     ["claiming the landing", claimNoticeLandingStep],
     ["ending the wait", endNoticeWaitStep],
   ])(

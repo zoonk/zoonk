@@ -29,6 +29,8 @@ import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { claimWarmUp } from "@zoonk/core/library/warm-ups/claim";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
+import { getNoticeWaitState } from "@zoonk/core/plans/notice-wait";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -2108,6 +2110,44 @@ describe(goalContentWorkflow, () => {
       expect(
         getStartMock().mock.calls.filter(([workflow]) => workflow === courseOutlineWorkflow),
       ).toHaveLength(outlinesBefore[0] ?? -1);
+    },
+  );
+
+  it(
+    "holds a new exam's plan on the notice's reading from the moment it's saved, while its setup still runs",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal({
+        details: { answered: [], examName: "Immunology board exam", level: "basic" },
+        kind: "exam",
+      });
+
+      await Promise.all([
+        learningProfileFixture({ memoryEnabled: true, userId: user.id }),
+        memoryFactFixture({
+          category: "routine",
+          statement: "Never studies on Sundays",
+          userId: user.id,
+        }),
+      ]);
+
+      const noticeDuringSetup: PlanView["notice"][] = [];
+
+      vi.mocked(fitPlanToRoutineFacts).mockImplementation(async () => {
+        const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+        noticeDuringSetup.push(
+          getNoticeWaitState({ noticeWaitUntil: plan.noticeWaitUntil, now: new Date() }),
+        );
+
+        return taskResult({ operations: [], reason: "Nothing to fit." });
+      });
+
+      researchEndsWhenAsked(async () => {});
+
+      await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+
+      expect(noticeDuringSetup).toStrictEqual(["reading"]);
     },
   );
 

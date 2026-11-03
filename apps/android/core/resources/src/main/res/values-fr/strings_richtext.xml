@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_math_bar": "cb889d42cd5aa154526225db3cd3126cc479387af9bfe77be3fe43f952d0be8d",
+  "richtext_math_cube_root": "b1a62cf1d48a8b0014ea2a1f4018456b25e58e93098c2ffb2991cdc6e26a3039",
   "richtext_math_cubed": "3504efa72e143bbd4d61ed2845cd64f8a9a62ddb99c0dfba9c33bfffc0535dcc",
+  "richtext_math_dot": "710be6c5aa6f8d051852808ba556c3a87d2eb39586dc3004f281500972ae3bac",
   "richtext_math_fraction": "459b2719b7badba17341dc9fb115c3ce2bc22c72f82bf9b5c5f20cf3e96d902f",
+  "richtext_math_hat": "293d4b80be95c45a934e9b71129d3c728ae26656031798e8cf81bdbbc8a6eb48",
+  "richtext_math_nth_root": "b178d7705c855a06969b0869d6a454c5db06581ee349fc5efd85e249c0e495d0",
   "richtext_math_power": "1f66141a67ebba636ae2a7b2e16e45dea0984b0a9f87f72e2f23998d8026b95d",
   "richtext_math_root": "36110eda9598e54c2014c32f7cc2c2921c37c2a6f3de2a52562a28a8a086daa2",
   "richtext_math_squared": "e124e2d94168b55518e87311e33cdc9c6d12e303771ac9fd0827eb2db20e8cbd",
-  "richtext_math_subscript": "fab5a4e7da25bc14d64e0ec92492c41984c068015d7b9b9f8956f4ce40f7a812"
+  "richtext_math_subscript": "fab5a4e7da25bc14d64e0ec92492c41984c068015d7b9b9f8956f4ce40f7a812",
+  "richtext_math_tilde": "73c546d22115b85fb723df64ed74e306f69d523c402d55f2df1547f3f274a7e7",
+  "richtext_math_vector": "c89911b112cbcf802a4c8764c7285eea0ced0b176797586cf732796bcb166645"
 }
 -->
 <resources>
@@ -22,4 +29,18 @@
     <string name="richtext_math_fraction">%1$s sur %2$s</string>
     <!-- Screen reader words for a square root: "square root of 2". -->
     <string name="richtext_math_root">racine carrée de %1$s</string>
+    <!-- Screen reader words for a cube root: "cube root of 8". -->
+    <string name="richtext_math_cube_root">racine cubique de %1$s</string>
+    <!-- Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x". -->
+    <string name="richtext_math_nth_root">racine d’indice %1$s de %2$s</string>
+    <!-- Screen reader words for a letter with a bar over it, such as a mean: "x bar". -->
+    <string name="richtext_math_bar">%1$s barre</string>
+    <!-- Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot". -->
+    <string name="richtext_math_dot">%1$s point</string>
+    <!-- Screen reader words for a letter with a hat over it, such as an estimate: "p hat". -->
+    <string name="richtext_math_hat">%1$s chapeau</string>
+    <!-- Screen reader words for a letter with a tilde over it: "x tilde". -->
+    <string name="richtext_math_tilde">%1$s tilde</string>
+    <!-- Screen reader words for a letter with an arrow over it, a vector: "vector v". -->
+    <string name="richtext_math_vector">vecteur %1$s</string>
 </resources>

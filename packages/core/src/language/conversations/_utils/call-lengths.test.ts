@@ -27,31 +27,24 @@ describe(toPracticeCallLengths, () => {
     });
   });
 
-  it("offers only what's left of today's or this month's call time", () => {
-    expect(lengths({ tier: "free", usedThisMonth: 50, usedToday: 50 })).toStrictEqual({
-      defaultMinutes: 1,
-      limit: null,
-      minutes: [1],
-      plusMinutes: [3, 5],
-    });
+  it("offers every length the plan allows while any of today's and this month's call time is left", () => {
+    const free = { defaultMinutes: 2, limit: null, minutes: [1, 2], plusMinutes: [3, 5] };
 
-    expect(lengths({ tier: "free", usedThisMonth: 200 })).toStrictEqual({
-      defaultMinutes: 1,
-      limit: null,
-      minutes: [1],
-      plusMinutes: [3, 5],
-    });
+    expect([
+      lengths({ tier: "free", usedThisMonth: 110, usedToday: 110 }),
+      lengths({ tier: "free", usedThisMonth: 290 }),
+    ]).toStrictEqual([free, free]);
   });
 
-  it("says until when calls come back once no length fits", () => {
-    expect(lengths({ tier: "free", usedThisMonth: 90, usedToday: 90 })).toStrictEqual({
+  it("says until when calls come back once no call time is left", () => {
+    expect(lengths({ tier: "free", usedThisMonth: 120, usedToday: 120 })).toStrictEqual({
       defaultMinutes: 2,
       limit: { period: "day", tier: "free" },
       minutes: [],
       plusMinutes: [],
     });
 
-    expect(lengths({ tier: "free", usedThisMonth: 280 })).toStrictEqual({
+    expect(lengths({ tier: "free", usedThisMonth: 300 })).toStrictEqual({
       defaultMinutes: 2,
       limit: { period: "month", tier: "free" },
       minutes: [],
@@ -59,7 +52,7 @@ describe(toPracticeCallLengths, () => {
     });
   });
 
-  it("offers Plus every length that fits, none locked", () => {
+  it("offers Plus every length, none locked, while any call time is left", () => {
     expect(lengths({ tier: "plus" })).toStrictEqual({
       defaultMinutes: 2,
       limit: null,
@@ -67,10 +60,10 @@ describe(toPracticeCallLengths, () => {
       plusMinutes: [],
     });
 
-    expect(lengths({ tier: "plus", usedToday: 1050 })).toStrictEqual({
+    expect(lengths({ tier: "plus", usedToday: 1190 })).toStrictEqual({
       defaultMinutes: 2,
       limit: null,
-      minutes: [1, 2],
+      minutes: [1, 2, 3, 5],
       plusMinutes: [],
     });
   });

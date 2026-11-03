@@ -153,6 +153,7 @@ msgstr "Tägliche Lernzeit"
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -389,6 +390,7 @@ msgstr "{done, number} von {total, number}"
 #: src/_components/time-answer.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
+#: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
@@ -992,6 +994,7 @@ msgstr "Brillen"
 
 #: src/appearance/buddy-settings.tsx
 #: src/journey/goal-actions.tsx
+#: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -1520,7 +1523,6 @@ msgid "The unit's call"
 msgstr "Gespräch dieser Einheit"
 
 #: src/challenge/challenge-call-intro.tsx
-#: src/language/conversation/conversation-intro.tsx
 msgctxt "YAmuVo"
 msgid "{time} · Level {level}"
 msgstr "{time} · Level {level}"
@@ -1582,10 +1584,9 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "Der Start läuft noch. Das dauert länger als üblich."
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/call-intro-footer.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
 #: src/plan/focus-test/focus-test-screen.tsx
 #: src/questions/test-out-preparing.tsx
 msgctxt "RFCwI6"
@@ -4801,19 +4802,64 @@ msgid ", not yet"
 msgstr ", noch nicht"
 
 #: src/language/conversation/call-control.tsx
+msgctxt "9PtnbA"
+msgid "All goals done. {name} will wrap up after your answer."
+msgstr "Alle Ziele erreicht. {name} beendet das Gespräch nach deiner Antwort."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "QK4WCr"
+msgid "Almost time. {name} will say goodbye after your answer."
+msgstr "Die Zeit ist fast um. {name} verabschiedet sich nach deiner Antwort."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "5Xm82-"
+msgid "Take your time."
+msgstr "Lass dir Zeit."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "Rg43lU"
+msgid "Answer {name} out loud."
+msgstr "Antworte {name} laut."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "hNhwvz"
+msgid "Tip: {goal}"
+msgstr "Tipp: {goal}"
+
+#: src/language/conversation/call-control.tsx
 msgctxt "Yyp8xw"
 msgid "Reconnecting…"
 msgstr "Verbindung wird wiederhergestellt…"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "bGfToC"
-msgid "Calling…"
-msgstr "Verbindung wird hergestellt…"
+msgctxt "TFeaSI"
+msgid "{name} answers first."
+msgstr "{name} meldet sich zuerst."
 
 #: src/language/conversation/call-control.tsx
-msgctxt "kVieCI"
-msgid "Microphone off"
-msgstr "Mikrofon aus"
+msgctxt "qAF84R"
+msgid "Calling {name}…"
+msgstr "Wir verbinden dich mit {name}…"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "f4awpI"
+msgid "{name} is saying goodbye"
+msgstr "{name} verabschiedet sich"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "-Uxg8O"
+msgid "Listen, then answer."
+msgstr "Hör zu und antworte dann."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "0YrKIJ"
+msgid "{name} is talking"
+msgstr "{name} spricht"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "IDdLoL"
+msgid "Unmute to answer out loud, or type your reply."
+msgstr "Schalt dein Mikrofon ein, um laut zu antworten, oder schreib deine Antwort."
 
 #: src/language/conversation/call-control.tsx
 msgctxt "HOzFdo"
@@ -4821,15 +4867,26 @@ msgid "Muted"
 msgstr "Stummgeschaltet"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "WjL1yk"
-msgid "{name} is talking…"
-msgstr "{name} spricht…"
+msgctxt "t7GzWJ"
+msgid "Type your reply below."
+msgstr "Gib unten deine Antwort ein."
 
-#. Call status while Zoonk listens to the learner speak.
+#: src/language/conversation/call-control.tsx
+msgctxt "HcxmJB"
+msgid "Your turn"
+msgstr "Du bist dran"
+
+#. Call status while Zoonk hears the learner speak.
 #: src/language/conversation/call-control.tsx
 msgctxt "GdiyKL"
 msgid "Listening…"
 msgstr "Wir hören zu…"
+
+#: src/language/conversation/call-control.tsx
+#: src/language/conversation/call-problem.tsx
+msgctxt "eisS9Z"
+msgid "Call ended"
+msgstr "Gespräch beendet"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "SENRqu"
@@ -4845,6 +4902,60 @@ msgstr "Stummschalten"
 msgctxt "3JVa6k"
 msgid "End"
 msgstr "Beenden"
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "HYCGBs"
+msgid "You've reached your daily time limit. You can make this call in your next session."
+msgstr "Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "RMqmiK"
+msgid "Allow the microphone to talk with {name}."
+msgstr "Erlaub den Zugriff auf dein Mikrofon, um mit {name} zu sprechen."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "KBc0tZ"
+msgid "Type instead"
+msgstr "Stattdessen schreiben"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "Wir können dein Mikrofon nicht nutzen"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "lLV_X_"
+msgid "Your microphone is off"
+msgstr "Dein Mikrofon ist aus"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "Prüf, ob ein Mikrofon angeschlossen ist und keine andere App es nutzt, oder führ dieses Gespräch schriftlich."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "doNUkv"
+msgid "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing."
+msgstr "Gib in deinen Browsereinstellungen das Mikrofon für Zoonk frei, um mit {name} zu sprechen, oder schreib deine Antworten."
+
+#: src/language/conversation/call-intro-footer.tsx
+#: src/language/conversation/checkpoint-call-preparing.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "7YNWfY"
+msgid "Call {name}"
+msgstr "Gespräch mit {name} starten"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "UJMZ20"
+msgid "Start the call"
+msgstr "Gespräch starten"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "ZJuJDK"
@@ -4867,6 +4978,11 @@ msgstr "Für Gespräche brauchst du ein kostenloses Konto"
 msgctxt "53_ATX"
 msgid "Goals of the call"
 msgstr "Ziele des Gesprächs"
+
+#: src/language/conversation/call-phrases.tsx
+msgctxt "OelCmv"
+msgid "Phrases you can use"
+msgstr "Nützliche Formulierungen"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "ll0AMp"
@@ -5025,25 +5141,36 @@ msgctxt "XIsjEi"
 msgid "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute."
 msgstr "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir bereiten es zuerst passend zu deinem Sprechniveau vor. Das dauert bis zu einer halben Minute."
 
-#: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/conversation/conversation-intro.tsx
-#: src/language/conversation/try-call-again.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "HYCGBs"
-msgid "You've reached your daily time limit. You can make this call in your next session."
-msgstr "Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
+msgctxt "iZAPuC"
+msgid "{name} answers and speaks first."
+msgstr "{name} nimmt das Gespräch an und spricht zuerst."
 
 #: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "UJMZ20"
-msgid "Start the call"
-msgstr "Gespräch starten"
+msgctxt "RjOSYE"
+msgid "Then it's your turn: answer out loud, or type if you can't talk."
+msgstr "Dann bist du dran: Antworte laut oder schreib, wenn du nicht sprechen kannst."
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "fOxqWQ"
+msgid "When you've done everything, or after about {time}, {name} says goodbye and the call ends."
+msgstr "Sobald du alles erledigt hast, spätestens aber nach etwa {time}, verabschiedet sich {name} und das Gespräch endet."
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "ho6R-9"
+msgid "How the call works"
+msgstr "So läuft das Gespräch ab"
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "mLswLY"
+msgid "About {time} · Level {level}"
+msgstr "Etwa {time} · Level {level}"
+
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/exam-speaking/exam-task-intro.tsx
+msgctxt "aRrvoE"
+msgid "It ends on its own after about {time}."
+msgstr "Das Gespräch endet nach etwa {time} von selbst."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -5052,9 +5179,9 @@ msgid "{role} · {place}"
 msgstr "{role} · {place}"
 
 #: src/language/conversation/conversation-intro.tsx
-msgctxt "lNJMCK"
-msgid "Speak or type. The microphone is used only during the call."
-msgstr "Sprich oder schreib. Das Mikrofon wird nur während des Gesprächs genutzt."
+msgctxt "kSgYCD"
+msgid "Turn your sound on. The microphone is on only during the call."
+msgstr "Schalt den Ton ein. Das Mikrofon ist nur während des Gesprächs eingeschaltet."
 
 #: src/language/conversation/conversation-labels.ts
 msgctxt "naDR8I"
@@ -5140,29 +5267,19 @@ msgid "Send"
 msgstr "Senden"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "OelCmv"
-msgid "Phrases you can use"
-msgstr "Nützliche Formulierungen"
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "Gespräch"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "7s2ccO"
-msgid "Your call time for this month is almost up."
-msgstr "Deine Gesprächszeit für diesen Monat ist fast aufgebraucht."
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "Zur neuesten Nachricht scrollen"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "RI9seF"
-msgid "Your call time for today is almost up."
-msgstr "Deine Gesprächszeit für heute ist fast aufgebraucht."
-
-#: src/language/conversation/conversation-live.tsx
-msgctxt "hNhwvz"
-msgid "Tip: {goal}"
-msgstr "Tipp: {goal}"
-
-#: src/language/conversation/conversation-live.tsx
-msgctxt "ohfWwZ"
-msgid "{elapsed} / {limit}"
-msgstr "{elapsed} / {limit}"
+msgctxt "6klpOH"
+msgid "Call time"
+msgstr "Gesprächszeit"
 
 #: src/language/conversation/conversation-live.tsx
 msgctxt "Dxp-r-"
@@ -5510,16 +5627,6 @@ msgstr "Von vorn beginnen"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Sprechübungen sind in Plus enthalten: Übe jede Aufgabe des Prüfungsteils in einem Gespräch und erhalte danach eine Einschätzung anhand der offiziellen Kriterien."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "TSrXx4"
-msgid "Not enough call time this month for this task"
-msgstr "Diesen Monat bleibt nicht genug Gesprächszeit für diese Aufgabe"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "o6YuRt"
-msgid "Not enough call time today for this task"
-msgstr "Heute bleibt nicht genug Gesprächszeit für diese Aufgabe"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
@@ -11935,6 +12042,84 @@ msgstr "Wir senden das Dokument zum Lesen…"
 msgctxt "Ib7UhK"
 msgid "We already read this document. Upload a different one."
 msgstr "Wir haben dieses Dokument schon gelesen. Lad ein anderes hoch."
+
+#. Screen reader words for a letter with a bar over it, such as a mean: "x bar".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "PlBsGt"
+msgid "{base} bar"
+msgstr "{base} quer"
+
+#. Screen reader words for a cube root: "cube root of 8".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "-nS0NQ"
+msgid "cube root of {radicand}"
+msgstr "Kubikwurzel aus {radicand}"
+
+#. Screen reader words for a formula, said after its base: "x cubed".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JvZTF3"
+msgid "cubed"
+msgstr "hoch drei"
+
+#. Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "TJGSDv"
+msgid "{base} dot"
+msgstr "{base} Punkt"
+
+#. Screen reader words for a fraction: "1 over 4".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "U6yBXR"
+msgid "{numerator} over {denominator}"
+msgstr "{numerator} durch {denominator}"
+
+#. Screen reader words for a letter with a hat over it, such as an estimate: "p hat".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "IDhChJ"
+msgid "{base} hat"
+msgstr "{base} Dach"
+
+#. Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "1NhIND"
+msgid "{index}th root of {radicand}"
+msgstr "Wurzel mit Index {index} aus {radicand}"
+
+#. Screen reader words for an exponent, said after its base: "2 to the power of 10".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "r6b-ph"
+msgid "to the power of {exponent}"
+msgstr "hoch {exponent}"
+
+#. Screen reader words for a square root: "square root of 2".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "AikD8O"
+msgid "square root of {radicand}"
+msgstr "Quadratwurzel aus {radicand}"
+
+#. Screen reader words for a formula, said after its base: "x squared".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JpnUIb"
+msgid "squared"
+msgstr "zum Quadrat"
+
+#. Screen reader words for an index, said after its base: "x sub 1".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "P4MIjF"
+msgid "sub {index}"
+msgstr "tiefgestellt {index}"
+
+#. Screen reader words for a letter with a tilde over it: "x tilde".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "K4VLy9"
+msgid "{base} tilde"
+msgstr "{base} Tilde"
+
+#. Screen reader words for a letter with an arrow over it, a vector: "vector v".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "WIPDp7"
+msgid "vector {base}"
+msgstr "Vektor {base}"
 
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx

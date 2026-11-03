@@ -153,6 +153,7 @@ msgstr "하루 학습 시간"
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -389,6 +390,7 @@ msgstr "{done, number}/{total, number}"
 #: src/_components/time-answer.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
+#: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
@@ -992,6 +994,7 @@ msgstr "안경"
 
 #: src/appearance/buddy-settings.tsx
 #: src/journey/goal-actions.tsx
+#: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -1520,7 +1523,6 @@ msgid "The unit's call"
 msgstr "단원 대화"
 
 #: src/challenge/challenge-call-intro.tsx
-#: src/language/conversation/conversation-intro.tsx
 msgctxt "YAmuVo"
 msgid "{time} · Level {level}"
 msgstr "{time} · 레벨 {level}"
@@ -1582,10 +1584,9 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/conversation-intro.tsx
+#: src/language/conversation/call-intro-footer.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
 #: src/plan/focus-test/focus-test-screen.tsx
 #: src/questions/test-out-preparing.tsx
 msgctxt "RFCwI6"
@@ -1808,7 +1809,7 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/today/today-plan-change.tsx
 msgctxt "JkS37H"
 msgid "Undo"
-msgstr "되돌리기"
+msgstr "실행 취소"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
@@ -4801,19 +4802,64 @@ msgid ", not yet"
 msgstr ", 아직이에요"
 
 #: src/language/conversation/call-control.tsx
+msgctxt "9PtnbA"
+msgid "All goals done. {name} will wrap up after your answer."
+msgstr "목표를 모두 달성했어요. 답변을 마치면 {name}(이)가 대화를 마무리해요."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "QK4WCr"
+msgid "Almost time. {name} will say goodbye after your answer."
+msgstr "곧 마칠 시간이에요. 답변을 마치면 {name}(이)가 작별 인사를 해요."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "5Xm82-"
+msgid "Take your time."
+msgstr "천천히 답해 보세요."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "Rg43lU"
+msgid "Answer {name} out loud."
+msgstr "{name}에게 소리 내어 답해 보세요."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "hNhwvz"
+msgid "Tip: {goal}"
+msgstr "힌트: {goal}"
+
+#: src/language/conversation/call-control.tsx
 msgctxt "Yyp8xw"
 msgid "Reconnecting…"
 msgstr "다시 연결하고 있어요…"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "bGfToC"
-msgid "Calling…"
-msgstr "연결하고 있어요…"
+msgctxt "TFeaSI"
+msgid "{name} answers first."
+msgstr "{name}(이)가 먼저 응답해요."
 
 #: src/language/conversation/call-control.tsx
-msgctxt "kVieCI"
-msgid "Microphone off"
-msgstr "마이크 꺼짐"
+msgctxt "qAF84R"
+msgid "Calling {name}…"
+msgstr "{name}에게 연결하고 있어요…"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "f4awpI"
+msgid "{name} is saying goodbye"
+msgstr "{name}(이)가 작별 인사를 하고 있어요"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "-Uxg8O"
+msgid "Listen, then answer."
+msgstr "먼저 듣고 답하세요."
+
+#: src/language/conversation/call-control.tsx
+msgctxt "0YrKIJ"
+msgid "{name} is talking"
+msgstr "{name}(이)가 이야기하고 있어요"
+
+#: src/language/conversation/call-control.tsx
+msgctxt "IDdLoL"
+msgid "Unmute to answer out loud, or type your reply."
+msgstr "음소거를 해제해 소리 내어 답하거나, 글로 답변을 입력하세요."
 
 #: src/language/conversation/call-control.tsx
 msgctxt "HOzFdo"
@@ -4821,15 +4867,26 @@ msgid "Muted"
 msgstr "음소거 중"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "WjL1yk"
-msgid "{name} is talking…"
-msgstr "{name}(이)가 말하고 있어요…"
+msgctxt "t7GzWJ"
+msgid "Type your reply below."
+msgstr "아래에 답변을 입력하세요."
 
-#. Call status while Zoonk listens to the learner speak.
+#: src/language/conversation/call-control.tsx
+msgctxt "HcxmJB"
+msgid "Your turn"
+msgstr "답할 차례예요"
+
+#. Call status while Zoonk hears the learner speak.
 #: src/language/conversation/call-control.tsx
 msgctxt "GdiyKL"
 msgid "Listening…"
 msgstr "듣고 있어요…"
+
+#: src/language/conversation/call-control.tsx
+#: src/language/conversation/call-problem.tsx
+msgctxt "eisS9Z"
+msgid "Call ended"
+msgstr "대화가 끝났어요"
 
 #: src/language/conversation/call-control.tsx
 msgctxt "SENRqu"
@@ -4845,6 +4902,60 @@ msgstr "음소거"
 msgctxt "3JVa6k"
 msgid "End"
 msgstr "끝내기"
+
+#. The daily time limit is a setting that stops study for the day.
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "HYCGBs"
+msgid "You've reached your daily time limit. You can make this call in your next session."
+msgstr "하루 학습 시간 제한에 도달했어요. 다음 학습 때 이 대화를 할 수 있어요."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "RMqmiK"
+msgid "Allow the microphone to talk with {name}."
+msgstr "{name}와(과) 대화하려면 마이크 사용을 허용해 주세요."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "KBc0tZ"
+msgid "Type instead"
+msgstr "글로 대화하기"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "마이크를 사용할 수 없어요"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "lLV_X_"
+msgid "Your microphone is off"
+msgstr "마이크가 꺼져 있어요"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "aUNKrh"
+msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
+msgstr "마이크가 연결되어 있고 다른 앱에서 사용 중이지 않은지 확인해 보세요. 글을 입력해 대화할 수도 있어요."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "doNUkv"
+msgid "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing."
+msgstr "브라우저 설정에서 Zoonk의 마이크 사용을 허용해 {name}와(과) 말로 대화하거나, 글로 대화해 보세요."
+
+#: src/language/conversation/call-intro-footer.tsx
+#: src/language/conversation/checkpoint-call-preparing.tsx
+#: src/language/conversation/try-call-again.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "7YNWfY"
+msgid "Call {name}"
+msgstr "{name}와(과) 대화하기"
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "UJMZ20"
+msgid "Start the call"
+msgstr "대화 시작하기"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "ZJuJDK"
@@ -4867,6 +4978,11 @@ msgstr "대화하려면 무료 계정이 필요해요"
 msgctxt "53_ATX"
 msgid "Goals of the call"
 msgstr "대화 목표"
+
+#: src/language/conversation/call-phrases.tsx
+msgctxt "OelCmv"
+msgid "Phrases you can use"
+msgstr "쓸 수 있는 표현"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "ll0AMp"
@@ -5025,25 +5141,36 @@ msgctxt "XIsjEi"
 msgid "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute."
 msgstr "이 챌린지는 단원 내용을 바탕으로 짧게 대화하는 활동이에요. 먼저 말하기 수준에 맞춰 내용을 만드는 데 최대 30초가 걸려요."
 
-#: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/conversation/conversation-intro.tsx
-#: src/language/conversation/try-call-again.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요."
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "HYCGBs"
-msgid "You've reached your daily time limit. You can make this call in your next session."
-msgstr "하루 학습 시간 제한에 도달했어요. 다음 학습 때 이 대화를 할 수 있어요."
+msgctxt "iZAPuC"
+msgid "{name} answers and speaks first."
+msgstr "연결되면 {name}(이)가 먼저 말을 건네요."
 
 #: src/language/conversation/conversation-intro.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "UJMZ20"
-msgid "Start the call"
-msgstr "대화 시작하기"
+msgctxt "RjOSYE"
+msgid "Then it's your turn: answer out loud, or type if you can't talk."
+msgstr "그다음에는 답할 차례예요. 소리 내어 답하거나, 말하기 어려우면 글로 입력하세요."
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "fOxqWQ"
+msgid "When you've done everything, or after about {time}, {name} says goodbye and the call ends."
+msgstr "할 일을 모두 마치거나 {time}쯤 지나면 {name}(이)가 작별 인사를 하고 대화가 끝나요."
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "ho6R-9"
+msgid "How the call works"
+msgstr "대화 진행 방법"
+
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "mLswLY"
+msgid "About {time} · Level {level}"
+msgstr "약 {time} · 레벨 {level}"
+
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/exam-speaking/exam-task-intro.tsx
+msgctxt "aRrvoE"
+msgid "It ends on its own after about {time}."
+msgstr "약 {time} 후에 자동으로 끝나요."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -5052,9 +5179,9 @@ msgid "{role} · {place}"
 msgstr "{role} · {place}"
 
 #: src/language/conversation/conversation-intro.tsx
-msgctxt "lNJMCK"
-msgid "Speak or type. The microphone is used only during the call."
-msgstr "말하거나 입력하세요. 마이크는 대화 중에만 사용돼요."
+msgctxt "kSgYCD"
+msgid "Turn your sound on. The microphone is on only during the call."
+msgstr "소리를 켜 주세요. 마이크는 대화 중에만 켜져요."
 
 #: src/language/conversation/conversation-labels.ts
 msgctxt "naDR8I"
@@ -5140,29 +5267,19 @@ msgid "Send"
 msgstr "보내기"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "OelCmv"
-msgid "Phrases you can use"
-msgstr "쓸 수 있는 표현"
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "대화"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "7s2ccO"
-msgid "Your call time for this month is almost up."
-msgstr "이번 달 대화 시간이 얼마 남지 않았어요."
+msgctxt "E6r0bc"
+msgid "Scroll to latest"
+msgstr "최신 메시지로 이동"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "RI9seF"
-msgid "Your call time for today is almost up."
-msgstr "오늘 대화 시간이 얼마 남지 않았어요."
-
-#: src/language/conversation/conversation-live.tsx
-msgctxt "hNhwvz"
-msgid "Tip: {goal}"
-msgstr "힌트: {goal}"
-
-#: src/language/conversation/conversation-live.tsx
-msgctxt "ohfWwZ"
-msgid "{elapsed} / {limit}"
-msgstr "{elapsed} / {limit}"
+msgctxt "6klpOH"
+msgid "Call time"
+msgstr "대화 시간"
 
 #: src/language/conversation/conversation-live.tsx
 msgctxt "Dxp-r-"
@@ -5510,16 +5627,6 @@ msgstr "다시 시작하기"
 msgctxt "l3c7Yz"
 msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
 msgstr "Plus에는 말하기 연습이 포함돼요. 말하기 시험의 모든 과제를 대화로 연습하고, 과제를 마칠 때마다 공식 평가 기준에 따른 예상 결과를 받아요."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "TSrXx4"
-msgid "Not enough call time this month for this task"
-msgstr "이 과제를 진행하기에는 이번 달 남은 대화 시간이 부족해요"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "o6YuRt"
-msgid "Not enough call time today for this task"
-msgstr "이 과제를 진행하기에는 오늘 남은 대화 시간이 부족해요"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
@@ -11935,6 +12042,84 @@ msgstr "내용을 읽을 수 있도록 보내고 있어요…"
 msgctxt "Ib7UhK"
 msgid "We already read this document. Upload a different one."
 msgstr "이미 읽은 문서예요. 다른 문서를 업로드해 주세요."
+
+#. Screen reader words for a letter with a bar over it, such as a mean: "x bar".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "PlBsGt"
+msgid "{base} bar"
+msgstr "{base} 바"
+
+#. Screen reader words for a cube root: "cube root of 8".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "-nS0NQ"
+msgid "cube root of {radicand}"
+msgstr "세제곱근 {radicand}"
+
+#. Screen reader words for a formula, said after its base: "x cubed".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JvZTF3"
+msgid "cubed"
+msgstr "세제곱"
+
+#. Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "TJGSDv"
+msgid "{base} dot"
+msgstr "{base} 도트"
+
+#. Screen reader words for a fraction: "1 over 4".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "U6yBXR"
+msgid "{numerator} over {denominator}"
+msgstr "분자 {numerator}, 분모 {denominator}"
+
+#. Screen reader words for a letter with a hat over it, such as an estimate: "p hat".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "IDhChJ"
+msgid "{base} hat"
+msgstr "{base} 햇"
+
+#. Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "1NhIND"
+msgid "{index}th root of {radicand}"
+msgstr "{index}제곱근 {radicand}"
+
+#. Screen reader words for an exponent, said after its base: "2 to the power of 10".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "r6b-ph"
+msgid "to the power of {exponent}"
+msgstr "의 {exponent}제곱"
+
+#. Screen reader words for a square root: "square root of 2".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "AikD8O"
+msgid "square root of {radicand}"
+msgstr "{radicand}의 제곱근"
+
+#. Screen reader words for a formula, said after its base: "x squared".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JpnUIb"
+msgid "squared"
+msgstr "제곱"
+
+#. Screen reader words for an index, said after its base: "x sub 1".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "P4MIjF"
+msgid "sub {index}"
+msgstr "아래 첨자 {index}"
+
+#. Screen reader words for a letter with a tilde over it: "x tilde".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "K4VLy9"
+msgid "{base} tilde"
+msgstr "{base} 틸드"
+
+#. Screen reader words for a letter with an arrow over it, a vector: "vector v".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "WIPDp7"
+msgid "vector {base}"
+msgstr "벡터 {base}"
 
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx

@@ -6,6 +6,7 @@ import {
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { extractQuestionFormats } from "@zoonk/ai/tasks/research/extract-question-formats";
+import { translatePassMarks } from "@zoonk/ai/tasks/research/translate-pass-marks";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -34,6 +35,11 @@ vi.mock("@zoonk/ai/tasks/research/check-exam-reading", async (importOriginal) =>
   checkExamReading: vi.fn(),
 }));
 
+vi.mock("@zoonk/ai/tasks/research/translate-pass-marks", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  translatePassMarks: vi.fn(),
+}));
+
 describe("blueprint extraction durability", () => {
   it("retains the extraction when a cited-fact check fails", async () => {
     const extraction = JSON.parse(
@@ -56,6 +62,10 @@ describe("blueprint extraction durability", () => {
 
     vi.mocked(checkExamReading).mockResolvedValue(
       taskResult({ missingSubjects: [], statedCounts: [] }),
+    );
+
+    vi.mocked(translatePassMarks).mockResolvedValue(
+      taskResult({ language: "pt", translations: {} }),
     );
 
     vi.mocked(checkCitedFacts).mockRejectedValue(new Error("Fact check unavailable"));
@@ -95,6 +105,8 @@ describe("blueprint extraction durability", () => {
     ]);
 
     expect(extractExamBlueprint).toHaveBeenCalledOnce();
+    expect(extractQuestionFormats).toHaveBeenCalledOnce();
+    expect(checkExamReading).toHaveBeenCalledOnce();
 
     expect(checkCitedFacts).toHaveBeenCalledWith(
       expect.objectContaining({ facts: expect.any(Array) }),

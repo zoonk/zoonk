@@ -54,7 +54,6 @@ export async function TryLesson({
         minutes={pick.minutes}
         origin={`${origin}#${id}`}
         playerPath={getLessonPlayerPath({ lessonId: pick.lessonId, locale })}
-        questionId={`${id}-question`}
         screen={pick.screen}
         secondary
       />

@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_math_bar": "ee68d86b24010bdbda94413354d74a66a4edc639743c6e2ee91c75dd10cbc342",
+  "richtext_math_cube_root": "5983c5f2872412259b7f5c9dc101515c6d29789fe9b4525bcfec976daa0ff4a8",
   "richtext_math_cubed": "027189a757a7f2f5c082b839e10084678501d4ad4765be8fed8bae1714cb88d4",
+  "richtext_math_dot": "67d4d6e4b51cac4ddcab1936e37e3491f6e481b399b5c1938589a498f8d3df04",
   "richtext_math_fraction": "2814355f67a15a24dacbb6f4ff0c437dbe57935a6242f5cc1aea4169b3211974",
+  "richtext_math_hat": "188b54bd05fa7999220689bb74926e028d031311045fca32f86e1e774f0e6a3c",
+  "richtext_math_nth_root": "a421aa58eb6a2baef00cc3e5da96331910a944a00f9e4ca0ec4596abb08fb411",
   "richtext_math_power": "c542b80786d36c4873935944820acb92a26ceb7e896b3f42d2094d53ab81a42e",
   "richtext_math_root": "3e9d82528e3f3c9fe19f4bf33145209b06c43e8169b268524e9ffaed95e7bf56",
   "richtext_math_squared": "7453bf9c89762ecdb714da98efb611feb7165d34c0969c42f73e5ac365ed1712",
-  "richtext_math_subscript": "8491c90ddf6abcd2b10516b9b521bde9c971d6b9c5789f5ead9e177b31898d99"
+  "richtext_math_subscript": "8491c90ddf6abcd2b10516b9b521bde9c971d6b9c5789f5ead9e177b31898d99",
+  "richtext_math_tilde": "d6b6f8e935a9f4bf0c035f5948a7d5ac6862d6e72a1d34e3555d4787c98cbb08",
+  "richtext_math_vector": "f2e900ab6690b9d24ddaf9dca3082245da0324707629eb3f3ff7f7bc253930dc"
 }
 -->
 <resources>
@@ -22,4 +29,18 @@
     <string name="richtext_math_fraction">%1$s przez %2$s</string>
     <!-- Screen reader words for a square root: "square root of 2". -->
     <string name="richtext_math_root">pierwiastek kwadratowy z %1$s</string>
+    <!-- Screen reader words for a cube root: "cube root of 8". -->
+    <string name="richtext_math_cube_root">pierwiastek sześcienny z %1$s</string>
+    <!-- Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x". -->
+    <string name="richtext_math_nth_root">pierwiastek stopnia %1$s z %2$s</string>
+    <!-- Screen reader words for a letter with a bar over it, such as a mean: "x bar". -->
+    <string name="richtext_math_bar">%1$s z kreską</string>
+    <!-- Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot". -->
+    <string name="richtext_math_dot">%1$s z kropką</string>
+    <!-- Screen reader words for a letter with a hat over it, such as an estimate: "p hat". -->
+    <string name="richtext_math_hat">%1$s z daszkiem</string>
+    <!-- Screen reader words for a letter with a tilde over it: "x tilde". -->
+    <string name="richtext_math_tilde">%1$s z tyldą</string>
+    <!-- Screen reader words for a letter with an arrow over it, a vector: "vector v". -->
+    <string name="richtext_math_vector">wektor %1$s</string>
 </resources>

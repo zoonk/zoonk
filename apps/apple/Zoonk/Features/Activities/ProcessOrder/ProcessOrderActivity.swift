@@ -95,9 +95,9 @@ private struct ProcessOrderCanvas: View {
         RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
       }
     }
-    .draggable(step.id)
-    .dropDestination(for: String.self) { ids, _ in
-      guard let id = ids.first, order.contains(id) else {
+    .draggable(ActivityDragItem(id: step.id))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard let id = dropped.first?.id, order.contains(id) else {
         return false
       }
 
@@ -112,7 +112,7 @@ private struct ProcessOrderCanvas: View {
     }
     .accessibilityLabel(
       Text(
-        "\(index + 1). \(LessonRichText.plain(step.text))", tableName: "Activities",
+        "\(index + 1). \(LessonRichText.spoken(step.text))", tableName: "Activities",
         comment: "VoiceOver: a step's place in the learner's order, then the step")
     )
     .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -146,7 +146,7 @@ private struct ProcessOrderCanvas: View {
     selectedId = nil
     context.setAnswer(.order(order))
 
-    let text = fields.steps.first { $0.id == id }.map { LessonRichText.plain($0.text) } ?? ""
+    let text = fields.steps.first { $0.id == id }.map { LessonRichText.spoken($0.text) } ?? ""
     announceActivityChange(
       String(
         localized: "\(text) is now step \(index + 1).", table: "Activities",

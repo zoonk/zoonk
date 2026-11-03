@@ -82,7 +82,7 @@ describe("the tutor's call offer", () => {
       .element(page.getByRole("dialog", { name: "Practice a conversation" }))
       .toBeVisible();
 
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
 
     await expect
       .poll(() => startConversation.mock.calls)
@@ -95,7 +95,7 @@ describe("the tutor's call offer", () => {
     const startConversation = renderOffer(OFFERED_CALL, "paused");
 
     await page.getByRole("button", { name: "Practice" }).click();
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
 
     await expect.element(page.getByText("Calls are paused", { exact: true })).toBeVisible();
 
@@ -108,7 +108,7 @@ describe("the tutor's call offer", () => {
       .not.toBeInTheDocument();
 
     startConversation.mockResolvedValueOnce(true);
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
 
     await expect
       .element(page.getByRole("dialog", { name: "Practice a conversation" }))
