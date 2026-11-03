@@ -1188,7 +1188,7 @@ describe(courseOutlineWorkflow, () => {
     );
   });
 
-  it("writes every band at the standard tier, never priority, and bands the plan gets to in days at the flex tier", async () => {
+  it("writes waited bands at priority, upcoming bands at standard, and later bands at flex", async () => {
     outlineOneChapter();
 
     const [{ bandSkills }, course] = await Promise.all([
@@ -1212,7 +1212,7 @@ describe(courseOutlineWorkflow, () => {
       vi
         .mocked(streamCourseOutline)
         .mock.calls.map(([params]) => [params.level, params.serviceTier]),
-    ).toStrictEqual([["overview", undefined]]);
+    ).toStrictEqual([["overview", "priority"]]);
 
     expect(
       vi
@@ -1271,7 +1271,7 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toMatchObject({ status: "written" });
   });
 
-  it("writes the band a learner waits on at the priority tier when its course is an exam's or a language's", async () => {
+  it("writes a waited exam band at priority and its upcoming band at standard", async () => {
     outlineOneChapter();
 
     const [{ bandSkills }, course] = await Promise.all([
@@ -1423,7 +1423,7 @@ describe(courseOutlineWorkflow, () => {
       const { band, first } = await writeAfterEarlyAttempt("completed");
 
       expect(streamCourseOutline).not.toHaveBeenCalled();
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
       expect(band.early).toStrictEqual({ chapterId: first.id, goalIds: [], position: 0 });
       expect(band.chapters).toStrictEqual(recordedOutline.chapters.slice(1));
     });

@@ -22,7 +22,11 @@ import { writeItemSet } from "@zoonk/ai/tasks/items/write-set";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
+import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
+import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
+import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
+import { claimWarmUp } from "@zoonk/core/library/warm-ups/claim";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { getNoticeWaitState } from "@zoonk/core/plans/notice-wait";
@@ -45,7 +49,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook, sleep } from "workflow";
+import { createHook, getWritable, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
 import { mockHookConflict } from "../../../mocks/workflow";
@@ -58,6 +62,7 @@ import {
   taskResult,
 } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
+import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
@@ -146,6 +151,25 @@ const placementItem = {
   question: "What part of the immune response recognizes one specific germ?",
   visual: null,
 };
+
+const warmUpCards = [
+  {
+    options: [
+      { correct: true, text: "2" },
+      { correct: false, text: "3" },
+    ],
+    question: "What is 1 + 1?",
+    reveal: "Adding one to one gives two.",
+  },
+  {
+    options: [
+      { correct: true, text: "3" },
+      { correct: false, text: "4" },
+    ],
+    question: "What is 2 + 1?",
+    reveal: "Adding one to two gives three.",
+  },
+];
 
 const typedPlacementItem = {
   acceptedAnswers: [],
@@ -398,6 +422,15 @@ describe(goalContentWorkflow, () => {
 
   beforeEach(() => {
     graph = isolatedGraph();
+    vi.mocked(generateWarmUpCards).mockResolvedValue(taskResult({ cards: [] }));
+
+    vi.mocked(checkWarmUpCards).mockImplementation(async ({ cards }) =>
+      taskResult(
+        { verdicts: cards.map(({ id }) => ({ id, keep: true, problem: null })) },
+        "anthropic/claude-haiku-5.5",
+      ),
+    );
+
     getStartMock().mockImplementation(runPlacementInline);
 
     vi.mocked(classifyGoalSpecificity).mockResolvedValue(
@@ -429,6 +462,216 @@ describe(goalContentWorkflow, () => {
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
     );
+  });
+
+  it.each(["ready", "failed"] as const)(
+    "publishes goalReady while a warm-up is still pending, then drains its %s outcome before closing",
+    async (outcome) => {
+      const { goal } = await newGoal();
+
+      const subjectKey = crypto.randomUUID();
+
+      vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+        taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${subjectKey}` }),
+      );
+
+      const pending = Promise.withResolvers<Awaited<ReturnType<typeof generateWarmUpCards>>>();
+      vi.mocked(generateWarmUpCards).mockReturnValue(pending.promise);
+      const close = vi.fn(async () => {});
+
+      vi.mocked(getWritable).mockReturnValue({
+        getWriter: () => ({ close, releaseLock: vi.fn(), write: getWorkflowWriteMock() }),
+      } as never);
+
+      const run = goalContentWorkflow({ goalId: goal.id });
+
+      try {
+        await vi.waitFor(
+          () => {
+            expect(isGoalReady(goal.id)).toBe(true);
+            expect(close).not.toHaveBeenCalled();
+            expect(generateWarmUpCards).toHaveBeenCalledOnce();
+          },
+          { timeout: 15_000 },
+        );
+      } finally {
+        if (outcome === "failed") {
+          pending.reject(new Error("Writer unavailable after retries"));
+        } else {
+          pending.resolve(taskResult({ cards: warmUpCards }));
+        }
+
+        await run;
+      }
+
+      const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      const events = getStreamedEvents().filter(({ step }) => step === "warmUpReady");
+      expect(close).toHaveBeenCalledOnce();
+
+      expect(Boolean(stored.warmUpId)).toBe(outcome === "ready");
+
+      expect(events).toStrictEqual(
+        outcome === "ready"
+          ? [
+              {
+                entityId: goal.id,
+                status: "completed",
+                step: "warmUpReady",
+                warmUpId: stored.warmUpId,
+              },
+            ]
+          : [],
+      );
+
+      expect(
+        vi.mocked(checkWarmUpCards).mock.calls.map(([params]) => params.writerModel),
+      ).toStrictEqual(outcome === "ready" ? ["openai/gpt-6-sol"] : []);
+
+      await expect(
+        prisma.warmUp.findFirst({ where: { identityKey: { endsWith: subjectKey } } }),
+      ).resolves.toMatchObject({ status: outcome });
+
+      expect(getStreamedEvents().some(({ step }) => step === "workflowError")).toBe(false);
+    },
+  );
+
+  it("closes the ready stream while plan follow-up work is still pending", async () => {
+    const { goal } = await newGoal();
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${crypto.randomUUID()}` }),
+    );
+
+    const follow = Promise.withResolvers<boolean>();
+    const following = vi.fn();
+
+    vi.mocked(sleep).mockImplementation(async (duration) => {
+      if (String(duration) === "5s" && isGoalReady(goal.id)) {
+        following();
+        await follow.promise;
+      }
+    });
+
+    const close = vi.fn(async () => {});
+
+    vi.mocked(getWritable).mockReturnValue({
+      getWriter: () => ({ close, releaseLock: vi.fn(), write: getWorkflowWriteMock() }),
+    } as never);
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(
+        () => {
+          expect(isGoalReady(goal.id)).toBe(true);
+          expect(following).toHaveBeenCalledWith();
+          expect(close).toHaveBeenCalledOnce();
+        },
+        { timeout: 15_000 },
+      );
+    } finally {
+      follow.resolve(true);
+      await run;
+    }
+
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it("reuses a ready warm-up and reports its id without writing again", async () => {
+    const [{ goal: first }, { goal: second }] = await Promise.all([newGoal(), newGoal()]);
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${crypto.randomUUID()}` }),
+    );
+
+    vi.mocked(generateWarmUpCards).mockResolvedValue(taskResult({ cards: warmUpCards }));
+    await goalContentWorkflow({ goalId: first.id });
+    await goalContentWorkflow({ goalId: second.id });
+    const stored = await prisma.goal.findUniqueOrThrow({ where: { id: first.id } });
+    expect(stored.warmUpId).toBeTruthy();
+    expect(generateWarmUpCards).toHaveBeenCalledOnce();
+    expect(checkWarmUpCards).toHaveBeenCalledOnce();
+
+    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual([
+      { entityId: first.id, status: "completed", step: "warmUpReady", warmUpId: stored.warmUpId },
+      { entityId: second.id, status: "completed", step: "warmUpReady", warmUpId: stored.warmUpId },
+    ]);
+  });
+
+  it("follows another run's deck and links only when it becomes ready", async () => {
+    const [{ goal }, { goal: owner }] = await Promise.all([newGoal(), newGoal()]);
+    const generalGoal = `Arithmetic ${crypto.randomUUID()}`;
+    const scope = { generalGoal, language: "en", ownerId: null, targetLanguage: null };
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal }),
+    );
+
+    const claim = await claimWarmUp({ goalId: owner.id, scope, workflowRunId: "other-writer" });
+
+    if (claim.status !== "claimed") {
+      throw new Error("Expected another run to claim this deck");
+    }
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      warmUpId: null,
+    });
+
+    vi.mocked(sleep).mockImplementation(async (duration) => {
+      if (String(duration) === "2s") {
+        await prisma.warmUp.update({
+          data: { cards: toWarmUpCards(warmUpCards), status: "ready" },
+          where: { id: claim.id },
+        });
+      }
+    });
+
+    await goalContentWorkflow({ goalId: goal.id });
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
+    expect(checkWarmUpCards).not.toHaveBeenCalled();
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      warmUpId: claim.id,
+    });
+
+    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual([
+      { entityId: goal.id, status: "completed", step: "warmUpReady", warmUpId: claim.id },
+    ]);
+  });
+
+  it("stops following after its bounded wait without failing the plan or taking the writer's claim", async () => {
+    const [{ goal }, { goal: owner }] = await Promise.all([newGoal(), newGoal()]);
+    const generalGoal = `Arithmetic ${crypto.randomUUID()}`;
+    const scope = { generalGoal, language: "en", ownerId: null, targetLanguage: null };
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal }),
+    );
+
+    const claim = await claimWarmUp({ goalId: owner.id, scope, workflowRunId: "other-writer" });
+
+    if (claim.status !== "claimed") {
+      throw new Error("Expected another run to claim this deck");
+    }
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "built",
+    });
+
+    expect(
+      vi.mocked(sleep).mock.calls.filter(([duration]) => String(duration) === "2s"),
+    ).toHaveLength(29);
+
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
+    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual([]);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      warmUpId: null,
+    });
+
+    await expect(
+      prisma.warmUp.findUniqueOrThrow({ where: { id: claim.id } }),
+    ).resolves.toMatchObject({ runId: "other-writer", status: "writing" });
   });
 
   it("builds the skill graph, the plan and the main course, and starts the outlines and placement questions", async () => {
@@ -482,7 +725,7 @@ describe(goalContentWorkflow, () => {
       }),
     );
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
     const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
     const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
@@ -491,8 +734,8 @@ describe(goalContentWorkflow, () => {
 
     expect(
       placementCalls.every(
-        (call) =>
-          call.serviceTier === undefined &&
+        (call, index) =>
+          call.serviceTier === (index === 0 ? "priority" : undefined) &&
           call.skills.length <= 2 &&
           call.quickCount === 2 &&
           call.typedCount === 0,
@@ -1568,7 +1811,7 @@ describe(goalContentWorkflow, () => {
       goalKind: "exam",
     });
 
-    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
     expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -2620,6 +2863,12 @@ describe(goalContentWorkflow, () => {
 
   it("joins the run already building the goal, and never rebuilds a goal whose plan exists", async () => {
     const { goal } = await newGoal();
+    const subjectKey = crypto.randomUUID();
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${subjectKey}` }),
+    );
+
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "owner-run" });
 
     await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
@@ -2630,6 +2879,7 @@ describe(goalContentWorkflow, () => {
       generationRunId: null,
     });
 
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
     mockHookConflict(null);
 
     await prisma.plan.update({
@@ -2661,6 +2911,13 @@ describe(goalContentWorkflow, () => {
     });
 
     expect(generateSkillGraph).not.toHaveBeenCalled();
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.warmUp.count({ where: { identityKey: { endsWith: subjectKey } } }),
+    ).resolves.toBe(0);
+
+    expect(getStreamedEvents().some(({ step }) => step === "warmUpReady")).toBe(false);
   });
 
   it("writes original free-response questions with pointed rubric rows for an AP exam", async () => {
@@ -2776,13 +3033,23 @@ describe(goalContentWorkflow, () => {
 
   it("rebuilds the curriculum from the notice the learner uploaded, without writing ahead again", async () => {
     const { goal } = await newGoal({ kind: "exam" });
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${crypto.randomUUID()}` }),
+    );
+
+    vi.mocked(generateWarmUpCards).mockResolvedValue(taskResult({ cards: warmUpCards }));
     await goalContentWorkflow({ goalId: goal.id });
+    const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(stored.warmUpId).toBeTruthy();
+    const readyEvents = getStreamedEvents().filter(({ step }) => step === "warmUpReady");
 
     const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
 
     await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
 
     vi.mocked(generateSkillGraph).mockClear();
+    vi.mocked(generateWarmUpCards).mockClear();
     vi.mocked(generateItems).mockClear();
     vi.mocked(generatePlacementItems).mockClear();
     getStartMock().mockClear();
@@ -2798,6 +3065,12 @@ describe(goalContentWorkflow, () => {
     expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
     });
+
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
+
+    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual(
+      readyEvents,
+    );
 
     expect(generateItems).not.toHaveBeenCalled();
     expect(generatePlacementItems).not.toHaveBeenCalled();

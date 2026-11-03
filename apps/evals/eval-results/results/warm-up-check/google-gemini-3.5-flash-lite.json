@@ -1,0 +1,468 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-beekeeping-wrong-key-and-myth-1",
+        "expected": { "planted": ["2", "5"] },
+        "userInput": {
+          "goal": "Beekeeping",
+          "kind": "learn",
+          "language": "en",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "To warm up the hive" },
+                { "correct": false, "id": "b", "text": "To put the bees to sleep" },
+                { "correct": true, "id": "c", "text": "To hide the bees' alarm scent" }
+              ],
+              "question": "Why do beekeepers puff smoke into a hive before opening it?",
+              "reveal": "Smoke masks the alarm scent that guard bees release, so fewer bees join in. Many also fill up on honey, which makes them calmer."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": true, "id": "a", "text": "2" },
+                { "correct": false, "id": "b", "text": "5" },
+                { "correct": false, "id": "c", "text": "8" }
+              ],
+              "question": "How many eyes does a honey bee have?",
+              "reveal": "Two, one big compound eye on each side of the head."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": false, "id": "a", "text": "Male drones" },
+                { "correct": false, "id": "b", "text": "The queen" },
+                { "correct": true, "id": "c", "text": "Female workers" }
+              ],
+              "question": "Who does almost all the work in a hive: foraging, cleaning and guarding?",
+              "reveal": "Female workers. Drones are the males, and their main job is to mate with young queens from other colonies."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "That the hive is too hot" },
+                { "correct": true, "id": "b", "text": "Where to find food" },
+                { "correct": false, "id": "c", "text": "That the queen has died" }
+              ],
+              "question": "A bee doing a \"waggle dance\" in the hive is telling the others…",
+              "reveal": "Where to find food. The angle of the dance points the way relative to the sun, and the length of each waggle says how far to fly."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": false, "id": "a", "text": "Nothing at all" },
+                { "correct": false, "id": "b", "text": "It grows a new sting" },
+                { "correct": true, "id": "c", "text": "It always dies" }
+              ],
+              "question": "What happens to a honey bee worker after it stings?",
+              "reveal": "It always dies, whatever it stings, because its barbed sting tears out of its body."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": true, "id": "a", "text": "Glands on a worker bee's belly" },
+                { "correct": false, "id": "b", "text": "Pollen the bees collect" },
+                { "correct": false, "id": "c", "text": "Tree resin" }
+              ],
+              "question": "Where does beeswax come from?",
+              "reveal": "Young workers make wax in glands on the underside of their abdomen, then chew the flakes into comb. Tree resin becomes propolis, the bees' glue."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": false, "id": "a", "text": "Mixing with pollen" },
+                { "correct": true, "id": "b", "text": "Losing most of its water" },
+                { "correct": false, "id": "c", "text": "Fermenting in the comb" }
+              ],
+              "question": "Nectar turns into honey mostly by…",
+              "reveal": "Losing water. Bees add enzymes and fan their wings over the cells until the nectar is thick enough, then seal each cell with wax."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": true, "id": "a", "text": "A queen" },
+                { "correct": false, "id": "b", "text": "A summer worker" }
+              ],
+              "question": "Who lives longer?",
+              "reveal": "The queen, by far: she can live for several years. A worker born in summer lives only a few weeks, worn out by foraging."
+            },
+            {
+              "id": "9",
+              "options": [
+                { "correct": false, "id": "a", "text": "Wasp" },
+                { "correct": false, "id": "b", "text": "Fungus" },
+                { "correct": true, "id": "c", "text": "Mite" }
+              ],
+              "question": "Varroa, a pest every beekeeper learns to check for, is a kind of…",
+              "reveal": "Mite. It's tiny, feeds on bees and spreads viruses, so beekeepers count the mites on a sample of bees to decide when to treat."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 3 planted errors; kept 7 of 7 clean cards. Missed planted card 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Caught 2 of 3 planted errors; kept 7 of 7 clean cards. Missed planted card 5.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Caught 2 of 3 planted errors; kept 7 of 7 clean cards. Missed planted card 5.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "id": "pt-enem-exam-rule-second-answer-stale-number-1",
+        "expected": { "planted": ["2", "5", "8"] },
+        "userInput": {
+          "goal": "Enem",
+          "kind": "exam",
+          "language": "pt",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "Mitocôndria" },
+                { "correct": false, "id": "b", "text": "Ribossomo" },
+                { "correct": true, "id": "c", "text": "Cloroplasto" }
+              ],
+              "question": "Qual parte da célula vegetal faz a fotossíntese?",
+              "reveal": "O cloroplasto, onde fica a clorofila. A mitocôndria faz quase o caminho inverso: usa glicose e oxigênio para liberar energia."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": false, "id": "a", "text": "90" },
+                { "correct": true, "id": "b", "text": "180" },
+                { "correct": false, "id": "c", "text": "200" }
+              ],
+              "question": "Quantas questões objetivas o Enem tem, somando os dois dias de prova?",
+              "reveal": "180: são 45 questões em cada uma das quatro áreas, divididas em dois domingos."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": false, "id": "a", "text": "R$ 55" },
+                { "correct": true, "id": "b", "text": "R$ 60" },
+                { "correct": false, "id": "c", "text": "R$ 64" }
+              ],
+              "question": "Um produto de R$ 80 está com 25% de desconto. Quanto você paga?",
+              "reveal": "R$ 60. 25% é um quarto: um quarto de 80 é 20, e 80 − 20 = 60."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Declarou a independência" },
+                { "correct": false, "id": "b", "text": "Proclamou a República" },
+                { "correct": true, "id": "c", "text": "Aboliu a escravidão no Brasil" }
+              ],
+              "question": "O que a Lei Áurea, de 1888, fez?",
+              "reveal": "Aboliu a escravidão. A República veio no ano seguinte, em 1889, e a independência foi em 1822."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": false, "id": "a", "text": "Pampa" },
+                { "correct": false, "id": "b", "text": "Tundra" },
+                { "correct": true, "id": "c", "text": "Cerrado" }
+              ],
+              "question": "Qual destes é um bioma brasileiro?",
+              "reveal": "O Cerrado, a savana que ocupa boa parte do centro do país."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": false, "id": "a", "text": "Condição" },
+                { "correct": false, "id": "b", "text": "Causa" },
+                { "correct": true, "id": "c", "text": "Consequência" }
+              ],
+              "question": "Em \"Ele correu tanto que ficou sem fôlego\", a parte \"que ficou sem fôlego\" indica…",
+              "reveal": "Consequência: ficar sem fôlego é o resultado de correr tanto. A dupla \"tanto… que\" costuma anunciar essa relação."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": false, "id": "a", "text": "É mais frio que a água" },
+                { "correct": false, "id": "b", "text": "Tem ar preso dentro" },
+                { "correct": true, "id": "c", "text": "É menos denso que a água líquida" }
+              ],
+              "question": "Por que o gelo boia na água?",
+              "reveal": "Ao congelar, as moléculas de água se organizam num arranjo mais espaçado. O gelo ocupa mais volume com a mesma massa e fica menos denso."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": false, "id": "a", "text": "R$ 980" },
+                { "correct": true, "id": "b", "text": "R$ 1.320" },
+                { "correct": false, "id": "c", "text": "R$ 2.100" }
+              ],
+              "question": "Qual é o valor do salário mínimo nacional no Brasil?",
+              "reveal": "R$ 1.320, o piso que nenhum trabalhador com carteira assinada pode receber abaixo."
+            },
+            {
+              "id": "9",
+              "options": [
+                { "correct": true, "id": "a", "text": "Absorve mais luz" },
+                { "correct": false, "id": "b", "text": "Reflete mais luz" },
+                { "correct": false, "id": "c", "text": "Conduz eletricidade" }
+              ],
+              "question": "Num dia de sol, por que uma camiseta preta esquenta mais que uma branca?",
+              "reveal": "Ela absorve mais luz e transforma essa energia em calor. A branca reflete boa parte da luz que recebe."
+            },
+            {
+              "id": "10",
+              "options": [
+                { "correct": true, "id": "a", "text": "6" },
+                { "correct": false, "id": "b", "text": "7" },
+                { "correct": false, "id": "c", "text": "12" }
+              ],
+              "question": "Uma receita para 4 pessoas usa 3 ovos. Para 8 pessoas, quantos ovos?",
+              "reveal": "6. Dobrou o número de pessoas, dobra o de ovos: as duas grandezas são diretamente proporcionais."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 7 of 7 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "pt-espanhol-regional-usage-and-contradicting-reveal-1",
+        "expected": { "planted": ["2", "5"] },
+        "userInput": {
+          "goal": "Espanhol",
+          "kind": "language",
+          "language": "pt",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "Envergonhada" },
+                { "correct": true, "id": "b", "text": "Grávida" },
+                { "correct": false, "id": "c", "text": "Cansada" }
+              ],
+              "question": "Em espanhol, \"embarazada\" quer dizer…",
+              "reveal": "Grávida. Para dizer que está envergonhada, use \"avergonzada\"."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": true, "id": "a", "text": "Deliciosa" },
+                { "correct": false, "id": "b", "text": "Estranha" }
+              ],
+              "question": "Se alguém na Espanha diz que a comida está \"exquisita\", essa pessoa achou a comida…",
+              "reveal": "Estranha. Em espanhol, \"exquisito\" é uma crítica, como \"esquisito\" em português."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": false, "id": "a", "text": "O animal de oito braços" },
+                { "correct": true, "id": "b", "text": "Pó" },
+                { "correct": false, "id": "c", "text": "Povo" }
+              ],
+              "question": "\"Polvo\", em espanhol, é…",
+              "reveal": "Pó, poeira. O animal se chama \"pulpo\", e povo é \"pueblo\"."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Conserto de carros" },
+                { "correct": true, "id": "b", "text": "Escritório" }
+              ],
+              "question": "Quem trabalha numa \"oficina\" na Espanha trabalha num…",
+              "reveal": "Escritório. Oficina mecânica, em espanhol, é \"taller\"."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": true, "id": "a", "text": "\"Coger el autobús\"" },
+                { "correct": false, "id": "b", "text": "\"Llevar el autobús\"" },
+                { "correct": false, "id": "c", "text": "\"Agarrar el autobús\"" }
+              ],
+              "question": "Para dizer “pegar o ônibus” em espanhol, se diz…",
+              "reveal": "\"Coger el autobús\". É assim em todos os países que falam espanhol."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": true, "id": "a", "text": "Comprida" },
+                { "correct": false, "id": "b", "text": "Larga" }
+              ],
+              "question": "Uma \"calle larga\" é uma rua…",
+              "reveal": "Comprida. \"Largo\" fala do comprimento. Para a largura, o espanhol usa \"ancho\"."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": false, "id": "a", "text": "Espera rápido" },
+                { "correct": true, "id": "b", "text": "Espera um pouco" },
+                { "correct": false, "id": "c", "text": "Cuidado com o rato" }
+              ],
+              "question": "\"Espera un rato\" quer dizer…",
+              "reveal": "Espera um pouco: \"rato\", em espanhol, é um tempinho. O bichinho é \"ratón\"."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": true, "id": "a", "text": "O café me agrada" },
+                { "correct": false, "id": "b", "text": "Eu gosto do café" }
+              ],
+              "question": "\"Me gusta el café\", ao pé da letra, é…",
+              "reveal": "\"O café me agrada\": em espanhol, o sujeito é o café. Por isso, no plural, fica \"me gustan los libros\"."
+            },
+            {
+              "id": "9",
+              "options": [
+                { "correct": true, "id": "a", "text": "Sobrenome" },
+                { "correct": false, "id": "b", "text": "Apelido" }
+              ],
+              "question": "\"Apellido\", em espanhol, é…",
+              "reveal": "Sobrenome. Apelido, em espanhol, é \"apodo\"."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 5 of 5 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 5 of 5 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 5 of 5 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-psychology-misattributed-quote-and-myth-1",
+        "expected": { "planted": ["2", "5"] },
+        "userInput": {
+          "goal": "Introductory psychology",
+          "kind": "learn",
+          "language": "en",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "The peripheral nervous system" },
+                { "correct": true, "id": "b", "text": "The central nervous system" }
+              ],
+              "question": "Which part of the nervous system is made of the brain and the spinal cord?",
+              "reveal": "The central nervous system. The nerves that branch out from it to the rest of the body make up the peripheral nervous system."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": false, "id": "a", "text": "About half" },
+                { "correct": false, "id": "b", "text": "Nearly all of it" },
+                { "correct": true, "id": "c", "text": "About 10%" }
+              ],
+              "question": "How much of your brain do you actually use?",
+              "reveal": "About 10%. The rest sits idle, which is why some people try to unlock it."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": true, "id": "a", "text": "Synapse" },
+                { "correct": false, "id": "b", "text": "Axon" },
+                { "correct": false, "id": "c", "text": "Dendrite" }
+              ],
+              "question": "Neurons pass signals to each other across a tiny gap called a…",
+              "reveal": "A synapse. The sending neuron releases chemical messengers, called neurotransmitters, that cross the gap."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Classical conditioning" },
+                { "correct": false, "id": "b", "text": "Habituation" },
+                { "correct": true, "id": "c", "text": "Operant conditioning" }
+              ],
+              "question": "Learning that a behavior leads to a reward, so you do it more often, is called…",
+              "reveal": "Operant conditioning: behavior is shaped by what follows it. Classical conditioning pairs two signals instead, like a sound and food."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": true, "id": "a", "text": "Albert Einstein" },
+                { "correct": false, "id": "b", "text": "Sigmund Freud" },
+                { "correct": false, "id": "c", "text": "B. F. Skinner" }
+              ],
+              "question": "Who said “Insanity is doing the same thing over and over and expecting different results”?",
+              "reveal": "Albert Einstein, talking about why people fail to learn from their mistakes."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": false, "id": "a", "text": "Extinction" },
+                { "correct": true, "id": "b", "text": "Habituation" },
+                { "correct": false, "id": "c", "text": "Sensitization" }
+              ],
+              "question": "Getting so used to a steady sound, like a fan, that you stop noticing it is called…",
+              "reveal": "Habituation. Your brain stops responding to a harmless signal that doesn't change, which frees your attention for new things."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": true, "id": "a", "text": "The left" },
+                { "correct": false, "id": "b", "text": "The right" }
+              ],
+              "question": "Which half of the brain mostly controls your right hand?",
+              "reveal": "The left. Each half of the brain mostly controls movement on the opposite side of the body."
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "warm-up-check"
+}

@@ -1,28 +1,49 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingTitle,
-} from "../onboarding-frame";
+import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
 import { isRunStopped } from "./wait-run";
 
+/** Where the learner goes once the plan is ready: the time question, or the plan itself. */
+export type PlanNext = "plan" | "timeQuestion";
+
+export function PlanReadyHeading({ next }: { next: PlanNext }) {
+  const t = useExtracted();
+
+  return (
+    <OnboardingHeading>
+      <OnboardingTitle>{t("Your plan is ready")}</OnboardingTitle>
+      <OnboardingDescription>
+        {next === "plan"
+          ? t("See it whenever you're ready.")
+          : t("One last question, then you'll see it.")}
+      </OnboardingDescription>
+    </OnboardingHeading>
+  );
+}
+
 export function PlanBuilding({
-  children,
+  holding,
+  next,
   run,
 }: {
-  children?: React.ReactNode;
+  holding: boolean;
+  next: PlanNext;
   run: GenerationRun;
 }) {
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
-      <GenerationWait kind="curriculum" run={run}>
+    <GenerationWait
+      doneLabel={holding ? t("Your plan is ready") : undefined}
+      kind="curriculum"
+      run={holding ? toHeldRun(run) : run}
+    >
+      {holding ? (
+        <PlanReadyHeading next={next} />
+      ) : (
         <OnboardingHeading>
           <OnboardingTitle>{t("Building your plan")}</OnboardingTitle>
           <OnboardingDescription>
@@ -33,8 +54,7 @@ export function PlanBuilding({
                 )}
           </OnboardingDescription>
         </OnboardingHeading>
-      </GenerationWait>
-      {children}
-    </OnboardingColumn>
+      )}
+    </GenerationWait>
   );
 }

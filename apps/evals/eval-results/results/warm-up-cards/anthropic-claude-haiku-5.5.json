@@ -1,0 +1,305 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The opening false friends and the explanations of \"librería\" and \"el mapa\" are accurate. However, card 6 has a second defensible answer: informal \"vos\" exists in Mexico. Card 3 also excludes valid alternative numeric notation and incorrectly describes decimal places as cents. Card 4's categorical corn answer overlooks wheat tortillas. These trigger the maximum score of 4 for false material or another right option. The changeable 'most common'/'most used' claims in cards 5 and 10 also fall under the restriction on superlatives, whose cap of 6 is less restrictive.",
+          "score": 4,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The deck has ten cards, starts with a strong hook, and mostly covers accessible vocabulary without duplicating answers across cards. However, the currency question is country trivia rather than a meaningful early Spanish-learning gap, triggering the cap of 7. Number formatting appears unusually early, several distractors are weak, and most questions use the same meaning-identification shape. \"Qué pena\" is useful but offers little surprise to a Brazilian beginner.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "All cards provide three concise options, and the reveals generally stay within the length limit and begin with the answer. Question lengths are broadly appropriate. However, cards 1, 2, and 8 each contain two sentences, violating the one-sentence requirement on several cards and triggering the cap of 7.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The Portuguese is generally natural Brazilian Portuguese, with concrete situations and no childish embellishments. However, \"tortilla\" appears unquoted in card 4, and cards 6, 8, and 10 repeatedly leave Spanish options and reveal openings unquoted. These mix target-language material into the Portuguese outside quotes, triggering the cap of 6.",
+          "score": 6,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3595,
+          "outputTokens": 1467,
+          "reasoningTokens": 711
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several cards overstate regional conventions. Card 6 incorrectly excludes \"vos\", which is used informally in parts of Mexico, including Chiapas. Card 3 treats one number-formatting convention as uniquely correct, although \"1 234,56\" is also valid notation; its reveal also confuses decimal places with monetary cents. Card 4 guarantees a corn tortilla even though Mexican tortillas can also be made from wheat flour. Repeated unquoted Spanish words violate the explicit language requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cards 1, 2, and 8 have two-sentence questions instead of one. The currency card is a weak Spanish-learning pretest item, with national labels making the distractors particularly easy to eliminate. Placing number-formatting conventions third interrupts the progression from accessible vocabulary hooks.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Keep the strong opening false friends, then prioritize beginner vocabulary and useful expressions over country trivia. Make regional questions explicitly about a named convention or locality, replace unsupported 'most common' claims with bounded descriptions, and put every Spanish word or phrase in quotes, including options and reveal openings.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese for a Brazilian learning Spanish: false friends and cognates, first words and phrases, one grammar surprise, one usage note. Spanish words in quotes, written as in Spanish; everything else in Brazilian Portuguese. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Em espanhol, \"embarazada\" quer dizer… Envergonhada / Grávida ✓ / Cansada. Para dizer que está envergonhada, use \"avergonzada\".\n2. Se alguém na Espanha diz que a comida está \"exquisita\", essa pessoa achou a comida… Estranha / Deliciosa ✓.\n3. \"Polvo\", em espanhol, é… Povo / O animal de oito braços / Pó ✓. O animal se chama \"pulpo\", e povo é \"pueblo\".\n4. Quem trabalha numa \"oficina\" na Espanha trabalha num… Escritório ✓ / Conserto de carros. Oficina mecânica, em espanhol, é \"taller\".\n5. Uma \"calle larga\" é uma rua… Comprida ✓ / Larga. Para a largura, o espanhol usa \"ancho\".\n6. \"Espera un rato\" quer dizer… Cuidado com o rato / Espera um pouco ✓ / Espera rápido.\n7. \"Me gusta el café\", ao pé da letra, é… Eu gosto do café / O café me agrada ✓. Por isso, no plural, fica \"me gustan los libros\".\n8. \"Apellido\", em espanhol, é… Sobrenome ✓ / Apelido. Apelido, em espanhol, é \"apodo\".\nA false friend must hold in Brazilian Portuguese. Penalize usage that only holds in some Spanish-speaking countries shown as universal (for example \"coger\" as the neutral word for \"pegar\" everywhere), regional slang, and Portugal's Portuguese.",
+        "id": "pt-espanhol-1",
+        "userInput": {
+          "goal": "Espanhol",
+          "kind": "language",
+          "language": "pt",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Card 3 triggers the cap of 4: greater mass is a partly valid contributor when air resistance is present, so 'A pedra é mais pesada' is not a cleanly incorrect explanation. The relevant distinction is drag relative to weight, not necessarily greater absolute drag on the paper. The remaining marked answers and explanations are sound at an introductory level. The prices are hypothetical arithmetic examples, and no card concerns the Enem's own rules or other prohibited changing information.",
+          "score": 4,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The opening salt-dissolving question provides a strong everyday hook, and the deck covers all four areas with mostly foundational concepts. However, card 10 effectively supplies its answer through the 100-by-100 hint and repeats the area calculation already tested in card 8, triggering the cap of 7. Some distractors, especially the military-tradition option for Iluminismo, are weak beginner misconceptions.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions are approximately within the requested character range, options are short, and every card has three choices. Reveals consistently begin with the answer. However, questions 3, 5, 6, 7, 8, and 10 use multiple sentences, while reveals 5, 8, and 10 exceed the two-sentence limit. These repeated violations trigger the cap of 7.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses natural Brazilian Portuguese, concrete everyday imagery, and approachable expressions such as 'pertinho' and 'some na água'. Currency formatting is Brazilian, and there are no mixed-language passages, emoji, exclamation marks, or prohibited promotional phrases. Overall, the tone is accessible rather than dry or childish.",
+          "score": 9,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3654,
+          "outputTokens": 1104,
+          "reasoningTokens": 381
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 3 does not cleanly distinguish its correct answer from a partly valid alternative: in air, the stone's greater mass can contribute to its falling faster because air resistance has less effect relative to its weight. The reveal should explain this relative effect rather than simply assert that the air resists the paper more. This triggers the accuracy cap for a partly correct second option.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several questions contain two sentences rather than one, and reveals 5, 8, and 10 contain three sentences rather than at most two. Card 10 supplies the calculation needed to answer it and largely repeats the rectangular-area skill tested in card 8. The deck also gives three cards each to Natureza and Matemática, exceeding the requested one or two per area.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace the hectare card with a distinct foundational concept, use a more plausible Iluminismo distractor than 'Só a tradição militar', and remove incidental framing such as the classroom setup and the explanation of Brazilian thousands separators. Preserve the concrete opening hook and everyday examples.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese on basic concepts from the Enem's areas (Linguagens, Ciências Humanas, Ciências da Natureza, Matemática), one or two per area. \"Enem\", never \"ENEM\". Amounts in reais written the Brazilian way. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Qual parte da célula vegetal faz a fotossíntese? Mitocôndria / Cloroplasto ✓ / Ribossomo.\n2. Um produto de R$ 80 está com 25% de desconto. Quanto você paga? R$ 55 / R$ 60 ✓ / R$ 64.\n3. O que a Lei Áurea, de 1888, fez? Proclamou a República / Declarou a independência / Aboliu a escravidão no Brasil ✓.\n4. Em \"Ele correu tanto que ficou sem fôlego\", a parte \"que ficou sem fôlego\" indica… Consequência ✓ / Causa / Condição.\n5. Por que o gelo boia na água? Tem ar preso dentro / É menos denso que a água líquida ✓ / É mais frio que a água.\n6. Qual bioma cobre a maior parte do território brasileiro? Cerrado / Mata Atlântica / Amazônia ✓.\n7. Num dia de sol, por que uma camiseta preta esquenta mais que uma branca? Absorve mais luz ✓ / Reflete mais luz / Conduz eletricidade.\n8. Uma receita para 4 pessoas usa 3 ovos. Para 8 pessoas, quantos ovos? 6 ✓ / 7 / 12.\nScore accuracy at most 6 when any card is about the Enem itself (dates, number of questions, scoring, the TRI, cutoffs, the essay's rules).",
+        "id": "pt-enem-1",
+        "userInput": {
+          "goal": "Enem",
+          "kind": "exam",
+          "language": "pt",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The false-card cap of 4 applies. Card 3's marked answer is plainly false, and its explanation incorrectly treats macroscopic classical behavior as eliminating microscopic quantum effects. Card 1's electron-bumping account misrepresents electrical energy transfer. Card 9 incorrectly says early thermal emission is mostly red rather than infrared. Card 4's wording conflates looking or measuring with an unmeasured probability distribution. The accurate photon-energy and interference material does not repair these failures.",
+          "score": 3,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The deck has the requested approximate size and several relevant introductory concepts, but cards 2 and 5 both test higher energy per photon at higher frequency, triggering the cap of 7 for repeated ideas. The opening circuit question is a weak fit for an introduction to quantum physics, the order lacks a clear difficulty progression, and distractors such as 'Super byte' and 'Red paint burns off first' provide little diagnostic value.",
+          "score": 6,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Several cards violate the format limits, triggering the cap of 7. Options exceeding six words occur in cards 1, 2, and 4. Reveals in cards 1, 2, 3, 4, 7, and 9 do not begin with the answer. Otherwise, questions are generally near the requested length, reveals are compact, and option counts are appropriate.",
+          "score": 6,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck consistently uses US English and generally accessible, conversational language without prohibited catchphrases, emoji, or exclamation marks. However, the sunlight-versus-lamp comparison is awkwardly phrased, and expressions such as 'quantum weirdness averages out' sacrifice clarity. The overall tone is neither consistently exam-like nor childish, so no tone cap applies.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3265,
+          "outputTokens": 1158,
+          "reasoningTokens": 416
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several cards teach incorrect physics. Card 3 falsely marks a quantum particle inside sand as always fixed in one spot; macroscopic classical behavior does not eliminate its constituents' quantum behavior. Card 1 misleadingly explains electrical energy transfer as electrons bumping their neighbors rather than electromagnetic energy propagation. Card 9 says a red-hot object emits mostly red light, although most emission at that stage is infrared. Card 4 also confuses the premeasurement probability distribution with what a measurement shows.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Cards 2 and 5 repeat the photon-energy idea. Several options exceed six words, and many reveals do not start with the answer. Card 2's comparison between sunlight and a dim lamp 'of the same brightness' is unclear and does not adequately specify the spectra being compared.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Open with a reliable quantum hook, such as the double-slit experiment, rather than classical circuit behavior. Replace the qubit naming question's implausible distractors with meaningful beginner misconceptions, and arrange the remaining cards in a clearer progression from concrete observations to abstract explanations.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English on the first ideas of quantum physics for a beginner, such as quantization of energy, photons, wave-particle duality, the double-slit experiment, superposition, the uncertainty principle, tunneling. Explanations stay true when simplified. Penalize popular myths stated as facts (that observation means a conscious observer, that entanglement sends messages faster than light, that the uncertainty principle is only about clumsy measurement), quotes (\"God does not play dice\", \"nobody understands quantum mechanics\") and claims about the latest quantum computers.",
+        "id": "en-quantum-physics-1",
+        "userInput": { "goal": "Quantum physics", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Card 5 has a second literally correct option, triggering the maximum score of 4. Its question also fails to establish the small-amplitude condition needed for approximate isochronism. Card 6's unsupported 'most common mistake' is a potentially changing superlative, triggering the separate maximum of 6; the lower cap governs. The explanations of mainspring energy and cleaning deteriorated oil are sound, but they do not offset these failures.",
+          "score": 4,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The short deck appropriately covers beginner mechanical-clock concepts, and the temperature-related opening offers an engaging hook. However, card 5 makes 'a wide swing' a tautologically available answer and supplies confusing wording rather than a fair knowledge gap, triggering the maximum of 7 for an answer obvious from the question. The deck also relies heavily on sentence completion, with some weak distractors such as 'oiling only the case.'",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Most questions are within the requested approximate length, most options are short, and the reveals are concise and answer-first. The concrete exceptions are card 4's two-sentence question and card 5's eight-word correct option. These are localized rather than widespread format failures.",
+          "score": 8,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses US English and generally achieves an approachable teaching voice through concrete phrases such as 'sticky and gummy' and 'tiny, timed steps.' It avoids prohibited catchphrases, emoji, and exclamation marks. Card 5's question and its 'Neither' response are awkward and difficult to interpret, preventing a higher language score.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2547,
+          "outputTokens": 1355,
+          "reasoningTokens": 631
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 5 has no defensible unique answer: a wide swing takes the same time as a wide swing, so option B is also correct literally. The intended approximate equality between shorter and wider swings requires a small-amplitude qualification that appears only in the reveal. Card 6 presents an unsupported, potentially changing superlative—beginners' 'most common mistake'—as established fact.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Card 4's question contains two sentences rather than one. Card 5's correct option has eight words, exceeding the six-word limit, and its question is confusingly phrased. Card 1's reveal assumes a brass pendulum rod although the question does not specify its material; antique clocks also use steel, wood, and compensated pendulums.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the concise six-card scope. Rebuild card 5 around a clear comparison explicitly limited to small swings, or replace it with another introductory restoration concept. Test the consequences of excess oil rather than claiming it is the most common mistake. Specify a spring-driven mechanical clock in card 2 and an uncompensated metal pendulum in card 1 to make their explanations more precise.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cards in US English on what a beginner restoring antique mechanical clocks learns first, such as the escapement, the pendulum and why its length sets the rate, the mainspring, why old oil must be cleaned off before relubricating, the beat. It's a niche subject, so a short deck of true cards is better than 10 with doubtful ones. Penalize made-up historical dates, makers and exact figures.",
+        "id": "en-antique-clocks-1",
+        "userInput": { "goal": "Restoring antique clocks", "kind": "learn", "language": "en" }
+      }
+    }
+  ],
+  "taskId": "warm-up-cards"
+}

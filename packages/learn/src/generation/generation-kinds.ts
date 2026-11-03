@@ -13,7 +13,7 @@ import {
 } from "@zoonk/core/library/generation/steps";
 import { type GenerationStepTimes } from "./generation-run";
 
-type StepPlace<TPhase extends string> = TPhase | "done" | "join";
+type StepPlace<TPhase extends string> = TPhase | "aside" | "done" | "join";
 
 type PhaseDefinition<TPhase extends string> = {
   id: TPhase;
@@ -42,6 +42,7 @@ const GOAL_STEPS = {
   joinRunningGoal: "join",
   readExamNotice: "notice",
   understandGoal: "goal",
+  warmUpReady: "aside",
 } as const;
 
 const understanding = {
@@ -124,6 +125,7 @@ const courseOutline = {
     readExamNotice: "skills",
     saveSkills: "plan",
     understandGoal: "skills",
+    warmUpReady: "aside",
   },
 } as const satisfies GenerationKindDefinition<GoalContentStepName, "outline" | "plan" | "skills">;
 

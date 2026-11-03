@@ -112,28 +112,27 @@ struct ScheduleQuestion: View {
     let findsTime = asks && datedGuess && !days.isEmpty
     let asksAdvice = asks && shown.asksAdvice
 
-    // A Group would give each screen its own asking tasks, which would start over as screens switch.
-    ZStack {
-      switch wait {
-      case .building?:
-        PlanBuilding(
-          view: view,
-          readResult: {
-            planMade = true
-            return true
-          },
-          onRunEnd: { runEnded = true }
-        ) {
-          if gate.failed {
-            GenerationFailureSection(failure: .connection, act: gate.restart)
-          }
+    PlanWaits(wait: wait) { holding in
+      PlanBuilding(
+        view: view,
+        next: .timeQuestion,
+        holding: holding,
+        readResult: {
+          planMade = true
+          return true
+        },
+        onRunEnd: { runEnded = true }
+      ) {
+        if gate.failed {
+          GenerationFailureSection(failure: .connection, act: gate.restart)
         }
-      case .readingNotice?:
-        NoticeReadingView(
-          document: examDocument, lastEdition: false, reconnect: gate.failed ? gate.restart : nil)
-      case nil:
-        question(shown)
       }
+    } notice: { holding in
+      NoticeReadingView(
+        document: examDocument, lastEdition: false, generationID: view.generationId,
+        next: .timeQuestion, holding: holding, reconnect: gate.failed ? gate.restart : nil)
+    } ready: {
+      question(shown)
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {

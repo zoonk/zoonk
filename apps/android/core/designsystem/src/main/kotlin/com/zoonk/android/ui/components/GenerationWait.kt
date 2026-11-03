@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -48,6 +49,7 @@ import com.zoonk.android.data.GenerationPhase
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.PhaseProgress
 import com.zoonk.android.data.PhaseStatus
+import com.zoonk.android.data.StepPlace
 import com.zoonk.android.data.progress
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
@@ -96,6 +98,7 @@ fun GenerationWait(
                     phase = phase,
                     following = following,
                     elapsedMillis = elapsed(phase, following, now, run.clockOffsetMillis),
+                    skillName = run.skillName.takeIf { kind.steps["buildSkillGraph"] == StepPlace.Phase(phase.phase.id) },
                 )
             }
         }
@@ -207,6 +210,7 @@ private fun PhaseRow(
     phase: PhaseProgress,
     following: Boolean,
     elapsedMillis: Long?,
+    skillName: String?,
 ) {
     val label = stringResource(phase.phase.label)
     val state =
@@ -235,7 +239,7 @@ private fun PhaseRow(
                 fontWeight = if (emphasized) FontWeight.Medium else null,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            if (phase.status == PhaseStatus.Active && following) DetailLine(phase.phase)
+            if (phase.status == PhaseStatus.Active && following) DetailLine(phase.phase, skillName)
         }
         if (elapsedMillis != null) {
             Text(
@@ -291,15 +295,28 @@ private fun PhaseIndicator(status: PhaseStatus) {
     }
 }
 
-/** A line of what the phase is doing, changing every few seconds and then cycling. */
+/** A line of what the phase is doing, changing every few seconds and then cycling, or the newest skill it wrote. */
 @Composable
-private fun DetailLine(phase: GenerationPhase) {
+private fun DetailLine(
+    phase: GenerationPhase,
+    skillName: String?,
+) {
     var tick by remember(phase.id) { mutableIntStateOf(0) }
     LaunchedEffect(phase.id) {
         while (true) {
             delay(Random.nextLong(DETAIL_MIN_MILLIS, DETAIL_MAX_MILLIS))
             tick++
         }
+    }
+    if (skillName != null) {
+        Text(
+            text = skillName,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodySmall,
+        )
+        return
     }
     val line = detailLine(phase, tick) ?: return
     Text(

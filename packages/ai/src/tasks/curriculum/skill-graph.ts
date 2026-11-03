@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { Output, generateText } from "ai";
+import { Output, streamText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -18,6 +18,7 @@ import {
   shouldWriteInSections,
   toSectionCalls,
 } from "./_utils/skill-graph-sections";
+import { type OnSkillNamed, finishStreamedPart } from "./_utils/streamed-skill-names";
 import { type ExamOutline, formatExamOutline } from "./exam-outline";
 import { buildSkillGraphSystemPrompt } from "./skill-graph-system-prompt";
 
@@ -98,6 +99,11 @@ export type SkillGraphParams = {
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
+  /**
+   * Each skill's name once the model finished writing it; a redraft or a retry names skills again.
+   * A callback that fails is ignored.
+   */
+  onSkillNamed?: OnSkillNamed;
 };
 
 type GraphPart =
@@ -199,15 +205,28 @@ async function writePart<TOutput>({
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
-    generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema: partSchema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-      }),
+    generate: () => {
+      // A failed stream rejects with the SDK's `NoOutputGeneratedError`. The provider's error is the
+      // real cause, and the SDK's default handler would log it with the learner's prompt.
+      const streamErrors: unknown[] = [];
+
+      return finishStreamedPart({
+        generation: streamText({
+          instructions: systemPrompt,
+          model,
+          onError: ({ error }) => {
+            streamErrors.push(error);
+          },
+          output: Output.object({ schema: partSchema }),
+          prompt: userPrompt,
+          providerOptions,
+          reasoning,
+        }),
+        onSkillNamed: params.onSkillNamed,
+      }).catch((error: unknown) => {
+        throw streamErrors[0] ?? error;
+      });
+    },
     libraryInput: true,
     systemPrompt,
     task: "skill-graph",

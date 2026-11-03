@@ -1,3 +1,4 @@
+import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { loadGoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -5,8 +6,13 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { taskResult } from "../../_test-utils/recorded-outputs";
-import { decideGoalScopeStep, keepMaterialPrivate } from "./goal-curriculum-steps";
+import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
+import { recordedOutput, taskResult } from "../../_test-utils/recorded-outputs";
+import {
+  buildSkillGraphStep,
+  decideGoalScopeStep,
+  keepMaterialPrivate,
+} from "./goal-curriculum-steps";
 
 const goal = {
   examBlueprintId: null,
@@ -147,5 +153,33 @@ describe(decideGoalScopeStep, () => {
       generalGoal: "OAB",
       ownerId: null,
     });
+  });
+});
+
+describe(buildSkillGraphStep, () => {
+  it("streams each skill's name as the graph is written, between the step's start and end", async () => {
+    const user = await userFixture();
+    const learnGoal = await goalFixture({ kind: "learn", language: "pt", userId: user.id });
+
+    vi.mocked(generateSkillGraph).mockImplementation(async ({ onSkillNamed }) => {
+      await onSkillNamed?.("Variáveis");
+      await onSkillNamed?.("Laços");
+      return { ...taskResult(recordedOutput("skill-graph")), repaired: [] } as never;
+    });
+
+    await buildSkillGraphStep({
+      inputs: await loadInputs(learnGoal.id),
+      scope: shared,
+      workflowRunId: "run",
+    });
+
+    const report = { entityId: learnGoal.id, step: "buildSkillGraph" };
+
+    expect(getStreamedEvents()).toStrictEqual([
+      { ...report, status: "started" },
+      { ...report, skillName: "Variáveis", status: "started" },
+      { ...report, skillName: "Laços", status: "started" },
+      { ...report, status: "completed" },
+    ]);
   });
 });

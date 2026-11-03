@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
@@ -28,6 +29,9 @@ import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.onboarding.syllabusOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.warmup.WARM_UP_ID
+import com.zoonk.android.feature.warmup.WarmUpStore
+import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -64,22 +68,25 @@ class PlanRevealStepFlowTest {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val plans = PlanStore(planApi, cache)
+        val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(
-                        examGoal(),
-                        isGuest = false,
-                        libraryCourse = null,
-                        GenerationRun(status = GenerationRun.Status.Following),
-                        onRetryRun = null,
-                        plans,
-                        navigator,
-                        SETUP,
-                        prepareToday,
-                    )
+                CompositionLocalProvider(LocalSetupWarmUp provides warmUps) {
+                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                        PlanRevealStep(
+                            examGoal(),
+                            isGuest = false,
+                            libraryCourse = null,
+                            GenerationRun(status = GenerationRun.Status.Following, warmUpId = WARM_UP_ID),
+                            onRetryRun = null,
+                            plans,
+                            navigator,
+                            SETUP,
+                            prepareToday,
+                        )
+                    }
                 }
             }
         }
@@ -161,6 +168,45 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
+    fun aGuessWhileThePlanIsBuiltDoesntHoldItOnceItsDocumentsAreRead() {
+        planApi.shownPlan = planOf(ready = false)
+        show()
+        rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
+        planApi.shownPlan = planOf(notice = "reading")
+        rule.mainClock.advanceTimeBy(POLL_MILLIS)
+
+        rule.onNodeWithText("Reading the exam's official documents").assertIsDisplayed()
+        rule.onNodeWithText("Your plan is ready").assertDoesNotExist()
+
+        planApi.shownPlan = planOf()
+        rule.mainClock.advanceTimeBy(POLL_MILLIS)
+
+        rule.onNodeWithText("Plan created").assertIsDisplayed()
+    }
+
+    @Test
+    fun aGuessWhileTheDocumentsAreReadKeepsItsAnswerThroughALostConnectionAndHoldsThePlan() {
+        planApi.shownPlan = planOf(notice = "reading")
+        show()
+        rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
+        planApi.planFailure = ApiException(ApiError.Network)
+        rule.mainClock.advanceTimeBy(POLL_MILLIS * 3)
+
+        rule.onNodeWithText("Connection lost").assertIsDisplayed()
+        rule.onNodeWithText("Here's the answer").assertExists()
+
+        planApi.planFailure = null
+        planApi.shownPlan = planOf()
+        rule.onNodeWithText("Reconnect").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(POLL_MILLIS)
+
+        rule.onNodeWithText("Your plan is ready").assertIsDisplayed()
+        rule.onNodeWithText("Here's the answer").assertExists()
+        rule.onNodeWithText("Next guess").assertDoesNotExist()
+        rule.onNodeWithText("Plan created").assertDoesNotExist()
+    }
+
+    @Test
     fun readsThatKeepFailingWhileTheDocumentsAreReadOfferToReconnect() {
         planApi.shownPlan = planOf(notice = "reading")
         show()
@@ -172,7 +218,8 @@ class PlanRevealStepFlowTest {
         planApi.planFailure = null
         planApi.shownPlan = planOf()
         rule.onNodeWithText("Reconnect").performScrollTo().performClick()
-        rule.mainClock.advanceTimeByFrame()
+        // The plan shows once a second passes after that tap, so a second tap can't land on it.
+        rule.mainClock.advanceTimeBy(1_100)
 
         rule.onNodeWithText("Plan created").assertIsDisplayed()
     }

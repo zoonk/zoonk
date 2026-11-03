@@ -85,25 +85,16 @@ describe(buildProviderOptions, () => {
 });
 
 describe(chooseServiceTier, () => {
-  it("runs work nobody waits on at the flex tier, whoever reads it", () => {
-    expect(chooseServiceTier({ reuse: "bounded", wait: "later" })).toBe("flex");
-    expect(chooseServiceTier({ reuse: "personal", wait: "later" })).toBe("flex");
+  it("runs background work at the flex tier", () => {
+    expect(chooseServiceTier({ wait: "later" })).toBe("flex");
   });
 
-  it("pays for priority when a learner waits on content many learners will read", () => {
-    expect(chooseServiceTier({ reuse: "bounded", wait: "learner" })).toBe("priority");
+  it("runs every call a learner waits on at the priority tier", () => {
+    expect(chooseServiceTier({ wait: "learner" })).toBe("priority");
   });
 
-  it("pays for priority on a small one-off call a learner waits on", () => {
-    expect(chooseServiceTier({ reuse: "library", small: true, wait: "learner" })).toBe("priority");
-    expect(chooseServiceTier({ reuse: "personal", small: true, wait: "learner" })).toBe("priority");
-  });
-
-  it("keeps the standard tier for interactive, personal and soon work", () => {
-    expect(chooseServiceTier({ reuse: "library", wait: "learner" })).toBeUndefined();
-    expect(chooseServiceTier({ reuse: "personal", wait: "learner" })).toBeUndefined();
-    expect(chooseServiceTier({ reuse: "bounded", wait: "soon" })).toBeUndefined();
-    expect(chooseServiceTier({ reuse: "personal", small: true, wait: "soon" })).toBeUndefined();
+  it("prepares content needed soon at the standard tier", () => {
+    expect(chooseServiceTier({ wait: "soon" })).toBeUndefined();
   });
 });
 

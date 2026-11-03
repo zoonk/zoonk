@@ -25,7 +25,7 @@ import { type AlphabetStepToSave, buildAlphabetLessonSteps } from "./alphabet-le
 
 type Analytics = Parameters<typeof generateAlphabetLesson>[0]["analytics"];
 
-const WRITE_TIER = chooseServiceTier({ reuse: "bounded", wait: "learner" });
+const WRITE_TIER = chooseServiceTier({ wait: "learner" });
 
 export type WriteAlphabetLessonResult =
   | { status: "notNeeded" }

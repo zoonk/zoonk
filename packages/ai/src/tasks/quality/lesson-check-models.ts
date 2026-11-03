@@ -1,4 +1,4 @@
-import { getModelFamily } from "../../_utils/model-family";
+import { pickReviewers } from "../../_utils/model-family";
 import { type CallReuse } from "../../provider-options";
 
 /**
@@ -22,11 +22,6 @@ const ONE_LEARNER_LESSON_REVIEWERS = [
   "openai/gpt-6.1-sol",
 ] as const;
 
-/**
- * Reviewers come from families other than the writer's, because a model tends to miss its own
- * family's mistakes. It reads the model that actually wrote the lesson, so a writer fallback
- * changes the reviewer too.
- */
 export function getLessonCheckModels({
   reuse,
   writerModel,
@@ -34,12 +29,8 @@ export function getLessonCheckModels({
   reuse: CallReuse;
   writerModel: string;
 }): { fallbackModels: string[]; model: string } {
-  const writerFamily = getModelFamily(writerModel);
-  const reviewers = reuse === "bounded" ? REUSED_LESSON_REVIEWERS : ONE_LEARNER_LESSON_REVIEWERS;
-
-  const [model = reviewers[0], ...fallbackModels] = reviewers.filter(
-    (candidate) => getModelFamily(candidate) !== writerFamily,
-  );
-
-  return { fallbackModels, model };
+  return pickReviewers({
+    reviewers: reuse === "bounded" ? REUSED_LESSON_REVIEWERS : ONE_LEARNER_LESSON_REVIEWERS,
+    writerModel,
+  });
 }

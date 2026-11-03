@@ -184,6 +184,10 @@ internal val GenerationRun.planMade get() = steps["createPlan"] == StepState.Com
 internal fun GenerationRun.withPoll(failed: Boolean): GenerationRun =
     if (failed) copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Connection) else this
 
+/** What stops a wait its reads follow: the reads, or the run itself; the run's own lost connection doesn't. */
+internal fun GenerationRun.stoppedBy(pollFailed: Boolean): GenerationFailure? =
+    if (pollFailed) GenerationFailure.Connection else failure.takeIf { isStopped }
+
 private val POLL_INTERVAL = 3.seconds
 private val SETTLE = 300.milliseconds
 private val ANSWER_TIMEOUT = 45.seconds

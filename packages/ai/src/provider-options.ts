@@ -119,24 +119,15 @@ export type CallReuse = "bounded" | "library" | "personal";
 export type CallWait = "learner" | "later" | "soon";
 
 /**
- * A learner waiting gets `priority` only when what's written is very likely reused or the call is a
- * `small` one-off. Calls that repeat all session never set `small`: their premium would add up.
+ * A learner's wait gets `priority`; prepared-ahead work uses the standard tier, and background
+ * work gets `flex`.
  */
-export function chooseServiceTier({
-  reuse = "library",
-  small = false,
-  wait,
-}: {
-  /** Only a learner's wait reads it; unset is `library`. */
-  reuse?: CallReuse;
-  small?: boolean;
-  wait: CallWait;
-}): ServiceTier | undefined {
+export function chooseServiceTier({ wait }: { wait: CallWait }): ServiceTier | undefined {
   if (wait === "later") {
     return "flex";
   }
 
-  if (wait === "learner" && (reuse === "bounded" || small)) {
+  if (wait === "learner") {
     return "priority";
   }
 
