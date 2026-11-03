@@ -311,27 +311,18 @@ private fun Conversation(
             CallProblem(kind, title, problemActions)
         }
 
-        save != null || callState.phase == LiveCallPhase.Ended -> {
-            ConversationLive(
-                conversation = conversation,
-                call = callState,
-                usedHelp = model.usedHelp,
-                actions = LiveCallActions(onEnd = {}, onHelp = {}, onMute = {}, onSend = {}, onTyping = {}),
-                ended =
-                    EndedCall(
-                        save ?: CallSave.Saving,
-                        grading = conversation.grades,
-                        onRetry = model::saveAgain,
-                        onClose = exits::close,
-                    ),
-            )
-        }
-
-        callState.phase == LiveCallPhase.Failed -> {
+        callState.phase == LiveCallPhase.Failed && save == null -> {
             CallProblem(CallProblemKind.Failed(callState.failure ?: LiveCallFailure.Connect, callState.limit), title, problemActions)
         }
 
+        // One screen from the call to its save, so the transcript keeps its place when the call ends.
         else -> {
+            val ended =
+                if (save != null || callState.phase == LiveCallPhase.Ended) {
+                    EndedCall(save ?: CallSave.Saving, grading = conversation.grades, onRetry = model::saveAgain, onClose = exits::close)
+                } else {
+                    null
+                }
             ConversationLive(
                 conversation = conversation,
                 call = callState,
@@ -345,6 +336,7 @@ private fun Conversation(
                         onSend = call::sendText,
                         onTyping = call::typed,
                     ),
+                ended = ended,
             )
         }
     }

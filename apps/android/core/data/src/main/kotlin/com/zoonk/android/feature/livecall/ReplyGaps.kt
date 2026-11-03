@@ -43,23 +43,22 @@ class ReplyGaps {
 
     fun learnerSpoke(now: Long) {
         val voiceAt = lastVoiceAt
-        if (voiceAt != null && now - voiceAt >= SLOW_REPLY_MS) unansweredTurns += 1
-        if (voiceAt == null || now - voiceAt >= SLOW_REPLY_MS) learnerTurns += 1
+        if (voiceAt == null || now - voiceAt >= SLOW_REPLY_MS) {
+            if (voiceAt != null) unansweredTurns += 1
+            learnerTurns += 1
+            cueSinceVoice = false
+        }
         lastVoiceAt = now
-        cueSinceVoice = false
     }
 
     fun cueSent() {
         if (lastVoiceAt != null) cueSinceVoice = true
     }
 
-    /** Words the character says over the learner don't answer them. */
-    fun characterSaid(
-        now: Long,
-        learnerSpeaking: Boolean,
-    ) {
+    /** Words the character says over the learner, while the microphone still hears them, don't answer them. */
+    fun characterSaid(now: Long) {
         val voiceAt = lastVoiceAt ?: return
-        if (learnerSpeaking) return
+        if (now - voiceAt < OVERLAP_MS) return
         if (!cueSinceVoice) gaps += now - voiceAt
         lastVoiceAt = null
     }
@@ -92,5 +91,8 @@ class ReplyGaps {
 
     private companion object {
         const val SLOW_REPLY_MS = 3000L
+
+        /** Two of the microphone's samples. */
+        const val OVERLAP_MS = 400L
     }
 }

@@ -639,15 +639,14 @@ private suspend fun LazyListState.followEnd(animate: Boolean) {
 }
 
 private suspend fun LazyListState.scrollToEnd(animate: Boolean) {
-    val info = layoutInfo
-    val total = info.totalItemsCount
+    val total = layoutInfo.totalItemsCount
     if (total == 0) return
-    val last = info.visibleItemsInfo.lastOrNull()
-    if (last == null || last.index < total - 1) {
+    if ((layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1) < total - 1) {
         if (animate) animateScrollToItem(total - 1) else scrollToItem(total - 1)
-        return
     }
-    // The newest turn grows past the bottom: scroll by what's left of it.
+    // The newest turn can be taller than the view: what's left of it comes into view too.
+    val info = layoutInfo
+    val last = info.visibleItemsInfo.lastOrNull() ?: return
     val rest = (last.offset + last.size + info.afterContentPadding - info.viewportEndOffset).toFloat()
     if (rest <= 0f) return
     if (animate) animateScrollBy(rest) else scrollBy(rest)

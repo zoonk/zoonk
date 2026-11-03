@@ -268,6 +268,7 @@ class LiveCall(
         // A start cancelled meanwhile never connects: its reservation is ended at once.
         if (!isCurrent()) {
             scope.launch { client.end(ready.setup.connectionId) }
+            analytics.track(ReplyGaps().event(CallEnd.LearnerEnded, task.kind, talkSeconds = 0, durationSeconds = 0))
             return null
         }
         connectionId = ready.setup.connectionId
@@ -322,7 +323,7 @@ class LiveCall(
                     mutableState.update { it.copy(learnerSpoke = true) }
                 } else {
                     ending?.characterSaid(now, event.startMs)
-                    gaps.characterSaid(now, learnerSpeaking = ending?.learnerSpeaking(now) == true)
+                    gaps.characterSaid(now)
                     characterTurn()
                 }
                 advance()

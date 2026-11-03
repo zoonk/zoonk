@@ -757,6 +757,7 @@ class LiveCallTest {
             assertEquals(LiveCallFailure.Connect, call.state.value.failure)
             assertTrue(transports.isEmpty())
             assertEquals(listOf(CONNECTION), client.ended)
+            assertEquals(listOf("learner_ended"), endReasons)
         }
 
     @Test
@@ -822,6 +823,28 @@ class LiveCallTest {
         }
 
     @Test
+    fun aQuickReplyIsMeasuredAndAGoodbyeSentWhileTheLearnerSpeaksIsLeftOut() =
+        runTest(dispatcher) {
+            val call = greeted()
+
+            learnerTalks(until = 3.seconds)
+            wait(0.4.seconds)
+            characterTalks(until = 4.seconds)
+            waitUntil(19.seconds)
+            learnerTalks(until = 22.seconds)
+            assertEquals(1, transport.goodbyes.size)
+            wait(1.seconds)
+            characterTalks(until = 24.seconds)
+            call.hangUp()
+
+            val ended = events.filterIsInstance<AnalyticsEvent.CallEnded>().single()
+            assertEquals(2, ended.learnerTurns)
+            assertEquals("0.6 s after the microphone last heard them", 600L, ended.replyGapMaxMs)
+            assertEquals(600L, ended.replyGapMedianMs)
+            assertEquals(0, ended.unansweredTurns)
+        }
+
+    @Test
     fun replyGapsRunFromTheLearnersLastWordToTheCharactersNextOnesAndSkipAnswersToCues() =
         runTest(dispatcher) {
             val call = greeted()
@@ -866,6 +889,7 @@ class LiveCallTest {
             assertEquals(LiveCallPhase.Ended, call.phase)
             assertTrue("No peer opens for a call already ended", transports.isEmpty())
             assertEquals(listOf(CONNECTION), client.ended)
+            assertEquals(listOf("learner_ended"), endReasons)
         }
     }
 
