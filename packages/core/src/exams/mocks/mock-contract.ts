@@ -1,6 +1,7 @@
 import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/research/partial-credit";
 import { type MistakeCause } from "@zoonk/db";
 import { z } from "zod";
+import { type CertificateFacts } from "../../certificates/certificate-contract";
 import { type ExamDayChecklistItem } from "../../checkpoints/weekly-challenge-rules";
 import { type SpeakingSectionView } from "../../language/exam-speaking/speaking-contract";
 import { answerTimeZoneSchema } from "../../learner/contract";
@@ -191,6 +192,7 @@ export type MockView = {
   breakUntil: string | null;
   canMove: boolean;
   ceremony: MilestoneView | null;
+  certificates: CertificateFacts[];
   checklist: ExamDayChecklistItem[];
   current: MockCurrentSection | null;
   date: string;

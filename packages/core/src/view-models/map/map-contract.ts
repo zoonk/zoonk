@@ -90,6 +90,22 @@ export const fieldMapViewSchema = z
     areas: z
       .array(mapAreaSchema)
       .meta({ description: "Every chapter of the plan with its skills, in plan order" }),
+    certificate: z
+      .object({
+        code: z
+          .string()
+          .nullable()
+          .meta({
+            description:
+              "Null while the course is finished but its certificate isn't written: offer it with POST /v1/goals/{goalId}/certificates",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "A learn or exam goal's course certificate, once every lesson is studied or tested out (one studied) and every phase challenge won; an exam's mocks don't count. Null before that, and for language and explain goals",
+        id: "GoalCertificate",
+      }),
     counts: skillStateCountsSchema,
     course: planCourseSchema.nullable(),
     courses: z

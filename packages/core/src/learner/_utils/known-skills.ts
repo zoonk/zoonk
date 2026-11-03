@@ -1,6 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
@@ -161,10 +162,12 @@ export async function testOutKnownPlanItems(
     ids.length > 0
       ? await tx.planItem.updateManyAndReturn({
           data: { completedAt: testedOutAt, status: "testedOut" },
-          select: { id: true },
+          select: { id: true, planId: true },
           where: { id: { in: ids }, status: "todo" },
         })
       : [];
+
+  await awardCourseCertificates(tx, { planIds: updated.map((item) => item.planId) });
 
   const standInIds =
     leftOut.length > 0

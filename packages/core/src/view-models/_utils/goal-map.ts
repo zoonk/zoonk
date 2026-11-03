@@ -10,7 +10,7 @@ import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
-import { isPlanFinished } from "../../plans/_utils/plan-end";
+import { isCourseFinished, isPlanFinished } from "../../plans/_utils/plan-end";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase } from "../map/map-contract";
@@ -20,6 +20,7 @@ export type GoalMap = {
   areas: MapArea[];
   /** Each chapter's displayed course comes first. */
   courseIds: string[];
+  courseFinished: boolean;
   finished: boolean;
   plan: GoalPlan;
   items: MapItem[];
@@ -203,6 +204,13 @@ export async function loadGoalMap({
 
   return {
     ...built,
+    courseFinished: isCourseFinished({
+      goalKind: goal.kind,
+      items,
+      phases: rows.phases,
+      studiesPastTarget,
+      targetDate: goal.targetDate,
+    }),
     courseIds: [...new Set(courseIds)],
     finished: isPlanFinished({
       goalKind: goal.kind,

@@ -1,6 +1,10 @@
 import { type Milestone } from "@zoonk/db";
 import { BELT_COLORS_ORDER, getBeltStartBrainPower } from "@zoonk/utils/belt-level";
 import { z } from "zod";
+import {
+  type CertificateFacts,
+  unshownCertificatesSchema,
+} from "../certificates/certificate-contract";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
@@ -34,6 +38,7 @@ export type StudyBlockCompletion = {
   capsulesOpened: number;
   /** The one milestone the block earned that gets a full-screen moment right after it. */
   ceremony: Milestone | null;
+  certificates: CertificateFacts[];
   checkpoint: CheckpointResultView | null;
   /** For lessons: the day their capsule opens, right when memory would start to fade. */
   comesBackOn: Date | null;
@@ -219,6 +224,7 @@ export const studyBlockCompletionSchema = z
         description:
           "The one milestone this block earned that gets a full-screen moment right after it (a new belt, the buddy's next stage, new glasses); null otherwise and on a retry",
       }),
+    certificates: unshownCertificatesSchema,
     checkpoint: checkpointResultSchema
       .nullable()
       .meta({ description: "A checkpoint's result with each right answer and why" }),

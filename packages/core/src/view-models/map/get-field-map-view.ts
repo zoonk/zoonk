@@ -1,5 +1,8 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { cacheTag } from "next/cache";
+import { getCertificatesCacheTag } from "../../cache/tags";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -14,6 +17,27 @@ export type FieldMapViewResult =
 
 function isRefreshGoal(details: unknown): boolean {
   return isJsonObject(details) && details.purpose === "refresh";
+}
+
+async function readCourseCertificate({
+  courseFinished,
+  goal,
+}: {
+  courseFinished: boolean;
+  goal: { id: string; userId: string };
+}): Promise<FieldMapView["certificate"]> {
+  cacheTag(getCertificatesCacheTag(goal.userId));
+
+  const certificate = await prisma.certificate.findUnique({
+    select: { code: true },
+    where: { userCertificate: { key: goal.id, kind: "course", userId: goal.userId } },
+  });
+
+  if (certificate) {
+    return { code: certificate.code };
+  }
+
+  return courseFinished ? { code: null } : null;
 }
 
 /** Requires an owned goal (active by default); completed plans may offer next study, refresh goals lead with fading skills. */
@@ -31,9 +55,10 @@ export async function getFieldMapView(
   const { goal } = resolved;
   const map = await loadGoalMap({ goal });
 
-  const [course, courses] = await Promise.all([
+  const [course, courses, certificate] = await Promise.all([
     loadPlanCourse({ goal, items: map.items }),
     loadMapCourses({ courseIds: map.courseIds, userId: goal.userId }),
+    readCourseCertificate({ courseFinished: map.courseFinished, goal }),
   ]);
 
   const areaCourses = courses.filter((entry) =>
@@ -45,6 +70,7 @@ export async function getFieldMapView(
   return {
     map: {
       areas: map.areas,
+      certificate,
       counts: countSkillStates(skills),
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),

@@ -169,3 +169,10 @@ export const ownedCertificateShape = {
 };
 
 export type OwnedCertificateFacts = CertificateFacts & { shownAt: string | null };
+
+export const unshownCertificatesSchema = z
+  .array(certificateFactsSchema)
+  .meta({
+    description:
+      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, then POST /me/certificates/{code}/views for each. Images and links: GET /certificates/{code}",
+  });

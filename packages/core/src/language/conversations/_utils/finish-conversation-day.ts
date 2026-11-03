@@ -84,6 +84,7 @@ export async function finishConversationDay({
   return conversation
     ? {
         ceremony: null,
+        certificates: [],
         conversation,
         missionMoment: null,
         reached: NOTHING_REACHED,

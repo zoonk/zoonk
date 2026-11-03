@@ -4,6 +4,8 @@ import { type LanguageSkill, type LanguageSkillLevel, type TransactionClient } f
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import { loadGoalCertificate } from "../../certificates/_utils/goal-certificate";
+import { type CertificateFacts } from "../../certificates/certificate-contract";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ProgressLock } from "../../sessions/_utils/session-progress";
@@ -22,7 +24,11 @@ import {
 } from "./level-test-rules";
 
 export type FinishLanguageLevelTestResult =
-  | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
+  | {
+      certificate: CertificateFacts | null;
+      levels: { label: string; score: number; skill: LanguageSkill }[];
+      status: "ready";
+    }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
 
 function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number }) {
@@ -217,5 +223,7 @@ export async function finishLanguageLevelTest(
     });
   }
 
-  return { levels: listLevelTestLevels(scores), status: "ready" };
+  const certificate = await loadGoalCertificate({ goalId: goal.id, kind: "placement", userId });
+
+  return { certificate, levels: listLevelTestLevels(scores), status: "ready" };
 }

@@ -63,6 +63,15 @@ describe(getCertificateLinks, () => {
 
     expect(new URL(linkedInUrl).searchParams.get("name")).toBe("Spanish B1");
   });
+
+  it("builds every link on the origin it's given", () => {
+    const links = getCertificateLinks({ ...COURSE, origin: "https://preview.zoonk.dev" });
+    const linkedIn = new URL(links.linkedInUrl).searchParams;
+
+    expect(links.url).toBe("https://preview.zoonk.dev/c/K7QF2M9XHD4P");
+    expect(new URL(links.imageUrls.print).origin).toBe("https://preview.zoonk.dev");
+    expect(linkedIn.get("certUrl")).toBe("https://preview.zoonk.dev/c/K7QF2M9XHD4P");
+  });
 });
 
 describe(formatCertificateCode, () => {

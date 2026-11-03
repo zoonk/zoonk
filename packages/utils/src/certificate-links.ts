@@ -73,18 +73,22 @@ function getLinkedInUrl({ input, url }: { input: CertificateLinkInput; url: stri
 }
 
 /**
- * The page path has no locale, so it opens in the visitor's language. Image paths name the
+ * `origin` defaults to `MAIN_URL`, which an app that doesn't set it reads as production. The page
+ * path has no locale, so it opens in the visitor's language. Image paths name the
  * certificate's own locale and end in `.png`, so Main's locale middleware leaves them alone and
  * every visitor sees the same picture.
  */
-export function getCertificateLinks(input: CertificateLinkInput): CertificateLinks {
+export function getCertificateLinks({
+  origin = MAIN_URL,
+  ...input
+}: CertificateLinkInput & { origin?: string }): CertificateLinks {
   const path = `/c/${input.code}`;
-  const url = new URL(path, MAIN_URL).toString();
+  const url = new URL(path, origin).toString();
   const locale = getSupportedLocaleFromLanguage(input.language);
   const version = getImageVersion(input.recipientName);
 
   const imageUrl = (variant: CertificateImageVariant) =>
-    new URL(`/${locale}${path}/image/${variant}.png?v=${version}`, MAIN_URL).toString();
+    new URL(`/${locale}${path}/image/${variant}.png?v=${version}`, origin).toString();
 
   return {
     imageUrls: { link: imageUrl("link"), post: imageUrl("post"), print: imageUrl("print") },

@@ -1,6 +1,7 @@
 import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { after } from "next/server";
+import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
 
@@ -56,6 +57,7 @@ export async function completePlanItem(
   });
 
   await reduceCompletedPlans(tx, { checked, userId });
+  await awardCourseCertificates(tx, { planIds: checked.map((item) => item.planId) });
 }
 
 /** A review day's practice comes in several blocks: its plan item is done once none is left to do. */
@@ -104,6 +106,7 @@ export async function completeLessonPlanItems(
   }
 
   await reduceCompletedPlans(tx, { checked, userId });
+  await awardCourseCertificates(tx, { planIds: checked.map((item) => item.planId) });
 
   return tx.goal.findMany({
     select: { id: true },

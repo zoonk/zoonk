@@ -290,3 +290,47 @@ describe("guest keyed-row linking", () => {
     },
   );
 });
+
+function createCertificate({ key, userId }: { key: string; userId: string }) {
+  return prisma.certificate.create({
+    data: {
+      code: randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase(),
+      completedOn: OLDER,
+      createdAt: OLDER,
+      details: { canDo: [], lessonsStudied: 20, minutes: null, skillLevels: [] },
+      key,
+      kind: "languageLevel",
+      language: "en",
+      level: "A1",
+      targetLanguage: "es",
+      userId,
+    },
+  });
+}
+
+describe("guest certificate linking", () => {
+  it("keeps a guest's certificate on a key the account holds, so a shared link still works", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    const [accountRow, guestRow, uniqueRow] = await Promise.all([
+      createCertificate({ key: "es:A1", userId: accountId }),
+      createCertificate({ key: "es:A1", userId: guestId }),
+      createCertificate({ key: "es:A2", userId: guestId }),
+    ]);
+
+    await prisma.$transaction((transaction) =>
+      moveKeyedRows({ guestUserId: guestId, transaction, userId: accountId }),
+    );
+
+    const accountRows = await prisma.certificate.findMany({ where: { userId: accountId } });
+
+    expect(accountRows).toHaveLength(3);
+    expect(accountRows).toContainEqual(accountRow);
+    expect(accountRows).toContainEqual({ ...uniqueRow, userId: accountId });
+    expect(accountRows).toContainEqual({ ...guestRow, key: guestRow.id, userId: accountId });
+    await expect(prisma.certificate.count({ where: { userId: guestId } })).resolves.toBe(0);
+  });
+});
