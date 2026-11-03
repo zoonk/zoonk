@@ -32,6 +32,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.GoalCertificate
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.SkillOutline
@@ -312,7 +313,7 @@ class PlanScreenshots {
                     ),
             )
 
-        val unclaimed = com.zoonk.api.models.GoalCertificate(code = null)
+        val unclaimed = GoalCertificate(code = null)
 
         fun ready(
             operations: List<PlanOp>,
