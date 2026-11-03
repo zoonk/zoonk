@@ -61,6 +61,14 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
   }
 }
 
+extension LearnerSummary {
+  /// The active goals that can still earn a certificate. Main also waits for a course plan's first
+  /// lesson, a count the summary doesn't carry.
+  var certificateGoals: [LearnerGoal] {
+    goals.filter { $0.status == .active && $0.kind != .explain }
+  }
+}
+
 extension CertificateFacts {
   /// The certificate pictures are A4 landscape.
   static let aspectRatio: CGFloat = 297 / 210

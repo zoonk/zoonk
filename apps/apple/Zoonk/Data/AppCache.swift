@@ -7,6 +7,8 @@ final class AppCache {
   let session: SessionStore
   private let now: () -> ContinuousClock.Instant
   private var resources: [WeakResource] = []
+  /// Every window follows the same change.
+  private var followedSession: AuthenticatedSession?
 
   init(
     session: SessionStore,
@@ -14,6 +16,7 @@ final class AppCache {
   ) {
     self.session = session
     self.now = now
+    followedSession = session.authenticatedSession
     session.subscriptionChanged = { [weak self] in
       self?.invalidate([.allowance, .userSubscription])
     }
@@ -50,9 +53,21 @@ final class AppCache {
     }
   }
 
+  /// Public reads of the session's domain stay on screen and revalidate: a guest who signs into an
+  /// account moves their certificates to it, under its name.
   func followSession() {
+    guard followedSession != session.authenticatedSession else {
+      return
+    }
+
+    followedSession = session.authenticatedSession
+
     for resource in liveResources {
       resource.followSession()
+
+      if resource.audience == .everyone, resource.domains.contains(.userSession) {
+        resource.invalidate()
+      }
     }
   }
 

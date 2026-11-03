@@ -4,6 +4,7 @@ import SwiftUI
 struct CertificatesScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var store
+  @Environment(LearnerSummaryStore.self) private var learner
   @ScaledMetric(relativeTo: .body) private var pictureWidth = 84.0
 
   let open: (_ code: String) -> Void
@@ -24,30 +25,30 @@ struct CertificatesScreen: View {
           }
         }
       case .empty:
-        ContentUnavailableView {
-          Label {
-            Text(
-              "No certificates yet", tableName: "Certificates",
-              comment: "Title when the learner has no certificate")
-          } icon: {
-            Image(systemName: "rosette")
+        let upNext = learner.summary.value?.certificateGoals ?? []
+
+        if upNext.isEmpty {
+          noCertificates
+            .lonePage()
+        } else {
+          List {
+            Section {
+              noCertificates
+            }
+            .listRowBackground(Color.clear)
+
+            Section {
+              ForEach(upNext) { goal in
+                upNextRow(goal)
+              }
+            } header: {
+              Text(
+                "Up next", tableName: "Certificates",
+                comment: "Heading over the learner's goals that can still earn a certificate")
+            }
           }
-        } description: {
-          Text(
-            "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
-            tableName: "Certificates", comment: "How the learner earns certificates")
-        } actions: {
-          Button {
-            router.sheet = nil
-            router.showRoot(of: .today)
-          } label: {
-            Text(
-              "Continue learning", tableName: "Certificates",
-              comment: "Goes to Today from the empty certificates page")
-          }
-          .buttonStyle(.mainAction)
+          .lonePage()
         }
-        .lonePage()
       case .failed(let error):
         PracticeLoadFailureView(error: error) {
           Task { await store.list.refresh() }
@@ -62,6 +63,53 @@ struct CertificatesScreen: View {
         "Certificates", tableName: "Certificates", comment: "Title of the learner's certificates")
     )
     .loads(store.list)
+  }
+
+  private var noCertificates: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "No certificates yet", tableName: "Certificates",
+          comment: "Title when the learner has no certificate")
+      } icon: {
+        Image(systemName: "rosette")
+      }
+    } description: {
+      Text(
+        "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
+        tableName: "Certificates", comment: "How the learner earns certificates")
+    } actions: {
+      Button {
+        router.sheet = nil
+        router.showRoot(of: .today)
+      } label: {
+        Text(
+          "Continue learning", tableName: "Certificates",
+          comment: "Goes to Today from the empty certificates page")
+      }
+      .buttonStyle(.mainAction)
+    }
+  }
+
+  private func upNextRow(_ goal: LearnerGoal) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(goal.title)
+
+      Group {
+        if goal.kind == .language {
+          Text(
+            "Comes when every skill you practice reaches the next level", tableName: "Certificates",
+            comment: "Under a language goal on the empty certificates page: when it earns one")
+        } else {
+          Text(
+            "Your certificate comes when you finish the plan", tableName: "Certificates",
+            comment: "Under a course goal on the empty certificates page: when it earns one")
+        }
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    }
+    .accessibilityElement(children: .combine)
   }
 
   private func row(_ certificate: Certificate) -> some View {
