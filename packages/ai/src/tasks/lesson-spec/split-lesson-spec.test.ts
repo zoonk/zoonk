@@ -177,6 +177,27 @@ describe(splitLessonSpec, () => {
     });
 
     expect(privateSecond?.screens[0]?.visualKind).toBe("table");
+
+    const advanced = splitLessonSpec({
+      language: "en",
+      level: "advanced",
+      spec: planned,
+      visualFloor: "pictures",
+    });
+
+    expect(advanced.map((part) => part.screens[0]?.visualKind)).toStrictEqual(["none", "picture"]);
+
+    expect(
+      getLessonSpecIssues({ level: "advanced", spec: advanced[1]!, visualFloor: "pictures" }).map(
+        (issue) => issue.code,
+      ),
+    ).not.toContain("hookVisual");
+
+    expect(
+      getLessonSpecIssues({ level: "advanced", spec: advanced[0]!, visualFloor: "pictures" }).map(
+        (issue) => issue.code,
+      ),
+    ).toContain("hookVisual");
   });
 
   it("drops a guess from a part where nothing is taught before it", () => {

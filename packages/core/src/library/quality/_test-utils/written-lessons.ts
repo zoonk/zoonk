@@ -13,7 +13,8 @@ export function temperatureSpec(): LessonSpec {
     screens: [
       {
         activityTemplate: null,
-        brief: "Guess the temperature after a rise.",
+        brief:
+          "At dawn the window thermometer shows −3 °C, and the forecast says 5 degrees warmer by noon. Where will the mark end up?",
         kind: "hook",
         skills: [],
         visual: null,
@@ -119,7 +120,7 @@ export function hubMap(ideas: readonly string[]): LessonMap {
   };
 }
 
-/** The opening guess an intermediate lesson may open with; a beginner one opens with a scene. */
+/** A guess about the rise, for the screen the plan gives the guess. */
 export function temperatureGuess(): Extract<WrittenScreen, { kind: "hookGuess" }> {
   return {
     image: null,
