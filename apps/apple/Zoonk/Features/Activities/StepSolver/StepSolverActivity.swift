@@ -157,7 +157,9 @@ private struct StepSolverCanvas: View {
             .foregroundStyle(.secondary)
         }
 
-        if isChecked, isFirstPickWrong, let first = wrongPicks.first {
+        if isChecked, isFirstPickWrong,
+          let first = step.choices.first(where: { $0.id == stepPicks.first })
+        {
           let picked = LessonRichText.typeset(first.text)
 
           firstPick(picked.quoted(spoken: false))
