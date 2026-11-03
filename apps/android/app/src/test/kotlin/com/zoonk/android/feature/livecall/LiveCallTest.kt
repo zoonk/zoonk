@@ -523,10 +523,14 @@ class LiveCallTest {
 
             waitUntil(20.seconds)
             call.typed()
-            waitUntil(44.8.seconds)
+            waitUntil(50.seconds)
+            assertEquals("Only the character's next words start a silence again", 0, transport.checkIns)
+
+            characterTalks(until = 51.seconds)
+            waitUntil(77.2.seconds)
             assertEquals(0, transport.checkIns)
             wait(0.2.seconds)
-            assertEquals(1, transport.checkIns)
+            assertEquals("25 s after the character stopped, at 52.4 s", 1, transport.checkIns)
         }
 
     @Test

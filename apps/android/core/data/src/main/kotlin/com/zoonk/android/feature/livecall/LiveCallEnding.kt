@@ -47,6 +47,8 @@ class LiveCallEnding(
     private var lastHeardAt: Long? = null
     private var lastTypedAt: Long? = null
     private var lastSentAt: Long? = null
+
+    /** Where the learner's unanswered silence started: when the character stopped, or the call went live; null once they answer. */
     private var silenceSince: Long? = liveAt
     private var checkedIn = false
     private var openingTakenAt: Long? = null
@@ -63,6 +65,8 @@ class LiveCallEnding(
         startMs: Double,
     ) {
         lastCharacterAt = now
+        // The character's answer to its own check-in doesn't start again the silence it checks in on.
+        if (!checkedIn) silenceSince = now + timing.characterQuietMs
         if (goodbyeSentAt == null || goodbyeSaid) return
         if (goodbyeTaken) {
             goodbyeSaid = startsGoodbye(startMs)
@@ -133,7 +137,7 @@ class LiveCallEnding(
         if (goodbyeSaid && now - lastActivityAt() >= timing.goodbyeQuietMs) return Step.HangUp(reason)
 
         if (now >= talkEndsAt) arm(EndingReason.Time, now)
-        val silence = silence(now)
+        val silence = silenceSince?.let { now - it } ?: 0
         if (silence >= timing.quietGoodbyeMs) arm(EndingReason.Quiet, now)
 
         if (reason == null && !checkedIn && silence >= timing.checkInMs) {
@@ -189,18 +193,6 @@ class LiveCallEnding(
      * waits for the character to be quiet.
      */
     private fun startsGoodbye(startMs: Double) = goodbyeTakenAtMs?.let { startMs >= it - GOODBYE_LEAD_MS } ?: true
-
-    /**
-     * How long the learner has left the floor unanswered: from when the character stopped, or the
-     * learner did. The character's answer to a check-in doesn't start it again.
-     */
-    private fun silence(now: Long): Long {
-        if (characterSpeaking(now) && !checkedIn) silenceSince = null
-        if (silenceSince == null && !characterSpeaking(now) && !learnerSpeaking(now)) {
-            silenceSince = maxOf(lastCharacterAt?.plus(timing.characterQuietMs) ?: liveAt, learnerAt() ?: Long.MIN_VALUE)
-        }
-        return silenceSince?.let { now - it } ?: 0
-    }
 
     private fun arm(
         armed: EndingReason,

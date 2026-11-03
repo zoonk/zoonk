@@ -627,11 +627,15 @@ private fun EndedStatus(ended: EndedCall) {
     }
 }
 
-/** Within a few items of the end, as the newest words arrive; further up, the learner is reading earlier ones. */
+/**
+ * Within a few items and a little scrolling of the end, as the newest words arrive; further up,
+ * even inside a long last turn, the learner is reading earlier words.
+ */
 private fun LazyListState.isNearEnd(): Boolean {
     val info = layoutInfo
-    val last = info.visibleItemsInfo.lastOrNull()?.index ?: return true
-    return last >= info.totalItemsCount - TRANSCRIPT_TAIL
+    val last = info.visibleItemsInfo.lastOrNull() ?: return true
+    if (last.index < info.totalItemsCount - TRANSCRIPT_TAIL) return false
+    return last.offset + last.size - info.viewportEndOffset <= info.viewportSize.height / FOLLOW_SLACK
 }
 
 private suspend fun LazyListState.followEnd(animate: Boolean) {
@@ -657,5 +661,8 @@ private val CONTROL_SIZE = 56.dp
 private val MARK_SIZE = 40.dp
 private const val HEARD_RING_ALPHA = 0.4f
 private const val TRANSCRIPT_TAIL = 3
+
+/** A quarter of the view below its end still follows: a fragment or two grows the newest turn by about a line. */
+private const val FOLLOW_SLACK = 4
 private const val SLOW_FEEDBACK_MS = 20_000L
 private const val SLOW_GRADE_MS = 45_000L
