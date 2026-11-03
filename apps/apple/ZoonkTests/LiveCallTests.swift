@@ -81,6 +81,14 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(turns.spokenSeconds, 3)
   }
 
+  func testALongCallKeepsItsNewestTurns() {
+    let turns = (0...300).reduce([TranscriptTurn]()) { turns, index in
+      turns.addingTypedReply("\(index)")
+    }
+
+    XCTAssertEqual(turns.conversationTurns.map(\.text), (1...300).map { "\($0)" })
+  }
+
   func testReadsCallRefusalsInTheLearnersTerms() {
     XCTAssertEqual(reservation(409, "CALL_IN_PROGRESS"), .callInProgress)
     XCTAssertEqual(reservation(503, "CALLS_PAUSED"), .callsPaused)
