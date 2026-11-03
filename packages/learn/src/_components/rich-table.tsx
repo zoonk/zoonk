@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
+import { SpokenMath } from "../rich-text/spoken-math";
 
 function getCellClass(align: MarkdownTableAlign | undefined) {
   return cn(
@@ -52,7 +53,7 @@ export function RichTable<TCell>({
                     key={key}
                     scope="col"
                   >
-                    {renderCell(cell)}
+                    <SpokenMath>{renderCell(cell)}</SpokenMath>
                   </th>
                 );
               })}

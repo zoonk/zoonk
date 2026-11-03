@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -104,7 +105,7 @@ function SortableRow({
         <span className="flex h-8 flex-none items-center">
           <GripVertical aria-hidden="true" className="text-muted-foreground size-4" />
         </span>
-        {children}
+        <SpokenMath>{children}</SpokenMath>
       </button>
     </li>
   );
