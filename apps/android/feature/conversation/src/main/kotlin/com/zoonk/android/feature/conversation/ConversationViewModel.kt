@@ -80,17 +80,25 @@ class ConversationViewModel(
         microphone: Boolean,
         takeover: Boolean = false,
     ) {
-        leaveCall()
+        val left = call
+        left?.leave()
         save = null
-        val next = newCall(conversation.callTask, callSoFar)
-        call = next
-        next.start(microphone, takeover)
-        // The notification's Hang up does what End does: a call that hasn't connected goes back to its intro.
-        ongoing.keep(next, conversation.character.name) {
-            if (next.state.value.phase == LiveCallPhase.Connecting) showIntro() else next.hangUp()
-        }
-        // A dropped call the learner then ends is saved too.
         viewModelScope.launch {
+            // A dropped call's reconnect may still be reserving: the next start must name its connection.
+            left?.let {
+                it.settle()
+                callSoFar = it.soFar
+            }
+            // Ended meanwhile, it's being saved under that connection: no other may start.
+            if (call !== left || left?.state?.value?.phase == LiveCallPhase.Ended) return@launch
+            val next = newCall(conversation.callTask, callSoFar)
+            call = next
+            next.start(microphone, takeover)
+            // The notification's Hang up does what End does.
+            ongoing.keep(next, conversation.character.name) {
+                if (next.state.value.phase == LiveCallPhase.Connecting) cancel() else next.hangUp()
+            }
+            // A dropped call the learner then ends is saved too.
             next.state.first { it.phase == LiveCallPhase.Ended }
             if (call === next) scope.launch { save(next) }
         }
@@ -108,17 +116,22 @@ class ConversationViewModel(
         start(conversation, microphone)
     }
 
-    /** Back to the intro, as ending a call that hasn't connected does. */
-    fun showIntro() {
-        leaveCall()
+    /**
+     * Ending a call that hasn't connected, or a refused microphone, goes back to the intro, unless a
+     * dropped call is left to save: it stays dropped, to end or call again.
+     */
+    fun cancel() {
+        val current = call
+        if (current?.hasCallToSave == true) {
+            current.leave()
+            return
+        }
+        current?.let {
+            callSoFar = it.soFar
+            it.leave()
+        }
         call = null
         save = null
-    }
-
-    private fun leaveCall() {
-        val left = call ?: return
-        callSoFar = left.soFar
-        left.leave()
     }
 
     fun startPrep() {

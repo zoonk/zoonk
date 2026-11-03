@@ -211,9 +211,10 @@ private fun Conversation(
     val intro = remember(conversation) { conversation.recode<LanguageConversation, LanguageConversationIntro>() }
     val result = conversation.result
     val title = conversationTitle(conversation)
-    // A microphone refused from a problem screen goes back to the intro, where the learner can type instead.
+    // A microphone refused from a problem screen goes back to the intro, where the learner can type instead,
+    // unless a dropped call is left to save.
     val launcher =
-        rememberCallLauncher(onBlocked = model::showIntro) { microphone, takeover -> model.start(conversation, microphone, takeover) }
+        rememberCallLauncher(onBlocked = model::cancel) { microphone, takeover -> model.start(conversation, microphone, takeover) }
     val onSeePlus = { exits.open(AppRoute.Subscription) }
     LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
@@ -292,12 +293,32 @@ private fun Conversation(
             onClose = exits::close,
             onRetry = { launcher.start(false) },
             onTakeover = { launcher.start(true) },
-            onEnd = { call?.hangUp() },
             onCreateAccount = { exits.open(AppRoute.Login) },
             onSeePlus = onSeePlus,
         )
+    val dropped =
+        if (call != null &&
+            callState != null
+        ) {
+            droppedCall(call.continuing, callState.phase, callState.failure, launcher.micBlocked)
+        } else {
+            null
+        }
 
     when {
+        call != null && callState != null && dropped != null -> {
+            val actions =
+                DroppedCallActions(
+                    onEnd = call::hangUp,
+                    onRetry = problemActions.onRetry,
+                    onTakeover = problemActions.onTakeover,
+                    onTypeInstead = launcher.typeInstead,
+                    onCreateAccount = problemActions.onCreateAccount,
+                    onSeePlus = onSeePlus,
+                )
+            DroppedCallScreen(dropped, callState.limit, conversation.character.name, title, actions)
+        }
+
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
             CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSeePlus = onSeePlus, onClose = exits::close)
         }
@@ -335,8 +356,7 @@ private fun Conversation(
                 call = callState,
                 actions =
                     LiveCallActions(
-                        // Ending a call that hasn't connected goes back to its intro.
-                        onEnd = { if (callState.phase == LiveCallPhase.Connecting) model.showIntro() else call.hangUp() },
+                        onEnd = { if (callState.phase == LiveCallPhase.Connecting) model.cancel() else call.hangUp() },
                         onHelp = call::help,
                         onMute = call::toggleMute,
                         onSend = call::sendText,

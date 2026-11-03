@@ -26,6 +26,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -1287,6 +1288,70 @@ class LiveCallTest {
         }
 
     @Test
+    fun aReconnectThatFailsCanStillBeEndedUnderTheLatestConnectionWithEveryTurn() =
+        runTest(dispatcher) {
+            val call = call(soFar = dropped())
+            client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(continuesCall = true, connectionId = RECONNECTION))))
+            call.start(microphone = true)
+            runCurrent()
+            transport.onLost()
+            runCurrent()
+            assertTrue(call.continuing)
+            assertEquals(LiveCallFailure.Connect, call.state.value.failure)
+
+            call.hangUp()
+            assertEquals(LiveCallPhase.Ended, call.phase)
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(RECONNECTION, summary?.connectionId)
+            assertEquals(listOf("¿Qué desea?", "Un café"), summary?.turns?.map { it.text })
+            assertTrue(RECONNECTION in client.ended)
+        }
+
+    @Test
+    fun aRefusedReconnectCanStillBeEndedUnderItsLastConnection() =
+        runTest(dispatcher) {
+            val call = call(soFar = dropped())
+            client.reservations = ArrayDeque(listOf(CallReservation.PlusRequired))
+            call.start(microphone = true)
+            runCurrent()
+            assertEquals(LiveCallFailure.PlusRequired, call.state.value.failure)
+
+            call.hangUp()
+            assertEquals(LiveCallPhase.Ended, call.phase)
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(CONNECTION, summary?.connectionId)
+        }
+
+    @Test
+    fun aReservationThatAnswersAfterTheReconnectWasCancelledIsTheLatestAndEndingWaitsForIt() =
+        runTest(dispatcher) {
+            val call = call(soFar = dropped())
+            val gate = CompletableDeferred<Unit>()
+            client.connectGates[2] = gate
+            client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(continuesCall = true, connectionId = RECONNECTION))))
+            call.start(microphone = true)
+            runCurrent()
+
+            call.leave()
+            assertEquals(LiveCallPhase.Failed, call.phase)
+            call.hangUp()
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertNull("Ending waits for the reservation on its way", summary)
+
+            gate.complete(Unit)
+            runCurrent()
+            assertEquals(RECONNECTION, summary?.connectionId)
+            assertTrue(RECONNECTION in client.ended)
+            assertTrue("No peer opens for a reconnect cancelled", transports.isEmpty())
+        }
+
+    @Test
     fun shortRepliesSplitByADropAddUpBeforeTheCallsSpokenTimeIsRounded() =
         runTest(dispatcher) {
             val first = live()
@@ -1421,6 +1486,7 @@ class LiveCallTest {
         }
 
     private companion object {
+        val RECONNECTION: UUID = UUID.fromString("00000000-0000-4000-8000-000000000002")
         val VOICE_SAMPLE = 200.milliseconds
         val FRAGMENT = 300.milliseconds
     }

@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.livecall.CallReservation
+import com.zoonk.android.feature.livecall.LiveServerEvent
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
 import com.zoonk.android.feature.livecall.setup
@@ -20,6 +21,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 class ConversationFlowTest {
@@ -134,8 +136,8 @@ class ConversationFlowTest {
             ArrayDeque(
                 listOf(
                     CallReservation.Ready(setup()),
-                    CallReservation.Ready(setup(talkSeconds = 150, continuesCall = true)),
-                    CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true)),
+                    CallReservation.Ready(setup(talkSeconds = 150, continuesCall = true, connectionId = SECOND)),
+                    CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true, connectionId = THIRD)),
                 ),
             )
         show()
@@ -154,10 +156,14 @@ class ConversationFlowTest {
         val earlier = listOf("¡Hola! ¿Qué le pongo?", "Un café, por favor.")
         assertEquals(earlier, client.offeredTurns.last().map { it.text })
 
-        // Cancelling the call back to its intro keeps what was said for the next start.
+        // Cancelling the call while it rings leaves it dropped, to end or call again.
         compose.onNodeWithContentDescription("Cancel").performClick()
         compose.waitForIdle()
-        goLive()
+        compose.onNodeWithText("The call dropped").assertExists()
+        compose.onNodeWithText("Call again").performClick()
+        compose.waitForIdle()
+        transport.onEvent(LiveServerEvent.Started)
+        compose.waitForIdle()
         assertEquals(3, transports.size)
         assertEquals(earlier, client.offeredTurns.last().map { it.text })
         seen("Lucía: ¡Hola! ¿Qué le pongo?")
@@ -167,6 +173,7 @@ class ConversationFlowTest {
         compose.waitForIdle()
 
         val saved = api.completions.single()
+        assertEquals(THIRD, saved.connectionId)
         assertEquals(earlier + "Con leche", saved.turns.map { it.text })
         assertEquals(3L, saved.spokenSeconds)
         assertTrue(saved.usedHelp)
@@ -191,5 +198,10 @@ class ConversationFlowTest {
                 .map { it.text },
         )
         compose.onNodeWithText("You did well.").assertExists()
+    }
+
+    private companion object {
+        val SECOND: UUID = UUID.fromString("00000000-0000-4000-8000-000000000002")
+        val THIRD: UUID = UUID.fromString("00000000-0000-4000-8000-000000000003")
     }
 }

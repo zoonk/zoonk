@@ -85,6 +85,40 @@ class ConversationScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPaused() = reconnectRefused(CallReservation.CallsPaused, "paused")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectInProgress() = reconnectRefused(CallReservation.CallInProgress, "in-progress")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectLimited() = reconnectRefused(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)), "limit")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPlusRequired() = reconnectRefused(CallReservation.PlusRequired, "plus")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-mdpi")
+    fun reconnectInProgressTablet() = reconnectRefused(CallReservation.CallInProgress, "in-progress-tablet")
+
+    private fun reconnectRefused(
+        refusal: CallReservation,
+        name: String,
+    ) {
+        val harness = ConversationHarness()
+        harness.client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup()), refusal))
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        harness.transport.onLost()
+        compose.onNodeWithText("Call again").performClick()
+        shot("reconnect-$name")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun calledAgain() {
         val harness = ConversationHarness()
         harness.client.reservations =

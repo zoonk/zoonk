@@ -46,8 +46,9 @@ fun setup(
     talkSeconds: Long = 300,
     seconds: Long = talkSeconds + 45,
     continuesCall: Boolean = false,
+    connectionId: UUID = CONNECTION,
 ) = LanguageConversationSetup(
-    connectionId = CONNECTION,
+    connectionId = connectionId,
     continuesCall = continuesCall,
     deadlineAt = Instant.parse("2026-10-29T12:05:00Z"),
     script = SCRIPT,

@@ -42,9 +42,11 @@ data class LiveCallTask(
 /**
  * What the call's earlier connections left, which calling again continues: its [turns] are shown
  * at once and never take a later connection's words, and [spokenMs] adds each connection's speech
- * once, rounded only for the saved call.
+ * once, rounded only for the saved call. [connectionId] is what completion must name, the latest
+ * connection the screen saw once one went live: until then there's no call to save.
  */
 data class CallSoFar(
+    val connectionId: UUID? = null,
     val turns: List<TranscriptTurn> = emptyList(),
     val spokenMs: Double = 0.0,
     val usedHelp: Boolean = false,
@@ -95,7 +97,8 @@ data class LiveCallSummary(
  * prompt never takes time from the call. Ending it silences it at once; the server then hangs it up
  * and confirms before the peer goes and before anything is saved. [scope] is the app's, so a call
  * left mid-request still hangs up; [leave] stops everything else it runs. It continues [soFar] when
- * the server says this connection continues the call, and starts over otherwise.
+ * the server says this connection continues the call, and starts over otherwise. Whatever stops a
+ * dropped call's reconnect before it goes live leaves the call dropped, to end and save.
  */
 class LiveCall(
     private val task: LiveCallTask,
@@ -135,6 +138,8 @@ class LiveCall(
 
     private var liveAt: Long? = null
     private var talkSecondsLeft = 0L
+    private var wentLive = false
+    private var reserving: Job? = null
 
     /** A new call's clock starts when it goes live; a continued one's counts the talk time the server says it already used. */
     private var clockZeroAt: Long? = null
@@ -149,8 +154,22 @@ class LiveCall(
         attempt += 1
         val mine = attempt
         mutableState.update { it.copy(phase = LiveCallPhase.Connecting, failure = null, limit = null, micBlocked = !microphone) }
-        scope.launch { connect(mine, microphone, takeover) }
+        val reservation = scope.async { reserve(takeover) { attempt == mine } }
+        reserving = reservation
+        scope.launch { connect(mine, microphone, reservation.await()) }
     }
+
+    /** Waits for a reservation still on its way, so [soFar] names the call's latest connection. */
+    suspend fun settle() {
+        reserving?.join()
+    }
+
+    /** It continues a dropped call, which it leaves dropped if it doesn't go live. */
+    val continuing get() = earlier.connectionId != null
+
+    private val savedConnection get() = if (wentLive || continuing) connectionId ?: earlier.connectionId else null
+
+    val hasCallToSave get() = savedConnection != null
 
     /** The learner ending the call; a dropped call ends this way too, so what was said still gets its feedback. */
     fun hangUp() = end(CallEnd.LearnerEnded)
@@ -207,6 +226,7 @@ class LiveCall(
         get() {
             val current = mutableState.value
             return CallSoFar(
+                connectionId = savedConnection,
                 turns = current.turns.map { TranscriptTurn(it.speaker, it.text) },
                 spokenMs = earlier.spokenMs + current.turns.spokenMs,
                 usedHelp = current.usedHelp,
@@ -222,11 +242,12 @@ class LiveCall(
         transport?.send(LiveClientCommand.Mute(!current.muted))
     }
 
-    /** Null only for a call that never got a connection. */
+    /** Null when there's no call to save: none of its connections went live. */
     suspend fun finish(): LiveCallSummary? {
-        val id = connectionId ?: return null
+        settle()
         release()
         val call = soFar
+        val id = call.connectionId ?: return null
         return LiveCallSummary(id, (call.spokenMs / 1000).roundToLong(), call.turns.conversationTurns, call.usedHelp)
     }
 
@@ -258,9 +279,8 @@ class LiveCall(
     private suspend fun connect(
         mine: Int,
         microphone: Boolean,
-        takeover: Boolean,
+        reservation: CallReservation?,
     ) {
-        val reservation = reserve(takeover) { attempt == mine }
         if (reservation == null || attempt != mine) return
         val ready =
             reservation as? CallReservation.Ready ?: run {
@@ -311,18 +331,19 @@ class LiveCall(
                 first
             }
         val ready = answer as? CallReservation.Ready ?: return answer
-
-        // A start cancelled meanwhile never connects: its reservation is ended at once.
-        if (!isCurrent()) {
-            scope.launch { client.end(ready.setup.connectionId) }
-            analytics.track(ReplyGaps().event(CallEnd.LearnerEnded, task.kind, learnerTurns = 0, talkSeconds = 0, durationSeconds = 0))
-            return null
-        }
+        // Kept even for a start cancelled meanwhile: completion must name the latest connection.
         connectionId = ready.setup.connectionId
         closeConfirmed = false
         endedAtDeadline = false
         reported = false
         liveAt = null
+
+        // A start cancelled meanwhile never connects: its reservation is ended at once.
+        if (!isCurrent()) {
+            report(CallEnd.LearnerEnded)
+            scope.launch { release() }
+            return null
+        }
         return answer
     }
 
@@ -427,6 +448,7 @@ class LiveCall(
             )
         gaps = ReplyGaps()
         liveAt = now
+        wentLive = true
         talkSecondsLeft = ((setup.talkSeconds * 1000 - now) / 1000).coerceAtLeast(0)
         val zeroAt = clockZeroAt ?: now
         mutableState.update { it.copy(phase = LiveCallPhase.Live, reconnecting = false, elapsedSeconds = (now - zeroAt) / 1000) }
@@ -582,7 +604,7 @@ class LiveCall(
 
     private fun end(reason: CallEnd) {
         val current = mutableState.value
-        val dropped = current.phase == LiveCallPhase.Failed && current.failure == LiveCallFailure.Dropped
+        val dropped = current.phase == LiveCallPhase.Failed && (current.failure == LiveCallFailure.Dropped || continuing)
         if (!current.isOpen && !dropped) return
         // A start still on its way never connects now: a reservation that comes back is ended at once.
         if (current.phase == LiveCallPhase.Connecting) attempt += 1
