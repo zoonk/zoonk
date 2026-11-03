@@ -162,12 +162,12 @@ export async function testOutKnownPlanItems(
     ids.length > 0
       ? await tx.planItem.updateManyAndReturn({
           data: { completedAt: testedOutAt, status: "testedOut" },
-          select: { id: true, planId: true },
+          select: { id: true, kind: true, planId: true },
           where: { id: { in: ids }, status: "todo" },
         })
       : [];
 
-  await awardCourseCertificates(tx, { planIds: updated.map((item) => item.planId) });
+  await awardCourseCertificates(tx, { finished: updated });
 
   const standInIds =
     leftOut.length > 0

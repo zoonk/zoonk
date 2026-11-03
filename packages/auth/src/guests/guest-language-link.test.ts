@@ -19,6 +19,7 @@ describe("guest language linking", () => {
         prisma.languageSkillLevel.create({
           data: {
             language: "en",
+            raisedAt: OLDER,
             score: 1.5,
             skill: "reading",
             startScore: 2,
@@ -182,6 +183,7 @@ describe("guest language linking", () => {
       expect(levels).toContainEqual(
         expect.objectContaining({
           language: source.language,
+          raisedAt: source.raisedAt,
           score: source.score,
           skill: source.skill,
           startScore: source.startScore,

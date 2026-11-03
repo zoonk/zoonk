@@ -52,12 +52,12 @@ export async function completePlanItem(
 ) {
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
-    select: { lessonId: true, planId: true },
+    select: { kind: true, lessonId: true, planId: true },
     where: { id: planItemId, plan: { goal: { userId } }, status: "todo" },
   });
 
   await reduceCompletedPlans(tx, { checked, userId });
-  await awardCourseCertificates(tx, { planIds: checked.map((item) => item.planId) });
+  await awardCourseCertificates(tx, { finished: checked });
 }
 
 /** A review day's practice comes in several blocks: its plan item is done once none is left to do. */
@@ -97,7 +97,7 @@ export async function completeLessonPlanItems(
 ): Promise<CheckedLanguageGoal[]> {
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
-    select: { lessonId: true, planId: true },
+    select: { kind: true, lessonId: true, planId: true },
     where: { lessonId, plan: { goal: { userId } }, status: "todo" },
   });
 
@@ -106,7 +106,7 @@ export async function completeLessonPlanItems(
   }
 
   await reduceCompletedPlans(tx, { checked, userId });
-  await awardCourseCertificates(tx, { planIds: checked.map((item) => item.planId) });
+  await awardCourseCertificates(tx, { finished: checked });
 
   return tx.goal.findMany({
     select: { id: true },
