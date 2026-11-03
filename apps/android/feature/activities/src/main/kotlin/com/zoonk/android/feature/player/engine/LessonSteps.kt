@@ -6,7 +6,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 
 private val READ_KINDS =
-    setOf(StepKind.Alphabet, StepKind.Explanation, StepKind.LessonMap, StepKind.Summary, StepKind.Vocabulary, StepKind.WorkedExample)
+    setOf(StepKind.Alphabet, StepKind.Explanation, StepKind.Map, StepKind.Summary, StepKind.Vocabulary, StepKind.WorkedExample)
 
 private val RETRY_KINDS = setOf(StepKind.Activity, StepKind.Check)
 
@@ -22,7 +22,7 @@ private val READ_ONLY_KINDS =
         StepKind.Alphabet,
         StepKind.Explanation,
         StepKind.Hook,
-        StepKind.LessonMap,
+        StepKind.Map,
         StepKind.Summary,
         StepKind.Vocabulary,
         StepKind.WorkedExample,

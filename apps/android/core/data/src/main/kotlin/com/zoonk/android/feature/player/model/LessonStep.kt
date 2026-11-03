@@ -82,7 +82,7 @@ enum class StepKind {
     Check,
     Explanation,
     Hook,
-    LessonMap,
+    Map,
     SpokenAnswer,
     Summary,
     TypedAnswer,
@@ -170,7 +170,7 @@ sealed interface StepContent {
         val map: LessonMap,
         val title: String,
     ) : StepContent {
-        override val kind get() = StepKind.LessonMap
+        override val kind get() = StepKind.Map
     }
 
     data class TypedAnswer(

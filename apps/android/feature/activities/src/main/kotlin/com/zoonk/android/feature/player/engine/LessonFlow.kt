@@ -139,7 +139,7 @@ val LessonPlayerState.canGoBack: Boolean
 
 /** A run resumed on the map has no results this sitting, so its last question would show unanswered. */
 private fun LessonPlayerState.isUnplayedBeforeMap(): Boolean {
-    if (currentStep?.kind != StepKind.LessonMap) return false
+    if (currentStep?.kind != StepKind.Map) return false
     val previousId = queue[position - 1]
     return previousId !in results && steps[previousId]?.isReadStep != true
 }

@@ -131,7 +131,7 @@ data class LessonPlayerState(
             now: Long,
         ): LessonPlayerState {
             val byId = steps.associateBy(LessonStep::id)
-            val queue = steps.filterNot { it.kind == StepKind.LessonMap }.map(LessonStep::id)
+            val queue = steps.filterNot { it.kind == StepKind.Map }.map(LessonStep::id)
             val isEmpty = queue.isEmpty()
 
             return LessonPlayerState(

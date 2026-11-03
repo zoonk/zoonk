@@ -270,7 +270,7 @@ private fun LessonPlayerState.startRun(
 }
 
 private val LessonPlayerState.isAllAnswered: Boolean
-    get() = phase == LessonPhase.Completed || currentStep?.kind == StepKind.LessonMap
+    get() = phase == LessonPhase.Completed || currentStep?.kind == StepKind.Map
 
 private fun LessonPlayerState.resync(
     action: LessonAction.RunResynced,
