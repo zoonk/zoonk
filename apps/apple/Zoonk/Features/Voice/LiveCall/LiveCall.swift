@@ -155,6 +155,11 @@ final class LiveCall {
     return max(0, (endedAt ?? date).timeIntervalSince(clockStart))
   }
 
+  /// On this connection: earlier connections' words don't count.
+  private var hasCharacterSpoken: Bool {
+    connectionTurns.contains { $0.speaker == .character }
+  }
+
   /// The learner has said something out loud: until then the turn row tells them to.
   var hasLearnerSpoken: Bool {
     turns.contains { $0.speaker == .learner && $0.startMs != nil }
@@ -167,7 +172,7 @@ final class LiveCall {
       return .reconnecting
     }
 
-    if phase != .live || !connectionTurns.contains(where: { $0.speaker == .character }) {
+    if phase != .live || !hasCharacterSpoken {
       return .calling
     }
 
@@ -543,9 +548,11 @@ final class LiveCall {
   }
 
   /// An exam's own prompts, at their times on the call's clock, until the ending starts or the
-  /// connection is lost: a cue a drop held back goes out after "Call again".
+  /// connection is lost: a cue a drop held back goes out after "Call again", once the character's
+  /// first words there (its resume line) did.
   private func sendExamCues() {
     guard let cues = conversation.speakingTask?.cues, let ending, ending.armed == nil,
+      hasCharacterSpoken,
       let due = Self.examCueDue(
         at: elapsed(at: .now), times: cues.map(\.atSeconds), sent: examCuesSent)
     else {
