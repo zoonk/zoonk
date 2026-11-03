@@ -54,7 +54,10 @@ function FieldRow({
       <ListRowContent>
         <span className="text-muted-foreground text-xs">{label}</span>
         <span
-          className={cn("text-sm break-all", mono ? "font-mono text-[0.8125rem]" : "font-medium")}
+          className={cn(
+            "text-sm wrap-anywhere",
+            mono ? "font-mono text-[0.8125rem]" : "font-medium",
+          )}
         >
           {value}
         </span>
