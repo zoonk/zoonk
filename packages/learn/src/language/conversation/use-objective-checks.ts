@@ -2,6 +2,7 @@
 
 import {
   type ConversationTurn,
+  type LanguageConversationObjectiveCheckInput,
   type LanguageConversationView,
   type LanguageConversationObjectiveCheck as ObjectiveCheck,
 } from "@zoonk/core/language/conversations/contract";
@@ -112,12 +113,16 @@ function useObjectiveChecks({
 export function useCallObjectives({
   checkObjectives,
   conversation,
+  getConnectionId,
   getTurns,
   metBefore,
   onResult,
 }: {
-  checkObjectives: CheckObjectives;
+  checkObjectives: (
+    input: LanguageConversationObjectiveCheckInput,
+  ) => Promise<ObjectiveCheck | null>;
   conversation: LanguageConversationView;
+  getConnectionId: () => string | null;
   getTurns: () => ConversationTurn[];
   metBefore: string[];
   onResult: (result: ObjectiveCheckResult) => void;
@@ -135,6 +140,14 @@ export function useCallObjectives({
     [labels, onResult],
   );
 
-  const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
+  const checkConnection = useCallback(
+    (turns: ConversationTurn[]) => {
+      const connectionId = getConnectionId();
+      return connectionId ? checkObjectives({ connectionId, turns }) : Promise.resolve(null);
+    },
+    [checkObjectives, getConnectionId],
+  );
+
+  const check = conversation.examTask ? skipObjectiveChecks : checkConnection;
   return useObjectiveChecks({ checkObjectives: check, getTurns, metBefore, onChecked });
 }

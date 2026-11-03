@@ -44,8 +44,11 @@ interface LiveCallClient {
     /** Has the server hang up: whether it already had at the call's deadline, null if unconfirmed. */
     suspend fun end(connectionId: UUID): Boolean?
 
-    /** What was said checked against the goals: every goal met so far, a mutual goodbye, and what to tell the character; null when it didn't run. */
-    suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck?
+    /** What was said on [connectionId] checked against the goals: every goal met so far, a mutual goodbye, and what to tell the character; null when it didn't run. */
+    suspend fun checkObjectives(
+        connectionId: UUID,
+        turns: List<LanguageConversationTurn>,
+    ): LanguageConversationObjectiveCheck?
 }
 
 /** Mirrors main's `readConnectionRefusal`. A [Limit] is always [Limit.Reached] with a period. */
@@ -197,13 +200,16 @@ class LiveConversationCalls(
         }
     }
 
-    override suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck? {
+    override suspend fun checkObjectives(
+        connectionId: UUID,
+        turns: List<LanguageConversationTurn>,
+    ): LanguageConversationObjectiveCheck? {
         val check =
             cache.mutate { session ->
                 perform {
                     api.clients(session).language.checkLanguageConversationObjectives(
                         conversationId,
-                        LanguageConversationObjectiveCheckInput(turns),
+                        LanguageConversationObjectiveCheckInput(connectionId = connectionId, turns = turns),
                     )
                 }
             }

@@ -12,7 +12,8 @@ struct LiveCallClient {
   /// Has the server hang up: whether it already had at the call's deadline, nil if unconfirmed.
   let end: @MainActor (_ connectionId: String) async -> Bool?
   /// Nil when the check didn't run.
-  let checkObjectives: @MainActor ([ConversationTurn]) async -> ObjectiveCheck?
+  let checkObjectives:
+    @MainActor (_ connectionId: String, _ turns: [ConversationTurn]) async -> ObjectiveCheck?
   let makeTransport: @MainActor () -> any LiveCallTransport
   /// Asks for the microphone; false when the learner said no.
   let requestMicrophone: @MainActor () async -> Bool
@@ -666,9 +667,13 @@ final class LiveCall {
   }
 
   private func checkObjectives() async {
+    guard let connectionId else {
+      return
+    }
+
     let sentAt = Date.now
     checkTiming.read()
-    let found = await client.checkObjectives(turns.conversationTurns)
+    let found = await client.checkObjectives(connectionId, turns.conversationTurns)
 
     guard phase == .live, let check = found else {
       return
@@ -864,10 +869,11 @@ extension LiveCallClient {
 
         return ended ?? nil
       },
-      checkObjectives: { turns in
+      checkObjectives: { connectionId, turns in
         let check = await voice.cache.mutate { identity in
           try await api.checkObjectives(
-            conversationId: conversationId, turns: turns, token: identity.bearerToken)
+            conversationId: conversationId, connectionId: connectionId, turns: turns,
+            token: identity.bearerToken)
         }
 
         guard case .done(let found) = check else {

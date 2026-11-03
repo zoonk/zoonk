@@ -81,8 +81,31 @@ const CALL_SO_FAR: ConversationTurn[] = [
   { speaker: "learner", text: "Is the apartment still available?" },
 ];
 
+const EARLIER_CALL: ConversationTurn[] = [
+  ...CALL_SO_FAR,
+  { speaker: "character", text: "It is. Would you like to see it?" },
+  { speaker: "learner", text: "Can I see it on Saturday?" },
+];
+
+const NEW_TURNS: ConversationTurn[] = [
+  { speaker: "character", text: "Hi, this is Sarah again. How can I help?" },
+  { speaker: "learner", text: "How much is the deposit?" },
+];
+
 function lastCreation() {
   return vi.mocked(createLiveCallSession).mock.lastCall?.[0];
+}
+
+function checkGoals(
+  { connectionId }: LanguageConversationSetup,
+  conversationId: string,
+  turns: ConversationTurn[],
+) {
+  return checkLanguageConversationObjectives({ conversationId, input: { connectionId, turns } });
+}
+
+function lastCheckedTurns() {
+  return vi.mocked(checkConversationObjectives).mock.lastCall?.[0].turns;
 }
 
 async function live(conversationId: string): Promise<LanguageConversationSetup> {
@@ -323,6 +346,46 @@ describe("live calls", () => {
     expect(lastCreation()?.instructions).not.toContain("The call dropped");
   });
 
+  it("[1] checks the goals of a call that starts over from its own first turn", async () => {
+    const { conversation } = await learner({ plus: true });
+    const first = await live(conversation.id);
+    await checkGoals(first, conversation.id, EARLIER_CALL);
+    advance(first.seconds);
+    await endLiveCall({ connectionId: first.connectionId, reason: "deadline" });
+    const second = await live(conversation.id);
+
+    expect(second.continuesCall).toBe(false);
+    await checkGoals(second, conversation.id, NEW_TURNS);
+
+    expect(lastCheckedTurns()).toStrictEqual(NEW_TURNS);
+  });
+
+  it("[1] checks the goals of a call that starts over long after the first one ended", async () => {
+    const { conversation } = await learner();
+    await runWholeCall(conversation.id);
+    advance(DAY_SECONDS / 2);
+    const second = await live(conversation.id);
+
+    await expect(checkGoals(second, conversation.id, NEW_TURNS)).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(lastCheckedTurns()).toStrictEqual(NEW_TURNS);
+  });
+
+  it("[1] checks the goals of a reconnect that kept none of the call so far, as after a reload, from its own first turn", async () => {
+    const { conversation } = await learner();
+    const first = await live(conversation.id);
+    await checkGoals(first, conversation.id, EARLIER_CALL);
+    advance(30);
+    const reconnected = await live(conversation.id);
+
+    expect(reconnected.continuesCall).toBe(true);
+    await checkGoals(reconnected, conversation.id, NEW_TURNS);
+
+    expect(lastCheckedTurns()).toStrictEqual(NEW_TURNS);
+  });
+
   it("[1] opens no talk window for a session OpenAI refused to create, so the next call is a new start", async () => {
     const { conversation, user } = await learner();
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 80, userId: user.id });
@@ -442,10 +505,7 @@ describe("live calls", () => {
     noObjectivesMet();
 
     await expect(
-      checkLanguageConversationObjectives({
-        conversationId: conversation.id,
-        input: { turns: [{ speaker: "learner", text: "Bye!" }] },
-      }),
+      checkGoals(setup, conversation.id, [{ speaker: "learner", text: "Bye!" }]),
     ).resolves.toMatchObject({ status: "ready" });
 
     advance(20);
@@ -567,10 +627,7 @@ describe("live calls", () => {
     noObjectivesMet();
 
     await expect(
-      checkLanguageConversationObjectives({
-        conversationId: conversation.id,
-        input: { turns: [{ speaker: "learner", text: "Is it available?" }] },
-      }),
+      checkGoals(setup, conversation.id, [{ speaker: "learner", text: "Is it available?" }]),
     ).resolves.toMatchObject({ status: "ready" });
 
     advance(60);

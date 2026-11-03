@@ -278,11 +278,12 @@ test.describe("Language goal API", () => {
 
     const turns = [{ speaker: "character", text: RENTING_SCENARIO.openingLine }];
     const checks = `/v1/language-conversations/${conversationId}/objective-checks`;
+    const check = { connectionId: randomUUID(), turns };
 
     const [hidden, hiddenCheck, notConnected] = await Promise.all([
       stranger.get(`/v1/language-conversations/${conversationId}`),
-      stranger.post(checks, { data: { turns } }),
-      apiContext.post(checks, { data: { turns } }),
+      stranger.post(checks, { data: check }),
+      apiContext.post(checks, { data: check }),
     ]);
 
     expect([hidden.status(), hiddenCheck.status(), notConnected.status()]).toStrictEqual([

@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  type ConversationTurn,
   type LanguageConversationObjectiveCheck,
+  type LanguageConversationObjectiveCheckInput,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
 import { type RefObject, useCallback, useState } from "react";
@@ -37,7 +37,7 @@ import { useCallObjectives } from "./use-objective-checks";
 export type LiveCallActions = CallConnectionActions & {
   /** Null when the check didn't run. */
   checkObjectives: (
-    turns: ConversationTurn[],
+    input: LanguageConversationObjectiveCheckInput,
   ) => Promise<LanguageConversationObjectiveCheck | null>;
 };
 
@@ -184,6 +184,7 @@ export function useLiveCall({
   const objectives = useCallObjectives({
     checkObjectives: actions.checkObjectives,
     conversation,
+    getConnectionId: connection.getConnectionId,
     getTurns,
     metBefore: earlier.metLabels,
     onResult: ending.checked,

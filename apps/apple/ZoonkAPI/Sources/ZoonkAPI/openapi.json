@@ -6934,7 +6934,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
+        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check on the same connection read (with the exchange before them), so send the whole transcript the learner's screen holds each time, with the connection it's on: a new connection's checks read from its first turn, so a call that started over, or a screen that lost the call so far, sends only what it has. A transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only while that connection is live.",
         "operationId": "checkLanguageConversationObjectives",
         "summary": "Check a live conversation's goals",
         "parameters": [
@@ -24553,6 +24553,12 @@
       "LanguageConversationObjectiveCheckInput": {
         "type": "object",
         "properties": {
+          "connectionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The live connection the learner is talking on"
+          },
           "turns": {
             "maxItems": 300,
             "type": "array",
@@ -24563,6 +24569,7 @@
           }
         },
         "required": [
+          "connectionId",
           "turns"
         ],
         "additionalProperties": false

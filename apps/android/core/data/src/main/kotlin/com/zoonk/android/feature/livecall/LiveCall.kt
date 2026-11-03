@@ -557,10 +557,11 @@ class LiveCall(
     private suspend fun checkObjectives() {
         checking = true
         try {
+            val id = connectionId ?: return
             val checkedAt = now() ?: return
             val turns = mutableState.value.turns.conversationTurns
             checkTiming = checkTiming.read()
-            val check = client.checkObjectives(turns) ?: return
+            val check = client.checkObjectives(id, turns) ?: return
             if (phase != LiveCallPhase.Live) return
             val machine = ending ?: return
             if (check.objectivesMet.size > mutableState.value.metLabels.size) {
