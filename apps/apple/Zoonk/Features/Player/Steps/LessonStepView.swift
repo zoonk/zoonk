@@ -323,7 +323,8 @@ private struct TypedAnswerStepView: View {
       }
     case .turn:
       LessonAnswerField(
-        label: Text(verbatim: LessonRichText.spoken(content.question)),
+        label: Text(
+          verbatim: LessonRichText.spoken(LessonQuestionParts(content.question).question)),
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,

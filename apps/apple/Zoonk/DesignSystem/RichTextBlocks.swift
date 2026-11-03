@@ -144,7 +144,7 @@ enum RichTextBlock: Equatable {
 
   /// Mirrors main's `parseRichBlocks`.
   static func parse(_ text: String) -> [RichTextBlock] {
-    let lines = text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
+    let lines = Self.lines(text)
     var blocks: [RichTextBlock] = []
     var previous: Line?
     var index = 0
@@ -165,6 +165,28 @@ enum RichTextBlock: Equatable {
     }
 
     return blocks
+  }
+
+  static func lines(_ text: String) -> [String] {
+    text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
+  }
+
+  /// The lines `parse` draws as tables.
+  static func tableLines(_ lines: [String]) -> IndexSet {
+    var found = IndexSet()
+    var index = 0
+
+    while index < lines.count {
+      guard let table = Table(lines: lines, at: index) else {
+        index += 1
+        continue
+      }
+
+      found.insert(integersIn: index..<table.end)
+      index = table.end
+    }
+
+    return found
   }
 
   struct Mark: Equatable {

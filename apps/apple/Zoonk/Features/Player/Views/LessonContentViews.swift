@@ -66,15 +66,60 @@ struct LessonTextBlocks: View {
   }
 }
 
+/// A question as a VoiceOver heading, with any table of data above it as a check's context.
 struct LessonQuestionText: View {
   let text: String
 
   var body: some View {
-    LessonRichText(text)
-      .font(.title2.weight(.semibold))
-      .dimsOnceChecked()
-      .fixedSize(horizontal: false, vertical: true)
-      .accessibilityAddTraits(.isHeader)
+    let parts = LessonQuestionParts(text)
+
+    if let data = parts.data {
+      LessonTextBlocks(data)
+        .foregroundStyle(.secondary)
+    }
+
+    if !parts.question.isEmpty {
+      LessonRichText(parts.question)
+        .font(.title2.weight(.semibold))
+        .dimsOnceChecked()
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityAddTraits(.isHeader)
+    }
+  }
+}
+
+/// Main's `splitQuestionData`: in a question with a table, the last run of prose lines asks, and the
+/// table with the rest of the lines is its data.
+struct LessonQuestionParts: Equatable {
+  let data: String?
+  let question: String
+}
+
+extension LessonQuestionParts {
+  init(_ text: String) {
+    let lines = RichTextBlock.lines(text)
+    let tableLines = RichTextBlock.tableLines(lines)
+
+    guard !tableLines.isEmpty else {
+      self.init(data: nil, question: text)
+      return
+    }
+
+    let isProse = { (index: Int) in
+      !tableLines.contains(index) && !lines[index].trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    guard let end = lines.indices.last(where: isProse) else {
+      self.init(data: text, question: "")
+      return
+    }
+
+    let start = (lines.indices.last { $0 < end && !isProse($0) } ?? -1) + 1
+    let data = (lines[..<start] + lines[(end + 1)...]).joined(separator: "\n")
+
+    self.init(
+      data: data.trimmingCharacters(in: .whitespacesAndNewlines),
+      question: lines[start...end].joined(separator: "\n"))
   }
 }
 
