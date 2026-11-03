@@ -35,7 +35,7 @@
   "catalog_expand": "5a379811e2914ad5372d8a6f1bd55824059f1f486b1345aa9a4131de258138c9",
   "catalog_go_to_chapter": "804433c186e8a610bf5cb35d21dab2df3222b29062b688834e8a2c6ddd338693",
   "catalog_goal_example": "f76b56bdbddf894834ccb771c7df9f68c5227e599d6f9a318b8a4f43d93ac212",
-  "catalog_guess_first": "03212970e956f5a8254785b482b86bfe2449a0d81e3055dbd7c30839688df824",
+  "catalog_guess_chip": "003548d292305eb63f85b5f5ea966ee50e370301e73986dd183d42b03f46c728",
   "catalog_guess_note": "c7131a8617bad35b7a1f717ec35e14aac147b2a4307215c6ccad30084d4a4784",
   "catalog_ideas": "037f90d72ae88b96ef2d971ea3cca0c81d59579eac2764a15991a8adc79c417a",
   "catalog_left_out": "0249afa96c9cd9e2a012767be4e27262b209ea3c2e9857bcc4d08b30d0b103d1",
@@ -181,7 +181,8 @@
     <string name="catalog_start_free">계정 없이 무료로 시작할 수 있어요.</string>
     <string name="catalog_try_title">레슨 체험하기 · 무료 · %1$s</string>
     <string name="catalog_try_place">%1$s · 레슨 %2$s</string>
-    <string name="catalog_guess_first">먼저 예상해 보세요. 점수에 반영되지 않아요.</string>
+    <!-- Chip above a lesson's opening question on a course page, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="catalog_guess_chip">예상일 뿐, 점수에는 반영되지 않아요</string>
     <string name="catalog_quick_question">간단한 문제</string>
     <string name="catalog_guess_note">답을 고르면 %1$s분 레슨이 시작돼요.</string>
     <string name="catalog_check_note">선택하면 %1$s분 레슨이 열려요. 레슨에서 정답을 확인해 보세요.</string>
