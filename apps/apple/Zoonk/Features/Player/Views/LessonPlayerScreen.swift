@@ -161,6 +161,31 @@ private struct LessonPlayerContent: View {
 
   @ViewBuilder
   private var content: some View {
+    if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
+      WarmUpHold(
+        surface: .lessonWait, isReady: writing == .written,
+        announcement: LessonWaitingView.lessonReady
+      ) { holding in
+        LessonWaitingView(
+          outline: warmUp.outline, writing: writing, warmUpID: warmUp.deckID, holding: holding
+        ) {
+          Task { await store.writeLesson() }
+        }
+        .lonePage()
+      } ready: {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .lonePage()
+      } onMoveOn: {
+        Task { await store.open() }
+      }
+    } else {
+      screen
+    }
+  }
+
+  @ViewBuilder
+  private var screen: some View {
     switch store.screen {
     case .loading:
       ProgressView()

@@ -279,6 +279,18 @@ struct LessonVerdict {
 }
 
 extension LessonVerdict {
+  static func guess(isRight: Bool) -> LessonVerdict {
+    isRight
+      ? LessonVerdict(
+        title: LocalizedStringResource(
+          "Good guess!", table: "Player", comment: "A hook's guess was right"),
+        symbol: "sparkles", tint: .success)
+      : LessonVerdict(
+        title: LocalizedStringResource(
+          "Here's the answer", table: "Player", comment: "A hook's guess missed"),
+        symbol: "sparkles", tint: .secondary)
+  }
+
   static func of(_ result: LessonStepResult, step: LessonStep) -> LessonVerdict {
     if result.isSampleAnswer {
       return LessonVerdict(
@@ -289,15 +301,7 @@ extension LessonVerdict {
     }
 
     if step.kind == .hook {
-      return result.isCorrect
-        ? LessonVerdict(
-          title: LocalizedStringResource(
-            "Good guess!", table: "Player", comment: "A hook's guess was right"),
-          symbol: "sparkles", tint: .success)
-        : LessonVerdict(
-          title: LocalizedStringResource(
-            "Here's the answer", table: "Player", comment: "A hook's guess missed"),
-          symbol: "sparkles", tint: .secondary)
+      return .guess(isRight: result.isCorrect)
     }
 
     if result.isCorrect {

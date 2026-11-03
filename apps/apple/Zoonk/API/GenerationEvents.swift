@@ -8,6 +8,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   let skillName: String?
   let status: String
   let step: String
+  let warmUpID: String?
 
   private enum CodingKeys: String, CodingKey {
     case at
@@ -16,11 +17,12 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     case skillName
     case status
     case step
+    case warmUpID = "warmUpId"
   }
 
   init(
     at: Date? = nil, entityID: String? = nil, reason: String? = nil, skillName: String? = nil,
-    status: String, step: String
+    status: String, step: String, warmUpID: String? = nil
   ) {
     self.at = at
     self.entityID = entityID
@@ -28,6 +30,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     self.skillName = skillName
     self.status = status
     self.step = step
+    self.warmUpID = warmUpID
   }
 
   init(from decoder: any Decoder) throws {
@@ -38,6 +41,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     skillName = try container.decodeIfPresent(String.self, forKey: .skillName)
     status = try container.decode(String.self, forKey: .status)
     step = try container.decode(String.self, forKey: .step)
+    warmUpID = try container.decodeIfPresent(String.self, forKey: .warmUpID)
   }
 }
 

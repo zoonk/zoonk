@@ -114,25 +114,30 @@ struct ScheduleQuestion: View {
 
     // A Group would give each screen its own asking tasks, which would start over as screens switch.
     ZStack {
-      switch wait {
-      case .building?:
-        PlanBuilding(
-          view: view,
-          readResult: {
-            planMade = true
-            return true
-          },
-          onRunEnd: { runEnded = true }
-        ) {
-          if gate.failed {
-            GenerationFailureSection(failure: .connection, act: gate.restart)
-          }
-        }
-      case .readingNotice?:
+      // Only the question waits for a learner still guessing, as on main: the notice's reading is
+      // another wait.
+      if wait == .readingNotice {
         NoticeReadingView(
           document: examDocument, lastEdition: false, reconnect: gate.failed ? gate.restart : nil)
-      case nil:
-        question(shown)
+      } else {
+        WarmUpHold(surface: .planWait, isReady: wait == nil, announcement: .planReady) { holding in
+          PlanBuilding(
+            view: view,
+            next: .timeQuestion,
+            holding: holding,
+            readResult: {
+              planMade = true
+              return true
+            },
+            onRunEnd: { runEnded = true }
+          ) {
+            if gate.failed {
+              GenerationFailureSection(failure: .connection, act: gate.restart)
+            }
+          }
+        } ready: {
+          question(shown)
+        }
       }
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {

@@ -15,10 +15,9 @@ struct PlanStep: View {
     let plan = plans.plan(goalId: view.goal.id)
 
     Group {
-      switch plan.value?.plan {
-      case let ready? where ready.ready && ready.notice != .reading:
-        PlanReveal(view: view, plan: ready)
-      case let reading? where reading.ready:
+      // Only the plan's reveal waits for a learner still guessing, as on main: the notice's
+      // reading is another wait, which the plan isn't ready before.
+      if let reading = plan.value?.plan, reading.ready, reading.notice == .reading {
         NoticeReadingView(
           document: reading.examDocument, lastEdition: reading.schedule.targetDateEstimated
         )
@@ -29,19 +28,29 @@ struct PlanStep: View {
             await plan.refresh()
           }
         }
-      default:
-        switch (plan.state, isWaiting) {
-        case (.idle, false), (.loading, false):
-          StepLoading()
-        default:
-          PlanBuilding(view: view, readResult: { await readUntilReady(plan) }) {
-            if let course = view.libraryCourse {
-              LibraryCourseOffer(
-                courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+      } else {
+        WarmUpHold(
+          surface: .planWait, isReady: plan.value?.plan.ready == true, announcement: .planReady
+        ) { holding in
+          switch (plan.state, isWaiting) {
+          case (.idle, false), (.loading, false):
+            StepLoading()
+          default:
+            PlanBuilding(
+              view: view, holding: holding, readResult: { await readUntilReady(plan) }
+            ) {
+              if let course = view.libraryCourse {
+                LibraryCourseOffer(
+                  courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+              }
             }
+            .onboardingColumn()
+            .onAppear { isWaiting = true }
           }
-          .onboardingColumn()
-          .onAppear { isWaiting = true }
+        } ready: {
+          if let ready = plan.value?.plan {
+            PlanReveal(view: view, plan: ready)
+          }
         }
       }
     }
@@ -70,7 +79,14 @@ struct PlanStep: View {
 /// Main's `PlanBuilding`: the goal's run while its plan is built, which both the reveal and the time
 /// question wait for.
 struct PlanBuilding<Trailing: View>: View {
+  enum Next {
+    case reveal
+    case timeQuestion
+  }
+
   let view: GoalOnboarding
+  var next = Next.reveal
+  var holding: WarmUpHolding?
   let readResult: () async -> Bool
   var onRunEnd: (() -> Void)?
   @ViewBuilder let trailing: () -> Trailing
@@ -79,11 +95,11 @@ struct PlanBuilding<Trailing: View>: View {
 
   var body: some View {
     GenerationWaitView(
-      title: LocalizedStringResource(
-        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
-      description: LocalizedStringResource(
-        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-        table: "Onboarding", comment: "Shown while a goal's plan is built"),
+      title: holding == nil
+        ? LocalizedStringResource(
+          "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built")
+        : .planReady,
+      description: description,
       stoppedDescription: LocalizedStringResource(
         "Your answers are saved.", table: "Onboarding",
         comment: "Shown when a goal's plan stopped building, over the way to try again"),
@@ -98,7 +114,47 @@ struct PlanBuilding<Trailing: View>: View {
       readResult: readResult,
       onRunEnd: onRunEnd,
       leading: { EmptyView() },
-      trailing: trailing)
+      trailing: trailing
+    )
+    .warmUpHoldBar(holding, label: holdLabel)
+  }
+
+  private var description: LocalizedStringResource {
+    switch (holding, next) {
+    case (nil, _):
+      LocalizedStringResource(
+        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+        table: "Onboarding", comment: "Shown while a goal's plan is built")
+    case (_?, .reveal):
+      LocalizedStringResource(
+        "See it whenever you're ready.", table: "Onboarding",
+        comment: "Under \"Your plan is ready\" when the plan shows next")
+    case (_?, .timeQuestion):
+      LocalizedStringResource(
+        "One last question, then you'll see it.", table: "Onboarding",
+        comment: "Under \"Your plan is ready\" when the time question comes before the plan")
+    }
+  }
+
+  private var holdLabel: Text {
+    switch next {
+    case .reveal:
+      Text(
+        "See your plan", tableName: "Onboarding",
+        comment: "Leaves the plan's wait, once the plan is ready, for the plan")
+    case .timeQuestion:
+      Text(
+        "Continue", tableName: "Onboarding",
+        comment: "Leaves the plan's wait, once the plan is ready, for the time question")
+    }
+  }
+}
+
+extension LocalizedStringResource {
+  static var planReady: LocalizedStringResource {
+    LocalizedStringResource(
+      "Your plan is ready", table: "Onboarding",
+      comment: "Title of the plan's wait once the plan is ready, for a learner still guessing")
   }
 }
 

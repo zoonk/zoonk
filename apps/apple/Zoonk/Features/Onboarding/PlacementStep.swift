@@ -11,6 +11,7 @@ struct PlacementStep: View {
   @Environment(ExamStore.self) private var exam
   @Environment(OnboardingStore.self) private var onboarding
   @State private var phase = Phase.loading
+  @State private var warmUpID: String?
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
@@ -33,6 +34,14 @@ struct PlacementStep: View {
       }
 
       return true
+    }
+
+    var isWaiting: Bool {
+      if case .waiting = self {
+        return true
+      }
+
+      return false
     }
 
     init(_ placement: GoalPlacement) {
@@ -91,15 +100,31 @@ struct PlacementStep: View {
     .modifier(PlacementMockLoading(goalId: view.goal.id, isExam: view.goal.kind == .exam))
   }
 
+  /// Questions that couldn't be written show at once, as on main: there's nothing to be ready for.
   @ViewBuilder
   private var steps: some View {
+    if phase == .unavailable {
+      ready
+    } else {
+      WarmUpHold(
+        surface: .placementWait, isReady: !phase.isWaiting, announcement: Self.questionsReady
+      ) { holding in
+        waiting(holding: holding)
+      } ready: {
+        ready
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var ready: some View {
     switch phase {
     case .loading:
       StepLoading()
     case .intro:
       intro
-    case .waiting(let failure):
-      waiting(failure)
+    case .waiting:
+      EmptyView()
     case .question(let question, let labels):
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
@@ -107,6 +132,8 @@ struct PlacementStep: View {
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
+      // A question held behind the warm-up's wait is timed from when it shows.
+      .onAppear { shownAt = .now }
     case .done(let forToday):
       outcome(
         title: forToday
@@ -225,50 +252,75 @@ struct PlacementStep: View {
     .environment(\.isSavingAnswer, isStarting)
   }
 
-  private func waiting(_ failure: GenerationFailure?) -> some View {
-    Form {
-      StepHeader(
-        title: Text(
-          "Getting your questions ready", tableName: "Onboarding",
-          comment: "Title while placement questions are written"),
-        description: Text(
-          "They come from the skills your goal needs. It usually takes a minute or two.",
-          tableName: "Onboarding",
-          comment: "Why placement questions take a moment"))
+  private static let questionsReady = LocalizedStringResource(
+    "Your questions are ready", table: "Onboarding",
+    comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
-      if let failure {
+  private func waiting(holding: WarmUpHolding?) -> some View {
+    Form {
+      if holding == nil {
+        StepHeader(
+          title: Text(
+            "Getting your questions ready", tableName: "Onboarding",
+            comment: "Title while placement questions are written"),
+          description: Text(
+            "They come from the skills your goal needs. It usually takes a minute or two.",
+            tableName: "Onboarding",
+            comment: "Why placement questions take a moment"))
+      } else {
+        StepHeader(
+          title: Text(Self.questionsReady),
+          description: Text(
+            "Start them whenever you're ready.", tableName: "Onboarding",
+            comment: "Under \"Your questions are ready\" on placement's wait"))
+      }
+
+      if case .waiting(let failure?) = phase {
         GenerationFailureSection(failure: failure) {
           retry(failure)
         }
-      } else {
+      } else if holding == nil {
         Section {
           ProgressView()
             .frame(maxWidth: .infinity)
         }
       }
 
+      if let warmUpID {
+        WarmUpSection(deckID: warmUpID)
+      }
+
       saveFailure
 
-      Section {
-        Button {
-          finish(fromScratch: false)
-        } label: {
+      if holding == nil {
+        Section {
+          Button {
+            finish(fromScratch: false)
+          } label: {
+            Text(
+              "Skip for now", tableName: "Onboarding",
+              comment: "Skips placement while its questions are written"
+            )
+            .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+          .listRowInsets(EdgeInsets())
+          .listRowBackground(Color.clear)
+        } footer: {
           Text(
-            "Skip for now", tableName: "Onboarding",
-            comment: "Skips placement while its questions are written"
-          )
-          .frame(maxWidth: .infinity)
+            "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
+            comment: "Under Skip for now")
         }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
-      } footer: {
-        Text(
-          "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-          comment: "Under Skip for now")
       }
     }
+    .warmUpDeck(warmUpID)
+    .warmUpHoldBar(
+      holding,
+      label: Text(
+        "Continue", tableName: "Onboarding",
+        comment: "Leaves placement's wait, once its questions are ready, for the questions")
+    )
     .onboardingColumn()
     .disabled(isSaving || isStarting)
     .task(id: waitRound) { await waitForQuestions() }
@@ -356,7 +408,11 @@ struct PlacementStep: View {
 
     if let generationID = view.generationId {
       do {
-        for try await _ in onboarding.events(generationID: generationID) {
+        for try await event in onboarding.events(generationID: generationID) {
+          if let id = event.warmUpID {
+            warmUpID = id
+          }
+
           await read()
 
           guard case .waiting = phase else {
@@ -391,10 +447,6 @@ struct PlacementStep: View {
   private func show(_ next: Phase, from placement: GoalPlacement?) {
     if let placement {
       shown = (max(shown.answered, placement.answered), max(shown.spent, placement.dayBudgetSpent))
-    }
-
-    if case .question = next {
-      shownAt = .now
     }
 
     phase = next

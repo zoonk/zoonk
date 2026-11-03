@@ -11929,6 +11929,65 @@
         }
       }
     },
+    "Your lesson is ready. Start it whenever you like." : {
+      "comment" : "A goal's first lesson is written while the learner still guesses on its wait",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lektion ist bereit. Leg los, wann du möchtest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu lección está lista. Empiézala cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta leçon est prête. Commence-la quand tu veux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua lezione è pronta. Iniziala quando vuoi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンの準備ができました。好きなときに始められます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨이 준비됐어요. 편할 때 시작하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja lekcja jest gotowa. Zacznij, kiedy chcesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua aula está pronta. Comece quando quiser."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersin hazır. İstediğin zaman başlayabilirsin."
+          }
+        }
+      }
+    },
     "Your mission" : {
       "comment" : "Above a challenge's mission",
       "localizations" : {
