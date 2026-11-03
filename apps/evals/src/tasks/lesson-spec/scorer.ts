@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type VisualFloor, getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
@@ -127,7 +127,7 @@ function checkLessonSpecs({
   };
 }
 
-export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) => {
+export const checkLessonSpecOutput: TaskCodeChecks<LessonSpecExpected> = ({ output, testCase }) => {
   const level = getLevel(testCase.userInput);
   const { exams, isPrivate, material } = testCase.userInput;
   const materialText = typeof material === "string" ? material : undefined;
@@ -140,11 +140,13 @@ export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCa
 
   const visualFloor = getVisualFloor({ isPrivate: isPrivate === true, material: materialText });
 
-  return scoreWithCodeChecks({
-    check: (value) =>
-      checkLessonSpecs({ expected: testCase.expected, level, novice, output: value, visualFloor }),
+  return checkLessonSpecs({ expected: testCase.expected, level, novice, output, visualFloor });
+};
+
+export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkLessonSpecOutput({ output: value, testCase }),
     output,
     scoreCategories: LESSON_SPEC_SCORE_CATEGORIES,
     testCase,
   });
-};
