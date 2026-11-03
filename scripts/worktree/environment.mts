@@ -3,7 +3,6 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join } from "node:path";
 import { parseEnv } from "node:util";
 import { isLocalDevelopmentDatabase } from "../../packages/db/src/local-database.ts";
-import { CONNECT_TIMEOUT_SECONDS } from "./postgres.mts";
 
 const ENV_FILES = [".env", ".env.local", ".env.development.local", ".env.production.local"];
 /** The app's Vercel link, which the Blob SDK reads to fetch the project's OIDC token. */
@@ -86,8 +85,6 @@ export function databaseEnvironment({ name, source }: { name: string; source: UR
 } {
   const url = new URL(source);
   url.pathname = `/${name}`;
-  // Prisma's migrate commands give up after 5 s by default; the app's pg pool ignores this.
-  url.searchParams.set("connect_timeout", String(CONNECT_TIMEOUT_SECONDS));
   return { DATABASE_URL: url.href, DATABASE_URL_UNPOOLED: url.href };
 }
 
