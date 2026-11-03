@@ -128,9 +128,9 @@ private struct MatchPairsCanvas: View {
     }
     .buttonStyle(MatchCardStyle(state: state))
     .disabled(isChecked || isDone)
-    .draggable("\(side.rawValue):\(card.id)")
-    .dropDestination(for: String.self) { payloads, _ in
-      guard !isChecked, !isDone, let payload = payloads.first,
+    .draggable(ActivityDragItem(id: "\(side.rawValue):\(card.id)"))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard !isChecked, !isDone, let payload = dropped.first?.id,
         payload.hasPrefix("\(other.rawValue):"),
         let dragged = others.first(where: { "\(other.rawValue):\($0.id)" == payload })
       else {

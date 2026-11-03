@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.toSize
 class ActivityDragDropState internal constructor(
     internal val layer: GraphicsLayer,
     private val haptics: HapticFeedback,
+    private val pointerOnly: Boolean,
 ) {
     internal var onDrop: (itemId: String, targetId: String) -> Unit = { _, _ -> }
     private val pieces = HashMap<String, LayoutCoordinates>()
@@ -106,18 +107,22 @@ class ActivityDragDropState internal constructor(
         if (drops && target != null) onDrop(piece.id, target)
     }
 
-    /** dnd-kit's `pointerWithin`, then `rectIntersection`: the target under the pointer, else the one the piece covers most. */
+    /**
+     * dnd-kit's `pointerWithin`, then `rectIntersection` unless [pointerOnly]: the target under the
+     * pointer, else the one the piece covers most.
+     */
     private fun targetUnder(
         pointer: Offset,
         piece: Rect,
     ): String? {
         val bounds = targets.filterValues { it.isAttached }.mapValues { it.value.boundsInRoot() }
-        return bounds.entries.firstOrNull { it.value.contains(pointer) }?.key
-            ?: bounds
-                .mapValues { it.value.intersect(piece) }
-                .filterValues { it.width > 0 && it.height > 0 }
-                .maxByOrNull { it.value.width * it.value.height }
-                ?.key
+        val under = bounds.entries.firstOrNull { it.value.contains(pointer) }?.key
+        if (under != null || pointerOnly) return under
+        return bounds
+            .mapValues { it.value.intersect(piece) }
+            .filterValues { it.width > 0 && it.height > 0 }
+            .maxByOrNull { it.value.width * it.value.height }
+            ?.key
     }
 }
 
@@ -129,13 +134,20 @@ internal class LiftedPiece(
     var pointer by mutableStateOf(grab)
 }
 
+/**
+ * With [pointerOnly], a piece drops only on the target under the pointer, never on one it merely
+ * covers: a full-width piece let go just above a target would otherwise land in it.
+ */
 @Composable
-fun rememberActivityDragDrop(onDrop: (itemId: String, targetId: String) -> Unit): ActivityDragDropState {
+fun rememberActivityDragDrop(
+    pointerOnly: Boolean = false,
+    onDrop: (itemId: String, targetId: String) -> Unit,
+): ActivityDragDropState {
     val layer = rememberGraphicsLayer()
     val haptics = LocalHapticFeedback.current
     val latest by rememberUpdatedState(onDrop)
-    return remember(layer, haptics) {
-        ActivityDragDropState(layer, haptics).apply {
+    return remember(layer, haptics, pointerOnly) {
+        ActivityDragDropState(layer, haptics, pointerOnly).apply {
             this.onDrop = {
                 item,
                 target,

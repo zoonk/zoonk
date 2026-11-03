@@ -14,6 +14,7 @@ import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-ques
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
+import { useSpokenText } from "../rich-text/use-spoken-text";
 import { ChoiceQuestion, type ChoiceResult } from "../session/question-block/choice-question";
 import { CheckButton, ContinueButton } from "../session/question-block/question-actions";
 import { useVerdict } from "../session/question-block/question-feedback";
@@ -177,6 +178,7 @@ export function PracticeStepView({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
+  const spoken = useSpokenText();
   const { phase } = run.state;
   const { drill } = step.entry;
   const { question } = step;
@@ -225,7 +227,11 @@ export function PracticeStepView({
         <ItemSetStimulus askedIn={runId} key={question.itemId} practice set={question.set} />
       )}
 
-      <section aria-label={question.question} className="flex flex-col gap-4" key={question.itemId}>
+      <section
+        aria-label={spoken.blocks(question.question)}
+        className="flex flex-col gap-4"
+        key={question.itemId}
+      >
         {phase.kind === "reading" ? (
           <QuestionLead graded={false} question={question} withTitle />
         ) : (

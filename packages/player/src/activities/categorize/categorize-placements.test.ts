@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   misplacedItems,
-  nextUnplacedId,
   placementsAnswer,
+  sortCard,
+  takeBackLastCard,
   unplacedItems,
 } from "./categorize-placements";
 
@@ -48,20 +49,29 @@ describe(misplacedItems, () => {
   });
 });
 
-describe(nextUnplacedId, () => {
-  it("moves forward to the next item left, wrapping around", () => {
-    expect(nextUnplacedId({ items, placedId: "wood", placements: { wood: "c" } })).toBe("rust");
+describe(takeBackLastCard, () => {
+  it("takes back the cards in the reverse order they were sorted", () => {
+    const first = sortCard({
+      groupId: "physical",
+      itemId: "ice",
+      state: { history: [], placements: {} },
+    });
 
-    expect(
-      nextUnplacedId({ items, placedId: "sugar", placements: { rust: "c", sugar: "c" } }),
-    ).toBe("ice");
+    const second = sortCard({ groupId: "chemical", itemId: "wood", state: first });
 
-    expect(
-      nextUnplacedId({
-        items,
-        placedId: "sugar",
-        placements: { ice: "p", rust: "c", sugar: "c", wood: "c" },
-      }),
-    ).toBeNull();
+    expect(takeBackLastCard(second)).toStrictEqual({
+      history: ["ice"],
+      placements: { ice: "physical" },
+    });
+
+    expect(takeBackLastCard(takeBackLastCard(second))).toStrictEqual({
+      history: [],
+      placements: {},
+    });
+  });
+
+  it("leaves a sort with nothing to take back as it is", () => {
+    const sorted = { history: [], placements: { ice: "physical" } };
+    expect(takeBackLastCard(sorted)).toBe(sorted);
   });
 });

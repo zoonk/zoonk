@@ -617,6 +617,7 @@ msgid "Split both sides into {count} equal groups"
 msgstr "Diviser les deux côtés en {count} groupes égaux"
 
 #: src/activities/balance/balance-controls.tsx
+#: src/activities/categorize/categorize-sorting.tsx
 #: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
@@ -674,54 +675,38 @@ msgid "{times} times more"
 msgstr "{times} fois plus"
 
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "VOcx64"
-msgid "{item} is in {group}. {sorted} of {total} sorted."
-msgstr "{item} est dans le groupe {group}. {sorted} éléments triés sur {total}."
+msgctxt "COrd83"
+msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
+msgstr "Trie {total, plural, one {# carte} other {# cartes}} dans {groups}, une à la fois."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/categorize-activity.tsx
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} est dans {group}. Carte suivante : {next}."
 
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "OnWRsG"
-msgid "right group"
-msgstr "bon groupe"
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} est dans {group}."
 
+#. Read by screen readers after Undo: this card is back to be sorted again.
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "4xT_96"
-msgid "wrong group"
-msgstr "mauvais groupe"
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "Tu as repris {item}."
 
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "xsV8g3"
-msgid "To sort"
-msgstr "À trier"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "htRVos"
-msgid "All sorted. Check when you're ready."
-msgstr "Tout est trié. Vérifie quand tu veux."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "6BdpHo"
-msgid "{sorted} of {total} sorted"
-msgstr "{sorted} éléments triés sur {total}"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "p97Ob6"
-msgid "Sort {total} items into {groups}. Pick an item, then pick its group. {sorted} of {total} sorted."
-msgstr "Trie {total} éléments dans les groupes suivants : {groups}. Choisis un élément, puis son groupe. {sorted} éléments triés sur {total}."
-
+#. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "gYfi1i"
-msgid "Put {item} in {group}"
-msgstr "Placer {item} dans le groupe {group}"
+msgctxt "jNJRxP"
+msgid "+{count}"
+msgstr "+{count}"
 
+#. A group that holds no cards once every card is sorted.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "N91Eq1"
-msgid "Put it here"
-msgstr "Placer ici"
-
-#: src/activities/categorize/categorize-group.tsx
-msgctxt "KjR3ZD"
-msgid "Nothing here yet"
-msgstr "Rien ici pour le moment"
+msgctxt "7CMfs1"
+msgid "No cards here"
+msgstr "Aucune carte ici"
 
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
@@ -732,6 +717,42 @@ msgstr "{right} sur {total} dans le bon groupe"
 msgctxt "Q5lL_i"
 msgid "{item} belongs in {group}."
 msgstr "{item} appartient au groupe {group}."
+
+#. Title of the menu that moves a sorted card to another group.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "AfxJ0y"
+msgid "Move to"
+msgstr "Déplacer vers"
+
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "HWVgRM"
+msgid ", right group"
+msgstr ", bon groupe"
+
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "NTZ7fO"
+msgid ", wrong group"
+msgstr ", mauvais groupe"
+
+#. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "-oG-_W"
+msgid "All sorted. Choose a card to move it."
+msgstr "Tout est trié. Choisis une carte pour la déplacer."
+
+#. Progress while sorting: how many of the cards already have a group.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "6BdpHo"
+msgid "{sorted} of {total} sorted"
+msgstr "Cartes classées : {sorted} sur {total}"
+
+#. Under the card being sorted, above the groups to choose from.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "c5muiH"
+msgid "Which group does it belong in?"
+msgstr "Dans quel groupe va cette carte ?"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
@@ -1170,6 +1191,12 @@ msgstr "Une distribution uniforme de {label}, de {min} à {max}."
 msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "{between} des valeurs se situent entre {from} et {to}, {below} en dessous et {above} au-dessus."
+
+#. A worked answer's wrong step, read with its correction once checked.
+#: src/activities/find-error/find-error-activity.tsx
+msgctxt "UPlDiJ"
+msgid "Step {number}: {text}. Corrected: {correction}"
+msgstr "Étape {number} : {text}. Correction : {correction}"
 
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
@@ -1861,14 +1888,14 @@ msgid "Two columns of cards. Pick a card on the left and one on the right to mat
 msgstr "Deux colonnes de cartes. Choisis une carte à gauche et une à droite pour les associer. {count, plural, =0 {} one {# carte n’a pas de correspondance.} other {# cartes n’ont pas de correspondance.}} {matched, plural, one {# paire associée sur {total}.} other {# paires associées sur {total}.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
+msgctxt "rnH_6_"
+msgid "<left></left> goes with <right></right>, not <guess></guess>."
+msgstr "<left></left> va avec <right></right>, pas avec <guess></guess>."
+
+#: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "Manquées au premier essai"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "prxLRA"
-msgid "{left} goes with {right}, not {guess}."
-msgstr "{left} va avec {right}, pas avec {guess}."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2778,14 +2805,14 @@ msgid "Step {current} of {total}."
 msgstr "Étape {current} sur {total}."
 
 #: src/activities/step-solver/step-solver-step.tsx
+msgctxt "LjV93h"
+msgid "Your first pick: <choice></choice>"
+msgstr "Ton premier choix : <choice></choice>"
+
+#: src/activities/step-solver/step-solver-step.tsx
 msgctxt "5SURVE"
 msgid "Right:"
 msgstr "Bonne réponse :"
-
-#: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5nqose"
-msgid "Your first pick: {choice}"
-msgstr "Ton premier choix : {choice}"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

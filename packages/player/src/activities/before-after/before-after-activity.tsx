@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { ArrowDown, Eye } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +16,7 @@ type State = BeforeAfterProps["content"]["fields"]["before"];
 
 function useDescribeState() {
   const format = useFormatNumber();
+  const spoken = useSpokenText();
 
   return (state: State) =>
     [
@@ -22,13 +24,14 @@ function useDescribeState() {
       state.facts
         .map((fact) => `${fact.label} ${format(fact.value, { unit: fact.unit })}`)
         .join(", "),
-      state.description,
+      spoken.inline(state.description),
     ].join(" ");
 }
 
 export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProps) {
   const t = useExtracted();
   const describe = useDescribeState();
+  const spoken = useSpokenText();
   const { check, fields } = content;
   const [isRevealed, setIsRevealed] = useState(false);
   const afterRef = useRef<HTMLElement>(null);
@@ -91,7 +94,7 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
       )}
 
       <ActivityTextAlternative>
-        {describe(fields.before)} {fields.change}{" "}
+        {describe(fields.before)} {spoken.inline(fields.change)}{" "}
         {showsAfter ? describe(fields.after) : t("The after state is hidden until you show it.")}
       </ActivityTextAlternative>
     </ActivityCanvas>

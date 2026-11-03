@@ -83,13 +83,18 @@ struct ActivityStepView: View {
         }
       }, baseMap: content.baseMap)
 
-    if let renderer = activityRenderers.renderer(for: content.template) {
-      renderer.canvas(canvasContext)
-    } else {
-      ActivityFallbackCanvas(context: canvasContext)
-    }
+    // As on main, nothing on the canvas answers (taps, menus, number keys) until a required
+    // picture is drawn.
+    Group {
+      if let renderer = activityRenderers.renderer(for: content.template) {
+        renderer.canvas(canvasContext)
+      } else {
+        ActivityFallbackCanvas(context: canvasContext)
+      }
 
-    ActivityDataNote(data: content.data)
+      ActivityDataNote(data: content.data)
+    }
+    .disabled(context.waitsForPicture)
   }
 
   @ViewBuilder

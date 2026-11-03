@@ -8,18 +8,24 @@ import {
   focusOn,
   openActivity,
   press,
+  pressOnPage,
+  sortCard,
+  sortedCard,
 } from "../_test-utils/activity-player";
-import { inlineImage } from "../preview/preview-steps";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep, inlineImage } from "../preview/preview-steps";
+
+const NUMBERED_BEAKERS = {
+  alt: "Two beakers side by side, numbered 1 and 2",
+  parts: ["left beaker", "right beaker"],
+  prompt: "Two beakers on a lab bench",
+};
 
 const LEAF = {
   alt: "A long, thin needle growing in a bundle of two from the twig",
   prompt: "Two long pine needles joined at the base on a twig",
 };
-
-async function sortItem({ group, item }: { group: string; item: string }) {
-  await page.getByRole("button", { exact: true, name: item }).click();
-  await page.getByRole("button", { name: `Put ${item} in ${group}` }).click();
-}
 
 async function matchCards(left: string, right: string) {
   await page.getByRole("button", { exact: true, name: left }).click();
@@ -30,10 +36,10 @@ describe("reasoning activities", () => {
   it("categorize: every item in its group is right", async () => {
     openActivity({ template: "categorize" });
     await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
-    await sortItem({ group: "New substance", item: "Burning wood" });
-    await sortItem({ group: "Same substance", item: "Melting ice" });
-    await sortItem({ group: "New substance", item: "Rusting iron" });
-    await expect.element(page.getByText("All sorted. Check when you're ready.")).toBeVisible();
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("3 of 3 in the right group")).toBeVisible();
@@ -49,11 +55,47 @@ describe("reasoning activities", () => {
     await expect.element(page.getByText("Example numbers, not real data")).not.toBeInTheDocument();
   });
 
+  it("categorize: a tap on a card already in a group sorts the next card into it", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    const sameSubstance = page.getByRole("button", { name: "Same substance" });
+
+    await sameSubstance.getByText("Melting ice").click();
+    await expect.element(page.getByText("2 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(sameSubstance.getByText("Rusting iron", { exact: true })).toBeVisible();
+    await expect.element(sameSubstance.getByText("+1", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Burning wood", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: Undo takes back the last card", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await page.getByRole("button", { name: "Undo" }).click();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Melting ice", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: a sorted card moves to another group from its menu", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "Same substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+    await sortedCard({ group: "Same substance", item: "Rusting iron" }).click();
+    await page.getByRole("menuitem", { name: "New substance" }).click();
+
+    await expect
+      .element(sortedCard({ group: "New substance", item: "Rusting iron" }))
+      .toBeVisible();
+
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
+
   it("categorize: a misplaced item says where it belongs and why", async () => {
     openActivity({ template: "categorize" });
-    await sortItem({ group: "Same substance", item: "Burning wood" });
-    await sortItem({ group: "Same substance", item: "Melting ice" });
-    await sortItem({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Burning wood" });
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Burning wood belongs in New substance.")).toBeVisible();
@@ -107,6 +149,49 @@ describe("reasoning activities", () => {
     await expect
       .element(page.getByText("embarazada goes with pregnant, not embarrassed."))
       .toBeVisible();
+  });
+
+  it("match pairs: a screen reader hears math cards in words, not LaTeX", async () => {
+    openActivity({
+      content: {
+        ...activityContentFixtures.matchPairs,
+        fields: {
+          distractors: [
+            {
+              side: "right",
+              text: "1.2",
+              why: String.raw`$\frac{1}{2}$ is one divided by two, not the digits 1 and 2.`,
+            },
+          ],
+          pairs: [
+            { id: "half", left: String.raw`$\frac{1}{2}$`, right: "0.5" },
+            { id: "square", left: "$3^2$", right: "9" },
+          ],
+        },
+        prompt: "Match each expression to its value.",
+      },
+      template: "matchPairs",
+    });
+
+    await matchCards("1 over 2", "1.2");
+
+    await expect
+      .element(
+        page.getByText(
+          "1 over 2 and 1.2 don't go together. “1.2” has no match. 1 over 2 is one divided by two, not the digits 1 and 2.",
+          { exact: true },
+        ),
+      )
+      .toBeInTheDocument();
+
+    await matchCards("1 over 2", "0.5");
+
+    await expect
+      .element(page.getByText("Matched 1 over 2 with 0.5. 1 of 2 pairs matched.", { exact: true }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: "1 over 2, matched" })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: "3 squared" })).toBeEnabled();
   });
 
   it("argument builder: the strong quote and reasoning are right", async () => {
@@ -239,28 +324,62 @@ describe("reasoning activities", () => {
 });
 
 describe("reasoning activities with only a keyboard", () => {
-  it("categorize: Space picks an item and its group, then Check", async () => {
+  it("categorize: number keys sort nothing while its numbered picture is drawn", async () => {
+    const step = activityStep({
+      content: { ...activityContentFixtures.categorize, image: NUMBERED_BEAKERS },
+      image: null,
+      imagePending: true,
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([step]) });
+    await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await pressOnPage("1");
+    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).not.toBeInTheDocument();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: sorting the last card while Undo has focus moves focus to the status", async () => {
     openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await focusOn(page.getByRole("button", { name: "Undo" }));
+    await press("Enter");
+    await expect.element(page.getByRole("button", { name: "Undo" })).toHaveFocus();
+    await press("1");
+    await press("1");
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toHaveFocus();
+  });
 
-    const placements = [
-      ["Burning wood", "New substance"],
-      ["Melting ice", "Same substance"],
-      ["Rusting iron", "New substance"],
-    ] as const;
-
-    for (const [item, group] of placements) {
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await focusOn(page.getByRole("button", { exact: true, name: item }));
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await press("Space");
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await focusOn(page.getByRole("button", { name: `Put ${item} in ${group}` }));
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await press("Space");
-    }
-
-    await focusOn(page.getByRole("button", { name: "Check" }));
+  it("categorize: number keys sort each card in turn, then Enter checks", async () => {
+    openActivity({ template: "categorize" });
+    await focusOn(page.getByRole("button", { name: "New substance" }));
+    await press("2");
+    await press("1");
+    await press("1");
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toHaveFocus();
     await press("Enter");
     await expectVerdict("Correct!");
+  });
+
+  it("categorize: Escape closes a card's menu and stays on the activity", async () => {
+    const { onExit } = openActivity({ template: "categorize" });
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await pressOnPage("2");
+    await press("1");
+    await press("1");
+    await focusOn(sortedCard({ group: "Same substance", item: "Melting ice" }));
+    await press("Enter");
+
+    const moveToNew = page.getByRole("menuitem", { name: "New substance" });
+    await expect.element(moveToNew).toBeVisible();
+    await press("Escape");
+    await expect.element(moveToNew).not.toBeInTheDocument();
+
+    await expect
+      .element(sortedCard({ group: "Same substance", item: "Melting ice" }))
+      .toBeVisible();
+
+    expect(onExit).not.toHaveBeenCalled();
   });
 });

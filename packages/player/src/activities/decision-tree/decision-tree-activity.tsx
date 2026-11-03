@@ -1,6 +1,7 @@
 "use client";
 
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CircleCheck, Undo2 } from "lucide-react";
@@ -34,6 +35,7 @@ export function DecisionTreeActivity({
   phase,
 }: DecisionTreeProps) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const { fields } = content;
   const isChecked = phase === "checked";
 
@@ -114,7 +116,7 @@ export function DecisionTreeActivity({
             columns={
               current.branches.some((branch) => branch.label.length > LONG_BRANCH_LENGTH) ? 1 : 2
             }
-            label={current.question}
+            label={spoken.blocks(current.question)}
           >
             {current.branches.map((branch) => (
               <ActivitySelectGridItem

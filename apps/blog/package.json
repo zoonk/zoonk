@@ -16,6 +16,7 @@
     "@vercel/analytics": "catalog:",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"

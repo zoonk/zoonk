@@ -13,6 +13,7 @@ import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option
 import { AnswersSaveError } from "../../_components/save-error";
 import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
+import { useSpokenText } from "../../rich-text/use-spoken-text";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
@@ -215,6 +216,7 @@ export function PlacementQuestionScreen({
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const choices = useQuestionChoices({ question, trueFalseLabels });
   const [value, setValue] = useState<string | null>(null);
   const [shownAt, setShownAt] = useState(() => Date.now());
@@ -266,7 +268,7 @@ export function PlacementQuestionScreen({
           ) : (
             <PlacementOptions
               choices={choices}
-              label={question.question}
+              label={spoken.blocks(question.question)}
               onChange={setValue}
               value={value}
             />

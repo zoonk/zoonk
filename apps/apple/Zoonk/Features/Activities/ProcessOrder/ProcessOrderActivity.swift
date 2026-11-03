@@ -95,9 +95,9 @@ private struct ProcessOrderCanvas: View {
         RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
       }
     }
-    .draggable(step.id)
-    .dropDestination(for: String.self) { ids, _ in
-      guard let id = ids.first, order.contains(id) else {
+    .draggable(ActivityDragItem(id: step.id))
+    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
+      guard let id = dropped.first?.id, order.contains(id) else {
         return false
       }
 

@@ -635,6 +635,18 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
+      - The categorize activity's \`prompt\` says what to sort and by what (the records into the animal groups by their body traits), never how to work the screen: no "arraste", "toque", "clique" or any other gesture, although its brief asks the learner to drag each record
+      - The categorize activity sorts the four records into poríferos, cnidários, artrópodes and vertebrados by body traits, as its brief says
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-grupos-de-animais-activity-prompt",
+    userInput: toInput(WALK_LESSONS["pt-grupos-de-animais"]),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
       - The guess shows the sensors' readings as a Markdown table and asks which sensor's readings are grouped and close to 50,0 mm, with sensor A (49,8 to 50,0 mm) right and a reveal that doesn't explain why yet
       - The guess's options name only sensors its table lists, and every sensor the table lists is an option: a guess has at most 4 options, so its table keeps at most four of the plan's five sensors, A among them, never A to D offered under a table that also lists E
       - Precision is how close the readings are to each other and accuracy how close their center is to the reference; the checks use the planned traps (the group near the reference taken as the more grouped one; the whole spread taken as the margin)
