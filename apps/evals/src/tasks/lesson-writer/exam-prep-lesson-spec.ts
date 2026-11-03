@@ -30,6 +30,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -38,6 +39,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -46,6 +48,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -54,6 +57,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -62,6 +66,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -70,6 +75,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -78,6 +84,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -86,6 +93,7 @@ export const EXAM_PREP_LESSON: Pick<
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -128,6 +136,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -136,6 +145,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -144,6 +154,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -152,6 +163,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -160,6 +172,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -168,6 +181,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "decisionTree",
@@ -176,6 +190,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -184,6 +199,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -192,6 +208,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "decisionTree",
@@ -200,6 +217,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -208,6 +226,7 @@ export const QUESTION_FIRST_EXAM_LESSON: Pick<
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [

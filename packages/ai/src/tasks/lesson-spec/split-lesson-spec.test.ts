@@ -21,7 +21,7 @@ function skill(topic: string): LessonSpecSkill {
 }
 
 function screen(kind: LessonScreenKind, skills: number[], brief: string = kind): LessonScreen {
-  return { activityTemplate: null, brief, kind, skills, visual: null };
+  return { activityTemplate: null, brief, kind, skills, visual: null, visualKind: "none" };
 }
 
 function spec({
@@ -44,7 +44,10 @@ function spec({
   };
 }
 
-/** Each skill gets an explanation and a check, so four skills fit on screens and time but not on skills. */
+/**
+ * Each skill gets an explanation and a check, and the first a guess, so four skills fit on screens
+ * and time but not on skills.
+ */
 function fourSkillSpec(): LessonSpec {
   const skills = ["Mean", "Median", "Mode", "Range"].map((topic) => skill(topic));
 
@@ -53,6 +56,9 @@ function fourSkillSpec(): LessonSpec {
       screen("hook", [], "original hook"),
       ...skills.flatMap((_, index) => [
         screen("explanation", [index]),
+        ...(index === 0
+          ? [screen("guess", [index], "guess about the mean"), screen("explanation", [index])]
+          : []),
         screen("check", [index], `check ${index}`),
       ]),
       screen("application", [0, 1, 2, 3], "original application"),
@@ -106,7 +112,7 @@ describe(splitLessonSpec, () => {
     expect(lessons.map((lesson) => lesson.canDo)).toStrictEqual(["Use Mean", "Use Mode"]);
   });
 
-  it("gives every new lesson a hook and one application and passes the lesson rules", () => {
+  it("gives every new lesson a hook and one application, and only the planner can give a later one its guess", () => {
     const [first, second] = splitLessonSpec({
       language: "en",
       level: "beginner",
@@ -131,10 +137,13 @@ describe(splitLessonSpec, () => {
     ]);
 
     expect(getLessonSpecIssues({ level: "beginner", spec: first! })).toStrictEqual([]);
-    expect(getLessonSpecIssues({ level: "beginner", spec: second! })).toStrictEqual([]);
+
+    expect(
+      getLessonSpecIssues({ level: "beginner", spec: second! }).map((issue) => issue.code),
+    ).toStrictEqual(["guess"]);
   });
 
-  it("opens a shared lesson's later part on a picture of its own hook scene", () => {
+  it("opens a later part on its own scene, in a picture when shared and a table when private", () => {
     const planned = fourSkillSpec();
 
     const [first, second] = splitLessonSpec({
@@ -143,7 +152,7 @@ describe(splitLessonSpec, () => {
       spec: {
         ...planned,
         screens: planned.screens.map((item, index) =>
-          index === 0 ? { ...item, visual: "The original scene" } : item,
+          index === 0 ? { ...item, visual: "The original scene", visualKind: "picture" } : item,
         ),
       },
       visualFloor: "pictures",
@@ -154,13 +163,23 @@ describe(splitLessonSpec, () => {
     expect(second?.screens[0]).toStrictEqual({
       ...screen("hook", [0], "Mode at work"),
       visual: "Mode at work",
+      visualKind: "picture",
     });
 
     expect(
       getLessonSpecIssues({ level: "beginner", spec: second!, visualFloor: "pictures" }).map(
         (issue) => issue.code,
       ),
-    ).not.toContain("hookPicture");
+    ).not.toContain("hookVisual");
+
+    const [, privateSecond] = splitLessonSpec({
+      language: "en",
+      level: "beginner",
+      spec: planned,
+      visualFloor: "drawn",
+    });
+
+    expect(privateSecond?.screens[0]?.visualKind).toBe("table");
   });
 
   it("drops a guess from a part where nothing is taught before it", () => {
@@ -172,12 +191,11 @@ describe(splitLessonSpec, () => {
       level: "beginner",
       spec: {
         ...planned,
-        screens: [...planned.screens.slice(0, 5), guess, ...planned.screens.slice(5)],
+        screens: [...planned.screens.slice(0, 7), guess, ...planned.screens.slice(7)],
       },
     });
 
     expect(second?.screens.map((item) => item.kind)).not.toContain("guess");
-    expect(getLessonSpecIssues({ level: "beginner", spec: second! })).toStrictEqual([]);
   });
 
   it("recomputes minutes for each new lesson", () => {

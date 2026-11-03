@@ -326,6 +326,7 @@ describe(lessonContentWorkflow, () => {
           provenance: { generatedAt: "", model: "", promptVersion: "", runId: "" },
           scope: { generalGoal: null, language: "en", ownerId: null, targetLanguage: null },
           specs: [],
+          visualFloor: "pictures",
           workflowRunId: "test-run-id",
         },
       }),

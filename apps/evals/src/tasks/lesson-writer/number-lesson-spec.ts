@@ -13,6 +13,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "hook",
       skills: [],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -21,6 +22,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "explanation",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -29,6 +31,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "workedExample",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -37,6 +40,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "check",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -45,6 +49,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "explanation",
       skills: [1],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -53,6 +58,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "workedExample",
       skills: [1],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -61,6 +67,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "check",
       skills: [1],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -69,6 +76,7 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       kind: "application",
       skills: [0, 1],
       visual: null,
+      visualKind: "none",
     },
   ],
   skills: [

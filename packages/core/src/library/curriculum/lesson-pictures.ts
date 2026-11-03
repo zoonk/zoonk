@@ -1,7 +1,8 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
-import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { getTeachingVisualShortfall, isTeachingScreen } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type VisualFloor } from "@zoonk/ai/tasks/visual-floor";
 
 export type PlannedPicture = {
@@ -68,21 +69,55 @@ export async function judgePlannedPicture({
   return { lesson: picture.lesson, screen: picture.screen, teaches };
 }
 
+/**
+ * A dropped picture the visual floor needs becomes a table the app draws from the screen's brief,
+ * so the floor never falls to nothing: the scene first, then teaching screens in order.
+ */
+function keepFloor({
+  dropped,
+  screens,
+  visualFloor,
+}: {
+  dropped: ReadonlySet<number>;
+  screens: readonly LessonScreen[];
+  visualFloor: VisualFloor;
+}): LessonScreen[] {
+  const bare = screens.map((screen, index) =>
+    dropped.has(index) ? { ...screen, visual: null, visualKind: "none" as const } : screen,
+  );
+
+  const sceneNeedsOne = visualFloor !== "none" && dropped.has(0) && bare[0]?.kind === "hook";
+  const missing = getTeachingVisualShortfall({ screens: bare, visualFloor });
+
+  const drawn = new Set([
+    ...(sceneNeedsOne ? [0] : []),
+    ...[...dropped]
+      .filter((index) => bare[index] && isTeachingScreen(bare[index].kind))
+      .toSorted((left, right) => left - right)
+      .slice(0, missing),
+  ]);
+
+  return bare.map((screen, index) =>
+    drawn.has(index) ? { ...screen, visualKind: "table" as const } : screen,
+  );
+}
+
 export function dropDecorativePictures({
   judged,
   specs,
+  visualFloor,
 }: {
   judged: readonly JudgedPicture[];
   specs: readonly LessonSpec[];
+  visualFloor: VisualFloor;
 }): LessonSpec[] {
-  const decorative = new Set(
-    judged.filter((item) => !item.teaches).map((item) => `${item.lesson}:${item.screen}`),
-  );
+  return specs.map((spec, lesson) => {
+    const dropped = new Set(
+      judged.filter((item) => item.lesson === lesson && !item.teaches).map((item) => item.screen),
+    );
 
-  return specs.map((spec, lesson) => ({
-    ...spec,
-    screens: spec.screens.map((screen, index) =>
-      decorative.has(`${lesson}:${index}`) ? { ...screen, visual: null } : screen,
-    ),
-  }));
+    return dropped.size === 0
+      ? spec
+      : { ...spec, screens: keepFloor({ dropped, screens: spec.screens, visualFloor }) };
+  });
 }

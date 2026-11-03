@@ -13,6 +13,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -21,6 +22,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "keyboardFretboard",
@@ -29,6 +31,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -37,6 +40,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -45,6 +49,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -73,6 +78,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -81,6 +87,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "combinationGrid",
@@ -89,6 +96,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: "randomSimulation",
@@ -97,6 +105,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [1],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -105,6 +114,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -143,6 +153,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -152,6 +163,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -160,6 +172,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "codeRunner",
@@ -168,6 +181,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -176,6 +190,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -205,6 +220,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -214,6 +230,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "decisionTree",
@@ -222,6 +239,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: "A pine twig with long needles growing in bundles of two, close up.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -230,6 +248,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -238,6 +257,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -267,6 +287,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -275,6 +296,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -283,6 +305,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "findError",
@@ -291,6 +314,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [1],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -299,6 +323,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -337,6 +362,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -346,6 +372,7 @@ export const ACTIVITY_LESSON_SPECS = {
         skills: [0],
         visual:
           "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio.",
+        visualKind: "picture",
       },
       {
         activityTemplate: "labeledDiagram",
@@ -354,6 +381,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -362,6 +390,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -370,6 +399,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0, 1],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [
@@ -408,6 +438,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -416,6 +447,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "lineCrossing",
@@ -424,6 +456,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -432,6 +465,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -440,6 +474,7 @@ export const ACTIVITY_LESSON_SPECS = {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [

@@ -10,6 +10,7 @@ function rawScreen(overrides: Partial<RawLessonScreen>): RawLessonScreen {
     kind: "explanation",
     skills: [1],
     visual: null,
+    visualKind: "none",
     ...overrides,
   };
 }
@@ -181,5 +182,33 @@ describe(normalizeLessonSpec, () => {
     });
 
     expect(spec.screens.map((screen) => screen.visual)).toStrictEqual([null, "A price tag."]);
+  });
+
+  it("keeps one visual per screen, of the kind the plan names when it can be shown", () => {
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({ visual: "A shop", visualKind: "table" }),
+        rawScreen({ activityTemplate: "number-line", visual: "A shop", visualKind: "picture" }),
+        rawScreen({ activityTemplate: "number-line", visual: "A shop", visualKind: "template" }),
+        rawScreen({ visual: null, visualKind: "picture" }),
+        rawScreen({ visual: "A shop", visualKind: "none" }),
+        rawScreen({ kind: "check", visual: "A shop", visualKind: "template" }),
+        rawScreen({ activityTemplate: "find-error", kind: "activity", visual: "A worked answer" }),
+      ]),
+      templateIds,
+    });
+
+    expect(
+      spec.screens.map((screen) => [screen.visualKind, screen.visual, screen.activityTemplate]),
+    ).toStrictEqual([
+      ["table", null, null],
+      ["picture", "A shop", null],
+      ["template", null, "number-line"],
+      ["none", null, null],
+      ["picture", "A shop", null],
+      ["picture", "A shop", null],
+      ["template", "A worked answer", "find-error"],
+    ]);
   });
 });

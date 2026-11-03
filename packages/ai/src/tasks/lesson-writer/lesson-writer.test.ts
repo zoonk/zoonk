@@ -48,7 +48,7 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 function screen(kind: LessonScreen["kind"], activityTemplate: string | null = null): LessonScreen {
-  return { activityTemplate, brief: kind, kind, skills: [0], visual: null };
+  return { activityTemplate, brief: kind, kind, skills: [0], visual: null, visualKind: "none" };
 }
 
 function spec(screens: LessonScreen[]): LessonSpec {

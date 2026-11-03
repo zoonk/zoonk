@@ -15,6 +15,7 @@ function specOf(kinds: LessonScreenKind[]): LessonSpec {
       kind,
       skills: kind === "hook" ? [] : [0],
       visual: null,
+      visualKind: "none",
     })),
   };
 }

@@ -762,6 +762,7 @@ export const BASE_LESSONS = {
           kind: "hook",
           skills: [],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -770,6 +771,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           skills: [0],
           visual: "A thermometer from −5 °C to 5 °C with an arrow going up.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -777,6 +779,7 @@ export const BASE_LESSONS = {
           kind: "workedExample",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -784,6 +787,7 @@ export const BASE_LESSONS = {
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -791,6 +795,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: "numberLine",
@@ -798,6 +803,7 @@ export const BASE_LESSONS = {
           kind: "activity",
           skills: [0],
           visual: null,
+          visualKind: "template",
         },
         {
           activityTemplate: null,
@@ -805,6 +811,7 @@ export const BASE_LESSONS = {
           kind: "check",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -812,6 +819,7 @@ export const BASE_LESSONS = {
           kind: "application",
           skills: [0],
           visual: null,
+          visualKind: "none",
         },
       ],
       skills: [

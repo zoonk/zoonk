@@ -13,6 +13,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       kind: "hook",
       skills: [],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -21,6 +22,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       kind: "explanation",
       skills: [0],
       visual: "The python.org downloads page with the Windows download button highlighted.",
+      visualKind: "picture",
     },
     {
       activityTemplate: null,
@@ -30,6 +32,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       skills: [0],
       visual:
         "The installer's first screen with the 'Add python.exe to PATH' box ticked and Install Now highlighted.",
+      visualKind: "picture",
     },
     {
       activityTemplate: null,
@@ -38,6 +41,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       kind: "check",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
     {
       activityTemplate: null,
@@ -46,6 +50,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       kind: "workedExample",
       skills: [0],
       visual: "A Windows Terminal window showing python --version and a print line.",
+      visualKind: "picture",
     },
     {
       activityTemplate: null,
@@ -54,6 +59,7 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       kind: "application",
       skills: [0],
       visual: null,
+      visualKind: "none",
     },
   ],
   skills: [

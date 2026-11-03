@@ -24,6 +24,7 @@ import {
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
+import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
@@ -50,6 +51,7 @@ const screenSchema = z.object({
   kind: z.enum(LESSON_SCREEN_KINDS),
   skills: z.array(z.number().int()),
   visual: z.string().nullable(),
+  visualKind: z.enum(LESSON_VISUAL_KINDS),
 });
 
 const lessonSchema = z.object({
@@ -102,19 +104,21 @@ function formatList(items: readonly string[]): string {
 
 function buildSystemPrompt(params: LessonSpecParams): string {
   const novice = readsNoviceRules(params);
+  const visualFloor = getVisualFloor(params);
 
   const prompt = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       experienced: !novice,
+      floor: visualFloor !== "none",
       material: Boolean(params.material),
       novice,
-      private: getVisualFloor(params) === "drawn",
+      pictures: visualFloor === "pictures",
+      private: visualFloor === "drawn",
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
-      visualFloor: getVisualFloor(params) === "pictures",
     },
   });
 
@@ -203,7 +207,7 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "earlyCheck",
   "guess",
   "hook",
-  "hookPicture",
+  "hookVisual",
   "skillReference",
   "teachingVisual",
   "unpracticedSkill",

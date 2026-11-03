@@ -46,6 +46,7 @@ function spec(screenCount: number): LessonSpec {
       kind: "explanation" as const,
       skills: [0],
       visual: null,
+      visualKind: "none",
     })),
     skills: [
       {

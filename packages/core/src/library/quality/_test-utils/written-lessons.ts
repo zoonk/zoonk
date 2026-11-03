@@ -17,6 +17,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "hook",
         skills: [],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -24,6 +25,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: "A thermometer from −5 °C to 5 °C with an arrow going up.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -31,6 +33,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "workedExample",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -38,6 +41,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -45,6 +49,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "explanation",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: "numberLine",
@@ -52,6 +57,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "activity",
         skills: [0],
         visual: null,
+        visualKind: "template",
       },
       {
         activityTemplate: null,
@@ -59,6 +65,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "check",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
       {
         activityTemplate: null,
@@ -66,6 +73,7 @@ export function temperatureSpec(): LessonSpec {
         kind: "application",
         skills: [0],
         visual: null,
+        visualKind: "none",
       },
     ],
     skills: [

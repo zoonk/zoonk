@@ -3,7 +3,7 @@ import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
-import { getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
+import { type VisualFloor, getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
@@ -49,6 +49,7 @@ type PlannedLessonSpecs = {
   provenance: Parameters<typeof saveLessonSpecs>[0]["provenance"];
   scope: LessonSpecInputs["scope"];
   specs: LessonSpec[];
+  visualFloor: VisualFloor;
   workflowRunId: string;
 };
 
@@ -104,20 +105,19 @@ async function planLesson({
   });
 
   const novice = readsNoviceRules(inputs.prompt);
+  const visualFloor = getVisualFloor(inputs.prompt);
 
   return {
     analytics: context,
     homeChapterId: inputs.homeChapterId,
     lessonId,
     novice,
-    pictures: listPlannedPictures({
-      specs: data.lessons,
-      visualFloor: getVisualFloor(inputs.prompt),
-    }),
+    pictures: listPlannedPictures({ specs: data.lessons, visualFloor }),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,
     status: "planned",
+    visualFloor,
     workflowRunId,
   };
 }
@@ -191,7 +191,11 @@ async function saveLessonPlan({
     lessonId: planned.lessonId,
     provenance: planned.provenance,
     scope: planned.scope,
-    specs: dropDecorativePictures({ judged, specs: planned.specs }),
+    specs: dropDecorativePictures({
+      judged,
+      specs: planned.specs,
+      visualFloor: planned.visualFloor,
+    }),
     workflowRunId: planned.workflowRunId,
   });
 

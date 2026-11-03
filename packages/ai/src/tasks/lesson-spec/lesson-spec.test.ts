@@ -50,7 +50,7 @@ function rawSkill(topic: string) {
 }
 
 function rawScreen(kind: string, skills: number[], activityTemplate: string | null = null) {
-  return { activityTemplate, brief: kind, kind, skills, visual: null };
+  return { activityTemplate, brief: kind, kind, skills, visual: null, visualKind: "none" };
 }
 
 function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
@@ -59,7 +59,7 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
     description: "Temperatures below zero.",
     screens: kinds.map((kind, index) => ({
       ...rawScreen(kind, kind === "hook" ? [] : [1]),
-      visual: index < 2 ? "A thermometer below zero" : null,
+      ...(index < 2 ? { visual: "A thermometer below zero", visualKind: "picture" } : {}),
     })),
     skills: [rawSkill("Temperature")],
     supportMode: "explanationFirst",
@@ -138,6 +138,7 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "guess",
         "explanation",
         "workedExample",
         "explanation",
@@ -151,6 +152,7 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "guess",
         "workedExample",
         "check",
         "explanation",

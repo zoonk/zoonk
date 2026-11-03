@@ -11,6 +11,7 @@ import {
   getMaxLessonMinutes,
   getSupportModeFromScreens,
 } from "./lesson-spec-rules";
+import { type LessonVisualKind } from "./lesson-visuals";
 
 type SkillSegment = { screens: LessonScreen[]; skill: number };
 
@@ -131,19 +132,35 @@ function createFrameScreen({
   kind,
   skills,
   visual = null,
+  visualKind = "none",
 }: {
   brief: string;
   kind: LessonScreenKind;
   skills: number[];
   visual?: string | null;
+  visualKind?: LessonVisualKind;
 }): LessonScreen {
-  return { activityTemplate: null, brief, kind, skills, visual };
+  return { activityTemplate: null, brief, kind, skills, visual, visualKind };
 }
 
-/**
- * The first lesson keeps the original hook and the last the original application. A shared lesson
- * always opens on a picture, so a new hook shows its own scene.
- */
+/** A new hook shows its scene: a shared lesson's in a picture, a private one's in a table. */
+function createHook({
+  brief,
+  visualFloor,
+}: {
+  brief: string;
+  visualFloor: VisualFloor;
+}): LessonScreen {
+  const hook = { brief, kind: "hook" as const, skills: [0] };
+
+  if (visualFloor === "pictures") {
+    return createFrameScreen({ ...hook, visual: brief, visualKind: "picture" });
+  }
+
+  return createFrameScreen({ ...hook, visualKind: visualFloor === "drawn" ? "table" : "none" });
+}
+
+/** The first lesson keeps the original hook and the last the original application. */
 function getFrame({
   isFirst,
   isLast,
@@ -176,12 +193,7 @@ function getFrame({
         }),
     hook: hook
       ? remapScreen({ fallback: [0], remap, screen: hook })
-      : createFrameScreen({
-          brief: skills[0]?.useCase ?? "",
-          kind: "hook",
-          skills: [0],
-          visual: visualFloor === "pictures" ? skills[0]?.useCase : null,
-        }),
+      : createHook({ brief: skills[0]?.useCase ?? "", visualFloor }),
   };
 }
 

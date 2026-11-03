@@ -8,7 +8,14 @@ function screen(
   brief: string,
   visual: string | null = null,
 ): LessonSpec["screens"][number] {
-  return { activityTemplate: null, brief, kind, skills: kind === "hook" ? [] : [0], visual };
+  return {
+    activityTemplate: null,
+    brief,
+    kind,
+    skills: kind === "hook" ? [] : [0],
+    visual,
+    visualKind: visual ? "picture" : "none",
+  };
 }
 
 export const PRICE_IMPACT_SPEC: LessonSpec = {
