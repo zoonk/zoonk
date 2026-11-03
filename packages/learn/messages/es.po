@@ -157,7 +157,7 @@ msgstr "Tiempo diario"
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
-#: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -9193,6 +9193,12 @@ msgid "{document, select, notice {Your plan will follow the notice's subjects, t
 msgstr "{document, select, notice {Tu plan se basará en las materias, los temas y las fechas de la convocatoria.} other {Tu plan se basará en las secciones, los temas y las fechas de la guía oficial.}} Esto suele tardar unos minutos."
 
 #: src/onboarding/steps/notice-reading.tsx
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "Tu plan está listo"
+
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "O9QcuL"
 msgid "Your plan, from what you told us"
 msgstr "Tu plan, según lo que nos contaste"
@@ -9379,19 +9385,6 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "Estamos eligiendo qué aprenderás primero y distribuyéndolo entre tus días de estudio. Preparar una materia nueva puede tomar uno o dos minutos."
 
-#: src/onboarding/steps/plan-building.tsx
-msgctxt "Tezxsy"
-msgid "Your plan is ready"
-msgstr "Tu plan está listo"
-
-#: src/onboarding/steps/plan-building.tsx
-#: src/plan/focus-test/focus-test-result.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Ver tu plan"
-
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
@@ -9429,6 +9422,14 @@ msgstr "Se interrumpió la preparación de tu plan"
 msgctxt "09Xo2h"
 msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "Tus respuestas están guardadas. Vuelve a intentarlo para que tu plan esté listo cuando termines de responder."
+
+#: src/onboarding/steps/plan-wait.tsx
+#: src/plan/focus-test/focus-test-result.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Ver tu plan"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
