@@ -9,6 +9,7 @@ import { Callout } from "../../_components/callout";
 import { PageEyebrow } from "../../_components/page";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { useSentenceSpace } from "../../_utils/locale";
+import { useFormatDuration } from "../../_utils/time-format";
 import { TaskFrame } from "../../shell/task-frame";
 import { CharacterRow, MicNote } from "../conversation/conversation-parts";
 import { useCriterionGloss, useTaskRoleNoun } from "./exam-speaking-labels";
@@ -63,6 +64,7 @@ export function ExamTaskIntro({
   const gloss = useCriterionGloss();
   const space = useSentenceSpace();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
   const heading = useRef<HTMLHeadingElement>(null);
   const { character } = conversation;
 
@@ -91,6 +93,10 @@ export function ExamTaskIntro({
         <p className="text-pretty">{examTask.card.summary}</p>
         <p className="text-muted-foreground text-sm text-pretty">
           {t("{name} opens the call, and your card stays on screen.", { name: character.name })}
+          {space}
+          {t("It ends on its own after about {time}.", {
+            time: formatDuration(conversation.minutes),
+          })}
           {space}
           {t("Rated on {criteria}.", {
             criteria: format.list(

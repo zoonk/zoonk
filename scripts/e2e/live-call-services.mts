@@ -111,8 +111,17 @@ async function buildMain(): Promise<boolean> {
 
   const metrics = resolve(repository, "apps/main/.next-e2e-build-time.txt");
 
+  // macOS ships BSD time: -l reports elapsed seconds and maximum RSS in bytes.
   const built = await run({
-    args: ["-v", "-o", metrics, "pnpm", "--filter", "main", "build:e2e"],
+    args: [
+      process.platform === "darwin" ? "-l" : "-v",
+      "-o",
+      metrics,
+      "pnpm",
+      "--filter",
+      "main",
+      "build:e2e",
+    ],
     command: "/usr/bin/time",
   });
 

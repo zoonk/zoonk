@@ -288,17 +288,23 @@ private struct CourseFitSections: View {
   }
 }
 
-struct CheckLine: View {
-  let text: String
+struct CheckLine<Content: View>: View {
+  @ViewBuilder let content: Content
 
   var body: some View {
     Label {
-      Text(text)
+      content
     } icon: {
       Image(systemName: "checkmark")
         .foregroundStyle(.success)
         .accessibilityHidden(true)
     }
+  }
+}
+
+extension CheckLine where Content == Text {
+  init(text: String) {
+    self.init { Text(text) }
   }
 }
 

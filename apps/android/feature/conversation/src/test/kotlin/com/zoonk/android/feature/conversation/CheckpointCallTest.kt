@@ -50,7 +50,7 @@ class CheckpointCallTest {
 
         assertEquals(listOf(CallRequest.Checkpoint(block), CallRequest.Checkpoint(block)), harness.api.starts)
         assertEquals(listOf("run-1"), harness.runs.followed)
-        compose.onNodeWithText("Start the call").assertExists()
+        compose.onNodeWithText("Call Lucía").assertExists()
         assertTrue("A prepared call waits for its own Start", harness.client.connects.isEmpty())
     }
 
@@ -61,7 +61,7 @@ class CheckpointCallTest {
         compose.waitForIdle()
         val reads = harness.api.checkpointReads
 
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Call Lucía").performClick()
         compose.waitForIdle()
 
         assertEquals(reads + 1, harness.api.checkpointReads)
@@ -73,7 +73,7 @@ class CheckpointCallTest {
         harness.api.checkpoint = checkpointStatus("""{"status":"ready","conversationId":"${harness.id}"}""")
         show()
 
-        compose.onNodeWithText("Start the call").assertExists()
+        compose.onNodeWithText("Call Lucía").assertExists()
         assertTrue(harness.api.starts.isEmpty())
     }
 
@@ -84,7 +84,7 @@ class CheckpointCallTest {
         compose.waitForIdle()
         val reads = harness.api.checkpointReads
 
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Call Lucía").performClick()
         compose.waitForIdle()
 
         assertEquals(reads + 1, harness.api.checkpointReads)

@@ -236,7 +236,7 @@ private struct WorkedExampleStepView: View {
           VStack(alignment: .leading, spacing: 4) {
             LessonTextBlocks(solved.text)
             if let math = solved.math {
-              Text(LessonMath.attributed(math))
+              Text(LessonMath.typeset(math))
             }
           }
         }
@@ -316,7 +316,7 @@ private struct TypedAnswerStepView: View {
       }
     case .turn:
       LessonAnswerField(
-        label: Text(LessonRichText.attributed(content.question)),
+        label: Text(verbatim: LessonRichText.spoken(content.question)),
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,
@@ -470,7 +470,8 @@ private struct SpokenAnswerStepView: View {
       }
 
       LessonAnswerField(
-        label: Text(LessonRichText.attributed(content.prompt)), text: context.answer?.text ?? "",
+        label: Text(verbatim: LessonRichText.spoken(content.prompt)),
+        text: context.answer?.text ?? "",
         isLocked: context.isLocked, isFocused: $isFocused, check: context.check
       ) {
         context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))

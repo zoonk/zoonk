@@ -129,7 +129,10 @@ describe("speaking mocks", () => {
 
     vi.mocked(checkConversationObjectives).mockResolvedValue({
       ...GENERATED,
-      data: { met: [{ label: "Listen and Repeat", learnerWords: TURNS[1]?.text ?? "" }] },
+      data: {
+        goodbye: false,
+        met: [{ label: "Listen and Repeat", learnerWords: TURNS[1]?.text ?? "" }],
+      },
       userPrompt: "",
     });
   });
@@ -284,7 +287,7 @@ describe("speaking mocks", () => {
     vi.mocked(checkConversationObjectives).mockImplementation(async () => {
       await Promise.race([scoring.promise, sleep(300)]);
       order.push("goals checked");
-      return { ...GENERATED, data: { met: [] }, userPrompt: "" };
+      return { ...GENERATED, data: { goodbye: false, met: [] }, userPrompt: "" };
     });
 
     const result = await completeLanguageConversation({

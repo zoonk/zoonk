@@ -54,14 +54,10 @@ type LiveConversationRole =
   | { exam: SpeakingMockExam; kind: "speakingMock" }
   | { examTask: ExamTaskRole; kind: "examTask" };
 
-export type LiveConversationInstructionsParams = LiveConversationRole & {
-  scenario: GenerateConversationScenarioSchema;
-  level: CefrLevel;
-  /** 1 to 5. */
-  minutes: number;
-  targetLanguage: string;
-  learnerLanguage: string;
-};
+type LiveConversationLanguages = { targetLanguage: string; learnerLanguage: string };
+
+export type LiveConversationInstructionsParams = LiveConversationRole &
+  LiveConversationLanguages & { scenario: GenerateConversationScenarioSchema; level: CefrLevel };
 
 const EXAM_TASK_TEMPLATES = {
   examiner: selectPromptVariants({
@@ -132,10 +128,6 @@ function formatObjectives(objectives: GenerateConversationScenarioSchema["object
     .join("\n");
 }
 
-function formatDuration(minutes: number): string {
-  return minutes === 1 ? "1 minute" : `${minutes} minutes`;
-}
-
 function formatCard(card: ExamTaskRole["card"]): string {
   return [...card.instructions, ...card.prompts.map((prompt) => `  - ${prompt}`)]
     .map((line) => `  ${line}`)
@@ -159,7 +151,9 @@ function getExamTaskValues(params: LiveConversationRole): Record<string, string>
 }
 
 /** An exam's examiner speaks its own variety: Cambridge's British English, DELE's Spain Spanish. */
-function getTargetLanguageName(params: LiveConversationInstructionsParams): string {
+export function getLiveConversationLanguageName(
+  params: LiveConversationRole & LiveConversationLanguages,
+): string {
   if (params.kind === "examTask") {
     return SPEAKING_EXAM_VARIETIES[params.examTask.exam];
   }
@@ -173,14 +167,14 @@ function getTargetLanguageName(params: LiveConversationInstructionsParams): stri
 export function buildLiveConversationInstructions(
   params: LiveConversationInstructionsParams,
 ): string {
-  const { learnerLanguage, minutes, scenario, targetLanguage } = params;
+  const { learnerLanguage, scenario, targetLanguage } = params;
 
   const { userLanguageName } = getLanguagePromptContext({
     targetLanguage,
     userLanguage: learnerLanguage,
   });
 
-  const targetLanguageName = getTargetLanguageName(params);
+  const targetLanguageName = getLiveConversationLanguageName(params);
   const { levelRules, template: roleTemplate } = getRoleRules(params);
 
   const role = fillTemplate(roleTemplate, {
@@ -198,7 +192,6 @@ export function buildLiveConversationInstructions(
   const instructions = fillTemplate(
     template.replace("{{ROLE}}", () => role.trim()),
     {
-      DURATION: formatDuration(minutes),
       LEARNER_LANGUAGE: userLanguageName,
       LEVEL_RULES: levelRules,
       OBJECTIVES: formatObjectives(scenario.objectives),

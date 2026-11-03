@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getDailySpendBudgetMicros, getEstimatedCostMicros, getUsageRule } from "../limits";
-import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
+import {
+  getDailySpendBudgetMicros,
+  getEstimatedCostMicros,
+  getLiveCallCostMicros,
+  getUsageRule,
+} from "../limits";
+import { evaluateUsage, getCallTimeLeft } from "./evaluate-usage";
 import { type UsageCounts } from "./usage-counts";
 
 const NOW = new Date("2026-09-15T12:00:00Z");
@@ -96,57 +101,16 @@ describe(evaluateUsage, () => {
   });
 });
 
-function hold({
-  seconds = 120,
-  tier,
-  usedThisMonth = 0,
-  usedToday = 0,
-}: {
-  seconds?: number;
-  tier: "free" | "plus";
-  usedThisMonth?: number;
-  usedToday?: number;
-}) {
-  return getCallHold({
-    left: getCallTimeLeft({ kind: "conversation", tier, usedThisMonth, usedToday }),
-    seconds,
-  });
-}
-
 function plusLeft(usedThisMonth: number) {
   return getCallTimeLeft({ kind: "conversation", tier: "plus", usedThisMonth, usedToday: 0 });
 }
 
-describe(getCallHold, () => {
-  it("holds a call's length, or what's left of the plan's call time today", () => {
-    expect([
-      hold({ tier: "free" }),
-      hold({ tier: "free", usedThisMonth: 30, usedToday: 30 }),
-      hold({ tier: "free", usedThisMonth: 130, usedToday: 130 }),
-      hold({ tier: "plus", usedThisMonth: 210, usedToday: 210 }),
-    ]).toStrictEqual([
-      { heldSeconds: 120, shortenedBy: null },
-      { heldSeconds: 90, shortenedBy: "day" },
-      { heldSeconds: 0, shortenedBy: "day" },
-      { heldSeconds: 120, shortenedBy: null },
-    ]);
-  });
-
-  it("holds what's left of the month's call time when it runs out before the day's", () => {
+describe(getCallTimeLeft, () => {
+  it("names what's left of the month when it runs out before the day's", () => {
     expect([plusLeft(0), plusLeft(4500)]).toStrictEqual([
       { limit: 1200, period: "day", seconds: 1200 },
       { limit: 5220, period: "month", seconds: 720 },
     ]);
-
-    expect(hold({ tier: "plus", usedThisMonth: 5130 })).toStrictEqual({
-      heldSeconds: 90,
-      shortenedBy: "month",
-    });
-
-    expect(hold({ tier: "free", usedThisMonth: 210 })).toStrictEqual({
-      heldSeconds: 90,
-      shortenedBy: "month",
-    });
   });
 
   it("has nothing to cap for uses that don't run for a time", () => {
@@ -159,37 +123,65 @@ describe(getCallHold, () => {
 describe("the plan's call time", () => {
   const claim = { costMicros: 0, generated: false, kind: "conversation", now: NOW } as const;
 
-  it("refuses a call once less than a minute of the day's call time is left", () => {
+  it("admits a call while any of the day's call time is left", () => {
     expect(
-      evaluateUsage({ ...claim, counts: counts({ secondsToday: 60 }), tier: "free" }),
+      evaluateUsage({ ...claim, counts: counts({ secondsToday: 119 }), tier: "free" }),
     ).toStrictEqual({ status: "allowed" });
 
     expect(
-      evaluateUsage({ ...claim, counts: counts({ secondsToday: 61 }), tier: "free" }),
+      evaluateUsage({ ...claim, counts: counts({ secondsToday: 120 }), tier: "free" }),
     ).toStrictEqual({
       limit: { limit: 120, period: "day", resource: "callSeconds", tier: "free" },
       status: "limitReached",
     });
   });
 
-  it("refuses a call once less than a minute of the month's call time is left, whatever today's", () => {
+  it("admits a call while any of the month's call time is left, whatever today's", () => {
     expect(
-      evaluateUsage({ ...claim, counts: counts({ secondsThisMonth: 241 }), tier: "free" }),
-    ).toStrictEqual({
-      limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
-      status: "limitReached",
+      (
+        [
+          { secondsThisMonth: 299, tier: "free" },
+          { secondsThisMonth: 300, tier: "free" },
+          { secondsThisMonth: 5219, tier: "plus" },
+          { secondsThisMonth: 5220, tier: "plus" },
+        ] as const
+      ).map(({ secondsThisMonth, tier }) =>
+        evaluateUsage({ ...claim, counts: counts({ secondsThisMonth }), tier }),
+      ),
+    ).toStrictEqual([
+      { status: "allowed" },
+      {
+        limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+        status: "limitReached",
+      },
+      { status: "allowed" },
+      {
+        limit: { limit: 5220, period: "month", resource: "callSeconds", tier: "plus" },
+        status: "limitReached",
+      },
+    ]);
+  });
+
+  it("admits a whole call while any of the day's AI budget is left", () => {
+    const budget = getDailySpendBudgetMicros("free");
+
+    const costMicros = getEstimatedCostMicros({
+      generated: false,
+      kind: "conversation",
+      seconds: 120,
     });
 
     expect(
-      evaluateUsage({ ...claim, counts: counts({ secondsThisMonth: 5161 }), tier: "plus" }),
-    ).toStrictEqual({
-      limit: { limit: 5220, period: "month", resource: "callSeconds", tier: "plus" },
-      status: "limitReached",
-    });
-
-    expect(
-      evaluateUsage({ ...claim, counts: counts({ secondsThisMonth: 5160 }), tier: "plus" }),
-    ).toStrictEqual({ status: "allowed" });
+      [budget - 1, budget].map((spentTodayMicros) =>
+        evaluateUsage({ ...claim, costMicros, counts: counts({ spentTodayMicros }), tier: "free" }),
+      ),
+    ).toStrictEqual([
+      { status: "allowed" },
+      {
+        limit: { limit: budget, period: "day", resource: "aiSpend", tier: "free" },
+        status: "limitReached",
+      },
+    ]);
   });
 
   it("names the month when both run out, since tomorrow brings no calls back", () => {
@@ -210,14 +202,10 @@ describe("the plan's call time", () => {
     ]);
   });
 
-  it("keeps a month of Plus's calls within $6 even if every call is a minute long", () => {
+  it("keeps the talk in a month of Plus's call minutes within $6 even if every call is a minute long", () => {
     const monthSeconds = getUsageRule({ kind: "conversation", tier: "plus" }).monthSeconds ?? 0;
 
-    const oneMinuteCall = getEstimatedCostMicros({
-      generated: false,
-      kind: "conversation",
-      seconds: 70,
-    });
+    const oneMinuteCall = getLiveCallCostMicros(70);
 
     expect((monthSeconds / 60) * oneMinuteCall).toBeLessThanOrEqual(6_000_000);
     expect((monthSeconds / 60 + 1) * oneMinuteCall).toBeGreaterThan(6_000_000);

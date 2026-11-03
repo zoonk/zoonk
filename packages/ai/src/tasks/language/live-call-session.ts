@@ -52,12 +52,16 @@ export type LiveCallSession = { sdp: string; sessionId: string };
 /**
  * Callers authorize and fence the reservation; browser configuration never enters this boundary.
  * Rejects with `LiveCallCreationRefusedError` only when OpenAI itself refused the request.
+ * `greeting` starts the session as developer input, so the character can speak first as soon as the
+ * app's commentary cue arrives.
  */
 export async function createLiveCallSession({
+  greeting,
   instructions,
   sdp,
   voice,
 }: {
+  greeting: string;
   instructions: string;
   sdp: string;
   voice: string;
@@ -73,6 +77,7 @@ export async function createLiveCallSession({
             dataChannel: {
               allowedClientEvents: [
                 "session.close",
+                "session.commentary.append",
                 "session.thinking.append",
                 "session.instructions.append",
                 "session.input_audio.mute",
@@ -85,6 +90,7 @@ export async function createLiveCallSession({
                 { type: "session.input_transcript.delta" },
                 { type: "session.output_transcript.delta" },
                 { type: "session.delegation.created" },
+                { type: "session.commentary.appended" },
                 { type: "session.thinking.appended" },
                 { type: "session.instructions.appended" },
                 { type: "session.input_audio.muted" },
@@ -94,6 +100,13 @@ export async function createLiveCallSession({
             },
           },
           delegation: { type: "client" },
+          input: [
+            {
+              content: [{ text: greeting, type: "input_text" }],
+              role: "developer",
+              type: "message",
+            },
+          ],
           store: false,
         },
       },
@@ -121,8 +134,8 @@ async function isAlreadyEnded(response: Response): Promise<boolean> {
 export type LiveCallHangup = "alreadyEnded" | "hungUp";
 
 /**
- * Resolves once the session is over, saying whether it already was; rejects when that isn't known,
- * so the caller keeps the call open and tries again.
+ * Resolves once the session is over, saying whether it already was; rejects with the provider's
+ * status and body when its answer doesn't say.
  */
 export async function hangUpLiveCallSession(providerSessionId: string): Promise<LiveCallHangup> {
   // The SDK has no hangup helper: the session's REST path sits beside its WebSocket one.
@@ -140,9 +153,10 @@ export async function hangUpLiveCallSession(providerSessionId: string): Promise<
     return "hungUp";
   }
 
-  if (await isAlreadyEnded(response)) {
+  if (await isAlreadyEnded(response.clone())) {
     return "alreadyEnded";
   }
 
-  throw new Error(`The provider didn't hang up the Live session (${response.status})`);
+  const body = await response.text().catch(() => "");
+  throw new Error(`The provider didn't hang up the Live session (${response.status}): ${body}`);
 }

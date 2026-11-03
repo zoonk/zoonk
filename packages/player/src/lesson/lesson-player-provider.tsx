@@ -29,6 +29,7 @@ import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
 import { useExampleLines } from "./use-example-lines";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
+import { usePreloadActivityCanvases } from "./use-preload-activity-canvases";
 import { CANT_WRITE_TODAY, isChosenToday } from "./use-today-choice";
 
 function getOptionIds(step: PlayableLibraryStep): string[] {
@@ -151,6 +152,7 @@ export function LessonPlayerProvider({
 
   useAbandonTracking({ state, track });
   usePreloadMath(lesson.steps);
+  usePreloadActivityCanvases(lesson.steps);
   const screen = useMemo(() => getLessonScreen(state), [state]);
   const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 

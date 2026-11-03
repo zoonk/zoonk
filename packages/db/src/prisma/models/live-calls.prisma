@@ -34,6 +34,8 @@ model LiveCallConnection {
   endedAt           DateTime?          @map("ended_at")
   /// Set while `starting` when an end was asked for before the session existed.
   endReason         LiveCallEndReason? @map("end_reason")
+  /// Ended without OpenAI confirming its session was over, so `costMicros` is an estimate.
+  endUnconfirmed    Boolean            @default(false) @map("end_unconfirmed")
   createdAt         DateTime           @default(now()) @map("created_at")
 
   @@index([userId, createdAt])

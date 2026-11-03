@@ -10,6 +10,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.models.LanguageConversationConnectInput
+import com.zoonk.api.models.LanguageConversationObjectiveCheck
 import com.zoonk.api.models.LanguageConversationObjectiveCheckInput
 import com.zoonk.api.models.LanguageConversationSetup
 import com.zoonk.api.models.LanguageConversationTurn
@@ -36,8 +37,8 @@ interface LiveCallClient {
     /** Has the server hang up: whether it already had at the call's deadline, null if unconfirmed. */
     suspend fun end(connectionId: UUID): Boolean?
 
-    /** Every goal met so far, from what was said; null when the check didn't run. */
-    suspend fun checkObjectives(turns: List<LanguageConversationTurn>): List<String>?
+    /** What was said checked against the goals: every goal met so far, a mutual goodbye, and what to tell the character; null when it didn't run. */
+    suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck?
 }
 
 /** Mirrors main's `readConnectionRefusal`. A [Limit] is always [Limit.Reached] with a period. */
@@ -182,8 +183,8 @@ class LiveConversationCalls(
         }
     }
 
-    override suspend fun checkObjectives(turns: List<LanguageConversationTurn>): List<String>? {
-        val met =
+    override suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck? {
+        val check =
             cache.mutate { session ->
                 perform {
                     api.clients(session).language.checkLanguageConversationObjectives(
@@ -192,6 +193,6 @@ class LiveConversationCalls(
                     )
                 }
             }
-        return (met as? MutationResult.Done)?.value?.objectivesMet
+        return (check as? MutationResult.Done)?.value
     }
 }

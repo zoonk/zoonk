@@ -5,8 +5,15 @@ import { logError } from "@zoonk/utils/logger";
 import { type ConversationTurn } from "../conversation-contract";
 import { type SavedScenario } from "./conversation-view";
 
-/** A model failure leaves objectives unmet; the call's review reads the whole transcript again. */
-export async function findNewlyMetObjectives({
+export type ObjectiveCheck = { goodbye: boolean; met: string[] };
+
+export const NOTHING_FOUND: ObjectiveCheck = { goodbye: false, met: [] };
+
+/**
+ * `met` holds the newly met labels. A model failure leaves objectives unmet and the call going;
+ * the call's review reads the whole transcript again.
+ */
+export async function runObjectiveCheck({
   row,
   scenario,
   turns,
@@ -16,13 +23,13 @@ export async function findNewlyMetObjectives({
   scenario: SavedScenario;
   turns: ConversationTurn[];
   userId: string;
-}): Promise<string[]> {
+}): Promise<ObjectiveCheck> {
   const open = scenario.objectives.filter(
     (objective) => !row.objectivesMet.includes(objective.label),
   );
 
   if (open.length === 0 || !turns.some((turn) => turn.speaker === "learner")) {
-    return [];
+    return NOTHING_FOUND;
   }
 
   try {
@@ -41,9 +48,12 @@ export async function findNewlyMetObjectives({
       turns,
     });
 
-    return [...new Set(data.met.map((objective) => objective.label))];
+    return {
+      goodbye: data.goodbye,
+      met: [...new Set(data.met.map((objective) => objective.label))],
+    };
   } catch (error) {
     logError("Checking a call's objectives failed", error);
-    return [];
+    return NOTHING_FOUND;
   }
 }

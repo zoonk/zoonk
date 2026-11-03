@@ -1,10 +1,10 @@
 "use client";
 
 import { getPageRetry } from "@/components/errors/page-retry";
-import { captureException } from "@sentry/nextjs";
+import { reportError } from "@/lib/sentry/report-error";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
-import { Suspense, lazy, useEffect } from "react";
 import "./globals.css";
+import { Suspense, lazy, useEffect } from "react";
 
 const PAGE_TITLE = "Zoonk";
 
@@ -19,7 +19,7 @@ export default function GlobalError({
   retry: () => void;
 }) {
   useEffect(() => {
-    captureException(error);
+    reportError(error);
   }, [error]);
 
   return (

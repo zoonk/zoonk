@@ -2,6 +2,7 @@ import { type LanguageConversation, type TransactionClient, sql } from "@zoonk/d
 import {
   getCallExposureMicros,
   getEndingCharge,
+  getTalkEndsAt,
 } from "../../language/conversations/_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "../../language/conversations/_utils/live-call-plus";
 import { settleLiveCall } from "../../language/conversations/_utils/settle-live-call";
@@ -11,6 +12,7 @@ import {
 } from "../../language/conversations/live-call-contract";
 import {
   LIVE_CALL_ATTEMPTS_PER_DAY,
+  LIVE_CALL_WRAP_UP_SECONDS,
   getCallMonthlyBudgetMicros,
   getLiveCallReservationMicros,
 } from "../limits";
@@ -19,6 +21,7 @@ import { type EntitlementViewer } from "./entitlement-viewer";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
 
 /** Must escape the transaction so a refused reservation rolls back its claimed call time. */
 export class LiveCallReservationRefusedError extends Error {
@@ -30,8 +33,15 @@ export class LiveCallReservationRefusedError extends Error {
   }
 }
 
-/** A checkpoint keeps the window its first connection opened; other calls start over. */
-async function requestedCallSeconds({
+type RequestedCall = { reconnect: boolean; seconds: number };
+
+/**
+ * A call that connected finishes, so a reconnect keeps what's left of its talk window, whatever the
+ * allowance; a connection with no provider session started nothing. A connection made inside a
+ * window continues it, one made after opens a new one. Once the window is over, a checkpoint has
+ * ended and other calls start over.
+ */
+async function requestCall({
   conversation,
   now,
   transaction,
@@ -39,21 +49,32 @@ async function requestedCallSeconds({
   conversation: LanguageConversation;
   now: Date;
   transaction: TransactionClient;
-}): Promise<number> {
-  const length = conversation.minutes * 60;
-
-  if (conversation.kind !== "checkpoint") {
-    return length;
-  }
-
-  const first = await transaction.liveCallConnection.findFirst({
+}): Promise<RequestedCall | null> {
+  const connected = await transaction.liveCallConnection.findMany({
     orderBy: { createdAt: "asc" },
-    where: { conversationId: conversation.id },
+    where: { conversationId: conversation.id, providerSessionId: { not: null } },
   });
 
-  return first
-    ? Math.max(0, Math.floor((first.deadlineAt.getTime() - now.getTime()) / MS_PER_SECOND))
-    : length;
+  const windowEndsAt = connected.reduce<number | null>(
+    (endsAt, connection) =>
+      endsAt !== null && connection.createdAt.getTime() < endsAt
+        ? endsAt
+        : getTalkEndsAt(connection),
+    null,
+  );
+
+  const left =
+    windowEndsAt === null ? 0 : Math.floor((windowEndsAt - now.getTime()) / MS_PER_SECOND);
+
+  if (left > 0) {
+    return { reconnect: true, seconds: left };
+  }
+
+  if (windowEndsAt !== null && conversation.kind === "checkpoint") {
+    return null;
+  }
+
+  return { reconnect: false, seconds: conversation.minutes * SECONDS_PER_MINUTE };
 }
 
 async function clearOpenConnection({
@@ -95,14 +116,12 @@ async function clearOpenConnection({
     : { status: "previousConnectionClosing" };
 }
 
-async function fitsMonthlyBudget({
+async function hasMonthlyBudgetLeft({
   now,
-  reservedMicros,
   transaction,
   viewer,
 }: {
   now: Date;
-  reservedMicros: number;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<boolean> {
@@ -118,7 +137,7 @@ async function fitsMonthlyBudget({
     0,
   );
 
-  return exposure + reservedMicros <= getCallMonthlyBudgetMicros(viewer.tier);
+  return exposure < getCallMonthlyBudgetMicros(viewer.tier);
 }
 
 async function newConnectionId(transaction: TransactionClient): Promise<string> {
@@ -155,7 +174,7 @@ export async function reserveLiveCall({
     return { status: "conversationEnded" };
   }
 
-  if (isPlusOnlyLiveCall(conversation.kind) && viewer.tier !== "plus") {
+  if (isPlusOnlyLiveCall(conversation) && viewer.tier !== "plus") {
     return { status: "plusRequired" };
   }
 
@@ -178,31 +197,32 @@ export async function reserveLiveCall({
     return { period: "day", status: "connectionLimitReached" };
   }
 
-  const seconds = await requestedCallSeconds({ conversation, now, transaction });
+  const call = await requestCall({ conversation, now, transaction });
 
-  if (seconds === 0) {
+  if (!call) {
     return { status: "conversationEnded" };
   }
 
-  return holdCallTime({ conversation, now, seconds, transaction, viewer });
+  return holdCallTime({ ...call, conversation, now, transaction, viewer });
 }
 
 async function holdCallTime({
   conversation,
   now,
+  reconnect,
   seconds,
   transaction,
   viewer,
-}: {
+}: RequestedCall & {
   conversation: LanguageConversation;
   now: Date;
-  seconds: number;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
   const id = await newConnectionId(transaction);
 
   const { decision } = await claimUsageInTransaction({
+    continuing: reconnect,
     generated: false,
     kind: "conversation",
     now,
@@ -216,15 +236,7 @@ async function holdCallTime({
     return decision;
   }
 
-  const heldSeconds = decision.heldSeconds ?? seconds;
-
-  if (heldSeconds === 0) {
-    throw new LiveCallReservationRefusedError({ status: "conversationEnded" });
-  }
-
-  const costMicros = getLiveCallReservationMicros(heldSeconds);
-
-  if (!(await fitsMonthlyBudget({ now, reservedMicros: costMicros, transaction, viewer }))) {
+  if (!reconnect && !(await hasMonthlyBudgetLeft({ now, transaction, viewer }))) {
     throw new LiveCallReservationRefusedError({
       limit: {
         limit: getCallMonthlyBudgetMicros(viewer.tier),
@@ -236,23 +248,17 @@ async function holdCallTime({
     });
   }
 
-  const [connection] = await Promise.all([
-    transaction.liveCallConnection.create({
-      data: {
-        conversationId: conversation.id,
-        costMicros,
-        createdAt: now,
-        deadlineAt: new Date(now.getTime() + heldSeconds * MS_PER_SECOND),
-        heldSeconds,
-        id,
-        userId: viewer.userId,
-      },
-    }),
-    transaction.usageRecord.update({
-      data: { costMicros },
-      where: { userUsageTarget: { kind: "conversation", targetId: id, userId: viewer.userId } },
-    }),
-  ]);
+  const connection = await transaction.liveCallConnection.create({
+    data: {
+      conversationId: conversation.id,
+      costMicros: getLiveCallReservationMicros(seconds),
+      createdAt: now,
+      deadlineAt: new Date(now.getTime() + (seconds + LIVE_CALL_WRAP_UP_SECONDS) * MS_PER_SECOND),
+      heldSeconds: seconds,
+      id,
+      userId: viewer.userId,
+    },
+  });
 
-  return { connection, endsAtLimit: decision.shortenedBy ?? null, status: "reserved" };
+  return { connection, status: "reserved" };
 }

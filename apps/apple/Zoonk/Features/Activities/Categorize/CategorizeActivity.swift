@@ -205,8 +205,8 @@ private struct CategorizeCanvas: View {
     .focused($focus, equals: .group(group.id))
     .accessibilityFocused($voiceOverFocus, equals: .group(group.id))
     // Named by what it shows, so Voice Control's "Tap <label>" finds it.
-    .accessibilityLabel(Text(LessonRichText.attributed(group.label)))
-    .accessibilityHint(Text(LessonRichText.attributed(group.rule)))
+    .accessibilityLabel(Text(verbatim: LessonRichText.spoken(group.label)))
+    .accessibilityHint(Text(verbatim: LessonRichText.spoken(group.rule)))
   }
 
   /// A plain chip sizes the row before the group's first card, and math in a card (raised or
@@ -298,7 +298,7 @@ private struct CategorizeCanvas: View {
           Button {
             move(item, to: other)
           } label: {
-            Text(LessonRichText.attributed(other.label))
+            Text(LessonRichText.typeset(other.label))
           }
         }
       } header: {
@@ -356,13 +356,13 @@ private struct CategorizeCanvas: View {
     sorting.sort(card.id, into: group.id)
     context.setAnswer(CategorizePlacements.answer(items, sorting.placements))
 
-    let item = LessonRichText.plain(card.text)
-    let label = LessonRichText.plain(group.label)
+    let item = LessonRichText.spoken(card.text)
+    let label = LessonRichText.spoken(group.label)
 
     if let next = sorting.cardInHand(from: items) {
       announceActivityChange(
         String(
-          localized: "\(item) is in \(label). Next: \(LessonRichText.plain(next.text)).",
+          localized: "\(item) is in \(label). Next: \(LessonRichText.spoken(next.text)).",
           table: "Activities", comment: "VoiceOver, after a card is sorted, with the next card"))
     } else {
       announceActivityChange(
@@ -388,7 +388,7 @@ private struct CategorizeCanvas: View {
 
     announceActivityChange(
       String(
-        localized: "Took back \(LessonRichText.plain(item.text)).", table: "Activities",
+        localized: "Took back \(LessonRichText.spoken(item.text)).", table: "Activities",
         comment: "VoiceOver, after Undo puts the last card sorted back in hand"))
 
     if sorting.history.isEmpty, let first = fields.groups.first {
@@ -407,7 +407,8 @@ private struct CategorizeCanvas: View {
     context.setAnswer(CategorizePlacements.answer(items, sorting.placements))
     announceActivityChange(
       String(
-        localized: "\(LessonRichText.plain(item.text)) is in \(LessonRichText.plain(group.label)).",
+        localized:
+          "\(LessonRichText.spoken(item.text)) is in \(LessonRichText.spoken(group.label)).",
         table: "Activities",
         comment: "VoiceOver, after the last card is sorted or a card is moved"))
 

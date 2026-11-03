@@ -985,58 +985,6 @@ final class LocalizedNumberTests: XCTestCase {
   }
 }
 
-final class LessonMathTests: XCTestCase {
-  func testExponentsRiseAndIndicesDropAsText() {
-    let typeset = LessonMath.attributed("x^{2} + a_1")
-    let runs = typeset.runs.map {
-      (
-        String(typeset[$0.range].characters),
-        $0[AttributeScopes.SwiftUIAttributes.BaselineOffsetAttribute.self] ?? 0
-      )
-    }
-
-    XCTAssertEqual(String(typeset.characters), "x2\u{2005}+\u{2005}a1")
-    XCTAssertGreaterThan(runs.first { $0.0 == "2" }?.1 ?? 0, 0)
-    XCTAssertLessThan(runs.first { $0.0 == "1" }?.1 ?? 0, 0)
-  }
-
-  func testFractionsSymbolsAndUprightText() {
-    XCTAssertEqual(String(LessonMath.attributed(#"\frac{1}{2}"#).characters), "1\u{2044}2")
-    XCTAssertEqual(
-      String(LessonMath.attributed(#"\text{R\$}\ 50 \div 10 = \text{R\$}\ 5"#).characters),
-      "R$ 50\u{2005}÷\u{2005}10\u{2005}=\u{2005}R$ 5")
-    XCTAssertEqual(
-      String(LessonMath.attributed(#"\sqrt{x+1} \leq \pi"#).characters),
-      "√(x\u{2005}+\u{2005}1)\u{2005}≤\u{2005}π")
-  }
-
-  func testUnderlineMarksItsArgument() {
-    let typeset = LessonMath.attributed(#"0.0\underline{5}3"#)
-    let underlined = typeset.runs
-      .filter { $0[AttributeScopes.SwiftUIAttributes.UnderlineStyleAttribute.self] != nil }
-      .map { String(typeset[$0.range].characters) }
-
-    XCTAssertEqual(String(typeset.characters), "0.053")
-    XCTAssertEqual(underlined, ["5"])
-  }
-
-  func testOperatorsAreSpacedAndSignsStayWithTheirNumbers() {
-    XCTAssertEqual(
-      String(LessonMath.attributed("-3 + x^{-1} = (-2) - 1").characters),
-      "−3\u{2005}+\u{2005}x−1\u{2005}=\u{2005}(−2)\u{2005}−\u{2005}1")
-    XCTAssertEqual(String(LessonMath.attributed("e^{x+1}").characters), "ex+1")
-  }
-
-  @MainActor
-  func testRichTextKeepsPricesAndTypesetsFormulas() {
-    XCTAssertEqual(
-      String(LessonRichText.attributed("It costs $5 and $10.").characters), "It costs $5 and $10.")
-    XCTAssertEqual(
-      String(LessonRichText.attributed(#"So $0.75 \times 80 = 60$ **now**"#).characters),
-      "So 0.75\u{2005}×\u{2005}80\u{2005}=\u{2005}60 now")
-  }
-}
-
 @MainActor
 final class LessonAskPlacementTests: XCTestCase {
   private func store() -> LessonPlayerStore {

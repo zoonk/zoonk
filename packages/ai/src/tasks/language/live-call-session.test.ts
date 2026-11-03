@@ -9,7 +9,12 @@ vi.mock("server-only", () => ({}));
 /** Only the HTTP boundary is replaced: the real SDK turns each response into its error. */
 vi.mock("../../_utils/block-test-provider-fetch", () => ({ blockTestProviderFetch: vi.fn() }));
 
-const SESSION = { instructions: "Be Linda.", sdp: "v=0\r\n", voice: "marin" };
+const SESSION = {
+  greeting: "Greet the caller now.",
+  instructions: "Be Linda.",
+  sdp: "v=0\r\n",
+  voice: "marin",
+};
 
 function respond(status: number, body: string) {
   vi.mocked(blockTestProviderFetch).mockResolvedValue(
@@ -38,6 +43,37 @@ describe(createLiveCallSession, () => {
     await expect(createLiveCallSession(SESSION)).resolves.toStrictEqual({
       sdp: "v=0\r\ns=answer\r\n",
       sessionId: "live_123",
+    });
+  });
+
+  it("starts the session with the greeting as developer input and lets the app send commentary", async () => {
+    respond(
+      201,
+      JSON.stringify({
+        session: { id: "live_123" },
+        transport: { sdp: "v=0\r\ns=answer\r\n", type: "webrtc" },
+      }),
+    );
+
+    await createLiveCallSession(SESSION);
+
+    const [, init] = vi.mocked(blockTestProviderFetch).mock.calls[0] ?? [];
+    const { session } = await new Response(init?.body).json();
+
+    expect(session.input).toStrictEqual([
+      {
+        content: [{ text: "Greet the caller now.", type: "input_text" }],
+        role: "developer",
+        type: "message",
+      },
+    ]);
+
+    expect(session.client.data_channel.allowed_client_events).toContain(
+      "session.commentary.append",
+    );
+
+    expect(session.client.data_channel.allowed_server_events).toContainEqual({
+      type: "session.commentary.appended",
     });
   });
 
@@ -132,9 +168,13 @@ describe(hangUpLiveCallSession, () => {
     [404, "<html><body>Not Found</body></html>"],
     [500, JSON.stringify({ error: { message: "Server error", type: "error" } })],
     [429, JSON.stringify({ error: { message: "Too many requests", type: "error" } })],
-  ])("rejects a %i answer, since the session may still run", async (status, body) => {
-    respond(status, body);
+    [503, ""],
+  ])(
+    "rejects a %i answer with what it said, since the session may still run",
+    async (status, body) => {
+      respond(status, body);
 
-    await expect(hangUpLiveCallSession("live_123")).rejects.toThrow(String(status));
-  });
+      await expect(hangUpLiveCallSession("live_123")).rejects.toThrow(`(${status}): ${body}`);
+    },
+  );
 });

@@ -575,7 +575,7 @@ describe("a language checkpoint's challenge intro", () => {
       call: {
         goals: RENTING_SCENARIO.objectives,
         level: "A2",
-        minutes: 1,
+        minutes: 2,
         targetLanguage: "en",
         title: RENTING_SCENARIO.title,
       },
@@ -607,7 +607,7 @@ describe("a language checkpoint's challenge intro", () => {
       call: {
         goals: RENTING_SCENARIO.objectives,
         level: "A2",
-        minutes: 1,
+        minutes: 2,
         targetLanguage: "en",
         title: RENTING_SCENARIO.title,
       },

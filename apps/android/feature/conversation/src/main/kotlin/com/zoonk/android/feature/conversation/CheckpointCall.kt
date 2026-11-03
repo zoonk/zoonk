@@ -211,7 +211,7 @@ private fun CheckpointIntro(
     exits: ConversationExits,
     onToday: () -> Unit,
 ) {
-    val startCall = rememberCallStart { microphone, _ -> model.start(microphone) }
+    val launcher = rememberCallLauncher { microphone, _ -> model.start(microphone) }
     val start =
         when (model.start) {
             CheckpointCallModel.Start.Idle -> CallIntroStart.Idle
@@ -224,7 +224,7 @@ private fun CheckpointIntro(
         CallIntro(
             conversation = call.intro,
             start = start,
-            onStart = {},
+            launcher = null,
             onSeePlus = { exits.open(AppRoute.Subscription) },
             onClose = exits::close,
             actions = {
@@ -244,7 +244,7 @@ private fun CheckpointIntro(
     CallIntro(
         conversation = call.intro,
         start = start,
-        onStart = { startCall(false) },
+        launcher = launcher,
         onSeePlus = { exits.open(AppRoute.Subscription) },
         onClose = exits::close,
     )

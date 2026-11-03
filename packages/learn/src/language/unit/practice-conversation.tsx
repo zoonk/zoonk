@@ -10,8 +10,8 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { DrawerCloseButton } from "../../_components/details-drawer";
@@ -138,9 +138,16 @@ function CallSetup({
       {isLocked ? (
         <PlusNotice inset>{t("Longer calls come with Plus.")}</PlusNotice>
       ) : (
-        <Button className="w-full" disabled={call.isStarting} onClick={call.start} size="lg">
-          <PhoneIcon aria-hidden="true" />
-          {call.isStarting ? t("Starting…") : t("Start the call")}
+        // It opens the call's intro, whose button is the one that calls.
+        <Button
+          aria-busy={call.isStarting}
+          className="w-full"
+          disabled={call.isStarting}
+          onClick={call.start}
+          size="lg"
+        >
+          {call.isStarting && <Spinner aria-hidden="true" />}
+          {t("Continue")}
         </Button>
       )}
       {call.failed && (
