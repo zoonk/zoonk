@@ -8,7 +8,7 @@ import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { getExamTaskEvidence } from "../exam-speaking/speaking-evidence";
-import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
+import { loadLanguageSkillEvidence } from "../levels/record-language-evidence";
 import { type LevelEvidence } from "../levels/skill-level-rules";
 import {
   type ExamScore,
@@ -271,6 +271,23 @@ export async function settleConversationReview({
       : getMetObjectives({ labels: owned.row.objectivesMet, objectives: scenario.objectives }),
   };
 
+  const evidence = getSpeakingEvidence({
+    feedback,
+    level,
+    objectivesMet: objectivesMet.length,
+    scenario,
+    spokenSeconds,
+  });
+
+  const speakingEvidence =
+    evidence &&
+    (await loadLanguageSkillEvidence({
+      evidence,
+      language: owned.row.targetLanguage,
+      skill: "speaking",
+      userId,
+    }));
+
   const progress = await settleConversation({
     bossKind: owned.bossKind,
     feedback,
@@ -278,6 +295,7 @@ export async function settleConversationReview({
     objectivesMet,
     reviewRunId: runId,
     row: owned.row,
+    speakingEvidence,
     spokenSeconds,
     timeZone,
     usedHelp,
@@ -293,31 +311,14 @@ export async function settleConversationReview({
     return { progress: null, status: "completed", won };
   }
 
-  const evidence = getSpeakingEvidence({
-    feedback,
-    level,
+  await trackCall({
+    objectives: scenario.objectives.length,
     objectivesMet: objectivesMet.length,
-    scenario,
+    owned,
     spokenSeconds,
+    userId,
+    won,
   });
-
-  await Promise.all([
-    evidence &&
-      recordLanguageSkillEvidence({
-        evidence,
-        language: owned.row.targetLanguage,
-        skill: "speaking",
-        userId,
-      }),
-    trackCall({
-      objectives: scenario.objectives.length,
-      objectivesMet: objectivesMet.length,
-      owned,
-      spokenSeconds,
-      userId,
-      won,
-    }),
-  ]);
 
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 

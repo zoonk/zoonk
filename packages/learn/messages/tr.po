@@ -928,7 +928,6 @@ msgid "{low} to {high}"
 msgstr "{low}–{high}"
 
 #: src/_utils/use-state-label.ts
-#: src/memory/memory-labels.tsx
 msgctxt "BkpBqH"
 msgid "Learning"
 msgstr "Öğreniliyor"
@@ -5099,7 +5098,6 @@ msgid "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}
 msgstr "{stars, plural, =0 {3 yıldızdan # tanesi} other {3 üzerinden # yıldız}}"
 
 #: src/language/conversation/call-stars-step.tsx
-#: src/memory/memory-labels.tsx
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Hedefler"
@@ -6346,24 +6344,35 @@ msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "Sil"
 
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.XHLYdJ"
+msgid "Goals"
+msgstr "Hedefler"
+
 #. A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "XQZA8e"
+msgctxt "memoryCategories.XQZA8e"
 msgid "Background"
 msgstr "Kişisel bilgiler"
 
 #: src/memory/memory-labels.tsx
-msgctxt "lEdpUM"
+msgctxt "memoryCategories.lEdpUM"
 msgid "Routine"
 msgstr "Günlük düzen"
 
 #: src/memory/memory-labels.tsx
-msgctxt "PCSt5T"
+msgctxt "memoryCategories.PCSt5T"
 msgid "Preferences"
 msgstr "Tercihler"
 
+#. A category of what Zoonk remembers about the learner: how their studies are going, like mixing up two ideas or reading better than they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "V2qutI"
+msgctxt "memoryCategories.BkpBqH"
+msgid "Learning"
+msgstr "Öğrenme"
+
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.V2qutI"
 msgid "Context"
 msgstr "Bağlam"
 

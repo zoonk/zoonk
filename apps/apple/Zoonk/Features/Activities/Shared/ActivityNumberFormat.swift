@@ -38,7 +38,7 @@ enum ActivityNumberFormat {
       style = style.notation(.compactName)
     }
 
-    let number = typographicMinus(value.formatted(style))
+    let number = display(value, style)
 
     guard let unit, !unit.isEmpty else {
       return number
@@ -47,18 +47,35 @@ enum ActivityNumberFormat {
     return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
   }
 
-  /// Main's `formatMoney`: cents only when a small amount has some ($3.50, $200, $103,449),
-  /// unless the caller asks for digits.
+  static func displayDigits(_ value: Double, unit: String? = nil) -> Int {
+    money(unit) == nil ? fractionDigits(value) : moneyDigits(value)
+  }
+
+  /// Rounded by a format style, as `format` rounds: ties to even, so 1.125 reads 1.12.
+  static func roundedForDisplay(_ value: Double, unit: String? = nil) -> Double {
+    let style = FloatingPointFormatStyle<Double>.number.locale(Locale(identifier: "en_US_POSIX"))
+      .precision(.fractionLength(0...displayDigits(value, unit: unit)))
+      .grouping(.never)
+
+    return Double(value.formatted(style)) ?? value
+  }
+
+  /// Main's `moneyFractionDigits`: cents only when a small amount has some ($3.50, $200, $103,449).
+  private static func moneyDigits(_ value: Double) -> Int {
+    abs(value) >= 1000 || isWhole(value, places: 2) ? 0 : 2
+  }
+
+  private static func isWhole(_ value: Double, places: Int) -> Bool {
+    let scale = pow(10, Double(places))
+    return ((value * scale + 0.5).rounded(.down)).truncatingRemainder(dividingBy: scale) == 0
+  }
+
+  /// Main's `formatMoney`, unless the caller asks for digits.
   private static func formatMoney(
     _ value: Double, currency: String, signed: Bool, digits: Int?, compact: Bool, locale: Locale
   ) -> String {
-    let isWhole = { (places: Int) in
-      let scale = pow(10, Double(places))
-      return ((value * scale + 0.5).rounded(.down)).truncatingRemainder(dividingBy: scale) == 0
-    }
-
-    let maximum = digits ?? (abs(value) >= 1000 || isWhole(2) ? 0 : 2)
-    let minimum = isWhole(maximum) ? 0 : min(maximum, 2)
+    let maximum = digits ?? moneyDigits(value)
+    let minimum = isWhole(value, places: maximum) ? 0 : min(maximum, 2)
 
     var style = FloatingPointFormatStyle<Double>.Currency(code: currency, locale: locale)
       .precision(.fractionLength(minimum...max(maximum, minimum)))
@@ -68,7 +85,7 @@ enum ActivityNumberFormat {
       style = style.notation(.compactName)
     }
 
-    return typographicMinus(value.formatted(style))
+    return display(value, style)
   }
 
   /// The money part of a unit and what follows it: "R$ por metro" is money per meter, so it reads
@@ -121,9 +138,15 @@ enum ActivityNumberFormat {
       ?? (unit.count == 3 && unit.allSatisfy { $0.isASCII && $0.isUppercase } ? unit : nil)
   }
 
-  /// A typographic minus reads as a sign, not a hyphen.
-  private static func typographicMinus(_ text: String) -> String {
-    text.replacingOccurrences(of: "-", with: "\u{2212}")
+  /// Main's `signDisplay: "negative"`, which Swift's sign strategies lack: a number that reads as
+  /// zero, like -0 or -0.0001 at two decimals, takes no sign, and a minus is typographic.
+  private static func display<Style: FormatStyle>(_ value: Double, _ style: Style) -> String
+  where Style.FormatInput == Double, Style.FormatOutput == String {
+    let text = value.formatted(style)
+    let readsAsZero =
+      value.isFinite && !text.contains { (1...9).contains($0.wholeNumberValue ?? 0) }
+    let shown = readsAsZero ? 0.0.formatted(style) : text
+    return shown.replacingOccurrences(of: "-", with: "\u{2212}")
   }
 
   static func fractionDigits(_ value: Double) -> Int {

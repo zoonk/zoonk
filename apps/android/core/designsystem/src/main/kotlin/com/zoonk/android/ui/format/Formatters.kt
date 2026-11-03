@@ -64,15 +64,25 @@ fun formatNumber(
             isGroupingUsed = grouping
             roundingMode = BigDecimal.ROUND_HALF_UP
         }
-    val digits = format.format(abs(value))
-    val roundsToZero = digits.none { Character.getNumericValue(it) in 1..9 }
-
-    return when {
-        value < 0 && !(signed && roundsToZero) -> MINUS_SIGN + digits
-        value > 0 && signed && !roundsToZero -> DecimalFormatSymbols.getInstance(ULocale.forLocale(locale)).plusSign + digits
-        else -> digits
-    }
+    return withSign(format.format(abs(value)), value, locale, signed)
 }
+
+/**
+ * Signs [text], the unsigned [value], as main's `signDisplay` does: a number that reads as zero,
+ * like -0.0001 at two decimals, takes no sign.
+ */
+internal fun withSign(
+    text: String,
+    value: Double,
+    locale: Locale,
+    signed: Boolean = false,
+): String =
+    when {
+        value.isFinite() && text.codePoints().noneMatch { Character.getNumericValue(it) in 1..9 } -> text
+        value < 0 -> MINUS_SIGN + text
+        signed && value > 0 -> DecimalFormatSymbols.getInstance(ULocale.forLocale(locale)).plusSign + text
+        else -> text
+    }
 
 /** A tenth of a point (`maximumFractionDigits = 1`) is main's `formatMetricPercent`, for averages and scores. */
 fun formatPercent(

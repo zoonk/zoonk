@@ -6,6 +6,7 @@ import { getMemoryCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
+import { isMemoryEnabled } from "./_utils/memory-access";
 import { type MemorySettingsUpdateInput } from "./memory-contract";
 
 export async function updateMemorySettings(
@@ -20,9 +21,7 @@ export async function updateMemorySettings(
   const userId = session.user.id;
 
   const changed = await writeLearnerChange({ userId }, async (tx) => {
-    const profile = await tx.userLearningProfile.findUnique({ where: { userId } });
-
-    if ((profile?.memoryEnabled ?? true) === input.enabled) {
+    if ((await isMemoryEnabled(userId, tx)) === input.enabled) {
       return unchanged(false);
     }
 

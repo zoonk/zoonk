@@ -491,13 +491,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Werdegang"
+            "value" : "Hintergrund"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trayectoria"
+            "value" : "Perfil"
           }
         },
         "fr" : {
@@ -509,37 +509,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Percorso personale"
+            "value" : "Profilo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "経歴"
+            "value" : "プロフィール"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "배경"
+            "value" : "기본 정보"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tobie"
+            "value" : "Podstawowe informacje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trajetória"
+            "value" : "Estudos e trabalho"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geçmiş"
+            "value" : "Kişisel bilgiler"
           }
         }
       }
@@ -1081,7 +1081,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hintergrund"
+            "value" : "Kontext"
           }
         },
         "es" : {
@@ -1199,19 +1199,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konnte nicht rückgängig gemacht werden. Der Eintrag wurde inzwischen geändert."
+            "value" : "Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos deshacerlo. El dato cambió desde entonces."
+            "value" : "No se pudo deshacer. Ya hubo otro cambio."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’annuler. Cette information a changé depuis."
+            "value" : "Impossible d’annuler. Cela a changé depuis."
           }
         },
         "it" : {
@@ -1223,19 +1223,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "その後内容が変わったため、元に戻せませんでした。"
+            "value" : "取り消せませんでした。その後、内容が変更されています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "되돌리지 못했어요. 그사이 내용이 바뀌었어요."
+            "value" : "그사이 내용이 바뀌어서 되돌릴 수 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się cofnąć zmiany. Ta informacja już się zmieniła."
+            "value" : "Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną."
           }
         },
         "pt" : {
@@ -1247,7 +1247,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geri alınamadı. Bilgi bu arada değişti."
+            "value" : "Geri alınamadı. Bu bilgi sonradan değişti."
           }
         }
       }
@@ -1559,25 +1559,25 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar memoria"
+            "value" : "Editar recuerdo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifier l’information"
+            "value" : "Modifier l’information mémorisée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifica memoria"
+            "value" : "Modifica l’informazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メモリの編集"
+            "value" : "メモリを編集する"
           }
         },
         "ko" : {
@@ -1589,7 +1589,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Edycja pamięci"
+            "value" : "Edytuj zapamiętaną informację"
           }
         },
         "pt" : {
@@ -1601,7 +1601,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Belleği düzenle"
+            "value" : "Bellek kaydını düzenle"
           }
         }
       }
@@ -1618,7 +1618,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo lo que hay en tu memoria, en un solo archivo"
+            "value" : "Toda tu memoria en un solo archivo"
           }
         },
         "fr" : {
@@ -1630,31 +1630,31 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutta la tua memoria in un unico file"
+            "value" : "Tutto il contenuto della tua memoria, in un unico file"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メモリの内容をすべて1つのファイルに"
+            "value" : "メモリのすべての内容を1つのファイルに"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "메모리에 저장된 모든 내용을 파일 하나로"
+            "value" : "메모리에 있는 모든 내용을 파일 하나로"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cała zawartość twojej pamięci w jednym pliku"
+            "value" : "Cała zawartość pamięci w jednym pliku"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo na sua memória, em um só arquivo"
+            "value" : "Tudo o que está na sua memória em um só arquivo"
           }
         },
         "tr" : {
@@ -1860,7 +1860,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Issu d’une conversation"
+            "value" : "D’après une conversation"
           }
         },
         "it" : {
@@ -1878,7 +1878,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화에서"
+            "value" : "채팅에서 알려 주셨어요"
           }
         },
         "pl" : {
@@ -1919,7 +1919,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Issu d’une séance d’étude"
+            "value" : "D’après une séance d’étude"
           }
         },
         "it" : {
@@ -1937,13 +1937,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 중에"
+            "value" : "학습 중에 알려 주셨어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podczas nauki"
+            "value" : "Z nauki"
           }
         },
         "pt" : {
@@ -1996,13 +1996,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "초기 설정에서"
+            "value" : "처음 시작할 때 알려 준 내용"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z pierwszych kroków w Zoonku"
+            "value" : "Z wprowadzenia"
           }
         },
         "pt" : {
@@ -2014,7 +2014,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İlk kurulumdan"
+            "value" : "Başlangıç adımlarından"
           }
         }
       }
@@ -2167,7 +2167,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習"
+            "value" : "学習状況"
           }
         },
         "ko" : {
@@ -2320,13 +2320,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gedächtnis ist ausgeschaltet. Es wird nichts Neues gemerkt und diese Einträge werden nicht verwendet."
+            "value" : "Erinnerungen sind ausgeschaltet. Es wird nichts Neues gespeichert und diese Angaben werden nicht verwendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La memoria está desactivada. No se guarda información nueva ni se usan estos datos."
+            "value" : "La memoria está desactivada. No se aprende nada nuevo sobre ti ni se usan estos datos."
           }
         },
         "fr" : {
@@ -2338,37 +2338,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La memoria è disattivata. Non memorizziamo nuove informazioni e non usiamo questi dati."
+            "value" : "La memoria è disattivata. Non memorizziamo nuove informazioni né usiamo quelle presenti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メモリはオフです。新しい情報は記録されず、保存済みの情報も使われません。"
+            "value" : "メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "메모리가 꺼져 있어요. 새로운 내용을 기억하지 않고, 저장된 내용도 사용하지 않아요."
+            "value" : "메모리가 꺼져 있어요. 새로운 정보를 기억하지 않고, 저장된 정보도 사용하지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pamięć jest wyłączona. Nie zapamiętujemy nic nowego ani nie korzystamy z tych informacji."
+            "value" : "Pamięć jest wyłączona. Nie zapamiętujemy nic nowego i nie korzystamy z tych informacji."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A memória está desativada. Nada de novo é aprendido, e essas informações não são usadas."
+            "value" : "A memória está desligada. Nada novo é aprendido e esses dados não são usados."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bellek kapalı. Yeni bilgi kaydedilmiyor ve bu bilgiler kullanılmıyor."
+            "value" : "Bellek kapalı. Seninle ilgili yeni bir şey öğrenmiyoruz ve bu bilgileri kullanmıyoruz."
           }
         }
       }
@@ -2409,7 +2409,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "메모리를 수정했어요:"
+            "value" : "메모리 업데이트:"
           }
         },
         "pl" : {
@@ -2615,7 +2615,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hier ist nichts. Solange das Gedächtnis ausgeschaltet ist, merkt sich Zoonk nichts über dich."
+            "value" : "Hier ist nichts. Zoonk speichert keine Notizen über dich, solange Erinnerungen ausgeschaltet sind."
           }
         },
         "es" : {
@@ -2627,43 +2627,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien ici. Zoonk ne garde aucune note sur toi tant que la mémoire est désactivée."
+            "value" : "Rien ici. Zoonk ne garde aucune note à ton sujet quand la mémoire est désactivée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qui non c’è nulla. Zoonk non prende appunti su di te quando la memoria è disattivata."
+            "value" : "Qui non c’è nulla. Zoonk non conserva note su di te quando la memoria è disattivata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "何もありません。メモリがオフの間、Zoonkはメモを残しません。"
+            "value" : "メモはありません。メモリがオフの間、Zoonkはメモを保存しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기록된 내용이 없어요. 메모리가 꺼져 있으면 Zoonk가 새로 알게 된 내용을 메모로 남기지 않아요."
+            "value" : "저장된 내용이 없어요. 메모리가 꺼져 있는 동안에는 Zoonk가 메모를 남기지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu nic nie ma. Gdy pamięć jest wyłączona, Zoonk nie zapisuje notatek o tobie."
+            "value" : "Nic tu nie ma. Zoonk nie zapisuje notatek o tobie, gdy pamięć jest wyłączona."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada por aqui. O Zoonk não guarda anotações sobre você enquanto a memória está desativada."
+            "value" : "Nada por aqui. O Zoonk não guarda anotações sobre você enquanto a memória estiver desativada."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Burada bir şey yok. Bellek kapalıyken Zoonk senin hakkında not tutmaz."
+            "value" : "Burada bir şey yok. Bellek kapalıyken Zoonk seninle ilgili not tutmaz."
           }
         }
       }
@@ -2674,7 +2674,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch nichts da. Wenn du lernst und chattest, erscheinen hier kurze Notizen, mit denen Zoonk dich beim Lernen unterstützt."
+            "value" : "Noch nichts da. Während du lernst und chattest, erscheinen hier kurze Notizen, die Zoonk beim Unterrichten helfen."
           }
         },
         "es" : {
@@ -2686,43 +2686,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien pour le moment. Au fil de tes séances et de tes conversations, de courtes notes qui aident Zoonk à t’accompagner apparaîtront ici."
+            "value" : "Rien pour l’instant. Au fil de tes études et de tes échanges, de courtes notes qui aident Zoonk à t’enseigner apparaîtront ici."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nulla. Mentre studi e chatti, qui compaiono brevi appunti che aiutano Zoonk a seguirti nello studio."
+            "value" : "Ancora nulla. Mentre studi e chatti, qui compaiono brevi note che aiutano Zoonk a insegnarti meglio."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ何もありません。学習やチャットをするうちに、Zoonkが学習に役立てる短いメモがここに表示されます。"
+            "value" : "まだ何もありません。学習やチャットを進めると、Zoonkが学習をサポートするための短いメモがここに表示されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아직 내용이 없어요. 공부하고 대화하다 보면 Zoonk가 더 잘 가르치는 데 도움이 되는 짧은 메모가 여기에 쌓여요."
+            "value" : "아직 메모가 없어요. 공부하고 대화하다 보면 Zoonk가 학습을 도울 때 참고할 짧은 메모가 여기에 생겨요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na razie nic tu nie ma. W miarę nauki i rozmów pojawią się tu krótkie notatki, które pomogą Zoonkowi lepiej cię uczyć."
+            "value" : "Na razie nic tu nie ma. Podczas nauki i rozmów pojawią się tu krótkie notatki, które pomogą Zoonkowi lepiej cię uczyć."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada por enquanto. Conforme você estuda e conversa, aparecem aqui pequenas anotações que ajudam o Zoonk a te ensinar."
+            "value" : "Nada por enquanto. Conforme você estuda e conversa, aparecem aqui anotações curtas que ajudam o Zoonk a te ensinar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Henüz bir şey yok. Çalışıp sohbet ettikçe Zoonk’un sana ders verirken yararlanacağı kısa notlar burada görünür."
+            "value" : "Henüz bir şey yok. Çalışıp sohbet ettikçe Zoonk’un sana daha iyi öğretmesini sağlayan kısa notlar burada görünür."
           }
         }
       }
@@ -2739,19 +2739,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A partir de tu actividad"
+            "value" : "Lo notamos por tu actividad"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remarqué grâce à ton activité"
+            "value" : "Observé dans ton activité"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rilevato dalla tua attività"
+            "value" : "Lo abbiamo notato dalla tua attività"
           }
         },
         "ja" : {
@@ -2763,7 +2763,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "활동을 통해 파악"
+            "value" : "활동을 보고 알게 됐어요"
           }
         },
         "pl" : {
@@ -2781,7 +2781,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etkinliklerinden anlaşıldı"
+            "value" : "Etkinliklerinden fark ettik"
           }
         }
       }
@@ -2816,7 +2816,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "「%@」のオプション"
+            "value" : "「%@」の操作"
           }
         },
         "ko" : {
@@ -2828,7 +2828,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcje: „%@”"
+            "value" : "Opcje dla „%@”"
           }
         },
         "pt" : {
@@ -2934,25 +2934,25 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "身近な例や、週の予定に合った学習計画"
+            "value" : "身近な例や、1週間の予定に合う学習計画"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내게 맞는 예시와 한 주 일정에 맞춘 계획"
+            "value" : "내게 맞는 예시와 이번 주 일정에 맞는 계획"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przykłady z twojego życia i plany dopasowane do twojego tygodnia"
+            "value" : "Przykłady z twojego życia i plany dopasowane do twojego grafiku"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exemplos personalizados e planos que cabem na sua semana"
+            "value" : "Exemplos para você e planos que cabem na sua semana"
           }
         },
         "tr" : {
@@ -2993,13 +2993,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学び方の好み"
+            "value" : "好み"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 취향"
+            "value" : "선호 사항"
           }
         },
         "pl" : {
@@ -3028,7 +3028,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir bereiten die Datei vor…"
+            "value" : "Wir bereiten alles vor…"
           }
         },
         "es" : {
@@ -3058,7 +3058,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "준비하고 있어요…"
+            "value" : "준비 중…"
           }
         },
         "pl" : {
@@ -3347,13 +3347,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "生活習慣"
+            "value" : "生活リズム"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "생활 패턴"
+            "value" : "일상"
           }
         },
         "pl" : {
@@ -3382,55 +3382,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreib es so, dass es für dich stimmt."
+            "value" : "Schreib, wie es bei dir wirklich ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corrige el dato con tus palabras."
+            "value" : "Escríbelo para que refleje tu situación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formule-le avec tes mots pour que ce soit juste."
+            "value" : "Reformule pour que ça corresponde à ta situation."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Racconta come stanno le cose per te."
+            "value" : "Scrivila in modo che ti rispecchi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正しい内容を自分の言葉で書いてください。"
+            "value" : "実際の状況に合うように書き直してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "실제 상황에 맞게 편한 말로 고쳐 주세요."
+            "value" : "실제 상황에 맞게 고쳐 주세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opisz własnymi słowami, jak jest u ciebie."
+            "value" : "Napisz to tak, jak jest u ciebie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conte como é, com suas palavras."
+            "value" : "Escreva de acordo com a sua realidade."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğrusunu kendi sözlerinle anlat."
+            "value" : "Seni doğru yansıtacak şekilde yaz."
           }
         }
       }
@@ -3801,37 +3801,37 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se guardó el cambio. Inténtalo de nuevo."
+            "value" : "No se pudo guardar. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La modification n’a pas été enregistrée. Réessaie."
+            "value" : "L’enregistrement a échoué. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La modifica non è stata salvata. Riprova."
+            "value" : "Il salvataggio non è riuscito. Riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保存できませんでした。もう一度試してください。"
+            "value" : "保存できませんでした。もう一度お試しください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "저장되지 않았어요. 다시 시도해 보세요."
+            "value" : "저장하지 못했어요. 다시 시도해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się zapisać zmiany. Spróbuj ponownie."
+            "value" : "Nie udało się zapisać. Spróbuj ponownie."
           }
         },
         "pt" : {
@@ -3843,7 +3843,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Değişiklik kaydedilemedi. Tekrar dene."
+            "value" : "Kaydedilemedi. Tekrar dene."
           }
         }
       }
@@ -3972,7 +3972,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen nutzen"
+            "value" : "Erinnerungen verwenden"
           }
         },
         "es" : {
@@ -4008,7 +4008,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Korzystanie z pamięci"
+            "value" : "Korzystamy z pamięci"
           }
         },
         "pt" : {
@@ -4043,7 +4043,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le téléchargement n’a pas pu être préparé. Réessaie."
+            "value" : "Impossible de préparer le téléchargement. Réessaie."
           }
         },
         "it" : {
@@ -4055,7 +4055,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ダウンロードの準備ができませんでした。もう一度試してください。"
+            "value" : "ダウンロードの準備ができませんでした。もう一度お試しください。"
           }
         },
         "ko" : {
@@ -4067,13 +4067,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało nam się przygotować pliku do pobrania. Spróbuj ponownie."
+            "value" : "Nie udało się przygotować pliku do pobrania. Spróbuj ponownie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos preparar o download. Tente de novo."
+            "value" : "A gente não conseguiu preparar o download. Tente de novo."
           }
         },
         "tr" : {
@@ -4138,7 +4138,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’un hatırladığı bilgi"
+            "value" : "Zoonk’un hatırladıkları"
           }
         }
       }
@@ -4155,7 +4155,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que Zoonk recuerda para darte ejemplos y planes que se adapten a tu vida."
+            "value" : "Lo que Zoonk recuerda para darte ejemplos y planes adaptados a tu vida."
           }
         },
         "fr" : {
@@ -4167,37 +4167,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cosa ricorda Zoonk per offrirti esempi e piani adatti alla tua vita."
+            "value" : "Quello che Zoonk ricorda di te per proporti esempi e piani adatti alla tua vita."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暮らしに合った例や学習計画を作るために、Zoonkが覚えていることです。"
+            "value" : "生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "일상에 맞는 예시와 계획을 만들기 위해 Zoonk가 기억하는 내용이에요."
+            "value" : "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informacje, które Zoonk pamięta, żeby dopasować przykłady i plany do twojego życia."
+            "value" : "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que o Zoonk lembra para te dar exemplos e planos que se encaixam na sua vida."
+            "value" : "O que o Zoonk lembra para te dar exemplos e planos que combinam com a sua vida."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hayatına uygun örnekler ve planlar sunmak için Zoonk’un hatırladığı bilgiler."
+            "value" : "Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları."
           }
         }
       }
@@ -4385,13 +4385,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Von dir erzählt"
+            "value" : "Von dir mitgeteilt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nos lo dijiste"
+            "value" : "Nos lo contaste"
           }
         },
         "fr" : {
@@ -4415,25 +4415,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "직접 알려 준 내용"
+            "value" : "직접 알려 주셨어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Od ciebie"
+            "value" : "Informacja od ciebie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você contou pra gente"
+            "value" : "Você contou para a gente"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bize sen anlattın"
+            "value" : "Bize anlattın"
           }
         }
       }
@@ -4562,55 +4562,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk speichert Angaben zu Gesundheit, Religion oder andere sensible Daten nur, wenn du darum bittest."
+            "value" : "Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Daten, es sei denn, du bittest darum."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no guarda información sobre tu salud o religión ni otros datos sensibles a menos que se lo pidas."
+            "value" : "Zoonk no guarda datos sobre tu salud, religión u otros temas sensibles a menos que se lo pidas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ne retient pas les informations sur ta santé, ta religion ou d’autres sujets sensibles, sauf si tu le lui demandes."
+            "value" : "Zoonk ne conserve pas d’informations sur ta santé, ta religion ou d’autres sujets sensibles, sauf si tu le lui demandes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk non conserva informazioni sulla salute, sulla religione o altri dettagli sensibili, a meno che tu non glielo chieda."
+            "value" : "Zoonk non conserva dati sulla salute, sulla religione o altre informazioni sensibili, a meno che tu non lo chieda."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkは、頼まれない限り健康や宗教などのデリケートな情報を保存しません。"
+            "value" : "Zoonkは、保存を頼まれない限り、健康や宗教などのデリケートな情報を保存しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "따로 요청하지 않으면 Zoonk는 건강이나 종교 같은 민감한 정보를 저장하지 않아요."
+            "value" : "따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk nie przechowuje informacji o zdrowiu, religii ani innych wrażliwych danych, chyba że o to poprosisz."
+            "value" : "Zoonk nie zapisuje informacji o zdrowiu, religii ani innych wrażliwych danych, chyba że o to poprosisz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não guarda dados de saúde, religião ou outras informações sensíveis, a menos que você peça."
+            "value" : "O Zoonk não guarda informações sobre sua saúde ou religião, nem outros dados sensíveis, a menos que você peça."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk, sen istemedikçe sağlığın, dinin veya diğer hassas konularla ilgili bilgileri saklamaz."
+            "value" : "Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz."
           }
         }
       }

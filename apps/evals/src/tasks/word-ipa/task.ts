@@ -10,5 +10,8 @@ export const wordIpaTask: Task<Parameters<typeof writeWordIpa>[0], WordIpa, Word
   id: "word-ipa",
   name: "Word IPA",
   score: scoreWordIpa,
+  skippedLanguages: {
+    en: "language audio writes IPA only for words of other languages, which a voice could read the English way",
+  },
   testCases: TEST_CASES,
 };

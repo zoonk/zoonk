@@ -3,7 +3,11 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { LEARNER_LOCK, waitForBlockedStatement } from "../_test-utils/learner-lock";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import {
@@ -75,10 +79,11 @@ describe("memory writes under the learner's lock", () => {
     mockGuestSession(user.id);
 
     const added = await addMemoryFact({ fact: newFact(), userId: user.id });
+    expect(added).not.toBeNull();
 
     const replacement = await replaceMemoryFact({
       fact: newFact("Wants Medicine"),
-      previousId: added.id,
+      previousId: added!.id,
       userId: user.id,
     });
 
@@ -167,6 +172,38 @@ describe("memory writes under the learner's lock", () => {
       await expect(
         prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
       ).resolves.toMatchObject({ status: "deleted" });
+    },
+  );
+
+  it.each(["add", "replace"] as const)(
+    "%s saves nothing once memory is switched off while it waits for the learner lock",
+    async (writer) => {
+      const user = await userFixture();
+      const fact = await memoryFactFixture({ userId: user.id });
+
+      const settings = holdLearnerLock({
+        beforeCommit: (tx) =>
+          tx.userLearningProfile.create({ data: { memoryEnabled: false, userId: user.id } }),
+        userId: user.id,
+      });
+
+      const pid = await settings.pid;
+      const save = write({ factId: fact.id, statement: "Wants Medicine", userId: user.id, writer });
+
+      try {
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
+      } finally {
+        settings.release();
+      }
+
+      const outcomes = await Promise.allSettled([settings.done, save]);
+      expect(outcomes.map((outcome) => outcome.status)).toStrictEqual(["fulfilled", "fulfilled"]);
+
+      await expect(
+        prisma.memoryFact.findMany({ where: { userId: user.id } }),
+      ).resolves.toStrictEqual([fact]);
+
+      await expect(save).resolves.toBeNull();
     },
   );
 
