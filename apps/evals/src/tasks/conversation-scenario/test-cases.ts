@@ -87,6 +87,18 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
+    expectations: `Brazilian learner of US English at A2, in a unit about chatting with neighbors, colleagues and new friends. The character already knows the learner: a friend, colleague or neighbor (role in Brazilian Portuguese), never a relative or someone they're meeting for the first time, and the situation says who they are to the learner. The objectives say what to do without giving anything away: no day, time or plan for the learner to propose and no hint of the character's twist (never "Suggest coffee on Saturday at 10 and pick another time if she can't"). The place and situation name no city or neighborhood, since that would be where the learner lives. Nothing names the learner or assumes facts about their life. US name. Opening line and hints short and simple (A2). Title, situation, role and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-a2-social-life",
+    userInput: {
+      canDo: ["Consigo conversar com vizinhos e colegas"],
+      learnerLanguage: "pt",
+      level: "A2",
+      targetLanguage: "en",
+      unitDescription: "Conversa com vizinhos, colegas e novos amigos.",
+      unitTitle: "Vida social",
+    },
+  },
+  {
     expectations: `US English speaker learning Mexican Spanish at A1, talking about family. The character already knows the learner: a friend, colleague, neighbor or host family member (role in US English), never one of the learner's relatives, and the situation says who they are to the learner ("your neighbor Lupita"). The learner says who is in their family and asks about the character's. The character's own family is in the brief; nothing assumes who is in the learner's family, and nothing names the learner. The opening line greets the way a friend would and says who is speaking. Opening line and hints very short (A1: 3 to 6 words, present tense): "Tengo dos hermanos.", "¿Tienes hijos?". Title, situation and descriptions in US English.`,
     id: "en-es-a1-family",
     userInput: {

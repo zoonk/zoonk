@@ -5,7 +5,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
-import { scenarioSchema } from "./_utils/scenario-schema";
+import { buildScenarioSchema } from "./_utils/scenario-schema";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
 import { type SpeakingMockExam } from "./exam-speaking-exams";
 import ieltsPrompt from "./speaking-mock-scenario-ielts.prompt.md";
@@ -44,12 +44,13 @@ export type GenerateSpeakingMockScenarioParams = {
   analytics?: AiGenerationContext;
 };
 
-function buildUserPrompt(params: GenerateSpeakingMockScenarioParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
+function buildUserPrompt({
+  languages,
+  params,
+}: {
+  languages: ReturnType<typeof getLanguagePromptContext>;
+  params: GenerateSpeakingMockScenarioParams;
+}): string {
   return `
     TARGET_LANGUAGE: ${languages.targetLanguageName}
     LEARNER_LANGUAGE: ${languages.userLanguageName}
@@ -62,7 +63,19 @@ function buildUserPrompt(params: GenerateSpeakingMockScenarioParams): string {
 export async function generateSpeakingMockScenario(params: GenerateSpeakingMockScenarioParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const systemPrompt = SYSTEM_PROMPTS[params.exam];
-  const userPrompt = buildUserPrompt(params);
+
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.learnerLanguage,
+  });
+
+  const userPrompt = buildUserPrompt({ languages, params });
+
+  const schema = buildScenarioSchema({
+    learnerLanguage: languages.userLanguageName,
+    targetLanguage: languages.targetLanguageName,
+  });
+
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -71,7 +84,7 @@ export async function generateSpeakingMockScenario(params: GenerateSpeakingMockS
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema: scenarioSchema }),
+        output: Output.object({ schema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
