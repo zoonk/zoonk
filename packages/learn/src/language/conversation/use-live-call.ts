@@ -7,7 +7,7 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { type RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
-import { type CallEndingEvent } from "./live-call-ending";
+import { type CallEndingEvent } from "./live-call-ending-event";
 import {
   type LiveCallError,
   useCallProblem,

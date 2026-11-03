@@ -4,7 +4,7 @@ import { getNumber } from "@zoonk/utils/json";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 import { type RefObject, useCallback } from "react";
 import { sendLiveCallCue } from "./live-call-commands";
-import { type CallEndingEvent } from "./live-call-ending";
+import { type CallEndingEvent } from "./live-call-ending-event";
 import { type LiveCallSession } from "./live-call-session";
 import { type TranscriptTurn, addTranscriptFragment } from "./live-call-transcript";
 import { type LiveCallPhase } from "./use-call-controls";

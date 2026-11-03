@@ -25,6 +25,8 @@ struct LiveCallEnding {
     case goodbye
     case goodbyeDone
     case checkIn
+    /// The latest objective check's note, which `LiveCall` holds.
+    case progress
   }
 
   enum Action: Equatable {
@@ -74,6 +76,7 @@ struct LiveCallEnding {
   private var silenceFrom: Date
   private var checkedIn = false
   private var isOver = false
+  private var isProgressDue = false
 
   init(timing: Timing, liveAt: Date, talkEndsAt: Date, hardStopAt: Date) {
     self.timing = timing
@@ -162,13 +165,15 @@ struct LiveCallEnding {
     }
   }
 
-  /// An objective check's answer for the transcript as it was at `snapshotAt`. True when its
-  /// progress note should go out.
+  /// An objective check's answer for the transcript as it was at `snapshotAt`, with `hasNote` when
+  /// it brought a note for the character.
   ///
   /// A mutual goodbye leaves only the hang-up: an ending that already started keeps its reason and
   /// skips its own goodbye, so the character doesn't say it twice, unless that cue already went
   /// out. A goodbye the learner has talked past since the snapshot isn't the end.
-  mutating func checked(at now: Date, snapshotAt: Date, goodbye: Bool, allGoalsMet: Bool) -> Bool {
+  mutating func checked(
+    at now: Date, snapshotAt: Date, goodbye: Bool, allGoalsMet: Bool, hasNote: Bool
+  ) {
     if goodbye, !(lastLearnerAt.map { $0 > snapshotAt } ?? false) {
       arm(.goodbye, at: now)
 
@@ -176,19 +181,18 @@ struct LiveCallEnding {
         isGoodbyeSaid = true
       }
 
-      return false
+      return
     }
 
     guard armed == nil else {
-      return false
+      return
     }
 
     if allGoalsMet {
       arm(.done, at: now)
-      return false
     }
 
-    return true
+    isProgressDue = isProgressDue || hasNote
   }
 
   /// What to do now. Call it after every event and on a steady tick.
@@ -228,6 +232,10 @@ struct LiveCallEnding {
       actions.append(.send(cue, whileLearnerSpeaks: isLearnerTalking(at: now)))
     }
 
+    if sendsProgress(at: now) {
+      actions.append(.send(.progress))
+    }
+
     if isGoodbyeSaid, isGoodbyeOver(at: now) {
       isOver = true
       actions.append(.hangUp(armed))
@@ -257,6 +265,27 @@ struct LiveCallEnding {
   private func isLearnerTalking(at now: Date) -> Bool {
     isLearnerSpeaking(at: now)
       || isRecent(lastHeardAt, at: now, within: seconds(timing.characterQuietMs))
+  }
+
+  /// Measured: GPT-Live answers a note that reaches it in a silence aloud, talking into a learner
+  /// who is still thinking or typing, and waits for a learner who is speaking. So the note goes
+  /// once the learner talks or sends a typed reply, and a goodbye, which ends the call anyway,
+  /// drops it.
+  private mutating func sendsProgress(at now: Date) -> Bool {
+    guard isProgressDue else {
+      return false
+    }
+
+    let hasFloor =
+      isLearnerTalking(at: now)
+      || isRecent(lastSentAt, at: now, within: seconds(timing.characterQuietMs))
+
+    guard cueSentAt != nil || hasFloor else {
+      return false
+    }
+
+    isProgressDue = false
+    return cueSentAt == nil
   }
 
   /// The opening goes out as the call goes live (`LiveCall` sends it). Measured: a slow session

@@ -98,6 +98,8 @@ final class LiveCall {
   @ObservationIgnored private var checkTiming = ObjectiveCheckTiming()
   /// Its own task, so words that arrive while it runs don't cancel it and lose its answer.
   @ObservationIgnored private var runningCheck: Task<Void, Never>?
+  /// The latest check's note for the character, until the ending sends it.
+  @ObservationIgnored private var progressNote: LiveCallCue?
 
   init(conversation: LanguageConversation, client: LiveCallClient) {
     self.conversation = conversation
@@ -506,6 +508,11 @@ final class LiveCall {
         sendGoodbye(script.cues.goodbye, whileLearnerSpeaks: whileLearnerSpeaks)
       case .send(.goodbyeDone, let whileLearnerSpeaks):
         sendGoodbye(script.cues.goodbyeDone, whileLearnerSpeaks: whileLearnerSpeaks)
+      case .send(.progress, _):
+        if let progressNote {
+          send(progressNote)
+          self.progressNote = nil
+        }
       case .hangUp(let reason):
         end(reason.map { EndReason($0) } ?? .hardStop)
         return
@@ -605,12 +612,12 @@ final class LiveCall {
     let allGoalsMet = conversation.objectives.allSatisfy {
       check.objectivesMet.contains($0.label)
     }
-    let sendsProgress = ending?.checked(
-      at: now, snapshotAt: sentAt, goodbye: check.goodbye, allGoalsMet: allGoalsMet)
+    let note = check.progress?.value1
+    progressNote = note ?? progressNote
 
-    if sendsProgress == true, let progress = check.progress?.value1 {
-      send(progress)
-    }
+    ending?.checked(
+      at: now, snapshotAt: sentAt, goodbye: check.goodbye, allGoalsMet: allGoalsMet,
+      hasNote: note != nil)
 
     advance(now)
   }

@@ -1,3 +1,4 @@
+import { type CallEndingEvent } from "./live-call-ending-event";
 import {
   type GoodbyeRequest,
   acknowledgeGoodbye,
@@ -34,26 +35,6 @@ export type CallEndingCommand =
   | { type: "progress" }
   | { reason: CallHangUpReason; type: "hangUp" };
 
-export type CallEndingEvent =
-  | { at: number; startMs: number; type: "characterSpoke" }
-  /** The learner's own words came back as a transcript: they spoke, about 1.5 s before. */
-  | { at: number; type: "learnerHeard" }
-  /** A microphone sample: `speaking` already holds the platform's hangover. */
-  | { at: number; speaking: boolean; type: "speech" }
-  | { at: number; type: "typing" }
-  | { at: number; type: "sent" }
-  | { at: number; id: string; startMs: number | null; type: "acknowledged" }
-  /** An objective check's answer for the transcript as it was at `snapshotAt`. */
-  | {
-      allMet: boolean;
-      at: number;
-      goodbye: boolean;
-      progress: boolean;
-      snapshotAt: number;
-      type: "checked";
-    }
-  | { at: number; type: "tick" };
-
 export type CallEndingState = {
   activityAt: number;
   armedAt: number | null;
@@ -69,6 +50,8 @@ export type CallEndingState = {
   /** When the opening cue was acknowledged; a retry before that would greet twice (measured). */
   openingAckAt: number | null;
   openingRetried: boolean;
+  /** A check's note for the character waits until the learner has the floor. */
+  progressDue: boolean;
   /** When the quiet stretch started: the end of the latest sound or keystroke from anyone. */
   quietFrom: number;
   reason: CallEndingReason | null;
@@ -175,6 +158,28 @@ function stepGoodbye(state: CallEndingState, at: number): Step {
   };
 }
 
+/**
+ * Measured: GPT-Live answers a note that reaches it in a silence aloud, talking into a learner who
+ * is still thinking or typing, and waits for a learner who is speaking. So the note goes once the
+ * learner speaks or sends a typed reply, and a goodbye, which ends the call anyway, drops it.
+ */
+function stepProgress(state: CallEndingState, at: number): Step {
+  if (!state.progressDue) {
+    return { commands: [], state };
+  }
+
+  if (state.goodbye) {
+    return { commands: [], state: { ...state, progressDue: false } };
+  }
+
+  const learnerHasFloor =
+    isLearnerSpeaking(state, at) || isRecent(at, state.sentAt, state.timing.characterQuietMs);
+
+  return learnerHasFloor
+    ? { commands: [{ type: "progress" }], state: { ...state, progressDue: false } }
+    : { commands: [], state };
+}
+
 function lastWordsAt(state: CallEndingState) {
   const words = [state.characterAt, state.heardAt, state.typingAt, state.sentAt];
   return Math.max(state.liveAt, ...words.filter((at) => at !== null));
@@ -212,7 +217,7 @@ function evaluate(state: CallEndingState, at: number): Step {
     next = { ...next, openingRetried: true };
   }
 
-  for (const step of [stepSilence, stepGoodbye]) {
+  for (const step of [stepSilence, stepGoodbye, stepProgress]) {
     const stepped = step(next, at);
     commands.push(...stepped.commands);
     next = stepped.state;
@@ -289,11 +294,8 @@ function check(state: CallEndingState, event: Extract<CallEndingEvent, { type: "
     return { commands: [], state: arm(state, "goodbye", event.at) };
   }
 
-  if (event.allMet) {
-    return { commands: [], state: arm(state, "done", event.at) };
-  }
-
-  return { commands: event.progress ? [{ type: "progress" }] : [], state };
+  const next = event.allMet ? arm(state, "done", event.at) : state;
+  return { commands: [], state: { ...next, progressDue: next.progressDue || event.progress } };
 }
 
 function reduce(
@@ -357,6 +359,7 @@ export function startCallEnding({
       liveAt: at,
       openingAckAt: null,
       openingRetried: false,
+      progressDue: false,
       quietFrom: at,
       reason: null,
       saidGoodbye: false,

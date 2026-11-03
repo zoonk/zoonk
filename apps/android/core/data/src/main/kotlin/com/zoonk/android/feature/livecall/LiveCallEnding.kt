@@ -24,6 +24,9 @@ class LiveCallEnding(
 
         data object CheckIn : Step
 
+        /** The latest objective check's note for the character, which the call holds. */
+        data object SendNote : Step
+
         /** [reason] picks the words: every goal met thanks the learner, the others have to go. */
         data class SayGoodbye(
             val reason: EndingReason,
@@ -58,6 +61,7 @@ class LiveCallEnding(
     private var goodbyeTaken = false
     private var goodbyeTakenAtMs: Double? = null
     private var goodbyeHeardFromMs: Double? = null
+    private var noteDue = false
 
     /** [startMs] is where the words fall on the session's timeline. */
     fun characterSaid(
@@ -117,6 +121,11 @@ class LiveCallEnding(
 
     fun goalsMet(now: Long) = arm(EndingReason.Done, now)
 
+    /** An objective check brought a note for the character; it waits for the learner's turn. */
+    fun noteArrived() {
+        if (reason == null) noteDue = true
+    }
+
     /**
      * The objective check found a mutual goodbye in what it was sent at [checkedAt]; anything the
      * learner did since makes it stale. Once the goodbye cue went, its own words and their quiet end
@@ -152,7 +161,24 @@ class LiveCallEnding(
             openingRetried = true
             return Step.RetryOpening
         }
-        return goodbyeStep(now)
+        return goodbyeStep(now) ?: noteStep(now)
+    }
+
+    /**
+     * Measured: GPT-Live answers a note that reaches it in a silence aloud, talking into a learner
+     * who is still thinking or typing, and waits for a learner who is speaking. So the note goes once
+     * the learner talks or sends a typed reply, and a goodbye, which ends the call anyway, drops it.
+     */
+    private fun noteStep(now: Long): Step? {
+        if (!noteDue) return null
+        if (goodbyeSentAt != null) {
+            noteDue = false
+            return null
+        }
+        val sentJustNow = lastSentAt?.let { now - it < timing.characterQuietMs } == true
+        if (!learnerTalking(now) && !sentJustNow) return null
+        noteDue = false
+        return Step.SendNote
     }
 
     /** One goodbye request at a time, sent once more when nothing at all followed it. */
