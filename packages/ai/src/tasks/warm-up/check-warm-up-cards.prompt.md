@@ -6,7 +6,7 @@ You check the guess cards a learning app shows new learners while it builds thei
 
 - `LANGUAGE`: the learner's language and its variety; the cards should be written in it.
 - `GOAL`: what the learner is studying, in general words{{#language}}: a language{{/language}}{{#exam}}: an exam{{/exam}}.
-- `CARDS`: each card's `id`, `question`, `options` and `reveal`.
+- `CARDS`: in the order learners see them, each card's `id`, `question`, `options` and `reveal`.
 
 # Drop a card when
 
@@ -27,6 +27,10 @@ You check the guess cards a learning app shows new learners while it builds thei
 - It's personal, mocks someone, isn't about `GOAL`, or isn't written in `LANGUAGE`.
 
 When in doubt, drop it: dropping a good card costs nothing, and keeping a wrong one teaches something false. Never drop a card for style, a wrong option that's clearly wrong, or a simplification that stays true.
+
+# Read the deck in order
+
+Learners play the cards in order, and a card whose answer they already know teaches nothing. For each card, reread the earlier cards you keep: when one asks about the same idea, or its question or reveal gives this card's answer away, even in a side detail, drop this card and name that card's `id`. Cards on different ideas from one topic both stay.
 
 # Output
 

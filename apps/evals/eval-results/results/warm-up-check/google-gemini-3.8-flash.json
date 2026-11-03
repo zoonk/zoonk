@@ -462,6 +462,432 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-kombucha-repeated-idea-and-revealed-answer-1",
+        "expected": { "planted": ["2", "4"] },
+        "userInput": {
+          "goal": "Brewing kombucha at home",
+          "kind": "learn",
+          "language": "en",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "Vinegar stirred in at the start" },
+                { "correct": true, "id": "b", "text": "A culture of yeasts and bacteria" },
+                { "correct": false, "id": "c", "text": "Tea leaves left in too long" }
+              ],
+              "question": "Sweet tea turns into tangy kombucha thanks to…",
+              "reveal": "A culture of yeasts and bacteria, living in the rubbery disc that floats on top. As they feed on the sugar, they make acids that keep most molds away."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": false, "id": "a", "text": "A layer of mold" },
+                { "correct": true, "id": "b", "text": "A home for microbes" },
+                { "correct": false, "id": "c", "text": "Leftover bits of tea" }
+              ],
+              "question": "The rubbery disc floating on a kombucha brew, called a SCOBY, is…",
+              "reveal": "A home for microbes: a mat of cellulose the bacteria spin, packed with the yeasts and bacteria that ferment the tea."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": true, "id": "a", "text": "The yeasts keep making gas" },
+                { "correct": false, "id": "b", "text": "The acids react with the glass" },
+                { "correct": false, "id": "c", "text": "Air gets trapped as you pour" }
+              ],
+              "question": "Once kombucha is sealed in a bottle, it gets fizzy because…",
+              "reveal": "The yeasts keep making carbon dioxide. In a sealed bottle the gas can't escape, so it dissolves into the drink and fizzes when you open it."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Too cold" },
+                { "correct": false, "id": "b", "text": "Full of caffeine" },
+                { "correct": true, "id": "c", "text": "Too acidic" }
+              ],
+              "question": "Mold rarely grows on a healthy kombucha brew because the brew is…",
+              "reveal": "Too acidic. The acids the culture makes leave little room for mold to take hold."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": false, "id": "a", "text": "The sugar" },
+                { "correct": true, "id": "b", "text": "The tea" },
+                { "correct": false, "id": "c", "text": "The SCOBY" }
+              ],
+              "question": "The caffeine in kombucha comes from…",
+              "reveal": "The tea. The culture doesn't make caffeine, so kombucha brewed from black or green tea keeps some of the tea's caffeine."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": true, "id": "a", "text": "Faster" },
+                { "correct": false, "id": "b", "text": "Slower" }
+              ],
+              "question": "Compared with a cool kitchen, a warm kitchen makes kombucha ferment…",
+              "reveal": "Faster. Yeasts and bacteria work quicker in warmth, so the same brew can turn tangy days sooner."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": true, "id": "a", "text": "Air the bacteria need" },
+                { "correct": false, "id": "b", "text": "Light for the culture" },
+                { "correct": false, "id": "c", "text": "A cooler temperature" }
+              ],
+              "question": "Kombucha jars are covered with cloth instead of a tight lid so the brew gets…",
+              "reveal": "Air. The bacteria that make kombucha's acids need oxygen, and the cloth still keeps fruit flies out."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": true, "id": "a", "text": "Kill the culture" },
+                { "correct": false, "id": "b", "text": "Burn off the sugar" },
+                { "correct": false, "id": "c", "text": "Turn bitter" }
+              ],
+              "question": "Brewers let freshly boiled tea cool before adding the culture because tea that hot would…",
+              "reveal": "Kill the culture. Yeasts and bacteria are living things, and tea near boiling is far too hot for them to survive."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 2 of 2 planted errors; kept 6 of 6 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "pt-astronomia-repeated-idea-and-revealed-answer-1",
+        "expected": { "planted": ["6", "7"] },
+        "userInput": {
+          "goal": "Astronomia",
+          "kind": "learn",
+          "language": "pt",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": true, "id": "a", "text": "Vemos partes diferentes do lado iluminado" },
+                { "correct": false, "id": "b", "text": "A sombra da Terra a cobre" },
+                { "correct": false, "id": "c", "text": "Nuvens escondem parte dela" }
+              ],
+              "question": "Por que a Lua parece mudar de forma ao longo do mês?",
+              "reveal": "Vemos partes diferentes do lado que o Sol ilumina. A sombra da Terra só cobre a Lua num eclipse lunar."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": true, "id": "a", "text": "O eixo da Terra é inclinado" },
+                { "correct": false, "id": "b", "text": "O Sol esquenta mais o sul" },
+                { "correct": false, "id": "c", "text": "O Brasil fica mais perto do Sol" }
+              ],
+              "question": "Por que é verão no Brasil quando é inverno na Europa?",
+              "reveal": "O eixo da Terra é inclinado. Em dezembro, o hemisfério sul fica voltado para o Sol e recebe a luz mais de frente e por mais horas."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": true, "id": "a", "text": "Cerca de 8 minutos" },
+                { "correct": false, "id": "b", "text": "Cerca de 8 horas" },
+                { "correct": false, "id": "c", "text": "Cerca de 8 segundos" }
+              ],
+              "question": "Quanto tempo a luz do Sol leva para chegar até a Terra?",
+              "reveal": "Cerca de 8 minutos. Ou seja, o Sol que você vê no céu é o Sol de 8 minutos atrás."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Uma estrela caindo" },
+                { "correct": true, "id": "b", "text": "Uma pedrinha entrando na atmosfera" },
+                { "correct": false, "id": "c", "text": "Um satélite apagando" }
+              ],
+              "question": "Uma estrela cadente é, na verdade…",
+              "reveal": "Uma pedrinha do espaço que entra na atmosfera tão rápido que esquenta e deixa um rastro de luz."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": false, "id": "a", "text": "O outro lado está sempre escuro" },
+                { "correct": true, "id": "b", "text": "Sua rotação acompanha a órbita" },
+                { "correct": false, "id": "c", "text": "Ela não gira" }
+              ],
+              "question": "Por que da Terra sempre vemos o mesmo lado da Lua?",
+              "reveal": "A gravidade da Terra sincronizou a Lua: ela gira uma vez em torno de si mesma no mesmo tempo em que dá uma volta em torno da Terra."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": false, "id": "a", "text": "Uma nuvem de poeira a cobre" },
+                { "correct": true, "id": "b", "text": "Entra na sombra da Terra" },
+                { "correct": false, "id": "c", "text": "Passa atrás do Sol" }
+              ],
+              "question": "Num eclipse lunar, a Lua escurece porque…",
+              "reveal": "Ela entra na sombra da Terra. Muitas vezes fica avermelhada, porque a atmosfera da Terra desvia um pouco de luz vermelha até ela."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": false, "id": "a", "text": "A distância até o Sol" },
+                { "correct": false, "id": "b", "text": "A velocidade da Terra" },
+                { "correct": true, "id": "c", "text": "A inclinação do eixo da Terra" }
+              ],
+              "question": "O que causa as estações do ano?",
+              "reveal": "A inclinação do eixo da Terra. A Terra fica até um pouco mais perto do Sol em janeiro, no verão do hemisfério sul."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": false, "id": "a", "text": "Exatamente 360 dias" },
+                { "correct": false, "id": "b", "text": "Cerca de 30 dias" },
+                { "correct": true, "id": "c", "text": "Cerca de 365 dias" }
+              ],
+              "question": "Quanto tempo a Terra leva para dar uma volta completa em torno do Sol?",
+              "reveal": "Cerca de 365 dias e 6 horas. Essas horas que sobram se juntam e viram o 29 de fevereiro dos anos bissextos."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 8 of 8 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 8 of 8 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 8 of 8 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-sourdough-related-ideas-all-clean-1",
+        "expected": { "planted": [] },
+        "userInput": {
+          "goal": "Baking sourdough bread",
+          "kind": "learn",
+          "language": "en",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "Baking soda" },
+                { "correct": false, "id": "b", "text": "Trapped air" },
+                { "correct": true, "id": "c", "text": "Wild yeasts" }
+              ],
+              "question": "A sourdough starter makes bread rise without store-bought yeast because it's full of…",
+              "reveal": "Wild yeasts, along with bacteria, that live in flour. Regular feedings of flour and water keep them active and multiplying."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": false, "id": "a", "text": "To let trapped air out" },
+                { "correct": true, "id": "b", "text": "To choose where it bursts open" },
+                { "correct": false, "id": "c", "text": "To help the middle cook" }
+              ],
+              "question": "Why do bakers slash the top of a loaf just before it goes in the oven?",
+              "reveal": "To choose where it opens. The loaf swells fast in the oven, and a shallow cut gives it a weak spot to expand from instead of tearing at random."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": false, "id": "a", "text": "Yeast" },
+                { "correct": false, "id": "b", "text": "Sugar" },
+                { "correct": true, "id": "c", "text": "Gluten" }
+              ],
+              "question": "Kneading dough mostly builds…",
+              "reveal": "Gluten, a stretchy web of proteins from the flour. It traps the gas the yeast makes, which lets the dough rise and hold its shape."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": false, "id": "a", "text": "Grows thicker" },
+                { "correct": true, "id": "b", "text": "Stays soft while the loaf rises" },
+                { "correct": false, "id": "c", "text": "Browns sooner" }
+              ],
+              "question": "For the first minutes of baking, bakers fill the oven with steam so the crust…",
+              "reveal": "Stays soft. A moist surface can keep stretching, so the loaf rises higher before the crust sets."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": true, "id": "a", "text": "Fridge" },
+                { "correct": false, "id": "b", "text": "Freezer" },
+                { "correct": false, "id": "c", "text": "Bread box" }
+              ],
+              "question": "Bread goes stale fastest when you keep it in the…",
+              "reveal": "Fridge. Cold speeds up the way the starch in bread firms up, so a loaf stales faster there than on the counter."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": true, "id": "a", "text": "Less than a white loaf" },
+                { "correct": false, "id": "b", "text": "More than a white loaf" }
+              ],
+              "question": "Made the same way, a loaf of whole wheat flour usually rises…",
+              "reveal": "Less. The bran in whole wheat flour gets in the way of the gluten web, so the dough traps less gas."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": true, "id": "a", "text": "Browning reactions in the heat" },
+                { "correct": false, "id": "b", "text": "Oil brushed on top" },
+                { "correct": false, "id": "c", "text": "Burnt flour" }
+              ],
+              "question": "The deep brown color and roasty flavor of a bread crust come mostly from…",
+              "reveal": "Browning reactions between sugars and proteins on the hot surface, the same kind that give toast and roasted coffee their flavor."
+            },
+            {
+              "id": "8",
+              "options": [
+                { "correct": true, "id": "a", "text": "Slows the yeast down" },
+                { "correct": false, "id": "b", "text": "Feeds the yeast" },
+                { "correct": false, "id": "c", "text": "Makes the dough rise faster" }
+              ],
+              "question": "Besides adding flavor, salt in bread dough…",
+              "reveal": "Slows the yeast down, which keeps the rise steady. Salt also tightens the gluten, so the dough is easier to shape."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 7 of 7 clean cards.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 7 of 7 clean cards.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 0 of 0 planted errors; kept 7 of 7 clean cards.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "pt-fotografia-related-ideas-all-clean-1",
+        "expected": { "planted": [] },
+        "userInput": {
+          "goal": "Fotografia",
+          "kind": "learn",
+          "language": "pt",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                { "correct": false, "id": "a", "text": "Mais escuro" },
+                { "correct": true, "id": "b", "text": "Mais desfocado" },
+                { "correct": false, "id": "c", "text": "Mais nítido" }
+              ],
+              "question": "Num retrato, abrir bem o diafragma, com um número f baixo como f/1.8, deixa o fundo…",
+              "reveal": "Mais desfocado. Quanto maior a abertura, mais estreita a faixa da cena que fica em foco, e o fundo vira um borrão suave."
+            },
+            {
+              "id": "2",
+              "options": [
+                { "correct": false, "id": "a", "text": "Mais longo" },
+                { "correct": true, "id": "b", "text": "Mais curto" }
+              ],
+              "question": "Para congelar um carro passando rápido, o tempo do obturador precisa ser…",
+              "reveal": "Mais curto, como 1/1000 s. O sensor recebe luz por tão pouco tempo que o carro quase não se move na foto."
+            },
+            {
+              "id": "3",
+              "options": [
+                { "correct": true, "id": "a", "text": "O ruído" },
+                { "correct": false, "id": "b", "text": "A saturação" },
+                { "correct": false, "id": "c", "text": "O desfoque" }
+              ],
+              "question": "Subir o ISO deixa a foto mais clara, mas também aumenta…",
+              "reveal": "O ruído, aqueles grãozinhos coloridos. A câmera amplifica o sinal do sensor, e o ruído é amplificado junto."
+            },
+            {
+              "id": "4",
+              "options": [
+                { "correct": true, "id": "a", "text": "Fora do centro" },
+                { "correct": false, "id": "b", "text": "Na borda da foto" },
+                { "correct": false, "id": "c", "text": "Bem no centro" }
+              ],
+              "question": "A regra dos terços sugere colocar o assunto principal…",
+              "reveal": "Fora do centro, sobre uma das linhas que dividem a foto em três partes. Assim a imagem costuma ficar mais viva que com tudo no meio."
+            },
+            {
+              "id": "5",
+              "options": [
+                { "correct": false, "id": "a", "text": "Esverdeado" },
+                { "correct": false, "id": "b", "text": "Azulado" },
+                { "correct": true, "id": "c", "text": "Alaranjado" }
+              ],
+              "question": "A luz da hora dourada, perto do nascer e do pôr do sol, tem um tom…",
+              "reveal": "Alaranjado. Com o Sol baixo, a luz atravessa mais atmosfera, que espalha boa parte do azul antes de chegar até nós."
+            },
+            {
+              "id": "6",
+              "options": [
+                { "correct": true, "id": "a", "text": "Um pedaço menor da cena" },
+                { "correct": false, "id": "b", "text": "Um pedaço maior da cena" }
+              ],
+              "question": "Comparada com uma lente de 24 mm, uma de 200 mm mostra…",
+              "reveal": "Um pedaço menor, mais ampliado. Quanto maior a distância focal, mais estreito o ângulo de visão."
+            },
+            {
+              "id": "7",
+              "options": [
+                { "correct": true, "id": "a", "text": "Mais dados do sensor" },
+                { "correct": false, "id": "b", "text": "Os mesmos dados, só maior" },
+                { "correct": false, "id": "c", "text": "Menos detalhes da cena" }
+              ],
+              "question": "Comparado com um JPEG, um arquivo RAW da mesma foto guarda…",
+              "reveal": "Mais dados do sensor. Por isso o arquivo fica maior e aguenta mais ajustes de luz e cor na edição."
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "warm-up-check"
