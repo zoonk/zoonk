@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   type LessonScreen,
@@ -48,7 +49,7 @@ function getCodes(
   lesson: LessonSpec,
   level: CourseLevel = "beginner",
   novice = false,
-  visualFloor = novice,
+  visualFloor: VisualFloor = novice ? "pictures" : "none",
 ) {
   return getLessonSpecIssues({ level, novice, spec: lesson, visualFloor }).map(
     (issue) => issue.code,
@@ -180,22 +181,30 @@ describe(getLessonSpecIssues, () => {
       );
 
     expect(getCodes(showing([1, 4]), "beginner", true)).toStrictEqual(["teachingVisual"]);
-    expect(getCodes(showing([1, 4]), "advanced", false, true)).toStrictEqual(["teachingVisual"]);
+
+    expect(getCodes(showing([1, 4]), "advanced", false, "pictures")).toStrictEqual([
+      "teachingVisual",
+    ]);
+
     expect(getCodes(showing([1, 4, 8]), "beginner", true)).toStrictEqual([]);
   });
 
-  it("asks a shared lesson for its hook's picture and one more visual, and a private one for neither", () => {
+  it("asks a shared lesson for its hook's picture and one more visual, and a private one only for the visual", () => {
     expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([
       "hookPicture",
       "teachingVisual",
     ]);
 
-    expect(getCodes(spec(validScreens), "intermediate", false, true)).toStrictEqual([
+    expect(getCodes(spec(validScreens), "intermediate", false, "pictures")).toStrictEqual([
       "hookPicture",
       "teachingVisual",
     ]);
 
-    expect(getCodes(spec(validScreens), "beginner", true, false)).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), "beginner", true, "drawn")).toStrictEqual([
+      "teachingVisual",
+    ]);
+
+    expect(getCodes(spec(validScreens), "beginner", true, "none")).toStrictEqual([]);
 
     const explored = validScreens.map((item, index) =>
       index === 0 ? { ...item, visual: "The shop" } : item,

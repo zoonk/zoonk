@@ -1,3 +1,4 @@
+import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 
 /**
@@ -197,10 +198,21 @@ function getTeachingVisualIssue(screens: readonly LessonScreen[]) {
   );
 }
 
-/** A floor, not a share to fill: the hook's picture and a few more visuals. */
-function getVisualFloorIssues(screens: readonly LessonScreen[]) {
+/** A floor, not a share to fill: the hook's picture in a shared lesson and a few more visuals. */
+function getVisualFloorIssues({
+  screens,
+  visualFloor,
+}: {
+  screens: readonly LessonScreen[];
+  visualFloor: VisualFloor;
+}) {
+  if (visualFloor === "none") {
+    return [];
+  }
+
   return [
-    screens[0]?.kind === "hook" &&
+    visualFloor === "pictures" &&
+      screens[0]?.kind === "hook" &&
       !screens[0].visual && {
         code: "hookPicture" as const,
         detail: "The hook has no picture of the lesson's main example.",
@@ -235,7 +247,7 @@ function getShapeIssues({
 }: {
   novice: boolean;
   spec: LessonSpec;
-  visualFloor: boolean;
+  visualFloor: VisualFloor;
 }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
@@ -269,7 +281,7 @@ function getShapeIssues({
       detail: "An activity screen has no template from the catalog.",
     },
     getGuessIssue(screens),
-    ...(visualFloor ? getVisualFloorIssues(screens) : []),
+    ...getVisualFloorIssues({ screens, visualFloor }),
   ].filter((issue) => issue !== false);
 }
 
@@ -327,18 +339,18 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
 
 /**
  * An empty list means the spec passes. `novice` is `readsNoviceRules` for the lesson, and
- * `visualFloor` is `hasVisualFloor`.
+ * `visualFloor` is `getVisualFloor`.
  */
 export function getLessonSpecIssues({
   level,
   novice = false,
   spec,
-  visualFloor = false,
+  visualFloor = "none",
 }: {
   level: CourseLevel;
   novice?: boolean;
   spec: LessonSpec;
-  visualFloor?: boolean;
+  visualFloor?: VisualFloor;
 }): LessonSpecIssue[] {
   return [
     ...getSizeIssues({ level, spec }),

@@ -14,7 +14,7 @@ import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
-import { hasVisualFloor } from "../_utils/visual-floor";
+import { type VisualFloor, getVisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
@@ -114,7 +114,7 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
-      visualFloor: hasVisualFloor(params),
+      visualFloor: getVisualFloor(params) === "pictures",
     },
   });
 
@@ -220,7 +220,7 @@ function countShapeIssues({
   data: LessonSpecResult;
   level: CourseLevel;
   novice: boolean;
-  visualFloor: boolean;
+  visualFloor: VisualFloor;
 }): number {
   return data.lessons
     .flatMap((spec) => getLessonSpecIssues({ level, novice, spec, visualFloor }))
@@ -238,7 +238,7 @@ export function generateLessonSpec(params: LessonSpecParams) {
         data,
         level: params.level,
         novice: readsNoviceRules(params),
-        visualFloor: hasVisualFloor(params),
+        visualFloor: getVisualFloor(params),
       }),
     draft: () => planLesson(params),
   });
