@@ -1,3 +1,4 @@
+import { getLessonMapShape } from "@zoonk/ai/tasks/lesson-writer/map";
 import { LESSON_MAP_SHAPES, type LessonMap } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { z } from "zod";
 import { explanationSchema } from "../steps/contract/content-schemas";
@@ -39,7 +40,14 @@ const savedLessonMapSchema = lessonMapSchema.extend({
 /** Null when the lesson has no map (not written yet, or a kind of lesson without one). */
 export function readLessonMap(summary: unknown): LessonMap | null {
   const parsed = savedLessonMapSchema.safeParse(normalizeStepContentValue(summary));
-  return parsed.success ? { ideas: parsed.data.ideas, shape: parsed.data.shape ?? "hub" } : null;
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  const { ideas, shape = "hub" } = parsed.data;
+
+  return { ideas, shape: getLessonMapShape({ ideas, shape }) };
 }
 
 export function readLessonMapSentences(summary: unknown): string[] {
