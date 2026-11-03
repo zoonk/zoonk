@@ -209,6 +209,11 @@ msgid "Name"
 msgstr "이름"
 
 #: src/app/auth/[locale]/setup/setup-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
+
+#: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "사용자 이름"
