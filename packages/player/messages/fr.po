@@ -743,7 +743,7 @@ msgstr "Tout est trié. Appuie sur une carte pour la déplacer."
 #: src/activities/categorize/categorize-sorting.tsx
 msgctxt "6BdpHo"
 msgid "{sorted} of {total} sorted"
-msgstr "{sorted} cartes classées sur {total}"
+msgstr "Cartes classées : {sorted} sur {total}"
 
 #. Under the card being sorted, above the groups to choose from.
 #: src/activities/categorize/categorize-sorting.tsx
