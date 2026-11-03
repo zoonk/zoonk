@@ -17,8 +17,8 @@ export function temperatureSpec(): LessonSpec {
           "At dawn the window thermometer shows −3 °C, and the forecast says 5 degrees warmer by noon. Where will the mark end up?",
         kind: "hook",
         skills: [],
-        visual: null,
-        visualKind: "none",
+        visual: "A window thermometer at dawn reading −3 °C.",
+        visualKind: "picture",
       },
       {
         activityTemplate: null,
@@ -140,7 +140,10 @@ export function writtenTemperatureLesson(): WrittenLesson {
   return {
     screens: [
       {
-        image: null,
+        image: {
+          alt: "A window thermometer at dawn, its mark at −3 °C.",
+          prompt: "A window thermometer at dawn reading −3 °C.",
+        },
         kind: "hookText",
         text: "It's −3 °C at dawn, and by noon the air is 5 degrees warmer. Where does the thermometer's mark end up?",
         visual: null,
