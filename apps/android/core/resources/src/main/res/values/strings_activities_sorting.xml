@@ -19,8 +19,8 @@
     <string name="activities_sorting_is_in">%1$s is in %2$s.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">Took back %1$s.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">All sorted. Tap a card to move it.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">All sorted. Choose a card to move it.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Move to</string>
     <!-- A group that holds no cards once every card is sorted. -->

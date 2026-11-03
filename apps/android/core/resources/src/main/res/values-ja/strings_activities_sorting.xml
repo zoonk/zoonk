@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "891845ce7a5a5c8003d7211432cde5663952b93ee0cafb8671454be0a56ff8b8",
-  "activities_sorting_all_sorted": "d9dc7afd5910ace1acb1a4212a1df3011659344a2aa21c700bc23f931812b263",
+  "activities_sorting_all_sorted": "9167d8528425f2a56d7277b9949ce18dc27f6cbfffda49812f39c222daee809a",
   "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
   "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
   "activities_sorting_badge_match_pairs": "7ece404ad928beba3ccf02e5c96d220e7ebaa91a0f9ed3e245c5a571a85ff9e2",
@@ -98,8 +98,8 @@
     <string name="activities_sorting_is_in">%1$sを%2$sに入れました。</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">%1$sを戻しました。</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">すべて分けました。カードをタップすると移動できます。</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">すべて分類できました。移動したいカードを選んでください。</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">移動先</string>
     <!-- A group that holds no cards once every card is sorted. -->

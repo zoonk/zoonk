@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "4d2e152c746892ddd375335c5c3a49de8586713132ac2ea9c75ec86bf98a7ea9",
-  "activities_sorting_all_sorted": "a22fe848582a3138ed74b446553136c40936e3b66f1b0468dad5dbd5f8190648",
+  "activities_sorting_all_sorted": "0dc13369c6b3c2b9a1877fe49651c1df145203b772364f3cc5a8f6fddfe151b3",
   "activities_sorting_badge_label_it": "8ba6075e5f2929a4015059d2b90a3a677b06c0b3b81fb0a79d1bf287ef25f1ec",
   "activities_sorting_badge_link_causes": "bb558f81bfa643d2326f9be421113e1727233af2920844ea2a98baa4b2d169ff",
   "activities_sorting_badge_match_pairs": "e9a9d0f3f62163e2f8e06c2f72c548ab0f8b7d5ba46a35dcd5c231431778432c",
@@ -99,8 +99,8 @@
     <string name="activities_sorting_is_in">%1$s %2$s grubunda.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">%1$s geri alındı.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">Hepsi yerleştirildi. Taşımak için bir karta dokun.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">Hepsi gruplandı. Taşımak istediğin kartı seç.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Gruba taşı</string>
     <!-- A group that holds no cards once every card is sorted. -->

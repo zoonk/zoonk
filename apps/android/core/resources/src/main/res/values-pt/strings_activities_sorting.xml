@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "a759ef9c78772b33357c8f67e283bfe26f327635a44c47425bc6761a887cd632",
-  "activities_sorting_all_sorted": "dcb70f47485f9401cd6536978239fdbc166c59118dc1bd3c386630b62bb930c3",
+  "activities_sorting_all_sorted": "d64adee7aff6829fe31af3351c7019c2a3df5eb886267899886b4ef12402929d",
   "activities_sorting_badge_label_it": "4613b2c3d44baaeb4d3dbb7cb4df26dc4ed8e60dc47c53fa498b64f349151d98",
   "activities_sorting_badge_link_causes": "9262fb5083c02ccd6f1a7a5794364633c6000437e7616548e4e82cd8c224169f",
   "activities_sorting_badge_match_pairs": "c04ac1e1bf99ad19374f06fd79f9ab438d60d440a47f6de8487099c421f4015f",
@@ -100,8 +100,8 @@
     <string name="activities_sorting_is_in">%1$s está em %2$s.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">Você pegou %1$s de volta.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">Tudo separado. Toque em um cartão para colocar em outro grupo.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">Tudo separado. Escolha um cartão para colocar em outro grupo.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Mover para</string>
     <!-- A group that holds no cards once every card is sorted. -->

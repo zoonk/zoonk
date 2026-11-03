@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "6efa6ac248760a60ebabdb3cb3aa1ba2ec390e6b3c13a9641720479493c12a4a",
-  "activities_sorting_all_sorted": "7a5e73aad96b872c3c42ec7f480934f61a03fc4289c717b192d4f0791fd59462",
+  "activities_sorting_all_sorted": "24bb43f65834e2a6b77c5757e14bb962caa3134623cb244658d0dd14c954f1d3",
   "activities_sorting_badge_label_it": "89553dfe3082de0ba7b58186cf4ac91a2451b34d20f9611c55e7a554c6b96e06",
   "activities_sorting_badge_link_causes": "b9332c7c30dd0e53d00f650885fdf0c4b5f65d8116b5076ce602696b9d3c6a85",
   "activities_sorting_badge_match_pairs": "057a46ca3a0d2535b1223c9469b2b0e7e96fdcc19cddfb91886b77c8a9e87bd3",
@@ -99,8 +99,8 @@
     <string name="activities_sorting_is_in">%1$s ist in der Gruppe %2$s.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">Zuordnung von %1$s rückgängig gemacht.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">Alles sortiert. Tippe auf eine Karte, um sie zu verschieben.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">Alles einsortiert. Wähl eine Karte aus, um sie zu verschieben.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Verschieben in</string>
     <!-- A group that holds no cards once every card is sorted. -->

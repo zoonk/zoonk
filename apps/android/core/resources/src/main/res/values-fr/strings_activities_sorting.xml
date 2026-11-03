@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "6c2e6e53a4a5b3ded11eed38c8a72b728eff2d616acbca1393c3034d6dc09d31",
-  "activities_sorting_all_sorted": "be565fd38b3457984d4daa8587a521853a7e446337bf6552659e1c8e5acf4293",
+  "activities_sorting_all_sorted": "7f6a851936d16410435292ff23a8d6d25a8f4203183887ce8276c1a75c437d4c",
   "activities_sorting_badge_label_it": "8200a857cbaa43425d79fee6d1bbe28d0ffa301991d6e1620a14a9e7a43f51f6",
   "activities_sorting_badge_link_causes": "4d707e65014ddc439e00e76f9438adb65ed94181d9dffbfb44fe7941abe9b861",
   "activities_sorting_badge_match_pairs": "c685fb2b9201328b561ce85c304760a3c14d2240e102998cc97fca155e15d1d3",
@@ -100,8 +100,8 @@
     <string name="activities_sorting_is_in">%1$s est dans %2$s.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">Tu as repris %1$s.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">Tout est trié. Appuie sur une carte pour la déplacer.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">Tout est trié. Choisis une carte pour la déplacer.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Déplacer vers</string>
     <!-- A group that holds no cards once every card is sorted. -->

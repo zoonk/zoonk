@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "a1789aac47ba803b94d5b03d42c6b0dacd9174023f9f2fa4d5d0fcfaeab7d1b4",
-  "activities_sorting_all_sorted": "80ea5bd7b0c17020917d7639cef1564903914f6917d665d21a417cbf2db46ded",
+  "activities_sorting_all_sorted": "5b23d1770a11a07ca4c9537313dde81dbe6bd646531cbf50017448e5d7be8b3b",
   "activities_sorting_badge_label_it": "e1cadc296422b63a6e16fe9aa4cd83fd42ad141620ef238eda60df52f97059bc",
   "activities_sorting_badge_link_causes": "b2412678f029510ba7c7cb9aa49244723105f1ba79bcc12aeae542ae435f416c",
   "activities_sorting_badge_match_pairs": "a727ab820aa1113e0ab9971ca534ce261dcbafe5bced11081f0795767c25b352",
@@ -100,8 +100,8 @@
     <string name="activities_sorting_is_in">%1$s está en %2$s.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">Retiraste %1$s del grupo.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">Todo está clasificado. Toca una tarjeta para moverla.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">Ya agrupaste todo. Elige una tarjeta para moverla.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">Mover a</string>
     <!-- A group that holds no cards once every card is sorted. -->

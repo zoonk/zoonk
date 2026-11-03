@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "261d3197c111b79cc72a38bd8d3a5ea02c6a46fdfe7c5d775a3125b8b4134e7e",
-  "activities_sorting_all_sorted": "107bfa139309c462e08c3b78a10274537171852ce5730c2565d1536a61446661",
+  "activities_sorting_all_sorted": "96eb35aaf835eb92880a3f50985215b8d75cc8aadeab9d4b0ec0cdd6f1681017",
   "activities_sorting_badge_label_it": "1bd1b4013bcb2ca586046004812923fb3e69e7c3716bad2e540cb68a845b0d76",
   "activities_sorting_badge_link_causes": "99168c16d353ca121996c887b678a4f2291ea8a9d66b7f97c57c31e707ccc4a8",
   "activities_sorting_badge_match_pairs": "034cada819e3f4f39cfb7cc958ca3049cfa6246c5c0e220a7a2b2ecda68c8e06",
@@ -98,8 +98,8 @@
     <string name="activities_sorting_is_in">%1$s 카드는 %2$s 그룹에 있어요.</string>
     <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
     <string name="activities_sorting_took_back">%1$s 카드를 되돌렸어요.</string>
-    <!-- Once every card has a group; tapping a card opens a menu to move it to another group. -->
-    <string name="activities_sorting_all_sorted">모두 분류했어요. 카드를 옮기려면 눌러 보세요.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">모두 분류했어요. 옮길 카드를 선택하세요.</string>
     <!-- Title of the menu that moves a sorted card to another group. -->
     <string name="activities_sorting_move_to">옮길 그룹</string>
     <!-- A group that holds no cards once every card is sorted. -->

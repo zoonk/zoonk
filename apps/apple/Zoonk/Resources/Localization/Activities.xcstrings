@@ -4184,61 +4184,61 @@
         }
       }
     },
-    "All sorted. Tap a card to move it." : {
-      "comment" : "Every card of a sorting activity has a group; a tap on a card moves it",
+    "All sorted. Choose a card to move it." : {
+      "comment" : "Every card of a sorting activity has a group; choosing a card moves it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles sortiert. Tippe auf eine Karte, um sie zu verschieben."
+            "value" : "Alles einsortiert. Wähl eine Karte aus, um sie zu verschieben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo está clasificado. Toca una tarjeta para moverla."
+            "value" : "Ya agrupaste todo. Elige una tarjeta para moverla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout est trié. Appuie sur une carte pour la déplacer."
+            "value" : "Tout est trié. Choisis une carte pour la déplacer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutto sistemato. Tocca una carta per spostarla."
+            "value" : "Hai sistemato tutte le carte. Scegline una per spostarla."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべて分けました。カードをタップすると移動できます。"
+            "value" : "すべて分類できました。移動したいカードを選んでください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모두 분류했어요. 카드를 옮기려면 눌러 보세요."
+            "value" : "모두 분류했어요. 옮길 카드를 선택하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystkie karty przyporządkowane. Dotknij karty, aby ją przenieść."
+            "value" : "Wszystko posortowane. Wybierz kartę, aby ją przenieść."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo separado. Toque em um cartão para colocar em outro grupo."
+            "value" : "Tudo separado. Escolha um cartão para colocar em outro grupo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hepsi yerleştirildi. Taşımak için bir karta dokun."
+            "value" : "Hepsi gruplandı. Taşımak istediğin kartı seç."
           }
         }
       }

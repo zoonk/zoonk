@@ -56,8 +56,8 @@ private struct CategorizeCanvas: View {
         dealing(card)
       } else {
         Text(
-          "All sorted. Tap a card to move it.", tableName: "Activities",
-          comment: "Every card of a sorting activity has a group; a tap on a card moves it"
+          "All sorted. Choose a card to move it.", tableName: "Activities",
+          comment: "Every card of a sorting activity has a group; choosing a card moves it"
         )
         .font(.subheadline.weight(.medium))
         .focusable()

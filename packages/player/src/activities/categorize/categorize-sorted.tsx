@@ -32,7 +32,11 @@ export function CategorizeSorted({
     <>
       {!checkedPairs && (
         <p className="text-sm font-medium outline-none" ref={statusRef} tabIndex={-1}>
-          {t("All sorted. Tap a card to move it.")}
+          {t({
+            description:
+              "Shown once every card has a group. Choosing a card opens a menu that moves it to another group.",
+            message: "All sorted. Choose a card to move it.",
+          })}
         </p>
       )}
 

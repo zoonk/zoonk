@@ -736,10 +736,11 @@ msgctxt "NTZ7fO"
 msgid ", wrong group"
 msgstr ", 잘못된 그룹"
 
+#. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
 #: src/activities/categorize/categorize-sorted.tsx
-msgctxt "7N2fCS"
-msgid "All sorted. Tap a card to move it."
-msgstr "모두 분류했어요. 카드를 옮기려면 눌러 보세요."
+msgctxt "-oG-_W"
+msgid "All sorted. Choose a card to move it."
+msgstr "모두 분류했어요. 옮길 카드를 선택하세요."
 
 #. Progress while sorting: how many of the cards already have a group.
 #: src/activities/categorize/categorize-sorting.tsx

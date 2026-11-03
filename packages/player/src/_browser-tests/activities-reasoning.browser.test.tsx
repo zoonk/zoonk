@@ -46,7 +46,7 @@ describe("reasoning activities", () => {
     await sortCard({ group: "Same substance", item: "Melting ice" });
     await sortCard({ group: "New substance", item: "Rusting iron" });
     await sortCard({ group: "New substance", item: "Burning wood" });
-    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toBeVisible();
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("3 of 3 in the right group")).toBeVisible();
@@ -312,7 +312,7 @@ describe("reasoning activities with only a keyboard", () => {
     await expect.element(page.getByRole("button", { name: "Undo" })).toHaveFocus();
     await press("1");
     await press("1");
-    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toHaveFocus();
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toHaveFocus();
   });
 
   it("categorize: number keys sort each card in turn, then Enter checks", async () => {
@@ -321,7 +321,7 @@ describe("reasoning activities with only a keyboard", () => {
     await press("2");
     await press("1");
     await press("1");
-    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toHaveFocus();
+    await expect.element(page.getByText("All sorted. Choose a card to move it.")).toHaveFocus();
     await press("Enter");
     await expectVerdict("Correct!");
   });
