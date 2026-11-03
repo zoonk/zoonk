@@ -11,6 +11,7 @@ import { appAttestPaths } from "./paths/app-attest";
 import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
 import { checkpointPaths } from "./paths/checkpoints";
+import { completedLessonPaths } from "./paths/completed-lessons";
 import { contentGenerationPaths } from "./paths/content-generation";
 import { courseEstimatePaths } from "./paths/course-estimates";
 import { courseGoalPaths } from "./paths/course-goals";
@@ -98,6 +99,7 @@ const paths = withInternalErrorResponses({
   ...catalogPaths,
   ...catalogResourcePaths,
   ...checkpointPaths,
+  ...completedLessonPaths,
   ...contentGenerationPaths,
   ...courseGoalPaths,
   ...courseEstimatePaths,

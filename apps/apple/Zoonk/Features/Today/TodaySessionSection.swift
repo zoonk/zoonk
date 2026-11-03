@@ -154,7 +154,7 @@ struct TodaySessionSection: View {
 
     if !foldsDone || disclosures.showsDone {
       ForEach(done, id: \.position) { block in
-        BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+        doneRow(block)
       }
     }
 
@@ -223,6 +223,23 @@ struct TodaySessionSection: View {
       .tint(.primary)
       .disabled(busy != nil)
       .listRowBackground(isNext ? NextRowBackground() : nil)
+    } else {
+      row
+    }
+  }
+
+  @ViewBuilder
+  private func doneRow(_ block: StudyBlock) -> some View {
+    let row = BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+
+    if let lessonId = block.lessonToReopen {
+      Button {
+        router.open(.lesson(lessonId: lessonId))
+      } label: {
+        row
+      }
+      .tint(.primary)
+      .disabled(busy != nil)
     } else {
       row
     }

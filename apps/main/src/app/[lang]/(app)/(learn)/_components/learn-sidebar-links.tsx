@@ -51,7 +51,7 @@ export function LearnSidebarFeedback() {
   );
 }
 
-type SidebarMenu = "exam" | "mindMaps" | "mistakes" | "speaking" | "stats";
+type SidebarMenu = "completedLessons" | "exam" | "mindMaps" | "mistakes" | "speaking" | "stats";
 
 const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
   exam: ["/mock/new"],

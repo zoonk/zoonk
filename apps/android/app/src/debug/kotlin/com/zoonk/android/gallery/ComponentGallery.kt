@@ -92,6 +92,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
@@ -576,6 +577,7 @@ private fun LessonVisuals() {
 @Composable
 private fun HeadersAndEmptyStates() {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        PageTitleRow("Plan", verticalAlignment = Alignment.CenterVertically) { FilledTonalButton(onClick = {}) { Text("Adjust plan") } }
         SectionHeader("This week")
         EmptyState(
             icon = R.drawable.ic_edit_square,

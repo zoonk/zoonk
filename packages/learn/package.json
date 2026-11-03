@@ -25,6 +25,7 @@
     "./chip": "./src/_components/chip.ts",
     "./choice-rows": "./src/_components/choice-rows.tsx",
     "./citation-label": "./src/_utils/use-citation-label.ts",
+    "./completed-lessons": "./src/completed-lessons/completed-lessons-screen.tsx",
     "./daily-time-picker": "./src/_components/daily-time-picker.tsx",
     "./device-storage": "./src/_utils/device-storage.ts",
     "./choice-styles": "./src/onboarding/choice-styles.ts",

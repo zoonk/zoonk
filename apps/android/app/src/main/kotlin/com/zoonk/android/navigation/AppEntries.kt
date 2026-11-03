@@ -9,6 +9,7 @@ import com.zoonk.android.feature.buddy.buddyEntries
 import com.zoonk.android.feature.catalog.catalogEntries
 import com.zoonk.android.feature.challenge.challengeEntries
 import com.zoonk.android.feature.checkpoint.checkpointEntries
+import com.zoonk.android.feature.completedlessons.completedLessonsEntries
 import com.zoonk.android.feature.conversation.conversationEntries
 import com.zoonk.android.feature.essay.essayEntries
 import com.zoonk.android.feature.exam.examEntries
@@ -68,6 +69,7 @@ fun appEntries(
         explainEntries(app, navigator)
         practiceBlockEntries(app, navigator)
         mistakesEntries(app, navigator)
+        completedLessonsEntries(app, navigator)
         checkpointEntries(app, navigator)
         challengeEntries(app, navigator)
         testOutEntries(app, navigator)

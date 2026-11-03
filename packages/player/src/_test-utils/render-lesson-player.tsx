@@ -63,10 +63,19 @@ export function startedRun({
   answers = [],
   hyperdrive = { knownStepIds: [], streak: 0 },
   optionalStepIds,
+  replay = false,
   runId = crypto.randomUUID(),
   startedAt = new Date().toISOString(),
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
-  return { answers, hyperdrive, optionalStepIds, reason: "started" as const, runId, startedAt };
+  return {
+    answers,
+    hyperdrive,
+    optionalStepIds,
+    reason: "started" as const,
+    replay,
+    runId,
+    startedAt,
+  };
 }
 
 export function buildAdapters(

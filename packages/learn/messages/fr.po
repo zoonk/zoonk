@@ -103,6 +103,7 @@ msgstr "Étudié"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -2180,6 +2181,34 @@ msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "Nouvelle tentative à ta prochaine séance"
 
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Leçons terminées"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "Retrouve toutes les leçons que tu as terminées"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "Hier"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "Les leçons terminées s’affichent ici pour que tu puisses les refaire quand tu veux."
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Afficher plus"
+
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "hxbNj_"
@@ -4137,6 +4166,7 @@ msgstr ", tu es ici"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr ", terminé"
@@ -7021,11 +7051,6 @@ msgstr "Tes erreurs corrigées"
 msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "Tes erreurs"
-
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Afficher plus"
 
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
@@ -12819,11 +12844,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · après le défi précédent"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", compte pour une mission"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", sautée"
@@ -13177,6 +13197,11 @@ msgstr "Préparation de ton plan pour {goal}"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "Cela prend généralement une ou deux minutes. Ta première journée s’affichera ici dès qu’elle sera prête."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", compte pour une mission"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

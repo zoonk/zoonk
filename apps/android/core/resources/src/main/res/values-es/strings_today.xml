@@ -19,6 +19,7 @@
   "today_coming_stalled": "77288e2229dd419bc74470faa163b8a1814579ead9faf44d8f50ea7e74e687bb",
   "today_coming_title": "604bbb0d65ca1a1175db12f7fb438ea056524daa1083c5e45559ec960f6fb9d1",
   "today_coming_writing": "b3b9c0bfc63f355a53d4d6c782517c337ea2cb8ddeb709a83d37b645e8589fa4",
+  "today_completed_lessons_detail": "da9559b9734b9e7dccc464c621bd18c1492f1f41efe007350ce38b56d7abd26d",
   "today_connection_lost": "e6f0f994a3db5a4829855c7bbd18c88ea7575407e361fbbddf97b6a28267d296",
   "today_connection_lost_detail": "74fc6ed7ed2a4c4ec5b2d2e1cb2c33d94fb73ae3d1acd874b9af4d27514a6013",
   "today_continue_explanation": "6ba568e18228f3fa421b85c12f7d2a567b7f797e4ff1a23072754602d13ecf30",
@@ -418,6 +419,8 @@
     <string name="today_practice_anytime">Practica cuando quieras</string>
     <string name="today_mistakes_notebook">Cuaderno de errores</string>
     <string name="today_mistakes_redo">Vuelve a intentar lo que respondiste mal</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Volver a cualquier lección que ya completaste</string>
     <string name="today_mistakes_return_tomorrow">Los errores de hoy vuelven mañana</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d listo para practicar</item>

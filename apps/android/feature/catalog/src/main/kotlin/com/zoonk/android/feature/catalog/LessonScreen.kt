@@ -183,7 +183,7 @@ private fun LessonFirstScreen(
     val start = @Composable {
         // A lesson not written yet says it starts writing; one with a first screen, that it opens.
         val label = if (lesson.firstScreen == null) R.string.catalog_start_this_lesson else R.string.catalog_start_lesson
-        Button(onClick = { navigator.open(AppRoute.Lesson(lessonId)) }) { Text(stringResource(label)) }
+        Button(onClick = { navigator.open(AppRoute.Lesson(lessonId, fromCatalog = true)) }) { Text(stringResource(label)) }
         Spacer(Modifier.size(16.dp))
         LineWithIcon(R.drawable.ic_play_circle, note, style = MaterialTheme.typography.bodySmall)
     }

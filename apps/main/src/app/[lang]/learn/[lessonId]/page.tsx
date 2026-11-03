@@ -2,7 +2,12 @@ import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
-import { FIRST_ANSWER_PARAM, ORIGIN_PARAM, readCatalogOrigin } from "@/lib/public/public-hrefs";
+import {
+  FIRST_ANSWER_PARAM,
+  type LessonOrigin,
+  ORIGIN_PARAM,
+  readLessonOrigin,
+} from "@/lib/public/public-hrefs";
 import { getLessonSessionContext } from "@/lib/session/lesson-session-context";
 import {
   type PlayableLibraryLessonResult,
@@ -61,7 +66,7 @@ function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
 
   return {
     firstAnswer: typeof firstAnswer === "string" ? firstAnswer : null,
-    origin: readCatalogOrigin(query[ORIGIN_PARAM]),
+    origin: readLessonOrigin(query[ORIGIN_PARAM]),
     studySessionId: isUuid(sessionParam) ? sessionParam : null,
   };
 }
@@ -92,12 +97,12 @@ function LessonWithoutScreens({
 }: {
   inSession: boolean;
   initialRequest: LessonRequest;
-  origin: string | null;
+  origin: LessonOrigin | null;
   result: Exclude<PlayableLibraryLessonResult, { status: "ready" }>;
   waiting: Awaited<ReturnType<typeof loadWaitingState>>;
 }) {
   if (result.status === "sessionRequired") {
-    return <LessonGuestGate exitHref={origin ?? "/"} lesson={result.lesson} />;
+    return <LessonGuestGate exitHref={origin?.path ?? "/"} lesson={result.lesson} />;
   }
 
   return (
@@ -105,7 +110,7 @@ function LessonWithoutScreens({
       inSession={inSession}
       initialRequest={initialRequest}
       lesson={result.lesson}
-      origin={origin}
+      origin={origin?.path ?? null}
       waiting={waiting}
     />
   );
@@ -113,6 +118,7 @@ function LessonWithoutScreens({
 
 const SESSION_ROUTING: LessonRouting = { exit: "/today", exitTo: null, nextLesson: null };
 
+/** A catalog page is gone back to only for a lesson without a chapter; an app place always. */
 async function getRouting({
   inSession,
   isGuest,
@@ -122,15 +128,15 @@ async function getRouting({
   inSession: boolean;
   isGuest: boolean;
   lesson: PlayableLibraryLesson | null;
-  origin: string | null;
+  origin: LessonOrigin | null;
 }): Promise<LessonRouting | undefined> {
   if (inSession) {
     return SESSION_ROUTING;
   }
 
-  const fromPage = origin ? { exit: origin, exitTo: null, nextLesson: null } : undefined;
+  const fromPage = origin ? { exit: origin.path, exitTo: null, nextLesson: null } : undefined;
 
-  if (isGuest || !lesson) {
+  if (isGuest || !lesson || origin?.kind === "app") {
     return fromPage;
   }
 
@@ -142,14 +148,22 @@ async function getRouting({
   return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
+/**
+ * The visitor's ending ("Build my plan") is only for a lesson opened from a public catalog page; a
+ * guest who opened it inside the app (Today, Completed lessons, their chapters) already has a goal.
+ */
 function isGuestLesson({
+  origin,
   session,
   studySessionId,
 }: {
+  origin: LessonOrigin | null;
   session: Awaited<ReturnType<typeof getSession>>;
   studySessionId: string | null;
 }): boolean {
-  return Boolean(session?.user.isAnonymous) && studySessionId === null;
+  return (
+    Boolean(session?.user.isAnonymous) && studySessionId === null && origin?.kind === "catalog"
+  );
 }
 
 /**
@@ -178,7 +192,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     ([lessonResult, lessonSession, context]) =>
       getRouting({
         inSession: context !== null,
-        isGuest: isGuestLesson({ session: lessonSession, studySessionId }),
+        isGuest: isGuestLesson({ origin, session: lessonSession, studySessionId }),
         lesson: lessonResult?.status === "ready" ? lessonResult.lesson : null,
         origin,
       }),
@@ -208,7 +222,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     routingRead,
   ]);
 
-  const isGuest = isGuestLesson({ session, studySessionId });
+  const isGuest = isGuestLesson({ origin, session, studySessionId });
   const soundsEnabled = profile?.soundsEnabled ?? true;
 
   const played = result?.status === "ready" ? { lesson: result.lesson } : null;

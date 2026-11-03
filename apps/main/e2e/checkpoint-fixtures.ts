@@ -17,7 +17,7 @@ const QUESTIONS_PER_SKILL = 3;
 export const CHECKPOINT_QUESTIONS = SKILL_NAMES.length * QUESTIONS_PER_SKILL;
 const CHECKPOINT_PASS_MARK = 5;
 
-export async function createGoalLearner() {
+async function createGoalLearner() {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ timezone: "UTC", title: "Learn percentages", userId: user.id });
 

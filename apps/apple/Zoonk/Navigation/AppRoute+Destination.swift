@@ -61,6 +61,10 @@ extension AppRoute {
         "The questions you got wrong, why, and practice until you get them right.",
         table: "Navigation",
         comment: "What the mistakes notebook shows, under its title until it can open")
+    case .completedLessons:
+      LocalizedStringResource(
+        "The lessons you've finished, ready to do again anytime.", table: "Navigation",
+        comment: "What the completed lessons page shows, under its title until it can open")
     case .speaking:
       LocalizedStringResource(
         "Calls in the language you're learning, at your level.", table: "Voice",
@@ -92,6 +96,8 @@ extension AppRoute {
       MockChooserScreen()
     case .mistakes:
       MistakesScreen()
+    case .completedLessons:
+      CompletedLessonsScreen()
     case .speaking:
       SpeakingScreen()
     case .earlierQuestions:
@@ -176,7 +182,7 @@ extension AppTab {
       }
     case .search:
       SearchScreen()
-    case .mistakes, .exam, .speaking, .mindMaps, .statistics:
+    case .mistakes, .completedLessons, .exam, .speaking, .mindMaps, .statistics:
       studyRoute?.destination
     }
   }

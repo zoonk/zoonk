@@ -19,6 +19,7 @@
   "today_coming_stalled": "dbd84c3081e9c4ea1f49bbb2ac064b6931d95b49222d2bbf5b219323a9b2d46b",
   "today_coming_title": "60ec15c7f3011287e4b022344833989dc6e0a63d21afd25f7bf66b682b67ca7a",
   "today_coming_writing": "358d879d49783f7cd3304ce0911a815bd7dfca3d09acc306af44908fdcaa14c9",
+  "today_completed_lessons_detail": "67abd8931cba414286ccde0714f5ec683832bb55f706e3be4777a865a70fa5f8",
   "today_connection_lost": "c8558f034aaca56c92c8ebd15e3ccaaaff4ed0a25b90f8d1e36e209247fa47db",
   "today_connection_lost_detail": "cad8ea09ffa7cc328aaa41aa2a11f8cc9d24a2a6bab53142ff9b6f02af088835",
   "today_continue_explanation": "b8b5a4df89f790f512e604f079666025fd2d81771940b2462dc7ff8e98292fdf",
@@ -404,6 +405,8 @@
     <string name="today_practice_anytime">İstediğin zaman pratik yap</string>
     <string name="today_mistakes_notebook">Yanlış defteri</string>
     <string name="today_mistakes_redo">Yanlış yaptığın soruları tekrar çöz</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Tamamladığın derslerden istediğine geri dön</string>
     <string name="today_mistakes_return_tomorrow">Bugünkü yanlışların yarın tekrar karşına çıkar</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d yanlış üzerinde çalışabilirsin</item>
