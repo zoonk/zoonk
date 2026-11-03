@@ -383,9 +383,6 @@ private struct StepScreen: View {
         view: view, draft: scheduleDraft, isSaving: isSaving, failed: failed, refusal: refusal,
         onAnswer: onAnswer, onChangeDate: onChangeDate
       )
-      // Its answers are for one date, so a date saved meanwhile, such as from another window, asks
-      // them again.
-      .id(view.goal.targetDate)
       .onboardingColumn()
     default:
       QuestionStep(

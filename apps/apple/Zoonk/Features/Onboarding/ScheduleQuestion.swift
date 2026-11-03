@@ -23,7 +23,7 @@ struct ScheduleQuestion: View {
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(\.isPaneSplit) private var isBesidePlan
   @Environment(\.onboardingAside) private var aside
-  @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
+  @State private var found = PlanAsking<FindKey, TimeToCover, ContinuousClock>()
   @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
   @State private var fullCourse: Bool
@@ -35,9 +35,17 @@ struct ScheduleQuestion: View {
   @State private var planMade = false
   @State private var runEnded = false
 
+  /// The answers are for the goal's date too, so a date saved meanwhile, such as from another
+  /// window, asks them again and keeps what the learner set.
+  private struct FindKey: Hashable, Sendable {
+    let week: ScheduleWeek
+    let date: String?
+  }
+
   private struct AdviceKey: Hashable, Sendable {
     let week: ScheduleWeek
     let minutes: Int
+    let date: String?
   }
 
   private struct Asked<Key: Hashable>: Hashable {
@@ -129,7 +137,7 @@ struct ScheduleQuestion: View {
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {
-        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey)
+        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey.week)
       }
     }
     .task(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
@@ -214,7 +222,9 @@ struct ScheduleQuestion: View {
 
   private var weekend: Int? { studiesOnWeekends && weekendOn ? weekendPicked : nil }
 
-  private var findKey: ScheduleWeek { ScheduleTime.findWeek(days: days, weekend: weekend) }
+  private var findKey: FindKey {
+    FindKey(week: ScheduleTime.findWeek(days: days, weekend: weekend), date: view.goal.targetDate)
+  }
 
   private var timeChoices: [TimeChoice] { view.timeChoices.map(TimeChoice.init) }
 
@@ -233,7 +243,7 @@ struct ScheduleQuestion: View {
       week: ScheduleTime.studyWeek(
         days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend,
         fullCourse: isExam && fullCourse),
-      minutes: minutes ?? view.recommendedMinutes)
+      minutes: minutes ?? view.recommendedMinutes, date: view.goal.targetDate)
 
     let advice = advised.answer(for: adviceKey)
 
