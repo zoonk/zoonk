@@ -10,6 +10,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { runSessionFollowUps } from "./_test-utils/session-follow-ups";
 import { claimDailyInsight } from "./insights/daily-insight";
 import {
@@ -269,20 +270,25 @@ const CALL_TURNS = [
   { speaker: "learner" as const, text: "Yes. I move to Toronto next month for my job." },
 ];
 
-async function practiceCall(kind: LanguageConversationKind = "practice") {
+async function practiceCall({
+  kind = "practice",
+  library = false,
+}: { kind?: LanguageConversationKind; library?: boolean } = {}) {
   const user = await userFixture();
 
-  const goal = await goalFixture({
-    kind: "language",
-    language: "pt",
-    targetLanguage: "en",
-    timezone: "America/Sao_Paulo",
-    userId: user.id,
-  });
+  const goal = library
+    ? null
+    : await goalFixture({
+        kind: "language",
+        language: "pt",
+        targetLanguage: "en",
+        timezone: "America/Sao_Paulo",
+        userId: user.id,
+      });
 
   const conversation = await prisma.languageConversation.create({
     data: {
-      goalId: goal.id,
+      goalId: goal?.id,
       kind,
       language: "pt",
       level: "A2",
@@ -294,7 +300,7 @@ async function practiceCall(kind: LanguageConversationKind = "practice") {
     },
   });
 
-  return { conversationId: conversation.id, userId: user.id };
+  return { conversationId: conversation.id, timeZone: "America/Sao_Paulo", userId: user.id };
 }
 
 describe(proposeCallMemory, () => {
@@ -317,9 +323,10 @@ describe(proposeCallMemory, () => {
   });
 
   it("reads the call as the learner saw it and saves its facts as from that call", async () => {
-    const { conversationId, userId } = await practiceCall();
+    const call = await practiceCall();
+    const { conversationId, userId } = call;
 
-    const proposed = await proposeCallMemory({ conversationId, turns: CALL_TURNS, userId });
+    const proposed = await proposeCallMemory({ ...call, turns: CALL_TURNS });
 
     expect(extractMemoryFacts).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -353,10 +360,28 @@ describe(proposeCallMemory, () => {
     });
   });
 
+  it("dates what it reads in the goal's time zone, else in the one the call ended in", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-04T01:30:00Z"));
+
+    const [goalCall, libraryCall] = await Promise.all([
+      practiceCall(),
+      practiceCall({ library: true }),
+    ]);
+
+    await proposeCallMemory({ ...goalCall, timeZone: "Asia/Tokyo", turns: CALL_TURNS });
+    await proposeCallMemory({ ...libraryCall, timeZone: "America/Sao_Paulo", turns: CALL_TURNS });
+
+    expect(vi.mocked(extractMemoryFacts).mock.calls.map(([params]) => params.today)).toStrictEqual([
+      "2026-11-03",
+      "2026-11-03",
+    ]);
+  });
+
   it("learns nothing from a mock, an exam task or a call where the learner never spoke", async () => {
     const [mock, examTask, silent] = await Promise.all([
-      practiceCall("speakingMock"),
-      practiceCall("examSpeaking"),
+      practiceCall({ kind: "speakingMock" }),
+      practiceCall({ kind: "examSpeaking" }),
       practiceCall(),
     ]);
 

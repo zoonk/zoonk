@@ -67,8 +67,8 @@ export async function conversationReviewWorkflow(
   await writeNextCall(input).catch(() => null);
 
   // Not owed with oweFollowUps: that would store the transcript, which calls never keep.
-  const { conversationId, turns, userId } = input;
-  await start(callMemoryWorkflow, [{ conversationId, turns, userId }]).catch(() => null);
+  const { conversationId, timeZone, turns, userId } = input;
+  await start(callMemoryWorkflow, [{ conversationId, timeZone, turns, userId }]).catch(() => null);
 
   return outcome;
 }

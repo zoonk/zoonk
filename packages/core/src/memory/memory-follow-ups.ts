@@ -9,6 +9,7 @@ import {
   type ConversationTurn,
   conversationScenarioSchema,
 } from "../language/conversations/conversation-contract";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { isMemoryEnabled } from "./_utils/memory-access";
 import { hasEnoughActivity, loadGoalActivity } from "./insights/_utils/goal-activity";
 import { type MemoryChange } from "./memory-contract";
@@ -100,10 +101,12 @@ const CALLS_THAT_TEACH_MEMORY: ReadonlySet<LanguageConversationKind> = new Set([
 /** Internal, for the run a call's review starts once it settles; the turns are never stored. */
 export async function proposeCallMemory({
   conversationId,
+  timeZone,
   turns,
   userId,
 }: {
   conversationId: string;
+  timeZone: string;
   turns: ConversationTurn[];
   userId: string;
 }): Promise<ProposedMemoryUpdate | null> {
@@ -133,7 +136,7 @@ export async function proposeCallMemory({
       kind: "call",
       language: conversation.language,
     },
-    timeZone: conversation.goal?.timezone,
+    timeZone: getAnswerTimeZone({ goal: conversation.goal, timeZone }),
     userId,
   });
 }
