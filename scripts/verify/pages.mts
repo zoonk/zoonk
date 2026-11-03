@@ -27,14 +27,13 @@ import { redactQuery, savedRequest } from "./requests.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
-import { THROTTLING, VIEWPORT_NAMES, type ViewportName } from "./viewports.mts";
+import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
 
 /**
  * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
  * explains when to run it and how to read it.
  */
 const repository = resolve(import.meta.dirname, "../..");
-const SCHEMES = ["light", "dark"] as const;
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -55,18 +54,6 @@ const { positionals, values } = parseArgs({
     viewports: { default: VIEWPORT_NAMES.join(","), type: "string" },
   },
 });
-
-function pick<T extends string>(list: string, allowed: readonly T[], name: string): T[] {
-  return list.split(",").map((item) => {
-    const match = allowed.find((candidate) => candidate === item.trim());
-
-    if (!match) {
-      throw new Error(`Unknown ${name} "${item}". Use ${allowed.join(", ")}.`);
-    }
-
-    return match;
-  });
-}
 
 const baseUrl = values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: "main" });
 const paths = positionals.length > 0 ? positionals : ["/"];

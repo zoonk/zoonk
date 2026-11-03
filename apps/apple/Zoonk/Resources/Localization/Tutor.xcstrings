@@ -5555,7 +5555,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma nova meta"
+            "value" : "Começar um novo objetivo"
           }
         },
         "tr" : {
@@ -6027,7 +6027,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No plano Grátis, você acompanha uma meta por vez: pause sua meta atual no menu dela ou acompanhe mais de uma com o Plus."
+            "value" : "No plano Grátis, você acompanha um objetivo por vez: pause seu objetivo atual no menu dele ou acompanhe mais de um com o Plus."
           }
         },
         "tr" : {

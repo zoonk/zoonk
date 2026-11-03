@@ -95,7 +95,16 @@ describe("dragging activity items with a finger", () => {
 
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {
     openActivity({ template: "labeledDiagram" });
-    await tap(page.getByRole("button", { name: "Put Aorta on spot 1" }));
+
+    // A busy machine can deliver the tap's end after the hold that starts a drag; paused, the page's hold timer can't run out mid-tap.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+    try {
+      await tap(page.getByRole("button", { name: "Put Aorta on spot 1" }));
+    } finally {
+      vi.useRealTimers();
+    }
+
     await expect.element(page.getByRole("button", { name: "Spot 1: Aorta" })).toBeVisible();
   });
 });

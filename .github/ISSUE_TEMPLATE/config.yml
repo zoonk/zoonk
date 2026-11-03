@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Suggest a feature
+    url: https://github.com/zoonk/zoonk/discussions/new?category=ideas
+    about: Ideas and feature requests go in Discussions, where others can upvote them.

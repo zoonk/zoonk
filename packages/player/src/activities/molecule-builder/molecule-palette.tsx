@@ -52,7 +52,7 @@ export function MoleculeElements({
     <div className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">
       {elements.map((element) => (
         <button
-          className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 outline-none focus-visible:ring-[3px] disabled:opacity-50"
+          className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={!canAdd}
           key={element}
           onClick={() => onAdd(element)}

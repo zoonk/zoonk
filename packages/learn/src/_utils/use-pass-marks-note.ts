@@ -1,7 +1,7 @@
 "use client";
 
 import { type PassMarks } from "@zoonk/core/library/exams/pass-marks";
-import { getBaseLanguage } from "@zoonk/utils/languages";
+import { getBaseLanguage, getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "./locale";
 
@@ -13,9 +13,10 @@ export function usePassMarksNote(passMarks: PassMarks | null): string | null {
     return null;
   }
 
-  const name = new Intl.DisplayNames([locale], { type: "language" }).of(passMarks.language);
-
   return t("In {language}, as the exam's documents say it.", {
-    language: name ?? passMarks.language,
+    language: getLanguageNameInSentence({
+      targetLanguage: passMarks.language,
+      userLanguage: locale,
+    }),
   });
 }

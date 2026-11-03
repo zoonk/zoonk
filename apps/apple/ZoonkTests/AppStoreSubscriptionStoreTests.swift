@@ -12,10 +12,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .purchased(transaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let signedTransactions = await synchronizationSpy.signedTransactions
     let finishCallCount = await finishSpy.callCount
@@ -34,10 +34,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .purchased(makeTransaction(finishSpy: finishSpy)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let finishCallCount = await finishSpy.callCount
 
@@ -54,10 +54,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .purchased(makeTransaction(finishSpy: finishSpy)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let finishCallCount = await finishSpy.callCount
 
@@ -74,10 +74,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .purchased(makeTransaction(finishSpy: finishSpy)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let finishCallCount = await finishSpy.callCount
 
@@ -94,10 +94,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .purchased(makeTransaction(finishSpy: finishSpy)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let finishCallCount = await finishSpy.callCount
 
@@ -113,10 +113,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     let didActivateSubscription = await store.handlePurchase(
       .unverified,
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let signedTransactions = await synchronizationSpy.signedTransactions
 
@@ -190,9 +190,9 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
   @MainActor
   func testPurchaseCompletionAndTransactionUpdateShareOneSynchronization() async {
     let finishSpy = TransactionFinishSpy()
-    let synchronizationSpy = SubscriptionSynchronizationSpy(
-      result: .synchronizedActive,
-      yieldsBeforeReturning: true)
+    let synchronizationSpy = SuspendedSubscriptionSynchronizationSpy(result: .synchronizedActive)
+    let account = SignedInAccount("account-a")
+    let purchaseWaits = Checkpoint()
     let purchaseTransaction = makeTransaction(
       finishSpy: finishSpy,
       signedTransaction: "purchase-jws",
@@ -204,24 +204,26 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
     let client = AppStoreSubscriptionClientStub(transactionUpdates: [updateTransaction])
     let store = AppStoreSubscriptionStore(client: client)
 
-    async let purchaseActivated = store.handlePurchase(
-      .purchased(purchaseTransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
     async let updatesObserved: Void = store.observeTransactionUpdates(
       synchronizationScope: { "account-a" },
       synchronize: { signedTransaction, _ in
         await synchronizationSpy.synchronize(signedTransaction)
       })
+    await synchronizationSpy.waitUntilStarted()
+    async let purchaseActivated = store.handlePurchase(
+      .purchased(purchaseTransaction),
+      owner: owner(of: account, reaching: purchaseWaits),
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
+    await purchaseWaits.wait()
+    synchronizationSpy.complete()
+
     let (didActivateSubscription, _) = await (purchaseActivated, updatesObserved)
-    let signedTransactions = await synchronizationSpy.signedTransactions
     let finishCallCount = await finishSpy.callCount
 
     XCTAssertTrue(didActivateSubscription)
-    XCTAssertEqual(signedTransactions.count, 1)
-    XCTAssertTrue(["purchase-jws", "update-jws"].contains(signedTransactions[0]))
+    XCTAssertEqual(synchronizationSpy.signedTransactions, ["update-jws"])
     XCTAssertEqual(finishCallCount, 1)
   }
 
@@ -232,6 +234,8 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
     let accountASynchronizationSpy = SuspendedSubscriptionSynchronizationSpy(
       result: .synchronizedActive)
     let accountBSynchronizationSpy = SubscriptionSynchronizationSpy(result: .accountMismatch)
+    let account = SignedInAccount("account-a")
+    let accountBWaits = Checkpoint()
     let store = AppStoreSubscriptionStore(client: AppStoreSubscriptionClientStub())
     let accountATransaction = makeTransaction(
       finishSpy: accountAFinishSpy,
@@ -244,35 +248,32 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     async let accountAActivated = store.handlePurchase(
       .purchased(accountATransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await accountASynchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { account.owner },
+      synchronize: { signedTransaction, _ in
+        await accountASynchronizationSpy.synchronize(signedTransaction)
+      })
     await accountASynchronizationSpy.waitUntilStarted()
+    account.owner = signedIn("account-b")
     async let accountBActivated = store.handlePurchase(
       .purchased(accountBTransaction),
-      synchronizationScope: "account-b"
-    ) { signedTransaction, _ in
-      await accountBSynchronizationSpy.synchronize(signedTransaction)
-    }
-
-    for _ in 0..<10 {
-      await Task.yield()
-    }
-    await accountASynchronizationSpy.complete()
+      owner: owner(of: account, reaching: accountBWaits),
+      synchronize: { signedTransaction, _ in
+        await accountBSynchronizationSpy.synchronize(signedTransaction)
+      })
+    await accountBWaits.wait()
+    accountASynchronizationSpy.complete()
 
     let (didActivateAccountA, didActivateAccountB) = await (
       accountAActivated,
       accountBActivated
     )
-    let accountASignedTransactions = await accountASynchronizationSpy.signedTransactions
     let accountBSignedTransactions = await accountBSynchronizationSpy.signedTransactions
     let accountAFinishCallCount = await accountAFinishSpy.callCount
     let accountBFinishCallCount = await accountBFinishSpy.callCount
 
-    XCTAssertTrue(didActivateAccountA)
+    XCTAssertFalse(didActivateAccountA)
     XCTAssertFalse(didActivateAccountB)
-    XCTAssertEqual(accountASignedTransactions, ["account-a-jws"])
+    XCTAssertEqual(accountASynchronizationSpy.signedTransactions, ["account-a-jws"])
     XCTAssertEqual(accountBSignedTransactions, ["account-b-jws"])
     XCTAssertEqual(accountAFinishCallCount, 1)
     XCTAssertEqual(accountBFinishCallCount, 0)
@@ -293,10 +294,11 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
       signedTransaction, _ in
       await initialSynchronizationSpy.synchronize(signedTransaction)
     }
-    await store.restorePurchases(synchronizationScope: "account-b") {
-      signedTransaction, _ in
-      await currentAccountSynchronizationSpy.synchronize(signedTransaction)
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-b") },
+      synchronize: { signedTransaction, _ in
+        await currentAccountSynchronizationSpy.synchronize(signedTransaction)
+      })
 
     let initialSignedTransactions = await initialSynchronizationSpy.signedTransactions
     let currentAccountSignedTransactions =
@@ -322,10 +324,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
           signedDate: Date(timeIntervalSince1970: 1),
           signedTransaction: "initial-jws",
           transactionID: 42)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
     _ = await store.handlePurchase(
       .purchased(
         makeTransaction(
@@ -333,10 +335,10 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
           signedDate: Date(timeIntervalSince1970: 2),
           signedTransaction: "updated-jws",
           transactionID: 42)),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let signedTransactions = await synchronizationSpy.signedTransactions
     let finishCallCount = await finishSpy.callCount
@@ -363,16 +365,16 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     async let initialResult = store.handlePurchase(
       .purchased(initialTransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
     async let updatedResult = store.handlePurchase(
       .purchased(updatedTransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
     let (initialDidActivate, updatedDidActivate) = await (initialResult, updatedResult)
     let maximumConcurrentCalls = await synchronizationSpy.maximumConcurrentCalls
     let finishCallCount = await finishSpy.callCount
@@ -391,7 +393,8 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
       result: .synchronizedActive)
     let queuedSynchronizationSpy = SubscriptionSynchronizationSpy(result: .synchronizedActive)
     let store = AppStoreSubscriptionStore(client: AppStoreSubscriptionClientStub())
-    let currentAccount = CurrentAccountIDStore(accountID: "account-a")
+    let account = SignedInAccount("account-a")
+    let queuedPurchaseWaits = Checkpoint()
     let firstTransaction = makeTransaction(
       finishSpy: firstFinishSpy,
       signedTransaction: "first-jws",
@@ -403,37 +406,38 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
 
     async let firstPurchase = store.handlePurchase(
       .purchased(firstTransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, _ in
-      await firstSynchronizationSpy.synchronize(signedTransaction)
-    }
+      owner: { account.owner },
+      synchronize: { signedTransaction, _ in
+        await firstSynchronizationSpy.synchronize(signedTransaction)
+      })
     await firstSynchronizationSpy.waitUntilStarted()
 
     async let queuedPurchase = store.handlePurchase(
       .purchased(queuedTransaction),
-      synchronizationScope: "account-a"
-    ) { signedTransaction, expectedAccountID in
-      guard await currentAccount.matches(expectedAccountID) else {
-        return .accountMismatch
-      }
+      owner: owner(of: account, reaching: queuedPurchaseWaits),
+      synchronize: { signedTransaction, expectedAccountID in
+        guard account.owner?.accountID == expectedAccountID else {
+          return .accountMismatch
+        }
 
-      return await queuedSynchronizationSpy.synchronize(signedTransaction)
-    }
+        return await queuedSynchronizationSpy.synchronize(signedTransaction)
+      })
+    await queuedPurchaseWaits.wait()
 
-    await currentAccount.setAccountID("account-b")
-    await firstSynchronizationSpy.complete()
+    account.owner = signedIn("account-b")
+    firstSynchronizationSpy.complete()
 
     let (firstDidActivate, queuedDidActivate) = await (firstPurchase, queuedPurchase)
     let queuedSignedTransactions = await queuedSynchronizationSpy.signedTransactions
     let firstFinishCallCount = await firstFinishSpy.callCount
     let queuedFinishCallCount = await queuedFinishSpy.callCount
 
-    XCTAssertTrue(firstDidActivate)
+    XCTAssertFalse(firstDidActivate)
     XCTAssertFalse(queuedDidActivate)
     XCTAssertEqual(queuedSignedTransactions, [])
     XCTAssertEqual(firstFinishCallCount, 1)
     XCTAssertEqual(queuedFinishCallCount, 0)
-    XCTAssertEqual(store.alert, .accountMismatch)
+    XCTAssertNil(store.alert)
   }
 
   @MainActor
@@ -444,10 +448,11 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
       currentEntitlements: [makeTransaction(finishSpy: finishSpy)])
     let store = AppStoreSubscriptionStore(client: client)
 
-    await store.restorePurchases(synchronizationScope: "account-a") {
-      signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let signedTransactions = await synchronizationSpy.signedTransactions
     let finishCallCount = await finishSpy.callCount
@@ -466,10 +471,11 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
       currentEntitlements: [makeTransaction(finishSpy: finishSpy)])
     let store = AppStoreSubscriptionStore(client: client)
 
-    await store.restorePurchases(synchronizationScope: "account-a") {
-      signedTransaction, _ in
-      await synchronizationSpy.synchronize(signedTransaction)
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        await synchronizationSpy.synchronize(signedTransaction)
+      })
 
     let signedTransactions = await synchronizationSpy.signedTransactions
     let finishCallCount = await finishSpy.callCount
@@ -497,10 +503,11 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
       ])
     let store = AppStoreSubscriptionStore(client: client)
 
-    await store.restorePurchases(synchronizationScope: "account-a") {
-      signedTransaction, _ in
-      signedTransaction == "active-jws" ? .synchronizedActive : .synchronizedInactive
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-a") },
+      synchronize: { signedTransaction, _ in
+        signedTransaction == "active-jws" ? .synchronizedActive : .synchronizedInactive
+      })
 
     let activeFinishCallCount = await activeFinishSpy.callCount
     let inactiveFinishCallCount = await inactiveFinishSpy.callCount
@@ -512,12 +519,49 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testPurchaseResultIsNotShownAfterTheSameAccountSignsInAgain() async {
+    let account = SignedInAccount("account-a")
+    let store = AppStoreSubscriptionStore(client: AppStoreSubscriptionClientStub())
+
+    let didActivateSubscription = await store.handlePurchase(
+      .purchased(makeTransaction(finishSpy: TransactionFinishSpy())),
+      owner: { account.owner },
+      synchronize: { _, _ in
+        account.owner = signedIn("account-a", token: "replaced")
+        return .authenticationRequired
+      })
+
+    XCTAssertFalse(didActivateSubscription)
+    XCTAssertNil(store.alert)
+  }
+
+  @MainActor
+  func testRestoreResultIsNotShownAfterTheAccountChanges() async {
+    let account = SignedInAccount("account-a")
+    let client = AppStoreSubscriptionClientStub(
+      currentEntitlements: [makeTransaction(finishSpy: TransactionFinishSpy())])
+    let store = AppStoreSubscriptionStore(client: client)
+
+    await store.restorePurchases(
+      owner: { account.owner },
+      synchronize: { _, _ in
+        account.owner = signedIn("account-b")
+        return .synchronizedActive
+      })
+
+    XCTAssertNil(store.alert)
+    XCTAssertFalse(store.isRestoring)
+  }
+
+  @MainActor
   func testRestoreWithNoEligiblePurchasesExplainsTheResult() async {
     let store = AppStoreSubscriptionStore(client: AppStoreSubscriptionClientStub())
 
-    await store.restorePurchases(synchronizationScope: "account-a") { _, _ in
-      .synchronizedActive
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-a") },
+      synchronize: { _, _ in
+        .synchronizedActive
+      })
 
     XCTAssertEqual(store.alert, .noPurchasesFound)
     XCTAssertFalse(store.isRestoring)
@@ -528,9 +572,11 @@ final class AppStoreSubscriptionStoreTests: XCTestCase {
     let store = AppStoreSubscriptionStore(
       client: AppStoreSubscriptionClientStub(restoreFails: true))
 
-    await store.restorePurchases(synchronizationScope: "account-a") { _, _ in
-      .synchronizedActive
-    }
+    await store.restorePurchases(
+      owner: { signedIn("account-a") },
+      synchronize: { _, _ in
+        .synchronizedActive
+      })
 
     XCTAssertEqual(store.alert, .restoreFailed)
     XCTAssertFalse(store.isRestoring)
@@ -590,34 +636,23 @@ private struct AppStoreSubscriptionClientStub: AppStoreSubscriptionClient {
 private actor SubscriptionSynchronizationSpy {
   private(set) var signedTransactions = [String]()
   private let result: AccountSubscriptionSynchronizationResult
-  private let yieldsBeforeReturning: Bool
 
-  init(
-    result: AccountSubscriptionSynchronizationResult,
-    yieldsBeforeReturning: Bool = false
-  ) {
+  init(result: AccountSubscriptionSynchronizationResult) {
     self.result = result
-    self.yieldsBeforeReturning = yieldsBeforeReturning
   }
 
   func synchronize(_ signedTransaction: String) async -> AccountSubscriptionSynchronizationResult {
     signedTransactions.append(signedTransaction)
-
-    if yieldsBeforeReturning {
-      await Task.yield()
-    }
-
     return result
   }
 }
 
-private actor SuspendedSubscriptionSynchronizationSpy {
+@MainActor
+private final class SuspendedSubscriptionSynchronizationSpy {
   private(set) var signedTransactions = [String]()
+  private let completed = Checkpoint()
   private let result: AccountSubscriptionSynchronizationResult
-  private var completionContinuation: CheckedContinuation<Void, Never>?
-  private var didComplete = false
-  private var didStart = false
-  private var startedContinuation: CheckedContinuation<Void, Never>?
+  private let started = Checkpoint()
 
   init(result: AccountSubscriptionSynchronizationResult) {
     self.result = result
@@ -627,33 +662,39 @@ private actor SuspendedSubscriptionSynchronizationSpy {
     -> AccountSubscriptionSynchronizationResult
   {
     signedTransactions.append(signedTransaction)
-    didStart = true
-    startedContinuation?.resume()
-    startedContinuation = nil
-
-    if !didComplete {
-      await withCheckedContinuation { continuation in
-        completionContinuation = continuation
-      }
-    }
-
+    started.reach()
+    await completed.wait()
     return result
   }
 
   func waitUntilStarted() async {
-    guard !didStart else {
+    await started.wait()
+  }
+
+  func complete() {
+    completed.reach()
+  }
+}
+
+@MainActor
+private final class Checkpoint {
+  private var continuation: CheckedContinuation<Void, Never>?
+  private var isReached = false
+
+  func reach() {
+    isReached = true
+    continuation?.resume()
+    continuation = nil
+  }
+
+  func wait() async {
+    guard !isReached else {
       return
     }
 
     await withCheckedContinuation { continuation in
-      startedContinuation = continuation
+      self.continuation = continuation
     }
-  }
-
-  func complete() {
-    didComplete = true
-    completionContinuation?.resume()
-    completionContinuation = nil
   }
 }
 
@@ -665,20 +706,32 @@ private actor TransactionFinishSpy {
   }
 }
 
-private actor CurrentAccountIDStore {
-  private var accountID: String
+@MainActor
+private final class SignedInAccount {
+  var owner: AppStoreSubscriptionOwner?
 
-  init(accountID: String) {
-    self.accountID = accountID
+  init(_ accountID: String) {
+    owner = signedIn(accountID)
   }
+}
 
-  func matches(_ expectedAccountID: String?) -> Bool {
-    accountID == expectedAccountID
+/// `handlePurchase` reads its owner and joins the synchronization coordinator in the same main-actor
+/// step, so once the checkpoint is reached, that purchase is waiting there.
+@MainActor
+private func owner(
+  of account: SignedInAccount,
+  reaching checkpoint: Checkpoint
+) -> @MainActor @Sendable () -> AppStoreSubscriptionOwner? {
+  {
+    checkpoint.reach()
+    return account.owner
   }
+}
 
-  func setAccountID(_ accountID: String) {
-    self.accountID = accountID
-  }
+private func signedIn(_ accountID: String, token: String = "token") -> AppStoreSubscriptionOwner {
+  AppStoreSubscriptionOwner(
+    accountID: accountID,
+    session: AuthenticatedSession(bearerToken: "\(accountID)-\(token)"))
 }
 
 private actor SubscriptionConcurrencySpy {

@@ -11,7 +11,7 @@ body:
 
         AI agents filing a report: follow [our bug report guide](https://github.com/zoonk/zoonk/blob/main/.agents/skills/zoonk-bug-report/SKILL.md).
 
-        Everything here is public, so leave out emails, passwords, payment details and anything else private. For a problem with your account or a payment, use [Help](https://www.zoonk.com/support) instead. For a security problem, [report it privately](https://github.com/zoonk/zoonk/security/advisories/new).
+        Everything here is public, so leave out emails, passwords, payment details and anything else private. For a problem with your account or a payment, use [Help](https://www.zoonk.com/support) instead. For a security problem, [report it privately](https://github.com/zoonk/zoonk/security/advisories/new). To ask for something new, [share an idea](https://github.com/zoonk/zoonk/discussions/new?category=ideas).
   - type: textarea
     id: what-happened
     attributes:

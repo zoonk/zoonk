@@ -2996,30 +2996,30 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Tüm çiftler eşleştirildi. Devam etmek için Kontrol et düğmesine bas."
 
-#: src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "Telaffuzu duraklat"
-
-#: src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "Telaffuzu dinle"
-
-#: src/components/play-audio-button.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "Duraklat"
-
-#: src/components/play-audio-button.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "Oynat"
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Cevap seçenekleri"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Telaffuzu duraklat"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Telaffuzu dinle"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "Duraklat"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "Oynat"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"

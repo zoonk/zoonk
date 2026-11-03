@@ -297,7 +297,7 @@ msgstr "Deixei abaixo a proposta de mudança no seu plano. Nada muda até você 
 #: src/lib/tutor-confirmation.ts
 msgctxt "cVQNWB"
 msgid "Below you can start it as a new goal."
-msgstr "Abaixo você pode começar uma nova meta com isso."
+msgstr "Abaixo você pode começar isso como um novo objetivo."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "40I13C"

@@ -1,6 +1,7 @@
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
@@ -70,7 +71,7 @@ const nextConfig: NextConfig = {
   redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } },
+    rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },
   },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },

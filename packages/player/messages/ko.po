@@ -2996,30 +2996,30 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "짝을 모두 맞췄어요. 계속하려면 확인을 누르세요."
 
-#: src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "발음 재생 일시 정지"
-
-#: src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "발음 재생"
-
-#: src/components/play-audio-button.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "일시 정지"
-
-#: src/components/play-audio-button.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "재생"
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "선택지"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "발음 재생 일시 정지"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "발음 재생"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "일시 정지"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "재생"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"

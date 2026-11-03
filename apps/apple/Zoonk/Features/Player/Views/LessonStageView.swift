@@ -3,9 +3,16 @@ import SwiftUI
 struct LessonStageView: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.lessonAudio) private var audio
+  @Environment(\.spokenAnswerRecording) private var recording
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
+
+  private struct ShownPrompt: Equatable {
+    let stepId: String
+    let url: URL?
+  }
 
   private static let verdictId = "verdict"
   private static let checkNoteId = "check-note"
@@ -33,6 +40,16 @@ struct LessonStageView: View {
 
   private func visit(_ step: LessonStep) -> String {
     "\(step.id)/\(state.rounds[step.id] ?? 0)"
+  }
+
+  /// Main's `ListeningInstead`: a spoken screen answered by listening is a listening screen.
+  private func shownPrompt(_ step: LessonStep) -> ShownPrompt {
+    guard case .spokenAnswer(_, let listening?) = step.content else {
+      return ShownPrompt(stepId: step.id, url: step.promptAudio)
+    }
+
+    let mode = store.spokenAnswerMode(canListen: true, canSpeak: recording.input != nil)
+    return ShownPrompt(stepId: step.id, url: mode == .listen ? listening.promptAudio : nil)
   }
 
   private func recapView(_ recap: LessonRecap, on step: LessonStep) -> some View {
@@ -200,8 +217,8 @@ struct LessonStageView: View {
       // A screen whose answer starts over (a missed question coming straight back) is made anew,
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
-      .onChange(of: step.id, initial: true) {
-        store.promptAudio.enter()
+      .onChange(of: shownPrompt(step), initial: true) { _, shown in
+        store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
       .task(id: step.id) {
         if step.hasExampleLineSlot {
@@ -321,6 +338,10 @@ struct LessonActionBar: View {
         .keyboardShortcut(.leftArrow, modifiers: [])
       }
 
+      if step.isRead {
+        LessonAudioButton(url: step.promptAudio, style: .bar)
+      }
+
       primaryButton
     }
     .frame(maxWidth: 680)
@@ -431,34 +452,13 @@ struct LessonActionBar: View {
       }
     }
 
-    let isReady = state.currentAnswer.map(isAnswerReady) ?? false
-
     return PrimaryAction(
       action: .check,
       title: step.kind == .hook
         ? LocalizedStringResource(
           "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
         : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer"),
-      isDisabled: !isReady || step.isRequiredPictureDrawing(openedAt: store.openedAt))
-  }
-
-  private func isAnswerReady(_ answer: LessonAnswer) -> Bool {
-    switch answer {
-    case .typedAnswer(let text), .spokenAnswer(let text):
-      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    case .fillBlank(let answers):
-      !answers.contains { $0.isEmpty }
-    case .reading(let words), .listening(let words):
-      !words.isEmpty
-    case .matchColumns(let pairs, _):
-      if case .language(let exercise, _) = step.content {
-        pairs.count == (exercise.content.pairs ?? []).count
-      } else {
-        false
-      }
-    default:
-      true
-    }
+      isDisabled: !step.canCheck(state.currentAnswer, openedAt: store.openedAt))
   }
 
   private static let continueTitle = LocalizedStringResource(
@@ -468,6 +468,29 @@ struct LessonActionBar: View {
 extension LessonStep {
   var showsOwnResult: Bool {
     kind == .challenge || kind == .matchColumns
+  }
+
+  func canCheck(_ answer: LessonAnswer?, openedAt: Date) -> Bool {
+    guard let answer, !isRequiredPictureDrawing(openedAt: openedAt) else {
+      return false
+    }
+
+    return switch answer {
+    case .typedAnswer(let text), .spokenAnswer(let text):
+      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    case .fillBlank(let answers):
+      !answers.contains { $0.isEmpty }
+    case .reading(let words), .listening(let words):
+      !words.isEmpty
+    case .matchColumns(let pairs, _):
+      if case .language(let exercise, _) = content {
+        pairs.count == (exercise.content.pairs ?? []).count
+      } else {
+        false
+      }
+    default:
+      true
+    }
   }
 
   fileprivate var hasWordBank: Bool {

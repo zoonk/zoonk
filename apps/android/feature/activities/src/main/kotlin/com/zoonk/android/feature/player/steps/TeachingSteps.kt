@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -55,6 +56,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
@@ -501,11 +503,10 @@ internal fun SpokenAnswerView(
         micBlocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listening?.takeIf { actions.cantTalk }
+    val listening = content.listeningInstead(actions.cantTalk)
 
     if (listening != null) {
-        val exercise = StepContent.Language(StepKind.Listening, listening, wordHints = null)
-        LanguageStepView(exercise, answer, state.results[step.id], locked, language, actions, part)
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)
         if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
         return
     }
@@ -563,6 +564,9 @@ internal fun SpokenAnswerView(
     }
 }
 
+internal fun StepContent.SpokenAnswer.listeningInstead(cantTalk: Boolean): StepContent.Language? =
+    listening?.takeIf { cantTalk }?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
+
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
     val translation = spoken.translation?.takeIf { it.isNotBlank() && it.trim() != spoken.targetText.trim() }
@@ -578,7 +582,10 @@ private fun TargetText(spoken: SpokenAnswerStepContent) {
     }
 }
 
-/** Enter checks a written answer; a number's field keeps Enter for the keyboard's own use. */
+/**
+ * A number's single line already turns Enter into Done, so only a written answer catches Enter
+ * itself. Compose closes the keyboard once the field turns read-only for the check.
+ */
 @Composable
 private fun AnswerField(
     text: String,
@@ -603,7 +610,16 @@ private fun AnswerField(
             placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
             minLines = if (isNumber) 1 else 3,
             singleLine = isNumber,
-            keyboardOptions = if (isNumber) KeyboardOptions(keyboardType = KeyboardType.Decimal) else KeyboardOptions.Default,
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = if (isNumber) KeyboardType.Decimal else KeyboardType.Unspecified,
+                    imeAction = ImeAction.Done,
+                ),
+            keyboardActions =
+                KeyboardActions(onDone = {
+                    actions.runPrimary()
+                    defaultKeyboardAction(ImeAction.Done)
+                }),
             textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },
         )
         AnswerHint(state, isNumber)

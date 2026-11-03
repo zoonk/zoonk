@@ -183,7 +183,7 @@ export function BalanceScale({
   return (
     <svg
       aria-hidden="true"
-      className={cn("mx-auto w-full max-w-sm", className)}
+      className={cn("mx-auto w-full max-w-sm select-none", className)}
       viewBox={`0 ${top} ${VIEW_WIDTH} ${VIEW_BOTTOM - top}`}
     >
       <path

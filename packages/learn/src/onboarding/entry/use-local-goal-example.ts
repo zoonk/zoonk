@@ -1,5 +1,6 @@
 "use client";
 
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 
@@ -39,8 +40,7 @@ export function useLocalGoalExample(): { exam: LocalExam; language: string } {
 
   return {
     exam: LOCAL_EXAMS[locale] ?? "sat",
-    // Mid-sentence, so the name keeps the language's own casing ("inglês", "Spanish").
-    language: new Intl.DisplayNames([locale], { type: "language" }).of(spoken) ?? spoken,
+    language: getLanguageNameInSentence({ targetLanguage: spoken, userLanguage: locale }),
   };
 }
 

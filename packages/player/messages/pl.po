@@ -2996,30 +2996,30 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Połączono wszystkie pary. Naciśnij „Sprawdź”, aby kontynuować."
 
-#: src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "Wstrzymaj odtwarzanie wymowy"
-
-#: src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "Odtwórz wymowę"
-
-#: src/components/play-audio-button.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "Wstrzymaj"
-
-#: src/components/play-audio-button.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "Odtwórz"
-
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Odpowiedzi do wyboru"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Wstrzymaj odtwarzanie wymowy"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Odtwórz wymowę"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "Wstrzymaj"
+
+#: src/components/prompt-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "Odtwórz"
 
 #: src/components/translation-step.tsx
 msgctxt "anLbqe"

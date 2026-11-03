@@ -2,19 +2,20 @@
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
+import { type PromptAudio, usePromptAudio } from "../player-audio-context";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
-import { PlayAudioButton } from "./play-audio-button";
+import { PromptAudioButton } from "./prompt-audio-button";
 import { QuestionText } from "./question-text";
 import { ScreenChip } from "./screen-chip";
 
-function AudioPrompt({ audioUrl }: { audioUrl: string }) {
+function AudioPrompt({ audio }: { audio: PromptAudio }) {
   const t = useExtracted();
 
   return (
     <div className="flex flex-col gap-3">
       <ScreenChip>{t("What do you hear?")}</ScreenChip>
-      <PlayAudioButton audioUrl={audioUrl} variant="labeled" />
+      <PromptAudioButton audio={audio} variant="labeled" />
     </div>
   );
 }
@@ -41,6 +42,8 @@ export function ListeningStep({
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
+  const audio = usePromptAudio();
+
   if (!step.sentence) {
     return null;
   }
@@ -54,11 +57,7 @@ export function ListeningStep({
       selectedAnswer={selectedAnswer}
       wordBankOptions={step.wordBankOptions}
     >
-      {step.sentence.audioUrl ? (
-        <AudioPrompt audioUrl={step.sentence.audioUrl} />
-      ) : (
-        <TextPrompt sentence={step.sentence.sentence} />
-      )}
+      {audio ? <AudioPrompt audio={audio} /> : <TextPrompt sentence={step.sentence.sentence} />}
     </ArrangeWordsInteraction>
   );
 }

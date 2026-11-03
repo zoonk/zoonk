@@ -1,6 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { LOCALE_COOKIE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
 import { withBotId } from "botid/next/config";
@@ -119,7 +120,7 @@ const nextConfig: NextConfig = {
   }),
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } },
+    rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },
   },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },

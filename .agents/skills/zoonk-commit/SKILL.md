@@ -1,6 +1,6 @@
 ---
 name: zoonk-commit
-description: Write Zoonk commit messages and PR titles or descriptions when preparing a commit or pull request.
+description: Write Zoonk commit messages and PR titles or descriptions, including the before-and-after numbers, screenshots and videos a PR shows, when preparing a commit or pull request.
 license: MIT
 metadata:
   author: zoonk
@@ -60,6 +60,49 @@ End with a short **Verification** section that tells the reviewer what was prove
 
 For multiline bodies, use a structured tool argument or write the exact text to a temporary file and pass `gh ... --body-file <path>`.
 
+## Show the change
+
+A reviewer sees what the change did without running it, from evidence of both sides measured the same way. Capture the before side first, before you edit; a reviewer can't check a before you describe from memory.
+
+| The change                                                                                                    | The PR shows                                                                    |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Makes something faster, lighter or cheaper                                                                    | Each number before → after, with the difference and how it was measured         |
+| Changes what a learner sees: layout, copy, color, a state, a new screen                                       | Screenshots before and after of each screen it changes, on a phone and a laptop |
+| Changes something that moves or takes several steps: a flow, a transition, a wait, a loading state, a gesture | Those screenshots, and a video of each side doing the same steps                |
+
+- **Numbers:** each metric with before → after and the difference (`LCP, phone, throttled: 2.4 s → 1.1 s (−54%)`), what was measured (page or command, build, screen, throttling) and how many runs. Measure both sides back to back on the same machine and settings; on a busy machine, compare the numbers noise barely moves (main-thread work, counts, bytes). For pages, `verify:pages --baseline` prints the table ([measuring pages](../verify/references/pages.md)). Report a number that didn't move or got worse too. "Faster" without numbers isn't evidence.
+- **A new screen** has only an after side and **a removed one** only a before; say so under the table.
+
+### Screenshots and videos
+
+`pnpm pr:capture` captures Main the same way on both sides and writes the PR's before-and-after section. Run it on `pnpm start`: `pnpm dev` adds its own overlay and loading states learners never see.
+
+```sh
+pnpm pr:capture before /today /plan --email <learner>@zoonk.test   # before you edit
+pnpm pr:capture after /today /plan --email <learner>@zoonk.test    # after the change
+```
+
+Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and rewrites `tmp/pr-media/media.md`: a table pairing each screenshot with its other side, then each side's video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
+
+```ts
+// tmp/pr-media/steps.mts
+export default async function steps({ page, shot }) {
+  await page.goto("/today");
+  await shot("today");
+  await page.getByRole("button", { name: "Start" }).click();
+  await shot("first question");
+}
+```
+
+- `shot(name, options)` waits until the page stops changing, or shoots at once with `settle: false` (a loading state), and takes Playwright's screenshot options (`fullPage`, `mask`). On a phone, a full-page shot ends touch emulation until the next load, so take it after the taps.
+- The steps run on each screen and scheme in turn. When they change what the learner has (an answer, a finished lesson), capture one screen and give each side its own learner (`pnpm dev:persona`).
+- If you already changed the code, capture the before side on the base the way [measuring pages](../verify/references/pages.md) measures a `--baseline`.
+- Look at every shot and video before you attach it: a path that fails stops the run, but a step that lands on the wrong screen still makes a picture of it.
+- Attached files are public, like the repository: show seeded and `dev:persona` learners only, never a real learner's data or a secret.
+- For the Apple or Android app, take the same shots and recordings in the simulator or emulator (`agent-device screenshot` and `record`, or `xcrun simctl io <device> screenshot` and `recordVideo`, `adb exec-out screencap -p` and `adb shell screenrecord`), and link them in the body the same way.
+
+[zoonk-pull-request](../zoonk-pull-request/SKILL.md) uploads them when it opens the PR.
+
 ## New commits on an open PR
 
-After pushing commits to a PR that already exists, read its live title and body and update them in the same step when the new commits change what a reviewer would read there: the behavior or scope, what must happen before merging, open decisions, or the verification (new results, or results the change made stale). Edit the live text rather than an earlier copy, so others' edits survive. Keep the description about the PR as it now stands, not a log of commits. Leave it alone when a commit changes none of that, such as a typo or lint fix.
+After pushing commits to a PR that already exists, read its live title and body and update them in the same step when the new commits change what a reviewer would read there: the behavior or scope, what must happen before merging, open decisions, the verification (new results, or results the change made stale), or what the before and after show (capture the after side again). Edit the live text rather than an earlier copy, so others' edits survive. Keep the description about the PR as it now stands, not a log of commits. Leave it alone when a commit changes none of that, such as a typo or lint fix.

@@ -30,15 +30,7 @@ type SpeechPlayer = {
     url: string;
   }) => Promise<PlaybackEnd>;
   stop: (owner: PlaybackOwner) => void;
-  /** Call it inside the tap, so the shared element may play the clip once it arrives. */
-  unlock: () => void;
 };
-
-/**
- * Mobile Safari only lets an element play sound it started inside a tap, so this plays there first.
- */
-const SILENT_WAV =
-  "data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
 
 const SpeechPlayerContext = createContext<SpeechPlayer | null>(null);
 
@@ -48,11 +40,12 @@ function clipKey({ language, personal = false, text }: Parameters<VoiceText>[0])
 
 type Playback = { finish: (end: PlaybackEnd) => void; owner: PlaybackOwner };
 
-function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => void } {
+function createSpeechPlayer(
+  voice: VoiceText,
+): SpeechPlayer & { dispose: () => void; unlock: () => void } {
   const clips = new Map<string, Promise<SpeechClipOutcome>>();
   let audio: HTMLAudioElement | null = null;
   let current: Playback | null = null;
-  let isUnlocked = false;
 
   const getAudio = () => {
     audio ??= new Audio();
@@ -136,15 +129,14 @@ function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => v
     }
   };
 
+  // Mobile Safari lets an element play later only once it played or loaded during a gesture.
+  // Loading makes no sound, so it doesn't interrupt the learner's music.
   const unlock = () => {
-    if (isUnlocked) {
-      return;
-    }
-
-    isUnlocked = true;
     const element = getAudio();
-    element.src = SILENT_WAV;
-    element.play().catch(() => null);
+
+    if (element.paused) {
+      element.load();
+    }
   };
 
   const dispose = () => {
@@ -156,7 +148,11 @@ function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => v
   return { dispose, load, play, stop, unlock };
 }
 
-/** Mount it once, above every screen that speaks, with a `voice` that keeps its identity. */
+/**
+ * Mount it once, above every screen that speaks, with a `voice` that keeps its identity. The
+ * learner's first tap or key press anywhere lets its one element play sound from then on, autoplay
+ * included.
+ */
 export function SpeechPlayerProvider({
   children,
   voice,
@@ -167,6 +163,27 @@ export function SpeechPlayerProvider({
   const player = useMemo(() => createSpeechPlayer(voice), [voice]);
 
   useEffect(() => () => player.dispose(), [player]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const onGesture = () => {
+      // Escape doesn't activate the page, so it can't unlock the element; a later gesture will.
+      // Firefox before 120 has no `userActivation`, and never needed the unlock.
+      if ("userActivation" in navigator && !navigator.userActivation.isActive) {
+        return;
+      }
+
+      player.unlock();
+      controller.abort();
+    };
+
+    const options = { capture: true, signal: controller.signal };
+    document.addEventListener("pointerup", onGesture, options);
+    document.addEventListener("keydown", onGesture, options);
+
+    return () => controller.abort();
+  }, [player]);
 
   return <SpeechPlayerContext value={player}>{children}</SpeechPlayerContext>;
 }

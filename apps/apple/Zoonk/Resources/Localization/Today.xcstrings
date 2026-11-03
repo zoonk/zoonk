@@ -1204,7 +1204,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A meta %@ está em pausa."
+            "value" : "Objetivo em pausa: %@."
           }
         },
         "tr" : {
@@ -5724,7 +5724,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "depois da data da sua meta"
+            "value" : "depois da data do seu objetivo"
           }
         },
         "tr" : {
@@ -6096,7 +6096,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ da sua meta, antes cobria %3$@."
+            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ do seu objetivo, antes cobria %3$@."
           }
         },
         "tr" : {
@@ -10353,7 +10353,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nova meta"
+            "value" : "Novo objetivo"
           }
         },
         "tr" : {
@@ -11116,7 +11116,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada está planejado até você retomar a meta."
+            "value" : "Nada está planejado até você retomar o objetivo."
           }
         },
         "tr" : {
@@ -14076,7 +14076,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece uma nova meta ou escolha outra acima."
+            "value" : "Comece um novo objetivo ou escolha outro acima."
           }
         },
         "tr" : {
@@ -14717,7 +14717,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meta sugerida"
+            "value" : "Objetivo sugerido"
           }
         },
         "tr" : {
@@ -15319,7 +15319,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
+            "value" : "O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais objetivos."
           }
         },
         "tr" : {
@@ -15616,7 +15616,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta meta está pausada."
+            "value" : "Este objetivo está pausado."
           }
         },
         "tr" : {
@@ -18543,7 +18543,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "data da sua meta"
+            "value" : "data do seu objetivo"
           }
         },
         "tr" : {
@@ -18602,7 +18602,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data da sua meta passou e ainda restam aulas."
+            "value" : "A data do seu objetivo passou e ainda restam aulas."
           }
         },
         "tr" : {

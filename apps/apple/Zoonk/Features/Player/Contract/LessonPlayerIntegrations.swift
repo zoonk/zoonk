@@ -7,7 +7,8 @@ import SwiftUI
 /// `play` and `speak` return once the sound has played or was stopped.
 struct LessonAudio: Sendable {
   private var owner = "lesson"
-  private let playing: @MainActor @Sendable (URL, _ rate: Float, _ owner: String) async -> Void
+  private let playing:
+    @MainActor @Sendable (URL, _ rate: Float, _ autoplay: Bool, _ owner: String) async -> Void
   private let speaking:
     (
       @MainActor @Sendable (
@@ -17,7 +18,9 @@ struct LessonAudio: Sendable {
   private let stopping: @MainActor @Sendable (_ owner: String) -> Void
 
   init(
-    play: @escaping @MainActor @Sendable (URL, _ rate: Float, _ owner: String) async -> Void,
+    play:
+      @escaping @MainActor @Sendable (URL, _ rate: Float, _ autoplay: Bool, _ owner: String)
+      async -> Void,
     speak: (
       @MainActor @Sendable (
         _ text: String, _ language: String, _ recording: URL?, _ rate: Float, _ owner: String
@@ -35,7 +38,7 @@ struct LessonAudio: Sendable {
 
   /// Starts a recording and returns at once.
   static let system = LessonAudio(
-    play: { url, rate, _ in SystemAudioPlayer.shared.play(url, rate: rate) },
+    play: { url, rate, _, _ in SystemAudioPlayer.shared.play(url, rate: rate) },
     speak: nil,
     stop: { _ in SystemAudioPlayer.shared.stop() })
 
@@ -58,8 +61,8 @@ struct LessonAudio: Sendable {
   }
 
   @MainActor
-  func play(_ url: URL, rate: Float = 1) async {
-    await playing(url, rate, owner)
+  func play(_ url: URL, rate: Float = 1, autoplay: Bool = false) async {
+    await playing(url, rate, autoplay, owner)
   }
 
   /// A sound still loading never starts.
