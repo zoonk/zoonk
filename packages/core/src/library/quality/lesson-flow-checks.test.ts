@@ -164,6 +164,24 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(tabled, tableSpec)).toStrictEqual([]);
     expect(flowCodes(withScreens({ 4: chart }), chartSpec)).toStrictEqual([]);
 
+    const templateSpec = planned({
+      4: { activityTemplate: "processOrder", visualKind: "template" },
+    });
+
+    const brokenExplore = {
+      ...explanation("Follow the steps."),
+      explore: { content: JSON.stringify({ fields: { steps: [] } }), template: "processOrder" },
+    };
+
+    const missing = checkWrittenLesson({
+      language: "en",
+      lesson: withScreens({ 4: brokenExplore }),
+      level: "beginner",
+      spec: templateSpec,
+    }).problems.find((problem) => problem.code === "plannedVisual");
+
+    expect(missing?.problem).toContain("fields.steps");
+
     const repeated = withScreens({
       3: { ...calculation, context: TABLE },
       4: explanation(`Look again:\n\n${TABLE}`),

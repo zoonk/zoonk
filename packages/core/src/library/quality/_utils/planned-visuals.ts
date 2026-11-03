@@ -3,6 +3,7 @@ import { type LessonVisualKind } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
+import { checkWrittenExplore } from "../../steps/written-screens";
 import { getScreenTexts } from "./screen-texts";
 
 const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "mathCheck", "typedAnswer"]);
@@ -16,6 +17,15 @@ function readTables(screen: WrittenScreen): string[] {
 }
 
 type VisualInput = { explores: boolean; screen: WrittenScreen; specScreen: LessonScreen };
+
+function describeExploreIssues(screen: WrittenScreen): string {
+  if (screen.kind !== "explanation" || !screen.explore) {
+    return "";
+  }
+
+  const checked = checkWrittenExplore(screen.explore);
+  return checked.ok ? "" : ` Its fields don't pass: ${checked.issues.join("; ")}.`;
+}
 
 function showsDrawing({ screen, specScreen }: VisualInput): boolean {
   return "visual" in screen && screen.visual?.kind === specScreen.visualKind;
@@ -38,12 +48,11 @@ export function findMissingPlannedVisual(input: VisualInput): string | null {
     return null;
   }
 
-  const shown =
-    specScreen.visualKind === "template"
-      ? `the ${String(specScreen.activityTemplate)} template to explore, with valid fields`
-      : `a ${specScreen.visualKind}`;
+  if (specScreen.visualKind === "template") {
+    return `The plan shows the ${String(specScreen.activityTemplate)} template to explore on this screen, but it shows none.${describeExploreIssues(input.screen)} Write its fields so they pass.`;
+  }
 
-  return `The plan shows ${shown} on this screen, but it shows none. Add it with the brief's data.`;
+  return `The plan shows a ${specScreen.visualKind} on this screen, but it shows none. Add it with the brief's data.`;
 }
 
 /** Screens whose table is the same one the screen before showed. */
