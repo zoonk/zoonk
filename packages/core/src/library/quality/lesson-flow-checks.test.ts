@@ -237,6 +237,37 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(repeated)).toContainEqual([4, "repeatedVisual"]);
   });
 
+  it("flags tables with the same columns on two teaching screens in a row, not on a check after them", () => {
+    const lesson = writtenTemperatureLesson();
+    const [rise, worked, calculation] = [lesson.screens[1], lesson.screens[2], lesson.screens[3]];
+
+    if (
+      rise?.kind !== "explanation" ||
+      worked?.kind !== "workedExample" ||
+      calculation?.kind !== "mathCheck"
+    ) {
+      throw new Error("Screens 2 to 4 are an explanation, a worked example and a math check.");
+    }
+
+    const otherRows = "| Time | Temperature |\n| --- | ---: |\n| 9 am | −1 °C |\n| 3 pm | 4 °C |";
+    const tabled = { ...rise, text: `${rise.text}\n\n${TABLE}` };
+
+    expect(
+      flowCodes(
+        withScreens({ 1: tabled, 2: { ...worked, problem: `${worked.problem}\n\n${otherRows}` } }),
+      ),
+    ).toContainEqual([2, "repeatedVisual"]);
+
+    expect(
+      flowCodes(
+        withScreens({
+          2: { ...worked, problem: `${worked.problem}\n\n${TABLE}` },
+          3: { ...calculation, context: otherRows },
+        }),
+      ),
+    ).not.toContainEqual([3, "repeatedVisual"]);
+  });
+
   it("flags the same template on two screens in a row, an explore then its activity included", () => {
     const activity = writtenTemperatureLesson().screens[5];
 

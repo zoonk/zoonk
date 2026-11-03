@@ -8,11 +8,15 @@ import { getScreenTexts } from "./screen-texts";
 
 const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "mathCheck", "typedAnswer"]);
 
+const TEACHING_KINDS = new Set<WrittenScreen["kind"]>(["explanation", "workedExample"]);
+
+function readTableParts(screen: WrittenScreen) {
+  return getScreenTexts(screen).flatMap((piece) => findMarkdownTables(piece.text));
+}
+
 function readTables(screen: WrittenScreen): string[] {
-  return getScreenTexts(screen).flatMap((piece) =>
-    findMarkdownTables(piece.text).map((table) =>
-      normalizeString(JSON.stringify([table.header, table.rows])),
-    ),
+  return readTableParts(screen).map((table) =>
+    normalizeString(JSON.stringify([table.header, table.rows])),
   );
 }
 
@@ -62,21 +66,36 @@ function readTemplate(screen: WrittenScreen): string | null {
   return screen.kind === "explanation" && screen.explore ? screen.explore.template : null;
 }
 
-function readVisuals(screen: WrittenScreen): string[] {
+type RepeatedKind = "columns" | "table" | "template";
+type Visual = { key: string; kind: RepeatedKind };
+
+function readVisuals(screen: WrittenScreen): Visual[] {
   const template = readTemplate(screen);
-  return [...readTables(screen), ...(template ? [`template:${template}`] : [])];
+
+  const columns = TEACHING_KINDS.has(screen.kind)
+    ? readTableParts(screen).map((table) => normalizeString(JSON.stringify(table.header)))
+    : [];
+
+  return [
+    ...readTables(screen).map((table) => ({ key: `table:${table}`, kind: "table" as const })),
+    ...columns.map((header) => ({ key: `columns:${header}`, kind: "columns" as const })),
+    ...(template ? [{ key: `template:${template}`, kind: "template" as const }] : []),
+  ];
 }
 
-type RepeatedVisual = { screen: number; template: string | null };
+export type RepeatedVisual = { kind: RepeatedKind; screen: number; template: string | null };
 
-/** The same template counts as repeated whatever its model, an explore then an activity included. */
+/**
+ * The same template counts as repeated whatever its model, an explore then an activity included, and
+ * so does a table with the same columns on the next teaching screen: it teaches by the same layout.
+ */
 export function findRepeatedVisuals(screens: readonly WrittenScreen[]): RepeatedVisual[] {
   const visuals = screens.map((screen) => readVisuals(screen));
 
   return screens.flatMap((screen, index) => {
-    const previous = new Set(visuals[index - 1]);
-    const repeated = visuals[index]?.find((visual) => previous.has(visual));
+    const previous = new Set(visuals[index - 1]?.map((visual) => visual.key));
+    const repeated = visuals[index]?.find((visual) => previous.has(visual.key));
 
-    return repeated ? [{ screen: index, template: readTemplate(screen) }] : [];
+    return repeated ? [{ kind: repeated.kind, screen: index, template: readTemplate(screen) }] : [];
   });
 }

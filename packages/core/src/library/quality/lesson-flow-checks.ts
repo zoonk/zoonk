@@ -6,7 +6,11 @@ import { findWordyExplanations } from "./_utils/explanation-words";
 import { findGuessGiveaways } from "./_utils/guess-giveaways";
 import { findMixedMoneyFormats } from "./_utils/money-formats";
 import { findScreensWithNewTerms } from "./_utils/new-terms";
-import { findMissingPlannedVisual, findRepeatedVisuals } from "./_utils/planned-visuals";
+import {
+  type RepeatedVisual,
+  findMissingPlannedVisual,
+  findRepeatedVisuals,
+} from "./_utils/planned-visuals";
 
 export type LessonFlowCheckCode =
   | "basis"
@@ -57,6 +61,18 @@ function getBasisProblems({
   return [...misquoted, ...missing].map((problem) => ({ ...problem, code: "basis" as const }));
 }
 
+function describeRepeatedVisual({ kind, template }: Omit<RepeatedVisual, "screen">): string {
+  if (kind === "template") {
+    return `Shows the same ${String(template)} as the screen before. Ask about something the learner works out with it, or show this screen's idea another way.`;
+  }
+
+  if (kind === "columns") {
+    return "Shows a table with the same columns as the screen before. Show this screen's idea another way (a chart, a template to explore, a picture of the story's object), or a table that compares something else.";
+  }
+
+  return "Shows the same table as the screen before. Change it to show this screen's idea (a new row, a value that moved) or show the idea another way.";
+}
+
 function getVisualProblems({
   lesson,
   screens,
@@ -75,11 +91,9 @@ function getVisualProblems({
     return problem ? [{ code: "plannedVisual" as const, problem, screen: index }] : [];
   });
 
-  const repeated = findRepeatedVisuals(lesson.screens).map(({ screen, template }) => ({
+  const repeated = findRepeatedVisuals(lesson.screens).map(({ kind, screen, template }) => ({
     code: "repeatedVisual" as const,
-    problem: template
-      ? `Shows the same ${template} as the screen before. Ask about something the learner works out with it, or show this screen's idea another way.`
-      : "Shows the same table as the screen before. Change it to show this screen's idea (a new row, a value that moved) or show the idea another way.",
+    problem: describeRepeatedVisual({ kind, template }),
     screen,
   }));
 
