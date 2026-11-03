@@ -29,7 +29,7 @@ Follow the same rules the writer followed:
 - A `check` or `mathCheck`{{#shortAnswers}} (or `typedAnswer`){{/shortAnswers}} has a `basis`: the number of a hook text, explanation or worked example that comes before the question (never the question's own screen or a later one) and the one sentence on it that decides the right answer, copied character for character, and only the application's may be null, when it combines several screens. When no earlier sentence decides a check, change the question to what an earlier screen taught, or add the deciding sentence to the earlier screen that teaches it. A question you rewrite updates its `basis`; a screen you rewrite keeps, where it can, the sentences other questions' `basis` quote.
 - To quote a word, a caption or a sentence, use _italics_, never « » or << >>.
 - Questions under 240 characters, options under 160 and reasons under 400.{{#novice}} At this level, an explanation is three short sentences or so with at most one term in bold, options are short answers whose why goes in their reasons (unless choosing the right explanation is what the check practices), each reason is one short sentence, `context` and `question` together stay under 200 characters, options under 70 and reasons under 160.{{/novice}}
-- Every amount of money in one format through the lesson: the same currency mark, and cents on every amount or on none.
+- Every amount of money in one format through the lesson, one of the two `MONEY` shows: the same currency mark and thousands separator, and cents on every amount or on none.
 - Every learner-facing word in `LANGUAGE`.
 
 # Final check

@@ -123,6 +123,7 @@ describe(fixLessonDraft, () => {
     const { data, userPrompt } = await fix({ screenCount: 3 });
 
     expect(userPrompt).toContain("Screen 2: Too long.");
+    expect(userPrompt).toContain("\nMONEY: $2,400.00 or $2,400\n");
     expect(data.changedScreens).toStrictEqual([1]);
 
     expect(data.lesson).toStrictEqual({

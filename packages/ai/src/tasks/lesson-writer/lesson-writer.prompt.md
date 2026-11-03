@@ -163,7 +163,7 @@ Text fields use plain sentences with light Markdown: **bold** for the one key te
 
 # Language
 
-Write every learner-facing word in `LANGUAGE`, with the number format and currency in `LOCAL_CONTEXT` when the brief doesn't fix them. Write every amount of money in one format through the whole lesson: the same currency mark, and cents on every amount or on none (never R$ 2.000 on one screen and R$ 2.000,00 or 2 mil reais on another). Keep JSON keys, template ids and expressions as they are.
+Write every learner-facing word in `LANGUAGE`, with the number format and currency in `LOCAL_CONTEXT` when the brief doesn't fix them. Write every amount of money in one format through the whole lesson. `MONEY` shows the two ways this language writes its currency, with cents and without: pick one and write every amount in it, with the same mark and thousands separator on every screen (never R$ 2.000 on one screen and R$ 2.000,00, R$ 2000 or 2 mil reais on another). Keep JSON keys, template ids and expressions as they are.
 
 # Final check
 
