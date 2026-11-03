@@ -46,7 +46,7 @@ export function withCourseLessonOrder({
       .flatMap((chapter) => chapter.lessonIds),
   );
 
-  return lessons
+  const placed = lessons
     .filter((lesson) => !excluded.has(lesson.lessonId) || order.has(lesson.lessonId))
     .map((lesson) => {
       const placement = order.get(lesson.lessonId);
@@ -64,4 +64,11 @@ export function withCourseLessonOrder({
           }
         : lesson;
     });
+
+  const outlined = placed
+    .filter((lesson) => lesson.courseOrder)
+    .toSorted((a, b) => (a.courseOrder?.position ?? 0) - (b.courseOrder?.position ?? 0))
+    .values();
+
+  return placed.map((lesson) => (lesson.courseOrder ? (outlined.next().value ?? lesson) : lesson));
 }

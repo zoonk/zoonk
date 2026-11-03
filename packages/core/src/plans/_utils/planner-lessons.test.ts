@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterSkillFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
@@ -99,5 +102,36 @@ describe(loadSkillLessons, () => {
     });
 
     expect(planned.map((lesson) => lesson.lessonId)).toStrictEqual([first, second]);
+  });
+
+  it("keeps a tagged chapter's lesson order when only its last lesson is linked to the skill", async () => {
+    const [skill, chapter] = await Promise.all([
+      skillFixture({ name: "Recognize equity elements" }),
+      libraryChapterFixture({ title: "Equity elements" }),
+    ]);
+
+    const titles = ["Assets", "Liabilities", "Entity separation", "Equity"];
+
+    const lessons = await Promise.all(
+      titles.map((title) => libraryLessonFixture({ homeChapterId: chapter.id, title })),
+    );
+
+    const lessonIds = lessons.map((lesson) => lesson.id);
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+      lessonSkillFixture({ lessonId: lessonIds.at(-1) ?? "", skillId: skill.id }),
+      ...lessonIds.map((lessonId, position) =>
+        chapterLessonFixture({ chapterId: chapter.id, lessonId, position }),
+      ),
+    ]);
+
+    const planned = await loadSkillLessons({
+      goal: LEARN_GOAL,
+      skillIds: [skill.id],
+      userId: null,
+    });
+
+    expect(planned.map((lesson) => lesson.lessonId)).toStrictEqual(lessonIds);
   });
 });
