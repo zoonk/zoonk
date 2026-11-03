@@ -1,11 +1,10 @@
-import { type ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
-import { type CDPSession, type Page } from "playwright";
+import { type CDPSession, type Page, type Route } from "playwright";
 import { defineConfig } from "vitest/config";
-import { type BrowserCommand, type Vite } from "vitest/node";
+import { type BrowserCommand } from "vitest/node";
 
 assertBrowserLaunchAllowed();
 
@@ -62,56 +61,51 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
   }
 };
 
-const HELD_PICTURES_PATH = "/__held-pictures/";
-
-/** A 3 × 2 grey PNG: a drawn scene's shape, small enough to inline. */
+/** A 3 × 2 grey PNG: the shape a scene is drawn at, small enough to inline. */
 const SCENE_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAASFvFNAAAADklEQVR4nGM4AwMMcBYAj4QOWXZs8u4AAAAASUVORK5CYII=",
   "base64",
 );
 
-type HeldPictures = { answered: Set<string>; waiting: Map<string, ServerResponse[]> };
+type HeldPictures = { answered: Set<string>; waiting: Map<string, Route> };
 
-declare global {
-  /** Vitest loads this file again for the browser server, so the server and the commands share it. */
-  var heldPictures: HeldPictures | undefined;
+const heldPictures = new WeakMap<Page, HeldPictures>();
+
+function sendPicture(route: Route) {
+  return route.fulfill({ body: SCENE_PNG, contentType: "image/png" });
 }
 
-function heldStore(): HeldPictures {
-  globalThis.heldPictures ??= { answered: new Set(), waiting: new Map() };
-  return globalThis.heldPictures;
-}
+const holdPictures: BrowserCommand<[]> = async ({ page }) => {
+  if (heldPictures.has(page)) {
+    return;
+  }
 
-function sendPicture(response: ServerResponse) {
-  response.setHeader("Content-Type", "image/png");
-  response.end(SCENE_PNG);
-}
+  const held: HeldPictures = { answered: new Set(), waiting: new Map() };
+  heldPictures.set(page, held);
 
-/** Pictures under `HELD_PICTURES_PATH` load only once `answerPicture` answers them, as on a slow network. */
-function heldPictures(): Vite.Plugin {
-  return {
-    configureServer(server) {
-      server.middlewares.use(HELD_PICTURES_PATH, (request, response) => {
-        const name = request.url ?? "";
-        const held = heldStore();
+  await page.context().route("**/held-pictures/**", (route) => {
+    const url = new URL(route.request().url());
 
-        if (held.answered.has(name)) {
-          sendPicture(response);
-          return;
-        }
+    if (url.searchParams.has("probe")) {
+      return route.fulfill({ status: 204 });
+    }
 
-        held.waiting.set(name, [...(held.waiting.get(name) ?? []), response]);
-      });
-    },
-    name: "held-pictures",
-  };
-}
+    if (held.answered.has(url.pathname)) {
+      return sendPicture(route);
+    }
 
-const answerPicture: BrowserCommand<[string]> = (_context, name) => {
-  const held = heldStore();
-  held.answered.add(`/${name}`);
-  held.waiting.get(`/${name}`)?.forEach((response) => sendPicture(response));
-  held.waiting.delete(`/${name}`);
+    held.waiting.set(url.pathname, route);
+  });
+};
+
+const answerPicture: BrowserCommand<[string]> = async ({ page }, path) => {
+  const held = heldPictures.get(page);
+  held?.answered.add(path);
+  const route = held?.waiting.get(path);
+
+  if (route) {
+    await sendPicture(route);
+  }
 };
 
 const tap: BrowserCommand<[{ x: number; y: number }]> = async ({ page }, { x, y }) => {
@@ -129,7 +123,7 @@ export default defineConfig({
       "streamdown",
     ],
   },
-  plugins: [react(), heldPictures()],
+  plugins: [react()],
   resolve: {
     alias: { "next/image": nextImageShim, "web-haptics/react": webHapticsShim },
     tsconfigPaths: true,
@@ -144,7 +138,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { answerPicture, emulateMedia, tap, touch },
+            commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
             enabled: true,
             headless: true,
             instances: [
