@@ -212,7 +212,7 @@ private struct CauseEffectCanvas: View {
             link(from: node.id, to: effect.id)
           } label: {
             Text(
-              "Led to \(LessonRichText.plain(effect.label))", tableName: "Activities",
+              "Led to \(LessonRichText.spoken(effect.label))", tableName: "Activities",
               comment: "VoiceOver action that links this cause to an effect")
           }
         }
@@ -327,7 +327,7 @@ private struct CauseEffectCanvas: View {
         .fontWeight(.medium)
         .accessibilityLabel(
           Text(
-            "\(LessonRichText.plain(fields.label(link.from))) led to \(LessonRichText.plain(fields.label(link.to)))",
+            "\(LessonRichText.spoken(fields.label(link.from))) led to \(LessonRichText.spoken(fields.label(link.to)))",
             tableName: "Activities", comment: "VoiceOver: one cause-effect link"))
 
         switch state {
@@ -360,7 +360,7 @@ private struct CauseEffectCanvas: View {
         } label: {
           Label {
             Text(
-              "Remove the link from \(LessonRichText.plain(fields.label(link.from))) to \(LessonRichText.plain(fields.label(link.to)))",
+              "Remove the link from \(LessonRichText.spoken(fields.label(link.from))) to \(LessonRichText.spoken(fields.label(link.to)))",
               tableName: "Activities", comment: "Takes out a cause-effect link")
           } icon: {
             Image(systemName: "xmark.circle.fill")

@@ -271,10 +271,10 @@ private struct ArgumentBuilderCanvas: View {
         .accessibilityLabel(
           part == .evidence
             ? Text(
-              "Use as evidence: \(LessonRichText.plain(text))", tableName: "Activities",
+              "Use as evidence: \(LessonRichText.spoken(text))", tableName: "Activities",
               comment: "VoiceOver: puts a quote in an argument's evidence part")
             : Text(
-              "Use as reasoning: \(LessonRichText.plain(text))", tableName: "Activities",
+              "Use as reasoning: \(LessonRichText.spoken(text))", tableName: "Activities",
               comment: "VoiceOver: puts a line in an argument's reasoning part"))
       }
     }
@@ -359,7 +359,7 @@ private struct QuoteText: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(LessonRichText.attributed("“\(text)”"))
+      Text(LessonRichText.typeset("“\(text)”"))
       Text(citation)
         .font(.caption)
         .foregroundStyle(.secondary)

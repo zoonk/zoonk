@@ -11,13 +11,13 @@ struct LessonRichText: View {
   }
 
   var body: some View {
-    Text(Self.attributed(text, literalNumbers: literalNumbers))
+    Text(Self.typeset(text, literalNumbers: literalNumbers))
   }
 
-  static func attributed(_ text: String, literalNumbers: Bool = false) -> AttributedString {
+  static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
     // An escaped dollar is a price, never the edge of a formula.
     let escaped = text.replacingOccurrences(of: "\\$", with: dollarPlaceholder)
-    var result = AttributedString()
+    var result = RichInline(text: AttributedString())
     var rest = Substring(escaped)
 
     while let match = rest.firstMatch(of: /\$\$(.+?)\$\$|\$([^$\s][^$]*?[^$\s]|[^$\s])\$(?!\d)/) {
@@ -25,7 +25,7 @@ struct LessonRichText: View {
       let formula = String(match.output.1 ?? match.output.2 ?? "")
       result +=
         isFormula(formula)
-        ? LessonMath.attributed(formula.replacingOccurrences(of: dollarPlaceholder, with: "\\$"))
+        ? LessonMath.typeset(formula.replacingOccurrences(of: dollarPlaceholder, with: "\\$"))
         : markdown(match.output.0, literalNumbers: literalNumbers)
       rest = rest[match.range.upperBound...]
     }
@@ -35,13 +35,13 @@ struct LessonRichText: View {
 
   private static let dollarPlaceholder = "\u{FFFC}"
 
-  private static func markdown(_ text: Substring, literalNumbers: Bool) -> AttributedString {
+  private static func markdown(_ text: Substring, literalNumbers: Bool) -> RichInline {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace)
     let restored = text.replacingOccurrences(of: dollarPlaceholder, with: "$")
     let parsed =
       (try? AttributedString(markdown: restored, options: options)) ?? AttributedString(restored)
-    return literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed)
+    return RichInline(text: literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed))
   }
 
   /// Prices ("$5 and $10") stay text: a formula has math in it.
@@ -60,7 +60,7 @@ struct LessonTextBlocks: View {
   }
 
   var body: some View {
-    RichTextBlocks(text, mark: mark) { LessonRichText.attributed($0) }
+    RichTextBlocks(text, mark: mark) { LessonRichText.typeset($0) }
   }
 }
 

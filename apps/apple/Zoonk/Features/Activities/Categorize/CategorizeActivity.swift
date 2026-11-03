@@ -134,7 +134,7 @@ private struct CategorizeCanvas: View {
             place(item.id, in: group.id)
           } label: {
             Text(
-              "Put in \(LessonRichText.plain(group.label))", tableName: "Activities",
+              "Put in \(LessonRichText.spoken(group.label))", tableName: "Activities",
               comment: "VoiceOver action that sorts an item into a group")
           }
         }
@@ -167,12 +167,12 @@ private struct CategorizeCanvas: View {
       .accessibilityLabel(
         selected.map {
           Text(
-            "Put \(LessonRichText.plain($0.text)) in \(LessonRichText.plain(group.label))",
+            "Put \(LessonRichText.spoken($0.text)) in \(LessonRichText.spoken(group.label))",
             tableName: "Activities", comment: "VoiceOver: places the picked item in this group")
-        } ?? Text(LessonRichText.attributed(group.label))
+        } ?? Text(verbatim: LessonRichText.spoken(group.label))
       )
       .accessibilityHint(
-        selected == nil ? Text(LessonRichText.attributed(group.rule)) : Text(verbatim: ""))
+        selected == nil ? Text(verbatim: LessonRichText.spoken(group.rule)) : Text(verbatim: ""))
 
       ForEach(inGroup) { item in
         tile(item)
@@ -243,7 +243,7 @@ private struct CategorizeCanvas: View {
     announceActivityChange(
       String(
         localized:
-          "\(LessonRichText.plain(item.text)) is in \(LessonRichText.plain(group.label)). \(sorted) of \(items.count) sorted.",
+          "\(LessonRichText.spoken(item.text)) is in \(LessonRichText.spoken(group.label)). \(sorted) of \(items.count) sorted.",
         table: "Activities", comment: "VoiceOver, after an item is sorted into a group"))
 
     // Keyboard and VoiceOver focus move on to the next item left, as on main.

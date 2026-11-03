@@ -130,7 +130,7 @@ private struct TimelineCanvas: View {
             }),
           in: Double(fields.start)...Double(fields.end), step: Double(step)
         ) {
-          Text(LessonRichText.attributed(event.label))
+          Text(verbatim: LessonRichText.spoken(event.label))
         } minimumValueLabel: {
           Text(formatYear(fields.start)).font(.caption2.monospacedDigit())
         } maximumValueLabel: {
@@ -195,7 +195,7 @@ private struct TimelineCanvas: View {
 
   private var axisDescription: Text {
     let dated = marks.sorted { $0.year < $1.year }
-      .map { "\(LessonRichText.plain($0.label)): \(formatYear($0.year))" }
+      .map { "\(LessonRichText.spoken($0.label)): \(formatYear($0.year))" }
       .joined(separator: ". ")
 
     return Text(

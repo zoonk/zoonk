@@ -76,7 +76,7 @@ struct LessonExampleLine: View {
       .accessibilityElement(children: .combine)
       .accessibilityLabel(
         Text(
-          "Your example: \(line)", tableName: "Player",
+          "Your example: \(LessonRichText.spoken(line))", tableName: "Player",
           comment: "VoiceOver label of the learner's personal example"))
     }
   }

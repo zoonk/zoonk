@@ -158,15 +158,22 @@ private struct StepSolverCanvas: View {
         }
 
         if isChecked, isFirstPickWrong, let first = wrongPicks.first {
-          Text(
-            "Your first pick: \(LessonRichText.plain(first.text))", tableName: "Activities",
-            comment: "After the check: the move the learner first picked on a step, which was wrong"
-          )
-          .font(.subheadline.weight(.medium))
-          .foregroundStyle(.destructive)
+          let picked = LessonRichText.typeset(first.text)
+
+          firstPick(Text(picked.text))
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(.destructive)
+            // A Text quoted inside another loses its own label, so VoiceOver gets the words here.
+            .accessibilityLabel(firstPick(Text(verbatim: picked.said)))
         }
       }
     }
+  }
+
+  private func firstPick(_ choice: Text) -> Text {
+    Text(
+      "Your first pick: \(choice)", tableName: "Activities",
+      comment: "After the check: the move the learner first picked on a step, which was wrong")
   }
 
   private func pick(_ choiceId: String, on step: StepSolverFields.Step) {
@@ -174,7 +181,7 @@ private struct StepSolverCanvas: View {
     picks = next
 
     if let choice = step.choices.first(where: { $0.id == choiceId }) {
-      announceActivityChange(LessonRichText.plain(choice.isCorrect ? step.math : choice.reason))
+      announceActivityChange(LessonRichText.spoken(choice.isCorrect ? step.math : choice.reason))
     }
 
     guard let pairs = StepSolver.firstPicks(fields.steps, picks: next) else {
