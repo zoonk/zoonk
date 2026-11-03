@@ -3,6 +3,7 @@ import {
   formatCertificateDate,
   formatStudyTime,
   getLadderFill,
+  getShownStudyCounts,
   getShownTopics,
   getStudyTimeStat,
 } from "./certificate-format";
@@ -65,5 +66,23 @@ describe(getShownTopics, () => {
 
     expect(getShownTopics(topics)).toStrictEqual(["a", "b", "c", "d", "e", "f"]);
     expect(getShownTopics(["a"])).toStrictEqual(["a"]);
+  });
+});
+
+describe(getShownStudyCounts, () => {
+  it("leaves out a count or study time of 0, as it does an unknown one", () => {
+    expect(
+      getShownStudyCounts({ lessonsStudied: 0, lessonsTestedOut: 0, minutes: 0 }),
+    ).toStrictEqual({ lessonsStudied: null, lessonsTestedOut: null, minutes: null });
+
+    expect(
+      getShownStudyCounts({ lessonsStudied: null, lessonsTestedOut: null, minutes: null }),
+    ).toStrictEqual({ lessonsStudied: null, lessonsTestedOut: null, minutes: null });
+  });
+
+  it("keeps every count above 0", () => {
+    expect(
+      getShownStudyCounts({ lessonsStudied: 1, lessonsTestedOut: 3, minutes: 45 }),
+    ).toStrictEqual({ lessonsStudied: 1, lessonsTestedOut: 3, minutes: 45 });
   });
 });

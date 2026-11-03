@@ -62,6 +62,21 @@ export function formatCount({ count, locale }: { count: number; locale: string }
   return getNumberFormatter(locale, {}).format(count);
 }
 
+type StudyCounts = Pick<CertificateFacts, "lessonsStudied" | "lessonsTestedOut" | "minutes">;
+
+function getShownCount(count: number | null): number | null {
+  return count === 0 ? null : count;
+}
+
+/** A certificate never states a zero: a count or study time of 0 is left out, as an unknown one is. */
+export function getShownStudyCounts(facts: StudyCounts): StudyCounts {
+  return {
+    lessonsStudied: getShownCount(facts.lessonsStudied),
+    lessonsTestedOut: getShownCount(facts.lessonsTestedOut),
+    minutes: getShownCount(facts.minutes),
+  };
+}
+
 export function getShownTopics(topics: readonly string[]): string[] {
   return topics.slice(0, MAX_TOPICS);
 }

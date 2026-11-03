@@ -9,6 +9,7 @@
   "certificates_cancel": "6811eb3b8457a7440f5c00482c445dd303d88348dc13dab552376eaf7f972387",
   "certificates_caption_course": "c3f9da9644b957639d6b43d3f4ab7e54e5e5ce3adb78b66d891b7ef7c2413741",
   "certificates_caption_course_hours": "8355bfeabee864b7e425649868a2943b38b7964cf66017d4d6c83ccbff97dd5a",
+  "certificates_caption_course_tested_out": "3089db8a4dbe62a02af0d227121deacb0a99085a267c3f57dc4e27b4edf88627",
   "certificates_caption_level": "527f3bc995cd9ce0aa320a46f3fe8c1de93b22fd40485c927a9cbfa3dfd10bad",
   "certificates_caption_placement": "3743b356af80ea6332cf1599308f37d92209dbf5c3043d02c44d7ce8ade5f1a9",
   "certificates_certificate": "faf9813d7d601a3d0cc509b874637e3fc94b70dcd52cc7be2426a7c081242a2a",
@@ -170,6 +171,8 @@
     <string name="certificates_alt_dated">%1$s、%2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
     <string name="certificates_caption_course">Zoonkで%1$sを修了しました（%2$s）。</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">Zoonkで%1$sを修了しました。</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
         <item quantity="other">Zoonkで%1$sを修了しました。%2$sに取り組み、約%3$d時間学習しました。</item>

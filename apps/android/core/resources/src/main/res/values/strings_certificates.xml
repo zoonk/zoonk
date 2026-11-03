@@ -100,6 +100,8 @@
 
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
     <string name="certificates_caption_course">I just finished %1$s on Zoonk: %2$s.</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">I just finished %1$s on Zoonk.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
         <item quantity="one">I just finished %1$s on Zoonk: %2$s and about %3$d hour of study.</item>

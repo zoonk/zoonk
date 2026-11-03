@@ -2284,6 +2284,65 @@
         }
       }
     },
+    "I just finished %@ on Zoonk." : {
+      "comment" : "Suggested text for sharing a course certificate whose lessons were all passed by test: the course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe gerade %@ auf Zoonk abgeschlossen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recién terminé %@ en Zoonk."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je viens de terminer %@ sur Zoonk."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ho appena completato %@ su Zoonk."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkで%@を修了しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방금 Zoonk에서 %@ 코스를 마쳤어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Właśnie udało mi się ukończyć kurs w Zoonku: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acabei de concluir %@ no Zoonk."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk’ta %@ kursunu yeni bitirdim."
+          }
+        }
+      }
+    },
     "Issue date" : {
       "comment" : "LinkedIn's field for when it was issued",
       "localizations" : {

@@ -6,6 +6,7 @@ import {
   formatCertificateDate,
   formatCount,
   formatStudyTime,
+  getShownStudyCounts,
   getStudyTimeStat,
 } from "./certificate-format";
 
@@ -31,10 +32,9 @@ export async function getSkillReadouts({ facts, locale }: KindInput): Promise<Re
   }));
 }
 
-/** Completed, lessons studied, lessons passed by test (when any) and study time (when known). */
 export async function getStudyFacts({ facts, locale }: KindInput): Promise<Readout[]> {
   const t = await getExtracted({ locale });
-  const lessonsTestedOut = facts.lessonsTestedOut ?? 0;
+  const { lessonsStudied, lessonsTestedOut, minutes } = getShownStudyCounts(facts);
 
   const completed = {
     label: t({
@@ -44,15 +44,15 @@ export async function getStudyFacts({ facts, locale }: KindInput): Promise<Reado
     value: formatCertificateDate({ isoDate: facts.completedOn, locale }),
   };
 
-  const lessonsStudied = {
+  const studied = lessonsStudied !== null && {
     label: t({
       description: "A certificate's fact: how many of the plan's lessons the learner studied.",
       message: "Lessons studied",
     }),
-    value: formatCount({ count: facts.lessonsStudied ?? 0, locale }),
+    value: formatCount({ count: lessonsStudied, locale }),
   };
 
-  const testedOut = {
+  const testedOut = lessonsTestedOut !== null && {
     label: t({
       description:
         "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.",
@@ -61,7 +61,7 @@ export async function getStudyFacts({ facts, locale }: KindInput): Promise<Reado
     value: formatCount({ count: lessonsTestedOut, locale }),
   };
 
-  const studyTime = facts.minutes !== null && {
+  const studyTime = minutes !== null && {
     label: t({
       description:
         "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.",
@@ -71,21 +71,18 @@ export async function getStudyFacts({ facts, locale }: KindInput): Promise<Reado
       description:
         "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).",
       message: "about {duration}",
-      values: { duration: formatStudyTime({ locale, minutes: facts.minutes }) },
+      values: { duration: formatStudyTime({ locale, minutes }) },
     }),
   };
 
-  return [completed, lessonsStudied, lessonsTestedOut > 0 && testedOut, studyTime].filter(
-    (fact) => fact !== false,
-  );
+  return [completed, studied, testedOut, studyTime].filter((fact) => fact !== false);
 }
 
-/** The post's big numbers: lessons studied and, when known, the hours they take. */
 export async function getStudyStats({ facts, locale }: KindInput): Promise<CertificateStat[]> {
   const t = await getExtracted({ locale });
-  const lessonsStudied = facts.lessonsStudied ?? 0;
+  const { lessonsStudied, minutes } = getShownStudyCounts(facts);
 
-  const lessons = {
+  const lessons = lessonsStudied !== null && {
     label: t({
       description:
         "Under a big number on a certificate's social post: how many lessons the learner studied.",
@@ -96,8 +93,8 @@ export async function getStudyStats({ facts, locale }: KindInput): Promise<Certi
     value: formatCount({ count: lessonsStudied, locale }),
   };
 
-  const studyTime = facts.minutes !== null && {
-    ...getStudyTimeStat({ locale, minutes: facts.minutes }),
+  const studyTime = minutes !== null && {
+    ...getStudyTimeStat({ locale, minutes }),
     label: t({
       description:
         "Under a big number of hours on a certificate's social post, such as “~41 h” over “of study”.",

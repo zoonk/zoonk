@@ -122,8 +122,11 @@ fun OwnedCertificate.caption(): String {
     return when (naming.kind) {
         CertificateKind.Course -> {
             val studied = (lessonsStudied ?: 0).toInt()
-            val lessons = pluralStringResource(R.plurals.certificates_lessons, studied, formatNumber(studied.toDouble(), locale))
             val hours = minutes?.let { (it / MINUTES_PER_HOUR.toDouble()).roundToInt() }?.takeIf { it > 0 }
+            if (studied == 0) {
+                return stringResource(R.string.certificates_caption_course_tested_out, title.orEmpty())
+            }
+            val lessons = pluralStringResource(R.plurals.certificates_lessons, studied, formatNumber(studied.toDouble(), locale))
             if (hours == null) {
                 stringResource(R.string.certificates_caption_course, title.orEmpty(), lessons)
             } else {

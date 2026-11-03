@@ -9,6 +9,7 @@
   "certificates_cancel": "729e5128ae5f2b540e00636a546c2d3094eca538018dabfab65d7a1917f82829",
   "certificates_caption_course": "c09bb48b740133e1c002ace00063191360bdea54dcb1579d6a4f8f311839c09f",
   "certificates_caption_course_hours": "5cdaaddc0e2743525585a790123d26aa11a2752fc9c1ab326fd0bf998e1904b8",
+  "certificates_caption_course_tested_out": "38dbe1a7273dfbfef9bdd396b12a30232fb159121ec9a65a9ea21c6dfc1b4b09",
   "certificates_caption_level": "054f9f3c41ead7373c6478dc31f4a97a31fe83d14b798464429d1603a853bf16",
   "certificates_caption_placement": "b1c09034662a8154c34ef1e084a9a0a9db103d190c16fbfab8ba30fc4107055b",
   "certificates_certificate": "f3f6f206110190eabe20dfdb1dc4f3e365909d5b2931625b3ff73a90cf556637",
@@ -172,6 +173,8 @@
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
     <string name="certificates_caption_course">Zoonk’ta %1$s kursunu az önce tamamladım: %2$s.</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">Zoonk’ta %1$s kursunu yeni bitirdim.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
         <item quantity="one">Zoonk’ta %1$s kursunu yeni tamamladım: %2$s ve yaklaşık %3$d saatlik çalışma.</item>

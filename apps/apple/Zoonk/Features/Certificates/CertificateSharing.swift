@@ -74,6 +74,15 @@ extension CertificateFacts {
     case .course:
       let lessons = lessonsStudied ?? 0
 
+      if lessons == 0 {
+        return String(
+          localized: "I just finished \(title ?? "") on Zoonk.",
+          table: "Certificates",
+          comment:
+            "Suggested text for sharing a course certificate whose lessons were all passed by test: the course"
+        )
+      }
+
       if let minutes, minutes > 0 {
         return String(
           localized:

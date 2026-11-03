@@ -9,6 +9,7 @@
   "certificates_cancel": "335a834ed2f5259c9eee673561f05476a041131f896980379d6142499d2d7a1d",
   "certificates_caption_course": "1a71f7d6fc404a52875679deea9bd97746d4f954acec1c286caa72deda4adbd9",
   "certificates_caption_course_hours": "34edb86e358a8673921a012f8300fd3c2cc7b6739661668dd787f448efe75aed",
+  "certificates_caption_course_tested_out": "17ce3071125998f3ad2b7524030d7b2887ba4a871ebb7cc37c22ab328b282d5f",
   "certificates_caption_level": "90371685d08cc991e70cefacc28b20573891a9be91dee7a685764e108cf30ad5",
   "certificates_caption_placement": "181291e77cb5d123f65e1c464cad356f9d1b3c5400e00953ec33bc9ae32c21bf",
   "certificates_certificate": "22c0487340ab86e183335330fcd18813f5c633de3c3f86f80c74902f68a5deb0",
@@ -170,6 +171,8 @@
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
     <string name="certificates_caption_course">방금 Zoonk에서 %1$s 코스를 마쳤어요(%2$s).</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">방금 Zoonk에서 %1$s 코스를 마쳤어요.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
         <item quantity="other">Zoonk에서 %1$s 코스를 방금 마쳤어요. %2$s를 약 %3$d시간 동안 공부했어요.</item>

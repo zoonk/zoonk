@@ -52,7 +52,6 @@ function useFactRows(facts: CertificateFacts) {
     value: label,
   }));
 
-  const studied = facts.lessonsStudied === null ? null : format.number(facts.lessonsStudied);
   const levels = courseLevels(facts.courseLevels);
 
   const rows = [
@@ -61,17 +60,13 @@ function useFactRows(facts: CertificateFacts) {
     facts.kind === "placement"
       ? { label: t("Taken"), mono: true, value: completed }
       : { label: t("Completed"), mono: true, value: completed },
-    studied !== null && { label: t("Lessons studied"), mono: true, value: studied },
-    Boolean(facts.lessonsTestedOut) && {
-      label: t("Passed by test"),
-      mono: true,
-      value: format.number(facts.lessonsTestedOut ?? 0),
-    },
-    facts.minutes !== null && {
-      label: t("Study time"),
-      mono: true,
-      value: studyTime(facts.minutes),
-    },
+    facts.lessonsStudied
+      ? { label: t("Lessons studied"), mono: true, value: format.number(facts.lessonsStudied) }
+      : null,
+    facts.lessonsTestedOut
+      ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
+      : null,
+    facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
     facts.answered !== null && {
       label: t("Answers"),
       mono: true,

@@ -1918,6 +1918,11 @@ msgid "I just completed level {level} in {language} on Zoonk."
 msgstr "Zoonkでレベル{level}を修了しました（{language}）。"
 
 #: src/certificates/certificate-share.tsx
+msgctxt "rIzvkK"
+msgid "I just finished {course} on Zoonk."
+msgstr "Zoonkで{course}を修了しました。"
+
+#: src/certificates/certificate-share.tsx
 msgctxt "xgqZIz"
 msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
 msgstr "Zoonkで{course}を修了しました（{lessons, plural, =0 {#レッスン} other {#レッスン}}）。"

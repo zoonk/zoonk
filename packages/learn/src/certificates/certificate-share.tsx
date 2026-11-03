@@ -48,7 +48,11 @@ function useShareText() {
 
     const course = certificateName(facts);
     const lessons = facts.lessonsStudied ?? 0;
-    const minutes = facts.minutes === null ? null : roundStudyMinutes(facts.minutes);
+    const minutes = facts.minutes ? roundStudyMinutes(facts.minutes) : null;
+
+    if (lessons === 0) {
+      return t("I just finished {course} on Zoonk.", { course });
+    }
 
     if (minutes === null) {
       return t(

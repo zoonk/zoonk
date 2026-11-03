@@ -9,6 +9,7 @@
   "certificates_cancel": "877a8ed5f80cc03107591456ac5e0b9ab7d30a0be0c7eb46c1a83b3874aae9b9",
   "certificates_caption_course": "96534d8734f3a44b9ef992519311c9e392c2ac8afb3c917daecd09a3af05d136",
   "certificates_caption_course_hours": "0e2b3c80998a55c9c383205a5a4b9ce10fdfcfa82fd4b74d49db33b495a34566",
+  "certificates_caption_course_tested_out": "342ca5e95d8a9c2b91a1977f8c5c8ea1a7b43bd296a18487bfda4c38f8c62d2a",
   "certificates_caption_level": "54cab115108bb7a362bcc809c0d1d1bc35e1a1bae92d5e22d32eee5508f59f0c",
   "certificates_caption_placement": "0023baa60d59239a4261700c534e173370429468df2490e15403dcaeede2aada",
   "certificates_certificate": "02f6a518b87df7c41e9adacdedb79e5c63c2ce86ddba8a783a8d5fe91799c50a",
@@ -174,6 +175,8 @@
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
     <string name="certificates_caption_course">Ho appena completato %1$s su Zoonk: %2$s.</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">Ho appena completato %1$s su Zoonk.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
         <item quantity="one">Ho appena completato %1$s su Zoonk: %2$s e circa %3$d ora di studio.</item>

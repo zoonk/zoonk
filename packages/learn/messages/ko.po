@@ -1918,6 +1918,11 @@ msgid "I just completed level {level} in {language} on Zoonk."
 msgstr "Zoonk에서 {level} 레벨의 {language} 학습을 막 마쳤어요."
 
 #: src/certificates/certificate-share.tsx
+msgctxt "rIzvkK"
+msgid "I just finished {course} on Zoonk."
+msgstr "방금 Zoonk에서 {course} 코스를 마쳤어요."
+
+#: src/certificates/certificate-share.tsx
 msgctxt "xgqZIz"
 msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
 msgstr "Zoonk에서 {course} 학습을 막 마쳤어요({lessons, plural, =0 {레슨 #개} other {레슨 #개}})."

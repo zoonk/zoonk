@@ -1918,6 +1918,11 @@ msgid "I just completed level {level} in {language} on Zoonk."
 msgstr "Zoonk’ta {level} seviyesini {language} dilinde az önce tamamladım."
 
 #: src/certificates/certificate-share.tsx
+msgctxt "rIzvkK"
+msgid "I just finished {course} on Zoonk."
+msgstr "Zoonk’ta {course} kursunu yeni bitirdim."
+
+#: src/certificates/certificate-share.tsx
 msgctxt "xgqZIz"
 msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
 msgstr "Zoonk’ta {course} kursunu az önce bitirdim: {lessons, plural, =0 {# ders} other {# ders}}."
