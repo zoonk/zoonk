@@ -128,7 +128,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original talk time, each with its own wrap-up. Calls may be shortened by the day/month allowance. The learner's monthly dollar budget and daily connection cap also apply.",
+        "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original talk time, each with its own wrap-up. A call starts at its full length while any of the learner's call time today and this month, their daily AI budget and their monthly call budget is left; all of it counts, so the next call is refused once one is used up. The daily connection cap also applies.",
       operationId: "connectLanguageConversation",
       requestBody: {
         content: { "application/json": { schema: languageConversationConnectInputSchema } },
@@ -140,7 +140,7 @@ export const languageConversationPaths = {
         "402": {
           ...paymentRequiredResponse,
           description:
-            "The checkpoint call or exam speaking task requires Plus, including after lapse. Error code: PLUS_REQUIRED. No reservation or provider session is created.",
+            "The checkpoint call, exam speaking task or practice length past the free plan's requires Plus, including after lapse. Error code: PLUS_REQUIRED. No reservation or provider session is created.",
         },
         "403": {
           ...forbiddenResponse,

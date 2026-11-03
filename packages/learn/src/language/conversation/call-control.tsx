@@ -63,19 +63,6 @@ function useWrapUpLine({ call, name }: { call: LiveCall; name: string }) {
     return null;
   }
 
-  if (call.endsAtLimit === "day") {
-    return t("Your call time for today is almost up. {name} will say goodbye after your answer.", {
-      name,
-    });
-  }
-
-  if (call.endsAtLimit === "month") {
-    return t(
-      "Your call time for this month is almost up. {name} will say goodbye after your answer.",
-      { name },
-    );
-  }
-
   return t("Almost time. {name} will say goodbye after your answer.", { name });
 }
 

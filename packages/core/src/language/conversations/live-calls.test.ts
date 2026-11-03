@@ -14,6 +14,7 @@ import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import {
   LIVE_CALL_WRAP_UP_SECONDS,
+  getCallMonthlyBudgetMicros,
   getDailySpendBudgetMicros,
   getLiveCallCostMicros,
   getLiveCallReservationMicros,
@@ -101,6 +102,32 @@ function noObjectivesMet() {
   });
 }
 
+/** Connects, talks through the talk time and its wrap-up, and lets the deadline hang up. */
+async function runWholeCall(conversationId: string): Promise<LanguageConversationSetup> {
+  const setup = await live(conversationId);
+  advance(setup.seconds);
+  await endLiveCall({ connectionId: setup.connectionId, reason: "deadline" });
+  return setup;
+}
+
+async function callSecondsUsed(userId: string): Promise<number | null> {
+  const { _sum } = await prisma.usageRecord.aggregate({
+    _sum: { seconds: true },
+    where: { kind: "conversation", userId },
+  });
+
+  return _sum.seconds;
+}
+
+async function costMicrosSpent(userId: string): Promise<number | null> {
+  const { _sum } = await prisma.usageRecord.aggregate({
+    _sum: { costMicros: true },
+    where: { userId },
+  });
+
+  return _sum.costMicros;
+}
+
 function pendingCreation() {
   const creation = Promise.withResolvers<LiveCallSession>();
   vi.mocked(createLiveCallSession).mockReturnValueOnce(creation.promise);
@@ -122,40 +149,45 @@ describe("live calls", () => {
       }));
   });
 
-  it("[1] holds what's left of the day plus a wrap-up it never counts, and refuses less than a minute without a session", async () => {
+  it("[1] admits a whole call while any of today's call time is left, with a wrap-up it never counts, and refuses the next one", async () => {
     const { conversation, user } = await learner();
-    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 80, userId: user.id });
 
-    const setup = await reserved(conversation.id);
+    const setup = await live(conversation.id);
     const row = await connection(setup.connectionId);
 
-    expect(setup).toMatchObject({ endsAtLimit: "day", seconds: 90 + WRAP_UP, talkSeconds: 90 });
-    expect(row.heldSeconds).toBe(90);
-    expect(row.deadlineAt.getTime() - row.createdAt.getTime()).toBe((90 + WRAP_UP) * SECOND_MS);
-    expect(row.costMicros).toBeGreaterThan(getLiveCallCostMicros(90 + WRAP_UP));
+    expect(setup).toMatchObject({ seconds: TWO_MINUTES + WRAP_UP, talkSeconds: TWO_MINUTES });
+    expect(row.heldSeconds).toBe(TWO_MINUTES);
+
+    expect(row.deadlineAt.getTime() - row.createdAt.getTime()).toBe(
+      (TWO_MINUTES + WRAP_UP) * SECOND_MS,
+    );
 
     await expect(
       usage({ connectionId: setup.connectionId, userId: user.id }),
-    ).resolves.toMatchObject({ costMicros: row.costMicros, seconds: 90 });
-
-    const short = await learner();
-
-    await usageRecordsFixture({
-      count: 1,
-      kind: "conversation",
-      seconds: 70,
-      userId: short.user.id,
+    ).resolves.toMatchObject({
+      costMicros: getLiveCallReservationMicros(TWO_MINUTES),
+      seconds: TWO_MINUTES,
     });
 
-    await expect(reserve(short.conversation.id)).resolves.toStrictEqual({
+    advance(TWO_MINUTES + WRAP_UP);
+    await endLiveCall({ connectionId: setup.connectionId, reason: "deadline" });
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
       limit: { limit: TWO_MINUTES, period: "day", resource: "callSeconds", tier: "free" },
       status: "limitReached",
     });
 
-    await expect(
-      prisma.liveCallConnection.count({ where: { userId: short.user.id } }),
-    ).resolves.toBe(0);
+    await expect(callSecondsUsed(user.id)).resolves.toBe(80 + TWO_MINUTES);
+    await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(1);
+    expect(createLiveCallSession).toHaveBeenCalledOnce();
+  });
 
+  it("[1] refuses a free learner a practice length that comes with Plus, without a session", async () => {
+    const { conversation, user } = await learner({ minutes: 5 });
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({ status: "plusRequired" });
+    await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(0);
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
@@ -258,45 +290,62 @@ describe("live calls", () => {
     ).resolves.toMatchObject({ seconds: TWO_MINUTES });
   });
 
-  it("[1] refuses a call when its reservation, wrap-up included, passes the day's AI budget", async () => {
-    const { conversation, user } = await learner();
-    const budget = getDailySpendBudgetMicros("free");
-    const reservation = getLiveCallReservationMicros(TWO_MINUTES);
-
-    expect(reservation).toBeGreaterThan(getLiveCallCostMicros(TWO_MINUTES + WRAP_UP));
+  it("[1] admits a whole call while any of the day's AI budget is left, and refuses the next one once that call spent it", async () => {
+    const { conversation, user } = await learner({ plus: true });
+    const budget = getDailySpendBudgetMicros("plus");
 
     await usageRecordsFixture({
-      costMicros: budget - reservation + 1,
+      costMicros: budget - 1,
       count: 1,
       kind: "explanation",
       userId: user.id,
     });
 
+    await runWholeCall(conversation.id);
+
     await expect(reserve(conversation.id)).resolves.toStrictEqual({
-      limit: { limit: budget, period: "day", resource: "aiSpend", tier: "free" },
+      limit: { limit: budget, period: "day", resource: "aiSpend", tier: "plus" },
       status: "limitReached",
     });
 
-    await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(0);
-
-    await prisma.usageRecord.updateMany({
-      data: { costMicros: budget - reservation },
-      where: { kind: "explanation", userId: user.id },
-    });
-
-    await expect(reserve(conversation.id)).resolves.toMatchObject({ status: "ready" });
+    await expect(costMicrosSpent(user.id)).resolves.toBe(
+      budget - 1 + getLiveCallCostMicros(TWO_MINUTES + WRAP_UP),
+    );
   });
 
-  it("[1] admits a free month's two 2-minute calls run to their hard stop, then a shortened third", async () => {
-    const { conversation, user } = await learner();
-    const calls = [await live(conversation.id)];
+  it("[1] admits a whole call while any of the month's call budget is left, and refuses the next one once that call spent it", async () => {
+    const { conversation, user } = await learner({ plus: true });
+    const budget = getCallMonthlyBudgetMicros("plus");
 
-    advance(TWO_MINUTES + WRAP_UP);
-    await endLiveCall({ connectionId: calls[0]?.connectionId ?? "", reason: "deadline" });
+    await liveCallHistoryFixture({
+      conversationId: conversation.id,
+      costMicros: budget - 1,
+      userId: user.id,
+    });
+
+    await runWholeCall(conversation.id);
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
+      limit: { limit: budget, period: "month", resource: "aiSpend", tier: "plus" },
+      status: "limitReached",
+    });
+
+    await expect(
+      prisma.liveCallConnection.aggregate({
+        _sum: { costMicros: true },
+        where: { userId: user.id },
+      }),
+    ).resolves.toStrictEqual({
+      _sum: { costMicros: budget - 1 + getLiveCallCostMicros(TWO_MINUTES + WRAP_UP) },
+    });
+  });
+
+  it("[1] admits a free month's two 2-minute calls run to their hard stop, a whole third with a minute left, and no fourth", async () => {
+    const { conversation, user } = await learner();
+
+    await runWholeCall(conversation.id);
     advance(DAY_SECONDS);
-    calls.push(await live(conversation.id));
-    advance(TWO_MINUTES + WRAP_UP);
-    await endLiveCall({ connectionId: calls[1]?.connectionId ?? "", reason: "deadline" });
+    await runWholeCall(conversation.id);
     advance(DAY_SECONDS);
 
     await expect(
@@ -309,10 +358,18 @@ describe("live calls", () => {
       { costMicros: getLiveCallCostMicros(TWO_MINUTES + WRAP_UP), seconds: TWO_MINUTES },
     ]);
 
-    await expect(reserve(conversation.id)).resolves.toMatchObject({
-      setup: { endsAtLimit: "month", talkSeconds: 60 },
-      status: "ready",
+    await expect(runWholeCall(conversation.id)).resolves.toMatchObject({
+      talkSeconds: TWO_MINUTES,
     });
+
+    advance(DAY_SECONDS);
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
+      limit: { limit: 5 * 60, period: "month", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+
+    await expect(callSecondsUsed(user.id)).resolves.toBe(3 * TWO_MINUTES);
   });
 
   it("[1] keeps none of the learner's time when the app left before the call was used and OpenAI already ended its session", async () => {

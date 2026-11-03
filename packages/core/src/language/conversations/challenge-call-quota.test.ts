@@ -110,13 +110,13 @@ describe("Plus challenge call quota", () => {
 
   afterEach(cleanupTestCalls);
 
-  it("bounds every reconnect by the challenge's original length, even below a practice call's minimum", async () => {
+  it("bounds every reconnect by the challenge's original length", async () => {
     const { conversationId } = await reachedChallenge();
     await connectTestCall(conversationId);
     vi.setSystemTime(new Date(Date.now() + 150_000));
 
     await expect(connectTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: null, talkSeconds: 30 },
+      setup: { talkSeconds: 30 },
       status: "ready",
     });
 

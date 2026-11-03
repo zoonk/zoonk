@@ -277,7 +277,6 @@ export function useLiveCall({
     /** The learner stopped a call that was still ringing. */
     cancel: () => report.send("learnerEnded"),
     elapsedSeconds: ending.elapsedSeconds,
-    endsAtLimit: ending.callLength?.endsAtLimit ?? null,
     error: problem.error,
     finish,
     hangUp: () => endFromOutside("learnerEnded"),

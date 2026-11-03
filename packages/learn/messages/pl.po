@@ -4735,16 +4735,6 @@ msgid "All goals done. {name} will wrap up after your answer."
 msgstr "Wszystkie cele osiągnięte. {name} zakończy rozmowę po twojej odpowiedzi."
 
 #: src/language/conversation/call-control.tsx
-msgctxt "mrdH6V"
-msgid "Your call time for today is almost up. {name} will say goodbye after your answer."
-msgstr "Kończy ci się dzisiejszy limit czasu na rozmowy. {name} pożegna się po twojej odpowiedzi."
-
-#: src/language/conversation/call-control.tsx
-msgctxt "1FM3B0"
-msgid "Your call time for this month is almost up. {name} will say goodbye after your answer."
-msgstr "Kończy ci się miesięczny limit czasu na rozmowy. {name} pożegna się po twojej odpowiedzi."
-
-#: src/language/conversation/call-control.tsx
 msgctxt "QK4WCr"
 msgid "Almost time. {name} will say goodbye after your answer."
 msgstr "Już prawie koniec. {name} pożegna się po twojej odpowiedzi."

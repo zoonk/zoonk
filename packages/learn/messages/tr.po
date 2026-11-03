@@ -4735,16 +4735,6 @@ msgid "All goals done. {name} will wrap up after your answer."
 msgstr "Tüm hedefler tamamlandı. {name} cevabından sonra sohbeti bitirecek."
 
 #: src/language/conversation/call-control.tsx
-msgctxt "mrdH6V"
-msgid "Your call time for today is almost up. {name} will say goodbye after your answer."
-msgstr "Bugünkü sohbet süren dolmak üzere. {name} cevabından sonra vedalaşacak."
-
-#: src/language/conversation/call-control.tsx
-msgctxt "1FM3B0"
-msgid "Your call time for this month is almost up. {name} will say goodbye after your answer."
-msgstr "Bu ayki sohbet süren dolmak üzere. {name} cevabından sonra vedalaşacak."
-
-#: src/language/conversation/call-control.tsx
 msgctxt "QK4WCr"
 msgid "Almost time. {name} will say goodbye after your answer."
 msgstr "Süre dolmak üzere. {name} cevabından sonra vedalaşacak."
