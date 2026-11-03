@@ -77,8 +77,7 @@
   "player_free_limit_month_description": "7e5dfc4f6faac89dd16aef1deecd09d8b191d4f0b50fc509f2899cdf663e4d65",
   "player_free_limit_month_title": "7da7e48870a1a191ebc298e5418f8be36d768977d070b2e3a469643aa79aa24d",
   "player_from_the_lesson": "13c852bc05492103a82f786d6980a79a7cd57a8eb28cc7335c9f3acad1de3830",
-  "player_guess_first": "fbacb628e97e7c161dd1e9e82a223d4556e6302465d09b077e3abf4eabc6c664",
-  "player_guess_hint": "aa247d38ae68865db0b240a4c976cff53d480a6f7ba3df923907c8d8cd0c6c3f",
+  "player_guess_chip": "fba208ed6c2d1fd2e186226a75b035792f9d2882b5be05b2037db1fd49049cf2",
   "player_guest_limit_description": "fe2390a3f8b41da401154ad038af1618ef2355ed9066671a2d45e5b1a91c9284",
   "player_guest_limit_title": "8e95b848988095f4752edbde85aebb3547688cf9f1fefe2ffeac3818bddf8cba",
   "player_guest_save_note": "babae80cb333978bfdffad66e7afa3a0db3866951593af03dd101ec2fa3739cb",
@@ -93,8 +92,9 @@
   "player_leave_description": "98fd9201e811608e71584d17dc6de9a763f420cbc4ad8973e20ee98e46559b51",
   "player_leave_title": "a65c7705b864c473545c4d8b0c1aaa495e206019bdf0e5073d1444821211ec50",
   "player_lesson_complete": "e9d16a9667842ea37376ed0d6fb87f21d3a712eae0d2ac07ee1f7b5e47a925cc",
+  "player_lesson_map": "cb555e387a836416318be3cef089401e45d62d1d7c8d61badeeed99f74f100a5",
+  "player_lesson_map_nested": "dfea8e881cd56d240f27a1fb336e8e9dcd03fcf8f1e5906d75a6caa1431bec48",
   "player_lesson_of": "675dea7a5f48105d339971bd08ece4401450102b1fac625036230ac3b7772716",
-  "player_lesson_summary": "bc84ae6d9a1d1e0e82096c9421d87f99499a7f7fbd4d1c0c85fb6856e7929c09",
   "player_listen": "2bfe217970c7e15766874c21b06d7011f8c4d85e65f9d934e11cf2056455a0fc",
   "player_microphone_blocked": "a77ce5515d31089725fd4cfdf2209fefca4a48fa4c52e96017a6f95ed8312ba5",
   "player_next_lesson": "7dbea98773de00436b9f0efc53e36ff1366a4bf5112a52e8c90d8afd5cde27aa",
@@ -187,7 +187,10 @@
     <string name="player_screen_options">Opcje ekranu</string>
     <string name="player_ai_note">Przygotowano z pomocą AI. Treść może zawierać błędy.</string>
     <string name="player_know_this">Oznacz jako znane</string>
-    <string name="player_lesson_summary">Podsumowanie lekcji</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">Mapa lekcji</string>
+    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <string name="player_lesson_map_nested">Każdy poziom mieści się w kolejnym.</string>
     <string name="player_progress">Postęp w lekcji</string>
     <string name="player_leave_title">Przerwać lekcję?</string>
     <string name="player_leave_description">Twoja odpowiedź nie została jeszcze sprawdzona, więc jej nie zapiszemy.</string>
@@ -255,8 +258,8 @@
     <string name="player_comes_back_tomorrow">To zagadnienie wróci w jutrzejszej powtórce</string>
     <string name="player_comes_back_weekday">To zagadnienie wróci w powtórce: %1$s</string>
     <string name="player_comes_back_date">To zagadnienie wróci w powtórce: %1$s</string>
-    <string name="player_guess_first">Najpierw zgadnij</string>
-    <string name="player_guess_hint">Jeśli teraz się pomylisz, łatwiej zapamiętasz odpowiedź na później.</string>
+    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="player_guess_chip">To tylko strzał, nie wpływa na wynik</string>
     <string name="player_answer_options">Odpowiedzi do wyboru</string>
     <string name="player_worked_example">Przykład z rozwiązaniem</string>
     <string name="player_worked_example_steps">Kroki</string>

@@ -40,6 +40,7 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.Segment
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.count
@@ -273,6 +274,7 @@ fun LessonCompletionView(
 
     LessonEndPages(
         withMoment = completion.status == CompletionStatus.Saved,
+        map = state.lessonMap,
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)

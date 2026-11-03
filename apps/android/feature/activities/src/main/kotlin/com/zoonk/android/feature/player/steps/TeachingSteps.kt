@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -43,6 +44,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +60,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
@@ -119,6 +122,8 @@ internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
 }
 
 private val QUESTION_SPACING = 24.dp
+private val QUESTION_PART_SPACING = 12.dp
+private val MIN_YIELDED_PICTURE = 140.dp
 
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
@@ -171,34 +176,85 @@ internal fun GuessHookView(
     part: StepPart,
 ) {
     val guess = content.content
-    val selectedId = (answer as? LessonAnswer.Hook)?.optionId
 
-    QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
-                StepPicture(step, PictureFrame.Question)
-                LessonStepVisual(guess.visual)
-                QuestionText(guess.question)
+    HookScene(
+        // Only a drawn picture gives up height: the placeholder and a picture's description need theirs.
+        viewHeight = LocalStepViewHeight.current.takeIf { step.image != null },
+        chip = { if (part.showsScreen) LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome) },
+        picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
+        question = {
+            if (part.showsScreen) {
+                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
+                    LessonStepVisual(guess.visual)
+                    QuestionText(guess.question)
+                }
             }
-        }
-
-        if (part.showsTurn) {
-            ChoiceOptions(
-                options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-                selectedId = selectedId,
-                isChecked = result != null,
-                isGuess = true,
-                locked = locked,
-                onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
-            )
-
-            if (result == null) {
-                Text(
-                    text = stringResource(R.string.player_guess_hint),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+        },
+        options = {
+            if (part.showsTurn) {
+                ChoiceOptions(
+                    options = guess.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
+                    selectedId = (answer as? LessonAnswer.Hook)?.optionId,
+                    isChecked = result != null,
+                    isGuess = true,
+                    locked = locked,
+                    onSelect = { id -> actions.select(id?.let(LessonAnswer::Hook)) },
                 )
+            }
+        },
+        dontKnow = {
+            if (part.showsTurn && result == null) {
+                GhostAction(
+                    R.drawable.ic_help,
+                    stringResource(R.string.player_dont_know_yet),
+                    enabled = !locked,
+                ) { actions.dontKnow(step.id) }
+            }
+        },
+    )
+}
+
+/**
+ * The hook's picture comes first. In one column of [viewHeight] it gives up height on a short view,
+ * down to [MIN_YIELDED_PICTURE], so the question and its options stay in view. It always leaves room
+ * for "I don't know yet", which the feedback takes once the answer shows.
+ */
+@Composable
+private fun HookScene(
+    viewHeight: Dp?,
+    chip: @Composable () -> Unit,
+    picture: @Composable () -> Unit,
+    question: @Composable () -> Unit,
+    options: @Composable () -> Unit,
+    dontKnow: @Composable () -> Unit,
+) {
+    val actionRoom = LocalMinimumInteractiveComponentSize.current
+
+    Layout(listOf(chip, picture, question, options, dontKnow), Modifier.fillMaxWidth()) { slots, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val partGap = QUESTION_PART_SPACING.roundToPx()
+        val sceneGap = QUESTION_SPACING.roundToPx()
+        val (chips, pictures, questions, optionList, actions) = slots
+        val (chipParts, questionParts, optionParts, actionParts) =
+            listOf(chips, questions, optionList, actions).map { part -> part.map { it.measure(loose) } }
+        val others =
+            chipParts.sumOf { it.height } + questionParts.sumOf { it.height } + optionParts.sumOf { it.height } +
+                partGap * 2 + sceneGap * 2 + actionRoom.roundToPx()
+        val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
+        val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
+        val rows =
+            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to sceneGap, actionParts to 0)
+                .filter { (parts, _) -> parts.any { it.height > 0 } }
+        val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
+
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            rows.forEach { (parts, gap) ->
+                parts.forEach { part ->
+                    part.placeRelative(0, y)
+                    y += part.height
+                }
+                y += gap
             }
         }
     }
@@ -418,7 +474,7 @@ internal fun SummaryView(content: StepContent.Summary) {
 }
 
 @Composable
-fun SummaryIdeas(ideas: List<String>) {
+private fun SummaryIdeas(ideas: List<String>) {
     Column {
         ideas.forEachIndexed { index, idea ->
             if (index > 0) HorizontalDivider()
@@ -469,7 +525,7 @@ internal fun TypedAnswerView(
                     if (!screen.canExplainFirst) {
                         GhostAction(R.drawable.ic_help, stringResource(R.string.player_dont_know_yet)) { actions.dontKnow(step.id) }
                     }
-                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), actions::skipWriting)
+                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), onClick = actions::skipWriting)
                 }
             }
         }
@@ -651,7 +707,7 @@ internal fun ExplainFirstButton(
     actions: StepActions,
 ) {
     if (screen.canExplainFirst) {
-        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), actions::explainFirst)
+        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), onClick = actions::explainFirst)
     }
 }
 
@@ -660,11 +716,12 @@ internal fun ExplainFirstButton(
 internal fun GhostAction(
     icon: Int,
     label: String,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val inset = ButtonDefaults.TextButtonWithIconContentPadding.calculateStartPadding(LocalLayoutDirection.current)
 
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset)) {
+    TextButton(onClick = onClick, enabled = enabled, modifier = Modifier.offset(x = -inset)) {
         Icon(painterResource(icon), contentDescription = null, modifier = Modifier.padding(end = 8.dp))
         Text(label)
     }

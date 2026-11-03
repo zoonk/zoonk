@@ -77,8 +77,7 @@
   "player_free_limit_month_description": "5519b6a1c36185a05b98bc2a58f1f2f22a59c8d9806873c80eab50b58dd7b951",
   "player_free_limit_month_title": "79949e17c36a9b4e06a456cf10505e60b09cc5dea84bb412450cf9c698a2d239",
   "player_from_the_lesson": "f7ebfc3a79c53236843b8d7692359028aa89df52fd702c5d8f6e5aa6dd9f94bb",
-  "player_guess_first": "3da0e731c158f220a7a2d2ddd4860f5ef506fa48182c28861d26a9f0484ad585",
-  "player_guess_hint": "3d25778b137a604c799d73c1caab67cd15f36d4f7be88781f9dc5f9912a4b8c7",
+  "player_guess_chip": "13b685cc605e07731bfd0f1ba8973c59f6633864a668a35788da8c2df5bab055",
   "player_guest_limit_description": "edc431623395f52b09996fa52a4e379255747c20ec37bf1b8724b05d75907807",
   "player_guest_limit_title": "62bf7ce6a30414dbaf8ed1f0bca2a71e7155e1a5c63959dbc0d0009a5996da59",
   "player_guest_save_note": "ccd1dd6e5f132f148a0fd34736a425a5e5360be479520969b9e8891af86d8537",
@@ -93,8 +92,9 @@
   "player_leave_description": "d9d179bbf0c8eaea64227a9624556dd574b8236b51a78d7830bc37f198a6b124",
   "player_leave_title": "523fe18da954d2a20e2595ee32510d4983ed89b52e3b6cc173edc99162caa17b",
   "player_lesson_complete": "614de0afda152acadf73389a4d99e03be4910a1c8ad59b5606bd39d6f05d0201",
+  "player_lesson_map": "4019029b0f4c7cd2f9e115424738daa2622ffb4cd91d2a85c7cabc1206a7976a",
+  "player_lesson_map_nested": "fa2a73edda5aeea6fbef9a49488aa8fe7a17ac3888f179a80ff3c242415ffd2a",
   "player_lesson_of": "f2e3f32fe7f41ea048e072aa5be6c39c5b4c618baa05a8e4b9b95d6999aee175",
-  "player_lesson_summary": "28ef2b7506f279757bf3cb04b24f4bcc27a959e73ec4c84f7a0ac070f59ba46e",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
   "player_microphone_blocked": "121eeff15f157528639dfe3185e4550f8dd5beeb3cca11a54f30c8a4cff14cc3",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
@@ -187,7 +187,10 @@
     <string name="player_screen_options">화면 옵션</string>
     <string name="player_ai_note">AI로 만든 내용이에요. 틀린 내용이 있을 수 있어요.</string>
     <string name="player_know_this">이미 알고 있어요</string>
-    <string name="player_lesson_summary">레슨 요약</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">레슨 개념도</string>
+    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <string name="player_lesson_map_nested">각 단계는 다음 단계 안에 들어 있어요.</string>
     <string name="player_progress">레슨 진도</string>
     <string name="player_leave_title">잠시 나갈까요?</string>
     <string name="player_leave_description">아직 답안을 확인하지 않아서 저장되지 않아요.</string>
@@ -252,8 +255,8 @@
     <string name="player_comes_back_tomorrow">이 내용은 내일 복습할 때 다시 나와요</string>
     <string name="player_comes_back_weekday">이 내용은 %1$s에 복습할 때 다시 나와요</string>
     <string name="player_comes_back_date">이 내용은 %1$s에 복습할 때 다시 나와요</string>
-    <string name="player_guess_first">먼저 예상하기</string>
-    <string name="player_guess_hint">지금 틀려 보면 나중에 더 잘 기억할 수 있어요.</string>
+    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="player_guess_chip">예상일 뿐, 점수에는 반영되지 않아요</string>
     <string name="player_answer_options">답안 선택지</string>
     <string name="player_worked_example">풀이 예시</string>
     <string name="player_worked_example_steps">풀이 과정</string>

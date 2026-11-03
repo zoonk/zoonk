@@ -3,7 +3,10 @@
     <string name="player_screen_options">Screen options</string>
     <string name="player_ai_note">Made with AI. It may contain mistakes.</string>
     <string name="player_know_this">I already know this</string>
-    <string name="player_lesson_summary">Lesson summary</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">Lesson map</string>
+    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <string name="player_lesson_map_nested">Each level sits inside the next one.</string>
     <string name="player_progress">Lesson progress</string>
     <string name="player_leave_title">Leave for now?</string>
     <string name="player_leave_description">Your answer hasn\'t been checked, so it won\'t be kept.</string>
@@ -73,8 +76,8 @@
     <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
     <string name="player_comes_back_date">This idea comes back in a review on %1$s</string>
 
-    <string name="player_guess_first">Guess first</string>
-    <string name="player_guess_hint">Getting it wrong now helps you remember later.</string>
+    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="player_guess_chip">Just a guess, it doesn\'t count</string>
     <string name="player_answer_options">Answer options</string>
     <string name="player_worked_example">Worked example</string>
     <string name="player_worked_example_steps">Steps</string>

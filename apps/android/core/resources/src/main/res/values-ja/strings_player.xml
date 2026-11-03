@@ -77,8 +77,7 @@
   "player_free_limit_month_description": "2183035bc22981b8b3276d819b51caac1ca3b29392a66fed54325a33348fbe65",
   "player_free_limit_month_title": "d048c67b8eccb4584a9eb9a915dbea78273449c4b30883aeb821223153641832",
   "player_from_the_lesson": "0e11ee36bf56bbdeae293ebdfca7aa1392d21cc8e0df34ae94db9db98ade7ba0",
-  "player_guess_first": "2af3f918af746031649c68d611d70e41713779b1fe082602c67058d42dbf9cf0",
-  "player_guess_hint": "dc7aeb6bfcadeda85acfbe8f10fe96ddf2f482a00f252138d409c3a31fc267f2",
+  "player_guess_chip": "c7f4a553f6728373e9d47ad80b4db97efd40aa1e9f2115f69d99613c145a4827",
   "player_guest_limit_description": "15f7748154e18f56bfcf45986b2a6b6cff443f428dc40f001bb6b0a79a1ba0cb",
   "player_guest_limit_title": "9a8a52b5eebe04822362b9f27e526c02827e3022d8747895c99d0fca65f4d460",
   "player_guest_save_note": "b0b633821f86ef8e6e907423959a3e2fc07f584d7f625bc3d99fb9b966a00029",
@@ -93,8 +92,9 @@
   "player_leave_description": "ee8698c82c6a1c4b5c68e7bf68bfda9b260723d0f0838a30b8318d93ab26e399",
   "player_leave_title": "f2b12e61d46133379004c1f86f90e35901d2c3d002ed7a339b701d2220ccf68a",
   "player_lesson_complete": "36d2a70d7cfd4713bcbb94f0dd610c91f8e7f97e6c9069ac6e628758795fa235",
+  "player_lesson_map": "41762a67a134a47ddcd4678faa9bae81cfd325108c0d79ea7addb91823065210",
+  "player_lesson_map_nested": "2c050a8255cde596287017ac1405380c2b7d1806b2ceea04739716b8937b5e25",
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
-  "player_lesson_summary": "e9cd217b0fc1c0f3167ca4480191eba55eb7599810a5b7ace236c6a8aff0e6f6",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_blocked": "6347cfd9522a5d5fb670890f070a888f91d6ad42f493d1190575411ddb09c64f",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
@@ -187,7 +187,10 @@
     <string name="player_screen_options">画面のオプション</string>
     <string name="player_ai_note">AIで作成しました。間違いが含まれることがあります。</string>
     <string name="player_know_this">これはもう知っている</string>
-    <string name="player_lesson_summary">レッスンのまとめ</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">レッスンマップ</string>
+    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <string name="player_lesson_map_nested">各階層は、次の階層の中に入っています。</string>
     <string name="player_progress">レッスンの進行状況</string>
     <string name="player_leave_title">いったん中断しますか？</string>
     <string name="player_leave_description">まだ答え合わせをしていないため、回答は保存されません。</string>
@@ -252,8 +255,8 @@
     <string name="player_comes_back_tomorrow">この内容は明日の復習にもう一度出てきます</string>
     <string name="player_comes_back_weekday">この内容は%1$sの復習にもう一度出てきます</string>
     <string name="player_comes_back_date">この内容は%1$sの復習にもう一度出てきます</string>
-    <string name="player_guess_first">まず予想する</string>
-    <string name="player_guess_hint">ここで間違えると、あとで覚えやすくなります。</string>
+    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="player_guess_chip">予想なので、採点されません</string>
     <string name="player_answer_options">選択肢</string>
     <string name="player_worked_example">解き方の例</string>
     <string name="player_worked_example_steps">ステップ</string>

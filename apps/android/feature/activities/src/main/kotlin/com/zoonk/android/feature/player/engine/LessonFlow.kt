@@ -32,6 +32,15 @@ fun LessonPlayerState.enterPosition(
 internal fun LessonPlayerState.complete(status: CompletionStatus = CompletionStatus.Saving): LessonPlayerState =
     copy(completion = LessonCompletion(status, testedOut = quickCheck != null), phase = LessonPhase.Completed)
 
+/** Once no other screen is left, retries included, the lesson's map comes before its end; "I already know this" skips it. */
+fun LessonPlayerState.finish(
+    status: CompletionStatus,
+    now: Long,
+): LessonPlayerState {
+    if (!isMapAhead) return complete(status)
+    return copy(notice = null, queue = queue + LESSON_MAP_STEP_ID).enterPosition(queue.size, now)
+}
+
 private fun LessonPlayerState.leaveQuickCheck(now: Long): LessonPlayerState {
     val quick = quickCheck ?: return this
     val answered = queue.filter(results::containsKey)
@@ -53,7 +62,7 @@ fun LessonPlayerState.advance(now: Long): LessonPlayerState {
     val next = position + 1
     val state = if (available.size == queue.size) this else copy(queue = available)
 
-    if (next >= available.size) return state.complete()
+    if (next >= available.size) return state.finish(CompletionStatus.Saving, now)
 
     return state.copy(notice = null).enterPosition(next, now)
 }
@@ -75,7 +84,7 @@ fun LessonPlayerState.leaveOutAhead(
     if (next.queue.getOrNull(position) == queue.getOrNull(position)) return next
 
     return if (position >= next.queue.size) {
-        next.complete(completionStatus)
+        next.finish(completionStatus, now)
     } else {
         next.copy(notice = null).enterPosition(position, now)
     }
@@ -232,7 +241,7 @@ fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {
     return copy(
         notice = null,
         queue = checks,
-        quickCheck = QuickCheck(missed = false, returnPosition = position, returnQueue = queue),
+        quickCheck = QuickCheck(missed = false, returnPosition = position, returnQueue = queue - LESSON_MAP_STEP_ID),
     ).enterPosition(0, now)
 }
 

@@ -18,6 +18,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -26,6 +27,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.player.engine.HyperdriveStart
+import com.zoonk.android.feature.player.engine.LESSON_MAP_STEP_ID
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -33,6 +35,8 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.tutor.TutorIdentity
@@ -41,8 +45,12 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LessonMap
+import com.zoonk.api.models.LessonMapIdeasInner
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
@@ -86,6 +94,14 @@ class LessonPlayerScreenshots {
     fun phone() = capture("phone")
 
     @Test
+    @Config(qualifiers = "w360dp-h640dp-xhdpi")
+    fun smallPhone() = capture("small-phone")
+
+    @Test
+    @Config(qualifiers = "w360dp-h640dp-night-xhdpi")
+    fun smallPhoneDark() = capture("small-phone-dark", dark = true)
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("phone-dark-more-contrast", dark = true, moreContrast = true)
 
@@ -106,7 +122,7 @@ class LessonPlayerScreenshots {
 
     private val steps =
         listOf(
-            hookGuessStep("hook"),
+            hookGuessStep("hook").copy(image = StepImage("scene", "$API_FILES/scene.png", "A food truck parked on a street", 1536, 1024)),
             explanationStep("idea", visual = RIDERSHIP),
             workedExampleStep("worked"),
             checkStep("quiz"),
@@ -136,6 +152,13 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("hook", checkResult(false, "No, and here's why.").toStepResult("Yes"), counts = false),
                 )
             },
+            "hook" to { at() },
+            "hook-dont-know" to { at(LessonAction.DontKnow("hook")) },
+            "map-stored" to { onMap(STORED_MAP, "Receitas regulares e eventuais") },
+            "map-hub" to { onMap(HUB_MAP, "Características dos seres vivos") },
+            "map-nested" to { onMap(NESTED_MAP, NESTED_TITLE) },
+            "completed-map" to
+                { onMap(NESTED_MAP, NESTED_TITLE, LessonAction.Continue, LessonAction.CompletionSaved(completion(COMPLETION))) },
             "explanation" to { at(*pastHook()) },
             "worked-example" to { at(*toWorked(), LessonAction.Continue) },
             "check-wrong" to {
@@ -250,6 +273,23 @@ class LessonPlayerScreenshots {
             },
         )
 
+    private fun onMap(
+        map: LessonMap,
+        title: String,
+        vararg actions: LessonAction,
+    ): LessonPlayerState {
+        val read = listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title)))
+        val started =
+            reduce(
+                LessonPlayerState.initial(LESSON_ID, read, now = 0),
+                LessonAction.RunStarted(RUN_ID, emptyList(), HyperdriveStart(emptySet(), 0), Instant.parse("2026-10-28T10:00:00Z")),
+                0,
+            )
+        return (listOf(LessonAction.Continue) + actions).fold(started) { state, action -> reduce(state, action, 0) }
+    }
+
+    private fun completion(json: String) = ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), json)
+
     private fun completed(json: String) =
         at(
             *toQuiz(),
@@ -306,9 +346,11 @@ class LessonPlayerScreenshots {
                 override fun replace(route: AppRoute) = Unit
             }
 
+        val pictures = PrivatePictures(AppContainer.preview(compose.activity).images, AuthenticatedSession(ANA, "token", "local"))
+
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalPrivatePictures provides pictures) {
                     key(index) {
                         LessonPlayer(
                             lesson,
@@ -354,6 +396,50 @@ class LessonPlayerScreenshots {
         println("Screenshot ${file.path}")
     }
 }
+
+private const val NESTED_TITLE = "Níveis de organização ecológica"
+
+private fun idea(
+    text: String,
+    label: String? = null,
+) = LessonMapIdeasInner(text = text, label = label)
+
+private val STORED_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Receita regular é o dinheiro que entra todo mês, como o salário."),
+                idea("Receita eventual aparece de vez em quando, como um bico ou um presente."),
+                idea("Ao planejar o mês, conte só com as receitas regulares."),
+            ),
+        shape = LessonMap.Shape.HUB,
+    )
+
+private val HUB_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Todo ser vivo é formado por uma ou mais células.", "Células"),
+                idea("Os seres vivos usam energia e matéria para crescer e se manter.", "Metabolismo"),
+                idea("Os seres vivos geram descendentes parecidos com eles.", "Reprodução"),
+                idea("Um sinal sozinho não basta para dizer que algo está vivo.", "Um sinal não basta"),
+            ),
+        shape = LessonMap.Shape.HUB,
+    )
+
+private val NESTED_MAP =
+    LessonMap(
+        ideas =
+            listOf(
+                idea("Um ser vivo individual, como uma capivara.", "Organismo"),
+                idea("Seres da mesma espécie, na mesma área, ao mesmo tempo.", "População"),
+                idea("Todas as populações de seres vivos de uma área.", "Comunidade"),
+                idea("Os seres vivos de uma área, o que não é vivo (água, solo, luz) e como um afeta o outro.", "Ecossistema"),
+            ),
+        shape = LessonMap.Shape.NESTED,
+    )
+
+private const val API_FILES = "http://localhost/v1/files"
 
 private val RIDERSHIP: StepVisual =
     ApiJson.decodeFromString(

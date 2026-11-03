@@ -3,8 +3,10 @@ package com.zoonk.android.feature.player.steps
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.unit.Dp
 import com.zoonk.android.data.Resource
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -27,6 +29,9 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLi
 
 /** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
 val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
+
+/** How tall a screen's one column shows at once; null where the screen isn't in one column. */
+val LocalStepViewHeight = compositionLocalOf<Dp?> { null }
 
 /** What a screen's view can ask the player to do. */
 @Stable
@@ -94,6 +99,7 @@ fun StepView(
             is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1, part)
             is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part)
             is StepContent.Summary -> if (part.showsScreen) SummaryView(content)
+            is StepContent.Map -> if (part.showsScreen) LessonMapStepView(content)
             is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part)
             is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language, part)
             is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, part)

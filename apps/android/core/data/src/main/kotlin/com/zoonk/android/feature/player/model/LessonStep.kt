@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentEndingsInner
@@ -81,6 +82,7 @@ enum class StepKind {
     Check,
     Explanation,
     Hook,
+    LessonMap,
     SpokenAnswer,
     Summary,
     TypedAnswer,
@@ -161,6 +163,14 @@ sealed interface StepContent {
         val content: SummaryStepContent,
     ) : StepContent {
         override val kind get() = StepKind.Summary
+    }
+
+    /** The map that ends a lesson, rooted on its [title]; the player adds it, so it has no screen on the server. */
+    data class Map(
+        val map: LessonMap,
+        val title: String,
+    ) : StepContent {
+        override val kind get() = StepKind.LessonMap
     }
 
     data class TypedAnswer(

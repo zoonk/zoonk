@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.engine
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.LibraryLessonCompletion
@@ -130,7 +131,7 @@ data class LessonPlayerState(
             now: Long,
         ): LessonPlayerState {
             val byId = steps.associateBy(LessonStep::id)
-            val queue = steps.map(LessonStep::id)
+            val queue = steps.filterNot { it.kind == StepKind.LessonMap }.map(LessonStep::id)
             val isEmpty = queue.isEmpty()
 
             return LessonPlayerState(

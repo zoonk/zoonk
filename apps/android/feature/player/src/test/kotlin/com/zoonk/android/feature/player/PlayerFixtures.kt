@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import com.zoonk.android.feature.player.engine.LESSON_MAP_STEP_ID
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
@@ -20,6 +21,8 @@ import com.zoonk.android.feature.player.model.SummaryStepContent
 import com.zoonk.android.feature.player.model.TypedAnswerStepContent
 import com.zoonk.android.feature.player.model.WorkedExampleStepContent
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LessonMap
+import com.zoonk.api.models.LessonMapIdeasInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4ContentOneOf
 import com.zoonk.api.models.PlayableLibraryStepAnyOf6ContentIdeasInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf8ContentStepsInner
@@ -133,6 +136,16 @@ fun spokenStep(id: String) =
                 translation = "I'm hungry",
             ),
             listening = null,
+        ),
+    )
+
+fun lessonMapStep() =
+    LessonStep(
+        LESSON_MAP_STEP_ID,
+        null,
+        StepContent.Map(
+            LessonMap(ideas = listOf(LessonMapIdeasInner(text = "A cloud is tiny droplets.")), shape = LessonMap.Shape.HUB),
+            "Clouds",
         ),
     )
 

@@ -77,8 +77,7 @@
   "player_free_limit_month_description": "3d1652c3bf61c4d8dd670e660094440d480f99a9c8592c8670d61e595f3f0bd2",
   "player_free_limit_month_title": "55af5d69da8b8988cfca712e0c427098966979deb38d5504d15b90672f70129f",
   "player_from_the_lesson": "17d73ce0224daa289bc763099f2d2e6c1e671ed3564435a49d08dc3d3c5f6bb6",
-  "player_guess_first": "3373d79273854683438333463cbaf4a891a7bd44b1c8f7aaf9a7e34de199b9b9",
-  "player_guess_hint": "8f95d299fe8670fc483ab350eb98ad6fa243aec887682643682d89babb392251",
+  "player_guess_chip": "14e424f42a05bd3765bf320e582766b9069412c1d2e04292e93c7a620393f602",
   "player_guest_limit_description": "0cd4ae12163dc7e2a782a9e20b66cb4acf1347eb9120e5056f4a84aa83b09baf",
   "player_guest_limit_title": "69e1f4ba1f17e62f589814106f9c61ad59f5423a268f2683bffdc5824d079b86",
   "player_guest_save_note": "0492c1126c85faf2a6634e30de7a2e223d61a19a5b57c824ba3de7c2e6feb972",
@@ -93,8 +92,9 @@
   "player_leave_description": "8396e62d659b6f24d20ab07ed1c5a11bead4328dd7a987aac0cf0f59f20e33ff",
   "player_leave_title": "3cea3abed641caa899906b5a3b219ef70fac47afc61ffcf5e074df9443594cc8",
   "player_lesson_complete": "cbb709d22a4255706059af72c5ad8fa03d07603f0e93a9f6cdc17581702894cd",
+  "player_lesson_map": "e3cd2edd4868e4ed933814179c09f4f3291dd08c7e6f2f44aa552c7a3e0a68ff",
+  "player_lesson_map_nested": "13cc069819b3a81efc73902e547a286b9f99844e9e301360695e02bdcc1baefa",
   "player_lesson_of": "77f8e143211024c89ebbeff43401e51f5d0088247e3d0a68dcbc807a572a054b",
-  "player_lesson_summary": "94a67410f02d2148f31447b079626ecdad07446dc6181646503aa6369c3dd1c2",
   "player_listen": "2c3a1e1d4744442bb0e25bb21d912496b7f443f7d9dd8d415bfb9b4554e32753",
   "player_microphone_blocked": "fa2f1c1b5e431071256daec5aec33442b410264e86d7cd1737c0eda0dc5c1101",
   "player_next_lesson": "583121a7d9e9b9f39395ad7a06c87700ce3481b968ed7a23fd5b050ab4fb6554",
@@ -187,7 +187,10 @@
     <string name="player_screen_options">Ekran seçeneklerini aç</string>
     <string name="player_ai_note">Yapay zekâyla hazırlandı. Hatalar içerebilir.</string>
     <string name="player_know_this">Bunu zaten biliyorum</string>
-    <string name="player_lesson_summary">Ders özeti</string>
+    <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
+    <string name="player_lesson_map">Ders haritası</string>
+    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <string name="player_lesson_map_nested">Her katman bir sonrakinin içinde yer alır.</string>
     <string name="player_progress">Ders ilerlemesi</string>
     <string name="player_leave_title">Şimdilik çıkmak ister misin?</string>
     <string name="player_leave_description">Cevabın henüz kontrol edilmediği için kaydedilmeyecek.</string>
@@ -253,8 +256,8 @@
     <string name="player_comes_back_tomorrow">Bu bilgi yarınki tekrarda karşına çıkacak</string>
     <string name="player_comes_back_weekday">Bu bilgi %1$s günü tekrarda karşına çıkacak</string>
     <string name="player_comes_back_date">Bu bilgi %1$s tarihindeki tekrarda karşına çıkacak</string>
-    <string name="player_guess_first">Önce tahmin et</string>
-    <string name="player_guess_hint">Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır.</string>
+    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <string name="player_guess_chip">Sadece bir tahmin, puanlanmaz</string>
     <string name="player_answer_options">Cevap seçenekleri</string>
     <string name="player_worked_example">Çözümlü örnek</string>
     <string name="player_worked_example_steps">Adımlar</string>
