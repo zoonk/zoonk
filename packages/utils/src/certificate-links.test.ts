@@ -30,8 +30,8 @@ describe(getCertificateLinks, () => {
   it("draws images in the certificate's locale while the page opens in the visitor's", () => {
     const links = getCertificateLinks(COURSE);
 
-    expect(links.path).toBe("/c/K7QF2M9XHD4P");
-    expect(new URL(links.url).pathname).toBe("/c/K7QF2M9XHD4P");
+    expect(links.path).toBe("/c/K7QF-2M9X-HD4P");
+    expect(new URL(links.url).pathname).toBe("/c/K7QF-2M9X-HD4P");
     expect(new URL(links.imageUrls.print).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/print.png");
     expect(new URL(links.imageUrls.screen).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/screen.png");
     expect(new URL(links.imageUrls.link).pathname).toBe("/pt/c/K7QF2M9XHD4P/image/link.png");
@@ -69,9 +69,9 @@ describe(getCertificateLinks, () => {
     const links = getCertificateLinks({ ...COURSE, origin: "https://preview.zoonk.dev" });
     const linkedIn = new URL(links.linkedInUrl).searchParams;
 
-    expect(links.url).toBe("https://preview.zoonk.dev/c/K7QF2M9XHD4P");
+    expect(links.url).toBe("https://preview.zoonk.dev/c/K7QF-2M9X-HD4P");
     expect(new URL(links.imageUrls.print).origin).toBe("https://preview.zoonk.dev");
-    expect(linkedIn.get("certUrl")).toBe("https://preview.zoonk.dev/c/K7QF2M9XHD4P");
+    expect(linkedIn.get("certUrl")).toBe("https://preview.zoonk.dev/c/K7QF-2M9X-HD4P");
   });
 });
 
