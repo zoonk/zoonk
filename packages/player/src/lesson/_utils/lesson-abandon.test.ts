@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   checkStep,
   explanationStep,
+  hookGuessStep,
   stepResult,
   typedAnswerStep,
 } from "../_test-utils/lesson-steps";
@@ -70,6 +71,22 @@ describe(getAbandonEvent, () => {
       name: "Activity Abandoned",
       properties: { lesson_id: "lesson", screen: 2, step_kind: "map", wrong_in_a_row: 0 },
     });
+  });
+
+  it("leaves out an opening guess, which never counts", () => {
+    const steps = [hookGuessStep("guess"), checkStep("q1")];
+
+    const revealed = play(
+      [
+        STARTED,
+        { counts: false, result: stepResult(false), stepId: "guess", type: "checkResolved" },
+        { type: "continue" },
+        ...answer("q1", false),
+      ],
+      steps,
+    );
+
+    expect(getAbandonEvent(revealed)?.properties).toMatchObject({ wrong_in_a_row: 1 });
   });
 
   it("starts counting again after a right answer", () => {
