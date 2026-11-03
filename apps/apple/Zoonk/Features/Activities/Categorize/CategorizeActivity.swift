@@ -407,7 +407,8 @@ private struct CategorizeCanvas: View {
     context.setAnswer(CategorizePlacements.answer(items, sorting.placements))
     announceActivityChange(
       String(
-        localized: "\(LessonRichText.spoken(item.text)) is in \(LessonRichText.spoken(group.label)).",
+        localized:
+          "\(LessonRichText.spoken(item.text)) is in \(LessonRichText.spoken(group.label)).",
         table: "Activities",
         comment: "VoiceOver, after the last card is sorted or a card is moved"))
 

@@ -119,9 +119,10 @@ private struct CauseEffectCanvas: View {
         HStack(alignment: .firstTextBaseline) {
           Group {
             if let causeId {
-              Text(
-                "Now pick what \(fields.label(causeId)) led to.", tableName: "Activities",
-                comment: "A cause is picked; the learner picks its effect next")
+              LessonRichText(
+                String(
+                  localized: "Now pick what \(fields.label(causeId)) led to.", table: "Activities",
+                  comment: "A cause is picked; the learner picks its effect next"))
             } else {
               Text(
                 "Pick a cause, then pick what it led to.", tableName: "Activities",
@@ -148,7 +149,7 @@ private struct CauseEffectCanvas: View {
       }
 
       if !isLocked, let notice {
-        Text(notice)
+        LessonRichText(notice)
           .font(.subheadline)
           .foregroundStyle(.secondary)
       }
@@ -223,10 +224,10 @@ private struct CauseEffectCanvas: View {
   private func press(_ id: String) {
     guard let cause = causeId else {
       causeId = id
-      notice = String(
-        localized: "\(fields.label(id)) picked. Now pick what it led to.", table: "Activities",
-        comment: "A cause is picked")
-      announceActivityChange(notice ?? "")
+      say(
+        String(
+          localized: "\(fields.label(id)) picked. Now pick what it led to.", table: "Activities",
+          comment: "A cause is picked"))
       return
     }
 
@@ -241,17 +242,17 @@ private struct CauseEffectCanvas: View {
 
   private func link(from: String, to: String) {
     let link = Link(from: from, to: to)
-    let cause = LessonRichText.plain(fields.label(from))
-    let effect = LessonRichText.plain(fields.label(to))
+    let cause = fields.label(from)
+    let effect = fields.label(to)
 
     if isGuided, !fields.expected.contains(link) {
-      notice = String(
-        localized: "\(cause) didn't lead straight to \(effect) here. Try another link.",
-        table: "Activities",
-        comment:
-          "A link the learner drew that isn't in the story; the arguments are the cause and the effect"
-      )
-      announceActivityChange(notice ?? "")
+      say(
+        String(
+          localized: "\(cause) didn't lead straight to \(effect) here. Try another link.",
+          table: "Activities",
+          comment:
+            "A link the learner drew that isn't in the story; the arguments are the cause and the effect"
+        ))
       return
     }
 
@@ -270,15 +271,20 @@ private struct CauseEffectCanvas: View {
       context.setAnswer(next.isEmpty ? nil : .links(next))
     }
 
-    notice =
+    say(
       isRemoving
-      ? String(
-        localized: "Removed: \(cause) led to \(effect).", table: "Activities",
-        comment: "A cause-effect link was taken out")
-      : String(
-        localized: "Linked: \(cause) led to \(effect).", table: "Activities",
-        comment: "A cause-effect link was made")
-    announceActivityChange(notice ?? "")
+        ? String(
+          localized: "Removed: \(cause) led to \(effect).", table: "Activities",
+          comment: "A cause-effect link was taken out")
+        : String(
+          localized: "Linked: \(cause) led to \(effect).", table: "Activities",
+          comment: "A cause-effect link was made"))
+  }
+
+  /// The notice quotes the events' labels as written, so it draws their math and says it in words.
+  private func say(_ line: String) {
+    notice = line
+    announceActivityChange(LessonRichText.spoken(line))
   }
 
   @ViewBuilder
@@ -320,15 +326,12 @@ private struct CauseEffectCanvas: View {
       .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
-        Text(
-          verbatim:
-            "\(LessonRichText.plain(fields.label(link.from))) → \(LessonRichText.plain(fields.label(link.to)))"
-        )
-        .fontWeight(.medium)
-        .accessibilityLabel(
-          Text(
-            "\(LessonRichText.spoken(fields.label(link.from))) led to \(LessonRichText.spoken(fields.label(link.to)))",
-            tableName: "Activities", comment: "VoiceOver: one cause-effect link"))
+        LessonRichText("\(fields.label(link.from)) → \(fields.label(link.to))")
+          .fontWeight(.medium)
+          .accessibilityLabel(
+            Text(
+              "\(LessonRichText.spoken(fields.label(link.from))) led to \(LessonRichText.spoken(fields.label(link.to)))",
+              tableName: "Activities", comment: "VoiceOver: one cause-effect link"))
 
         switch state {
         case .incorrect:

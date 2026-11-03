@@ -57,9 +57,10 @@ private struct TimelineCanvas: View {
               report()
             } label: {
               Label {
-                Text(
-                  "Place \(next.label) on the timeline", tableName: "Activities",
-                  comment: "Puts the next event on the timeline, to move to its year")
+                LessonRichText(
+                  String(
+                    localized: "Place \(next.label) on the timeline", table: "Activities",
+                    comment: "Puts the next event on the timeline, to move to its year"))
               } icon: {
                 Image(systemName: "plus")
               }
@@ -211,8 +212,6 @@ private struct TimelineCanvas: View {
     return VStack(alignment: .leading, spacing: 6) {
       ForEach(Array(zip(dated, dated.dropFirst()).enumerated()), id: \.offset) { index, pair in
         let (earlier, later) = pair
-        let years = TimelineScale.yearsBetween(earlier.1, later.1)
-        let rounded = TimelineScale.roundedGap(years)
 
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Circle()
@@ -220,13 +219,23 @@ private struct TimelineCanvas: View {
             .frame(width: 8, height: 8)
             .accessibilityHidden(true)
 
-          Text(
-            "\(gapText(years: years, rounded: rounded)) from \(LessonRichText.plain(earlier.0)) (\(formatYear(earlier.1))) to \(LessonRichText.plain(later.0)) (\(formatYear(later.1)))",
-            tableName: "Activities", comment: "The time between two dates of a timeline")
+          gap(from: earlier, to: later, spoken: false)
+            .accessibilityLabel(gap(from: earlier, to: later, spoken: true))
         }
         .font(.subheadline)
       }
     }
+  }
+
+  private func gap(from earlier: (String, Int), to later: (String, Int), spoken: Bool) -> Text {
+    let years = TimelineScale.yearsBetween(earlier.1, later.1)
+    let rounded = TimelineScale.roundedGap(years)
+    let from = LessonRichText.typeset(earlier.0).quoted(spoken: spoken)
+    let to = LessonRichText.typeset(later.0).quoted(spoken: spoken)
+
+    return Text(
+      "\(gapText(years: years, rounded: rounded)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
+      tableName: "Activities", comment: "The time between two dates of a timeline")
   }
 
   private func gapText(years: Int, rounded: Int) -> Text {
@@ -347,7 +356,7 @@ private struct TimelineAxis: View {
           x(mark.year) < size.width / 3
           ? .leading : x(mark.year) > size.width * 2 / 3 ? .trailing : .center
         context.draw(
-          Text(LessonRichText.plain(mark.label)).font(.caption).foregroundStyle(
+          Text(LessonRichText.typeset(mark.label).text).font(.caption).foregroundStyle(
             color == .secondary ? .secondary : .primary),
           at: CGPoint(x: x(mark.year), y: y), anchor: anchor)
       }

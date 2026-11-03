@@ -160,11 +160,10 @@ private struct StepSolverCanvas: View {
         if isChecked, isFirstPickWrong, let first = wrongPicks.first {
           let picked = LessonRichText.typeset(first.text)
 
-          firstPick(Text(picked.text))
+          firstPick(picked.quoted(spoken: false))
             .font(.subheadline.weight(.medium))
             .foregroundStyle(.destructive)
-            // A Text quoted inside another loses its own label, so VoiceOver gets the words here.
-            .accessibilityLabel(firstPick(Text(verbatim: picked.said)))
+            .accessibilityLabel(firstPick(picked.quoted(spoken: true)))
         }
       }
     }

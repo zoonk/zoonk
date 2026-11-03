@@ -55,7 +55,6 @@ private struct MatchPairsCanvas: View {
           Image(systemName: "xmark.circle")
             .foregroundStyle(.destructive)
         }
-        // A Text quoted inside another loses its own label, so VoiceOver gets the words here.
         .accessibilityLabel(missLine(miss, spoken: true))
         .font(.subheadline)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -89,10 +88,7 @@ private struct MatchPairsCanvas: View {
 
   private func missLine(_ miss: Miss, spoken: Bool) -> Text {
     let explanation =
-      miss.explanation.map {
-        spoken
-          ? Text(verbatim: LessonRichText.spoken($0)) : Text(LessonRichText.typeset($0).text)
-      }
+      miss.explanation.map { LessonRichText.typeset($0).quoted(spoken: spoken) }
       ?? Text(
         "Those two don't go together.", tableName: "Activities",
         comment: "Two picked cards don't match and there's no note on why")

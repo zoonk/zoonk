@@ -20,6 +20,12 @@ struct RichInline {
   static func += (lhs: inout RichInline, rhs: RichInline) {
     lhs = lhs + rhs
   }
+
+  /// For quoting it inside another `Text`, which drops a quoted Text's own label: draw it, then
+  /// give the whole line a label that quotes it spoken.
+  func quoted(spoken: Bool) -> Text {
+    spoken ? Text(verbatim: said) : Text(text)
+  }
 }
 
 extension Text {

@@ -128,5 +128,11 @@ final class LessonMathTests: XCTestCase {
     XCTAssertEqual(
       String(sentence.text.characters), "So 1\u{2044}4\(gap)×\(gap)80\(gap)=\(gap)20 now")
     XCTAssertEqual(sentence.spoken, "So 1 over 4 × 80 = 20 now")
+    XCTAssertEqual(
+      LessonRichText.typeset("The speed is $$v =\n  \\sqrt{\\frac{GM}{r}}$$ in orbit.").spoken,
+      "The speed is v = square root of GM over r in orbit.")
+    XCTAssertEqual(
+      String(LessonRichText.typeset("The variable is $$\nx\n$$.").text.characters),
+      "The variable is x.")
   }
 }
