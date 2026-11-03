@@ -724,15 +724,17 @@ msgctxt "AfxJ0y"
 msgid "Move to"
 msgstr "Mover para"
 
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
 #: src/activities/categorize/categorize-row.tsx
-msgctxt "OnWRsG"
-msgid "right group"
-msgstr "grupo correto"
+msgctxt "HWVgRM"
+msgid ", right group"
+msgstr ", grupo certo"
 
+#. Read by screen readers right after a checked card's text, so it starts with the separator.
 #: src/activities/categorize/categorize-row.tsx
-msgctxt "4xT_96"
-msgid "wrong group"
-msgstr "grupo incorreto"
+msgctxt "NTZ7fO"
+msgid ", wrong group"
+msgstr ", grupo errado"
 
 #: src/activities/categorize/categorize-sorted.tsx
 msgctxt "7N2fCS"

@@ -84,13 +84,24 @@ export function CategorizeMoveRow({
 
 export function CategorizeResultRow({ isRight, text }: { isRight: boolean; text: string }) {
   const t = useExtracted();
-  const verdict = isRight ? t("right group") : t("wrong group");
+
+  const verdict = isRight
+    ? t({
+        description:
+          "Read by screen readers right after a checked card's text, so it starts with the separator.",
+        message: ", right group",
+      })
+    : t({
+        description:
+          "Read by screen readers right after a checked card's text, so it starts with the separator.",
+        message: ", wrong group",
+      });
 
   return (
     <li className={cn(ROW_CLASS, isRight ? "bg-success/9" : "bg-destructive/9")}>
       <span className="min-w-0 flex-1">
         <LessonRichText text={text} />
-        <span className="sr-only">{`, ${verdict}`}</span>
+        <span className="sr-only">{verdict}</span>
       </span>
 
       {isRight ? (
