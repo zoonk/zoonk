@@ -5,6 +5,7 @@ import {
   GenerationTimeline,
   GenerationTimelineHeader,
   GenerationTimelineProgress,
+  GenerationTimelineStatus,
   GenerationTimelineStep,
   GenerationTimelineStepDetail,
   GenerationTimelineStepIndicator,
@@ -16,12 +17,8 @@ import { useTickCount } from "@zoonk/ui/hooks/tick-count";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { getDetailLine } from "../../generation/_utils/detail-line";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingTitle,
-} from "../onboarding-frame";
+import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
+import { type PlanNext, PlanReadyHeading } from "./plan-building";
 
 /** Reading a notice and fitting it into the plan usually takes about four minutes. */
 const READING_MS = 240_000;
@@ -53,10 +50,14 @@ function ReadingDetail({ document }: { document: ExamDocument }) {
 
 export function NoticeReading({
   document,
+  holding,
   lastNotice,
+  next,
 }: {
   document: ExamDocument;
+  holding: boolean;
   lastNotice: boolean;
+  next: PlanNext;
 }) {
   const t = useExtracted();
   const locale = useAppLocale();
@@ -66,16 +67,18 @@ export function NoticeReading({
     : t("Reading the exam's official documents");
 
   const value = useAnimatedProgress({
-    active: true,
+    active: !holding,
     estimatedMs: READING_MS,
-    progress: PLAN_BUILT_PROGRESS,
+    progress: holding ? 100 : PLAN_BUILT_PROGRESS,
     target: 100,
   });
 
   return (
-    <OnboardingColumn>
-      <GenerationTimeline>
-        <GenerationTimelineHeader>
+    <GenerationTimeline>
+      <GenerationTimelineHeader>
+        {holding ? (
+          <PlanReadyHeading next={next} />
+        ) : (
           <OnboardingHeading>
             <OnboardingTitle>{title}</OnboardingTitle>
             <OnboardingDescription>
@@ -89,33 +92,35 @@ export function NoticeReading({
                   )}
             </OnboardingDescription>
           </OnboardingHeading>
+        )}
 
-          <GenerationTimelineProgress
-            aria-label={title}
-            locale={locale}
-            value={value}
-            weights={PHASE_WEIGHTS}
-          />
-        </GenerationTimelineHeader>
+        <GenerationTimelineProgress
+          aria-label={title}
+          locale={locale}
+          value={value}
+          weights={PHASE_WEIGHTS}
+        />
+      </GenerationTimelineHeader>
 
-        <GenerationTimelineSteps aria-label={title}>
-          <GenerationTimelineStep status="completed">
-            <GenerationTimelineStepIndicator />
-            <GenerationTimelineStepLabel>
-              {t("Your plan, from what you told us")}
-            </GenerationTimelineStepLabel>
-          </GenerationTimelineStep>
+      <GenerationTimelineStatus>{holding ? t("Your plan is ready") : ""}</GenerationTimelineStatus>
 
-          <GenerationTimelineStep status="active">
-            <GenerationTimelineStepIndicator />
-            <GenerationTimelineStepLabel>
-              {t("Reading the official documents")}
-            </GenerationTimelineStepLabel>
-            <ReadingDetail document={document} />
-          </GenerationTimelineStep>
-        </GenerationTimelineSteps>
-      </GenerationTimeline>
-    </OnboardingColumn>
+      <GenerationTimelineSteps aria-label={title}>
+        <GenerationTimelineStep status="completed">
+          <GenerationTimelineStepIndicator />
+          <GenerationTimelineStepLabel>
+            {t("Your plan, from what you told us")}
+          </GenerationTimelineStepLabel>
+        </GenerationTimelineStep>
+
+        <GenerationTimelineStep status={holding ? "completed" : "active"}>
+          <GenerationTimelineStepIndicator />
+          <GenerationTimelineStepLabel>
+            {t("Reading the official documents")}
+          </GenerationTimelineStepLabel>
+          {!holding && <ReadingDetail document={document} />}
+        </GenerationTimelineStep>
+      </GenerationTimelineSteps>
+    </GenerationTimeline>
   );
 }
 

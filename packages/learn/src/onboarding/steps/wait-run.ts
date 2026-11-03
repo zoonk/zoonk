@@ -1,4 +1,5 @@
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 
@@ -38,6 +39,8 @@ export function hasWaitFailed({
   return poll === "failed" || poll === "timedOut" || isRunStopped(run);
 }
 
+export type PlanWaitScreen = "building" | "notice";
+
 type PlanGate = { last: PlanReadiness | null; status: PollStatus };
 
 /**
@@ -52,7 +55,7 @@ export function getPlanWait({
   gate: PlanGate;
   opened: PlanReadiness;
   run: GenerationRun | null;
-}): "building" | "notice" | null {
+}): PlanWaitScreen | null {
   const { last } = gate;
   const { readingNotice, ready } = last ?? opened;
 
@@ -61,4 +64,25 @@ export function getPlanWait({
   }
 
   return readingNotice && !hasWaitFailed({ poll: gate.status, run }) ? "notice" : "building";
+}
+
+/** A notice wait that stopped shows the plan's wait instead, which offers to try again. */
+export function getRevealWait({
+  plan,
+  poll,
+  run,
+}: {
+  plan: Pick<PlanView, "notice" | "ready"> | null;
+  poll: PollStatus;
+  run: GenerationRun | null;
+}): PlanWaitScreen | null {
+  if (!plan?.ready) {
+    return "building";
+  }
+
+  if (plan.notice !== "reading") {
+    return null;
+  }
+
+  return hasWaitFailed({ poll, run }) ? "building" : "notice";
 }

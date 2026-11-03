@@ -157,7 +157,7 @@ msgstr "Time a day"
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
-#: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -9193,6 +9193,12 @@ msgid "{document, select, notice {Your plan will follow the notice's subjects, t
 msgstr "{document, select, notice {Your plan will follow the notice's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
 
 #: src/onboarding/steps/notice-reading.tsx
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "Your plan is ready"
+
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "O9QcuL"
 msgid "Your plan, from what you told us"
 msgstr "Your plan, from what you told us"
@@ -9379,19 +9385,6 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 
-#: src/onboarding/steps/plan-building.tsx
-msgctxt "Tezxsy"
-msgid "Your plan is ready"
-msgstr "Your plan is ready"
-
-#: src/onboarding/steps/plan-building.tsx
-#: src/plan/focus-test/focus-test-result.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "See your plan"
-
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
@@ -9429,6 +9422,14 @@ msgstr "Building your plan stopped"
 msgctxt "09Xo2h"
 msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "Your answers are saved. Try again so it's ready when you finish."
+
+#: src/onboarding/steps/plan-wait.tsx
+#: src/plan/focus-test/focus-test-result.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "See your plan"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"

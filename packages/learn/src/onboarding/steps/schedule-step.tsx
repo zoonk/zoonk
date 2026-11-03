@@ -15,8 +15,7 @@ import { type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
-import { NoticeReading } from "./notice-reading";
-import { PlanWait } from "./plan-building";
+import { PlanWait } from "./plan-wait";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -247,16 +246,13 @@ export function ScheduleStep({
     onPlanReadyChange(wait === null);
   }, [onPlanReadyChange, wait]);
 
-  if (wait === "notice") {
-    return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
-  }
-
   return (
     <PlanWait
       next="timeQuestion"
+      notice={{ document: getExamDocument(goal), lastNotice: false }}
       readWarmUp={readWarmUp}
-      ready={wait === null}
       run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })}
+      wait={wait}
     >
       <StepForm
         canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}

@@ -11,11 +11,10 @@ import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
-import { NoticeReading } from "./notice-reading";
-import { PlanBuilding, PlanWait } from "./plan-building";
+import { PlanWait } from "./plan-wait";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
-import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
+import { WAITING_RUN, getRevealWait, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
 
 const POLL_MS = 3000;
 
@@ -114,14 +113,6 @@ export function PlanReveal({
     return <StepLoading />;
   }
 
-  if (plan?.ready && readingNotice) {
-    return hasWaitFailed({ poll: poll.status, run }) ? (
-      <PlanBuilding next="plan" run={waitRun} />
-    ) : (
-      <NoticeReading document={plan.examDocument} lastNotice={plan.schedule.targetDateEstimated} />
-    );
-  }
-
   async function refreshAfter<T>(change: Promise<T>): Promise<T> {
     const done = await change;
     await safeAsync(refresh);
@@ -141,10 +132,15 @@ export function PlanReveal({
   return (
     <PlanWait
       next="plan"
+      notice={
+        plan
+          ? { document: plan.examDocument, lastNotice: plan.schedule.targetDateEstimated }
+          : undefined
+      }
       offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
       readWarmUp={actions.readWarmUp}
-      ready={shown}
       run={waitRun}
+      wait={getRevealWait({ plan, poll: poll.status, run })}
     >
       {plan && (
         <PlanScreenProvider

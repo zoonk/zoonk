@@ -5,12 +5,16 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
-import { mapGoalSkills } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
 
 /** The time question asks the plan every 3 s while it's being built. */
 const NEXT_CHECK_TIMEOUT_MS = 10_000;
 
 const TIME_QUESTION = "How much time can you study each day?";
+
+const FIRST_CARD = "Why do beekeepers puff smoke into a hive before opening it?";
+
+const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
@@ -79,9 +83,7 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
 }) => {
   const { deck, goal } = await openPlanWait({ page, userId: noProgressUser.id });
 
-  const card = page.getByRole("radiogroup", {
-    name: "Why do beekeepers puff smoke into a hive before opening it?",
-  });
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
 
   await card.getByRole("radio", { name: /alarm scent/u }).click();
   await expect(page.getByText("Good guess!")).toBeVisible();
@@ -111,15 +113,61 @@ test("a learner who didn't guess moves on to the time question as soon as the pl
 }) => {
   const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
 
-  await expect(
-    page.getByRole("radiogroup", {
-      name: "Why do beekeepers puff smoke into a hive before opening it?",
-    }),
-  ).toBeVisible();
+  await expect(page.getByRole("radiogroup", { name: FIRST_CARD })).toBeVisible();
 
   await mapGoalSkills({ goalId: goal.id });
 
   await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible({
     timeout: NEXT_CHECK_TIMEOUT_MS,
   });
+});
+
+test("a learner who guessed while the exam's notice is read stays once it's read", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const [deck, goal] = await Promise.all([warmUpFixture(), createMappedGoal(noProgressUser.id)]);
+
+  await Promise.all([
+    prisma.goal.update({
+      data: {
+        details: { answered: [...ANSWERED, "placement"], subject: "algebra" },
+        generationRunId: goal.id,
+      },
+      where: { id: goal.id },
+    }),
+    prisma.plan.update({
+      data: { noticeWaitUntil: new Date(Date.now() + STILL_READING_MS) },
+      where: { goalId: goal.id },
+    }),
+  ]);
+
+  await followRun({
+    events: [
+      { status: "completed", step: "warmUpReady", warmUpId: deck.id },
+      { status: "completed", step: "createPlan" },
+    ],
+    page,
+    runId: goal.id,
+  });
+
+  await page.goto(`/start/${goal.id}`);
+
+  await expect(
+    page.getByRole("heading", { name: "Reading the exam's official documents" }),
+  ).toBeVisible();
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
+
+  await expect(page.getByRole("heading", { name: "Your plan is ready" })).toBeVisible({
+    timeout: NEXT_CHECK_TIMEOUT_MS,
+  });
+
+  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
+  await page.getByRole("button", { name: "See your plan" }).click();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { WAITING_RUN, getPlanWait, hasWaitFailed } from "./wait-run";
+import { WAITING_RUN, getPlanWait, getRevealWait, hasWaitFailed } from "./wait-run";
 
 describe(hasWaitFailed, () => {
   it.each<PollStatus>(["idle", "polling"])("keeps a healthy notice wait open while %s", (poll) => {
@@ -71,5 +71,20 @@ describe(getPlanWait, () => {
   it("offers to try again when asking about the notice's reading stopped", () => {
     const gate = { last: reading, status: "failed" as const };
     expect(getPlanWait({ gate, opened: reading, run: following })).toBe("building");
+  });
+});
+
+describe(getRevealWait, () => {
+  const read = { notice: "usual" as const, ready: true };
+  const reading = { notice: "reading" as const, ready: true };
+
+  it("waits for the plan, then for its exam's notice, then shows it", () => {
+    expect(getRevealWait({ plan: null, poll: "polling", run: WAITING_RUN })).toBe("building");
+    expect(getRevealWait({ plan: reading, poll: "polling", run: WAITING_RUN })).toBe("notice");
+    expect(getRevealWait({ plan: read, poll: "idle", run: WAITING_RUN })).toBeNull();
+  });
+
+  it("offers to try again on the plan's wait when the notice's wait failed", () => {
+    expect(getRevealWait({ plan: reading, poll: "timedOut", run: WAITING_RUN })).toBe("building");
   });
 });
