@@ -102,7 +102,6 @@ export function useConnectCall({
 
       // `seconds` is when the server hangs up; `talkSeconds` when the call starts ending.
       const length: CallLength = {
-        endsAtLimit: setup.endsAtLimit,
         hardStopAt: answeredAt + setup.seconds * MS_PER_SECOND,
         script: setup.script,
         talkEndsAt: answeredAt + setup.talkSeconds * MS_PER_SECOND,

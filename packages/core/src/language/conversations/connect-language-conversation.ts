@@ -89,7 +89,7 @@ export async function connectLanguageConversation({
     return { status: "conversationEnded" };
   }
 
-  if (isPlusOnlyLiveCall(owned.row.kind) && viewer.tier !== "plus") {
+  if (isPlusOnlyLiveCall(owned.row) && viewer.tier !== "plus") {
     return { status: "plusRequired" };
   }
 
@@ -138,7 +138,6 @@ export async function connectLanguageConversation({
       ...getCallTimes(connection),
       connectionId: connection.id,
       deadlineAt: connection.deadlineAt.toISOString(),
-      endsAtLimit: result.endsAtLimit,
       script: call.script,
       sessionUrl: `/v1/language-conversations/${conversationId}/connections/${connection.id}/sdp`,
       voice: getLiveConversationVoice(owned.row.targetLanguage),

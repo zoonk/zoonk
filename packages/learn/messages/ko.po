@@ -4735,16 +4735,6 @@ msgid "All goals done. {name} will wrap up after your answer."
 msgstr "목표를 모두 달성했어요. 답변을 마치면 {name}(이)가 대화를 마무리해요."
 
 #: src/language/conversation/call-control.tsx
-msgctxt "mrdH6V"
-msgid "Your call time for today is almost up. {name} will say goodbye after your answer."
-msgstr "오늘 대화 시간이 얼마 남지 않았어요. 답변을 마치면 {name}(이)가 작별 인사를 해요."
-
-#: src/language/conversation/call-control.tsx
-msgctxt "1FM3B0"
-msgid "Your call time for this month is almost up. {name} will say goodbye after your answer."
-msgstr "이번 달 대화 시간이 얼마 남지 않았어요. 답변을 마치면 {name}(이)가 작별 인사를 해요."
-
-#: src/language/conversation/call-control.tsx
 msgctxt "QK4WCr"
 msgid "Almost time. {name} will say goodbye after your answer."
 msgstr "곧 마칠 시간이에요. 답변을 마치면 {name}(이)가 작별 인사를 해요."

@@ -103,7 +103,7 @@ async function prepareCreation({
 
     const viewer = await refreshLiveCallViewer({ isGuest, now, transaction, userId });
 
-    if (isPlusOnlyLiveCall(conversation.kind) && viewer?.tier !== "plus") {
+    if (isPlusOnlyLiveCall(conversation) && viewer?.tier !== "plus") {
       return unchanged({ status: "plusRequired" as const });
     }
 

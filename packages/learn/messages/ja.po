@@ -4735,16 +4735,6 @@ msgid "All goals done. {name} will wrap up after your answer."
 msgstr "すべての目標を達成しました。答えたあと、{name}さんが会話を締めくくります。"
 
 #: src/language/conversation/call-control.tsx
-msgctxt "mrdH6V"
-msgid "Your call time for today is almost up. {name} will say goodbye after your answer."
-msgstr "今日の会話時間は残りわずかです。答えたあと、{name}さんがお別れのあいさつをします。"
-
-#: src/language/conversation/call-control.tsx
-msgctxt "1FM3B0"
-msgid "Your call time for this month is almost up. {name} will say goodbye after your answer."
-msgstr "今月の会話時間は残りわずかです。答えたあと、{name}さんがお別れのあいさつをします。"
-
-#: src/language/conversation/call-control.tsx
 msgctxt "QK4WCr"
 msgid "Almost time. {name} will say goodbye after your answer."
 msgstr "もうすぐ終了です。答えたあと、{name}さんがお別れのあいさつをします。"

@@ -1,6 +1,6 @@
 import { type CallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
 import { type EntitlementTier } from "../../../entitlements/contract";
-import { getUsageRule } from "../../../entitlements/limits";
+import { getLongestCallSeconds } from "../../../entitlements/limits";
 import { PRACTICE_CONVERSATION_MINUTES } from "../conversation-contract";
 
 const SECONDS_PER_MINUTE = 60;
@@ -18,13 +18,15 @@ function toSeconds(minutes: number): number {
   return minutes * SECONDS_PER_MINUTE;
 }
 
-function getPlusMinutes(): number[] {
-  const free = getUsageRule({ kind: "conversation", tier: "free" }).daySeconds ?? 0;
-  const plus = getUsageRule({ kind: "conversation", tier: "plus" }).daySeconds ?? 0;
-
+function getTierMinutes(tier: EntitlementTier): number[] {
   return PRACTICE_CONVERSATION_MINUTES.filter(
-    (minutes) => toSeconds(minutes) > free && toSeconds(minutes) <= plus,
+    (minutes) => toSeconds(minutes) <= getLongestCallSeconds(tier),
   );
+}
+
+function getPlusMinutes(): number[] {
+  const free = getTierMinutes("free");
+  return getTierMinutes("plus").filter((minutes) => !free.includes(minutes));
 }
 
 function getDefaultMinutes(minutes: readonly number[]): number {
@@ -51,11 +53,7 @@ export function toPracticeCallLengths({
     };
   }
 
-  const minutes = PRACTICE_CONVERSATION_MINUTES.filter(
-    (length) => !left || toSeconds(length) <= left.seconds,
-  );
-
-  if (minutes.length === 0 && left) {
+  if (left && left.seconds <= 0) {
     return {
       defaultMinutes: DEFAULT_PRACTICE_MINUTES,
       limit: { period: left.period, tier },
@@ -63,6 +61,8 @@ export function toPracticeCallLengths({
       plusMinutes: [],
     };
   }
+
+  const minutes = getTierMinutes(tier);
 
   return {
     defaultMinutes: getDefaultMinutes(minutes),

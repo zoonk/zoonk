@@ -15,7 +15,7 @@ export type AllowanceLimit = {
 
 /** slowDown retries after retryAfterSeconds; limitReached waits for a cap reset. signUpRequired moves guest work into an account. */
 export type UsageDecision =
-  | { heldSeconds?: number; shortenedBy?: "day" | "month"; status: "allowed" }
+  | { status: "allowed" }
   | { limit: AllowanceLimit; status: "limitReached" }
   | { retryAfterSeconds: number; status: "slowDown" }
   | { status: "signUpRequired" }
