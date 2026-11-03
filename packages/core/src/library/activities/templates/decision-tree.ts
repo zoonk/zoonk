@@ -27,7 +27,7 @@ const nodeSchema = z.discriminatedUnion("kind", [
   z.object({ id: idSchema, kind: z.literal("outcome"), label: labelSchema }).strict(),
 ]);
 
-const decisionTreeFields = z
+const decisionTreeShape = z
   .object({
     case: z
       .object({
@@ -44,7 +44,7 @@ const decisionTreeFields = z
   })
   .strict();
 
-type DecisionTreeFields = z.output<typeof decisionTreeFields>;
+type DecisionTreeFields = z.output<typeof decisionTreeShape>;
 type TreeNode = z.output<typeof nodeSchema>;
 
 function childIds(node: TreeNode): string[] {
@@ -71,6 +71,56 @@ function walkCase(
 
   return next ? walkCase(fields, [...path, next]) : null;
 }
+
+/**
+ * A tree has one way into each node, but writers often send two branches to the same outcome
+ * ("this rule doesn't apply"). Each later branch gets its own copy of that outcome, and a case that
+ * ends on a copy names it.
+ */
+function splitSharedOutcomes(fields: DecisionTreeFields): DecisionTreeFields {
+  const outcomes = new Map(
+    fields.nodes.flatMap((node) => (node.kind === "outcome" ? [[node.id, node] as const] : [])),
+  );
+
+  const uses = new Map<string, number>();
+  const copies: TreeNode[] = [];
+
+  const nodes = fields.nodes.map((node) => {
+    if (node.kind !== "question") {
+      return node;
+    }
+
+    const branches = node.branches.map((branch) => {
+      const outcome = outcomes.get(branch.next);
+      const count = (uses.get(branch.next) ?? 0) + 1;
+      uses.set(branch.next, count);
+
+      if (!outcome || count === 1) {
+        return branch;
+      }
+
+      const id = `${branch.next}-${count}`;
+      copies.push({ ...outcome, id });
+      return { ...branch, next: id };
+    });
+
+    return { ...node, branches };
+  });
+
+  if (copies.length === 0) {
+    return fields;
+  }
+
+  const repaired = { ...fields, nodes: [...nodes, ...copies] };
+  const reached = walkCase(repaired)?.at(-1);
+  const copied = copies.find((copy) => copy.id === reached);
+
+  return copied && reached?.startsWith(`${fields.case.outcomeId}-`)
+    ? { ...repaired, case: { ...repaired.case, outcomeId: copied.id } }
+    : repaired;
+}
+
+const decisionTreeFields = decisionTreeShape.transform((fields) => splitSharedOutcomes(fields));
 
 function reachable(fields: DecisionTreeFields, visited: ReadonlySet<string>): ReadonlySet<string> {
   const next = fields.nodes

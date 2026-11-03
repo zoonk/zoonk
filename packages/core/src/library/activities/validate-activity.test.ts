@@ -389,6 +389,43 @@ describe(validateActivity, () => {
     expect(firstIcon(explore)).toBe(DEFAULT_PROCESS_ICON);
   });
 
+  it("gives each branch its own copy of an outcome two branches share, and walks the case to it", () => {
+    const impeded = validateExploreActivity(
+      sharedOutcomeTree(
+        [
+          { branch: "Sim", nodeId: "cargo" },
+          { branch: "Sim", nodeId: "fazenda" },
+        ],
+        "impedida",
+      ),
+    );
+
+    const free = validateExploreActivity(
+      sharedOutcomeTree(
+        [
+          { branch: "Sim", nodeId: "cargo" },
+          { branch: "Não", nodeId: "fazenda" },
+        ],
+        "livre",
+      ),
+    );
+
+    const fieldsOf = (result: typeof impeded) =>
+      result.ok
+        ? (result.content.fields as { case: { outcomeId: string }; nodes: { id: string }[] })
+        : null;
+
+    expect(fieldsOf(impeded)?.nodes.map((node) => node.id)).toStrictEqual([
+      "cargo",
+      "fazenda",
+      "impedida",
+      "livre",
+      "livre-2",
+    ]);
+
+    expect(fieldsOf(free)?.case.outcomeId).toBe("livre-2");
+  });
+
   it("rejects molecules that can't be built with at most triple bonds or are too big", () => {
     const quadrupleBond = structuredClone(fixtures.moleculeBuilder);
     quadrupleBond.fields = { elements: ["C"], formula: "C2" };
@@ -507,6 +544,39 @@ describe(validateActivity, () => {
     ).toContain("answerMismatch");
   });
 });
+
+function treeOutcome(id: string, label: string) {
+  return { id, kind: "outcome" as const, label };
+}
+
+function treeQuestion(id: string, yes: string, no: string) {
+  return {
+    branches: [
+      { label: "Sim", next: yes },
+      { label: "Não", next: no },
+    ],
+    id,
+    kind: "question" as const,
+    question: `${id}?`,
+  };
+}
+
+function sharedOutcomeTree(answers: { branch: string; nodeId: string }[], outcomeId: string) {
+  return {
+    data: { isExample: true },
+    fields: {
+      case: { answers, description: "Uma servidora quer advogar contra o município.", outcomeId },
+      nodes: [
+        treeQuestion("cargo", "fazenda", "livre"),
+        treeQuestion("fazenda", "impedida", "livre"),
+        treeOutcome("impedida", "Atuação impedida"),
+        treeOutcome("livre", "Essa regra não impede a atuação"),
+      ],
+      rootId: "cargo",
+    },
+    template: "decisionTree",
+  };
+}
 
 function explored(id: ActivityTemplateId) {
   const { data, fields, template } = fixtures[id] as {
