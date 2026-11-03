@@ -48,11 +48,13 @@ export const pictureNeedClassifier = {
 
 type PictureNeedInput = Parameters<typeof pictureNeedClassifier.toInput>[0];
 
+export type PictureJudgment = { probability: number; teaches: boolean };
+
 /** Throws when neither model answers, so the caller's workflow step retries it. */
 export async function judgePicture({
   analytics,
   ...input
-}: PictureNeedInput & { analytics?: AiGenerationContext }): Promise<boolean> {
+}: PictureNeedInput & { analytics?: AiGenerationContext }): Promise<PictureJudgment> {
   const run = await evaluateQuestions({
     analytics,
     fallbackModel,
@@ -62,5 +64,7 @@ export async function judgePicture({
     task: "picture-need",
   });
 
-  return decideBoolean({ probability: run.answers.teaches.probability, threshold: TEACHES_AT });
+  const { probability } = run.answers.teaches;
+
+  return { probability, teaches: decideBoolean({ probability, threshold: TEACHES_AT }) };
 }

@@ -187,7 +187,7 @@ async function saveLessonPlan({
     lessonId: planned.lessonId,
     provenance: planned.provenance,
     scope: planned.scope,
-    specs: dropDecorativePictures({ judged, specs: planned.specs }),
+    specs: dropDecorativePictures({ judged, novice: planned.novice, specs: planned.specs }),
     workflowRunId: planned.workflowRunId,
   });
 

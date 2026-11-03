@@ -1,7 +1,11 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
-import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
-import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type PictureJudgment, judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
+import {
+  type LessonScreen,
+  type LessonSpec,
+  countMissingTeachingVisuals,
+} from "@zoonk/ai/tasks/lesson-spec/rules";
 
 export type PlannedPicture = {
   lesson: number;
@@ -13,7 +17,7 @@ export type PlannedPicture = {
   kind: string;
 };
 
-export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & { teaches: boolean };
+export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & PictureJudgment;
 
 /**
  * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does a new
@@ -55,7 +59,7 @@ export async function judgePlannedPicture({
   novice: boolean;
   picture: PlannedPicture;
 }): Promise<JudgedPicture> {
-  const teaches = await judgePicture({
+  const judgment = await judgePicture({
     analytics,
     lesson: picture.lessonTitle,
     novice,
@@ -64,24 +68,69 @@ export async function judgePlannedPicture({
     screen: { brief: picture.brief, kind: picture.kind },
   });
 
-  return { lesson: picture.lesson, screen: picture.screen, teaches };
+  return { ...judgment, lesson: picture.lesson, screen: picture.screen };
+}
+
+function clearPictures({
+  dropped,
+  screens,
+}: {
+  dropped: readonly number[];
+  screens: readonly LessonScreen[];
+}): LessonScreen[] {
+  return screens.map((screen, index) =>
+    dropped.includes(index) ? { ...screen, visual: null } : screen,
+  );
+}
+
+function countMissingAfter(input: {
+  dropped: readonly number[];
+  screens: readonly LessonScreen[];
+}) {
+  return countMissingTeachingVisuals(clearPictures(input));
+}
+
+/** Keeps, best-scored first, the decorative pictures a new learner's lesson needs for its floor. */
+function keepVisualFloor({
+  decorative,
+  screens,
+}: {
+  decorative: readonly JudgedPicture[];
+  screens: readonly LessonScreen[];
+}): number[] {
+  const dropped = decorative.map((picture) => picture.screen);
+  const missing = countMissingAfter({ dropped, screens });
+
+  const kept = new Set(
+    decorative
+      .filter(({ screen }) => {
+        const restored = dropped.filter((index) => index !== screen);
+        return countMissingAfter({ dropped: restored, screens }) < missing;
+      })
+      .toSorted((first, second) => second.probability - first.probability)
+      .slice(0, missing)
+      .map(({ screen }) => screen),
+  );
+
+  return dropped.filter((screen) => !kept.has(screen));
 }
 
 export function dropDecorativePictures({
   judged,
+  novice,
   specs,
 }: {
   judged: readonly JudgedPicture[];
+  novice: boolean;
   specs: readonly LessonSpec[];
 }): LessonSpec[] {
-  const decorative = new Set(
-    judged.filter((item) => !item.teaches).map((item) => `${item.lesson}:${item.screen}`),
-  );
+  return specs.map((spec, lesson) => {
+    const decorative = judged.filter((picture) => picture.lesson === lesson && !picture.teaches);
 
-  return specs.map((spec, lesson) => ({
-    ...spec,
-    screens: spec.screens.map((screen, index) =>
-      decorative.has(`${lesson}:${index}`) ? { ...screen, visual: null } : screen,
-    ),
-  }));
+    const dropped = novice
+      ? keepVisualFloor({ decorative, screens: spec.screens })
+      : decorative.map((picture) => picture.screen);
+
+    return { ...spec, screens: clearPictures({ dropped, screens: spec.screens }) };
+  });
 }
