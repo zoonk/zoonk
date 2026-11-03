@@ -113,7 +113,7 @@ fun OwnedCertificate.pictureLabel(): String {
     return stringResource(R.string.certificates_alt_dated, heading, day)
 }
 
-/** The text a share suggests: lessons studied, never lessons skipped, and the hours only when known. */
+/** The text a share suggests, as Main words it: lessons studied, never lessons skipped, and the study time only when known. */
 @Composable
 @ReadOnlyComposable
 fun OwnedCertificate.caption(): String {
@@ -122,15 +122,30 @@ fun OwnedCertificate.caption(): String {
     return when (naming.kind) {
         CertificateKind.Course -> {
             val studied = (lessonsStudied ?: 0).toInt()
-            val hours = minutes?.let { (it / MINUTES_PER_HOUR.toDouble()).roundToInt() }?.takeIf { it > 0 }
+            val studyMinutes = minutes?.toInt()?.takeIf { it > 0 }
             if (studied == 0) {
                 return stringResource(R.string.certificates_caption_course_tested_out, title.orEmpty())
             }
             val lessons = pluralStringResource(R.plurals.certificates_lessons, studied, formatNumber(studied.toDouble(), locale))
-            if (hours == null) {
-                stringResource(R.string.certificates_caption_course, title.orEmpty(), lessons)
-            } else {
-                pluralStringResource(R.plurals.certificates_caption_course_hours, hours, title.orEmpty(), lessons, hours)
+            when {
+                studyMinutes == null -> {
+                    stringResource(R.string.certificates_caption_course, title.orEmpty(), lessons)
+                }
+
+                studyMinutes < MINUTES_PER_HOUR -> {
+                    pluralStringResource(
+                        R.plurals.certificates_caption_course_minutes,
+                        studyMinutes,
+                        title.orEmpty(),
+                        lessons,
+                        studyMinutes,
+                    )
+                }
+
+                else -> {
+                    val hours = (studyMinutes / MINUTES_PER_HOUR.toDouble()).roundToInt()
+                    pluralStringResource(R.plurals.certificates_caption_course_hours, hours, title.orEmpty(), lessons, hours)
+                }
             }
         }
 

@@ -7,8 +7,9 @@
   "certificates_alt_level": "645af52b2e48579f2690a8e3640f376e8a873e4cfba363fb7685d79b802096dd",
   "certificates_alt_placement": "711a61d78a82637cd7e217428fb9c2ee790e976369ceb81f1f3706d6cff54bba",
   "certificates_cancel": "3293056d52d0eb8080356716a45e86c1770d3085d72f8da10a58cd1a9fe50b4b",
-  "certificates_caption_course": "bce20eaef3ac4908826bcd8f1338d03139534efe6b65506d1bf77e1be5d8de58",
-  "certificates_caption_course_hours": "3775b86b64594c8afde4cb12e826c38683115d421ac27a9aabb095cffecda957",
+  "certificates_caption_course": "f48c367114f57c93f65ae860f04ff35c3a438d08c10be4b75756b886d9b7cee5",
+  "certificates_caption_course_hours": "b43a231dc1d3df8b0506dc775343d963a4099f57e05df8a90fa136f06120bb47",
+  "certificates_caption_course_minutes": "7bc241e6215f25dd1b2147162ef770281bdd58258f09b8b56221dfed23b9de66",
   "certificates_caption_course_tested_out": "63fa04dfc49d60259963db3880b3f52f20958c226567214a7bc808bf684dd7d2",
   "certificates_caption_level": "fef94ce232d63b2b5962e999a7b59d2db478d972e3a94f18359abce5685b0539",
   "certificates_caption_placement": "56b4a042ed15de00e76b8c3f4c7399349b74d1e005981a24ecd22403eadc8a3b",
@@ -176,15 +177,22 @@
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
-    <string name="certificates_caption_course">Właśnie udało mi się ukończyć kurs w Zoonku: %1$s, %2$s.</string>
+    <string name="certificates_caption_course">Kurs „%1$s” w Zoonku już za mną: %2$s.</string>
     <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
     <string name="certificates_caption_course_tested_out">Właśnie udało mi się ukończyć kurs w Zoonku: %1$s.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
-        <item quantity="one">Kurs „%1$s” w Zoonku już za mną: %2$s i około %3$d godziny nauki.</item>
-        <item quantity="few">Kurs „%1$s” w Zoonku już za mną: %2$s i około %3$d godzin nauki.</item>
-        <item quantity="many">Kurs „%1$s” w Zoonku już za mną: %2$s i około %3$d godzin nauki.</item>
-        <item quantity="other">Kurs „%1$s” w Zoonku już za mną: %2$s i około %3$d godzin nauki.</item>
+        <item quantity="one">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d godzina nauki.</item>
+        <item quantity="few">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d godziny nauki.</item>
+        <item quantity="many">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d godzin nauki.</item>
+        <item quantity="other">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d godziny nauki.</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="one">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d minuta nauki.</item>
+        <item quantity="few">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d minuty nauki.</item>
+        <item quantity="many">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d minut nauki.</item>
+        <item quantity="other">Kurs „%1$s” w Zoonku już za mną: %2$s i mniej więcej %3$d minuty nauki.</item>
     </plurals>
     <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
     <plurals name="certificates_lessons">

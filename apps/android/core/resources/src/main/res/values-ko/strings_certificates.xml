@@ -7,8 +7,9 @@
   "certificates_alt_level": "025f8be61a020d69cba5ac3f7f3efa91716782e8e4001a7226a1361246b1c227",
   "certificates_alt_placement": "a0a6e182a741f742c0589ef47712f7074eae2d01ca874e4e1e403c7ff68e83bc",
   "certificates_cancel": "335a834ed2f5259c9eee673561f05476a041131f896980379d6142499d2d7a1d",
-  "certificates_caption_course": "1a71f7d6fc404a52875679deea9bd97746d4f954acec1c286caa72deda4adbd9",
-  "certificates_caption_course_hours": "34edb86e358a8673921a012f8300fd3c2cc7b6739661668dd787f448efe75aed",
+  "certificates_caption_course": "aa0d192e0eeb41dc968d30294fc4fa6decee834f3f7ed064e7b047e621ba9073",
+  "certificates_caption_course_hours": "d872db4d340b32b482dabbe3fef7855304a6f8675db69ff2b9e24445df891a8c",
+  "certificates_caption_course_minutes": "0a98626bb8db34518ff7317c2044033a1bf15b5600b6ef5d43ac0c66cfc0c6d0",
   "certificates_caption_course_tested_out": "17ce3071125998f3ad2b7524030d7b2887ba4a871ebb7cc37c22ab328b282d5f",
   "certificates_caption_level": "90371685d08cc991e70cefacc28b20573891a9be91dee7a685764e108cf30ad5",
   "certificates_caption_placement": "181291e77cb5d123f65e1c464cad356f9d1b3c5400e00953ec33bc9ae32c21bf",
@@ -170,12 +171,16 @@
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
-    <string name="certificates_caption_course">방금 Zoonk에서 %1$s 코스를 마쳤어요(%2$s).</string>
+    <string name="certificates_caption_course">Zoonk에서 %1$s 학습을 막 마쳤어요(%2$s).</string>
     <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
     <string name="certificates_caption_course_tested_out">방금 Zoonk에서 %1$s 코스를 마쳤어요.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
-        <item quantity="other">Zoonk에서 %1$s 코스를 방금 마쳤어요. %2$s를 약 %3$d시간 동안 공부했어요.</item>
+        <item quantity="other">Zoonk에서 %1$s 학습을 막 마쳤어요(%2$s, 학습 시간 약 %3$d시간).</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="other">Zoonk에서 %1$s 학습을 막 마쳤어요(%2$s, 학습 시간 약 %3$d분).</item>
     </plurals>
     <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
     <plurals name="certificates_lessons">

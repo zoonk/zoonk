@@ -107,6 +107,11 @@
         <item quantity="one">I just finished %1$s on Zoonk: %2$s and about %3$d hour of study.</item>
         <item quantity="other">I just finished %1$s on Zoonk: %2$s and about %3$d hours of study.</item>
     </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="one">I just finished %1$s on Zoonk: %2$s and about %3$d minute of study.</item>
+        <item quantity="other">I just finished %1$s on Zoonk: %2$s and about %3$d minutes of study.</item>
+    </plurals>
     <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
     <plurals name="certificates_lessons">
         <item quantity="one">%1$s lesson</item>

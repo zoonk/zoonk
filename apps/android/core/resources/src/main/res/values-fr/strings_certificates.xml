@@ -9,6 +9,7 @@
   "certificates_cancel": "e0de45251f6fa1ef536c104d3294d6974118d5a755213299d037c9e7570f3351",
   "certificates_caption_course": "0fc678ab4de6ca0b79e041c4eb1704434a1fd2104a6baba0a7f4ee174095f1ac",
   "certificates_caption_course_hours": "b2d52085974ffd758b90a948136017419e74c28b385e500ae48940b7eed18471",
+  "certificates_caption_course_minutes": "782b19900a84563395945b82e1e9280427ab054df09c8f3b8257ccb3f0dd13d5",
   "certificates_caption_course_tested_out": "612b41bcbf187e4ea8dca4cc6acab2647907719b613005445a63e202ed774e8c",
   "certificates_caption_level": "ab2b0c0ed47e6c1b8979852271337a48dea817741d070bbb2d70ad4eae04e96d",
   "certificates_caption_placement": "502105de8e74438537da5dd45cdc96f398fc9c092180260c078b437bf4b90fdc",
@@ -182,6 +183,12 @@
         <item quantity="one">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d heure d’étude.</item>
         <item quantity="many">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d heures d’étude.</item>
         <item quantity="other">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d heures d’étude.</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="one">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d minute d’étude.</item>
+        <item quantity="many">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d minutes d’étude.</item>
+        <item quantity="other">Je viens de terminer %1$s sur Zoonk : %2$s et environ %3$d minutes d’étude.</item>
     </plurals>
     <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
     <plurals name="certificates_lessons">

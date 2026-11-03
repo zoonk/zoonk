@@ -8,7 +8,8 @@
   "certificates_alt_placement": "453f311d21101a91d97ecebc6d94917b73db3756c236349addffdf0a7c60eb7f",
   "certificates_cancel": "ef5418b8844b2e6498119a94f65e3e86508f75f373570e70a746a3393dc85135",
   "certificates_caption_course": "6dc3644535e8dbf1786e82b23aa9f543e0cdb793431d75f5ae7e87860deff995",
-  "certificates_caption_course_hours": "5af6300e715c80016c9c60b1741d8116c6dc591fca3ce70d76cdce96f0eff8ff",
+  "certificates_caption_course_hours": "1e7fbc99d5c80ad3d3b5d79534f82f699c511fca57cc855fe2dcf8bfc3eb0e2f",
+  "certificates_caption_course_minutes": "63c3c1e3c1beb7cc4e8f146db2b603e993b561ec74cc5aa58d9ada2b50ff3ba9",
   "certificates_caption_course_tested_out": "d72835f80bccd879a3e2ee450ff1bcb4f6c70d994c7a5cb2c36baf973d9b0b39",
   "certificates_caption_level": "23b16971378643203f45bc9b617c2af7d1e981ad125fe1f03bab6c5939faa90c",
   "certificates_caption_placement": "e2a94e3adcfc50d0f9f490839963dd2a6db90babb9d682d5625a6f0aaf0d5685",
@@ -179,9 +180,15 @@
     <string name="certificates_caption_course_tested_out">Recién terminé %1$s en Zoonk.</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
     <plurals name="certificates_caption_course_hours">
-        <item quantity="one">Terminé %1$s en Zoonk: %2$s y aproximadamente %3$d hora de estudio.</item>
-        <item quantity="many">Terminé %1$s en Zoonk: %2$s y aproximadamente %3$d horas de estudio.</item>
-        <item quantity="other">Terminé %1$s en Zoonk: %2$s y aproximadamente %3$d horas de estudio.</item>
+        <item quantity="one">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d hora de estudio.</item>
+        <item quantity="many">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d horas de estudio.</item>
+        <item quantity="other">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d horas de estudio.</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="one">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d minuto de estudio.</item>
+        <item quantity="many">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d minutos de estudio.</item>
+        <item quantity="other">Recién terminé %1$s en Zoonk: %2$s y aproximadamente %3$d minutos de estudio.</item>
     </plurals>
     <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
     <plurals name="certificates_lessons">
