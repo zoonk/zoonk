@@ -88,6 +88,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.currentLocale
@@ -792,11 +793,19 @@ private fun PictureOption(
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when {
             image != null -> {
-                PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Question, Modifier.fillMaxWidth())
+                PrivatePicture(
+                    image.url,
+                    image.alt,
+                    image.width,
+                    image.height,
+                    PictureFrame.Question,
+                    Modifier.fillMaxWidth(),
+                    PictureShape.Square,
+                )
             }
 
             step.imagePending -> {
-                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth()) {
+                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth(), PictureShape.Square) {
                     Icon(
                         painterResource(R.drawable.ic_image),
                         contentDescription = stringResource(R.string.player_drawing_picture),

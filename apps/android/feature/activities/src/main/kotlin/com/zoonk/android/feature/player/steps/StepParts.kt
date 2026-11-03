@@ -34,6 +34,7 @@ import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
@@ -53,7 +54,7 @@ fun StepPicture(
     val centered = Modifier.fillMaxWidth().wrapContentWidth()
 
     when {
-        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame, centered)
+        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame, centered, PictureShape.Landscape)
         step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question }, centered)
         frame == PictureFrame.Question && picture != null -> DescribedPicture(picture.alt)
     }
@@ -65,7 +66,7 @@ private fun StepPicturePending(
     alt: String?,
     modifier: Modifier,
 ) {
-    PendingPicture(frame, modifier) {
+    PendingPicture(frame, modifier, PictureShape.Landscape) {
         Icon(painterResource(R.drawable.ic_image), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(
             stringResource(R.string.player_drawing_picture),

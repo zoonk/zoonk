@@ -41,6 +41,18 @@ enum class PictureFrame(
     Question(0.40f),
 }
 
+/**
+ * The shape a picture holds until its own size is known: pictures stored before lessons drew in
+ * landscape are portrait, a lesson's screen pictures are now landscape and its option pictures square.
+ */
+enum class PictureShape(
+    val ratio: Float,
+) {
+    Portrait(1024f / 1280f),
+    Landscape(1536f / 1024f),
+    Square(1f),
+}
+
 @Composable
 private fun PictureFrame.maxHeight(): Dp =
     with(LocalDensity.current) {
@@ -49,8 +61,9 @@ private fun PictureFrame.maxHeight(): Dp =
     } * heightShare
 
 /**
- * Sized from its stored [width] and [height] so nothing jumps, a muted surface until it loads; a
- * picture that fails to load leaves no gap. Draws nothing outside [LocalPrivatePictures].
+ * Sized from its stored [width] and [height], or its [shape] when they're unknown, so nothing jumps;
+ * a muted surface until it loads, and a picture that fails to load leaves no gap. Draws nothing
+ * outside [LocalPrivatePictures].
  */
 @Composable
 fun PrivatePicture(
@@ -60,11 +73,12 @@ fun PrivatePicture(
     height: Long?,
     frame: PictureFrame,
     modifier: Modifier = Modifier,
+    shape: PictureShape = PictureShape.Portrait,
 ) {
     val pictures = LocalPrivatePictures.current ?: return
     val context = LocalContext.current
     var failed by remember(url) { mutableStateOf(false) }
-    val ratio = (width ?: DEFAULT_WIDTH).toFloat() / (height ?: DEFAULT_HEIGHT).coerceAtLeast(1)
+    val ratio = if (width != null && height != null && width > 0 && height > 0) width.toFloat() / height else shape.ratio
     val maxHeight = frame.maxHeight()
 
     if (failed) return
@@ -84,13 +98,11 @@ fun PrivatePicture(
     )
 }
 
-/** A picture still being drawn, in the space a drawn one takes. */
+/** A picture still being drawn, in the space a drawn one of its [shape] takes. */
 @Composable
 fun PendingPicture(
     frame: PictureFrame,
     modifier: Modifier = Modifier,
+    shape: PictureShape = PictureShape.Portrait,
     content: @Composable ColumnScope.() -> Unit,
-) = MediaPending(modifier.heightIn(max = frame.maxHeight()).aspectRatio(DEFAULT_WIDTH.toFloat() / DEFAULT_HEIGHT), content)
-
-private const val DEFAULT_WIDTH = 1024L
-private const val DEFAULT_HEIGHT = 1280L
+) = MediaPending(modifier.heightIn(max = frame.maxHeight()).aspectRatio(shape.ratio), content)
