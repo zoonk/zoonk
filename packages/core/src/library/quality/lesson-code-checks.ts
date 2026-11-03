@@ -19,8 +19,10 @@ import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
 import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
+import { type LessonFlowCheckCode, checkLessonFlow } from "./lesson-flow-checks";
 
 type LessonCheckCode =
+  | LessonFlowCheckCode
   | "activityProgram"
   | "activityTemplate"
   | "answerKey"
@@ -268,10 +270,13 @@ export function checkWrittenLesson({
           },
         ];
 
+  const screens = checked.map((result) => result.converted);
+
   return {
     problems: [
       ...countProblem,
       ...checked.flatMap((result) => result.problems),
+      ...checkLessonFlow({ lesson, screens, spec }),
       ...getTermOrderProblems(lesson),
       ...getRepeatProblems({
         chapterLessons,
@@ -283,6 +288,6 @@ export function checkWrittenLesson({
       ...getRepeatedQuestionProblems(lesson.screens),
       ...getLessonMapProblems({ language, map: lesson.summary }),
     ],
-    screens: checked.map((result) => result.converted),
+    screens,
   };
 }

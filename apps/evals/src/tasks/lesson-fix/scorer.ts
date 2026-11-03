@@ -72,11 +72,7 @@ export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, te
 
   const checked = checkLesson(input, lesson);
 
-  const problems = [
-    ...checked.problems,
-    ...(await checkLessonPrograms(checked.screens)),
-    ...findQuestionBases({ lesson, screens: checked.screens }).problems,
-  ].map(
+  const problems = [...checked.problems, ...(await checkLessonPrograms(checked.screens))].map(
     (problem) => `Screen ${problem.screen === null ? "-" : problem.screen + 1}: ${problem.problem}`,
   );
 

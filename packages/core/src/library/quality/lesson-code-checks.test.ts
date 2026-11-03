@@ -329,7 +329,11 @@ describe(checkWrittenLesson, () => {
       throw new Error("Screen 8 is a check.");
     }
 
-    const fallback = { ...application, question: "Where does the dot stop after the rise?" };
+    const fallback = {
+      ...application,
+      basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
+      question: "Where does the dot stop after the rise?",
+    };
 
     expect(codesOf(withScreen(5, fallback))).toContainEqual([5, "screenKind"]);
     expect(codesOf(withScreen(5, fallback), { allowActivityFallback: true })).toStrictEqual([]);
@@ -470,13 +474,13 @@ describe(checkWrittenLesson, () => {
   it("rejects Markdown the player shows as marks and text a writer left unfinished", () => {
     const split = explanation("_The speaker opens the session.\nThe floor is yours._");
 
-    expect(codesOf(withScreen(1, split))).toStrictEqual([
-      [1, "markdown"],
-      [1, "markdown"],
+    expect(codesOf(withScreen(4, split))).toStrictEqual([
+      [4, "markdown"],
+      [4, "markdown"],
     ]);
 
-    expect(codesOf(withScreen(1, explanation("[Insert an example here]")))).toStrictEqual([
-      [1, "placeholder"],
+    expect(codesOf(withScreen(4, explanation("[Insert an example here]")))).toStrictEqual([
+      [4, "placeholder"],
     ]);
 
     const lesson = writtenTemperatureLesson();

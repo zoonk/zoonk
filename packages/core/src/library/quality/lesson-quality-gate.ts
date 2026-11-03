@@ -32,10 +32,17 @@ export type LessonWritingContext = Pick<
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
 
+/** Flaws a fix pass may not fully clear that still leave a lesson worth publishing. */
 const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
+  "basis",
+  "guessAnswer",
+  "moneyFormat",
+  "newTerms",
+  "plannedVisual",
   "readingLevel",
   "repeatedExample",
   "repeatedQuestion",
+  "repeatedTable",
   "termOrder",
 ]);
 

@@ -216,7 +216,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
-        basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
+        basis: { quote: "First climb to zero: that takes 3 degrees.", screen: 3 },
         context: null,
         image: null,
         kind: "check",
