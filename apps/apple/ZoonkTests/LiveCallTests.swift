@@ -363,6 +363,30 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(run.hangUp?.at ?? 0, 45, accuracy: 0.11)
   }
 
+  func testAGoodbyeSaidBeforeTheCueWentOutIsntSaidAgain() {
+    var waiting = EndingRun()
+    waiting.chat(until: 110)
+    waiting.learnerTalks(from: 112, to: 114)
+    // The character says goodbye back across the talk time, so the cue waits for it to stop.
+    waiting.characterTalks(from: 115, to: 121)
+    waiting.saidGoodbye(at: 122)
+    waiting.wait(until: 130)
+
+    XCTAssertTrue(waiting.times(of: .goodbye).isEmpty)
+    XCTAssertEqual(waiting.hangUp?.reason, .time)
+    XCTAssertEqual(waiting.hangUp?.at ?? 0, 124, accuracy: 0.11)
+
+    var sent = EndingRun()
+    sent.chat(until: 110)
+    sent.learnerTalks(from: 115, to: 121)
+    sent.saidGoodbye(at: 122)
+    sent.wait(until: 128)
+
+    // The cue already went out: its own goodbye is the one to wait for.
+    assertTimes(sent.times(of: .goodbye), [120], accuracy: 0.11)
+    XCTAssertNil(sent.hangUp)
+  }
+
   func testAQuietLearnerIsCheckedOnOnceThenTheCallSaysGoodbye() {
     var run = EndingRun()
     run.characterTalks(from: 1, to: 3)

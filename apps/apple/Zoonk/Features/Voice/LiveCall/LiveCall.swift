@@ -566,11 +566,11 @@ final class LiveCall {
 
       let now = Date.now
 
-      if let ending, ending.armed == nil {
-        // A goodbye the learner has talked past since it was checked isn't the end.
-        if check.goodbye, !ending.hasLearnerActed(after: sentAt) {
-          self.ending?.saidGoodbye(at: now)
-        } else if conversation.objectives.allSatisfy({ check.objectivesMet.contains($0.label) }) {
+      // A goodbye the learner has talked past since it was checked isn't the end.
+      if let ending, check.goodbye, !ending.hasLearnerActed(after: sentAt) {
+        self.ending?.saidGoodbye(at: now)
+      } else if let ending, ending.armed == nil {
+        if conversation.objectives.allSatisfy({ check.objectivesMet.contains($0.label) }) {
           self.ending?.goalsMet(at: now)
         } else if let progress = check.progress?.value1 {
           send(progress)

@@ -170,9 +170,13 @@ struct LiveCallEnding {
     arm(.done, at: now)
   }
 
-  /// The learner said goodbye and the character said it back: it only remains to hang up.
+  /// The learner said goodbye and the character said it back: it only remains to hang up. An
+  /// ending that already started keeps its reason and skips its own goodbye, so the character
+  /// doesn't say it twice; once that cue went out, its own goodbye is the one to wait for.
   mutating func saidGoodbye(at now: Date) {
-    if arm(.goodbye, at: now) {
+    arm(.goodbye, at: now)
+
+    if cueSentAt == nil {
       isGoodbyeSaid = true
     }
   }
