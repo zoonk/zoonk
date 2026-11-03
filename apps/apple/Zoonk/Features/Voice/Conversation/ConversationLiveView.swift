@@ -431,14 +431,19 @@ private struct CallEndedStatus: View {
       }
     }
     .task(id: state) {
+      isSlow = false
+
       guard state == .saving else {
         return
       }
 
       // Past this a save says it's still working: a call's feedback takes a few seconds, an
-      // exam's grade about half a minute.
+      // exam's grade about half a minute. A save that failed meanwhile cancels the wait.
       try? await Task.sleep(for: .seconds(isGrading ? 45 : 20))
-      isSlow = true
+
+      if !Task.isCancelled {
+        isSlow = true
+      }
     }
   }
 
