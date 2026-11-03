@@ -407,6 +407,7 @@
     "./library/variants/get-or-create": "./src/library/variants/get-or-create-step-variant.ts",
     "./library/variants/version-targets": "./src/library/variants/learner-version-targets.ts",
     "./library/warm-ups/contract": "./src/library/warm-ups/warm-up-contract.ts",
+    "./library/warm-ups/get": "./src/library/warm-ups/get-warm-up.ts",
     "./lookahead/claim-questions": "./src/lookahead/claim-questions.ts",
     "./lookahead/contract": "./src/lookahead/generation-wait-contract.ts",
     "./lookahead/exam-format-skills": "./src/lookahead/exam-format-skills.ts",
