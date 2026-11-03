@@ -55,11 +55,16 @@ import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasHeader
+import com.zoonk.android.feature.activities.ActivityDragDrop
+import com.zoonk.android.feature.activities.ActivityDragDropState
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.activityDraggable
+import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.feature.activities.rememberActivityDragDrop
 import com.zoonk.android.feature.activities.seededShuffle
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerResult
@@ -160,76 +165,103 @@ private fun CategorizeActivity(props: ActivityProps) {
         onDispose { props.takeNumberKeys(null) }
     }
 
-    ActivityCanvas {
-        if (card == null || props.isChecked) {
-            if (!props.isChecked) {
-                Text(
-                    stringResource(R.string.activities_sorting_all_sorted),
-                    Modifier.focusRequester(focus.statusLine).focusable(),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                )
-            }
-            groups.forEach { group ->
-                SortedGroup(group, items.filter { placements[it.id] == group.id }) { item ->
-                    if (expected == null) {
-                        MovableRow(
-                            item = item,
-                            others = groups.filter { it.id != group.id },
-                            enabled = editable,
-                            onMove = { move(item, it) },
-                            modifier = Modifier.focusRequester(focus.rows.getValue(item.id)),
-                        )
-                    } else {
-                        val result = if (expected[item.id] == group.id) AnswerResult.Right else AnswerResult.Wrong
-                        CheckedRow(item, cardNames.getValue(item.id), result)
+    // A drop does what a tap or the menu does, and only for the card that was lifted: one sorted mid-drag by a key drops nowhere.
+    fun drop(
+        itemId: String,
+        groupId: String,
+    ) {
+        val group = groups.firstOrNull { it.id == groupId } ?: return
+        val inHand = unplacedItems(items, placements) { it.id }.firstOrNull()
+        when {
+            inHand != null -> if (inHand.id == itemId) sort(group)
+            placements[itemId] != groupId -> items.firstOrNull { it.id == itemId }?.let { move(it, group) }
+        }
+    }
+
+    val dragDrop = rememberActivityDragDrop(pointerOnly = true, onDrop = ::drop)
+    // A lifted row's own group takes no drop, so it doesn't light up either.
+    val liftedFrom = items.firstOrNull { dragDrop.isLifted(it.id) }?.let { placements[it.id] }
+
+    fun isOver(group: Group) = dragDrop.overId == group.id && group.id != liftedFrom
+
+    ActivityDragDrop(dragDrop) {
+        ActivityCanvas {
+            if (card == null || props.isChecked) {
+                if (!props.isChecked) {
+                    Text(
+                        stringResource(R.string.activities_sorting_all_sorted),
+                        Modifier.focusRequester(focus.statusLine).focusable(),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    )
+                }
+                groups.forEach { group ->
+                    SortedGroup(
+                        group,
+                        items.filter { placements[it.id] == group.id },
+                        over = isOver(group),
+                        modifier = if (expected == null) Modifier.activityDropTarget(dragDrop, group.id) else Modifier,
+                    ) { item ->
+                        if (expected == null) {
+                            MovableRow(
+                                item = item,
+                                others = groups.filter { it.id != group.id },
+                                enabled = editable,
+                                dragDrop = dragDrop,
+                                onMove = { move(item, it) },
+                                modifier = Modifier.focusRequester(focus.rows.getValue(item.id)),
+                            )
+                        } else {
+                            val result = if (expected[item.id] == group.id) AnswerResult.Right else AnswerResult.Wrong
+                            CheckedRow(item, cardNames.getValue(item.id), result)
+                        }
                     }
                 }
-            }
-            if (expected != null) CategorizeResults(groups, items, expected, placements)
-        } else {
-            Text(
-                pluralStringResource(R.plurals.activities_sorting_sorted_count, sorted, sorted, items.size),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
-            CardInHand(items, card)
-            ActivityCanvasHeader(
-                readout = {
-                    UndoButton(
-                        shown = history.isNotEmpty(),
-                        enabled = editable,
-                        onClick = ::undo,
-                        modifier = Modifier.onFocusChanged { focus.onUndo = it.isFocused },
-                    )
-                },
-                itemVerticalAlignment = Alignment.CenterVertically,
-            ) {
+                if (expected != null) CategorizeResults(groups, items, expected, placements)
+            } else {
                 Text(
-                    stringResource(R.string.activities_sorting_which_group),
+                    pluralStringResource(R.plurals.activities_sorting_sorted_count, sorted, sorted, items.size),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                 )
-            }
-            Column(
-                Modifier.onFocusChanged { focus.inGroups = it.hasFocus },
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                groups.forEachIndexed { index, group ->
-                    val inGroup = history.filter { placements[it] == group.id }
-                    AnswerOption(
-                        marker = index + 1,
-                        picked = false,
-                        result = null,
-                        onClick = { sort(group) },
-                        modifier = Modifier.focusRequester(focus.groups[index]),
-                        enabled = editable,
-                        role = Role.Button,
-                    ) {
-                        GroupToSort(
-                            group = group,
-                            latest = inGroup.lastOrNull()?.let { id -> items.first { it.id == id } },
-                            others = (inGroup.size - 1).coerceAtLeast(0),
+                CardInHand(items, card, dragDrop, editable)
+                ActivityCanvasHeader(
+                    readout = {
+                        UndoButton(
+                            shown = history.isNotEmpty(),
+                            enabled = editable,
+                            onClick = ::undo,
+                            modifier = Modifier.onFocusChanged { focus.onUndo = it.isFocused },
                         )
+                    },
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.activities_sorting_which_group),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                Column(
+                    Modifier.onFocusChanged { focus.inGroups = it.hasFocus },
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    groups.forEachIndexed { index, group ->
+                        val inGroup = history.filter { placements[it] == group.id }
+                        AnswerOption(
+                            marker = index + 1,
+                            picked = isOver(group),
+                            result = null,
+                            onClick = { sort(group) },
+                            modifier = Modifier.focusRequester(focus.groups[index]).activityDropTarget(dragDrop, group.id),
+                            enabled = editable,
+                            role = Role.Button,
+                        ) {
+                            GroupToSort(
+                                group = group,
+                                latest = inGroup.lastOrNull()?.let { id -> items.first { it.id == id } },
+                                others = (inGroup.size - 1).coerceAtLeast(0),
+                            )
+                        }
                     }
                 }
             }
@@ -264,28 +296,38 @@ private class CategorizeFocus(
     var toMovedRow by mutableStateOf<String?>(null)
 }
 
-/** Every card in one box, only the one in hand shown, so the box is as tall as the tallest card and the groups never move. */
+/**
+ * Every card in one box, only the one in hand shown, so the box is as tall as the tallest card and the groups never move.
+ * A long press lifts it onto a group; its grip says it moves.
+ */
 @Composable
 private fun CardInHand(
     items: List<Item>,
     card: Item,
+    dragDrop: ActivityDragDropState,
+    enabled: Boolean,
 ) {
     val shape = RoundedCornerShape(12.dp)
-    Box(
+    Row(
         Modifier
             .fillMaxWidth()
+            .activityDraggable(dragDrop, card.id, enabled, shape)
             .clip(shape)
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(16.dp),
-        contentAlignment = Alignment.CenterStart,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        items.forEach { item ->
-            RichInlineText(
-                item.text,
-                if (item.id == card.id) Modifier else Modifier.alpha(0f).clearAndSetSemantics {},
-                style = MaterialTheme.typography.titleMedium,
-            )
+        RowMark(R.drawable.ic_drag_indicator, MaterialTheme.colorScheme.onSurfaceVariant)
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            items.forEach { item ->
+                RichInlineText(
+                    item.text,
+                    if (item.id == card.id) Modifier else Modifier.alpha(0f).clearAndSetSemantics {},
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
         }
     }
 }
@@ -362,18 +404,26 @@ private fun PreviewChip(
     )
 }
 
-/** A group once every card is sorted: its label and rule over its cards, no longer a button. */
+/**
+ * A group once every card is sorted: its label and rule over its cards, no longer a button. A row
+ * dragged [over] it shows the picked look.
+ */
 @Composable
 private fun SortedGroup(
     group: Group,
     cards: List<Item>,
+    over: Boolean,
+    modifier: Modifier,
     row: @Composable (Item) -> Unit,
 ) {
     val shape = RoundedCornerShape(12.dp)
+    val tone = answerTone(picked = over, result = null)
     Column(
-        Modifier
+        modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape)
+            .clip(shape)
+            .background(tone.container)
+            .border(tone.border, shape)
             .padding(horizontal = 14.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -409,20 +459,33 @@ private fun SortedGroup(
     }
 }
 
+/** A sorted card: a tap opens its "Move to" menu, and a long press lifts it onto another group. */
 @Composable
 private fun MovableRow(
     item: Item,
     others: List<Group>,
     enabled: Boolean,
+    dragDrop: ActivityDragDropState,
     onMove: (Group) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
+    val shape = RoundedCornerShape(8.dp)
+    // A row draws no surface of its own inside its list, and the lift draws the row's own drawing, so it takes the card's while lifted.
+    val lifted =
+        if (dragDrop.isLifted(item.id)) {
+            Modifier.background(MaterialTheme.colorScheme.surface, shape).border(1.dp, MaterialTheme.colorScheme.outline, shape)
+        } else {
+            Modifier
+        }
 
     Box {
         CardRow(
             item,
-            modifier.clickable(enabled = enabled, role = Role.DropdownList) { open = true },
+            modifier
+                .activityDraggable(dragDrop, item.id, enabled, shape)
+                .then(lifted)
+                .clickable(enabled = enabled, role = Role.DropdownList) { open = true },
         ) {
             RowMark(R.drawable.ic_unfold_more, MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -492,7 +555,7 @@ private fun spokenLine(text: String): String {
     return line.spoken ?: line.text.text
 }
 
-/** A row's mark at the end, growing with the text as the font gets larger. */
+/** A mark beside a card's text, growing with the text as the font gets larger. */
 @Composable
 private fun RowMark(
     @DrawableRes icon: Int,
