@@ -43,7 +43,7 @@ export function StepsClient(props: {
           chooseTools: async (input) => {
             const chosen = await props.planActions.chooseTools(input);
 
-            if (chosen) {
+            if (chosen === true) {
               navigation.refreshPages();
             }
 
