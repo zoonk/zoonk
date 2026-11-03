@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./divided-rows.css";
 @import "./hit-area.css";
+@import "./ink-band.css";
 @import "./scroll-fade.css";
 @import "./shimmer.css";
 @import "tw-animate-css";
