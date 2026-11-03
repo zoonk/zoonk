@@ -120,6 +120,9 @@ model LanguageConversation {
   startedAt           DateTime?                  @map("started_at")
   /// Once set, the call takes no new connections.
   reviewRunId         String?                    @map("review_run_id")
+  /// The fact the character may bring up; only practice calls get one.
+  memoryFactId        String?                    @map("memory_fact_id") @db.Uuid
+  memoryFact          MemoryFact?                @relation(fields: [memoryFactId], references: [id], onDelete: SetNull)
   endedAt             DateTime?                  @map("ended_at")
   createdAt           DateTime                   @default(now()) @map("created_at")
   updatedAt           DateTime                   @default(now()) @updatedAt @map("updated_at")
@@ -128,6 +131,7 @@ model LanguageConversation {
   @@index([goalId])
   @@index([chapterId])
   @@index([sectionId])
+  @@index([memoryFactId])
   @@map("language_conversations")
 }
 

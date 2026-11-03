@@ -15,6 +15,7 @@ import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewe
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readCallNote } from "../../memory/call-fact";
 import { buildLiveCall } from "./_utils/conversation-view";
 import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
@@ -80,6 +81,8 @@ async function prepareCreation({
   isGuest: boolean;
   userId: string;
 }): Promise<Prepared> {
+  const learnerNote = await readCallNote({ conversationId, now: new Date(), userId });
+
   return writeLearnerChange<Prepared>({ userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId });
 
@@ -95,7 +98,7 @@ async function prepareCreation({
     }
 
     const now = new Date();
-    const call = buildLiveCall(conversation);
+    const call = buildLiveCall({ learnerNote, row: conversation });
 
     if (!call || conversation.reviewRunId !== null) {
       return unchanged({ status: "conversationEnded" as const });

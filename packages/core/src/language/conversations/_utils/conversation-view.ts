@@ -160,12 +160,16 @@ function toResult({
   };
 }
 
-export function buildLiveCall(
+export function buildLiveCall({
+  learnerNote,
+  row,
+}: {
+  learnerNote?: string;
   row: Pick<
     LanguageConversation,
     "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage"
-  >,
-): { instructions: string; script: LiveCallScript } | null {
+  >;
+}): { instructions: string; script: LiveCallScript } | null {
   const data = readSavedScenario(row);
   const role = data ? toLiveRole(data) : null;
 
@@ -176,6 +180,7 @@ export function buildLiveCall(
   const params = {
     ...role,
     learnerLanguage: row.language,
+    learnerNote,
     level: row.level,
     scenario: data,
     targetLanguage: row.targetLanguage,

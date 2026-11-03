@@ -13,6 +13,7 @@ type NewConversation = {
   language: string;
   level: CefrLevel;
   markChanged: true;
+  memoryFactId?: string | null;
   minutes: number;
   scenario: ConversationScenario & { exam?: SpeakingMockExam; examTask?: ExamTaskSnapshot };
   sectionId?: string;
@@ -29,6 +30,7 @@ export function toConversationData(input: Omit<NewConversation, "markChanged">) 
     language: input.language,
     level: input.level,
     liveModel: LIVE_CONVERSATION_MODEL,
+    memoryFactId: input.memoryFactId ?? null,
     minutes: input.minutes,
     scenario: input.scenario,
     sectionId: input.sectionId ?? null,

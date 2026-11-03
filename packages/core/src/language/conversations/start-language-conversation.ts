@@ -3,6 +3,7 @@ import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session"
 import { prisma } from "@zoonk/db";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { findFactForCall } from "../../memory/call-fact";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { getStoredBlockWait } from "../../sessions/block-wait";
@@ -77,7 +78,10 @@ async function startPractice({
     return { status: "preparing", writing: { kind: "unitScenario", level, unit, userId } };
   }
 
-  await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });
+  const [memoryFactId] = await Promise.all([
+    findFactForCall({ now: new Date(), userId }),
+    saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId }),
+  ]);
 
   const conversation = await createConversation({
     chapterId: chapter.id,
@@ -86,6 +90,7 @@ async function startPractice({
     language: chapter.language,
     level,
     markChanged: true,
+    memoryFactId,
     minutes: input.minutes,
     scenario,
     targetLanguage,
