@@ -110,7 +110,8 @@ describe("a lesson's code", () => {
     const skeletonShown = watchCanvasSkeletons();
 
     await answerAndContinue();
-    await expect.element(page.getByText("Split it.")).toBeVisible();
+    const explanation = page.getByRole("paragraph").filter({ hasText: "Split it." });
+    await expect.element(explanation).toBeVisible();
     expect(drawnCanvas("activity-explore")).not.toBeNull();
 
     await page.getByRole("button", { name: /^Next/u }).click();

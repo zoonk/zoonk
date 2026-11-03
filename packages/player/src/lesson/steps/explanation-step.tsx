@@ -1,5 +1,7 @@
 "use client";
 
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { useId } from "react";
 import { ActivityExplore } from "../../activities/activity-explore";
@@ -15,13 +17,17 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
   const { content } = step;
   const exploredPictureLost = useIsExploredPictureLost(step);
   const ideaId = useId();
+  const spoken = useSpokenText();
+  const idea = content.title ? `${content.title}\n\n${content.text}` : content.text;
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
-      <div className="flex w-full flex-col gap-2 sm:gap-3" id={ideaId}>
+      <div className="flex w-full flex-col gap-2 sm:gap-3">
         {content.title && (
           <h2 className="text-foreground text-[0.9375rem] leading-snug font-semibold">
-            <LessonRichText text={content.title} />
+            <SpokenMath>
+              <LessonRichText text={content.title} />
+            </SpokenMath>
           </h2>
         )}
         <LessonBody>{content.text}</LessonBody>
@@ -30,7 +36,12 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
       <LessonStepPicture className="order-first" hero priority step={step} />
       <LessonVisual visual={content.visual} />
       {content.explore && !exploredPictureLost && (
-        <ActivityExplore content={content.explore} labelId={ideaId} />
+        <>
+          <span hidden id={ideaId}>
+            {spoken.blocks(idea)}
+          </span>
+          <ActivityExplore content={content.explore} labelId={ideaId} />
+        </>
       )}
       <StrugglePauseOffer step={step} />
 

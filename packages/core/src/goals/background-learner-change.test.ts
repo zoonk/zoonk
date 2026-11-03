@@ -18,9 +18,10 @@ import { describe, expect, it, vi } from "vitest";
 import { setGoalPrimaryCourse } from "../library/curriculum/goal-primary-course";
 import { linkGoalToExamBlueprint, unlinkGoalFromSharedExam } from "../library/exams/exam-learners";
 import { recordGoalNoticeFormats } from "../library/exams/notice-formats";
+import { noticeWaitFixture } from "../plans/_test-utils/notice-landing";
 import { followPlanToday } from "../plans/_utils/follow-plan-today";
 import { loadPlanContext } from "../plans/_utils/plan-context";
-import { claimNoticeLanding, endNoticeWait, startNoticeWait } from "../plans/notice-wait";
+import { claimNoticeLanding, endNoticeWait } from "../plans/notice-wait";
 import { recordGoalBuildFailure, recordGoalGeneration } from "./record-goal-generation";
 
 async function setup() {
@@ -193,15 +194,9 @@ describe("background goal plan marks", () => {
 
   it("marks notice wait transitions and deadlines, rolling back duplicate and expired claims", async () => {
     const { goal, plan, user } = await setup();
-    const before = await stamp(user.id, plan.id);
     const now = new Date("2026-10-01T12:00:00Z");
-
-    await Promise.all([
-      startNoticeWait({ goalId: goal.id, now }),
-      startNoticeWait({ goalId: goal.id, now }),
-    ]);
-
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
+    await noticeWaitFixture({ goalId: goal.id, now });
+    const before = await stamp(user.id, plan.id);
 
     const landing = { goalId: goal.id, now: new Date(now.getTime() + 120_000) };
     await expect(claimNoticeLanding(landing)).resolves.toBe(true);

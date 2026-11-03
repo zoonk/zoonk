@@ -3,6 +3,7 @@
 import { AnswerOption } from "@zoonk/learn/answer-option";
 import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -114,7 +115,9 @@ export function CategorizeGroupList({
       ref={dropRef}
     >
       <h3 className="text-[0.9375rem] leading-6 font-medium" id={headingId}>
-        <LessonRichText text={group.label} />
+        <SpokenMath>
+          <LessonRichText text={group.label} />
+        </SpokenMath>
       </h3>
 
       <p className={RULE_CLASS}>

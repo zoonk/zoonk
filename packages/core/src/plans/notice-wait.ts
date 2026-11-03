@@ -48,47 +48,16 @@ export function getNoticeWaitState({
   return noticeWaitUntil > now ? "reading" : "usual";
 }
 
+export function getNoticeWaitEnd(now: Date): Date {
+  return new Date(now.getTime() + NOTICE_WAIT_MS);
+}
+
 async function revalidateGoalPlan(goalId: string) {
   const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
 
   if (goal) {
     revalidatePlanTags(goal.userId);
   }
-}
-
-/** Workflow bridge for the goal's content workflow. */
-export async function startNoticeWait({
-  goalId,
-  now = new Date(),
-}: {
-  goalId: string;
-  now?: Date;
-}): Promise<void> {
-  const goal = await prisma.goal.findUnique({
-    include: { plan: { select: { id: true } } },
-    where: { id: goalId },
-  });
-
-  if (!goal?.plan) {
-    return;
-  }
-
-  const planId = goal.plan.id;
-
-  const until = new Date(now.getTime() + NOTICE_WAIT_MS);
-
-  await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
-    const updated = await tx.plan.updateMany({
-      data: { noticeWaitUntil: until },
-      where: { OR: [{ noticeWaitUntil: null }, { noticeWaitUntil: { not: until } }], id: planId },
-    });
-
-    if (updated.count === 0) {
-      return unchanged(null);
-    }
-  });
-
-  await revalidateGoalPlan(goalId);
 }
 
 export async function claimNoticeLanding({

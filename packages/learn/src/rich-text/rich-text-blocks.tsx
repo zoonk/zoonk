@@ -5,6 +5,7 @@ import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segmen
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { speakSegments } from "./rich-text-speech";
 import { typesetNumbers } from "./rich-text-typography";
+import { SpokenMath } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
 
 function typeset({
@@ -89,17 +90,19 @@ function RichBlockView({
 
   const Paragraph = paragraphTag;
 
+  const lines = block.lines.map((line, index) => {
+    const key = `line-${index}`;
+
+    return (
+      <span className="block" key={key}>
+        <RichInlineSegments segments={line} />
+      </span>
+    );
+  });
+
   return (
     <Paragraph htmlFor={htmlFor}>
-      {block.lines.map((line, index) => {
-        const key = `line-${index}`;
-
-        return (
-          <span className="block" key={key}>
-            <RichInlineSegments segments={line} />
-          </span>
-        );
-      })}
+      {paragraphTag === "p" ? lines : <SpokenMath>{lines}</SpokenMath>}
     </Paragraph>
   );
 }
