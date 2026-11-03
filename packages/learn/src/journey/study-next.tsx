@@ -20,65 +20,17 @@ import {
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionLinkAction,
   SuggestionOpen,
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
 import { SlotContent } from "../plan/plan-suggestion-context";
+import { CertificateAction, type CourseCertificate } from "./course-certificate";
 
 type CourseLink = StudyNextView["related"][number];
 
-/** A finished course's certificate: its page once written, else the claim that writes it. */
-type StudyNextCertificate = { href: string | null; onClaim: () => Promise<boolean> };
-
-export type StudyNext = {
-  certificate: StudyNextCertificate | null;
-  onContinue: () => Promise<boolean>;
-  view: StudyNextView;
-};
-
-function CertificateAction({
-  certificate,
-  primary,
-}: {
-  certificate: StudyNextCertificate;
-  primary: boolean;
-}) {
-  const t = useExtracted();
-  const [failed, setFailed] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const variant = primary ? "default" : "outline";
-
-  if (certificate.href) {
-    return (
-      <SuggestionLinkAction href={certificate.href} variant={variant}>
-        {t("View certificate")}
-      </SuggestionLinkAction>
-    );
-  }
-
-  const claim = () => {
-    startTransition(async () => {
-      setFailed(!(await certificate.onClaim()));
-    });
-  };
-
-  return (
-    <>
-      <SuggestionAction
-        aria-busy={isPending || undefined}
-        disabled={isPending}
-        onClick={claim}
-        variant={variant}
-      >
-        {t("Get your certificate")}
-      </SuggestionAction>
-      {failed && <SuggestionSaveError />}
-    </>
-  );
-}
+export type StudyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
 
 function ContinueAtNextLevel({
   next,
@@ -142,9 +94,11 @@ function RelatedCourses({
 }
 
 export function StudyNextSuggestion({
+  certificate,
   courseHref,
-  next: { certificate, onContinue, view: next },
+  next: { onContinue, view: next },
 }: {
+  certificate: CourseCertificate | null;
   courseHref: (course: CourseLink) => string;
   next: StudyNext;
 }) {

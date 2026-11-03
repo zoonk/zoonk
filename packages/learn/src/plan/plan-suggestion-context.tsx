@@ -21,6 +21,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { type CourseCertificate } from "../journey/course-certificate";
 import { type GoalStatusControl } from "../journey/goal-actions";
 import { type StudyNext } from "../journey/study-next";
 import { type PlanEditorSection } from "./plan-editor-sections";
@@ -30,17 +31,22 @@ import { useUndoChange } from "./use-undo-change";
 export type SlotItem =
   | { key: string; kind: "behind" | "tooTight"; text: string }
   | { choice: ExamChoiceView; key: string; kind: "choice" }
-  | { key: string; kind: "coverage" | "finished" | "fitLessons" | "freeWeekOver" | "paused" }
+  | {
+      key: string;
+      kind: "courseComplete" | "coverage" | "finished" | "fitLessons" | "freeWeekOver" | "paused";
+    }
   | { key: string; kind: "pastDate"; lessons: number };
 
 export type SlotResult = { change: PlanChangeView | null; item: SlotItem; text: string };
 
 export type SlotPreview = PlanPreviewState;
 
-export type PlanSuggestionHost = {
+/** From the goal map: what to study next once the plan is finished, and its course's certificate once the course is. */
+export type PlanEnd = { certificate: CourseCertificate | null; next: StudyNext | null };
+
+export type PlanSuggestionHost = PlanEnd & {
   courseHref: (course: { brandSlug: string; courseSlug: string }) => string;
   goalStatus: GoalStatusControl | null;
-  next: StudyNext | null;
   onAdjust: () => void;
   onEdit: (section: PlanEditorSection) => void;
 };

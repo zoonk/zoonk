@@ -112,19 +112,18 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
   };
 }
 
-type JourneyNext = Omit<StudyNext, "certificate"> & { certificate: FieldMapView["certificate"] };
-
 type JourneyClientProps = Omit<
   JourneyScreenProps,
-  "actions" | "goalStatus" | "links" | "next" | "refresh" | "standing" | "tutor"
+  "actions" | "end" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  certificate: FieldMapView["certificate"];
   completedLessons: boolean;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
-  next: JourneyNext | null;
+  next: StudyNext | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
   readAt: number;
   resume: GoalStatusControl["resume"];
@@ -161,6 +160,7 @@ function useGoalStatus({
 export function JourneyClient({
   actions,
   buddy,
+  certificate,
   completedLessons,
   goalId,
   goalStatus,
@@ -183,9 +183,9 @@ export function JourneyClient({
 
   /** The learner asked for it, so it shows even when another device already claimed it. */
   const claimCertificate = async () => {
-    const certificate = await claimCourseCertificateAction(goalId);
-    setClaimed(certificate);
-    return certificate !== null;
+    const facts = await claimCourseCertificateAction(goalId);
+    setClaimed(facts);
+    return facts !== null;
   };
 
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
@@ -216,18 +216,15 @@ export function JourneyClient({
           },
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
         }}
+        end={{
+          certificate: certificate && {
+            href: certificate.code ? getCertificatePath(certificate.code) : null,
+            onClaim: claimCertificate,
+          },
+          next: next && { ...next, onContinue: () => continueNextLevel(next.onContinue) },
+        }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
-        next={
-          next && {
-            ...next,
-            certificate: next.certificate && {
-              href: next.certificate.code ? getCertificatePath(next.certificate.code) : null,
-              onClaim: claimCertificate,
-            },
-            onContinue: () => continueNextLevel(next.onContinue),
-          }
-        }
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}

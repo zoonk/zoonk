@@ -4505,6 +4505,22 @@ msgctxt "7wkXtE"
 msgid "Adding a quick check that it works…"
 msgstr "Çalıştığını doğrulamak için kısa bir kontrol ekliyoruz…"
 
+#: src/journey/course-certificate.tsx
+msgctxt "n-Px0T"
+msgid "Get your certificate"
+msgstr "Sertifikanı al"
+
+#: src/journey/course-certificate.tsx
+msgctxt "koWpue"
+msgid "View certificate"
+msgstr "Sertifikayı görüntüle"
+
+#. A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead
+#: src/journey/course-certificate.tsx
+msgctxt "dhP2hY"
+msgid "Course complete"
+msgstr "Kurs tamamlandı"
+
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
@@ -5250,16 +5266,6 @@ msgstr "Aşamalar"
 msgctxt "yXPFJy"
 msgid "<date></date> · exam"
 msgstr "<date></date> · sınav"
-
-#: src/journey/study-next.tsx
-msgctxt "koWpue"
-msgid "View certificate"
-msgstr "Sertifikayı görüntüle"
-
-#: src/journey/study-next.tsx
-msgctxt "n-Px0T"
-msgid "Get your certificate"
-msgstr "Sertifikanı al"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
