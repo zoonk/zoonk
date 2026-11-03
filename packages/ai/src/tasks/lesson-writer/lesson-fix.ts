@@ -15,6 +15,7 @@ import {
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
+import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
   type WrittenLesson,
   type WrittenScreen,
@@ -39,7 +40,7 @@ const schema = z.object({
   summary: writtenLessonSchema.shape.summary.nullable(),
 });
 
-const fixOutput = schemaInPrompt(schema);
+const fixOutput = schemaInPrompt(schema, { repair: fitWrittenBounds });
 
 export type FixLessonDraftParams = LessonWritingContext & {
   lesson: WrittenLesson;

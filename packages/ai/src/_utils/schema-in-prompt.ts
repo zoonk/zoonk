@@ -40,11 +40,24 @@ function fitsBranch(node: JSONSchema7, value: unknown): boolean {
   });
 }
 
+/** A nullable union is a union inside a union, such as a chart or a timeline, or null. */
+function unionBranches(node: JSONSchema7): JSONSchema7[] {
+  return (node.anyOf ?? []).flatMap((definition) => {
+    const branch = asNode(definition);
+
+    if (!branch) {
+      return [];
+    }
+
+    return branch.anyOf ? unionBranches(branch) : [branch];
+  });
+}
+
 function fillOmittedNulls(value: unknown, node: JSONSchema7): unknown {
   if (node.anyOf) {
-    const [branch, ...others] = node.anyOf
-      .map((definition) => asNode(definition))
-      .filter((candidate) => candidate !== undefined && fitsBranch(candidate, value));
+    const [branch, ...others] = unionBranches(node).filter((candidate) =>
+      fitsBranch(candidate, value),
+    );
 
     return branch && others.length === 0 ? fillOmittedNulls(value, branch) : value;
   }
@@ -89,17 +102,18 @@ ${JSON.stringify(jsonSchema)}`;
 }
 
 /**
- * Strict decoding can't take the lesson writer's schema everywhere: Anthropic compiles it into a
- * grammar that holds at most 16 nullable or union fields and refuses it as too large even without
- * them, and Gemini refuses its array bounds (Claude Opus 5.5 and Gemini 3.8 Flash, 3 Nov 2026). So
- * the schema goes in the system prompt (`outputRules`), the request asks for JSON without one, which
- * every provider accepts, and code validates the answer. A key left out reads as null when null is a
- * value it takes; any other flaw fails the call, and the step retries it.
+ * Strict decoding didn't take the lesson writer's schema everywhere: Claude Opus 5.5 refused each
+ * whole-lesson variant we sent, first for its 49 nullable or union fields (the limit is 16) and,
+ * with none, as a grammar too large to compile, and Gemini 3.8 Flash refused its array bounds (3 Nov
+ * 2026). So the schema goes in the system prompt (`outputRules`), the request asks for JSON without
+ * one, which every provider accepts, and code checks the answer: a key left out reads as null when
+ * null is a value it takes, `repair` fixes what code can, and any other flaw fails the call for the
+ * step to retry.
  */
-export function schemaInPrompt<OBJECT>(schema: z.ZodType<OBJECT>): {
-  output: OutputInterface<OBJECT, unknown, never>;
-  outputRules: string;
-} {
+export function schemaInPrompt<OBJECT>(
+  schema: z.ZodType<OBJECT>,
+  { repair = (value) => value }: { repair?: (value: unknown) => unknown } = {},
+): { output: OutputInterface<OBJECT, unknown, never>; outputRules: string } {
   const json = Output.json();
   const inlineSchema = zodSchema(schema).jsonSchema;
 
@@ -125,7 +139,9 @@ export function schemaInPrompt<OBJECT>(schema: z.ZodType<OBJECT>): {
           throw fail(error instanceof Error ? error : new Error(String(error)));
         }
 
-        const result = await schema.safeParseAsync(fillOmittedNulls(value, await inlineSchema));
+        const result = await schema.safeParseAsync(
+          repair(fillOmittedNulls(value, await inlineSchema)),
+        );
 
         if (!result.success) {
           throw fail(result.error);

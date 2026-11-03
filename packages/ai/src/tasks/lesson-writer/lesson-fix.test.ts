@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { fixLessonDraft } from "./lesson-fix";
@@ -84,6 +85,25 @@ function fix(params: { screenCount: number; shortAnswers?: boolean }) {
   });
 }
 
+/** A fixed check screen 2 with `count` options, the first one right. */
+function fixedCheck(count: number) {
+  return {
+    basis: null,
+    context: null,
+    image: null,
+    kind: "check" as const,
+    options: Array.from({ length: count }, (_, index) => ({
+      isCorrect: index === 0,
+      picture: null,
+      reason: `Why ${index}.`,
+      text: `Option ${index}`,
+    })),
+    question: "Which one?",
+    screen: 2,
+    visual: null,
+  };
+}
+
 describe(fixLessonDraft, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -163,5 +183,14 @@ describe(fixLessonDraft, () => {
     expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Fix the lesson.\nFix typed answers.\nKeep the rest.",
     );
+  });
+
+  it("drops a check's extra wrong option instead of failing the fix", async () => {
+    await answerOnceWith({ screens: [fixedCheck(6)], summary: null });
+
+    const { data } = await fix({ screenCount: 3 });
+    const { screen: _number, ...fixed } = fixedCheck(5);
+
+    expect(data.lesson.screens[1]).toStrictEqual(fixed);
   });
 });

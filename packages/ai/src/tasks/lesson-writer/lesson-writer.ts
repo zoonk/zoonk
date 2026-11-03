@@ -16,13 +16,14 @@ import {
 } from "./format-lesson-plan";
 import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
+import { fitWrittenBounds } from "./written-lesson-bounds";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
 const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
   typedQuestionRules.trim().replaceAll(/^/gmu, "  "),
 );
 
-const lessonOutput = schemaInPrompt(writtenLessonSchema);
+const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
  * Terra taught fewer wrong ideas than Sol on the lesson-writer eval at under half the cost (30 Oct

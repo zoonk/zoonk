@@ -5,8 +5,8 @@ import { type LessonScreenKind } from "../lesson-spec/lesson-spec-rules";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 
 const MIN_OPTIONS = 2;
-const MAX_GUESS_OPTIONS = 4;
-const MAX_CHECK_OPTIONS = 5;
+export const MAX_GUESS_OPTIONS = 4;
+export const MAX_CHECK_OPTIONS = 5;
 const MIN_WORKED_STEPS = 2;
 const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;

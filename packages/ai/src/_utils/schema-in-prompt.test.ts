@@ -63,6 +63,48 @@ describe(schemaInPrompt, () => {
     });
   });
 
+  it("reads a key left out inside a nullable union's branch as null", async () => {
+    const visual = z
+      .union([
+        z.object({ kind: z.literal("chart"), source: z.string().nullable() }),
+        z.object({ kind: z.literal("timeline"), title: z.string() }),
+      ])
+      .nullable();
+
+    const visualOutput = schemaInPrompt(z.object({ visual })).output;
+
+    await expect(
+      visualOutput.parseCompleteOutput(
+        { text: JSON.stringify({ visual: { kind: "chart" } }) },
+        context as never,
+      ),
+    ).resolves.toStrictEqual({ visual: { kind: "chart", source: null } });
+  });
+
+  it("repairs the answer before checking it, and still fails what the repair leaves out of bounds", async () => {
+    const titled = z.object({ title: z.string().max(5) });
+
+    const { output: repaired } = schemaInPrompt(titled, {
+      repair: (value) => ({ title: (value as { title: string }).title.slice(0, 5) }),
+    });
+
+    await expect(
+      repaired.parseCompleteOutput(
+        { text: JSON.stringify({ title: "Photosynthesis" }) },
+        context as never,
+      ),
+    ).resolves.toStrictEqual({ title: "Photo" });
+
+    const { output: unrepaired } = schemaInPrompt(titled);
+
+    await expect(
+      unrepaired.parseCompleteOutput(
+        { text: JSON.stringify({ title: "Photosynthesis" }) },
+        context as never,
+      ),
+    ).rejects.toBeInstanceOf(NoObjectGeneratedError);
+  });
+
   it("fails on text that isn't JSON or a value the schema rejects, so the step retries", async () => {
     await expect(parse("Here is the lesson.")).rejects.toBeInstanceOf(NoObjectGeneratedError);
 

@@ -1,6 +1,6 @@
 import { generateText } from "ai";
-import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it, vi } from "vitest";
+import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { getLessonRewriteModel, writeLessonDraft } from "./lesson-writer";
@@ -228,23 +228,7 @@ describe(writeLessonDraft, () => {
       },
     };
 
-    const model = new MockLanguageModelV4({
-      doGenerate: {
-        content: [{ text: JSON.stringify(draft), type: "text" }],
-        finishReason: { raw: "end_turn", unified: "stop" },
-        usage: {
-          inputTokens: { cacheRead: 0, cacheWrite: 0, noCache: 10, total: 10 },
-          outputTokens: { reasoning: 0, text: 10, total: 10 },
-        },
-        warnings: [],
-      },
-    });
-
-    const { generateText: actualGenerateText } = await vi.importActual<typeof Ai>("ai");
-
-    vi.mocked(generateText).mockImplementationOnce((options) =>
-      actualGenerateText({ ...options, model }),
-    );
+    await answerOnceWith(draft);
 
     const { data } = await writeLessonDraft({
       activityTemplates: [],
@@ -256,5 +240,43 @@ describe(writeLessonDraft, () => {
     });
 
     expect(data.screens[0]).toMatchObject({ options: [{ picture: null }, { picture: null }] });
+  });
+
+  it("brings a long alt and a guess's extra wrong option within bounds instead of failing", async () => {
+    const alt = "word ".repeat(40).trim();
+
+    await answerOnceWith({
+      screens: [
+        {
+          image: { alt, prompt: "A pressure sensor on a pipe." },
+          kind: "hookGuess",
+          options: [
+            { isCorrect: false, text: "A" },
+            { isCorrect: true, text: "B" },
+            { isCorrect: false, text: "C" },
+            { isCorrect: false, text: "D" },
+            { isCorrect: false, text: "E" },
+          ],
+          question: "Which reading do you trust?",
+          reveal: "B, because it was calibrated.",
+          visual: null,
+        },
+      ],
+      summary: EMPTY_MAP,
+    });
+
+    const { data } = await writeLessonDraft({
+      activityTemplates: [],
+      chapterTitle: "Sensors",
+      courseTitle: "Instrumentation",
+      language: "en",
+      level: "intermediate",
+      spec: spec([screen("hook")]),
+    });
+
+    expect(data.screens[0]).toMatchObject({
+      image: { alt: expect.stringMatching(/^(?:word ){30,}word\u2026$/u) },
+      options: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
+    });
   });
 });
