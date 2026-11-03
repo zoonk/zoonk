@@ -49,7 +49,6 @@ class LiveCallEnding(
     private var lastTypedAt: Long? = null
     private var lastSentAt: Long? = null
 
-    /** When the last sound anyone made stopped (or the last keystroke): the quiet the check-in and the quiet goodbye count from. */
     private var quietSince = liveAt
     private var checkedIn = false
     private var openingTakenAt: Long? = null
@@ -204,7 +203,6 @@ class LiveCallEnding(
         armedAt = now
     }
 
-    /** A sound or keystroke from the learner starts a new quiet once it stops, with its own check-in. */
     private fun learnerActed(until: Long) {
         soundUntil(until)
         checkedIn = false
