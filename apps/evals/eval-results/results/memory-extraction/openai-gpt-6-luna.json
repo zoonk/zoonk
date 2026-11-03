@@ -473,6 +473,344 @@
           "today": "2026-09-26"
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["background"], "keywords": ["enfermeir", "enfermag"] }],
+          "forbidden": ["cafe", "grande"],
+          "maxFacts": 2
+        },
+        "id": "pt-call-a1-real-job-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": ["Pedir um café", "Perguntar o preço"],
+            "situation": "Você está num café em Londres e pede algo para beber."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Hi there! What can I get you?" },
+            {
+              "speaker": "learner",
+              "text": "Coffee... big coffee. Me nurse, I work night, in hospital. Need coffee for... for awake."
+            },
+            {
+              "speaker": "character",
+              "text": "Oh, a night shift! One large coffee. That's three pounds."
+            },
+            { "speaker": "learner", "text": "Three pound. Ok. Thank you." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [],
+          "forbidden": ["room", "hotel", "madrid", "night", "october", "carlos", "conference"],
+          "maxFacts": 0
+        },
+        "id": "en-call-booking-role-1",
+        "userInput": {
+          "language": "en",
+          "scenario": {
+            "objectives": ["Book a double room", "Say your name", "Ask if breakfast is included"],
+            "situation": "You call a hotel in Madrid to book a room for a work trip."
+          },
+          "source": "call",
+          "targetLanguage": "es",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Hotel Sol, buenas tardes. ¿En qué puedo ayudarle?" },
+            {
+              "speaker": "learner",
+              "text": "Hola. Quiero una habitación doble, tres noches, del cinco al ocho de octubre."
+            },
+            { "speaker": "character", "text": "Perfecto. ¿A nombre de quién?" },
+            {
+              "speaker": "learner",
+              "text": "Carlos Ruiz. Voy a un congreso. ¿El desayuno está incluido?"
+            },
+            { "speaker": "character", "text": "Sí, el desayuno está incluido." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [],
+          "forbidden": ["john", "smith", "chef", "cozinh", "paris", "restaurante", "segunda"],
+          "maxFacts": 0
+        },
+        "id": "pt-call-invented-name-job-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": ["Diga seu nome", "Conte sua experiência", "Diga quando pode começar"],
+            "situation": "Você faz uma entrevista por telefone para uma vaga de cozinheiro num restaurante."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Hello, thanks for calling. Can I have your name?" },
+            { "speaker": "learner", "text": "Yes. My name is John Smith." },
+            {
+              "speaker": "character",
+              "text": "Nice to meet you, John. Tell me about your experience."
+            },
+            {
+              "speaker": "learner",
+              "text": "I am chef for ten years, in restaurant in Paris. I can start Monday."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [],
+          "forbidden": ["child", "kid", "daughter", "son", "croissant"],
+          "maxFacts": 0
+        },
+        "id": "en-call-character-only-1",
+        "userInput": {
+          "language": "en",
+          "scenario": {
+            "objectives": ["Commander un petit-déjeuner", "Demander l'addition"],
+            "situation": "You order breakfast at a café in Paris."
+          },
+          "source": "call",
+          "targetLanguage": "fr",
+          "today": "2026-09-26",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Bonjour ! Alors, vous avez deux enfants, c'est ça ? Ils sont à l'école ?"
+            },
+            { "speaker": "learner", "text": "Euh... un croissant, s'il vous plaît. Et un café." },
+            {
+              "speaker": "character",
+              "text": "Très bien. Et vos enfants aiment les croissants aussi ?"
+            },
+            { "speaker": "learner", "text": "L'addition, s'il vous plaît." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [],
+          "forbidden": ["jardin", "professor", "crianca", "creche", "escola", "oxford"],
+          "maxFacts": 0
+        },
+        "id": "pt-call-garbled-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": ["Comprar uma passagem de trem", "Perguntar o horário"],
+            "situation": "Você compra uma passagem de trem para Oxford pelo telefone."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Good morning, National Rail. How can I help?" },
+            {
+              "speaker": "learner",
+              "text": "One ticket... Oxford. I am... the I work... gardener? Garden near... no, I word in the kinder... I teaching small... no."
+            },
+            { "speaker": "character", "text": "Sorry, I didn't catch that. A single to Oxford?" },
+            { "speaker": "learner", "text": "Yes. What time... the train?" }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "goals", "routine"],
+              "expiresOn": ["2026-10-17", "2026-10-18"],
+              "keywords": ["naples", "napoli"]
+            }
+          ],
+          "forbidden": ["pizza", "margherita"],
+          "maxFacts": 1
+        },
+        "id": "en-call-dated-trip-1",
+        "userInput": {
+          "language": "en",
+          "scenario": {
+            "objectives": ["Ordinare una pizza", "Dare l'indirizzo"],
+            "situation": "You order a pizza by phone for delivery."
+          },
+          "source": "call",
+          "targetLanguage": "it",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Pizzeria da Mario, buonasera!" },
+            {
+              "speaker": "learner",
+              "text": "Buonasera. Una pizza margherita, per favore. Via Nazionale dodici."
+            },
+            { "speaker": "character", "text": "Perfetto, trenta minuti." },
+            {
+              "speaker": "learner",
+              "text": "Grazie. Ah, io... il mese prossimo vado a Napoli, il diciassette ottobre, per il matrimonio di mia sorella!"
+            },
+            { "speaker": "character", "text": "Che bello! Auguri!" }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "background"],
+              "intent": "forget",
+              "keywords": ["cachorro", "cao"]
+            }
+          ],
+          "forbidden": ["fazenda", "mae"],
+          "maxFacts": 1
+        },
+        "id": "pt-call-forget-dog-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": ["Cumprimente seu vizinho", "Combine um café no fim de semana"],
+            "situation": "Você liga para o seu vizinho Tom para combinar um café no fim de semana."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Hey, good to hear from you! How's your dog doing?" },
+            {
+              "speaker": "learner",
+              "text": "Oh... I don't have the dog anymore. He go to live in the farm of my mother."
+            },
+            { "speaker": "character", "text": "Oh, I see. So, coffee on Saturday?" },
+            { "speaker": "learner", "text": "Yes, Saturday is good." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["background", "context", "routine"], "keywords": ["diabet"] }],
+          "forbidden": ["gym", "hour", "open"],
+          "maxFacts": 2
+        },
+        "id": "en-call-sensitive-1",
+        "userInput": {
+          "language": "en",
+          "scenario": {
+            "objectives": ["Nach den Öffnungszeiten fragen", "Nach dem Preis fragen"],
+            "situation": "You call a gym in Berlin to ask about opening hours and prices."
+          },
+          "source": "call",
+          "targetLanguage": "de",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Fitnessstudio Mitte, hallo!" },
+            {
+              "speaker": "learner",
+              "text": "Hallo. Wann ist offen? Ich habe Diabetes, mein Arzt sagt, ich muss jeden Tag Sport machen."
+            },
+            {
+              "speaker": "character",
+              "text": "Wir haben jeden Tag von sechs bis dreiundzwanzig Uhr geöffnet."
+            },
+            { "speaker": "learner", "text": "Und wie viel kostet es?" }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [],
+          "forbidden": ["pizza", "pepperoni", "ingles", "english"],
+          "maxFacts": 0
+        },
+        "id": "pt-call-nothing-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": ["Pedir duas pizzas", "Perguntar o preço"],
+            "situation": "Você liga para uma pizzaria e pede o jantar."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            { "speaker": "character", "text": "Tony's Pizza, how can I help you?" },
+            {
+              "speaker": "learner",
+              "text": "Hello. Sorry, my English is not good. I want two pizza... pepperoni."
+            },
+            { "speaker": "character", "text": "Two pepperoni pizzas, no problem." },
+            { "speaker": "learner", "text": "How much is it? ... Ok, thank you, bye." }
+          ]
+        }
+      }
     }
   ],
   "taskId": "memory-extraction"

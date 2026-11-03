@@ -102,7 +102,7 @@ export const memoryExtractionTask: Task<
   MemoryExtractionSchema,
   MemoryExtractionExpected
 > = {
-  description: "Pick out lasting facts about a learner from onboarding answers or a chat",
+  description: "Pick out lasting facts about a learner from onboarding answers, a chat or a call",
   generate: extractMemoryFacts,
   id: "memory-extraction",
   name: "Memory Extraction",
