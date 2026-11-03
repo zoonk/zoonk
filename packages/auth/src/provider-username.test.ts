@@ -17,10 +17,7 @@ const providerAuth = betterAuth({
   rateLimit: { enabled: false },
   secret: "provider-username-test-secret-with-enough-entropy",
   socialProviders: {
-    google: {
-      clientId: "google-client-id",
-      clientSecret: "google-client-secret",
-    },
+    google: { clientId: "google-client-id", clientSecret: "google-client-secret" },
   },
 });
 
