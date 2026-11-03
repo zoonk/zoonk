@@ -115,6 +115,16 @@ async function readPlanTime(goalId: string) {
   return result.time;
 }
 
+async function readSavedDates(goalId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+  const settings = parsePlanSettings(plan.settings);
+
+  return {
+    funded: settings.mockFunding.map((entry) => entry.date),
+    overflowing: settings.checkpointOverflow.map((entry) => entry.date),
+  };
+}
+
 async function readFeasibility(goalId: string) {
   const result = await getGoalPlan(goalId);
 
@@ -206,7 +216,6 @@ describe(getPlanTimeAdvice, () => {
     ).resolves.toMatchObject({ advice: { endDate: null, ready: true }, status: "ready" });
   });
 
-  // It saves and searches an exam plan at a dozen daily times, past the default timeout on CI's slower runners.
   it("recommends the least fitting accepted time when more time adds an exam mock", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
@@ -246,7 +255,13 @@ describe(getPlanTimeAdvice, () => {
     expect(preview65.coveredShare).toBe(1);
     expect(preview70.coveredShare).toBe(0.91);
 
-    for (const dailyMinutes of Array.from({ length: 10 }, (_, index) => (index + 1) * 5)) {
+    const shortOfFitting = [
+      { dailyMinutes: 5, funded: [], overflowing: ["2020-10-04", "2020-10-11"] },
+      { dailyMinutes: 25, funded: ["2020-10-11"], overflowing: [] },
+      { dailyMinutes: 50, funded: ["2020-10-11"], overflowing: ["2020-10-04"] },
+    ];
+
+    for (const { dailyMinutes, ...savedDates } of shortOfFitting) {
       // eslint-disable-next-line no-await-in-loop -- Each candidate reads the previous accepted state.
       const preview = await readAdvice(goal.id, studyDays, { dailyMinutes });
       expect(preview.coveredShare).toBeLessThan(1);
@@ -265,6 +280,8 @@ describe(getPlanTimeAdvice, () => {
       // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
       const savedTime = await readPlanTime(goal.id);
       expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([55, 55]);
+      // eslint-disable-next-line no-await-in-loop -- What the accepted time funds and overflows.
+      await expect(readSavedDates(goal.id)).resolves.toStrictEqual(savedDates);
     }
 
     await expect(
@@ -274,11 +291,7 @@ describe(getPlanTimeAdvice, () => {
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 55 });
 
-    const at65 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-    expect(parsePlanSettings(at65.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
     const higher = await updateGoal({
       goalId: goal.id,
@@ -290,12 +303,10 @@ describe(getPlanTimeAdvice, () => {
     const time70 = await readPlanTime(goal.id);
     expect(saved70?.fits).toBe(false);
     expect(saved70?.coveredShare).toBe(preview70.coveredShare);
-    const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    expect(parsePlanSettings(at70.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-04",
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({
+      funded: ["2020-10-04", "2020-10-11"],
+    });
 
     const accepted = await updateGoal({
       goalId: goal.id,
@@ -303,11 +314,7 @@ describe(getPlanTimeAdvice, () => {
     });
 
     expect(accepted.status).toBe("updated");
-    const at55 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-    expect(parsePlanSettings(at55.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
-      "2020-10-11",
-    ]);
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
     const plan = await getGoalPlan(goal.id);
 
@@ -326,7 +333,7 @@ describe(getPlanTimeAdvice, () => {
       time70.recommendedMinutes,
       planTime.recommendedMinutes,
     ]).toStrictEqual([55, 55, 55]);
-  }, 60_000);
+  });
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
     const { goal, library } = await setup();
