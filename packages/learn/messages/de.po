@@ -385,6 +385,7 @@ msgstr "{done, number} von {total, number}"
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
@@ -4873,6 +4874,7 @@ msgid "Allow the microphone to talk with {name}."
 msgstr "Erlaub den Zugriff auf dein Mikrofon, um mit {name} zu sprechen."
 
 #: src/language/conversation/call-intro-footer.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "KBc0tZ"
 msgid "Type instead"
 msgstr "Stattdessen schreiben"
@@ -4948,70 +4950,6 @@ msgid "It ended when you started another call."
 msgstr "Es wurde beendet, als du ein anderes Gespräch gestartet hast."
 
 #: src/language/conversation/call-problem.tsx
-msgctxt "bSm8pu"
-msgid "Start a new call to keep practicing."
-msgstr "Starte ein neues Gespräch, um weiter zu üben."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ZXosfu"
-msgid "This call has ended"
-msgstr "Dieses Gespräch ist beendet"
-
-#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "bpY1F_"
-msgid "It's the same for everyone right now. Try again later."
-msgstr "Das betrifft gerade alle. Versuch es später noch einmal."
-
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "hFgARl"
-msgid "Calls are paused"
-msgstr "Gespräche sind pausiert"
-
-#. Another call is still running: this ends it and starts the call on this screen.
-#: src/language/conversation/call-problem.tsx
-msgctxt "MAatFa"
-msgid "End that call and start this one"
-msgstr "Das andere Gespräch beenden und dieses starten"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "1ZMIpa"
-msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
-msgstr "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du dafür kein Feedback."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "0LuKMT"
-msgid "You're already in a call"
-msgstr "Du führst bereits ein Gespräch"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ycr28Y"
-msgid "End the call"
-msgstr "Gespräch beenden"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "p5AWJt"
-msgid "Call again"
-msgstr "Gespräch noch einmal starten"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "253hZZ"
-msgid "Call again, or end the call to get feedback on what you said."
-msgstr "Starte das Gespräch noch einmal oder beende es, um Feedback zu deinen Antworten zu bekommen."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "Das Gespräch wurde unterbrochen"
-
-#: src/language/conversation/call-problem.tsx
 msgctxt "OheLSd"
 msgid "This happens sometimes. Try again in a moment."
 msgstr "Das passiert manchmal. Versuch es gleich noch einmal."
@@ -5050,6 +4988,50 @@ msgstr "Das Gespräch wird noch beendet. Versuch es gleich noch einmal."
 msgctxt "HBlKaW"
 msgid "We couldn't save the call."
 msgstr "Wir konnten das Gespräch nicht speichern."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "1ZMIpa"
+msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
+msgstr "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du dafür kein Feedback."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "0LuKMT"
+msgid "You're already in a call"
+msgstr "Du führst bereits ein Gespräch"
+
+#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "bpY1F_"
+msgid "It's the same for everyone right now. Try again later."
+msgstr "Das betrifft gerade alle. Versuch es später noch einmal."
+
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/exam-speaking/speaking-task-row.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "hFgARl"
+msgid "Calls are paused"
+msgstr "Gespräche sind pausiert"
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "bSm8pu"
+msgid "Start a new call to keep practicing."
+msgstr "Starte ein neues Gespräch, um weiter zu üben."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "ZXosfu"
+msgid "This call has ended"
+msgstr "Dieses Gespräch ist beendet"
+
+#. Another call is still running: this ends it and starts the call on this screen.
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "MAatFa"
+msgid "End that call and start this one"
+msgstr "Das andere Gespräch beenden und dieses starten"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -5285,6 +5267,26 @@ msgstr "Noch offene Gesprächsziele"
 msgctxt "Ogdmi_"
 msgid "Words to practice saying"
 msgstr "Wörter zum Üben der Aussprache"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "253hZZ"
+msgid "Call again, or end the call to get feedback on what you said."
+msgstr "Starte das Gespräch noch einmal oder beende es, um Feedback zu deinen Antworten zu bekommen."
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "ycr28Y"
+msgid "End the call"
+msgstr "Gespräch beenden"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "p5AWJt"
+msgid "Call again"
+msgstr "Gespräch noch einmal starten"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "Das Gespräch wurde unterbrochen"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
