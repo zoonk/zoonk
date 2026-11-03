@@ -82,14 +82,29 @@ private struct TutorConversationView<Header: View>: View {
       }
     }
     .onChange(of: conversation.turns.last?.id) { previous, latest in
-      // A question just sent moves to the top, so its answer has the room to come in under it.
-      guard previous != nil || conversation.turns.count == 1, let latest else {
-        return
+      if previous != nil || conversation.turns.count == 1 {
+        reveal(latest)
       }
+    }
+    .onChange(of: conversation.asking?.id) { _, asking in
+      reveal(asking)
 
-      withAnimation(.snappy) {
-        position.scrollTo(id: latest, anchor: .top)
+      if asking != nil {
+        AccessibilityNotification.Announcement(
+          String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer")
+        ).post()
       }
+    }
+  }
+
+  /// A question just sent moves to the top, so its answer has the room to come in under it.
+  private func reveal(_ id: String?) {
+    guard let id else {
+      return
+    }
+
+    withAnimation(.snappy) {
+      position.scrollTo(id: id, anchor: .top)
     }
   }
 
@@ -122,13 +137,14 @@ private struct TutorConversationView<Header: View>: View {
         .buttonStyle(.bordered)
       }
     case .loaded, .empty:
+      let turns = conversation.turns + [conversation.asking].compactMap(\.self)
+
       earlierMessages
 
-      ForEach(Array(conversation.turns.enumerated()), id: \.element.id) { index, turn in
+      ForEach(Array(turns.enumerated()), id: \.element.id) { index, turn in
         VStack(alignment: .leading, spacing: 20) {
           if index > 0,
-            !Calendar.current.isDate(
-              turn.createdAt, inSameDayAs: conversation.turns[index - 1].createdAt)
+            !Calendar.current.isDate(turn.createdAt, inSameDayAs: turns[index - 1].createdAt)
           {
             TutorDayLabel(date: turn.createdAt)
           } else if index == 0, !Calendar.current.isDateInToday(turn.createdAt) {

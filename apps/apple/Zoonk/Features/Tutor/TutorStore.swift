@@ -39,7 +39,8 @@ final class TutorConversation {
   let thread: Resource<TutorThreadPage>
 
   var draft = ""
-  private(set) var isAsking = false
+  /// The question on its way to the server, shown as sent until its saved turn takes its place.
+  private(set) var asking: TutorTurn?
   private(set) var answeringID: String?
   private(set) var askFailure: TutorFailure?
   private(set) var answerFailures: [String: TutorFailure] = [:]
@@ -55,7 +56,7 @@ final class TutorConversation {
   @ObservationIgnored private var draftSuggestion: TutorSuggestion?
   @ObservationIgnored private var preparedOffers: Set<UUID> = []
   /// A question whose reply never came, sent again with its request id so it's asked once.
-  @ObservationIgnored private var unresolved: (question: String, suggestion: String?, id: String)?
+  private var unresolved: (question: String, suggestion: String?, id: String)?
 
   init(scope: TutorScope, api: any TutorAPIClient, cache: AppCache) {
     self.scope = scope
@@ -91,6 +92,15 @@ final class TutorConversation {
     }
 
     return turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
+  }
+
+  var isAsking: Bool {
+    asking != nil
+  }
+
+  /// Being sent, or lost on its way: the next send asks it again, so nothing else is offered.
+  var hasUnsentQuestion: Bool {
+    unresolved != nil
   }
 
   /// Every earlier question needs its answer first: a failed one is retried first, as on main.
@@ -223,25 +233,34 @@ final class TutorConversation {
     }
 
     let request = unresolved ?? (question, suggestion, UUID().uuidString.lowercased())
+    // The composer's words leave with the question they say, and come back if it isn't asked.
+    let taken =
+      draft.trimmingCharacters(in: .whitespacesAndNewlines) == request.question ? draft : ""
     unresolved = request
-    isAsking = true
+    asking = TutorTurn(
+      id: request.id, question: request.question, status: .pending, createdAt: .now,
+      about: scope.about)
     askFailure = nil
+
+    if !taken.isEmpty {
+      draft = ""
+    }
 
     do {
       let asked = try await api.ask(
         scope, question: request.question, suggestion: request.suggestion, requestId: request.id,
         token: session.bearerToken)
 
-      isAsking = false
+      asking = nil
       unresolved = nil
 
       guard cache.session.authenticatedSession == session else {
         return
       }
 
-      draft = ""
       thread.update { page in
         var page = page
+        page.turns.removeAll { $0.id == asked.turn.id }
         page.turns.append(asked.turn)
         return page
       }
@@ -256,7 +275,12 @@ final class TutorConversation {
         await streamAnswer(asked.turn.id)
       }
     } catch {
-      isAsking = false
+      asking = nil
+
+      if draft.isEmpty {
+        draft = taken
+      }
+
       await fail(asking: error, session: session)
     }
   }
@@ -277,6 +301,10 @@ final class TutorConversation {
     default:
       // The question may have been saved: the next send asks it again with the same id.
       askFailure = .failed
+
+      if draft.isEmpty, let unresolved {
+        draft = unresolved.question
+      }
     }
   }
 
