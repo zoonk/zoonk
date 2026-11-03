@@ -320,7 +320,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ gehört in %2$@."
+            "value" : "%1$@ gehört zu %2$@."
           }
         },
         "en" : {
@@ -338,43 +338,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ va dans %2$@."
+            "value" : "%1$@ appartient au groupe %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ va in %2$@."
+            "value" : "%1$@ va nel gruppo %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@が入るのは%2$@です。"
+            "value" : "「%1$@」が入るのは「%2$@」です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 항목은 %2$@에 들어가요."
+            "value" : "%1$@은(는) %2$@에 속해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ należy do grupy: %2$@."
+            "value" : "Element „%1$@” należy do grupy: %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ pertence a %2$@."
+            "value" : "%1$@ pertence ao grupo %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için doğru yer: %2$@."
+            "value" : "%1$@ öğesi %2$@ grubunda olmalı."
           }
         }
       }
@@ -639,7 +639,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ist in %2$@."
+            "value" : "%1$@ ist in der Gruppe %2$@."
           }
         },
         "en" : {
@@ -663,25 +663,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ è in %2$@."
+            "value" : "%1$@ è nel gruppo %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@は%2$@に入っています。"
+            "value" : "%1$@を%2$@に入れました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 카드가 %2$@에 있어요."
+            "value" : "%1$@ 카드는 %2$@ 그룹에 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karta „%1$@” jest w grupie „%2$@”."
+            "value" : "%1$@ jest w grupie: %2$@."
           }
         },
         "pt" : {
@@ -693,7 +693,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, %2$@ grubunda."
+            "value" : "%1$@ %2$@ grubunda."
           }
         }
       }
@@ -704,7 +704,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ist in %2$@. Als Nächstes: %3$@."
+            "value" : "%1$@ ist in der Gruppe %2$@. Als Nächstes: %3$@."
           }
         },
         "en" : {
@@ -728,25 +728,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ è in %2$@. Prossima carta: %3$@."
+            "value" : "%1$@ è nel gruppo %2$@. Prossima carta: %3$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@は%2$@に入っています。次は%3$@です。"
+            "value" : "%1$@を%2$@に入れました。次は%3$@です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 카드가 %2$@에 있어요. 다음 카드: %3$@."
+            "value" : "%1$@ 카드는 %2$@ 그룹에 있어요. 다음은 %3$@ 카드예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karta „%1$@” jest w grupie „%2$@”. Następna karta: %3$@."
+            "value" : "%1$@ jest w grupie: %2$@. Następna karta: %3$@."
           }
         },
         "pt" : {
@@ -758,7 +758,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, %2$@ grubunda. Sıradaki: %3$@."
+            "value" : "%1$@ %2$@ grubunda. Sıradaki: %3$@."
           }
         }
       }
@@ -2298,13 +2298,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld／%2$lld個を正しく分類"
+            "value" : "正しく分類できた数：%1$lld / %2$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld/%2$lld개 올바르게 분류"
+            "value" : "올바르게 분류한 항목 %1$lld/%2$lld개"
           }
         },
         "pl" : {
@@ -2322,7 +2322,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld / %2$lld doğru grupta"
+            "value" : "%1$lld / %2$lld öğe doğru grupta"
           }
         }
       }
@@ -2660,7 +2660,7 @@
       }
     },
     "%lld of %lld sorted" : {
-      "comment" : "How many items of a sorting activity have a group",
+      "comment" : "Progress while sorting: how many of the cards already have a group.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2677,25 +2677,25 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld clasificados"
+            "value" : "%1$lld de %2$lld clasificadas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld classés"
+            "value" : "%1$lld sur %2$lld classées"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld su %2$lld raggruppati"
+            "value" : "%1$lld su %2$lld classificate"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld／%2$lld個を分類済み"
+            "value" : "%1$lld/%2$lld枚を分類済み"
           }
         },
         "ko" : {
@@ -2713,13 +2713,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld classificados"
+            "value" : "%1$lld de %2$lld separados"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld / %2$lld gruplandı"
+            "value" : "%1$lld / %2$lld gruplandırıldı"
           }
         }
       }
@@ -4190,55 +4190,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles einsortiert. Tippe auf eine Karte, um sie zu verschieben."
+            "value" : "Alles sortiert. Tippe auf eine Karte, um sie zu verschieben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo clasificado. Toca una tarjeta para moverla."
+            "value" : "Todo está clasificado. Toca una tarjeta para moverla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout est classé. Appuie sur une carte pour la déplacer."
+            "value" : "Tout est trié. Appuie sur une carte pour la déplacer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai sistemato tutte le carte. Tocca una carta per spostarla."
+            "value" : "Tutto sistemato. Tocca una carta per spostarla."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべて振り分けました。カードをタップすると移動できます。"
+            "value" : "すべて分けました。カードをタップすると移動できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모두 분류했어요. 카드를 옮기려면 탭하세요."
+            "value" : "모두 분류했어요. 카드를 옮기려면 눌러 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystko posortowane. Stuknij kartę, aby ją przenieść."
+            "value" : "Wszystkie karty przyporządkowane. Dotknij karty, aby ją przenieść."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo organizado. Toque no cartão que quiser mover."
+            "value" : "Tudo separado. Toque em um cartão para colocar em outro grupo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hepsi gruplandı. Taşımak için bir karta dokun."
+            "value" : "Hepsi yerleştirildi. Taşımak için bir karta dokun."
           }
         }
       }
@@ -6645,7 +6645,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードがありません"
+            "value" : "カードはありません"
           }
         },
         "ko" : {
@@ -7614,71 +7614,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Soru"
-          }
-        }
-      }
-    },
-    "Put %@ in %@" : {
-      "comment" : "VoiceOver: sorts the card in hand into this group",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ in %2$@ einordnen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Put %1$@ in %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocar %1$@ en %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place %1$@ dans %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metti %1$@ in %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@を%2$@に入れる"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@을(를) %2$@에 넣기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umieść element „%1$@” w grupie „%2$@”"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocar %1$@ em %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ öğesini %2$@ grubuna yerleştir"
           }
         }
       }
@@ -10286,13 +10221,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zurückgenommen."
+            "value" : "Zuordnung von %@ rückgängig gemacht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recuperaste %@."
+            "value" : "Retiraste %@ del grupo."
           }
         },
         "fr" : {
@@ -10310,19 +10245,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を手元に戻しました。"
+            "value" : "%@を戻しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 카드를 다시 가져왔어요."
+            "value" : "%@ 카드를 되돌렸어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przywrócono kartę „%@”."
+            "value" : "Cofnięto kartę: %@."
           }
         },
         "pt" : {
@@ -10493,7 +10428,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "되돌리기"
+            "value" : "실행 취소"
           }
         },
         "pl" : {
@@ -11053,7 +10988,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In welche Gruppe gehört die Karte?"
+            "value" : "Zu welcher Gruppe gehört sie?"
           }
         },
         "es" : {
@@ -11071,25 +11006,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In quale gruppo va?"
+            "value" : "A quale gruppo appartiene?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "どのグループに入りますか？"
+            "value" : "どのグループに当てはまりますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "어느 그룹에 속할까요?"
+            "value" : "어느 그룹에 들어갈까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Do której grupy należy?"
+            "value" : "Do której grupy należy ta karta?"
           }
         },
         "pt" : {

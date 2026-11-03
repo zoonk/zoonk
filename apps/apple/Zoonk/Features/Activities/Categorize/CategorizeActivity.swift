@@ -76,7 +76,8 @@ private struct CategorizeCanvas: View {
       ActivityCaption(
         Text(
           "\(items.count - CategorizePlacements.unplaced(items, sorting.placements).count) of \(items.count) sorted",
-          tableName: "Activities", comment: "How many items of a sorting activity have a group")
+          tableName: "Activities",
+          comment: "Progress while sorting: how many of the cards already have a group.")
       )
       .padding(.bottom, 8)
 
@@ -177,39 +178,44 @@ private struct CategorizeCanvas: View {
     .modifier(ActivityNumberKey(index: index))
     .focused($focus, equals: .group(group.id))
     .accessibilityFocused($voiceOverFocus, equals: .group(group.id))
-    .accessibilityLabel(
-      Text(
-        "Put \(LessonRichText.plain(card.text)) in \(LessonRichText.plain(group.label))",
-        tableName: "Activities", comment: "VoiceOver: sorts the card in hand into this group")
-    )
+    // Named by what it shows, so Voice Control's "Tap <label>" finds it.
+    .accessibilityLabel(Text(LessonRichText.attributed(group.label)))
     .accessibilityHint(Text(LessonRichText.attributed(group.rule)))
   }
 
-  @ViewBuilder
+  /// A plain chip sizes the row before the group's first card, and math in a card (raised or
+  /// lowered text) can't make it taller, so no group shifts the ones under it.
   private func preview(_ group: CategorizeFields.Group) -> some View {
     let sorted = sorting.history.filter { sorting.placements[$0] == group.id }
+    let latest = items.first { $0.id == sorted.last }
 
-    if let latest = items.first(where: { $0.id == sorted.last }) {
-      HStack(spacing: 6) {
-        LessonRichText(latest.text)
-          .lineLimit(1)
-          .previewChip()
+    return Text(verbatim: " ")
+      .previewChip()
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .hidden()
+      .overlay(alignment: .leading) {
+        if let latest {
+          HStack(spacing: 6) {
+            LessonRichText(latest.text)
+              .lineLimit(1)
+              .previewChip()
 
-        if sorted.count > 1 {
-          Text(
-            "+\(sorted.count - 1)", tableName: "Activities",
-            comment: "On a group: how many more cards are in it besides the one shown"
-          )
-          .monospacedDigit()
-          .foregroundStyle(.secondary)
-          .previewChip()
-          .fixedSize()
+            if sorted.count > 1 {
+              Text(
+                "+\(sorted.count - 1)", tableName: "Activities",
+                comment: "On a group: how many more cards are in it besides the one shown"
+              )
+              .monospacedDigit()
+              .foregroundStyle(.secondary)
+              .previewChip()
+              .fixedSize()
+            }
+          }
         }
       }
       .font(.footnote)
       .padding(.top, 4)
       .accessibilityHidden(true)
-    }
   }
 
   private func sortedGroup<Row: View>(
@@ -337,7 +343,11 @@ private struct CategorizeCanvas: View {
         String(
           localized: "\(item) is in \(label).", table: "Activities",
           comment: "VoiceOver, after the last card is sorted or a card is moved"))
-      voiceOverFocus = .status
+
+      // The group or Undo VoiceOver was on is gone.
+      if voiceOverFocus != nil {
+        voiceOverFocus = .status
+      }
     }
   }
 
