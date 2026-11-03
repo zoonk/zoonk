@@ -112,33 +112,27 @@ struct ScheduleQuestion: View {
     let findsTime = asks && datedGuess && !days.isEmpty
     let asksAdvice = asks && shown.asksAdvice
 
-    // A Group would give each screen its own asking tasks, which would start over as screens switch.
-    ZStack {
-      // Only the question waits for a learner still guessing, as on main: the notice's reading is
-      // another wait.
-      if wait == .readingNotice {
-        NoticeReadingView(
-          document: examDocument, lastEdition: false, reconnect: gate.failed ? gate.restart : nil)
-      } else {
-        WarmUpHold(surface: .planWait, isReady: wait == nil, announcement: .planReady) { holding in
-          PlanBuilding(
-            view: view,
-            next: .timeQuestion,
-            holding: holding,
-            readResult: {
-              planMade = true
-              return true
-            },
-            onRunEnd: { runEnded = true }
-          ) {
-            if gate.failed {
-              GenerationFailureSection(failure: .connection, act: gate.restart)
-            }
-          }
-        } ready: {
-          question(shown)
+    PlanWaits(wait: wait) { holding in
+      PlanBuilding(
+        view: view,
+        next: .timeQuestion,
+        holding: holding,
+        readResult: {
+          planMade = true
+          return true
+        },
+        onRunEnd: { runEnded = true }
+      ) {
+        if gate.failed {
+          GenerationFailureSection(failure: .connection, act: gate.restart)
         }
       }
+    } notice: { holding in
+      NoticeReadingView(
+        document: examDocument, lastEdition: false, generationID: view.generationId,
+        next: .timeQuestion, holding: holding, reconnect: gate.failed ? gate.restart : nil)
+    } ready: {
+      question(shown)
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {

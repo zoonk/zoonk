@@ -165,17 +165,20 @@ private struct LessonPlayerContent: View {
       WarmUpHold(
         surface: .lessonWait, isReady: writing == .written,
         announcement: LessonWaitingView.lessonReady
-      ) { holding in
-        LessonWaitingView(
-          outline: warmUp.outline, writing: writing, warmUpID: warmUp.deckID, holding: holding
-        ) {
-          Task { await store.writeLesson() }
-        }
-        .lonePage()
-      } ready: {
-        ProgressView()
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+      ) { stage in
+        switch stage {
+        case .waiting(let holding):
+          LessonWaitingView(
+            outline: warmUp.outline, writing: writing, warmUpID: warmUp.deckID, holding: holding
+          ) {
+            Task { await store.writeLesson() }
+          }
           .lonePage()
+        case .ready:
+          ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .lonePage()
+        }
       } onMoveOn: {
         Task { await store.open() }
       }
