@@ -65,9 +65,12 @@ describe("reasoning activities", () => {
   it("categorize: a tap on a card already in a group sorts the next card into it", async () => {
     openActivity({ template: "categorize" });
     await sortCard({ group: "Same substance", item: "Melting ice" });
+    const sameSubstance = page.getByRole("button", { name: "Same substance" });
 
-    await page.getByRole("button", { name: "Same substance" }).getByText("Melting ice").click();
+    await sameSubstance.getByText("Melting ice").click();
     await expect.element(page.getByText("2 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(sameSubstance.getByText("Rusting iron", { exact: true })).toBeVisible();
+    await expect.element(sameSubstance.getByText("+1", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Burning wood", { exact: true })).toBeVisible();
   });
 
