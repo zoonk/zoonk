@@ -298,7 +298,7 @@ export const languageConversationObjectiveCheckSchema = z
       .nullable()
       .meta({
         description:
-          "Tell the character what the learner achieved: null when this check found nothing new or every objective is met",
+          "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
       }),
   })
   .meta({ id: "LanguageConversationObjectiveCheck" });

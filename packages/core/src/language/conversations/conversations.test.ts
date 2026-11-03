@@ -66,6 +66,12 @@ const TURNS = [
   { speaker: "learner" as const, text: "Can I see it on Saturday?" },
 ];
 
+const GOODBYE_TURNS = [
+  ...TURNS,
+  { speaker: "learner" as const, text: "Thank you, bye!" },
+  { speaker: "character" as const, text: "Bye, see you Saturday!" },
+];
+
 const COMPLETION = {
   spokenSeconds: 42,
   timeZone: "America/Sao_Paulo",
@@ -78,12 +84,9 @@ const PRACTICE_SECONDS = 120;
 const TEN_MINUTES_MS = 600_000;
 const DAY_MS = 86_400_000;
 
-function objectivesAnswer(labels: string[]) {
+function objectivesAnswer(labels: string[], { goodbye = false } = {}) {
   return {
-    data: {
-      goodbye: false,
-      met: labels.map((label) => ({ label, learnerWords: "It is available?" })),
-    },
+    data: { goodbye, met: labels.map((label) => ({ label, learnerWords: "It is available?" })) },
     provenance: PROVENANCE,
     systemPrompt: "",
     usage: undefined as never,
@@ -634,28 +637,37 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    const goodbye = [
-      ...TURNS,
-      { speaker: "learner" as const, text: "Thank you, bye!" },
-      { speaker: "character" as const, text: "Bye, see you Saturday!" },
-    ];
-
-    vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
-      ...objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"]),
-      data: {
-        ...objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"]).data,
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
+      objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"], {
         goodbye: true,
-      },
-    });
+      }),
+    );
 
     await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: goodbye } }),
+      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
     ).resolves.toStrictEqual({
       check: {
         goodbye: true,
         objectivesMet: ["Is it available?", "Book a viewing", "Ask about the deposit"],
         progress: null,
       },
+      status: "ready",
+    });
+  });
+
+  it("sends no progress with a goodbye, though goals are left: the character has already said goodbye", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
+      objectivesAnswer(["Is it available?"], { goodbye: true }),
+    );
+
+    await expect(
+      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
+    ).resolves.toStrictEqual({
+      check: { goodbye: true, objectivesMet: ["Is it available?"], progress: null },
       status: "ready",
     });
   });

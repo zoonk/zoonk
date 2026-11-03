@@ -228,14 +228,14 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("answers an objective check with the progress cue and a mutual goodbye", async () => {
+  it("answers an objective check with the goals met and the progress cue", async () => {
     const { conversationId } = await authenticatedCallFixture();
     const setup = await setupOf(reserveCall(conversationId));
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
     const [first, second] = RENTING_SCENARIO.objectives;
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
-      data: { goodbye: true, met: [{ label: first?.label ?? "", learnerWords: "Is it free?" }] },
+      data: { goodbye: false, met: [{ label: first?.label ?? "", learnerWords: "Is it free?" }] },
       provenance: {
         generatedAt: new Date().toISOString(),
         latencyMs: 1,
@@ -254,8 +254,8 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     const response = await checkObjectives(
       request(`/v1/language-conversations/${conversationId}/objective-checks`, {
         turns: [
-          { speaker: "learner", text: "Is it free? Thanks, bye!" },
-          { speaker: "character", text: "Yes, it is. Bye!" },
+          { speaker: "learner", text: "Is it free?" },
+          { speaker: "character", text: "Yes, it is." },
         ],
       }),
       { params: Promise.resolve({ conversationId }) },
@@ -264,7 +264,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(response.status).toBe(200);
 
     expect(languageConversationObjectiveCheckSchema.parse(await response.json())).toStrictEqual({
-      goodbye: true,
+      goodbye: false,
       objectivesMet: [first?.label],
       progress: {
         channel: "thinking",

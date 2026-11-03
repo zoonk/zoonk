@@ -39564,7 +39564,7 @@
           },
           "progress": {
             "nullable": true,
-            "description": "Tell the character what the learner achieved: null when this check found nothing new or every objective is met",
+            "description": "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
             "allOf": [
               {
                 "$ref": "#/components/schemas/LiveCallCue"

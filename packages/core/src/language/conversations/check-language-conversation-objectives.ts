@@ -140,7 +140,7 @@ export async function checkLanguageConversationObjectives({
       goodbye: found.goodbye,
       objectivesMet,
       progress:
-        labels.length > row.objectivesMet.length
+        !found.goodbye && labels.length > row.objectivesMet.length
           ? getObjectivesProgressCue({ met: objectivesMet, open })
           : null,
     },
