@@ -1,24 +1,34 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type CourseLevel } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import {
   hubMap,
+  temperatureGuess,
   temperatureSpec,
   writtenTemperatureLesson,
   writtenTypedAnswer,
 } from "./_test-utils/written-lessons";
 import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
-type CheckOptions = { allowActivityFallback?: boolean; shortAnswers?: boolean };
+type CheckOptions = {
+  allowActivityFallback?: boolean;
+  exams?: readonly unknown[];
+  level?: CourseLevel;
+  shortAnswers?: boolean;
+};
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
-    ...options,
+    exams: undefined,
     language: "en",
     lesson,
     level: "beginner",
     spec: temperatureSpec(),
+    ...options,
   });
 }
+
+const INTERMEDIATE: CheckOptions = { level: "intermediate" };
 
 function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
   const lesson = writtenTemperatureLesson();
@@ -63,6 +73,7 @@ describe(checkWrittenLesson, () => {
     };
 
     const checked = checkWrittenLesson({
+      exams: undefined,
       language: "en",
       lesson: {
         ...lesson,
@@ -396,23 +407,18 @@ describe(checkWrittenLesson, () => {
   });
 
   it("rejects options a learner can't tell apart", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const duplicated = { ...hook, options: [...hook.options, { isCorrect: false, text: "2 °c" }] };
 
-    expect(codesOf(withScreen(0, duplicated))).toContainEqual([0, "duplicateOptions"]);
+    expect(codesOf(withScreen(0, duplicated), INTERMEDIATE)).toContainEqual([
+      0,
+      "duplicateOptions",
+    ]);
   });
 
   it("rejects options the screen's data disagrees with, as sensors A to E against options A to D", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const sensors = {
       ...hook,
@@ -421,7 +427,7 @@ describe(checkWrittenLesson, () => {
         "Which sensor is the most precise?\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |\n| E | 50,1 |",
     };
 
-    expect(codesOf(withScreen(0, sensors))).toStrictEqual([[0, "optionData"]]);
+    expect(codesOf(withScreen(0, sensors), INTERMEDIATE)).toStrictEqual([[0, "optionData"]]);
   });
 
   it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
@@ -468,15 +474,11 @@ describe(checkWrittenLesson, () => {
   });
 
   it("rejects a guess's reveal that points at an option by its place", () => {
-    const hook = writtenTemperatureLesson().screens[0];
-
-    if (hook?.kind !== "hookGuess") {
-      throw new Error("Screen 1 is a guess.");
-    }
+    const hook = temperatureGuess();
 
     const byPlace = { ...hook, reveal: "The right answer is the second." };
 
-    expect(codesOf(withScreen(0, byPlace))).toStrictEqual([[0, "optionPosition"]]);
+    expect(codesOf(withScreen(0, byPlace), INTERMEDIATE)).toStrictEqual([[0, "optionPosition"]]);
   });
 
   it("rejects a check that asks an earlier check's question with other numbers", () => {
@@ -509,6 +511,17 @@ describe(checkWrittenLesson, () => {
     ]);
 
     expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
+  });
+
+  it("opens a beginner or overview lesson with a scene, while an exam's or an intermediate one may guess", () => {
+    const guessing = withScreen(0, temperatureGuess());
+    const scene: [number, string] = [0, "screenKind"];
+
+    expect(codesOf(guessing)).toContainEqual(scene);
+    expect(codesOf(guessing, { level: "overview" })).toContainEqual(scene);
+    expect(codesOf(guessing, INTERMEDIATE)).not.toContainEqual(scene);
+    expect(codesOf(guessing, { exams: [{ name: "ENEM" }] })).not.toContainEqual(scene);
+    expect(codesOf(writtenTemperatureLesson())).not.toContainEqual(scene);
   });
 
   it("lets two named ideas share a sentence, as two things with the same trait", () => {

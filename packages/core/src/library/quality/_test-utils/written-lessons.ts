@@ -112,19 +112,29 @@ export function hubMap(ideas: readonly string[]): LessonMap {
   };
 }
 
+/** The opening guess an intermediate lesson may open with; a beginner one opens with a scene. */
+export function temperatureGuess(): Extract<WrittenScreen, { kind: "hookGuess" }> {
+  return {
+    image: null,
+    kind: "hookGuess",
+    options: [
+      { isCorrect: true, text: "2 °C" },
+      { isCorrect: false, text: "8 °C" },
+      { isCorrect: false, text: "−8 °C" },
+    ],
+    question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+    reveal: "It shows 2 °C. Guessing first helps you remember the rule.",
+    visual: null,
+  };
+}
+
 export function writtenTemperatureLesson(): WrittenLesson {
   return {
     screens: [
       {
         image: null,
-        kind: "hookGuess",
-        options: [
-          { isCorrect: true, text: "2 °C" },
-          { isCorrect: false, text: "8 °C" },
-          { isCorrect: false, text: "−8 °C" },
-        ],
-        question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-        reveal: "It shows 2 °C. Guessing first helps you remember the rule.",
+        kind: "hookText",
+        text: "It's −3 °C at dawn, and by noon the air is 5 degrees warmer. Where does the thermometer's mark end up?",
         visual: null,
       },
       {

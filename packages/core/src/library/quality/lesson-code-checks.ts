@@ -5,13 +5,13 @@ import {
   type WrittenScreen,
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
-import { normalizeString } from "@zoonk/utils/string";
 import { findOptionPositionReferences } from "../_utils/answer-options";
-import { lessonMapSchema } from "../lessons/lesson-map";
 import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
 import { findArithmeticErrors } from "./_utils/arithmetic";
+import { getLessonMapProblems } from "./_utils/lesson-map-checks";
 import { findLessonPhrases } from "./_utils/lesson-phrases";
 import { findLongSentences, getMaxExplanationCharacters } from "./_utils/reading-level";
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
@@ -20,9 +20,6 @@ import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
 import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
-
-const MAX_SUMMARY_SENTENCES = 2;
-const SENTENCE_END = /[.!?…](?:\s|$)/gu;
 
 type LessonCheckCode =
   | "activityProgram"
@@ -54,6 +51,7 @@ type ScreenCheckInput = {
   index: number;
   language: string;
   level: CourseLevel;
+  novice: boolean;
   screen: WrittenScreen;
   specScreen: LessonScreen;
   shortAnswers: boolean;
@@ -63,11 +61,12 @@ type Problem = { code: LessonCheckCode; problem: string } | false;
 
 function getKindProblems({
   allowActivityFallback,
+  novice,
   screen,
   specScreen,
   shortAnswers,
 }: ScreenCheckInput): Problem[] {
-  const kinds = getWrittenKinds({ kind: specScreen.kind, shortAnswers });
+  const kinds = getWrittenKinds({ kind: specScreen.kind, novice, shortAnswers });
 
   const fallback =
     allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check";
@@ -180,51 +179,6 @@ function checkScreen(input: ScreenCheckInput): {
   return { converted, problems };
 }
 
-function countSentences(text: string): number {
-  return Math.max(1, [...text.matchAll(SENTENCE_END)].length);
-}
-
-function getSummaryProblems({
-  language,
-  map,
-}: {
-  language: string;
-  map: LessonMap;
-}): LessonCheckProblem[] {
-  const parsed = lessonMapSchema.safeParse(map);
-  const summary = map.ideas.map((idea) => idea.text);
-
-  const normalized = map.ideas.map(
-    (idea) => `${normalizeString(idea.label ?? "")}\n${normalizeString(idea.text)}`,
-  );
-
-  const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
-
-  const problems: Problem[] = [
-    ...writing,
-    !parsed.success && {
-      code: "summary",
-      problem: `The summary card is invalid: ${parsed.error?.issues.map((issue) => issue.message).join("; ")}.`,
-    },
-    summary.some((idea) => countSentences(idea) > MAX_SUMMARY_SENTENCES) && {
-      code: "summary",
-      problem: "Each summary idea is one sentence.",
-    },
-    new Set(normalized).size !== normalized.length && {
-      code: "summary",
-      problem: "Two summary ideas say the same thing.",
-    },
-    summary.some((idea) => findLessonPhrases({ language, text: idea }).framing.length > 0) && {
-      code: "lessonFraming",
-      problem: "The summary talks about the lesson itself; state each idea directly.",
-    },
-  ];
-
-  return problems
-    .filter((problem) => problem !== false)
-    .map((problem) => ({ ...problem, screen: null }));
-}
-
 function getTermOrderProblems(lesson: WrittenLesson): LessonCheckProblem[] {
   return findTermsUsedBeforeExplained(lesson.screens).map(({ introducedAt, term, usedAt }) => ({
     code: "termOrder",
@@ -278,9 +232,11 @@ export function toReviewedLesson({
   };
 }
 
+/** `exams` and `material` decide with `level` whether the lesson follows the novice rules. */
 export function checkWrittenLesson({
   allowActivityFallback = false,
   chapterLessons,
+  exams,
   language,
   lesson,
   level,
@@ -291,6 +247,7 @@ export function checkWrittenLesson({
 }: {
   allowActivityFallback?: boolean;
   chapterLessons?: Parameters<typeof findRepeatedExamples>[0]["chapterLessons"];
+  exams: readonly unknown[] | undefined;
   language: string;
   lesson: WrittenLesson;
   level: CourseLevel;
@@ -299,7 +256,8 @@ export function checkWrittenLesson({
   spec: LessonSpec;
   shortAnswers?: boolean;
 }): { problems: LessonCheckProblem[]; screens: ConvertedScreen[] } {
-  const lessonInput = { allowActivityFallback, language, level, shortAnswers };
+  const novice = readsNoviceRules({ exams, level, material });
+  const lessonInput = { allowActivityFallback, language, level, novice, shortAnswers };
 
   const checked = lesson.screens.flatMap((screen, index) => {
     const specScreen = spec.screens[index];
@@ -330,7 +288,7 @@ export function checkWrittenLesson({
         spec,
       }),
       ...getRepeatedQuestionProblems(lesson.screens),
-      ...getSummaryProblems({ language, map: lesson.summary }),
+      ...getLessonMapProblems({ language, map: lesson.summary }),
     ],
     screens: checked.map((result) => result.converted),
   };

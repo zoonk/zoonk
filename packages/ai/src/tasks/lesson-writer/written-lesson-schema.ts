@@ -183,15 +183,22 @@ const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly Writte
 
 /**
  * Learners would rather pick than type an answer, so a check or the application is typed only for
- * exams that ask short written answers (`shortAnswers`).
+ * exams that ask short written answers (`shortAnswers`). A novice lesson (`readsNoviceRules`) opens
+ * with a scene, never a guess.
  */
 export function getWrittenKinds({
   kind,
+  novice,
   shortAnswers,
 }: {
   kind: LessonScreenKind;
+  novice: boolean;
   shortAnswers: boolean;
 }): readonly WrittenScreenKind[] {
+  if (novice && kind === "hook") {
+    return ["hookText"];
+  }
+
   const kinds = WRITTEN_KINDS_BY_SCREEN[kind];
 
   return shortAnswers && (kind === "check" || kind === "application")

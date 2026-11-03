@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { writtenTemperatureLesson } from "./_test-utils/written-lessons";
+import { temperatureGuess, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { getReasoningCheckReason } from "./reasoning-check-policy";
 
 function wordsOnlyLesson() {
-  const lesson = writtenTemperatureLesson();
-  return { ...lesson, screens: lesson.screens.filter((screen) => screen.kind === "hookGuess") };
+  return { ...writtenTemperatureLesson(), screens: [temperatureGuess()] };
 }
 
 const never = () => 1;

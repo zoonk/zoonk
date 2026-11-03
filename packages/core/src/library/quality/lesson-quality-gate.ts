@@ -126,6 +126,7 @@ export async function runLessonQualityGate({
   const checked = checkWrittenLesson({
     allowActivityFallback,
     chapterLessons: context.chapterLessons,
+    exams: context.exams,
     language: context.language,
     lesson,
     level: context.level,

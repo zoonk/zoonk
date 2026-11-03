@@ -1,14 +1,8 @@
 {
   "screens": [
     {
-      "kind": "hookGuess",
-      "question": "You scrape your knee. Before your body knows whether a germ entered, what might tell it something is wrong?",
-      "options": [
-        { "text": "Nearby injured cells", "isCorrect": true },
-        { "text": "The exact name of a germ", "isCorrect": false },
-        { "text": "Nothing until the scrape heals", "isCorrect": false }
-      ],
-      "reveal": "Nearby injured cells can be the clue. Let’s see why your body can notice them so quickly.",
+      "kind": "hookText",
+      "text": "You scrape your knee on the sidewalk. Long before your body could know whether a germ got in, something nearby is already sounding the alarm. What tells it something is wrong?",
       "image": {
         "prompt": "A small scrape on a knee, shown in a simple cutaway. Show several nearby cells just beneath the broken skin. Keep the scrape and cells easy to distinguish; no text labels.",
         "alt": "A small scrape breaks the skin above nearby cells."
