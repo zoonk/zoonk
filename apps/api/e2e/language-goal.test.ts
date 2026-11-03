@@ -326,7 +326,7 @@ test.describe("Language goal API", () => {
 
     const [reconnect, lateCheck] = await Promise.all([
       apiContext.post(`/v1/language-conversations/${conversationId}/connections`),
-      apiContext.post(checks, { data: { turns } }),
+      apiContext.post(checks, { data: { connectionId: setup.connectionId, turns } }),
     ]);
 
     expect([reconnect.status(), lateCheck.status()]).toStrictEqual([409, 409]);
