@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_math_bar": "d9a8584051d97e70946fe9311700600efe618b22fec456a6b7aa9ad763fac7e5",
+  "richtext_math_cube_root": "d46dc551542a6885067d365a7baf2a567db0c9aa475aae2b5f44e701ed4b9578",
   "richtext_math_cubed": "6bfa548cade12f11df451231a8bd8ddd20dbd7b05ded71c0f60340c6bbc91d42",
+  "richtext_math_dot": "fff01cb51fda1ef60cdd92a2d64ef223c5951d0041311b624704523fd6612f23",
   "richtext_math_fraction": "caa495d110c851f800f462b1ebd43caa600d7548311eee73446c584fcd6db7f0",
+  "richtext_math_hat": "f12d8380d0ce4a50dcfc0b0c79cb76b8059178ca1b6ab6a8243e6dbd9f8782b1",
+  "richtext_math_nth_root": "f2a10a99167140082a44830de28eeabd4559d9bcc933aab0eccfe797f31e9d89",
   "richtext_math_power": "0a3a75ee0264397d30ce3529fa410fe336d3bda2af7b89cf91ca6b6b8df1b7c8",
   "richtext_math_root": "40c04f09313c659d6df8f12803fe8043f73f29a66e06f4993f30cded7a8ad54f",
   "richtext_math_squared": "212335d3cbdeb008f510d9c5b715fcb8d5daab50260d8b91f4249fa84ceeaceb",
-  "richtext_math_subscript": "26d047125a64437c0c0e063e80686edd87571e8ec5f0cbbb232cd8f87f3d5711"
+  "richtext_math_subscript": "26d047125a64437c0c0e063e80686edd87571e8ec5f0cbbb232cd8f87f3d5711",
+  "richtext_math_tilde": "72ec1c61e59b2f7ed0b54c59012fc3e3d8ac4574101ae8a4451d058e93a36f49",
+  "richtext_math_vector": "9274b625ecc2a804a62b4be4f2d43de6ec23f1fea234c3ad7db086c87455f2dc"
 }
 -->
 <resources>
@@ -22,4 +29,18 @@
     <string name="richtext_math_fraction">%1$s bölü %2$s</string>
     <!-- Screen reader words for a square root: "square root of 2". -->
     <string name="richtext_math_root">karekök %1$s</string>
+    <!-- Screen reader words for a cube root: "cube root of 8". -->
+    <string name="richtext_math_cube_root">küp kök %1$s</string>
+    <!-- Screen reader words for a root with an index other than 2 or 3; {index} is a number such as 4 or a letter such as n: "4th root of 16", "nth root of x". -->
+    <string name="richtext_math_nth_root">%1$s. dereceden kök %2$s</string>
+    <!-- Screen reader words for a letter with a bar over it, such as a mean: "x bar". -->
+    <string name="richtext_math_bar">üstü çizgili %1$s</string>
+    <!-- Screen reader words for a letter with a dot over it, a rate of change in physics: "x dot". -->
+    <string name="richtext_math_dot">üstü noktalı %1$s</string>
+    <!-- Screen reader words for a letter with a hat over it, such as an estimate: "p hat". -->
+    <string name="richtext_math_hat">şapkalı %1$s</string>
+    <!-- Screen reader words for a letter with a tilde over it: "x tilde". -->
+    <string name="richtext_math_tilde">tildeli %1$s</string>
+    <!-- Screen reader words for a letter with an arrow over it, a vector: "vector v". -->
+    <string name="richtext_math_vector">%1$s vektörü</string>
 </resources>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
 import { HelpCircleIcon, PenLineIcon, PenOffIcon } from "lucide-react";
@@ -42,6 +43,7 @@ export function TypedAnswerStepView({
   step,
 }: LessonStepViewProps<StepOf<"typedAnswer">>) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
   const { actions, screen } = useLessonPlayer();
   const isNumber = isNumberAnswer(step.content.acceptedAnswers);
@@ -68,7 +70,7 @@ export function TypedAnswerStepView({
         autoFocusOnPointer
         isLocked={isLocked}
         isNumber={isNumber}
-        label={step.content.question}
+        label={spoken.blocks(question)}
         onChange={(value) => onAnswer(value ? { kind: "typedAnswer", text: value } : null)}
         value={text}
       />

@@ -2,6 +2,7 @@
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
@@ -70,6 +71,7 @@ export function CodeTracerActivity({
   phase,
 }: CodeTracerProps) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const { fields } = content;
   const isChecked = phase === "checked";
   const isExploring = phase === "explore";
@@ -153,7 +155,7 @@ export function CodeTracerActivity({
           <ActivitySelectGrid
             className="font-mono"
             columns={optionColumns(upcoming.pause.options)}
-            label={upcoming.pause.question}
+            label={spoken.blocks(upcoming.pause.question)}
           >
             {upcoming.pause.options.map((option) => (
               <ActivitySelectGridItem

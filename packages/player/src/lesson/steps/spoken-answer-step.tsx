@@ -1,6 +1,7 @@
 "use client";
 
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
@@ -12,6 +13,7 @@ import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../componen
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
+import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
 import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
@@ -250,6 +252,7 @@ function ModeSwitch({
 
 export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAnswer">>) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const { answer, isLocked, onAnswer, step } = props;
   const answerMode = useAnswerMode({ onAnswer, step });
   const { listening } = step;
@@ -280,7 +283,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           <LessonAnswerField
             autoFocusOnPointer={answerMode.micBlocked}
             isLocked={isLocked}
-            label={step.content.prompt}
+            label={spoken.blocks(splitQuestionData(step.content.prompt).question)}
             onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
             value={text}
           />
