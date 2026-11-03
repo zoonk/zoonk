@@ -8,7 +8,6 @@ import {
   estimateLessonMinutes,
   fitsLesson,
   getMaxLessonMinutes,
-  getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
 type SkillSegment = { screens: LessonScreen[]; skill: number };
@@ -229,7 +228,6 @@ function buildPart({
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
     screens,
     skills,
-    supportMode: getSupportModeFromScreens(screens),
     title: formatTopics({ language, topics: skills.map((skill) => skill.topic) }),
   };
 }

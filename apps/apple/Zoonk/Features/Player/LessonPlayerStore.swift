@@ -227,7 +227,7 @@ final class LessonPlayerStore {
     case .success(let run):
       state.startRun(
         runId: run.runId, answers: run.answers, startedAt: run.startedAt,
-        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds, support: run.support)
+        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
     case .failure(let refusal):
       state.refuseRun(refusal)
     }

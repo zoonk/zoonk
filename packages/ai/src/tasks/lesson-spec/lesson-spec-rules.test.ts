@@ -25,7 +25,6 @@ function spec(screens: LessonScreen[], skills = [skill("Calculate a percent chan
     estimatedMinutes: estimateLessonMinutes(screens.map((item) => item.kind)),
     screens,
     skills,
-    supportMode: "explanationFirst",
     title: "Percent change",
   };
 }
@@ -193,18 +192,18 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(explored), "beginner", true)).toStrictEqual([]);
   });
 
-  it("checks the support mode against the screen after the hook", () => {
-    const questionFirst = [
+  it("asks every lesson for an explanation before its first check, at every level", () => {
+    const asksFirst = spec([
       screen("hook", []),
       screen("check"),
       screen("explanation"),
       screen("explanation"),
       screen("check"),
       screen("application"),
-    ];
+    ]);
 
-    expect(getCodes({ ...spec(questionFirst), supportMode: "questionFirst" })).toStrictEqual([]);
-    expect(getCodes(spec(questionFirst))).toStrictEqual(["supportMode"]);
+    expect(getCodes(asksFirst, "advanced")).toStrictEqual(["earlyCheck"]);
+    expect(getCodes(spec(validScreens), "advanced")).toStrictEqual([]);
   });
 
   it("requires a worked example for each hard skill and every skill taught and practiced", () => {

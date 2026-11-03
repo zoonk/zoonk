@@ -26,7 +26,6 @@ import {
   loadProgressAnswers,
   loadProgressRuns,
 } from "./_utils/lesson-runs";
-import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
@@ -64,16 +63,9 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
       return unchanged({ isNew: false, run: resumable });
     }
 
-    const [first] = await loadProgressRuns({ client: tx, lessonId: lesson.id, until: now, userId });
-
-    const support =
-      (first && getRunLessonSupport(first)) ??
-      (await loadLessonSupport({ client: tx, lessonId: lesson.id, userId }));
-
     const run = await startLearningEvent(tx, {
       contentIds: {
         lessonId: lesson.id,
-        ...(support && { support }),
         ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
         ...(studySessionId && { studySessionId }),
       },
@@ -128,22 +120,14 @@ async function readRun({
   run: LearningEvent;
   userId: string;
 }): Promise<LibraryLessonRun | null> {
-  const [progress, hyperdrive, support, replay] = await Promise.all([
+  const [progress, hyperdrive, replay] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
     getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
-    getRunLessonSupport(run) ?? loadLessonSupport({ lessonId, userId }),
     hasFinishedLessonBefore(prisma, { lessonId, runId: run.id, userId }),
   ]);
 
   return progress
-    ? {
-        ...progress,
-        hyperdrive,
-        replay,
-        runId: run.id,
-        startedAt: run.startedAt.toISOString(),
-        support,
-      }
+    ? { ...progress, hyperdrive, replay, runId: run.id, startedAt: run.startedAt.toISOString() }
     : null;
 }
 

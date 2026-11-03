@@ -324,6 +324,5 @@ export const wherePriceComesFromLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("Where a price comes from", "De onde vem o preço de uma ação"),
 };

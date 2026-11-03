@@ -136,7 +136,6 @@ export const LESSON_SPECS = {
           "Reading probability densities and node patterns in molecular orbitals and semiconductor devices.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Particle in a box",
   },
   "en-percent-change-beginner": {
@@ -251,7 +250,6 @@ export const LESSON_SPECS = {
         useCase: "Understanding why a stock or pay cut takes a bigger percent rise to recover.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Percent change",
   },
   "pt-eletron-nucleo-overview": {
@@ -334,7 +332,6 @@ export const LESSON_SPECS = {
           "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Por que o elétron não cai no núcleo",
   },
   "pt-partes-da-celula-hobby": {
@@ -413,7 +410,6 @@ export const LESSON_SPECS = {
         useCase: "Entender esquemas de células em livros, museus e documentários de ciência.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Membrana, citoplasma e material genético",
   },
   "pt-regra-de-tres-intermediate": {
@@ -433,19 +429,19 @@ export const LESSON_SPECS = {
       {
         activityTemplate: null,
         brief:
-          "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
-        kind: "check",
-        skills: [0],
-        visual: null,
-      },
-      {
-        activityTemplate: null,
-        brief:
           "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
         kind: "explanation",
         skills: [0],
         visual:
           "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Peça que o aluno classifique dois casos novos: um carro que roda mais quilômetros com o mesmo consumo gasta mais combustível (direta); uma piscina enchida por mais torneiras iguais fica cheia em menos tempo (inversa). Inclua a opção tentadora de que as duas relações são diretas.",
+        kind: "check",
+        skills: [0],
+        visual: null,
       },
       {
         activityTemplate: null,
@@ -535,7 +531,6 @@ export const LESSON_SPECS = {
           "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis.",
       },
     ],
-    supportMode: "questionFirst",
     title: "Regra de três simples e composta",
   },
 } satisfies Record<string, LessonSpec>;

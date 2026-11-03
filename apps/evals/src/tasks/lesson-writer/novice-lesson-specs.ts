@@ -110,7 +110,6 @@ export const NOVICE_LESSON_SPECS = {
           "Organizar os registros de uma empresa sem confundir gastos do negócio com gastos do proprietário.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Entidade contábil",
   },
   "pt-equacao-patrimonial-beginner": {
@@ -220,7 +219,6 @@ export const NOVICE_LESSON_SPECS = {
         useCase: "Conferir os totais patrimoniais registrados por uma empresa.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Equação patrimonial",
   },
   "pt-niveis-ecologicos-beginner": {
@@ -318,7 +316,6 @@ export const NOVICE_LESSON_SPECS = {
           "Escolher o recorte adequado para estudar os seres vivos de um lago e seu ambiente.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Níveis de organização ecológica",
   },
   "pt-patrimonio-liquido-beginner": {
@@ -395,7 +392,6 @@ export const NOVICE_LESSON_SPECS = {
         useCase: "Conferir a posição patrimonial de uma empresa a partir de seus registros.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Patrimônio líquido",
   },
   "pt-receitas-regulares-overview": {
@@ -474,7 +470,6 @@ export const NOVICE_LESSON_SPECS = {
           "Reconhecer quais entradas de dinheiro têm frequência habitual ao pensar nos próximos meses.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Receitas regulares e eventuais",
   },
   "pt-usuarios-contabilidade-beginner": {
@@ -586,7 +581,6 @@ export const NOVICE_LESSON_SPECS = {
           "Entender quem consulta informações de uma organização e para tomar quais decisões.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Usuários e finalidade da contabilidade",
   },
 } as const satisfies Record<string, LessonSpec>;

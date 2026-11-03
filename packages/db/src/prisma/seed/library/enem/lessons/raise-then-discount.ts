@@ -311,6 +311,5 @@ export const raiseThenDiscountLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("A raise, then a discount", "Aumento seguido de desconto"),
 };

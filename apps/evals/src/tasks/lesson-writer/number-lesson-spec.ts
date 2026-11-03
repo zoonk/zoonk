@@ -91,6 +91,5 @@ export const SCIENTIFIC_NOTATION_SPEC = {
       useCase: "Estimar quantas vezes uma grandeza é maior que outra.",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Notação científica",
 } satisfies LessonSpec;

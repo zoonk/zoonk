@@ -4,7 +4,7 @@ import { describeActivityTemplates } from "@zoonk/core/library/activities/writer
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
-import { EXAM_PREP_LESSON, QUESTION_FIRST_EXAM_LESSON } from "./exam-prep-lesson-spec";
+import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
@@ -236,8 +236,8 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   },
   {
     expectations: `
-      - MUST be in Brazilian Portuguese, for intermediate learners who partly know the idea (question first)
-      - The first check after the hook is something learners can try before the explanation, and the next explanation builds on it
+      - MUST be in Brazilian Portuguese, for intermediate learners who partly know the idea
+      - The first explanation comes before the first check, and that check applies the comparison to new cases instead of repeating it
       - Telling direct from inverse proportion comes before setting up the rule of three, with an everyday comparison (more workers, fewer days)
       - Worked examples of a direct and an inverse case, each followed by a similar check; numbers must be right
       - Checks name the classic trap of treating an inverse proportion as direct
@@ -605,19 +605,6 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-finalidades-oab-exam-prep",
     userInput: toInput(EXAM_PREP_LESSON),
-  },
-  {
-    expectations: `
-      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
-      - The explanation right after the bicycle check starts from that check's question and its right answer (whose bicycle it is), and never says how the learner answered it: no praise ("você começou pela pergunta certa", "acertou") and no correction, since every learner reads it, including those who picked a wrong option
-      - No explanation or worked example judges an answer the learner gave to an earlier screen
-      - The elements are analyzed in order (tipicidade, then ilicitude, then culpabilidade), with arts. 155, 23, II, 25, 163, 22 and 27 of the Código Penal applied as the briefs say
-      - No screen names the exam, its board or its notice
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-tipicidade-question-first-no-praise",
-    userInput: toInput(QUESTION_FIRST_EXAM_LESSON),
   },
   {
     expectations: `

@@ -8,7 +8,7 @@ type LessonSpecOutput = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 
 export const lessonSpecTask: Task<LessonSpecParams, LessonSpecOutput, LessonSpecExpected> = {
   description:
-    "Plan a lesson before it's written: 1 to 3 skills, a 5 to 12 screen plan with checks, activities, visuals and support mode, split when it doesn't fit",
+    "Plan a lesson before it's written: 1 to 3 skills, a 5 to 12 screen plan with checks, activities and visuals, split when it doesn't fit",
   generate: generateLessonSpec,
   id: "lesson-spec",
   name: "Lesson Spec",

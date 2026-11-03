@@ -312,6 +312,5 @@ export const whyColorsExistLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "explanationFirst",
   title: t("Why colors exist", "Por que as cores existem"),
 };

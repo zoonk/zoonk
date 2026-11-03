@@ -67,6 +67,5 @@ export const SETUP_LESSON_SPEC: LessonSpec = {
       useCase: "Getting ready to run the scripts later chapters use on your own computer.",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Set up Python on Windows",
 };

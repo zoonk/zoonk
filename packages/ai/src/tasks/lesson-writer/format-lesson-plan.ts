@@ -128,7 +128,6 @@ CHAPTER_TITLE: ${context.chapterTitle}
 LESSON_TITLE: ${spec.title}
 LESSON_DESCRIPTION: ${spec.description}
 CAN_DO: ${spec.canDo}
-SUPPORT_MODE: ${spec.supportMode}
 ${formatLessonExams(context.exams)}
 CHAPTER_LESSONS: ${formatChapterLessons(context.chapterLessons)}
 

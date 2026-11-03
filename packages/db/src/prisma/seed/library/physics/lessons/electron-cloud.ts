@@ -369,6 +369,5 @@ export const electronCloudLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("Why doesn't the electron fall in?", "Por que o elétron não cai no núcleo?"),
 };

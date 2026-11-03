@@ -67,7 +67,6 @@ function spec(screens: LessonScreen[]): LessonSpec {
         useCase: "A winter forecast",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Temperatures below zero",
   };
 }

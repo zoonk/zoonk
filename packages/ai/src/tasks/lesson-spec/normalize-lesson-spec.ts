@@ -4,9 +4,7 @@ import {
   type LessonScreenKind,
   type LessonSpec,
   type LessonSpecSkill,
-  type SupportMode,
   estimateLessonMinutes,
-  getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
 /** Skills are numbered from 1 in the order the lesson lists them. */
@@ -23,7 +21,6 @@ export type RawLessonSpec = {
   description: string;
   screens: RawLessonScreen[];
   skills: LessonSpecSkill[];
-  supportMode: SupportMode;
   title: string;
 };
 
@@ -116,8 +113,6 @@ export function normalizeLessonSpec({
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
     screens,
     skills,
-    // The writer builds an explanation on the check before it, so the screen plan decides.
-    supportMode: getSupportModeFromScreens(screens),
     title: toPlainLine(raw.title),
   };
 }

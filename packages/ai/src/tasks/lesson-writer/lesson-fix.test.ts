@@ -57,7 +57,6 @@ function spec(screenCount: number): LessonSpec {
         useCase: "Work.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "A lesson",
   };
 }
