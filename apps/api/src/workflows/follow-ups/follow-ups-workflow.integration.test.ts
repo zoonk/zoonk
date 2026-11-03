@@ -18,7 +18,7 @@ vi.mock("@zoonk/ai/tasks/language/exam-speaking-card", () => ({
   generateExamSpeakingCard: vi.fn(),
 }));
 
-const WAIT = { interval: 200, timeout: 30_000 };
+const WAIT = { interval: 200, timeout: 10_000 };
 
 const CAUSE = {
   correctAnswer: "since",

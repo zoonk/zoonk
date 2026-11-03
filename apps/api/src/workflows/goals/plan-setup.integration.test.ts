@@ -66,8 +66,6 @@ describe("a new plan's routine fit", () => {
   it("makes each model call in a step of its own, so a failed call retries alone", async () => {
     const goal = await plannedGoalWithLargeMemory();
 
-    // No terms, so no text search: steps here share the test's Prisma client (`globalThis.prisma`),
-    // whose raw queries don't take the step bundle's `sql` fragments.
     vi.mocked(generateMemorySearchTerms)
       .mockRejectedValueOnce(new Error("The gateway is down"))
       .mockResolvedValue(taskResult({ terms: [] }) as never);
