@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { type StdioOptions, spawn } from "node:child_process";
 
 const INTERRUPT_EXIT_CODE = 130;
 const TERMINATION_EXIT_CODE = 143;
@@ -42,18 +42,16 @@ export function runForegroundCommand({
   command,
   currentDirectory,
   environment,
+  stdio = "inherit",
 }: {
   args: string[];
   command: string;
   currentDirectory: string;
   environment: NodeJS.ProcessEnv;
+  stdio?: StdioOptions;
 }): Promise<CommandResult> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd: currentDirectory,
-      env: environment,
-      stdio: "inherit",
-    });
+    const child = spawn(command, args, { cwd: currentDirectory, env: environment, stdio });
 
     function forwardSignal(signal: NodeJS.Signals): void {
       if (child.exitCode === null && !child.killed) {
