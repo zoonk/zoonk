@@ -31,20 +31,12 @@ export const WALK_LESSONS: Record<
         {
           activityTemplate: null,
           brief:
-            "Edson encontrou um caranguejo no litoral. Pergunte com qual animal ele deve agrupá-lo pelos traços do corpo: A) caracol-marinho, B) camarão, C) estrela-do-mar, D) peixe, E) água-viva. Revele imediatamente B: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+            "Edson acha um caranguejo e uma estrela-do-mar na mesma poça do litoral, e um amigo diz que os dois são do mesmo grupo porque vivem no mar. Mostre a cena numa figura e termine na pergunta aberta, sem opções: o que decide o grupo de um animal?",
           kind: "hook",
           skills: [],
-          visual: null,
-          visualKind: "none",
-        },
-        {
-          activityTemplate: null,
-          brief:
-            "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
-          kind: "check",
-          skills: [0],
-          visual: null,
-          visualKind: "none",
+          visual:
+            "Edson agachado numa poça de maré entre as rochas, olhando um caranguejo e uma estrela-do-mar lado a lado na água rasa.",
+          visualKind: "picture",
         },
         {
           activityTemplate: null,
@@ -55,6 +47,15 @@ export const WALK_LESSONS: Record<
           visual:
             "Esponja inteira presa a uma rocha, com poros pequenos distribuídos pelo corpo, abertura maior no alto e setas mostrando a entrada e a saída da água.",
           visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Edson olha de novo o caranguejo. Pergunte, sem valer ponto, com qual animal ele deve agrupá-lo pelos traços do corpo: caracol-marinho, camarão, estrela-do-mar ou água-viva. Revele camarão assim que a pessoa escolher: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+          kind: "guess",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: null,
@@ -94,6 +95,15 @@ export const WALK_LESSONS: Record<
           visual:
             "Peixe visto de lado, com contorno do corpo, ossos internos e coluna ao longo das costas destacados.",
           visualKind: "picture",
+        },
+        {
+          activityTemplate: null,
+          brief:
+            "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
+          kind: "check",
+          skills: [0],
+          visual: null,
+          visualKind: "none",
         },
         {
           activityTemplate: "categorize",
