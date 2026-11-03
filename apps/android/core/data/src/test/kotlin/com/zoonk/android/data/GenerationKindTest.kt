@@ -65,4 +65,47 @@ class GenerationKindTest {
         assertEquals(5_000L, progress.phases[1].startedAt)
         assertNull(progress.phases[1].endedAt)
     }
+
+    @Test
+    fun aRunningPhaseKeepsItsStartWhenItsOwnStepReportsLater() {
+        val times =
+            mapOf(
+                "understandGoal" to StepTimes(started = 1_000),
+                "buildSkillGraph" to StepTimes(started = 2_000, completed = 30_000),
+                "saveSkills" to StepTimes(started = 41_000),
+            )
+        val steps =
+            arrayOf("understandGoal" to StepState.Started, "buildSkillGraph" to StepState.Completed, "saveSkills" to StepState.Started)
+
+        val running = GenerationKind.Curriculum.progress(run(*steps, times = times)).phases[2]
+        assertEquals(30_000L, running.startedAt)
+
+        val done =
+            GenerationKind.Curriculum
+                .progress(
+                    run(*steps, "createPlan" to StepState.Completed, times = times + ("createPlan" to StepTimes(completed = 54_000))),
+                ).phases[2]
+        assertEquals(30_000L, done.startedAt)
+        assertEquals(54_000L, done.endedAt)
+    }
+
+    @Test
+    fun theLastPhaseEndsWhenTheRunIsDone() {
+        val progress =
+            GenerationKind.Placement.progress(
+                run(
+                    "buildSkillGraph" to StepState.Completed,
+                    "createPlan" to StepState.Completed,
+                    "goalReady" to StepState.Completed,
+                    times =
+                        mapOf(
+                            "buildSkillGraph" to StepTimes(started = 2_000, completed = 30_000),
+                            "createPlan" to StepTimes(completed = 54_000),
+                            "goalReady" to StepTimes(completed = 90_000),
+                        ),
+                ),
+            )
+        assertEquals(30_000L, progress.phases.last().startedAt)
+        assertEquals(90_000L, progress.phases.last().endedAt)
+    }
 }
