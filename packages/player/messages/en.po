@@ -3707,7 +3707,7 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Your example"
 
-#. Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.
+#. Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.
 #: src/lesson/steps/hook-step.tsx
 msgctxt "AlhfZ4"
 msgid "Just a guess, it doesn't count"

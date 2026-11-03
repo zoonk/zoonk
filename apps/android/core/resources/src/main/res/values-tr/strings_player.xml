@@ -256,7 +256,7 @@
     <string name="player_comes_back_tomorrow">Bu bilgi yarınki tekrarda karşına çıkacak</string>
     <string name="player_comes_back_weekday">Bu bilgi %1$s günü tekrarda karşına çıkacak</string>
     <string name="player_comes_back_date">Bu bilgi %1$s tarihindeki tekrarda karşına çıkacak</string>
-    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">Sadece bir tahmin, puanlanmaz</string>
     <string name="player_answer_options">Cevap seçenekleri</string>
     <string name="player_worked_example">Çözümlü örnek</string>

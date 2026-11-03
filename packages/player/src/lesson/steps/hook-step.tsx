@@ -40,7 +40,7 @@ function HookGuess({
         <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>
           {t({
             description:
-              "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
+              "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.",
             message: "Just a guess, it doesn't count",
           })}
         </LessonEyebrow>

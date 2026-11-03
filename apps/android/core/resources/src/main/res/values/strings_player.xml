@@ -76,7 +76,7 @@
     <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
     <string name="player_comes_back_date">This idea comes back in a review on %1$s</string>
 
-    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">Just a guess, it doesn\'t count</string>
     <string name="player_answer_options">Answer options</string>
     <string name="player_worked_example">Worked example</string>

@@ -255,7 +255,7 @@
     <string name="player_comes_back_tomorrow">この内容は明日の復習にもう一度出てきます</string>
     <string name="player_comes_back_weekday">この内容は%1$sの復習にもう一度出てきます</string>
     <string name="player_comes_back_date">この内容は%1$sの復習にもう一度出てきます</string>
-    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">予想なので、採点されません</string>
     <string name="player_answer_options">選択肢</string>
     <string name="player_worked_example">解き方の例</string>

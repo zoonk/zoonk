@@ -110,7 +110,7 @@ private struct HookStepView: View {
         Text(
           "Just a guess, it doesn't count", tableName: "Player",
           comment:
-            "Chip above the lesson's opening question, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points."
+            "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored."
         )
       } icon: {
         Image(systemName: "sparkles")
