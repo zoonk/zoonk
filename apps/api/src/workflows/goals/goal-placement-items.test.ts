@@ -300,7 +300,7 @@ describe(placementItemsWorkflow, () => {
 
     expect(
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual([undefined, undefined, undefined, undefined]);
+    ).toStrictEqual(["priority", undefined, undefined, undefined]);
 
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
     await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);

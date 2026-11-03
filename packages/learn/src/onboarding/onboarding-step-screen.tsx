@@ -5,6 +5,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { useEffect, useRef } from "react";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
@@ -30,6 +31,37 @@ import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
+
+const PLAN_WAIT_STEPS = new Set<OnboardingStep>(["plan", "schedule"]);
+
+function usePlanWait({
+  recordPlanWait,
+  step,
+}: {
+  recordPlanWait: OnboardingActions["recordPlanWait"];
+  step: OnboardingStep;
+}) {
+  const startedAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!PLAN_WAIT_STEPS.has(step)) {
+      startedAt.current = null;
+    }
+  }, [step]);
+
+  return (isReady: boolean) => {
+    if (!isReady) {
+      startedAt.current ??= Date.now();
+      return;
+    }
+
+    if (startedAt.current !== null) {
+      const milliseconds = Date.now() - startedAt.current;
+      startedAt.current = null;
+      void recordPlanWait(milliseconds);
+    }
+  };
+}
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
@@ -170,6 +202,7 @@ export function OnboardingStepScreen({
 }) {
   const subject = getSubject(view);
   const props = { onAnswer, pending };
+  const onPlanReadyChange = usePlanWait({ recordPlanWait: actions.recordPlanWait, step });
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
@@ -190,7 +223,9 @@ export function OnboardingStepScreen({
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
           onChangeDate={schedule.onChangeDate}
+          onPlanReadyChange={onPlanReadyChange}
           planReadiness={view.planReadiness}
+          readWarmUp={actions.readWarmUp}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
           together={{
@@ -232,6 +267,7 @@ export function OnboardingStepScreen({
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
           isGuest={isGuest}
+          onPlanReadyChange={onPlanReadyChange}
           libraryCourse={
             view.libraryCourse
               ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }

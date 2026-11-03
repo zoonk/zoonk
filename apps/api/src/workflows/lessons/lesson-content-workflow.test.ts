@@ -321,16 +321,21 @@ describe(lessonContentWorkflow, () => {
     ).toStrictEqual([undefined, "flex"]);
   });
 
-  it("pays for priority only when a learner waits on an exam's shared lesson, not on any shared one", async () => {
+  it("plans and writes every lesson a learner waits on at the priority tier", async () => {
     const [anyTopic, exam] = await Promise.all([outlinedLesson(), outlinedLesson()]);
     vi.mocked(writeLessonDraft).mockClear();
+    vi.mocked(generateLessonSpec).mockClear();
 
     await lessonContentWorkflow({ lessonId: anyTopic.id, wait: "learner" });
     await lessonContentWorkflow({ forExam: true, lessonId: exam.id, wait: "learner" });
 
     expect(
+      vi.mocked(generateLessonSpec).mock.calls.map(([params]) => params.serviceTier),
+    ).toStrictEqual(["priority", "priority"]);
+
+    expect(
       vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual([undefined, "priority"]);
+    ).toStrictEqual(["priority", "priority"]);
   });
 
   it("joins the run already writing the lesson and ends with its result", async () => {

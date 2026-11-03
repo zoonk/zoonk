@@ -82,10 +82,9 @@ async function runMain() {
   process.env.MAIN_APP_URL = `http://localhost:${mainPort}`;
 
   const [apiBuilt, mainBuilt] = await Promise.all([
-    run({
-      args: ["--filter", "api", "build:e2e"],
-      environment: { ...process.env, NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
-    }).then(async (built) => markBuilt({ app: "api", built })),
+    run({ args: ["--filter", "api", "build:e2e"] }).then(async (built) =>
+      markBuilt({ app: "api", built }),
+    ),
     buildMain().then(async (built) => markBuilt({ app: "main", built })),
   ]);
 

@@ -229,12 +229,14 @@ internal fun PlayingLesson(
 internal fun LessonFrame(
     title: String?,
     onClose: () -> Unit,
+    modifier: Modifier = Modifier,
     bottomBar: (@Composable () -> Unit)? = null,
     scrolls: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
+        modifier = modifier,
         title = { title?.let { LessonTitle(it) } },
         bottomBar = bottomBar,
     ) { padding ->
@@ -343,5 +345,5 @@ private fun WaitingLesson(
 
     LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
 
-    LessonWaitingScreen(outline, viewModel, exits, readLesson = resource::refresh)
+    LessonWaitingScreen(outline, viewModel, app.warmUps, exits, readLesson = resource::refresh)
 }

@@ -24,8 +24,10 @@ data class GenerationEvent(
     val at: Long? = null,
     val entityId: String? = null,
     val reason: String? = null,
+    val skillName: String? = null,
     val status: String,
     val step: String,
+    val warmUpId: String? = null,
 )
 
 /**

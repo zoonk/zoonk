@@ -31,6 +31,7 @@ type CallEndReason =
   | "learner_ended"
   | "quiet"
   | "time";
+export type WarmUpSurface = "lessonWait" | "placementWait" | "planWait";
 
 /** Keep these property names so existing lesson dashboards continue to work. */
 type LessonEventProperties = { goal_id: string | null; lessonKind: string; lesson_id: string };
@@ -58,6 +59,14 @@ type OnboardingEvents = {
     goal_id: string;
     phases: number;
   };
+  /** `position` is the card's place in the deck, from 1. Both carry `goal_kind` as a shared property. */
+  "Warm-Up Answered": {
+    card_id: string;
+    correct: boolean;
+    position: number;
+    surface: WarmUpSurface;
+  };
+  "Warm-Up Shown": { card_count: number; surface: WarmUpSurface };
 };
 
 type DailyEvents = {

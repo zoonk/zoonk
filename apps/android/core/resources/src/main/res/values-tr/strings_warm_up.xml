@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "warm_up_deck_end": "7ae75eb216092dc8dbeaafb7ea15da1274dfab3a98059916ea76ab3863744aeb",
+  "warm_up_lesson_ready": "1185ac246fb18333ce90aba91911d5d7c9e079e53e633021e118468b176a5c56",
+  "warm_up_next": "d0158be36da63d97113f14bc49b8113e74ada446d12eb642389105ea4004e575",
+  "warm_up_plan_ready": "2421219dd41f631bde1c1c28349cd70d23bfac2ec9d57e739c2648007f79d587",
+  "warm_up_plan_ready_one_question": "389cfece76a0c2ec43f232d6e72f1d6b875a163ea00f53e341fa2a3bc008bc8f",
+  "warm_up_plan_ready_whenever": "ff7f4907ecc4d89abcc91f11995f07fbefaa8fea83519e6e9e3adec05cce750e",
+  "warm_up_questions_ready": "80d27f79fd20716358b60a96ef3ff0c95bf0a248c70f08c70adfcc2054fc9b6f",
+  "warm_up_questions_ready_description": "f7a7dbd8badb51cb07bd6e61c6d46b9bf7d7492f336869bbb4f0d20041187f63",
+  "warm_up_title": "8a8f9663293d16da0df53168f1768d0f5c1c7802e0586517250d634e6db5137a"
+}
+-->
+<resources>
+    <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
+    <string name="warm_up_title">Beklerken tahmin et</string>
+    <!-- Button under a guessed question's answer: shows the next question. -->
+    <string name="warm_up_next">Bir tahmin daha yap</string>
+    <!-- Under the last question's answer: there are no more questions to guess. -->
+    <string name="warm_up_deck_end">Şimdilik bu kadar.</string>
+    <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
+    <string name="warm_up_plan_ready">Planın hazır</string>
+    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
+    <string name="warm_up_plan_ready_one_question">Son bir sorudan sonra planını göreceksin.</string>
+    <!-- Under "Your plan is ready" on the step that shows the plan. -->
+    <string name="warm_up_plan_ready_whenever">Hazır olduğunda planına bakabilirsin.</string>
+    <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
+    <string name="warm_up_questions_ready">Soruların hazır</string>
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">Hazır olduğunda başlayabilirsin.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
+    <string name="warm_up_lesson_ready">Dersin hazır. İstediğin zaman başlayabilirsin.</string>
+</resources>

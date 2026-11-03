@@ -18,6 +18,17 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ \"$CLAUDE_CODE_REMOTE\" != true ] || bash \"$CLAUDE_PROJECT_DIR/scripts/cloud/start.sh\" > /tmp/zoonk-start.log 2>&1 || { echo 'Starting PostgreSQL or preparing the databases failed; the end of /tmp/zoonk-start.log:'; tail -n 20 /tmp/zoonk-start.log; }"
+          }
+        ]
+      }
+    ],
     "WorktreeCreate": [
       {
         "hooks": [

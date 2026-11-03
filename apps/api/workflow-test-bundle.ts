@@ -6,15 +6,16 @@ import { BaseBuilder, createBaseBuilderConfig } from "@workflow/builders";
 const OUT_DIR = join(import.meta.dirname, ".workflow-vitest");
 
 /**
- * `@zoonk/ai` stays an import so a test's `vi.mock` can replace it, and `@zoonk/db` so steps share
- * the test's Prisma runtime: an inlined copy's `sql` fragments fail that client's `instanceof Sql`.
+ * Workspace packages stay imports so steps share the test's copy: its `vi.mock` reaches them, and an
+ * inlined `@zoonk/db`'s `sql` fragments would fail the test's Prisma `instanceof Sql`. Inlined, they
+ * also pull every package they use into a 21 MB bundle that Vite is slow to transform.
  */
 class ApiWorkflowTestBuilder extends BaseBuilder {
   constructor() {
     super({
       ...createBaseBuilderConfig({
         dirs: ["src"],
-        externalPackages: ["@zoonk/ai", "@zoonk/db"],
+        externalPackages: ["@zoonk/*"],
         workingDir: import.meta.dirname,
       }),
       buildTarget: "next",

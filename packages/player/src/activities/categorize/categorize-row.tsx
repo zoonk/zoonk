@@ -1,5 +1,6 @@
 "use client";
 
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +42,9 @@ function CategorizeMoveMenu({
         {otherGroups.map((group) => (
           <DropdownMenuItem key={group.id} onClick={() => onMove(group.id)}>
             <span className="min-w-0">
-              <LessonRichText text={group.label} />
+              <SpokenMath>
+                <LessonRichText text={group.label} />
+              </SpokenMath>
             </span>
           </DropdownMenuItem>
         ))}
@@ -98,7 +101,9 @@ export function CategorizeMoveRow({
           onPointerDown={(event) => event.preventBaseUIHandler()}
         >
           <span className="min-w-0 flex-1">
-            <LessonRichText text={text} />
+            <SpokenMath>
+              <LessonRichText text={text} />
+            </SpokenMath>
           </span>
 
           <ChevronsUpDown aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />

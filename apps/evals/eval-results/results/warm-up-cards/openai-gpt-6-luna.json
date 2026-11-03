@@ -1,0 +1,822 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Card 3 is faulty: capping is an action workers take after honey ripens, not the cue that tells them it is ready. This counts as one inaccurate card and triggers the maximum score of 8. The remaining cards are substantially accurate, with no clear prohibited advice, exact variable figures, or myths presented as facts.",
+          "score": 8,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten cards cover relevant introductory beekeeping ideas, and winter heat generation provides a useful hook. However, card 9 makes the answer obvious through 'day-to-day work' and 'Workers,' triggering the cap of 7. Its two male distractors are also redundant. Basic nectar and worker questions appear after the harder reproduction question, and question shapes are repetitive.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions fit the requested approximate length, all cards have three options, and reveals are short and begin with the answer. However, all three options on card 5 exceed six words, as do one option on card 6 and two on card 10. Several cards therefore break the option-length limit, triggering the cap of 7.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses natural US English and accessible, concrete explanations. Terms such as flight muscles, enzymes, and ventilation are used in understandable contexts. The tone is restrained but approachable, without mixed languages, childish phrasing, exclamation marks, or prohibited introductory expressions.",
+          "score": 9,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3459,
+          "outputTokens": 898,
+          "reasoningTokens": 245
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 3 reverses cause and effect: wax capping does not tell workers that honey is ready to store; workers cap honey after ripening it. The reveal describes the correct sequence but does not fix the question. Card 9 also undermines pretesting by asking which bees do the work while offering 'Workers' against two male options.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Cards 5, 6, and 10 contain options longer than six words. Card 9's 'Drones' and 'Newly hatched males' are effectively duplicate distractors. The order introduces unfertilized-egg development before simpler ideas such as nectar and worker roles, and the questions offer little variation in shape.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Rewrite card 3 to ask what capped cells usually indicate to a beekeeper. Shorten the overlong options, replace card 9 with a less self-answering worker-role question, and place basic colony roles before reproduction. A comparison or numerical question would add useful variety.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English on the first ideas of beekeeping. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (right answer marked ✓):\n1. Why do beekeepers puff smoke into a hive before opening it? To put the bees to sleep / To hide the bees' alarm scent ✓ / To warm up the hive. Smoke masks the alarm scent that guard bees release, so fewer bees join in. Many also fill up on honey, which makes them calmer.\n2. How many eyes does a honey bee have? 2 / 5 ✓ / 8. Five: two big compound eyes on the sides of the head, and three small simple eyes on top that mostly sense light.\n3. Who does almost all the work in a hive: foraging, cleaning and guarding? Male drones / The queen / Female workers ✓. Drones are the males, and their main job is to mate with young queens from other colonies.\n4. A bee doing a \"waggle dance\" in the hive is telling the others… Where to find food ✓ / That the hive is too hot / That the queen has died. The angle points the way relative to the sun, and the length of each waggle says how far to fly.\n5. Where does beeswax come from? Pollen the bees collect / Tree resin / Glands on a worker bee's belly ✓.\n6. Nectar turns into honey mostly by… Mixing with pollen / Losing most of its water ✓ / Fermenting in the comb.\n7. Who lives longer? A summer worker / A queen ✓.\n8. Varroa, a pest every beekeeper learns to check for, is a kind of… Wasp / Mite ✓ / Fungus.\nPenalize myths such as \"bees die after any sting\" or \"smoke puts bees to sleep\" stated as facts, and colony sizes or honey yields given as exact figures.",
+        "id": "en-beekeeping-1",
+        "userInput": { "goal": "Beekeeping", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The marked answers and explanations are accurate in their stated contexts, with no second correct options or prohibited content. The computer context disambiguates \"carpeta\", the adjective explanation acknowledges variation, and the \"ustedes\" usage is explicitly limited to Mexico rather than presented as universal.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten cards cover useful beginner vocabulary and expressions, and \"embarazada\" makes a strong opening hook. However, cards 2 and 7 make their answers apparent from the question, triggering the explicit cap of 7. Question shapes are also repetitive, and the adjective example is not a surprising contrast for Portuguese speakers.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions are single sentences within the approximate length range. Every card has three short options, and reveals begin with the answer, stay within two sentences and the length limit, and avoid feedback about whether the learner guessed correctly.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The instructional language is natural Brazilian Portuguese, and Spanish words and phrases are quoted and correctly written. The tone is accessible and grounded in everyday situations, without prohibited catchphrases, emoji, exclamation marks, or unquoted language mixing.",
+          "score": 10,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3509,
+          "outputTokens": 904,
+          "reasoningTokens": 345
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Cards 2 and 7 give away their answers: card 2 names the computer's document folder before asking what \"carpeta\" means, and card 7 displays \"casa blanca\" before asking where the adjective goes. These weaken the diagnostic value and trigger the pretest score cap of 7.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The deck relies almost entirely on meaning recognition and phrase selection, with only the final card using sentence completion. The adjective-position card offers little surprise for Brazilian beginners because its example follows the same order as Portuguese.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove the translation from card 2's setup and replace card 7 with a genuine Spanish–Portuguese grammar contrast. Add another question shape while retaining the strong opening false friend and the explicitly localized usage note.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese for a Brazilian learning Spanish: false friends and cognates, first words and phrases, one grammar surprise, one usage note. Spanish words in quotes, written as in Spanish; everything else in Brazilian Portuguese. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Em espanhol, \"embarazada\" quer dizer… Envergonhada / Grávida ✓ / Cansada. Para dizer que está envergonhada, use \"avergonzada\".\n2. Se alguém na Espanha diz que a comida está \"exquisita\", essa pessoa achou a comida… Estranha / Deliciosa ✓.\n3. \"Polvo\", em espanhol, é… Povo / O animal de oito braços / Pó ✓. O animal se chama \"pulpo\", e povo é \"pueblo\".\n4. Quem trabalha numa \"oficina\" na Espanha trabalha num… Escritório ✓ / Conserto de carros. Oficina mecânica, em espanhol, é \"taller\".\n5. Uma \"calle larga\" é uma rua… Comprida ✓ / Larga. Para a largura, o espanhol usa \"ancho\".\n6. \"Espera un rato\" quer dizer… Cuidado com o rato / Espera um pouco ✓ / Espera rápido.\n7. \"Me gusta el café\", ao pé da letra, é… Eu gosto do café / O café me agrada ✓. Por isso, no plural, fica \"me gustan los libros\".\n8. \"Apellido\", em espanhol, é… Sobrenome ✓ / Apelido. Apelido, em espanhol, é \"apodo\".\nA false friend must hold in Brazilian Portuguese. Penalize usage that only holds in some Spanish-speaking countries shown as universal (for example \"coger\" as the neutral word for \"pegar\" everywhere), regional slang, and Portugal's Portuguese.",
+        "id": "pt-espanhol-1",
+        "userInput": {
+          "goal": "Espanhol",
+          "kind": "language",
+          "language": "pt",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All ten marked answers and their explanations are substantively correct under the ordinary classroom reading. No card concerns the Enem's own rules or other prohibited factual topics, and the hypothetical discount calculation is not financial advice. Card 3 should explicitly compare asphalt-heavy streets with greener streets under similar conditions to make its claim precise.",
+          "score": 8,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The deck covers relevant introductory concepts across all four areas without repeating an idea or revealing another card's answer. However, cards 2 and 8 substantially cue their answers, and some distractors—especially card 4's claim that everyone thought alike—are weak. The obvious-answer trigger caps this category at 7. Ordering also places series circuits before easier everyday material.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Reveals consistently begin with the answer, explain it briefly, and stay within the length limit. Questions generally meet the character guidance. However, cards 1 and 10 each contain two sentences, and card 4 contains two options exceeding six words. Several cards therefore break the stated limits, triggering the cap of 7.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The Brazilian Portuguese is natural, accessible, and concrete, with correctly formatted reais and no language mixing. The tone is neither childish nor consistently exam-like. However, the exclamation mark in card 1 violates the explicit punctuation restriction, even though it appears in illustrative dialogue.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3588,
+          "outputTokens": 1018,
+          "reasoningTokens": 381
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several cards have weak diagnostic value because the wording or distractors makes the answer too easy to identify. Card 2 contrasts remembering a repeated message with implausible absolute claims; card 4 offers the sweeping claim that everyone thought alike; card 8 strongly cues 'Filtração' through 'filtro'. These weaken the surprising-but-fair beginner pretest.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Cards 1 and 10 use two-sentence questions, and card 4 has two seven-word options. Card 1 includes a prohibited exclamation mark. Card 3 does not specify what the asphalt-heavy streets are warmer than. The deck also gives three cards each to Ciências Humanas and Ciências da Natureza rather than the requested one or two.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use more plausible beginner misconceptions as distractors, open with a stronger conceptual surprise, and move the accessible filtration and discount cards before the more demanding series-circuit card.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese on basic concepts from the Enem's areas (Linguagens, Ciências Humanas, Ciências da Natureza, Matemática), one or two per area. \"Enem\", never \"ENEM\". Amounts in reais written the Brazilian way. The cards don't need to match the hand-checked reference deck below; they should reach its bar: as true, as surprising and as close to what a beginner learns first.\nReference deck (resposta certa marcada com ✓):\n1. Qual parte da célula vegetal faz a fotossíntese? Mitocôndria / Cloroplasto ✓ / Ribossomo.\n2. Um produto de R$ 80 está com 25% de desconto. Quanto você paga? R$ 55 / R$ 60 ✓ / R$ 64.\n3. O que a Lei Áurea, de 1888, fez? Proclamou a República / Declarou a independência / Aboliu a escravidão no Brasil ✓.\n4. Em \"Ele correu tanto que ficou sem fôlego\", a parte \"que ficou sem fôlego\" indica… Consequência ✓ / Causa / Condição.\n5. Por que o gelo boia na água? Tem ar preso dentro / É menos denso que a água líquida ✓ / É mais frio que a água.\n6. Qual bioma cobre a maior parte do território brasileiro? Cerrado / Mata Atlântica / Amazônia ✓.\n7. Num dia de sol, por que uma camiseta preta esquenta mais que uma branca? Absorve mais luz ✓ / Reflete mais luz / Conduz eletricidade.\n8. Uma receita para 4 pessoas usa 3 ovos. Para 8 pessoas, quantos ovos? 6 ✓ / 7 / 12.\nScore accuracy at most 6 when any card is about the Enem itself (dates, number of questions, scoring, the TRI, cutoffs, the essay's rules).",
+        "id": "pt-enem-1",
+        "userInput": {
+          "goal": "Enem",
+          "kind": "exam",
+          "language": "pt",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The marked answers and explanations are correct for the beginner Python situations presented. Each card has one defensible correct option. The deck avoids version-dependent facts, popularity claims, disputed trivia, and prohibited topics.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten cards cover distinct, relevant early Python concepts, and range's excluded endpoint provides a useful opening hook. However, card 3's answer is evident from its premise, triggering the explicit cap of 7. Difficulty progression is uneven, and a few distractors are too unrelated to diagnose realistic misconceptions.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "All cards have three concise options and short, answer-first reveals. Most questions meet the length and sentence requirements. Card 1 has two sentences, and card 7 is noticeably shorter than the requested range; these are localized rather than widespread violations.",
+          "score": 8,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses natural US English and accessible explanations such as 'chopping off the decimal part.' It avoids prohibited catchphrases, exclamation marks, emoji, and childish language. The tone is clear and instructional without becoming excessively formal.",
+          "score": 9,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3111,
+          "outputTokens": 966,
+          "reasoningTokens": 402
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 3 largely gives away its answer: after being told that an item was added to a list, learners only need to identify that the list changed. This weakens its diagnostic value and triggers the pretest category's cap of 7 for an obvious answer.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Card 1 uses two sentences rather than the required single-sentence question. Card 7's question is only 38 characters, below the approximate 50–110-character target. The difficulty order is uneven: negative floor division appears before simpler string iteration and equality comparison.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace card 3 with a short, concrete list-mutation prediction. Move basic equality and string iteration ahead of negative floor division and exception handling. Improve distractors such as 'The loop’s next item' in card 10 so they represent plausible beginner misunderstandings rather than unrelated concepts.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English on what a beginner meets in the first weeks of Python, such as what a variable holds, indentation, lists and their indexes starting at 0, strings, loops, functions, why \"=\" and \"==\" differ. Code fragments may appear in the question or options as plain text, short and exactly right (no Markdown backticks). Penalize version-specific facts (release numbers, \"the newest Python\"), library popularity claims and anything a Python expert would argue about.",
+        "id": "en-python-1",
+        "userInput": { "goal": "Python programming", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Cards 1 and 5 trigger the two-card cap of 6: card 1 has another physically possible answer through multiphoton absorption, and card 5 omits the bound-state restriction needed for its discrete-energy claim. The remaining cards are broadly sound introductory explanations. The deck correctly rejects faster-than-light messaging and the equipment-only account of uncertainty, and includes no prohibited quotations or current-computer claims.",
+          "score": 6,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten-card scope and opening photoelectric-effect hook fit the goal. However, cards 1 and 10 overlap and the earlier reveal supplies the later answer, triggering the cap of 7. Card 5 also closely echoes its answer in the question. Foundational energy concepts appear after more abstract material, weakening easy-before-hard progression.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "All cards use single-sentence questions within the approximate length range, three short options, and concise one- or two-sentence reveals. Each reveal starts with the correct answer and adds an explanation without commenting on the learner's performance.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses correct, natural US English without mixed languages, hype, or childish phrasing. Some explanations remain unnecessarily abstract for beginners, particularly 'intrinsic quantum property' and the unexplained 'fermions.' More everyday wording or concrete connections would better match the requested teaching voice.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3200,
+          "outputTokens": 1400,
+          "reasoningTokens": 745
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two cards need scientific qualification. Card 1 asks what 'could' release electrons, but making light brighter can cause multiphoton photoemission, so higher frequency is not uniquely correct as written. Specify the single-photon regime and an initial frequency below the threshold. Card 5 incorrectly makes discrete energy gains universal: ionization permits a continuum of final electron energies. Restrict it to transitions between bound energy levels. Cards 1 and 10 also test overlapping photon-energy knowledge, and card 1's reveal gives away card 10's answer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The difficulty progression is uneven: uncertainty and entanglement precede simpler energy-level and photon-energy concepts. Card 5's correct option largely restates its question. Card 6 identifies spin only as an 'intrinsic quantum property,' which offers beginners little concrete understanding.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "After fixing the scientific qualifications and overlap, vary the question shapes with a simple comparison or prediction. Give spin a brief connection to angular momentum rather than only explaining what it is not.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English on the first ideas of quantum physics for a beginner, such as quantization of energy, photons, wave-particle duality, the double-slit experiment, superposition, the uncertainty principle, tunneling. Explanations stay true when simplified. Penalize popular myths stated as facts (that observation means a conscious observer, that entanglement sends messages faster than light, that the uncertainty principle is only about clumsy measurement), quotes (\"God does not play dice\", \"nobody understands quantum mechanics\") and claims about the latest quantum computers.",
+        "id": "en-quantum-physics-1",
+        "userInput": { "goal": "Quantum physics", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All ten cards present defensible, stable introductory legal concepts, with a single correct option and consistent explanations. The personality card accurately states the statutory starting point while acknowledging protection of the unborn child's rights. There is no exam logistics content, individualized legal advice, reliance on recent amendments, or prohibited article numbering. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The deck has the appropriate breadth and size, with distinct beginner-level concepts and no answer leakage between cards. However, card 9 effectively gives away its answer through 'de propósito', triggering the cap of 7. Several distractors, especially the two voluntary-payment alternatives in card 7, are too easy to eliminate. Almost every question uses the same sentence-completion shape, and difficulty does not consistently increase.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "All cards have three short options, single-sentence questions within the approximate requested length, and concise one- or two-sentence reveals. Each reveal starts with the correct answer and explains it without judging the learner's response. No prohibited option types or meaningful length violations appear.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The Portuguese is Brazilian and generally correct; conventional legal expressions such as 'habeas corpus' are appropriate terminology, not a language-mixing problem. However, the repeated formal completion stems and statutory phrasing create a predominantly dry, exam-like tone, triggering the cap of 7. 'Posse de propriedade' is also awkward when read as a standalone answer. Some explanations are more accessible, notably 'A separação não é isolamento'.",
+          "score": 7,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3315,
+          "outputTokens": 859,
+          "reasoningTokens": 249
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The pretest sometimes rewards obvious elimination rather than revealing a knowledge gap: card 9 supplies 'de propósito' before asking about conscious intent, and card 7 contrasts a compulsory charge only with voluntary contributions and donations. The repeated completion stems and formal phrasing also make the tone more exam-like than conversational.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use more plausible beginner misconceptions as distractors, vary the question shapes, and place the accessible intent example before technical concepts such as administrative competence and police-power fees. Rephrase 'Posse de propriedade' so the distinction reads naturally even when the answer is displayed independently.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Brazilian Portuguese on basic, stable legal concepts from the OAB exam's subjects (ethics, constitutional, civil, criminal, administrative, labor, tax and procedural law), one or two per subject, such as what a habeas corpus protects, the separation of powers, what a statute of limitations is. Score accuracy at most 6 when a card is about the exam itself (number of questions, pass mark, phases, fees, dates), gives legal advice for someone's own case, or relies on a recent change in a law. Article numbers are fine only for the Constitution's stable, famous ones.",
+        "id": "pt-oab-1",
+        "userInput": {
+          "goal": "Exame de Ordem da OAB",
+          "kind": "exam",
+          "language": "pt",
+          "subjects": [
+            "Ética Profissional",
+            "Direito Constitucional",
+            "Direito Civil",
+            "Direito Penal",
+            "Direito Administrativo",
+            "Direito do Trabalho",
+            "Direito Tributário",
+            "Direito Processual Civil"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Card 2 has a partly valid alternative: a bookstore can also be a place to find a book and read it there. Its wording does not establish a uniquely correct answer, triggering the one-card cap of 8. The remaining marked answers are defensible, and the explanation of \"pants\" appropriately identifies regional variation. No prohibited topic is present.",
+          "score": 8,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten-card deck covers useful beginner material and opens with a strong false-friend hook. However, card 2 is answerable through ordinary Spanish knowledge without knowing any English, and card 9 displays the adjective form it asks about. These answer-exposure weaknesses trigger the cap of 7. Easier greeting material also appears after harder vocabulary, and question shapes have limited variety.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions are single sentences within the approximate length range. Every card has three short options, with no prohibited catch-all answers. Reveals begin with the answer, provide a brief explanation in one or two sentences, and remain within the length limit.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The Spanish is natural and compatible with Mexican usage, including \"carros\", and avoids vosotros, vos, exaggerated enthusiasm, and childish phrasing. However, card 7 presents three unquoted English options. This explicitly triggers the mixed-language cap of 6, even though its reveal quotes those words correctly.",
+          "score": 6,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3184,
+          "outputTokens": 1039,
+          "reasoningTokens": 425
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 7 leaves the English options are, am, and is outside quotation marks, violating the language requirement. Card 2 does not uniquely distinguish a library from a bookstore: someone can also look for a book to read inside a bookstore. It never presents \"library\", so it does not actually test the intended English distinction.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The progression is uneven: the straightforward morning greeting follows the less elementary \"actual\" and \"sensible\" distinctions. Card 9 largely exposes its answer by showing the unchanged adjective in \"two red cars\". Most cards use the same identification shape.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Ask directly what \"library\" means, quote every English option, and move the basic greeting earlier. Test adjective agreement with a blank rather than a completed phrase. Add another question shape where it naturally fits.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in Mexican Spanish (tú, never vosotros or vos) for a Spanish speaker learning English, such as false friends (\"embarrassed\", \"actually\", \"library\", \"carpet\", \"exit\"), first words and phrases, one grammar surprise (adjectives before nouns, \"I am 20 years old\"), one usage note. English words in quotes; everything else in Spanish. Penalize British-only or American-only usage shown as universal, slang, and Spain's Spanish.",
+        "id": "es-english-1",
+        "userInput": {
+          "goal": "Inglés",
+          "kind": "language",
+          "language": "es",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The marked answers are correct, the distractors do not provide alternative correct answers in context, and the reveals agree with their answers. The deck makes no incorrect claim about coffee's origin, exact kanji requirements, or regional dialect, and contains no prohibited subject matter.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The ten cards cover relevant beginner material, and the opening false friend provides a strong hook. However, card 10 makes 'They're okay' obvious through its setup, triggering the maximum score of 7. Most cards use similar meaning-identification shapes, and the progression moves back from counters to a basic expression rather than consistently building difficulty.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Questions are single sentences within the approximate length range. Every card has three short options, and each reveal starts with the answer and stays within the sentence and character limits. No prohibited option forms appear.",
+          "score": 10,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The English is natural, accessible US English with an appropriate conversational tone. However, card 9 includes unquoted Japanese options and an unquoted Japanese reveal opening, triggering the maximum score of 6 for language mixing outside quoted target-language words. Missing romanization also makes several cards less accessible to the intended beginner.",
+          "score": 6,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3145,
+          "outputTokens": 865,
+          "reasoningTokens": 295
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 9 uses unquoted Japanese in all three options and at the start of its reveal. This violates the requirement to keep target-language text quoted and triggers the language category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Romanization is missing where it would materially help an English-speaking beginner, including the opening word, the vocabulary readings, and the counters. Card 10 strongly telegraphs its answer by asking what someone means after being asked whether they are okay. Question shapes also have limited variety.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Keep the opening false-friend hook, but add pronunciation support and arrange later cards in a clearer easy-to-hard progression. Replace card 10's leading context with a fairer situation, and vary the deck with a sentence-completion or comparison question.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "About 10 cards in US English for an English speaker starting Japanese, such as the three scripts (hiragana, katakana, kanji) and what each is for, word order with the verb at the end, particles such as \"は\" and \"を\", politeness with \"です\" and \"ます\", counters, loanwords written in katakana. Japanese words in quotes, in Japanese script with a romanization where it helps. Every card about a word, particle or phrase shows it in its question: score pretest at most 6 when a card asks about \"this word\" without showing it. Penalize regional dialect shown as standard, wrong readings, wrong loanword origins (コーヒー came from Dutch), and claims about how many kanji someone \"needs\" as an exact figure.",
+        "id": "en-japanese-1",
+        "userInput": {
+          "goal": "Japanese",
+          "kind": "language",
+          "language": "en",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Card 4 contains a misleading physical-obstruction premise about smoke, triggering the one-problem-card cap of 8. Its explanation of the consequences of an actually blocked airway is otherwise correct. The other cards are broadly accurate, and none tells learners what to do for an injury or illness or includes prohibited treatment numbers.",
+          "score": 8,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The subjects are relevant to introductory first aid, and the opening CPR card addresses a useful misconception. However, card 4 makes its answer obvious from 'windpipe,' triggering the cap of 7. Card 7's distractors are not credible beginner alternatives, and card 5 substantially gives away card 10's blood-flow-and-oxygen explanation. Question shapes are also repetitive.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "All cards have three options, appropriately sized single-sentence questions, and short answer-first reveals. However, several cards exceed the six-word option limit: examples include 'The amount of oxygen in the blood,' 'The burn instantly removes all blood from the area,' and 'The brain may get too little oxygen-rich blood.' These repeated violations trigger the cap of 7.",
+          "score": 7,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses natural US English and generally clear, accessible explanations without prohibited catchphrases, emoji, or exclamation marks. Some wording is unnecessarily formal, such as 'in first-aid terminology,' and 'The skin keeps producing flames' introduces an isolated silly distractor that weakens the otherwise straightforward teaching tone.",
+          "score": 8,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3158,
+          "outputTokens": 1164,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Card 4 inaccurately groups smoke with food as something that blocks the windpipe. Smoke inhalation can injure airways and cause swelling; smoke itself is not an obstructing object like food. The remaining cards generally provide accurate conceptual education without emergency instructions, treatment advice, or prohibited guideline numbers.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Several options exceed six words, including options in cards 2, 7, 8, and 10. Pretest discrimination is weakened by card 4's obvious windpipe-to-air answer and card 7's implausible distractors. Card 5 also supplies much of the reduced-blood-flow explanation tested again in card 10.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use more varied question shapes and a clearer easy-to-hard progression. Replace absurd distractors with believable beginner misconceptions, and make the blood-loss card test a concept not already explained by the shock card.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cards in US English on first aid that teach how the body works and what standard terms mean (what CPR stands for, why the recovery position keeps the airway open, what a tourniquet does, what shock means), never instructions to follow in an emergency, doses, or treatment advice. Guideline numbers that change between editions (compression rates and depths, ratios) are a never-write. Fewer than 10 cards is fine. Score accuracy at most 6 for any card that tells the learner what to do for an injury or illness.",
+        "id": "en-first-aid-1",
+        "userInput": { "goal": "First aid", "kind": "learn", "language": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The cards stay within stable conceptual tax economics: credits, cascading taxation, destination, regressivity, neutrality, transparency, incidence, tax bases, and preferential treatment. The marked answers and explanations are substantively correct at this introductory level, with no competing correct options. No rates, dates, transition schedules, current legal provisions, or other prohibited changing details appear, so no accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The topics are relevant to beginners, but cards 1 and 9 duplicate the credit mechanism and disclose each other's answer. Cards 6 and 10 also make the answer apparent from the question, triggering the cap of 7. Question shapes are repetitive, several distractors are implausible, and the opening assumes familiarity with inputs and production stages rather than providing the strongest accessible hook.",
+          "score": 7,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Every card has three options and a concise, answer-first reveal of two sentences. Questions generally meet the approximate length requirement; the first is slightly long. Card 2 has one seven-word option, exceeding the explicit six-word limit. These are isolated issues rather than several substantial violations, so the format cap of 7 does not apply.",
+          "score": 8,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses correct Brazilian Portuguese throughout, without mixed languages, emoji, exclamations, or prohibited openings. However, the recurring abstract formulations—such as 'atribuir a arrecadação', 'qual princípio pode estar em jogo' and 'o valor atribuído ao tributo'—produce a predominantly dry, exam-like tone. This triggers the tone cap of 7 despite occasional accessible phrases.",
+          "score": 7,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3250,
+          "outputTokens": 1123,
+          "reasoningTokens": 443
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Cards 1 and 9 test the same tax-credit mechanism, and card 1's reveal supplies card 9's answer. Cards 6 and 10 are largely answerable by restating their questions. These weaknesses reduce diagnostic value and trigger the pretest cap of 7.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Card 2's option 'Cada etapa paga só uma taxa fixa' exceeds the six-word limit. The language is correct Brazilian Portuguese, but the predominantly formal, definition-oriented tone resembles an exam more than an engaging teacher. Several distractors, such as receiving less change or the tax disappearing on resale, are too easy to dismiss.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Remove card 9 rather than retaining a duplicate. Open with a concrete puzzle about who bears a tax or why consumption taxes weigh differently across incomes, then progress toward credits and neutrality. Vary question shapes and replace implausible distractors with recognizable beginner misconceptions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cards in Brazilian Portuguese on the stable concepts behind Brazil's tax reform, such as what a value-added tax is, cumulative versus non-cumulative taxes, taxing at the destination versus the origin, the idea of a dual VAT. Score accuracy at most 6 for any card that states rates, dates, the transition schedule, or details that the laws and regulations may still change. Fewer than 10 cards is fine.",
+        "id": "pt-reforma-tributaria-1",
+        "userInput": { "goal": "Reforma tributária brasileira", "kind": "learn", "language": "pt" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The marked answers and explanations accurately describe the mechanical principles in their ordinary instructional context. The hour-hand ratio is the standard twelve-hour-dial relationship. No fabricated history, doubtful numerical claims, prohibited topics, or genuinely competing correct options appear.",
+          "score": 10,
+          "label": "Accuracy and safe topics",
+          "weight": 40
+        },
+        {
+          "categoryId": "pretest",
+          "reasoning": "The duplicate pendulum-length questions trigger the explicit maximum of 7, with the earlier explanation giving away the later answer. Cards 7 and 10 also overlap substantially around relative hand movement. Numerous implausible distractors make answers too easy to identify without understanding, and placing the fusee before elementary gearing weakens easy-to-hard progression. The topics themselves generally fit introductory mechanical-clock learning.",
+          "score": 6,
+          "label": "Pretest value and deck order",
+          "weight": 25
+        },
+        {
+          "categoryId": "format",
+          "reasoning": "Every card has three options, and the reveals consistently start with the answer and provide a concise explanation. Most questions and options meet the length guidance. The exceptions are card 7’s approximately 126-character question and card 10’s seven-word distractor. These are isolated rather than widespread violations.",
+          "score": 8,
+          "label": "Card format",
+          "weight": 15
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The deck uses natural US English throughout, with accessible descriptions such as 'bit by bit' and 'back and forth.' Technical vocabulary is appropriate to the subject and supported by plain explanations. There are no prohibited catchphrases, emoji, exclamation marks, or language mixing.",
+          "score": 9,
+          "label": "Language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3160,
+          "outputTokens": 909,
+          "reasoningTokens": 302
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Cards 1 and 4 test the same pendulum-length principle, and card 1 directly supplies the reasoning needed for card 4. Several distractors, such as hands’ color and making the case airtight, are implausible even for beginners, weakening the deck as a diagnostic pretest.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Card 7’s question is about 126 characters, exceeding the suggested question length. Card 10 has a seven-word option, exceeding the six-word limit. The difficulty also steps backward: the specialized fusee question precedes elementary hand movement and gearing questions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Trim the duplicate pendulum card and consider consolidating the related hand-motion cards. Use plausible mechanical misconceptions as distractors, and place basic power, gearing, and timekeeping concepts before the fusee question. A shorter deck would be more useful than retaining repetitive cards.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cards in US English on what a beginner restoring antique mechanical clocks learns first, such as the escapement, the pendulum and why its length sets the rate, the mainspring, why old oil must be cleaned off before relubricating, the beat. It's a niche subject, so a short deck of true cards is better than 10 with doubtful ones. Penalize made-up historical dates, makers and exact figures.",
+        "id": "en-antique-clocks-1",
+        "userInput": { "goal": "Restoring antique clocks", "kind": "learn", "language": "en" }
+      }
+    }
+  ],
+  "taskId": "warm-up-cards"
+}

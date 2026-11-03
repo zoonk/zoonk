@@ -29,7 +29,7 @@ Read the whole diff since the work started, then take every row it touches. A on
 
 ## 2. Run the automated checks
 
-Use the [development guide](../../guides/development.md)'s table for the change's checks before a commit: format and lint the touched files (lint after format), typecheck, the affected tests, and the containing suites when the impact is broad. Before a PR, run the full gate the root `AGENTS.md` describes, reading `.github/workflows` for the commands. A check that fails is investigated and fixed, never rerun until green.
+Use the [development guide](../../guides/development.md)'s table for the change's checks before a commit: format and lint the touched files (lint after format), typecheck, the affected tests, and the containing suites when the impact is broad. Before a PR, run them for the whole branch on the final tree; CI runs every suite on the PR ([PR verification gate](../../../AGENTS.md#pr-verification-gate)). A check that fails is investigated and fixed, never rerun until green.
 
 Before introducing or modifying a constant, predicate, formula, schema, or helper, establish its owner and existing implementations:
 

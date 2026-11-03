@@ -1,4 +1,6 @@
+import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { LessonWaiting } from "./lesson-waiting";
 
@@ -10,12 +12,14 @@ export function LessonWaitingView({
   lesson,
   origin,
   waiting,
+  warmUp,
 }: {
   initialRequest: LessonRequest;
   inSession: boolean;
   lesson: LessonOutline;
   origin: string | null;
   waiting: Awaited<ReturnType<typeof getLessonWaitingState>> | null;
+  warmUp: WarmUpDeck | null;
 }) {
   const request: LessonRequest =
     waiting?.status === "ready" && waiting.state.generationId
@@ -23,12 +27,15 @@ export function LessonWaitingView({
       : initialRequest;
 
   return (
-    <LessonWaiting
-      alternative={waiting?.status === "ready" ? waiting.state.alternative : null}
-      exitHref={inSession ? "/today" : (origin ?? "/")}
-      initialRequest={request}
-      key={request.status === "writing" ? request.generationId : request.status}
-      lesson={lesson}
-    />
+    <MainLearnProvider>
+      <LessonWaiting
+        alternative={waiting?.status === "ready" ? waiting.state.alternative : null}
+        exitHref={inSession ? "/today" : (origin ?? "/")}
+        initialRequest={request}
+        key={request.status === "writing" ? request.generationId : request.status}
+        lesson={lesson}
+        warmUp={warmUp}
+      />
+    </MainLearnProvider>
   );
 }

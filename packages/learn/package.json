@@ -47,6 +47,7 @@
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",
     "./generation/run": "./src/generation/generation-run.ts",
+    "./guess-hint": "./src/_components/guess-hint.tsx",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
     "./goal-switcher": "./src/shell/goal-switcher.tsx",
     "./goal-mark": "./src/shell/goal-mark.tsx",
@@ -156,7 +157,10 @@
     "./missions-ring": "./src/buddies/missions-ring.tsx",
     "./tutor-identity": "./src/conversation/tutor-identity.tsx",
     "./upload-request": "./src/research/upload-request-card.tsx",
+    "./verdict-label": "./src/_components/verdict-label.tsx",
     "./visual": "./src/visuals/lesson-visual.tsx",
+    "./warm-up/card": "./src/warm-up/warm-up-card.tsx",
+    "./warm-up/hold": "./src/warm-up/use-ready-hold.ts",
     "./rich-text": "./src/rich-text/rich-text-blocks.tsx",
     "./rich-text/inline": "./src/rich-text/rich-inline-segments.tsx",
     "./rich-text/math": "./src/rich-text/math-markup.ts",
@@ -164,6 +168,7 @@
     "./rich-text/preload-math": "./src/rich-text/use-preload-math.ts",
     "./rich-text/parser": "./src/rich-text/rich-text-parser.ts",
     "./rich-text/speech": "./src/rich-text/use-spoken-text.ts",
+    "./rich-text/spoken-math": "./src/rich-text/spoken-math.tsx",
     "./rich-text/typography": "./src/rich-text/rich-text-typography.ts"
   },
   "scripts": {

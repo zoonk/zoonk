@@ -42,7 +42,7 @@ struct MultilineTextField: View {
 
   /// Return typed at the caret, over a selection or not, rather than a paste that happens to hold
   /// a new line.
-  static func isReturn(from text: String, to typed: String) -> Bool {
+  nonisolated static func isReturn(from text: String, to typed: String) -> Bool {
     let old = Array(text)
     let new = Array(typed)
     let prefix = zip(old, new).prefix { $0 == $1 }.count

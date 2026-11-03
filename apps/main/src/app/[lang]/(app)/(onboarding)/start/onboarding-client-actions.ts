@@ -31,6 +31,7 @@ import {
   getPlacementMockAction,
   getPlanAction,
   joinWaitlistAction,
+  readWarmUpAction,
   startOverAction,
   stopPlacementMockAction,
 } from "./onboarding-actions";
@@ -89,6 +90,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       }
     },
   }),
+  readWarmUp: readWarmUpAction,
   recordPlanWait: (milliseconds) =>
     recordGenerationWaitAction({ contentKind: "curriculum", milliseconds }),
   startOver: startOverAction,

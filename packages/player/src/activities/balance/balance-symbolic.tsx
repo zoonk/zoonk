@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 
 type SymbolicStep = { equation: string; move: string };

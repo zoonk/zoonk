@@ -1,5 +1,6 @@
 "use client";
 
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
+import { WarmUpCard } from "../warm-up/warm-up-card";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -19,6 +21,7 @@ import { useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
+import { useFirstLessonWarmUp } from "./use-first-lesson-warm-up";
 import { useSessionAction } from "./use-session-action";
 
 export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
@@ -245,6 +248,7 @@ export function NextStop({
   notWritten,
   sessionBar,
   tap = null,
+  warmUp = null,
 }: {
   actions: NextStopActions;
   alternative: DayStep | null;
@@ -257,6 +261,7 @@ export function NextStop({
   notWritten: LessonNotWritten | null;
   sessionBar: { completed: number; total: number };
   tap?: NextStopTap | null;
+  warmUp?: WarmUpDeck | null;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -268,6 +273,9 @@ export function NextStop({
   const aside = useSessionQueueAside(queue);
 
   const written = useWrittenWhileWaiting({ actions, block, lesson });
+  const card = useFirstLessonWarmUp({ deck: warmUp, isReady });
+  // The finished wait stays above a card still showing, so the card doesn't move under the learner.
+  const heldWait = written && card !== null;
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
 
   return (
@@ -296,8 +304,18 @@ export function NextStop({
           <NotWritten actions={actions} block={block} reason={notWritten} />
         )}
 
-        {!isReady && !notWritten && (
+        {!notWritten && (!isReady || heldWait) && (
           <Waiting actions={actions} block={block} generationId={generationId} lesson={lesson} />
+        )}
+
+        {!notWritten && card && (
+          <WarmUpCard
+            deck={card.deck}
+            holding={card.hold.status === "hold"}
+            nextOnEnter={!alternative}
+            onGuess={card.hold.onGuess}
+            surface="lessonWait"
+          />
         )}
       </TaskBody>
 

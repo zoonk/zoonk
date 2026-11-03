@@ -1,13 +1,14 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
 import { Prisma, PrismaClient } from "./generated/prisma/client";
+import { getDatabaseUrl } from "./local-database";
 import { createDatabasePool } from "./pool";
 
 declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const pool = createDatabasePool(process.env.DATABASE_URL);
+const pool = createDatabasePool(getDatabaseUrl());
 
 attachDatabasePool(pool);
 
@@ -83,6 +84,7 @@ export type {
   UsageRecord,
   UserLearningProfile,
   UserProgress,
+  WarmUp,
 } from "./generated/prisma/client";
 
 export {

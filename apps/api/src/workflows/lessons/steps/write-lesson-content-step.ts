@@ -73,8 +73,7 @@ async function write({
   lesson: LessonTarget;
 }): Promise<WriteResult> {
   const analytics = toContentAnalytics({ ...input, scope: lesson });
-  const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
-  const serviceTier = chooseServiceTier({ reuse, wait: input.wait ?? "soon" });
+  const serviceTier = chooseServiceTier({ wait: input.wait ?? "soon" });
 
   if (lesson.targetLanguage) {
     const result = await writeLanguageLessonContent({
@@ -103,6 +102,7 @@ async function write({
       : toOutcome(challenge.status);
   }
 
+  const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
   const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
 
   if (result.status === "drafted") {

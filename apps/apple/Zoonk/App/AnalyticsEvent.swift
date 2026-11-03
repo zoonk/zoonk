@@ -23,6 +23,10 @@ enum AnalyticsEvent: Equatable {
     case chapter, course, lesson
   }
 
+  enum WarmUpSurface: String {
+    case planWait, placementWait, lessonWait
+  }
+
   /// A reply gap runs from the learner's microphone going quiet to the next character transcript
   /// arriving: a proxy for the wait the learner heard.
   struct CallEnded: Equatable {
@@ -52,6 +56,9 @@ enum AnalyticsEvent: Equatable {
   case subscriptionCheckoutStarted(BillingPeriod)
   case subscriptionGateShown
   case todayViewed
+  /// `position` counts from 1, the deck's first card.
+  case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
+  case warmUpShown(surface: WarmUpSurface, cardCount: Int)
 
   var name: String {
     switch self {
@@ -69,6 +76,8 @@ enum AnalyticsEvent: Equatable {
     case .subscriptionCheckoutStarted: "Subscription Checkout Started"
     case .subscriptionGateShown: "Subscription Gate Shown"
     case .todayViewed: "Today Viewed"
+    case .warmUpAnswered: "Warm-Up Answered"
+    case .warmUpShown: "Warm-Up Shown"
     }
   }
 
@@ -103,6 +112,10 @@ enum AnalyticsEvent: Equatable {
       ["content_id": contentID, "page": page.rawValue]
     case .subscriptionCheckoutStarted(let billingPeriod):
       ["billingPeriod": billingPeriod.rawValue, "plan": "plus"]
+    case .warmUpAnswered(let surface, let cardID, let position, let correct):
+      ["card_id": cardID, "correct": correct, "position": position, "surface": surface.rawValue]
+    case .warmUpShown(let surface, let cardCount):
+      ["card_count": cardCount, "surface": surface.rawValue]
     case .homeViewed, .logbookViewed, .subscriptionGateShown, .todayViewed:
       [:]
     }

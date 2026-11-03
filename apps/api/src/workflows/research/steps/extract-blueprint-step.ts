@@ -146,10 +146,7 @@ async function extractBlueprintDraftStep({
     throw new FatalError("None of the research sources exist anymore.");
   }
 
-  const serviceTier = chooseServiceTier({
-    reuse: documents.every((document) => document.url) ? "bounded" : "personal",
-    wait: background ? "later" : "learner",
-  });
+  const serviceTier = chooseServiceTier({ wait: background ? "later" : "learner" });
 
   const extractionDocuments = documents.map((document) => ({
     sourceId: document.id,

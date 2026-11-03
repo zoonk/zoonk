@@ -4,6 +4,12 @@ extension View {
   /// Frame data that isn't a screen's content passes `refreshable: false`, so pull to refresh stays
   /// with the screens.
   func loads(_ resources: any CachedResource..., refreshable: Bool = true) -> some View {
+    loads(resources, refreshable: refreshable)
+  }
+
+  /// For resources a screen learns about while it shows, such as a deck its run names: the list
+  /// changes without changing the view.
+  func loads(_ resources: [any CachedResource], refreshable: Bool = true) -> some View {
     modifier(ResourceLoading(resources: resources, refreshable: refreshable))
   }
 }

@@ -176,6 +176,8 @@ export function PlacementStep({
 
   const [buildFailed, setBuildFailed] = useState(false);
   const [answerFailed, setAnswerFailed] = useState(false);
+  // Questions that arrived while the learner waited show once the wait moves on.
+  const [questionsReady, setQuestionsReady] = useState<ReadyOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
 
@@ -201,13 +203,13 @@ export function PlacementStep({
     }
 
     if (outcome.status === "ready") {
-      showReady(outcome);
+      setQuestionsReady(outcome);
     }
   };
 
   // A run that failed or never started pauses checking until its "Try again" starts it over.
   const poll = usePoll({
-    active: phase.kind === "waiting" && !isRunStopped(run),
+    active: phase.kind === "waiting" && questionsReady === null && !isRunStopped(run),
     intervalMs: POLL_MS,
     onPoll: async () => show(await actions.getPlacement(goalId)),
   });
@@ -258,8 +260,16 @@ export function PlacementStep({
       return (
         <PlacementWaiting
           buildFailed={buildFailed}
+          onQuestions={() => {
+            if (questionsReady) {
+              setQuestionsReady(null);
+              showReady(questionsReady);
+            }
+          }}
           onSkip={() => finish(false)}
           poll={poll}
+          questionsReady={questionsReady !== null}
+          readWarmUp={actions.readWarmUp}
           run={run}
           skipping={isPending}
         />
