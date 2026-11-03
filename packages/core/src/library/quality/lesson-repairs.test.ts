@@ -15,6 +15,18 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
   };
 }
 
+function explanationOf(text: string): WrittenScreen {
+  return {
+    exampleLineIdea: null,
+    explore: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "An idea",
+    visual: null,
+  };
+}
+
 describe(repairWrittenLesson, () => {
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
     const sentence = "The balance ends at $ -12,34 after the refund.";
@@ -133,6 +145,46 @@ describe(repairWrittenLesson, () => {
 
     expect(withRealCents.screens[0]).toMatchObject({
       text: `${sentence}\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.600 |`,
+    });
+  });
+
+  it("leaves an activity's program and expected output as written, repairing only its prose", () => {
+    const fields = {
+      editableLines: [2],
+      expectedOutput: "$2400.00",
+      language: "python",
+      solution: 'price = 2400\nprint("$" + format(price, ".2f"))',
+      starterCode: "price = 2400\nprint(price)",
+    };
+
+    const exercise: WrittenScreen = {
+      content: JSON.stringify({
+        check: {
+          explanation: "Rent is $2400 a month, so show it with two decimals.",
+          kind: "interaction",
+        },
+        fields,
+      }),
+      kind: "activity",
+      template: "codeRunner",
+    };
+
+    const [, repaired] = repairWrittenLesson({
+      language: "en",
+      lesson: {
+        screens: [explanationOf("The flat costs $3,000.00 a month."), exercise],
+        summary: hubMap(["Format money with two decimals."]),
+      },
+    }).screens;
+
+    const content: unknown = JSON.parse(repaired?.kind === "activity" ? repaired.content : "{}");
+
+    expect(content).toStrictEqual({
+      check: {
+        explanation: "Rent is $2,400 a month, so show it with two decimals.",
+        kind: "interaction",
+      },
+      fields,
     });
   });
 

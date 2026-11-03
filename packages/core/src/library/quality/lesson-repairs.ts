@@ -3,7 +3,12 @@ import { createMoneyNotationRepair } from "@zoonk/utils/money-notation";
 import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import { getScreenTexts, mapScreenTexts } from "./_utils/screen-texts";
+import {
+  getActivityProse,
+  getScreenTexts,
+  mapActivityProse,
+  mapScreenTexts,
+} from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
@@ -13,7 +18,7 @@ function readLessonTexts(lesson: WrittenLesson): string[] {
   return [
     ...lesson.screens.flatMap((screen) =>
       screen.kind === "activity"
-        ? [screen.content]
+        ? getActivityProse(screen.content)
         : getScreenTexts(screen).map(({ text }) => text),
     ),
     ...lesson.summary.ideas.map((idea) => idea.text),
@@ -22,7 +27,7 @@ function readLessonTexts(lesson: WrittenLesson): string[] {
 
 function repairScreenText(screen: WrittenScreen, repairMoney: TextRepair): WrittenScreen {
   if (screen.kind === "activity") {
-    return { ...screen, content: repairMoney(screen.content) };
+    return { ...screen, content: mapActivityProse(screen.content, repairMoney) };
   }
 
   return mapScreenTexts(screen, ({ layout, text }) =>
