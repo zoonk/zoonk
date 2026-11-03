@@ -1,7 +1,7 @@
 import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { getAppLocale } from "@/i18n/locale";
-import { withCatalogOrigin } from "@/lib/public/public-hrefs";
+import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
@@ -137,10 +137,7 @@ export function FirstQuestion({
   return (
     <LessonProgressSwitch
       continueLesson={
-        <ContinueLesson
-          href={withCatalogOrigin(props.playerPath, props.origin)}
-          secondary={secondary}
-        />
+        <ContinueLesson href={withOrigin(props.playerPath, props.origin)} secondary={secondary} />
       }
       question={<QuestionScreen {...props} />}
     />

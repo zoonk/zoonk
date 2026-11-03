@@ -290,6 +290,12 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     status == .completed || status == .skipped
   }
 
+  /// The lesson a finished row opens again, outside the session. A skipped lesson comes back in
+  /// the plan, and finished review, practice or challenge work was made for its day.
+  var lessonToReopen: String? {
+    status == .completed && kind == .learn ? lessonId : nil
+  }
+
   /// Mirrors main's `getBlockKind`.
   var learnKind: LearnKind {
     if checkpoint?.mock == true {

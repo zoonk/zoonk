@@ -97,6 +97,7 @@ describe(orderLessonOpening, () => {
     const resumed = lessonPlayerReducer(start, {
       answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "missing" }],
       hyperdrive: { knownStepIds: [], streak: 0 },
+      replay: false,
       runId: "run",
       startedAt: STARTED_AT,
       type: "runStarted",

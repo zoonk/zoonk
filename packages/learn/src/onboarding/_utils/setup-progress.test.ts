@@ -40,4 +40,34 @@ describe(getSetupProgress, () => {
       ).toBeNull();
     }
   });
+
+  it("keeps an earlier question's place when a later screen opens it again", () => {
+    expect(
+      getSetupProgress({
+        current: "targetDate",
+        history: ["purpose", "targetDate", "level", "schedule"],
+        view: { steps: ["schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 1, total: 4 });
+  });
+
+  it("adds a question the learner never saw before the screen that opened it", () => {
+    expect(
+      getSetupProgress({
+        current: "targetDate",
+        history: ["target", "level", "schedule"],
+        view: { steps: ["schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 2, total: 4 });
+  });
+
+  it("keeps a question's place when the plan asks it again", () => {
+    expect(
+      getSetupProgress({
+        current: "targetDate",
+        history: ["purpose", "targetDate", "level", "schedule"],
+        view: { steps: ["targetDate", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 1, total: 4 });
+  });
 });

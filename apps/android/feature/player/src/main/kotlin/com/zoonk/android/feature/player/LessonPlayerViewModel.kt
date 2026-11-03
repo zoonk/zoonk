@@ -170,7 +170,7 @@ class LessonPlayerViewModel(
     private val choices: TodayChoices,
     private val drafts: DraftStore,
     private val sessionSteps: SessionSteps? = null,
-    private val isGuest: () -> Boolean = { false },
+    private val endsAsGuest: () -> Boolean = { false },
     private val activeGoalId: () -> String? = { null },
     private val lessonStarted: Resource<Boolean>? = null,
     private val chapters: GoalContentStore? = null,
@@ -200,6 +200,7 @@ class LessonPlayerViewModel(
 
     private var lesson: PlayableLesson? = null
     private var openedAt = 0L
+    private var replay = false
     private var owner = sessions.current
     private var work = openScope()
     private var starting: Job? = null
@@ -485,6 +486,7 @@ class LessonPlayerViewModel(
                     is StartOutcome.Started -> {
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
+                        replay = outcome.run.replay
                         mutableState.value = state
                         work.launch { followLatePictures() }
                     }
@@ -753,8 +755,8 @@ class LessonPlayerViewModel(
     }
 
     /**
-     * A guest outside a session ends with where the lesson fits and "Build my plan"; a chapter's
-     * lesson with its next one.
+     * A guest's lesson from the catalog ([endsAsGuest]) ends with where it fits and "Build my plan"; a chapter's
+     * lesson with its next one, unless the learner had already finished it and came back to review.
      */
     private suspend fun readEnding() {
         val session = owner ?: return
@@ -763,13 +765,13 @@ class LessonPlayerViewModel(
 
         val ending =
             try {
-                if (isGuest()) {
+                if (endsAsGuest()) {
                     LessonEnding(guest = true, fit = store.api.fit(session, lessonId))
                 } else {
-                    LessonEnding(nextLessonId = lesson?.chapterId?.let { nextLessonIn(it) })
+                    LessonEnding(nextLessonId = lesson?.chapterId?.takeUnless { replay }?.let { nextLessonIn(it) })
                 }
             } catch (e: ApiException) {
-                LessonEnding(guest = isGuest())
+                LessonEnding(guest = endsAsGuest())
             }
 
         if (sessions.current == session) mutableEnding.value = ending

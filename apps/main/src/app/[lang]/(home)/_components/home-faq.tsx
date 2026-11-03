@@ -98,14 +98,14 @@ export async function HomeFaq() {
     {
       answer: t({
         description:
-          "{exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva sua meta do seu jeito.”",
+          "{exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”",
         message:
           "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words.",
         values: { exam: exam.name },
       }),
       id: "goals",
       question: t({
-        description: "In Brazilian Portuguese: “Quais provas e metas dá para estudar?”",
+        description: "In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”",
         message: "Which exams and goals can I study for?",
       }),
     },
@@ -116,7 +116,7 @@ export async function HomeFaq() {
       <div
         className={cn(
           PUBLIC_CONTAINER_CLASS,
-          "grid grid-cols-1 gap-8 py-22 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-20 lg:py-34",
+          "grid grid-cols-1 gap-8 py-26 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-20 lg:py-36",
         )}
       >
         <div>

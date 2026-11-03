@@ -65,6 +65,8 @@
     "./checkpoints/rules": "./src/checkpoints/checkpoint-rules.ts",
     "./checkpoints/weekly-challenge": "./src/checkpoints/get-weekly-challenge.ts",
     "./checkpoints/weekly-challenge-rules": "./src/checkpoints/weekly-challenge-rules.ts",
+    "./completed-lessons/contract": "./src/completed-lessons/contract.ts",
+    "./completed-lessons/list-current-user": "./src/completed-lessons/list-current-user-completed-lessons.ts",
     "./courses/count-catalog": "./src/courses/count-catalog-courses.ts",
     "./courses/get-by-slug": "./src/courses/get-course-by-slug.ts",
     "./courses/get-detail": "./src/courses/get-course-detail.ts",

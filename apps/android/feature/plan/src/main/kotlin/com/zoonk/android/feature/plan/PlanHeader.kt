@@ -5,7 +5,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
@@ -37,6 +36,7 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -56,9 +56,13 @@ internal fun PlanHeader(
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PlanEyebrow(page)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            PlanTitle(Modifier.weight(1f))
-            onAdjust?.let { FilledTonalButton(onClick = it) { Text(stringResource(R.string.plan_adjust_plan)) } }
+        PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
+            onAdjust?.let {
+                FilledTonalButton(
+                    onClick = it,
+                    Modifier.weight(1f, fill = false),
+                ) { Text(stringResource(R.string.plan_adjust_plan)) }
+            }
             PlanMenu(page, links, resume, isSaving, onSetStatus, report)
         }
     }

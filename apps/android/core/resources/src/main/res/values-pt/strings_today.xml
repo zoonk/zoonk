@@ -19,6 +19,7 @@
   "today_coming_stalled": "ba66ac667319ed42cbe32b34d152a09c279dffaeaf0e09269454bb1ce7973b8e",
   "today_coming_title": "6b1b44d52bcf8d2f00190147263f74adc5b125b56183b72d9d148dfd9bb168cd",
   "today_coming_writing": "d736ac609099c7c93ff0ebcdf11826bccfa5eda4d9dedcfa400c3c9e770e6359",
+  "today_completed_lessons_detail": "1971a380fd6ead728fa1b62ec1bf2f35ae1b507dea382e1a0ff51427fc957e5c",
   "today_connection_lost": "981ea8faf68816c2ae574e0fcb21ab7806fbe154438d00eadebb35433622c2c7",
   "today_connection_lost_detail": "1c4341888c592eb8beedf126e0683724c8b2fea813f7c14a71145bfe0efbcaf9",
   "today_continue_explanation": "d57d8cc08f0fb1fc35619d4794e72f8e02b434b83618727665c7f7277466c556",
@@ -418,6 +419,8 @@
     <string name="today_practice_anytime">Pratique quando quiser</string>
     <string name="today_mistakes_notebook">Caderno de erros</string>
     <string name="today_mistakes_redo">Refaça o que você errou</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Volte a qualquer aula que você já concluiu</string>
     <string name="today_mistakes_return_tomorrow">Os erros de hoje voltam amanhã</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d para praticar</item>

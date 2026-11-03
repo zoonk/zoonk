@@ -26,6 +26,9 @@ internal class FakeTutorApi : TutorApi {
     /** Holds the next thread read until it completes. */
     var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
 
+    /** Holds every ask until it completes. */
+    var askGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+
     override suspend fun thread(
         key: TutorThreadKey,
         cursor: String?,
@@ -46,6 +49,7 @@ internal class FakeTutorApi : TutorApi {
         session: AuthenticatedSession,
     ): AskedQuestion {
         asked += Ask(question, requestId, scope, suggestion)
+        askGate?.await()
         refusal?.let { throw it }
         return AskedQuestion(turn("q${asked.size}", TutorTurn.Status.Pending, null, question, scope.about), null)
     }
@@ -69,17 +73,3 @@ fun turn(
     about: TutorTurn.About = TutorTurn.About.Plan,
     toolOffer: TutorToolOffer? = null,
 ) = TutorTurn(id, question, answer, status, Instant.parse("2026-10-28T12:00:00Z"), about, toolOffer = toolOffer)
-
-/** What the server labels a question asked in [this] scope. */
-private val TutorScope.about: TutorTurn.About
-    get() =
-        when (this) {
-            is TutorScope.Plan -> TutorTurn.About.Plan
-            is TutorScope.Subject -> TutorTurn.About.Subject
-            is TutorScope.Chapter -> TutorTurn.About.Chapter
-            is TutorScope.Mock -> TutorTurn.About.Mock
-            is TutorScope.Lesson -> TutorTurn.About.Lesson
-            is TutorScope.Step -> TutorTurn.About.Step
-            is TutorScope.Answer -> TutorTurn.About.Answer
-            is TutorScope.Item -> if (answered) TutorTurn.About.Answer else TutorTurn.About.Item
-        }

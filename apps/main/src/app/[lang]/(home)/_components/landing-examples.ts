@@ -1,56 +1,21 @@
 import { getCourseExamDaysByRoute } from "@zoonk/core/catalog/course-exam-days-by-route";
-import { addIsoDays, daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getIsoDay } from "@zoonk/utils/calendar-day";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { lang } from "next/root-params";
-import { cache } from "react";
 import { type ExamExample, type ExampleSet } from "./example-set";
-import { de } from "./example-sets/de";
-import { en } from "./example-sets/en";
-import { es } from "./example-sets/es";
-import { fr } from "./example-sets/fr";
-import { it } from "./example-sets/it";
-import { ja } from "./example-sets/ja";
-import { ko } from "./example-sets/ko";
-import { pl } from "./example-sets/pl";
-import { pt } from "./example-sets/pt";
-import { tr } from "./example-sets/tr";
+import { getLocaleExampleSet } from "./locale-example-sets";
 import { getNextSitting } from "./next-sitting";
 
-export const EXAMPLE_GOALS = ["exam", "move", "job"] as const;
-
-export type ExampleGoal = (typeof EXAMPLE_GOALS)[number];
-
-export const DEFAULT_EXAMPLE_GOAL: ExampleGoal = "exam";
-
-export const GOAL_SWITCH = "landing-goal";
-
-const EXAMPLE_SETS: Record<SupportedLocale, ExampleSet> = {
-  de,
-  en,
-  es,
-  fr,
-  it,
-  ja,
-  ko,
-  pl,
-  pt,
-  tr,
-};
-
 export async function getExampleSet(): Promise<ExampleSet> {
-  return EXAMPLE_SETS[getSupportedLocaleFromLanguage(await lang())];
+  return getLocaleExampleSet(getSupportedLocaleFromLanguage(await lang()));
 }
 
 /** Noon UTC is the same day in every time zone. */
 function exampleDay(isoDate: string): Date {
   return new Date(`${isoDate}T12:00:00Z`);
 }
-
-/** Example dates are written as if this were today and move with the real calendar, so no day shown is already gone. */
-const AUTHORED_TODAY = "2026-10-13";
 
 type ExampleDays = { examDay: string | null; today: string };
 
@@ -79,32 +44,10 @@ async function getExampleDays({ course, timeZone }: ExamExample): Promise<Exampl
   }
 }
 
-type ExampleCalendar = { examDay: Date; shift: (isoDate: string) => Date; today: Date };
-
-export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
+/** The exam example's next sitting, so the goal box never suggests a date that's gone. */
+export async function getExampleExamDay(): Promise<Date> {
   const { exam } = await getExampleSet();
   const { examDay, today } = await getExampleDays(exam);
-  const offset = daysBetweenIsoDays({ from: AUTHORED_TODAY, to: today });
 
-  return {
-    examDay: exampleDay(examDay ?? getNextSitting({ sittings: exam.sittings, today })),
-    shift: (isoDate) => exampleDay(addIsoDays({ day: isoDate, days: offset })),
-    today: exampleDay(today),
-  };
-});
-
-const JOB_GOAL_DATE = "2027-06-10";
-
-export function addDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * MS_PER_DAY);
-}
-
-export function getGoalDate({
-  calendar,
-  goal,
-}: {
-  calendar: ExampleCalendar;
-  goal: "exam" | "job";
-}): Date {
-  return goal === "exam" ? calendar.examDay : calendar.shift(JOB_GOAL_DATE);
+  return exampleDay(examDay ?? getNextSitting({ sittings: exam.sittings, today }));
 }

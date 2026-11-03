@@ -291,19 +291,8 @@ private fun LevelTile(
 private fun ScoreTrend(score: CurrentUserScoreResponseScore?) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // As tall as the patterns' "See all" beside it, so the two headers line up.
-        Row(
-            Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            SectionHeader(stringResource(R.string.stats_score_90), Modifier.weight(1f))
-            score?.let {
-                Text(
-                    metricPercent(it.score, currentLocale()),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-                )
-            }
+        Box(Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current), contentAlignment = Alignment.CenterStart) {
+            SectionHeader(stringResource(R.string.stats_score_90), detail = score?.let { metricPercent(it.score, currentLocale()) })
         }
 
         if (score == null) StatsLine(stringResource(R.string.stats_score_after_answers)) else ScoreChart(score)
@@ -320,8 +309,7 @@ private fun PatternsOverview(
     val spread = patterns?.weekSpread?.let { stringResource(R.string.stats_range, percent(it.low, locale), percent(it.high, locale)) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            SectionHeader(stringResource(R.string.stats_patterns_90), Modifier.weight(1f))
+        SectionHeader(stringResource(R.string.stats_patterns_90)) {
             TextButton(onClick = { context.open(StatsPage.Patterns) }) { Text(stringResource(R.string.stats_see_all)) }
         }
 

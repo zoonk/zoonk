@@ -166,6 +166,7 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
       .filter((answer) => Date.parse(answer.answeredAt) < startedAt)
       .map((answer) => answer.stepId),
     hyperdrive: action.hyperdrive,
+    replay: action.replay,
     runId: action.runId,
     status: "started" as const,
   };

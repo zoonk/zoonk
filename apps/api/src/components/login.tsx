@@ -35,8 +35,12 @@ export function LoginTitle({ children, className }: React.ComponentProps<"h1">) 
   );
 }
 
-export function LoginDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
+export function LoginDescription({ children, className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p className={cn("text-muted-foreground text-sm text-balance", className)} {...props}>
+      {children}
+    </p>
+  );
 }
 
 export function LoginDivider({ children, className }: React.ComponentProps<"div">) {

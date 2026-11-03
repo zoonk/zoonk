@@ -115,7 +115,7 @@ class FakeLessonPlayerApi(
         return ApiJson.decodeFromString(
             """
             {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "startedAt":"2026-10-28T10:00:00Z","support":null}
+             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":null}
             """.trimIndent(),
         )
     }

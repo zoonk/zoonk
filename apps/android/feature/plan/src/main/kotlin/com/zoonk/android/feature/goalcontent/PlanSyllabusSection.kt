@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -68,13 +69,8 @@ fun PlanSyllabusSection(
                 )
                 Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.weight(1f))
-                    Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.padding(horizontal = PAGE_PADDING)) {
+                    FlowRow(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
                         LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
                         LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))

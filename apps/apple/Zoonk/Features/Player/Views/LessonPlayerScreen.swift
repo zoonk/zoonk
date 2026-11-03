@@ -288,7 +288,7 @@ private struct LessonPlayerContent: View {
   }
 
   private var guestEnding: LessonGuestEnding? {
-    guard store.isGuest, store.studySessionId == nil, let lesson = store.lesson else {
+    guard store.endsAsGuest, let lesson = store.lesson else {
       return nil
     }
 

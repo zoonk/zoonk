@@ -2,6 +2,7 @@ import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contra
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
+import { type LessonQuestionState } from "./lesson-question-state";
 
 function sortQuestions(questions: LessonQuestionResource[]) {
   return questions.toSorted(
@@ -108,6 +109,13 @@ function getLatestQuestion({
   }
 
   return latest;
+}
+
+export function endQuestionCreate({
+  creating,
+  draft,
+}: Pick<LessonQuestionState, "creating" | "draft">) {
+  return { creating: null, draft: draft || (creating?.draft ?? "") };
 }
 
 export function isSameDraftContext({

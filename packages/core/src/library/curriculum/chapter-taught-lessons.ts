@@ -27,7 +27,9 @@ export function compareCourseOrder(a: CourseOrder, b: CourseOrder): number {
   return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 }
 
-type ChapterTaughtLesson = PlannerLesson & { chapterId: string; order: CourseOrder };
+export type CourseOrderedLesson = PlannerLesson & { order: CourseOrder };
+
+type ChapterTaughtLesson = CourseOrderedLesson & { chapterId: string };
 
 export async function loadChapterTaughtLessons({
   skillCourses = new Map(),
@@ -41,7 +43,7 @@ export async function loadChapterTaughtLessons({
   userId: string | null;
   withChallenges: boolean;
   withToolChapters: boolean;
-}): Promise<PlannerLesson[]> {
+}): Promise<ChapterTaughtLesson[]> {
   const visible = libraryRowsVisibleTo(userId);
 
   const rows = await prisma.chapterSkill.findMany({
@@ -102,49 +104,42 @@ export async function loadChapterTaughtLessons({
     }));
   });
 
-  return lessons
-    .toSorted(
-      (a, b) =>
-        compareCourseOrder(a.order, b.order) ||
-        a.chapterId.localeCompare(b.chapterId) ||
-        a.lessonId.localeCompare(b.lessonId),
-    )
-    .map((lesson) => ({
-      band: lesson.band,
-      chapterId: lesson.chapterId,
-      lessonId: lesson.lessonId,
-      minutes: lesson.minutes,
-      skillIds: lesson.skillIds,
-      title: lesson.title,
-    }));
+  return lessons.toSorted(
+    (a, b) =>
+      compareCourseOrder(a.order, b.order) ||
+      a.chapterId.localeCompare(b.chapterId) ||
+      a.lessonId.localeCompare(b.lessonId),
+  );
 }
 
 export function mergePlannerLessons({
   chapterTaught,
   taught,
 }: {
-  chapterTaught: readonly PlannerLesson[];
-  taught: readonly PlannerLesson[];
+  chapterTaught: readonly CourseOrderedLesson[];
+  taught: readonly CourseOrderedLesson[];
 }): PlannerLesson[] {
-  const taggedChapters = new Map<string, string | null>();
+  const taggedPlaces = new Map<string, CourseOrderedLesson>();
 
   for (const lesson of chapterTaught) {
-    if (!taggedChapters.has(lesson.lessonId)) {
-      taggedChapters.set(lesson.lessonId, lesson.chapterId);
+    if (!taggedPlaces.has(lesson.lessonId)) {
+      taggedPlaces.set(lesson.lessonId, lesson);
     }
   }
 
   const merged = [...taught, ...chapterTaught].reduce((byId, lesson) => {
     const existing = byId.get(lesson.lessonId);
-    const chapterId = taggedChapters.get(lesson.lessonId) ?? lesson.chapterId;
+    const place = taggedPlaces.get(lesson.lessonId) ?? lesson;
 
     return byId.set(
       lesson.lessonId,
       existing
         ? { ...existing, skillIds: [...new Set([...existing.skillIds, ...lesson.skillIds])] }
-        : { ...lesson, chapterId },
+        : { ...lesson, chapterId: place.chapterId, order: place.order },
     );
-  }, new Map<string, PlannerLesson>());
+  }, new Map<string, CourseOrderedLesson>());
 
-  return [...merged.values()];
+  return [...merged.values()]
+    .toSorted((a, b) => compareCourseOrder(a.order, b.order))
+    .map(({ order: _order, ...lesson }) => lesson);
 }

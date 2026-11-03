@@ -51,6 +51,7 @@
   "load_failed_try_again": "fcf4e2a3446679a6aee46830a337f7c483876aab3a300142110336633923dca5",
   "navigation_back": "612c1236cfb72db287ccfc6641f5a3eab287af4493e6b279b21e001250f746fc",
   "navigation_buddy": "845354b26596c0b96604dd4c00bb010be10c1fd2648084cdf8f627f5421a3ef1",
+  "navigation_completed_lessons": "d17a5666a7f7994b01466416fa3a28b57e5cbb493f84921c62f994dcc3e7c4ba",
   "navigation_exam": "ac95c0d56fd0c9cc4630e504c887c710071adeeff29f24e6e7a1001bee49fd3a",
   "navigation_mind_maps": "b1055fb3d20c40e9279c9fa8b6ea86e4c107efe0898763f966e76ce32ec0fa8b",
   "navigation_mistakes": "1f57824caf03c70d707a0fc8563eb96d89bd6c5f2d89f591bfccad8fba00a818",
@@ -78,6 +79,8 @@
     <string name="navigation_buddy">짝꿍</string>
     <string name="navigation_study">학습</string>
     <string name="navigation_mistakes">오답 노트</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">완료한 레슨</string>
     <string name="navigation_exam">시험</string>
     <string name="navigation_speaking">말하기</string>
     <string name="navigation_mind_maps">마인드맵</string>

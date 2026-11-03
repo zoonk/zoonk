@@ -24,6 +24,7 @@
     "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",
     "./lib/*": "./src/lib/*.ts",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
+    "./patterns/links/pending": "./src/patterns/links/pending-link.tsx",
     "./turbopack": "./src/turbopack.ts"
   },
   "scripts": {

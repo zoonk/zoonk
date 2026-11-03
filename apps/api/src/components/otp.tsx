@@ -7,6 +7,7 @@ import {
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -37,6 +38,10 @@ export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
 
 export function OTPDescription({ children, className }: React.ComponentProps<"p">) {
   return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
+}
+
+export function OTPDescriptionSkeleton() {
+  return <Skeleton className="h-5 w-60 max-w-full rounded-md" />;
 }
 
 export function OTPForm({ children, className, ...props }: React.ComponentProps<"form">) {
@@ -74,6 +79,30 @@ function keepDigits(text: string) {
 }
 
 export const OTP_LENGTH = 6;
+
+function OTPGroupSkeleton() {
+  return (
+    <div className="flex gap-2">
+      <Skeleton className="h-13 w-12 rounded-lg" />
+      <Skeleton className="h-13 w-12 rounded-lg" />
+      <Skeleton className="h-13 w-12 rounded-lg" />
+    </div>
+  );
+}
+
+export function OTPFormSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex w-full flex-col items-center gap-4">
+      <div className="flex justify-center gap-3">
+        <OTPGroupSkeleton />
+        <OTPGroupSkeleton />
+      </div>
+
+      <Skeleton className="h-11 w-full rounded-lg" />
+      <Skeleton className="my-3 h-5 w-52 rounded-md" />
+    </div>
+  );
+}
 
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (

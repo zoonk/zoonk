@@ -36,7 +36,13 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   explanations: [],
   goals: [],
   onSwitchGoal: switchGoal,
-  places: { exam: false, mindMaps: false, readyMistakes: 0, speaking: false },
+  places: {
+    completedLessons: false,
+    exam: false,
+    mindMaps: false,
+    readyMistakes: 0,
+    speaking: false,
+  },
   today: null,
 };
 
@@ -129,6 +135,12 @@ export function useLearnerPaletteGroups({
       label: t("Mistakes notebook"),
       menu: getMenu("mistakes"),
     }),
+    places.completedLessons &&
+      createNavigationPaletteItem({
+        id: "completed-lessons",
+        label: t("Completed lessons"),
+        menu: getMenu("completedLessons"),
+      }),
     places.exam &&
       createNavigationPaletteItem({ id: "exam", label: t("Exam"), menu: getMenu("exam") }),
     places.speaking &&

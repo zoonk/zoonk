@@ -1,4 +1,5 @@
 import { createBaseConfig } from "@zoonk/e2e/base.config";
+import { E2E_MAIN_APP_URL } from "./e2e/main-app-url";
 
 export default createBaseConfig({
   globalSetup: "./e2e/global-setup.ts",
@@ -10,7 +11,6 @@ export default createBaseConfig({
     APPLE_IAP_KEY_ID: "",
     APPLE_IAP_PRIVATE_KEY: "",
     APPLE_IAP_XCODE_BUNDLE_ID: "com.zoonk.dev",
-    // Nothing listens there: tests read where a sign-in that started on the API goes.
-    MAIN_APP_URL: "http://localhost:49153",
+    MAIN_APP_URL: E2E_MAIN_APP_URL,
   },
 });

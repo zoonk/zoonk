@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/categories/category";
 import { countCatalogCourses } from "@zoonk/core/courses/count-catalog";
 import { listCourses } from "@zoonk/core/courses/list";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
@@ -75,7 +76,14 @@ async function CourseCategories({ language }: { language: string }) {
       <h2 className={LIST_TITLE_CLASS} id="footer-categories">
         {t("Categories")}
       </h2>
-      <ul className="text-muted-foreground mt-1 flex flex-col text-sm">
+      <Link
+        className={cn(LINK_CLASS, "text-muted-foreground mt-1 text-sm sm:hidden")}
+        href="/courses"
+        prefetch
+      >
+        {t("Explore courses")}
+      </Link>
+      <ul className="text-muted-foreground mt-1 hidden flex-col text-sm sm:flex">
         {links.map((category) => (
           <li key={category.key}>
             <Link className={LINK_CLASS} href={`/courses/${category.key}`} prefetch>

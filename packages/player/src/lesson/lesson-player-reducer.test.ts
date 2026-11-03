@@ -274,6 +274,7 @@ describe(lessonPlayerReducer, () => {
       {
         answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "quiz" }],
         hyperdrive: { knownStepIds: [], streak: 0 },
+        replay: false,
         runId: "run",
         startedAt: STARTED_AT,
         type: "runStarted",
@@ -620,6 +621,7 @@ describe(lessonPlayerReducer, () => {
       {
         answers: [{ answeredAt: ANSWERED_AT, isCorrect: false, stepId: "q1" }],
         hyperdrive: { knownStepIds: [], streak: 0 },
+        replay: false,
         runId: "run",
         startedAt: STARTED_AT,
         type: "runStarted",
@@ -643,7 +645,14 @@ describe(lessonPlayerReducer, () => {
     const hyperdrive = { knownStepIds: [], streak: 0 };
 
     const done = play(steps, [
-      { answers, hyperdrive, runId: "run", startedAt: STARTED_AT, type: "runStarted" },
+      {
+        answers,
+        hyperdrive,
+        replay: false,
+        runId: "run",
+        startedAt: STARTED_AT,
+        type: "runStarted",
+      },
     ]);
 
     expect(done).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
@@ -656,7 +665,14 @@ describe(lessonPlayerReducer, () => {
     const answeredHere = play(steps, [
       { type: "continue" },
       ...answerCheck("q1", false),
-      { answers, hyperdrive, runId: "run", startedAt: STARTED_AT, type: "runStarted" },
+      {
+        answers,
+        hyperdrive,
+        replay: false,
+        runId: "run",
+        startedAt: STARTED_AT,
+        type: "runStarted",
+      },
     ]);
 
     expect([answeredHere.phase, answeredHere.firstVerdicts]).toStrictEqual([
@@ -756,7 +772,14 @@ describe(lessonPlayerReducer, () => {
       [explanationStep("e")],
       [
         { type: "runStarting" },
-        { answers: [], hyperdrive, runId: "run-1", startedAt: STARTED_AT, type: "runStarted" },
+        {
+          answers: [],
+          hyperdrive,
+          replay: false,
+          runId: "run-1",
+          startedAt: STARTED_AT,
+          type: "runStarted",
+        },
         { type: "continue" },
         { type: "completionFailed" },
         { type: "completionRetried" },
@@ -764,7 +787,7 @@ describe(lessonPlayerReducer, () => {
     );
 
     expect([done.run, done.completion?.status]).toStrictEqual([
-      { carriedStepIds: [], hyperdrive, runId: "run-1", status: "started" },
+      { carriedStepIds: [], hyperdrive, replay: false, runId: "run-1", status: "started" },
       "saving",
     ]);
   });
