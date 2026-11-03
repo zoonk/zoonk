@@ -28,7 +28,7 @@ class EvidenceAdmissionChangedError extends Error {
 
 const WORD_STEP_KINDS = new Set<StepKind>(["translation", "vocabulary"]);
 
-type SkillEvidence = {
+export type SkillEvidence = {
   evidence: LevelEvidence;
   language: string;
   skill: LanguageSkill;
@@ -49,7 +49,7 @@ async function loadStartScore({
   return getStartScore({ details: readGoalDetails(goal), skill });
 }
 
-async function addSkillEvidence(
+export async function addSkillEvidence(
   tx: TransactionClient,
   { evidence, language, skill, startScore, userId }: SkillEvidence,
 ): Promise<void> {
@@ -100,53 +100,15 @@ async function changesSelection(tx: TransactionClient, input: SkillEvidence): Pr
   return applyLevelEvidence(state, input.evidence).score !== (current?.score ?? 0);
 }
 
-async function writeEvidence({
-  attempt = 1,
-  skill,
-  write,
-}: {
-  attempt?: number;
-  skill: SkillEvidence;
-  write: (tx: TransactionClient) => Promise<void>;
-}): Promise<void> {
-  const { error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      const planInputs = await changesSelection(tx, skill);
-      await markLearnerChanged(tx, { planInputs, userId: skill.userId });
-
-      if (planInputs !== (await changesSelection(tx, skill))) {
-        throw new EvidenceAdmissionChangedError();
-      }
-
-      await write(tx);
-    }),
-  );
-
-  if (error instanceof EvidenceAdmissionChangedError && attempt < MAX_EVIDENCE_ATTEMPTS) {
-    return writeEvidence({ attempt: attempt + 1, skill, write });
-  }
-
-  if (error) {
-    throw error;
-  }
-}
-
-/** Internal: the caller must derive `userId` from the authenticated session. */
-export async function recordLanguageSkillEvidence({
+/** Callers must derive `userId` from the authenticated session. */
+export async function loadLanguageSkillEvidence({
   evidence,
   language,
   skill,
   userId,
-}: {
-  evidence: LevelEvidence;
-  language: string;
-  skill: LanguageSkill;
-  userId: string;
-}): Promise<void> {
+}: Omit<SkillEvidence, "startScore">): Promise<SkillEvidence> {
   const startScore = await loadStartScore({ language, skill, userId });
-
-  const input = { evidence, language, skill, startScore, userId };
-  await writeEvidence({ skill: input, write: (tx) => addSkillEvidence(tx, input) });
+  return { evidence, language, skill, startScore, userId };
 }
 
 export type LanguageStepEvidence = {
@@ -217,6 +179,37 @@ export async function writeLanguageStepEvidence(
   }
 }
 
+async function writeStepEvidence({
+  attempt = 1,
+  evidence,
+}: {
+  attempt?: number;
+  evidence: LanguageStepEvidence;
+}): Promise<void> {
+  const { skill } = evidence;
+
+  const { error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const planInputs = await changesSelection(tx, skill);
+      await markLearnerChanged(tx, { planInputs, userId: skill.userId });
+
+      if (planInputs !== (await changesSelection(tx, skill))) {
+        throw new EvidenceAdmissionChangedError();
+      }
+
+      await writeLanguageStepEvidence(tx, evidence);
+    }),
+  );
+
+  if (error instanceof EvidenceAdmissionChangedError && attempt < MAX_EVIDENCE_ATTEMPTS) {
+    return writeStepEvidence({ attempt: attempt + 1, evidence });
+  }
+
+  if (error) {
+    throw error;
+  }
+}
+
 /** Callers must derive `userId` from the authenticated session. */
 export async function recordLanguageStepEvidence(
   input: Parameters<typeof loadLanguageStepEvidence>[0],
@@ -227,8 +220,5 @@ export async function recordLanguageStepEvidence(
     return;
   }
 
-  await writeEvidence({
-    skill: evidence.skill,
-    write: (tx) => writeLanguageStepEvidence(tx, evidence),
-  });
+  await writeStepEvidence({ evidence });
 }

@@ -13,7 +13,13 @@ import { type ModelValues } from "../_utils/formula-model";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaModelDescription } from "./formula-model-description";
 import { FormulaModelEvents, FormulaModelLegend } from "./formula-model-events";
-import { type Output, modelView, startingModel, useModelReadouts } from "./formula-model-view";
+import {
+  type Output,
+  changeFormat,
+  modelView,
+  startingModel,
+  useModelReadouts,
+} from "./formula-model-view";
 
 type FormulaModelProps = ActivityRendererProps<"formulaModel">;
 type Content = FormulaModelProps["content"];
@@ -110,13 +116,7 @@ function FormulaModelBoard({
 
   const view = modelView({ axis, charted, content, events, outputAt, sliders });
 
-  const readouts = useModelReadouts({
-    charted,
-    formatOutput,
-    outputAt,
-    outputs: fields.outputs,
-    view,
-  });
+  const readouts = useModelReadouts({ charted, formatOutput, view });
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -147,9 +147,7 @@ function FormulaModelBoard({
         baseline={view.baselineCurve ? { points: view.baselineCurve, y: view.chartedBefore } : null}
         compare={view.compared}
         current={{ points: view.current, y: view.chartedNow }}
-        deltaLabel={
-          view.delta === 0 ? null : format(view.delta, { signed: true, unit: charted.unit })
-        }
+        deltaLabel={view.delta && format(view.delta.amount, changeFormat(view.delta, charted.unit))}
         expected={
           isChecked ? expectedPoint({ axis, content, expected, format, submitted: answer }) : null
         }

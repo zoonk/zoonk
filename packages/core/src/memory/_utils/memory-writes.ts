@@ -8,6 +8,7 @@ import {
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type MemorySource } from "../memory-contract";
 import { forgetExampleLines } from "./forget-example-lines";
+import { isMemoryEnabled } from "./memory-access";
 
 const MAX_HISTORY_DEPTH = 50;
 
@@ -39,19 +40,27 @@ function toFactData({ fact, userId }: { fact: NewMemoryFact; userId: string }) {
   };
 }
 
+/** Returns null, writing nothing, when memory is off. */
 export async function addMemoryFact({
   fact,
   userId,
 }: {
   fact: NewMemoryFact;
   userId: string;
-}): Promise<MemoryFact> {
-  return writeLearnerChange({ userId }, (transaction) =>
-    transaction.memoryFact.create({ data: toFactData({ fact, userId }) }),
-  );
+}): Promise<MemoryFact | null> {
+  return writeLearnerChange({ userId }, async (transaction) => {
+    if (!(await isMemoryEnabled(userId, transaction))) {
+      return unchanged(null);
+    }
+
+    return transaction.memoryFact.create({ data: toFactData({ fact, userId }) });
+  });
 }
 
-/** Returns null, writing nothing, when another update already replaced or removed the old fact. */
+/**
+ * Returns null, writing nothing, when memory is off or another update already replaced or removed
+ * the old fact.
+ */
 export async function replaceMemoryFact({
   fact,
   previousId,
@@ -62,6 +71,10 @@ export async function replaceMemoryFact({
   userId: string;
 }): Promise<{ fact: MemoryFact; previous: MemoryFact } | null> {
   return writeLearnerChange({ userId }, async (transaction) => {
+    if (!(await isMemoryEnabled(userId, transaction))) {
+      return unchanged(null);
+    }
+
     const existing = await transaction.memoryFact.findFirst({
       where: { id: previousId, status: "active", userId },
     });

@@ -64,7 +64,7 @@ export async function writeLearner({
     writeLearnerSkills(scope),
     writeAttempts(scope, { inSession: false, sessionId: null }),
     writeHistory(scope, goalId),
-    writeLearnerExtras(scope),
+    writeLearnerExtras(scope, goalId),
     writeLanguageHistory({ ...scope, goalId }),
   ]);
 
