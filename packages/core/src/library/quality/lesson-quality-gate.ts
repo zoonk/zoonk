@@ -43,7 +43,7 @@ const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
   "repeatedExample",
   "repeatedQuestion",
   "repeatedVisual",
-  "screenWords",
+  "screenLength",
   "termOrder",
 ]);
 
@@ -134,7 +134,6 @@ export async function runLessonQualityGate({
   const checked = checkWrittenLesson({
     allowActivityFallback,
     chapterLessons: context.chapterLessons,
-    exams: context.exams,
     language: context.language,
     lesson,
     level: context.level,

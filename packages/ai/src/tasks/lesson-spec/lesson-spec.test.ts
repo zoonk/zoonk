@@ -59,7 +59,9 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
     description: "Temperatures below zero.",
     screens: kinds.map((kind, index) => ({
       ...rawScreen(kind, kind === "hook" ? [] : [1]),
-      ...(index < 2 ? { visual: "A thermometer below zero", visualKind: "picture" } : {}),
+      ...(["hook", "explanation", "workedExample"].includes(kind)
+        ? { visual: `A thermometer below zero ${index}`, visualKind: "picture" }
+        : {}),
     })),
     skills: [rawSkill("Temperature")],
     title,
@@ -131,7 +133,7 @@ describe(generateLessonSpec, () => {
   });
 
   it("plans the lesson again when its plan breaks a shape rule, and keeps the better plan", async () => {
-    // Four teaching screens in a row: a check comes every 2 or 3 screens.
+    // Five teaching screens in a row: a check comes after at most four.
     const longRun = oneSkillLesson({
       kinds: [
         "hook",
@@ -139,6 +141,7 @@ describe(generateLessonSpec, () => {
         "guess",
         "explanation",
         "workedExample",
+        "explanation",
         "explanation",
         "check",
         "application",

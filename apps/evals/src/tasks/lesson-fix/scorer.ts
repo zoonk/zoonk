@@ -36,7 +36,6 @@ function lostPictures(before: WrittenLesson, after: WrittenLesson): number[] {
 function checkLesson(input: FixLessonDraftParams, lesson: WrittenLesson) {
   return checkWrittenLesson({
     allowActivityFallback: true,
-    exams: input.exams,
     language: input.language,
     lesson,
     level: input.level,

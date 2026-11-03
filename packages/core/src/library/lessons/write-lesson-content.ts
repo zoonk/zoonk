@@ -122,7 +122,11 @@ export async function writeLessonContent({
       remainingFixes: reusable ? 1 : PRIVATE_FIX_PASSES,
       review,
       version: {
-        lesson: repairWrittenLesson({ language: inputs.language, lesson: draft.data }),
+        lesson: repairWrittenLesson({
+          language: inputs.language,
+          lesson: draft.data,
+          spec: inputs.spec,
+        }),
         provenanceByScreen: draft.data.screens.map(() => draft.provenance),
       },
     },

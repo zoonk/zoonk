@@ -15,6 +15,7 @@ import {
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
+import { getScreenCharacterLimit } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
   type WrittenLesson,
@@ -105,8 +106,8 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const rules = selectPromptVariants({
     template: fixPrompt,
-    variants: { experienced: !novice, novice, shortAnswers: Boolean(params.shortAnswers) },
-  });
+    variants: { novice, shortAnswers: Boolean(params.shortAnswers) },
+  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterLimit(params.language)));
 
   const systemPrompt = `${rules}\n\n${fixOutput.outputRules}`;
 

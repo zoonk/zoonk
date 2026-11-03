@@ -53,10 +53,11 @@ export type LessonSpec = {
   laterPart?: boolean;
 };
 
+/** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
 export const LESSON_SIZE = {
   maxMinutes: 5,
-  maxScreens: 12,
-  maxScreensWithoutCheck: 3,
+  maxScreens: 16,
+  maxScreensWithoutCheck: 4,
   maxSkills: 3,
   /** An advanced idea that can't be split, such as a derivation. */
   maxUnsplittableMinutes: 6,
@@ -68,12 +69,12 @@ export const LESSON_SIZE = {
 
 const SECONDS_PER_MINUTE = 60;
 
-/** Reading or doing time per screen for a typical learner, calibrated to 5 to 12 screens in 2 to 5 minutes. */
+/** Reading or doing time per screen for a typical learner, calibrated to 5 to 16 screens in 2 to 5 minutes. */
 const SCREEN_SECONDS: Record<LessonScreenKind, number> = {
   activity: 40,
   application: 40,
   check: 20,
-  explanation: 25,
+  explanation: 15,
   guess: 20,
   hook: 15,
   workedExample: 45,
@@ -94,7 +95,6 @@ type LessonSpecIssueCode =
   | "earlyCheck"
   | "guess"
   | "hook"
-  | "hookVisual"
   | "screenCount"
   | "skillCount"
   | "skillReference"
@@ -244,7 +244,7 @@ function getShapeIssues({
     },
     longestRun > LESSON_SIZE.maxScreensWithoutCheck && {
       code: "checkGap" as const,
-      detail: `Has ${longestRun} teaching screens in a row; a check comes every 2 or 3 screens.`,
+      detail: `Has ${longestRun} teaching screens in a row; a check comes after at most ${LESSON_SIZE.maxScreensWithoutCheck}.`,
     },
     getEarlyCheckIssue({ novice, screens }),
     screens.some((screen) => screen.kind === "activity" && !screen.activityTemplate) && {

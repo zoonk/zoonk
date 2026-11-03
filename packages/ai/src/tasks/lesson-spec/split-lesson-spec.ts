@@ -151,11 +151,9 @@ function createHook({
 }): LessonScreen {
   const hook = { brief, kind: "hook" as const, skills: [0] };
 
-  if (visualFloor === "pictures") {
-    return createFrameScreen({ ...hook, visual: brief, visualKind: "picture" });
-  }
-
-  return createFrameScreen({ ...hook, visualKind: visualFloor === "drawn" ? "table" : "none" });
+  return visualFloor === "drawn"
+    ? createFrameScreen({ ...hook, visualKind: "table" })
+    : createFrameScreen({ ...hook, visual: brief, visualKind: "picture" });
 }
 
 /** The first lesson keeps the original hook and the last the original application. */

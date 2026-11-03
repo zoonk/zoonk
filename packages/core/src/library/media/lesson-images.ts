@@ -10,7 +10,11 @@ import {
   type LibraryPicture,
   drawLibraryImage,
 } from "./_utils/draw-library-image";
-import { getOptionPictureRequests, getStepImageRequest } from "./_utils/step-image-request";
+import {
+  findStepsSharingPicture,
+  getOptionPictureRequests,
+  getStepImageRequest,
+} from "./_utils/step-image-request";
 
 export type StepImageOutcome =
   | { status: "generated"; mediaAssetId: string; alt: string }
@@ -37,6 +41,10 @@ function findStepForImage(stepId: string) {
           id: true,
           language: true,
           ownerId: true,
+          steps: {
+            select: { content: true, id: true, kind: true, mediaAssetId: true },
+            where: CURRENT_STEPS,
+          },
           targetLanguage: true,
           title: true,
           visibility: true,
@@ -78,23 +86,27 @@ export async function listLessonImageSteps({ lessonId }: { lessonId: string }): 
     where: { id: lessonId },
   });
 
-  return (lesson?.steps ?? [])
-    .filter((step) => !step.mediaAssetId && getStepImageRequest(step))
+  const pending = (lesson?.steps ?? []).filter(
+    (step) => !step.mediaAssetId && getStepImageRequest(step),
+  );
+
+  return pending
+    .filter((step) => findStepsSharingPicture({ step, steps: pending })[0]?.id === step.id)
     .map((step) => step.id);
 }
 
 async function linkStepImage({
   lessonId,
   mediaAssetId,
-  stepId,
+  stepIds,
 }: {
   lessonId: string;
   mediaAssetId: string;
-  stepId: string;
+  stepIds: string[];
 }): Promise<void> {
   await prisma.step.updateMany({
     data: { mediaAssetId, pictureAvailableAt: new Date() },
-    where: { id: stepId, mediaAssetId: null },
+    where: { id: { in: stepIds }, mediaAssetId: null },
   });
 
   revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
@@ -131,8 +143,10 @@ export async function createStepImage({
     return { status: "failed" };
   }
 
+  const stepIds = findStepsSharingPicture({ step, steps: lesson.steps }).map((item) => item.id);
+
   const { error } = await safeAsync(() =>
-    linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepId }),
+    linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepIds }),
   );
 
   if (error) {

@@ -1,7 +1,7 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
-import { dropDecorativePictures } from "./lesson-pictures";
+import { dropDecorativePictures, listPlannedPictures } from "./lesson-pictures";
 
 function pictured(kind: LessonScreen["kind"]): LessonScreen {
   return {
@@ -28,15 +28,19 @@ const screens = [
   plain("guess"),
   pictured("explanation"),
   plain("check"),
-  plain("explanation"),
+  pictured("explanation"),
   plain("check"),
   plain("application"),
 ];
 
-function kindsAfterDropping(dropped: number[], visualFloor: "drawn" | "none" | "pictures") {
+function kindsAfterDropping(
+  dropped: number[],
+  visualFloor: "drawn" | "none" | "pictures",
+  planned: LessonScreen[] = screens,
+) {
   const [spec] = dropDecorativePictures({
     judged: dropped.map((screen) => ({ lesson: 0, screen, teaches: false })),
-    specs: [lessonOf(screens)],
+    specs: [lessonOf(planned)],
     visualFloor,
   });
 
@@ -55,8 +59,26 @@ describe(dropDecorativePictures, () => {
     expect(kinds?.[3]).toStrictEqual(["none", null]);
   });
 
-  it("keeps a private lesson's scene drawn when its picture goes", () => {
-    expect(kindsAfterDropping([0], "drawn")?.[0]).toStrictEqual(["table", null]);
-    expect(kindsAfterDropping([0], "none")?.[0]).toStrictEqual(["none", null]);
+  it("judges a picture shown on several screens once, and drops it from all of them", () => {
+    const heart = { ...pictured("explanation"), visual: "The heart from the front" };
+    const shared = [pictured("hook"), heart, heart, heart, plain("check"), ...screens.slice(5)];
+
+    expect(
+      listPlannedPictures({ specs: [lessonOf(shared)] }).map((item) => item.screen),
+    ).toStrictEqual([1, 5]);
+
+    const kinds = kindsAfterDropping([1], "none", shared);
+
+    expect(kinds?.slice(1, 4)).toStrictEqual([
+      ["none", null],
+      ["none", null],
+      ["none", null],
+    ]);
+  });
+
+  it("never judges the scene's picture, so every lesson opens on its moment", () => {
+    expect(
+      listPlannedPictures({ specs: [lessonOf(screens)] }).map((item) => item.screen),
+    ).toStrictEqual([1, 3, 5]);
   });
 });

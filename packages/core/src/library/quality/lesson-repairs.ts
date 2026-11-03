@@ -1,3 +1,5 @@
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { findSharedPicture } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
@@ -67,18 +69,47 @@ function repairOptions({
   return screen;
 }
 
+type PictureRequest = { alt: string; prompt: string };
+
+function getPicture(screen: WrittenScreen | undefined): PictureRequest | null {
+  return screen && screen.kind !== "check" && "image" in screen ? screen.image : null;
+}
+
+/**
+ * A screen planned to keep the picture the screens before it show gets that exact picture, so the
+ * app draws it once and the learner sees the same one while the screens explain more of it.
+ */
+function repeatSharedPictures({
+  screens,
+  spec,
+}: {
+  screens: readonly WrittenScreen[];
+  spec: LessonSpec;
+}): WrittenScreen[] {
+  return screens.map((screen, index) => {
+    const first = findSharedPicture(spec.screens, index);
+    const image = first === null ? null : getPicture(screens[first]);
+
+    return image && screen.kind !== "check" && "image" in screen ? { ...screen, image } : screen;
+  });
+}
+
 export function repairWrittenLesson({
   language,
   lesson,
+  spec,
 }: {
   language: string;
   lesson: WrittenLesson;
+  spec: LessonSpec;
 }): WrittenLesson {
+  const screens = lesson.screens.map((screen) =>
+    repairOptions({ language, screen: repairBasisQuote(repairScreenText(screen)) }),
+  );
+
   return {
     ...lesson,
-    screens: lesson.screens.map((screen) =>
-      repairOptions({ language, screen: repairBasisQuote(repairScreenText(screen)) }),
-    ),
+    screens: repeatSharedPictures({ screens, spec }),
     summary: {
       ...lesson.summary,
       ideas: lesson.summary.ideas.map((idea) => ({

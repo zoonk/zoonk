@@ -7,13 +7,6 @@ const MAX_SENTENCE_WORDS: Readonly<Record<CourseLevel, number>> = {
   overview: 32,
 };
 
-const MAX_EXPLANATION_CHARACTERS: Readonly<Record<CourseLevel, number>> = {
-  advanced: 900,
-  beginner: 650,
-  intermediate: 750,
-  overview: 650,
-};
-
 const MATH_SPAN = /\$[^$]+\$/gu;
 const SENTENCE_END = /(?<=[.!?…])\s+/u;
 const WORD = /[\p{L}\p{N}]/u;
@@ -29,8 +22,4 @@ export function findLongSentences({ level, text }: { level: CourseLevel; text: s
     .replaceAll(MATH_SPAN, "x")
     .split(SENTENCE_END)
     .filter((sentence) => countWords(sentence) > maxWords);
-}
-
-export function getMaxExplanationCharacters(level: CourseLevel): number {
-  return MAX_EXPLANATION_CHARACTERS[level];
 }

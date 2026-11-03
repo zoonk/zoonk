@@ -21,6 +21,7 @@ import {
 } from "./format-lesson-plan";
 import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
+import { getScreenCharacterLimit } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
@@ -83,11 +84,10 @@ const FIND_ERROR_TEMPLATE = "findError";
 function buildSystemPrompt(params: WriteLessonDraftParams): string {
   const novice = readsNoviceRules(params);
 
-  return selectPromptVariants({
+  const rules = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
-      experienced: !novice,
       material: Boolean(params.material),
       novice,
       setup: Boolean(params.setup),
@@ -98,6 +98,11 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
       ),
     },
   });
+
+  return rules.replaceAll(
+    "{{SCREEN_CHARACTERS}}",
+    String(getScreenCharacterLimit(params.language)),
+  );
 }
 
 function formatWriterPrompt(params: WriteLessonDraftParams): string {

@@ -33,16 +33,12 @@ function flowCodes(
     "newTerms",
     "plannedVisual",
     "repeatedVisual",
-    "screenWords",
+    "screenLength",
   ]);
 
   return checkWrittenLesson({ language: "en", lesson, level: "beginner", spec, ...options })
     .problems.filter((problem) => flow.has(problem.code))
     .map((problem) => [problem.screen, problem.code]);
-}
-
-function words(count: number): string {
-  return Array.from({ length: count }, () => "word").join(" ");
 }
 
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
@@ -166,28 +162,43 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(withScreens({ 1: reais, 4: euros }))).not.toContainEqual([4, "moneyFormat"]);
   });
 
-  it("flags an explanation far over its word target, a lower one for new learners", () => {
-    const sixty = explanation(`${words(59)}.`);
-    const eighty = explanation(`${words(79)}.`);
-    const withTable = explanation(`${words(40)}.\n\n${TABLE}`);
+  it("flags any screen past a tweet's 250 characters at every level, tables aside", () => {
+    const fits = explanation(`${"a".repeat(249)}.`);
+    const over = explanation(`${"a".repeat(250)}.`);
+    const withTable = explanation(`${"a".repeat(200)}.\n\n${TABLE}`);
+    const japanese = explanation(`${"水".repeat(125)}。`);
 
-    expect(flowCodes(withScreens({ 4: sixty }))).toStrictEqual([[4, "screenWords"]]);
-
-    expect(
-      flowCodes(withScreens({ 4: sixty }), temperatureSpec(), { level: "advanced" }),
-    ).toStrictEqual([]);
+    expect(flowCodes(withScreens({ 4: fits }))).toStrictEqual([]);
+    expect(flowCodes(withScreens({ 4: over }))).toStrictEqual([[4, "screenLength"]]);
 
     expect(
-      flowCodes(withScreens({ 4: sixty }), temperatureSpec(), {
-        exams: [{ name: "SAT", style: "multipleChoice" }],
-      }),
-    ).toStrictEqual([]);
-
-    expect(
-      flowCodes(withScreens({ 4: eighty }), temperatureSpec(), { level: "advanced" }),
-    ).toStrictEqual([[4, "screenWords"]]);
+      flowCodes(withScreens({ 4: over }), temperatureSpec(), { level: "advanced" }),
+    ).toStrictEqual([[4, "screenLength"]]);
 
     expect(flowCodes(withScreens({ 4: withTable }))).toStrictEqual([]);
+    expect(flowCodes(withScreens({ 4: japanese }))).toStrictEqual([[4, "screenLength"]]);
+  });
+
+  it("measures each step of a worked example and a check's context with its question", () => {
+    const { screens } = writtenTemperatureLesson();
+    const worked = screens[2];
+    const check = screens[3];
+
+    if (worked?.kind !== "workedExample" || check?.kind !== "mathCheck") {
+      throw new Error("Screens 3 and 4 are a worked example and a calculation.");
+    }
+
+    const longStep = {
+      ...worked,
+      steps: [...worked.steps.slice(0, 1), { math: null, text: "b".repeat(260) }],
+    };
+
+    const longCheck = { ...check, context: "c".repeat(200), question: "d".repeat(60) };
+
+    expect(flowCodes(withScreens({ 2: longStep, 3: longCheck }))).toStrictEqual([
+      [2, "screenLength"],
+      [3, "screenLength"],
+    ]);
   });
 
   it("asks for the visual the plan names and never the same table twice in a row", () => {

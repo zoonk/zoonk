@@ -19,6 +19,37 @@ export type StepImageRequest = {
   screenText: string;
 };
 
+type StepWithContent = { content: unknown; id: string; kind: StepKind };
+
+function getPictureKey(request: StepImageRequest): string {
+  return JSON.stringify([request.prompt, request.parts]);
+}
+
+/**
+ * The steps that ask for the same picture as `step` (itself included), so a picture the lesson
+ * keeps across screens is drawn once and shown on each of them.
+ */
+export function findStepsSharingPicture<STEP extends StepWithContent>({
+  step,
+  steps,
+}: {
+  step: StepWithContent;
+  steps: readonly STEP[];
+}): STEP[] {
+  const request = getStepImageRequest(step);
+
+  if (!request) {
+    return [];
+  }
+
+  const key = getPictureKey(request);
+
+  return steps.filter((other) => {
+    const otherRequest = getStepImageRequest(other);
+    return otherRequest !== null && getPictureKey(otherRequest) === key;
+  });
+}
+
 function getScreenText(content: Record<string, unknown>): string {
   return SCREEN_TEXT_FIELDS.map((field) => content[field])
     .filter((value): value is string => typeof value === "string")

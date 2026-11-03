@@ -180,4 +180,18 @@ describe(normalizeLessonSpec, () => {
       ["template", "A worked answer", "find-error"],
     ]);
   });
+
+  it("shows a scene planned with nothing in a picture of its moment, and keeps a planned one", () => {
+    const moment = "Lia finds the soda can burst in the freezer. How can cold break metal?";
+
+    const [bare, table] = [
+      rawScreen({ brief: moment, kind: "hook", skills: [] }),
+      rawScreen({ brief: moment, kind: "hook", skills: [], visualKind: "table" }),
+    ].map(
+      (hook) => normalizeLessonSpec({ exploreIds, raw: rawSpec([hook]), templateIds }).screens[0],
+    );
+
+    expect([bare?.visualKind, bare?.visual]).toStrictEqual(["picture", moment]);
+    expect([table?.visualKind, table?.visual]).toStrictEqual(["table", null]);
+  });
 });

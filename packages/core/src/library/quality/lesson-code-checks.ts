@@ -5,7 +5,6 @@ import {
   type WrittenScreen,
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { findOptionPositionReferences } from "../_utils/answer-options";
@@ -13,7 +12,7 @@ import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
 import { findArithmeticErrors } from "./_utils/arithmetic";
 import { getLessonMapProblems } from "./_utils/lesson-map-checks";
 import { findLessonPhrases } from "./_utils/lesson-phrases";
-import { findLongSentences, getMaxExplanationCharacters } from "./_utils/reading-level";
+import { findLongSentences } from "./_utils/reading-level";
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
 import { findRepeatedQuestions } from "./_utils/repeated-questions";
 import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
@@ -41,7 +40,6 @@ type LessonCheckCode =
   | "repeatedQuestion"
   | "screenCount"
   | "screenKind"
-  | "screenLength"
   | "summary"
   | "termOrder"
   | "visual";
@@ -129,17 +127,7 @@ function getTextProblems({
     ];
   });
 
-  const maxCharacters = getMaxExplanationCharacters(level);
-
-  return [
-    ...textProblems,
-    screen.kind === "explanation" &&
-      removeMarkdownTables(screen.text).length > maxCharacters && {
-        code: "screenLength",
-        problem: `The text has ${removeMarkdownTables(screen.text).length} characters besides its tables; one screen holds one idea in under ${maxCharacters}. Cut words or keep only this screen's idea.`,
-      },
-    ...findAnswerFlaws({ language, screen }),
-  ];
+  return [...textProblems, ...findAnswerFlaws({ language, screen })];
 }
 
 export function checkScreenText(input: {
@@ -235,7 +223,6 @@ export function toReviewedLesson({
 export function checkWrittenLesson({
   allowActivityFallback = false,
   chapterLessons,
-  exams,
   language,
   lesson,
   level,
@@ -246,7 +233,6 @@ export function checkWrittenLesson({
 }: {
   allowActivityFallback?: boolean;
   chapterLessons?: Parameters<typeof findRepeatedExamples>[0]["chapterLessons"];
-  exams?: readonly unknown[];
   language: string;
   lesson: WrittenLesson;
   level: CourseLevel;
@@ -279,12 +265,7 @@ export function checkWrittenLesson({
     problems: [
       ...countProblem,
       ...checked.flatMap((result) => result.problems),
-      ...checkLessonFlow({
-        lesson,
-        novice: readsNoviceRules({ exams, level, material }),
-        screens,
-        spec,
-      }),
+      ...checkLessonFlow({ lesson, screens, spec }),
       ...getTermOrderProblems(lesson),
       ...getRepeatProblems({
         chapterLessons,

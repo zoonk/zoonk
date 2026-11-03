@@ -2,7 +2,11 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { getTeachingVisualShortfall, isTeachingScreen } from "@zoonk/ai/tasks/lesson-spec/visuals";
+import {
+  findSharedPicture,
+  getTeachingVisualShortfall,
+  isTeachingScreen,
+} from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type VisualFloor } from "@zoonk/ai/tasks/visual-floor";
 
 export type PlannedPicture = {
@@ -18,19 +22,14 @@ export type PlannedPicture = {
 export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & { teaches: boolean };
 
 /**
- * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does a
- * shared lesson's hook picture: it opens on its story's moment.
+ * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does the
+ * scene's picture: every lesson opens on its story's moment. A picture shown again on the next
+ * screens is judged once, on the screen that first shows it.
  */
-export function listPlannedPictures({
-  specs,
-  visualFloor,
-}: {
-  specs: readonly LessonSpec[];
-  visualFloor: VisualFloor;
-}): PlannedPicture[] {
+export function listPlannedPictures({ specs }: { specs: readonly LessonSpec[] }): PlannedPicture[] {
   return specs.flatMap((spec, lesson) =>
     spec.screens.flatMap((screen, index) =>
-      screen.visual && !(visualFloor === "pictures" && screen.kind === "hook")
+      screen.visual && screen.kind !== "hook" && findSharedPicture(spec.screens, index) === null
         ? [
             {
               brief: screen.brief,
@@ -71,7 +70,7 @@ export async function judgePlannedPicture({
 
 /**
  * A dropped picture the visual floor needs becomes a table the app draws from the screen's brief,
- * so the floor never falls to nothing: the scene first, then teaching screens in order.
+ * so the floor never falls to nothing, teaching screens in order.
  */
 function keepFloor({
   dropped,
@@ -86,16 +85,14 @@ function keepFloor({
     dropped.has(index) ? { ...screen, visual: null, visualKind: "none" as const } : screen,
   );
 
-  const sceneNeedsOne = visualFloor !== "none" && dropped.has(0) && bare[0]?.kind === "hook";
   const missing = getTeachingVisualShortfall({ screens: bare, visualFloor });
 
-  const drawn = new Set([
-    ...(sceneNeedsOne ? [0] : []),
-    ...[...dropped]
+  const drawn = new Set(
+    [...dropped]
       .filter((index) => bare[index] && isTeachingScreen(bare[index].kind))
       .toSorted((left, right) => left - right)
       .slice(0, missing),
-  ]);
+  );
 
   return bare.map((screen, index) =>
     drawn.has(index) ? { ...screen, visualKind: "table" as const } : screen,
@@ -112,8 +109,15 @@ export function dropDecorativePictures({
   visualFloor: VisualFloor;
 }): LessonSpec[] {
   return specs.map((spec, lesson) => {
-    const dropped = new Set(
+    const judgedDropped = new Set(
       judged.filter((item) => item.lesson === lesson && !item.teaches).map((item) => item.screen),
+    );
+
+    const dropped = new Set(
+      spec.screens.flatMap((_, index) => {
+        const first = findSharedPicture(spec.screens, index) ?? index;
+        return judgedDropped.has(first) ? [index] : [];
+      }),
     );
 
     return dropped.size === 0

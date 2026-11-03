@@ -1,6 +1,6 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
-import { hubMap, writtenTemperatureLesson } from "./_test-utils/written-lessons";
+import { hubMap, temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { repairWrittenLesson } from "./lesson-repairs";
 
 function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
@@ -14,6 +14,8 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
     visual: null,
   };
 }
+
+const spec = temperatureSpec();
 
 describe(repairWrittenLesson, () => {
   it("moves a minus written after the money mark in text, tables, activities and the quote that cites it, keeping the amount", () => {
@@ -53,6 +55,7 @@ describe(repairWrittenLesson, () => {
     const [text, play, question] = repairWrittenLesson({
       language: "en",
       lesson: { screens: [explanation, activity, quoted], summary: hubMap(["One idea."]) },
+      spec,
     }).screens;
 
     const fixed = "-$ 12,34";
@@ -90,6 +93,7 @@ describe(repairWrittenLesson, () => {
     const [repaired] = repairWrittenLesson({
       language: "en",
       lesson: { screens: [exercise], summary: hubMap(["Format money with two decimals."]) },
+      spec,
     }).screens;
 
     const content: unknown = JSON.parse(repaired?.kind === "activity" ? repaired.content : "{}");
@@ -102,7 +106,7 @@ describe(repairWrittenLesson, () => {
 
   it("leaves a lesson with nothing to repair as it was", () => {
     const lesson = writtenTemperatureLesson();
-    expect(repairWrittenLesson({ language: "en", lesson })).toStrictEqual(lesson);
+    expect(repairWrittenLesson({ language: "en", lesson, spec })).toStrictEqual(lesson);
   });
 
   it("takes out marks learners would see, in every text and the map, keeping the map's labels and shape", () => {
@@ -117,7 +121,7 @@ describe(repairWrittenLesson, () => {
       },
     };
 
-    const repaired = repairWrittenLesson({ language: "pt", lesson });
+    const repaired = repairWrittenLesson({ language: "pt", lesson, spec });
 
     expect(repaired.summary).toStrictEqual({
       ideas: [
@@ -152,6 +156,7 @@ describe(repairWrittenLesson, () => {
     const repaired = repairWrittenLesson({
       language: "pt",
       lesson: { screens: [explanation, question], summary: hubMap(["Ideia."]) },
+      spec,
     });
 
     expect(repaired.screens[0]).toMatchObject({ text: "O sensor A erra menos que o sensor B." });
@@ -176,6 +181,7 @@ describe(repairWrittenLesson, () => {
     const repaired = repairWrittenLesson({
       language: "pt",
       lesson: { screens: [twins, alone], summary: hubMap(["Ideia."]) },
+      spec,
     });
 
     const texts = repaired.screens.map((screen) =>
@@ -186,5 +192,43 @@ describe(repairWrittenLesson, () => {
       ["R$ 15,00", "R$ 20"],
       ["R$ 15", "R$ 15,00"],
     ]);
+  });
+
+  it("gives a screen planned with the picture before it that exact picture, and leaves others", () => {
+    const lesson = writtenTemperatureLesson();
+    const heart = "The heart from the front, its four chambers labeled";
+
+    const shared = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index < 2 ? { ...screen, visual: heart, visualKind: "picture" as const } : screen,
+      ),
+    };
+
+    const drawn = { alt: "A heart with four chambers.", prompt: heart };
+    const [hook, explanation] = lesson.screens;
+
+    if (hook?.kind !== "hookText" || explanation?.kind !== "explanation") {
+      throw new Error("The lesson opens on a scene and an explanation.");
+    }
+
+    const written = {
+      ...lesson,
+      screens: [
+        { ...hook, image: drawn },
+        { ...explanation, image: { alt: "Another heart.", prompt: "A heart" } },
+        ...lesson.screens.slice(2),
+      ],
+    };
+
+    const repaired = repairWrittenLesson({ language: "en", lesson: written, spec: shared });
+
+    expect(
+      repaired.screens.slice(0, 2).map((screen) => "image" in screen && screen.image),
+    ).toStrictEqual([drawn, drawn]);
+
+    expect(repairWrittenLesson({ language: "en", lesson: written, spec }).screens[1]).toStrictEqual(
+      written.screens[1],
+    );
   });
 });

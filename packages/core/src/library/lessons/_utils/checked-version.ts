@@ -190,7 +190,12 @@ export async function fixVersionDraft({
   });
 
   const changed = new Set(fix.data.changedScreens);
-  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: fix.data.lesson });
+
+  const lesson = repairWrittenLesson({
+    language: gate.context.language,
+    lesson: fix.data.lesson,
+    spec: gate.context.spec,
+  });
 
   return {
     lesson,
@@ -244,7 +249,12 @@ export async function checkVersion({
   gate: LessonGate;
   review: boolean;
 }): Promise<CheckedVersion> {
-  const lesson = repairWrittenLesson({ language: gate.context.language, lesson: written.lesson });
+  const lesson = repairWrittenLesson({
+    language: gate.context.language,
+    lesson: written.lesson,
+    spec: gate.context.spec,
+  });
+
   const draft = { ...written, lesson };
   const first = await runLessonQualityGate({ ...gate, lesson, review });
 

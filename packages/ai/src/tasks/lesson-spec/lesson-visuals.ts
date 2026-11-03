@@ -27,7 +27,7 @@ export function isTeachingScreen(kind: LessonScreenKind): boolean {
   return kind === "explanation" || kind === "workedExample";
 }
 
-const TEACHING_SCREENS_PER_VISUAL = 3;
+const TEACHING_SCREENS_PER_VISUAL = 2;
 
 function countsTowardFloor({
   screen,
@@ -72,14 +72,15 @@ function getTeachingVisualIssue({
   return (
     missing > 0 && {
       code: "teachingVisual" as const,
-      detail: `${missing} more explanations or worked examples need ${kinds}: one in three shows one.`,
+      detail: `${missing} more explanations or worked examples need ${kinds}: one in two shows one.`,
     }
   );
 }
 
 /**
- * A floor, not a share to fill: the scene's visual and one in three teaching screens. A private
- * lesson's pictures serve one learner, so its floor counts only what the app draws.
+ * A floor, not a share to fill: one in two teaching screens. A private lesson's pictures serve one
+ * learner, so its floor counts only what the app draws. The scene's visual is set in code
+ * (`normalizeLessonSpec`), so it's never missing.
  */
 export function getVisualFloorIssues({
   screens,
@@ -88,16 +89,24 @@ export function getVisualFloorIssues({
   screens: readonly LessonScreen[];
   visualFloor: VisualFloor;
 }) {
-  if (visualFloor === "none") {
-    return [];
+  return [getTeachingVisualIssue({ screens, visualFloor })].filter((issue) => issue !== false);
+}
+
+/**
+ * A picture planned word for word like the screen before's is that same picture, shown again while
+ * the next screens explain more of it: the index of the screen that first shows it, or null.
+ */
+export function findSharedPicture(screens: readonly LessonScreen[], index: number): number | null {
+  const screen = screens[index];
+  const previous = screens[index - 1];
+
+  if (
+    screen?.visualKind !== "picture" ||
+    previous?.visualKind !== "picture" ||
+    screen.visual !== previous.visual
+  ) {
+    return null;
   }
 
-  return [
-    screens[0]?.kind === "hook" &&
-      screens[0].visualKind === "none" && {
-        code: "hookVisual" as const,
-        detail: "The scene shows nothing; it needs a picture of its moment or a table or chart.",
-      },
-    getTeachingVisualIssue({ screens, visualFloor }),
-  ].filter((issue) => issue !== false);
+  return findSharedPicture(screens, index - 1) ?? index - 1;
 }

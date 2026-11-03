@@ -102,6 +102,7 @@
     "./tasks/lesson-writer/fix": "./src/tasks/lesson-writer/lesson-fix.ts",
     "./tasks/lesson-writer/map": "./src/tasks/lesson-writer/lesson-map.ts",
     "./tasks/lesson-writer/schema": "./src/tasks/lesson-writer/written-lesson-schema.ts",
+    "./tasks/lesson-writer/screen-length": "./src/tasks/lesson-writer/screen-length.ts",
     "./tasks/material/answer": "./src/tasks/material/answer-from-material.ts",
     "./tasks/material/cite": "./src/tasks/material/cite-material.ts",
     "./tasks/quality/lesson-check": "./src/tasks/quality/lesson-quality-check.ts",

@@ -1,8 +1,8 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { MAX_SCREEN_CHARACTERS } from "@zoonk/ai/tasks/lesson-writer/screen-length";
 import { findQuestionBases } from "../steps/question-bases";
 import { type ConvertedScreen } from "../steps/written-screens";
-import { findWordyExplanations } from "./_utils/explanation-words";
 import { findGuessGiveaways } from "./_utils/guess-giveaways";
 import { findMixedMoneyFormats } from "./_utils/money-formats";
 import { findScreensWithNewTerms } from "./_utils/new-terms";
@@ -11,6 +11,7 @@ import {
   findMissingPlannedVisual,
   findRepeatedVisuals,
 } from "./_utils/planned-visuals";
+import { findLongScreens } from "./_utils/screen-length";
 
 export type LessonFlowCheckCode =
   | "basis"
@@ -19,7 +20,7 @@ export type LessonFlowCheckCode =
   | "newTerms"
   | "plannedVisual"
   | "repeatedVisual"
-  | "screenWords";
+  | "screenLength";
 
 type LessonFlowProblem = { code: LessonFlowCheckCode; problem: string; screen: number };
 
@@ -100,20 +101,12 @@ function getVisualProblems({
   return [...missing, ...repeated];
 }
 
-function getWordingProblems({
-  lesson,
-  novice,
-}: {
-  lesson: WrittenLesson;
-  novice: boolean;
-}): LessonFlowProblem[] {
-  const wordy = findWordyExplanations({ novice, screens: lesson.screens }).map(
-    ({ screen, target, words }) => ({
-      code: "screenWords" as const,
-      problem: `Has ${words} words besides its tables; an explanation here aims for about ${target}. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it.`,
-      screen,
-    }),
-  );
+function getWordingProblems({ lesson }: { lesson: WrittenLesson }): LessonFlowProblem[] {
+  const long = findLongScreens(lesson.screens).map(({ characters, part, screen }) => ({
+    code: "screenLength" as const,
+    problem: `${part ? `Its ${part} has` : "Has"} ${characters} characters to read besides its tables; a screen holds one idea in a tweet, at most ${MAX_SCREEN_CHARACTERS}. Keep that idea and its example, put detail in the screen's table or visual, and cut the rest.`,
+    screen,
+  }));
 
   const guesses = findGuessGiveaways(lesson.screens).map((giveaway) => ({
     ...giveaway,
@@ -132,13 +125,11 @@ function getWordingProblems({
     screen: mention.screen,
   }));
 
-  return [...guesses, ...bold, ...money, ...wordy];
+  return [...guesses, ...bold, ...money, ...long];
 }
 
 export function checkLessonFlow(input: {
   lesson: WrittenLesson;
-  /** `readsNoviceRules` for the lesson, which sets its words per explanation. */
-  novice: boolean;
   screens: readonly ConvertedScreen[];
   spec: LessonSpec;
 }): LessonFlowProblem[] {

@@ -118,7 +118,12 @@ describe(splitLessonSpec, () => {
 
     expect(first?.screens[0]).toStrictEqual(screen("hook", [0], "original hook"));
     expect(first?.screens.at(-1)).toStrictEqual(screen("application", [0, 1], "Median at work"));
-    expect(second?.screens[0]).toStrictEqual(screen("hook", [0], "Mode at work"));
+
+    expect(second?.screens[0]).toStrictEqual({
+      ...screen("hook", [0], "Mode at work"),
+      visual: "Mode at work",
+      visualKind: "picture",
+    });
 
     expect(second?.screens.at(-1)).toStrictEqual(
       screen("application", [0, 1], "original application"),
@@ -173,12 +178,6 @@ describe(splitLessonSpec, () => {
       visualKind: "picture",
     });
 
-    expect(
-      getLessonSpecIssues({ level: "beginner", spec: second!, visualFloor: "pictures" }).map(
-        (issue) => issue.code,
-      ),
-    ).not.toContain("hookVisual");
-
     const [, privateSecond] = splitLessonSpec({
       language: "en",
       level: "beginner",
@@ -196,18 +195,6 @@ describe(splitLessonSpec, () => {
     });
 
     expect(advanced.map((part) => part.screens[0]?.visualKind)).toStrictEqual(["none", "picture"]);
-
-    expect(
-      getLessonSpecIssues({ level: "advanced", spec: advanced[1]!, visualFloor: "pictures" }).map(
-        (issue) => issue.code,
-      ),
-    ).not.toContain("hookVisual");
-
-    expect(
-      getLessonSpecIssues({ level: "advanced", spec: advanced[0]!, visualFloor: "pictures" }).map(
-        (issue) => issue.code,
-      ),
-    ).toContain("hookVisual");
   });
 
   it("drops a guess from a part where nothing is taught before it", () => {
@@ -235,7 +222,7 @@ describe(splitLessonSpec, () => {
     ]);
   });
 
-  it("starts a new lesson when a skill would pass twelve screens or five minutes", () => {
+  it("starts a new lesson when a skill would pass sixteen screens or five minutes", () => {
     const skills = ["Mean", "Median", "Mode"].map((topic) => skill(topic));
 
     const lessons = splitLessonSpec({
@@ -287,7 +274,8 @@ describe(splitLessonSpec, () => {
         screens: [
           screen("hook", []),
           ...longSkillScreens(0),
-          screen("explanation", [1]),
+          screen("workedExample", [0]),
+          screen("workedExample", [1]),
           screen("check", [1]),
           screen("explanation", [1]),
           screen("check", [1]),
@@ -300,7 +288,7 @@ describe(splitLessonSpec, () => {
     });
 
     expect(lessons.map((lesson) => lesson.title)).toStrictEqual(["Mean", "Median and Mode"]);
-    expect(lessons.map((lesson) => lesson.screens.length)).toStrictEqual([7, 8]);
+    expect(lessons.map((lesson) => lesson.screens.length)).toStrictEqual([8, 8]);
   });
 
   it("never cuts a single skill in half, even when it is too long", () => {

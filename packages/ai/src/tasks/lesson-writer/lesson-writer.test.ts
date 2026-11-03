@@ -29,10 +29,7 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "{{#exams}}",
     "Write it for the exams.",
     "{{/exams}}",
-    "Keep it short.",
-    "{{#experienced}}",
-    "Open with a guess.",
-    "{{/experienced}}",
+    "Keep it under {{SCREEN_CHARACTERS}} characters.",
     "{{#novice}}",
     "Show it before asking.",
     "{{/novice}}",
@@ -156,39 +153,39 @@ describe(writeLessonDraft, () => {
       ]);
 
     expect(regular.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(beginner.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
+      "Write the lesson.\nKeep it under 250 characters.\nShow it before asking.\nCheck it.",
     );
 
     expect(beginnerExam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nWrite it for the exams.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(spotAi.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nWrite the AI's mistake.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nWrite the AI's mistake.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(material.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nWrite it from the material.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nWrite it from the material.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(sources.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nWrite it from the sources.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nWrite it from the sources.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(exam.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nOpen with a guess.\nCheck it.",
+      "Write the lesson.\nWrite it for the exams.\nKeep it under 250 characters.\nCheck it.",
     );
 
     expect(setup.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite the setup.\nCheck it.",
+      "Write the lesson.\nKeep it under 250 characters.\nWrite the setup.\nCheck it.",
     );
 
     expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
-      "Write the lesson.\nKeep it short.\nOpen with a guess.\nWrite typed answers.\nCheck it.",
+      "Write the lesson.\nKeep it under 250 characters.\nWrite typed answers.\nCheck it.",
     );
 
     // The schema travels in the system prompt, since no provider but OpenAI takes it as a grammar.

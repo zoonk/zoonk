@@ -106,7 +106,7 @@ async function planLesson({
     homeChapterId: inputs.homeChapterId,
     lessonId,
     novice,
-    pictures: listPlannedPictures({ specs: data.lessons, visualFloor }),
+    pictures: listPlannedPictures({ specs: data.lessons }),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,

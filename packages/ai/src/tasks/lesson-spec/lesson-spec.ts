@@ -205,7 +205,6 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "earlyCheck",
   "guess",
   "hook",
-  "hookVisual",
   "skillReference",
   "teachingVisual",
   "unpracticedSkill",
