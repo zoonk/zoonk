@@ -97,7 +97,7 @@ function cueTimes(log: { at: number; type: string }[]) {
 }
 
 describe("the call's ending at its talk time", () => {
-  it("sends the goodbye at once while the learner is speaking", () => {
+  it("sends the goodbye at once, as quiet context, while the learner is speaking", () => {
     const { goodbyes } = play({
       events: [...GREETING, ...learnerTalks(8000, 8000)],
       talkSeconds: 10,
@@ -105,7 +105,7 @@ describe("the call's ending at its talk time", () => {
     });
 
     expect(goodbyes).toStrictEqual([
-      { at: 10_000, cue: "goodbye", id: "goodbye-1", type: "goodbye" },
+      { at: 10_000, cue: "goodbye", id: "goodbye-1", type: "goodbye", whileLearnerSpeaks: true },
     ]);
   });
 
@@ -163,8 +163,8 @@ describe("the call's ending at its talk time", () => {
     const { goodbyes } = play({ events: GREETING, talkSeconds: 20, until: 40_000 });
 
     expect(goodbyes).toStrictEqual([
-      { at: 20_000, cue: "goodbye", id: "goodbye-1", type: "goodbye" },
-      { at: 28_000, cue: "goodbye", id: "goodbye-2", type: "goodbye" },
+      { at: 20_000, cue: "goodbye", id: "goodbye-1", type: "goodbye", whileLearnerSpeaks: false },
+      { at: 28_000, cue: "goodbye", id: "goodbye-2", type: "goodbye", whileLearnerSpeaks: false },
     ]);
   });
 });
@@ -271,7 +271,13 @@ describe("what the objective check ends", () => {
     });
 
     expect(goodbyes).toStrictEqual([
-      { at: 13_000, cue: "goodbyeDone", id: "goodbye-1", type: "goodbye" },
+      {
+        at: 13_000,
+        cue: "goodbyeDone",
+        id: "goodbye-1",
+        type: "goodbye",
+        whileLearnerSpeaks: true,
+      },
     ]);
 
     expect(log.filter((entry) => entry.type === "progress")).toHaveLength(0);
@@ -351,6 +357,7 @@ describe("what the objective check ends", () => {
       cue: "goodbye",
       id: "goodbye-1",
       type: "goodbye",
+      whileLearnerSpeaks: true,
     });
 
     expect(withCheck.log).toStrictEqual(withoutCheck.log);
@@ -377,7 +384,7 @@ describe("a quiet learner", () => {
     ]);
 
     expect(goodbyes).toStrictEqual([
-      { at: 54_000, cue: "goodbye", id: "goodbye-1", type: "goodbye" },
+      { at: 54_000, cue: "goodbye", id: "goodbye-1", type: "goodbye", whileLearnerSpeaks: false },
     ]);
   });
 

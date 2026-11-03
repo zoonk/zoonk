@@ -33,7 +33,11 @@ export type CallEndingCommand =
   | { cue: "checkIn"; type: "cue" }
   /** Sent with `id` as its event id, so its acknowledgment comes back with it. */
   | { cue: "opening"; id: typeof OPENING_ID; type: "cue" }
-  | { cue: "goodbye" | "goodbyeDone"; id: string; type: "goodbye" }
+  /**
+   * `whileLearnerSpeaks`: measured, a goodbye spoken aloud at once ("commentary") made the character
+   * talk over a learner who paused mid-answer; as quiet context ("thinking") it waited for them.
+   */
+  | { cue: "goodbye" | "goodbyeDone"; id: string; type: "goodbye"; whileLearnerSpeaks: boolean }
   | { type: "progress" }
   | { reason: CallHangUpReason; type: "hangUp" };
 
@@ -172,7 +176,10 @@ function stepGoodbye(state: CallEndingState, at: number): Step {
   const id = requested.ids.at(-1) ?? "";
   const cue = state.reason === "done" ? "goodbyeDone" : "goodbye";
 
-  return { commands: [{ cue, id, type: "goodbye" }], state: { ...state, goodbye: requested } };
+  return {
+    commands: [{ cue, id, type: "goodbye", whileLearnerSpeaks: isLearnerSpeaking(state, at) }],
+    state: { ...state, goodbye: requested },
+  };
 }
 
 function hangUp(state: CallEndingState, reason: CallHangUpReason): Step {
@@ -270,10 +277,8 @@ function check(state: CallEndingState, event: Extract<CallEndingEvent, { type: "
 
   // Both already said goodbye before the cue went out: the cue would make the character say it again.
   if (state.reason) {
-    return {
-      commands: [],
-      state: saidGoodbye && !state.goodbye ? { ...state, saidGoodbye: true } : state,
-    };
+    const said = saidGoodbye && !state.goodbye;
+    return { commands: [], state: said ? { ...state, saidGoodbye: true } : state };
   }
 
   if (saidGoodbye) {

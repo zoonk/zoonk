@@ -76,9 +76,15 @@ export function useCallEnding({
       const { cues } = call.length.script;
 
       for (const command of commands) {
-        if (command.type === "cue" || command.type === "goodbye") {
+        if (command.type === "cue") {
           const eventId = "id" in command ? command.id : undefined;
           sendLiveCallCue({ cue: cues[command.cue], eventId, session: call.session });
+        }
+
+        if (command.type === "goodbye") {
+          const { text } = cues[command.cue];
+          const channel = command.whileLearnerSpeaks ? "thinking" : cues[command.cue].channel;
+          sendLiveCallCue({ cue: { channel, text }, eventId: command.id, session: call.session });
         }
 
         if (command.type === "progress" && progress.current) {
