@@ -209,7 +209,7 @@ export const languageTodayViewSchema = z
       .nullable()
       .meta({
         description:
-          "The speaking paper of the exam the goal names (DELE, DELF or DALF, Goethe-Zertifikat, Cambridge English), to practice any time at its target level; null when it names none",
+          "The speaking paper of the exam the goal names in its language (DELE, DELF or DALF, Goethe-Zertifikat, Cambridge English), to practice any time at its target level; null when it names none of them",
       }),
   })
   .meta({ id: "LanguageToday" });
