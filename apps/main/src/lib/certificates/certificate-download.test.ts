@@ -26,6 +26,19 @@ describe(getCertificateDownloadDisposition, () => {
     );
   });
 
+  it("keeps a long name in any script within a file name's 255 bytes", () => {
+    const disposition = getCertificateDownloadDisposition({
+      name: "山田花子",
+      title: "量子物理学".repeat(30),
+    });
+
+    const fileName = decodeURIComponent(disposition.split("filename*=UTF-8''")[1] ?? "");
+
+    expect(fileName).toMatch(/^山田花子 - 量子物理学/u);
+    expect(fileName).toMatch(/\.png$/u);
+    expect(new TextEncoder().encode(fileName).length).toBeLessThanOrEqual(255);
+  });
+
   it("drops characters a file system refuses and leaves out a missing name", () => {
     expect(
       getCertificateDownloadDisposition({ name: null, title: 'Data: "A/B" testing\nbasics' }),

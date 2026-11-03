@@ -7,6 +7,7 @@ import {
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -268,6 +269,26 @@ describe("course certificates", () => {
 
     await expect(listCertificates(studied.user.id)).resolves.toHaveLength(1);
     await expect(listCertificates(untouched.user.id)).resolves.toHaveLength(0);
+  });
+
+  it("counts the stand-ins a finishing test-out adds as passed by test", async () => {
+    const [fixture, placed] = await Promise.all([courseGoal(), skillFixture()]);
+    const todo = lastTodo(fixture);
+
+    await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
+      testOutKnownPlanItems(tx, {
+        goalId: fixture.goal.id,
+        items: [{ ...todo, skillIds: [todo.skillId ?? ""] }],
+        knownSkillIds: new Set([todo.skillId ?? "", placed.id]),
+        placedSkills: [{ id: placed.id, phase: 0 }],
+        testedOutAt: new Date(),
+        timeZone: TIME_ZONE,
+      }),
+    );
+
+    const [certificate] = await listCertificates(fixture.user.id);
+
+    expect(certificate?.details).toMatchObject({ lessonsStudied: 1, lessonsTestedOut: 2 });
   });
 
   it("never awards a language goal's plan a course certificate", async () => {

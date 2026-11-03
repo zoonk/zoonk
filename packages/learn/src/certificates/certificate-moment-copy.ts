@@ -39,7 +39,7 @@ export function useCertificateMomentCopy({
   account,
   certificates,
 }: {
-  account: CertificateAccount;
+  account: CertificateAccount | null;
   certificates: CertificateFacts[];
 }) {
   const t = useExtracted();

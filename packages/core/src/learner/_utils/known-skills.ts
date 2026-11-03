@@ -167,12 +167,12 @@ export async function testOutKnownPlanItems(
         })
       : [];
 
-  await awardCourseCertificates(tx, { finished: updated });
-
   const standInIds =
     leftOut.length > 0
       ? await insertTestedOutStandIns(tx, { goalId, skills: leftOut, testedOutAt, timeZone })
       : [];
+
+  await awardCourseCertificates(tx, { finished: updated });
 
   const changed = new Set(updated.map((item) => item.id));
   return { itemIds: ids.filter((id) => changed.has(id)), standInIds };

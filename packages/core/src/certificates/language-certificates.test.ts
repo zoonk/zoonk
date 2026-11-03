@@ -8,9 +8,18 @@ import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
 import { finishLanguageLevelTest } from "../language/level-test/finish-language-level-test";
 import { type LevelTestBank } from "../language/level-test/level-test-contract";
-import { recordLanguageSkillEvidence } from "../language/levels/record-language-evidence";
+import {
+  type SkillEvidence,
+  addSkillEvidence,
+  loadLanguageSkillEvidence,
+} from "../language/levels/record-language-evidence";
 
 const WINDOW = 20;
+
+async function recordSkillEvidence(input: Omit<SkillEvidence, "startScore">) {
+  const evidence = await loadLanguageSkillEvidence(input);
+  await prisma.$transaction((tx) => addSkillEvidence(tx, evidence));
+}
 
 async function languageLearner(level: string) {
   const user = await userFixture();
@@ -28,7 +37,7 @@ async function languageLearner(level: string) {
 
 /** A full window of right answers on advanced content: half a step up. */
 function raise(userId: string, skill: LanguageSkill) {
-  return recordLanguageSkillEvidence({
+  return recordSkillEvidence({
     evidence: { ceiling: 5, correct: WINDOW, total: WINDOW },
     language: "es",
     skill,
@@ -38,7 +47,7 @@ function raise(userId: string, skill: LanguageSkill) {
 
 /** A full window of wrong answers: half a step down. */
 function lower(userId: string, skill: LanguageSkill) {
-  return recordLanguageSkillEvidence({
+  return recordSkillEvidence({
     evidence: { ceiling: 0, correct: 0, total: WINDOW },
     language: "es",
     skill,
@@ -88,7 +97,7 @@ describe("language level certificates", () => {
   it("counts nothing a typed level put there until answers raise it", async () => {
     const { user } = await languageLearner("C2");
 
-    await recordLanguageSkillEvidence({
+    await recordSkillEvidence({
       evidence: { ceiling: 5, correct: 0, total: 5 },
       language: "es",
       skill: "writing",

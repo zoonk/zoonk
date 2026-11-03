@@ -16,7 +16,7 @@ async function claimCertificate(
   if (result.status === "notFinished") {
     return createErrorResponse({
       code: "COURSE_NOT_FINISHED",
-      message: "Finish every lesson and challenge of the course first",
+      message: "The course isn't finished, or this goal earns no course certificate",
       status: httpStatus.conflict,
     });
   }

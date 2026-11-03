@@ -150,7 +150,7 @@ export function CertificateDetails({
             {row.value}
           </DetailRow>
         ))}
-        {owner && <OwnerLinkRow links={links} />}
+        {owner?.account === "account" && <OwnerLinkRow links={links} />}
       </dl>
       {owner && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
