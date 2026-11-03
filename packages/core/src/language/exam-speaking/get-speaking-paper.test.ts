@@ -40,7 +40,10 @@ describe("the speaking paper read", () => {
     const { goal, user } = await languageGoalFixture();
 
     await prisma.goal.update({
-      data: { details: { targetLevel: "B2" }, targetLanguage: "es" },
+      data: {
+        details: { reason: "Quero fazer o DELE um dia", targetLevel: "B2" },
+        targetLanguage: "es",
+      },
       where: { id: goal.id },
     });
 
@@ -79,7 +82,10 @@ describe("the speaking paper read", () => {
 
     await Promise.all([
       prisma.goal.update({
-        data: { details: { targetLevel: "B2" }, targetLanguage: "es" },
+        data: {
+          details: { reason: "Quero fazer o DELE um dia", targetLevel: "B2" },
+          targetLanguage: "es",
+        },
         where: { id: goal.id },
       }),
       prisma.subscription.create({

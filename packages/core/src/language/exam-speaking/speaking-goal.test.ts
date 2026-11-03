@@ -113,7 +113,7 @@ describe(getSpeakingExamGoal, () => {
     ).toStrictEqual({ exam: "cambridge", level: "B1" });
   });
 
-  it("gives a language goal that names no exam its language's certificate at the target level", () => {
+  it("gives a language goal that names no exam no exam's speaking paper", () => {
     expect(
       getSpeakingExamGoal({
         fallbackLevel: "A2",
@@ -125,34 +125,8 @@ describe(getSpeakingExamGoal, () => {
           title: "Inglês para Toronto",
         }),
       }),
-    ).toStrictEqual({ exam: "cambridge", level: "B1" });
+    ).toBeNull();
 
-    expect(
-      getSpeakingExamGoal({
-        fallbackLevel: "A2",
-        goal: goal({
-          details: { targetScore: "C1" },
-          kind: "language",
-          targetLanguage: "fr",
-          title: "Francês para o trabalho",
-        }),
-      }),
-    ).toStrictEqual({ exam: "delf", level: "C1" });
-
-    expect(
-      getSpeakingExamGoal({
-        fallbackLevel: "B1",
-        goal: goal({
-          details: { targetLevel: "A1" },
-          kind: "language",
-          targetLanguage: "de",
-          title: "Alemão",
-        }),
-      }),
-    ).toStrictEqual({ exam: "goethe", level: "A1" });
-  });
-
-  it("practices a language goal with no target at the learner's own level, without reading levels into its words", () => {
     expect(
       getSpeakingExamGoal({
         fallbackLevel: "B1",
@@ -163,7 +137,7 @@ describe(getSpeakingExamGoal, () => {
           title: "Espanhol para viajar",
         }),
       }),
-    ).toStrictEqual({ exam: "dele", level: "B1" });
+    ).toBeNull();
   });
 
   it("leaves out language goals naming an exam without a paper here, and languages without one", () => {
