@@ -1231,9 +1231,9 @@ msgstr "データ"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Zoonkや相棒が呼びかけるときの名前"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx

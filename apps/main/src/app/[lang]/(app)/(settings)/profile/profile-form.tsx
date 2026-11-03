@@ -32,7 +32,7 @@ function NameHint({ isTooLong }: { isTooLong: boolean }) {
     return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
   }
 
-  return t("How Zoonk and your buddy call you");
+  return t("How Zoonk and your buddy call you, and the name on your certificates.");
 }
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {

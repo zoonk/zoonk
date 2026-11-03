@@ -1231,9 +1231,9 @@ msgstr "Verilerin"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Zoonk ve arkadaşın sana bu adla seslenir"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx

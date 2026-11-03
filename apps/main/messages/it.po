@@ -1231,9 +1231,9 @@ msgstr "I tuoi dati"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Come ti chiamano Zoonk e il tuo compagno"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Il nome con cui ti chiamano Zoonk e il tuo compagno e che compare sui tuoi certificati."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
