@@ -228,7 +228,7 @@ struct LiveCallEnding {
       actions.append(.send(cue, whileLearnerSpeaks: isLearnerTalking(at: now)))
     }
 
-    if isGoodbyeSaid, now.timeIntervalSince(lastActivity) >= seconds(timing.goodbyeQuietMs) {
+    if isGoodbyeSaid, isGoodbyeOver(at: now) {
       isOver = true
       actions.append(.hangUp(armed))
     }
@@ -328,12 +328,24 @@ struct LiveCallEnding {
     return now.timeIntervalSince(floorSince) >= answerWait
   }
 
+  /// Measured: a noisy room keeps the microphone above the speech level, so after the goodbye its
+  /// sound holds the call only as long as a learner gets to answer unless it comes back as words.
+  private func isGoodbyeOver(at now: Date) -> Bool {
+    now.timeIntervalSince(lastActivity) >= seconds(timing.goodbyeQuietMs)
+      || now.timeIntervalSince(lastWordsAt) >= seconds(timing.answerWaitMs)
+  }
+
   private var lastLearnerAt: Date? {
     [lastMicAt, lastHeardAt, lastTypedAt, lastSentAt].compactMap(\.self).max()
   }
 
+  private var lastWordsAt: Date {
+    [lastCharacterAt, lastHeardAt, lastTypedAt, lastSentAt].compactMap(\.self).max() ?? liveAt
+  }
+
   private var lastActivity: Date {
-    [lastCharacterAt, lastLearnerAt].compactMap(\.self).max() ?? liveAt
+    let micQuietAt = lastMicAt?.addingTimeInterval(Self.micHangover)
+    return [lastCharacterAt, lastLearnerAt, micQuietAt].compactMap(\.self).max() ?? liveAt
   }
 
   private func isRecent(_ date: Date?, at now: Date, within interval: TimeInterval) -> Bool {

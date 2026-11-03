@@ -467,11 +467,46 @@ final class LiveCallTests: XCTestCase {
     run.learnerTalks(from: 115, to: 121)
     run.acknowledge(at: 121.5)
     run.characterTalks(from: 122.5, to: 125)
-    run.learnerTalks(from: 126, to: 140)
+    run.microphoneHears(from: 126, to: 140)
+
+    for second in stride(from: 128.0, through: 140, by: 2) {
+      run.learnerHeard(at: second)
+    }
+
     run.learnerTypes(at: 142)
     run.wait(until: 150)
 
     XCTAssertEqual(run.hangUp?.at ?? 0, 145, accuracy: 0.11)
+  }
+
+  func testAfterTheGoodbyeANoisyRoomHoldsTheCallOnlyUntilTheAnswerWait() {
+    var run = EndingRun(talk: 5)
+    run.characterTalks(from: 0.5, to: 2.3)
+    run.microphoneHears(from: 9, to: 70)
+    run.acknowledge(at: 13)
+    run.characterTalks(from: 13.2, to: 15)
+    run.wait(until: 60)
+
+    // The goodbye's last words came at 15 s; only noise followed them.
+    XCTAssertEqual(run.hangUp?.reason, .time)
+    XCTAssertEqual(run.hangUp?.at ?? 0, 23, accuracy: 0.11)
+  }
+
+  func testAfterTheGoodbyeTheCallWaitsWhileTheLearnersWordsKeepComingBack() {
+    var run = EndingRun(talk: 5)
+    run.characterTalks(from: 0.5, to: 2.3)
+    run.acknowledge(at: 13)
+    run.characterTalks(from: 13.2, to: 15)
+    run.microphoneHears(from: 15.5, to: 30)
+
+    for second in stride(from: 17.0, through: 30, by: 1) {
+      run.learnerHeard(at: second)
+    }
+
+    run.wait(until: 60)
+
+    // Their last words came back at 30 s; the microphone went quiet at 31 s.
+    XCTAssertEqual(run.hangUp?.at ?? 0, 34, accuracy: 0.11)
   }
 
   func testWhenTheLearnerAnswersTheGoodbyeTheQuietWindowStartsAgain() {
@@ -1034,6 +1069,7 @@ private struct EndingRun {
   private var ending: LiveCallEnding
   private var now: TimeInterval = 0
   private var log: [(at: TimeInterval, action: LiveCallEnding.Action)] = []
+  private var microphone: ClosedRange<TimeInterval>?
 
   init(talk: TimeInterval = 120, hardStop: TimeInterval = 165) {
     ending = LiveCallEnding(
@@ -1074,8 +1110,19 @@ private struct EndingRun {
   mutating func wait(until seconds: TimeInterval) {
     while now < seconds - 0.0001 {
       now = min(seconds, now + 0.1)
+
+      if microphone?.contains(now) == true {
+        ending.learnerSpoke(at: date(now))
+      }
+
       advance()
     }
+  }
+
+  /// The microphone stays above the speech threshold from `start` through `end`, a learner talking
+  /// or a noisy room, while the rest of the timeline plays.
+  mutating func microphoneHears(from start: TimeInterval, to end: TimeInterval) {
+    microphone = start...end
   }
 
   /// Every 10 s the character talks for 3 s, and the learner answers for 2 s.
