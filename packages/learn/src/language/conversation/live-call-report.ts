@@ -7,7 +7,7 @@
 const SLOW_REPLY_MS = 3000;
 
 export type ReplyGaps = {
-  /** An app cue went out after the learner stopped: the character answers it, not only them. */
+  /** An app cue went out in this turn: the character's next words answer it, not only them. */
   cued: boolean;
   delegations: number;
   gaps: number[];
@@ -42,10 +42,12 @@ function hearVoice(gaps: ReplyGaps, event: Extract<ReplyGapEvent, { type: "voice
 
   if (event.speaking) {
     const unanswered = gaps.unanswered + (isUnanswered(gaps, event.at) ? 1 : 0);
-    return { ...gaps, speaking: true, stoppedAt: null, unanswered };
+    // Speaking again after a pause is the same turn, which keeps a cue sent during it.
+    const cued = gaps.stoppedAt !== null && gaps.cued;
+    return { ...gaps, cued, speaking: true, stoppedAt: null, unanswered };
   }
 
-  return { ...gaps, cued: false, speaking: false, stoppedAt: event.voicedAt ?? event.at };
+  return { ...gaps, speaking: false, stoppedAt: event.voicedAt ?? event.at };
 }
 
 export function recordReplyGap(gaps: ReplyGaps, event: ReplyGapEvent): ReplyGaps {
@@ -58,11 +60,11 @@ export function recordReplyGap(gaps: ReplyGaps, event: ReplyGapEvent): ReplyGaps
   }
 
   if (event.type === "cue") {
-    return gaps.stoppedAt === null ? gaps : { ...gaps, cued: true };
+    return { ...gaps, cued: true };
   }
 
   if (gaps.stoppedAt === null) {
-    return gaps;
+    return { ...gaps, cued: false };
   }
 
   const answered = gaps.cued ? gaps.gaps : [...gaps.gaps, event.at - gaps.stoppedAt];

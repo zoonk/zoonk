@@ -6,7 +6,7 @@ import { type LiveCallSession } from "./live-call-session";
 import { loadLiveCallSession } from "./load-live-call-session";
 import { type ConversationConnection } from "./use-call-connection";
 import { type LiveCallPhase } from "./use-call-controls";
-import { type CallAudio, openCallAudio, openTypedCallAudio } from "./use-call-microphone";
+import { type CallAudio, openCallAudio } from "./use-call-microphone";
 
 export type LiveCallError =
   | "callInProgress"
@@ -19,7 +19,8 @@ export type LiveCallError =
 
 /**
  * The microphone opens before the call is reserved, since the server's deadline starts then and a
- * permission prompt would take its time. Null when the start was cancelled meanwhile.
+ * permission prompt would take its time. Null when the start was cancelled meanwhile, `blocked`
+ * when the microphone is: only the learner chooses a typed call.
  */
 export async function openCall({
   audio,
@@ -31,7 +32,11 @@ export async function openCall({
   keepAudio: (audio: CallAudio) => boolean;
 }) {
   const live = loadLiveCallSession();
-  const opened = audio ?? (await openCallAudio()) ?? openTypedCallAudio();
+  const opened = audio ?? (await openCallAudio());
+
+  if (!opened) {
+    return isCurrent() ? ("blocked" as const) : null;
+  }
 
   if (!isCurrent()) {
     opened.stop();

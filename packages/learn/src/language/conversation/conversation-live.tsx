@@ -32,7 +32,6 @@ const MS_PER_SECOND = 1000;
 const PERCENT = 100;
 const NO_BREAK_SPACE = "\u00A0";
 
-/** How the screen's last part reads once the call ended: saving, or a save to try again. */
 export type CallEnding = { onRetry: () => void; state: "closing" | "failed" | "saving" };
 
 function Transcript({
@@ -156,7 +155,7 @@ function CallBody({
           <Transcript call={call} conversation={conversation} />
         </TaskBody>
       </MessageScrollerViewport>
-      <MessageScrollerButton aria-label={t("Scroll to latest")}>
+      <MessageScrollerButton aria-label={t("Scroll to latest")} behavior="auto">
         <ArrowDownIcon aria-hidden="true" />
       </MessageScrollerButton>
     </MessageScroller>

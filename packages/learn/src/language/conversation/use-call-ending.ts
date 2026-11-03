@@ -180,5 +180,12 @@ export function useCallEnding({
     return () => clearInterval(timer);
   }, [dispatch, examCues, onCue, startedAt]);
 
-  return { begin, callLength, checked, dispatch, elapsedSeconds, view };
+  // A call ended or failed from outside (End, a drop, the server's hangup) stops its clock, so a
+  // late tick or check can't end it once more, or save a call the learner may still call again.
+  const stop = useCallback(() => {
+    running.current = null;
+    setStartedAt(null);
+  }, []);
+
+  return { begin, callLength, checked, dispatch, elapsedSeconds, stop, view };
 }

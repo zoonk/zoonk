@@ -17,7 +17,6 @@ import { type LiveCall } from "./use-live-call";
 
 const MARK_CLASS = "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
 
-/** The calling mark's ring turns while the call rings, and holds still under reduced motion. */
 function CallingMark() {
   return (
     <span aria-hidden="true" className={cn(MARK_CLASS, "bg-secondary relative")}>
@@ -50,7 +49,6 @@ function QuietMark({ icon }: { icon: React.ReactNode }) {
   );
 }
 
-/** What the line under "Your turn" says once the call started ending, until the goodbye. */
 function useWrapUpLine({ call, name }: { call: LiveCall; name: string }) {
   const t = useExtracted();
   const reason = call.turn?.saidGoodbye ? null : call.turn?.reason;

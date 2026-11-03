@@ -57,6 +57,22 @@ describe(summarizeReplyGaps, () => {
     ).toMatchObject({ reply_gap_max_ms: null, slow_replies: 0, unanswered_turns: 2 });
   });
 
+  it("leaves out the answer to a cue sent while the learner was still speaking", () => {
+    expect(
+      play(
+        [
+          { at: 10_000, speaking: true, type: "voice", voicedAt: 10_000 },
+          { type: "cue" },
+          { at: 13_000, speaking: false, type: "voice", voicedAt: 12_000 },
+          { at: 16_500, type: "character" },
+          ...turn(20_000),
+          { at: 21_400, type: "character" },
+        ],
+        30_000,
+      ),
+    ).toMatchObject({ reply_gap_max_ms: 1400, slow_replies: 0 });
+  });
+
   it("keeps a short pause inside one turn", () => {
     expect(
       play([...turn(5000), ...turn(7000), { at: 8500, type: "character" }], 10_000),

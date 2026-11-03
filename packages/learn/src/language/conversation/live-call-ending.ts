@@ -312,7 +312,6 @@ function reduce(
   return event.type === "sent" ? { ...markLearner(state, at), sentAt: at, typingAt: null } : state;
 }
 
-/** The call went live: the character greets the caller, and the clocks start. */
 export function startCallEnding({
   at,
   hardStopAt,
@@ -365,7 +364,6 @@ export function stepCallEnding(state: CallEndingState, event: CallEndingEvent): 
   return { commands: [...applied.commands, ...evaluated.commands], state: evaluated.state };
 }
 
-/** What the call's screen shows from the ending's state. */
 export function getCallEndingView(state: CallEndingState, at: number) {
   const quiet = quietFor(state, at);
 

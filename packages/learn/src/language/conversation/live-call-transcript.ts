@@ -15,7 +15,6 @@ type TranscriptFragment = {
   startMs: number;
 };
 
-/** A pause this long between two fragments starts a new sentence. */
 const UTTERANCE_PAUSE_MS = 1000;
 
 /**

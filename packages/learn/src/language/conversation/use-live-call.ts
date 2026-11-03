@@ -5,7 +5,7 @@ import {
   type LanguageConversationObjectiveCheck,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type RefObject, useCallback, useEffect, useMemo } from "react";
+import { type RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { type CallEndingEvent } from "./live-call-ending";
 import {
@@ -39,7 +39,6 @@ export type LiveCallActions = CallConnectionActions & {
   ) => Promise<LanguageConversationObjectiveCheck | null>;
 };
 
-/** The learner's voice, typing and sending, for the call's ending and its report. */
 function useLearnerInput({
   dispatch,
   mutedRef,
@@ -71,7 +70,6 @@ function useLearnerInput({
   return { hear, onSent, onTyping };
 }
 
-/** The session's events, told to the ending, the objective checks and the report. */
 function useLiveCallEvents({
   begin,
   endAtDeadline,
@@ -159,6 +157,16 @@ export function useLiveCall({
     onHangUp: endAs,
   });
 
+  const stopEnding = ending.stop;
+
+  const endFromOutside = useCallback(
+    (reason: CallEndReason) => {
+      stopEnding();
+      endAs(reason);
+    },
+    [endAs, stopEnding],
+  );
+
   const objectives = useCallObjectives({
     checkObjectives: actions.checkObjectives,
     conversation,
@@ -173,10 +181,11 @@ export function useLiveCall({
 
   const fail = useCallback(
     (error: LiveCallError, limit: CallLimit | null = null) => {
+      stopEnding();
       report.send(error === "dropped" ? "dropped" : "failed");
       failCall(error, limit);
     },
-    [failCall, report],
+    [failCall, report, stopEnding],
   );
 
   const input = useLearnerInput({
@@ -202,7 +211,7 @@ export function useLiveCall({
     updateTurns,
   });
 
-  const endAtDeadline = useCallback(() => endAs("hardStop"), [endAs]);
+  const endAtDeadline = useCallback(() => endFromOutside("hardStop"), [endFromOutside]);
 
   const handleEvent = useLiveCallEvents({
     begin: ending.begin,
@@ -219,6 +228,13 @@ export function useLiveCall({
     updateTurns,
   });
 
+  const [microphoneRefused, setMicrophoneRefused] = useState(false);
+
+  const onMicrophoneBlocked = useCallback(() => {
+    setPhase("idle");
+    setMicrophoneRefused(true);
+  }, [setPhase]);
+
   const { cancelStart, start } = useConnectCall({
     endAtDeadline,
     endedByServer: connection.endedByServer,
@@ -227,6 +243,7 @@ export function useLiveCall({
     hear: input.hear,
     keepAudio: microphone.keep,
     keepSession,
+    onMicrophoneBlocked,
     onReserved: report.reserved,
     phaseRef,
     reserve: connection.reserve,
@@ -259,10 +276,12 @@ export function useLiveCall({
     endsAtLimit: ending.callLength?.endsAtLimit ?? null,
     error: problem.error,
     finish,
-    hangUp: () => endAs("learnerEnded"),
+    hangUp: () => endFromOutside("learnerEnded"),
     limit: problem.limit,
     metLabels: objectives.metLabels,
     micBlocked: microphone.blocked,
+    /** A call started again without the intro found the microphone blocked: ask the learner. */
+    microphoneRefused,
     muted,
     onTyping: input.onTyping,
     phase,

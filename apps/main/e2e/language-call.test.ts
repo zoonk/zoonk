@@ -284,6 +284,31 @@ test.describe("Language calls", () => {
     await page.context().close();
   });
 
+  test("calling again with a blocked microphone asks first instead of reserving a typed call", async ({
+    browser,
+  }) => {
+    const { goal, renting, user } = await createLanguageLearner();
+    const call = await createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id });
+    const page = await openAs(browser, user);
+
+    const connections = () =>
+      prisma.liveCallConnection.count({ where: { conversationId: call.id } });
+
+    await blockMicrophone(page);
+    const gateway = await answerLiveCalls(page, "silent");
+    await page.clock.install();
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Call Linda" }).click();
+    await page.getByRole("button", { name: "Type instead" }).click();
+    await gateway.asked;
+    await page.clock.fastForward("00:16");
+    await page.getByRole("button", { name: "Try again" }).click();
+
+    await expect(page.getByText("Your microphone is off")).toBeVisible();
+    await expect.poll(connections).toBe(1);
+    await page.context().close();
+  });
+
   test("a call that doesn't connect says so, takes typed replies while it rings and calls again", async ({
     browser,
   }) => {

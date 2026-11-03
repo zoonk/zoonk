@@ -19,7 +19,6 @@ type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
 
 type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired" | "ready";
 
-/** The host hands the call the audio the tap opened. */
 export function CheckpointCallIntro({
   conversation,
   dailyLimitReached,
@@ -95,11 +94,13 @@ export function ConversationIntro({
   conversation,
   exitHref,
   locked = false,
+  microphoneBlocked = false,
   onStart,
 }: {
   conversation: LanguageConversationView;
   exitHref: string;
   locked?: boolean;
+  microphoneBlocked?: boolean;
   onStart: (audio: CallAudio) => void;
 }) {
   const { examTask } = conversation;
@@ -107,6 +108,7 @@ export function ConversationIntro({
   const footer = (
     <CallIntroFooter
       conversation={conversation}
+      microphoneBlocked={microphoneBlocked}
       onStart={onStart}
       start={locked ? "plusRequired" : "idle"}
     />

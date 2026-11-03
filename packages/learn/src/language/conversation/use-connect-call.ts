@@ -15,10 +15,7 @@ const MS_PER_SECOND = 1000;
 
 type Connection = ReturnType<typeof useCallConnection>;
 
-/**
- * Opens the microphone, reserves the call and connects its session. `cancelStart` drops a start
- * still on its way, whatever it was waiting for.
- */
+/** `cancelStart` drops a start still on its way, whatever it was waiting for. */
 export function useConnectCall({
   endAtDeadline,
   endedByServer,
@@ -27,6 +24,7 @@ export function useConnectCall({
   hear,
   keepAudio,
   keepSession,
+  onMicrophoneBlocked,
   onReserved,
   phaseRef,
   reserve,
@@ -40,6 +38,7 @@ export function useConnectCall({
   hear: (sample: SpeechSample) => void;
   keepAudio: (audio: CallAudio) => boolean;
   keepSession: (session: LiveCallSession) => void;
+  onMicrophoneBlocked: () => void;
   onReserved: (talkSeconds: number) => void;
   phaseRef: RefObject<LiveCallPhase>;
   reserve: Connection["reserve"];
@@ -65,6 +64,11 @@ export function useConnectCall({
       const opened = await openCall({ audio: given, isCurrent, keepAudio });
 
       if (!opened) {
+        return;
+      }
+
+      if (opened === "blocked") {
+        onMicrophoneBlocked();
         return;
       }
 
@@ -123,6 +127,7 @@ export function useConnectCall({
       hear,
       keepAudio,
       keepSession,
+      onMicrophoneBlocked,
       onReserved,
       phaseRef,
       reserve,

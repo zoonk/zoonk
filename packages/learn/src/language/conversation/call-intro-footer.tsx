@@ -36,8 +36,14 @@ function preloadLiveCall() {
  * The tap asks for the microphone before anything is reserved: Safari on iOS asks only during a
  * tap, and a call the learner can't speak in shouldn't start on its own.
  */
-function useMicrophoneAsk(onAudio: (audio: CallAudio) => void) {
-  const [ask, setAsk] = useState<"asking" | "blocked" | "idle">("idle");
+function useMicrophoneAsk({
+  blocked,
+  onAudio,
+}: {
+  blocked: boolean;
+  onAudio: (audio: CallAudio) => void;
+}) {
+  const [ask, setAsk] = useState<"asking" | "blocked" | "idle">(blocked ? "blocked" : "idle");
   const attempt = useRef(0);
   const prompting = useTakingLong({ active: ask === "asking", afterMs: PROMPT_SHOWN_MS });
 
@@ -88,15 +94,17 @@ function useMicrophoneAsk(onAudio: (audio: CallAudio) => void) {
  */
 export function CallIntroFooter({
   conversation,
+  microphoneBlocked = false,
   onStart,
   start,
 }: {
   conversation: Pick<LanguageConversationIntro, "character" | "examTask" | "kind">;
+  microphoneBlocked?: boolean;
   onStart: (audio: CallAudio) => void;
   start: CallIntroFooterState;
 }) {
   const t = useExtracted();
-  const microphone = useMicrophoneAsk(onStart);
+  const microphone = useMicrophoneAsk({ blocked: microphoneBlocked, onAudio: onStart });
   const { name } = conversation.character;
 
   return (
