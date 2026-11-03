@@ -5,7 +5,7 @@
   "goal_box_example_explanation": "024d3f8bce9225c60c7e54ec3dc7b55e33a4f4f2e5fb120242ab45d17b4e2870",
   "goal_box_example_language": "e8280b7b9816a1cf2622d8d511904a38429d01b8d5f5d54eb4fb73e94e9bfa6e",
   "goal_box_example_music": "664caa9bcfbe6c40880a84a666e3b4e414463773d93fcf3b96f0396a56e81de4",
-  "goal_box_example_pick": "1126cc8947e71db51519bcdc4ff6fc43fe7409448a2eee2ddd85bdfd4e12e891",
+  "goal_box_example_pick": "23e3a7d87bee020132bf5f840755cb19aae2e58cfda4ec8c6ef0bfa8a06b6f6d",
   "goal_box_example_topic": "58481e4633ca8dddffb547b8defa53195ba6da83ce7786b8d1a25e419fd3fad7",
   "goal_box_examples": "fdaaf4f7bb08d030c8e664af4e01f8cb1836f8a141c25eed44519c53d06c669b",
   "goal_box_kind_exam": "2f52ec2b472c7c48e724f9d23ace0a1293e3b4904a8ccb16e5fa19406ad9b4c5",
@@ -16,7 +16,7 @@
   "goal_box_label": "c654353d563a003fa33ce6763f2edd31c2d2d15760e666b58019b7f63c93d5a5",
   "goal_box_placeholder": "b3c159be363bcae64d4705282f2f79f9b48ae4ab49c6cd34dd17541c8aee75de",
   "goal_box_submit": "2b5ea793e9f91036760cf75f2be2b6ff538162c8fde2cf3b98fcb645112bdb26",
-  "goal_box_write_first": "1c27b69e665f74d502fc0675e51a938c4f97d377df7621ae6e4b4ba57bd7f80f"
+  "goal_box_write_first": "d6687c390b196526124511ff3999d4ce1c95a199027f2c18b6e3b3f04fe16b55"
 }
 -->
 <resources>
@@ -24,10 +24,10 @@
     <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. %1$s is a language name. -->
     <string name="goal_box_placeholder">passar no Enem, falar %1$s…</string>
     <string name="goal_box_submit">Criar meu plano</string>
-    <string name="goal_box_write_first">Primeiro, escreva sua meta no campo com suas próprias palavras.</string>
+    <string name="goal_box_write_first">Primeiro, escreva seu objetivo no campo com suas próprias palavras.</string>
     <string name="goal_box_examples">Exemplos</string>
     <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
-    <string name="goal_box_example_pick">começar esta meta</string>
+    <string name="goal_box_example_pick">começar este objetivo</string>
     <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the EXANI-II in Spanish, the bac in French, the Abitur in German, the maturità in Italian, the 共通テスト in Japanese, the 수능 in Korean, the YKS in Turkish, the matura in Polish. For an exam without a pass mark (共通テスト, 수능, YKS), say doing well on it. -->
     <string name="goal_box_example_exam">Passar no Enem</string>
     <!-- %1$s is a language name. -->

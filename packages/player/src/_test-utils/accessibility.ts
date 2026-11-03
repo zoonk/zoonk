@@ -10,6 +10,11 @@ import {
   findSmallTargets,
   sampleTargets,
 } from "@zoonk/testing/accessibility/target-size";
+import {
+  LABELED_DRAWING_SELECTOR,
+  findSelectableDrawings,
+  findSelectableTargets,
+} from "@zoonk/testing/accessibility/text-selection";
 import axe from "axe-core";
 import { expect } from "vitest";
 import { onDevice } from "./device-media";
@@ -38,11 +43,18 @@ async function scanScreen(where: string): Promise<string[]> {
     rules: HOST_DOCUMENT_RULES,
   });
 
-  const smallTargets = findSmallTargets(sampleTargets(TARGET_SELECTOR)).map(
+  const targets = sampleTargets(TARGET_SELECTOR);
+
+  const smallTargets = findSmallTargets(targets).map(
     (target) => `${where}: [target-size] ${target} (needs ${MIN_TARGET_PX} px)`,
   );
 
-  return [...describeViolations(results.violations, where).failing, ...smallTargets];
+  const selectable = [
+    ...findSelectableTargets(targets),
+    ...findSelectableDrawings(sampleTargets(LABELED_DRAWING_SELECTOR)),
+  ].map((target) => `${where}: [text-selection] ${target} lets a held finger select its text`);
+
+  return [...describeViolations(results.violations, where).failing, ...smallTargets, ...selectable];
 }
 
 async function scanInEachScheme(label: string): Promise<string[]> {

@@ -337,13 +337,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld meta"
+                  "value" : "%lld objetivo"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld metas"
+                  "value" : "%lld objetivos"
                 }
               }
             }
@@ -516,13 +516,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld meta por vez"
+                  "value" : "%lld objetivo por vez"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld metas por vez"
+                  "value" : "%lld objetivos por vez"
                 }
               }
             }
@@ -1227,7 +1227,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um plano para sua meta e seu prazo"
+            "value" : "Um plano para seu objetivo e seu prazo"
           }
         },
         "tr" : {
@@ -1699,7 +1699,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quase. Aulas, metas e seu parceiro só têm limites para barrar robôs e ferramentas automatizadas, não quem está aprendendo. As conversas para praticar têm limites diários e mensais, maiores que os do plano grátis."
+            "value" : "Quase. Aulas, objetivos e seu parceiro só têm limites para barrar robôs e ferramentas automatizadas, não quem está aprendendo. As conversas para praticar têm limites diários e mensais, maiores que os do plano grátis."
           }
         },
         "tr" : {
@@ -4138,7 +4138,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas as metas · todas as aulas"
+            "value" : "Todos os objetivos · todas as aulas"
           }
         },
         "tr" : {
@@ -4659,7 +4659,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metas, planos e progresso"
+            "value" : "Objetivos, planos e progresso"
           }
         },
         "tr" : {
@@ -8687,7 +8687,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso exclui permanentemente seu perfil, metas, planos, progresso, memória e arquivos enviados. Não dá para desfazer."
+            "value" : "Isso exclui permanentemente seu perfil, objetivos, planos, progresso, memória e arquivos enviados. Não dá para desfazer."
           }
         },
         "tr" : {
@@ -10518,7 +10518,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você continua com o Plus até o fim do período já pago. Depois, você volta para o plano grátis e mantém suas metas e seu progresso."
+            "value" : "Você continua com o Plus até o fim do período já pago. Depois, você volta para o plano grátis e mantém seus objetivos e seu progresso."
           }
         },
         "tr" : {

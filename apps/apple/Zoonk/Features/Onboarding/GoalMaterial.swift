@@ -448,20 +448,15 @@ struct MaterialQuestionsView: View {
             comment: "Placeholder of the box for a question about the learner's material"),
           label: Text(
             "Your question", tableName: "Onboarding",
-            comment: "The box for a question about the learner's material")
+            comment: "The box for a question about the learner's material"),
+          onSubmit: ask
         )
         .lineLimit(1...5)
         .focused($isFocused)
         .submitLabel(.send)
-        .onSubmit(ask)
         .onChange(of: question) { _, value in
           if value.count > Self.maxLength {
             question = String(value.prefix(Self.maxLength))
-          }
-
-          if value.hasSuffix("\n") {
-            question = String(value.dropLast())
-            ask()
           }
         }
         .padding(.vertical, 10)

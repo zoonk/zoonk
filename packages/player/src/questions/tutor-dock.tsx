@@ -230,7 +230,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         count,
         name: buddy.identity.name,
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-solid"
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >

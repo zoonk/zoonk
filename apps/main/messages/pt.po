@@ -56,7 +56,7 @@ msgstr "Explorar cursos"
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
-msgstr "Começar uma meta"
+msgstr "Começar um objetivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -142,12 +142,12 @@ msgstr "abre o chat"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "Q7LVft"
 msgid "Start a new goal: “{goal}”"
-msgstr "Começar uma nova meta: “{goal}”"
+msgstr "Começar um novo objetivo: “{goal}”"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "MA35Hh"
 msgid "Start a goal: “{goal}”"
-msgstr "Começar uma meta: “{goal}”"
+msgstr "Começar um objetivo: “{goal}”"
 
 #. Heading over the option to ask the buddy the typed question.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
@@ -159,7 +159,7 @@ msgstr "Perguntar"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
-msgstr "Nova meta"
+msgstr "Novo objetivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "u82Vi2"
@@ -193,7 +193,7 @@ msgstr "Pergunte para {buddy}…"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
-msgstr "Começar uma nova meta"
+msgstr "Começar um novo objetivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
@@ -279,7 +279,7 @@ msgstr "Ações"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "OXDyuT"
 msgid "Your goals"
-msgstr "Suas metas"
+msgstr "Seus objetivos"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "eclXxO"
@@ -759,7 +759,7 @@ msgstr "Pular para o conteúdo"
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "l5SUmq"
 msgid "Start with a goal"
-msgstr "Comece com uma meta"
+msgstr "Comece com um objetivo"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
@@ -904,7 +904,7 @@ msgstr "Simulado com tempo igual ao da prova real"
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
-msgstr "O que você vai estudar a cada dia até alcançar sua meta e os assuntos que ela abrange."
+msgstr "O que você vai estudar a cada dia até alcançar seu objetivo e os assuntos que ele abrange."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 msgctxt "NIpBgv"
@@ -914,7 +914,7 @@ msgstr "Seu plano vem depois de algumas perguntas"
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 msgctxt "mMlLhC"
 msgid "Answer them and we'll plan every day until you reach your goal."
-msgstr "Responda às perguntas e a gente vai planejar cada dia até você alcançar sua meta."
+msgstr "Responda às perguntas e a gente vai planejar cada dia até você alcançar seu objetivo."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 msgctxt "acrOoz"
@@ -959,12 +959,12 @@ msgstr "Continuar explicação"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
-msgstr "As aulas, revisões e práticas de cada dia para sua meta."
+msgstr "As aulas, revisões e práticas de cada dia para seu objetivo."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
+msgstr "O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais objetivos."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -974,7 +974,7 @@ msgstr "Retomar {goal}"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "kL0PL2"
 msgid "Start a new goal, or pick another one above."
-msgstr "Comece uma nova meta ou escolha outra acima."
+msgstr "Comece um novo objetivo ou escolha outro acima."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "WDKpPN"
@@ -984,27 +984,27 @@ msgstr "Você concluiu {goal}."
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
 msgid "Finished"
-msgstr "Concluída"
+msgstr "Concluído"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "Nada está planejado até você retomar a meta."
+msgstr "Nada está planejado até você retomar o objetivo."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "CSgdxh"
 msgid "{goal} is paused."
-msgstr "{goal}: meta pausada."
+msgstr "Objetivo em pausa: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
 msgid "This goal is paused."
-msgstr "Esta meta está pausada."
+msgstr "Este objetivo está pausado."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "C2iTEH"
 msgid "Paused"
-msgstr "Pausada"
+msgstr "Pausado"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
@@ -1098,7 +1098,7 @@ msgstr "Escreva com suas palavras o que você quer alcançar. O Zoonk pergunta s
 #: src/app/[lang]/(app)/(onboarding)/start/page.tsx
 msgctxt "G4ZsrK"
 msgid "Start with your goal"
-msgstr "Comece pela sua meta"
+msgstr "Comece pelo seu objetivo"
 
 #: src/app/[lang]/(app)/(settings)/_components/settings-eyebrow.tsx
 msgctxt "DId5yN"
@@ -1151,7 +1151,7 @@ msgstr "Excluir sua conta?"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
-msgstr "Suas metas, planos, progresso, memória e arquivos enviados serão apagados para sempre. Não dá para desfazer isso."
+msgstr "Seus objetivos, planos, progresso, memória e arquivos enviados serão apagados para sempre. Não dá para desfazer isso."
 
 #: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
 msgctxt "B62Z1j"
@@ -1647,7 +1647,7 @@ msgstr "Sua Energia agora e nos últimos 12 meses."
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "5CNApj"
 msgid "All goals"
-msgstr "Todas as metas"
+msgstr "Todos os objetivos"
 
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
@@ -3372,11 +3372,12 @@ msgid "<line>Stop deciding what to study.</line> <line>Just study.</line>"
 msgstr "<line>Pare de decidir o que estudar.</line> <line>Só estude.</line>"
 
 #. The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
+#. The landing's subhead. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "WtT1Bl"
 msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
-msgstr "Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo."
+msgstr "Conte seu objetivo e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo."
 
 #. An example goal a learner might type, short enough to fit on one line beside a button; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -3929,7 +3930,7 @@ msgstr "Quanto tempo por dia?"
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
-msgstr "Você não pode começar outra meta agora. Primeiro, conclua ou pause uma delas."
+msgstr "Você não pode começar outro objetivo agora. Primeiro, conclua ou pause um deles."
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "kaDIbJ"
@@ -4314,7 +4315,7 @@ msgstr "Não precisa de cartão."
 #: src/components/pricing/free-plan.tsx
 msgctxt "SJVGSo"
 msgid "A plan for your goal and your date"
-msgstr "Um plano para sua meta e sua data"
+msgstr "Um plano para seu objetivo e sua data"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "Bj_ci-"
@@ -4334,7 +4335,7 @@ msgstr "Conversas para praticar conversação, com limites menores que os do Plu
 #: src/components/pricing/free-plan.tsx
 msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
-msgstr "{goals, plural, one {# meta} other {# metas}} · {lessons, plural, one {# aula} other {# aulas}} por mês"
+msgstr "{goals, plural, one {# objetivo} other {# objetivos}} · {lessons, plural, one {# aula} other {# aulas}} por mês"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "ktRBJl"
@@ -4359,7 +4360,7 @@ msgstr "Limites maiores para conversas de prática"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
 msgid "Every goal · every lesson"
-msgstr "Todas as metas · todas as aulas"
+msgstr "Todos os objetivos · todas as aulas"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "0I_Rwu"
@@ -4425,7 +4426,7 @@ msgstr "Cancele quando quiser."
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
 msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Prepare-se para sua prova, um novo emprego ou uma mudança com o Zoonk Plus: aulas e metas ilimitadas, preparo completo para provas com simulados e seu parceiro de estudos com IA. Comece de graça."
+msgstr "Prepare-se para sua prova, um novo emprego ou uma mudança com o Zoonk Plus: aulas e objetivos ilimitados, preparo completo para provas com simulados e seu parceiro de estudos com IA. Comece de graça."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -4441,7 +4442,7 @@ msgstr "Comece de graça. <rest>Quando quiser tudo, tem o Plus.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "O Grátis te acompanha em uma meta por vez. O Plus te acompanha em todas as metas, até o grande dia."
+msgstr "O Grátis te acompanha em um objetivo por vez. O Plus te acompanha em todos os objetivos, até o grande dia."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -4456,7 +4457,7 @@ msgstr "No plano Grátis, você tem:"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "Uoc-Co"
 msgid "{count, plural, one {# goal} other {# goals}} at a time"
-msgstr "{count, plural, one {# meta} other {# metas}} por vez"
+msgstr "{count, plural, one {# objetivo} other {# objetivos}} por vez"
 
 #: src/components/pricing/plus-questions.tsx
 #: src/components/pricing/pricing-covers.tsx
@@ -4502,7 +4503,7 @@ msgstr "O Plus é mesmo ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Quase. As aulas, as metas e seu Parceiro têm limites apenas para impedir bots e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis. <link>Leia nossa política de uso justo</link>."
+msgstr "Quase. As aulas, os objetivos e seu Parceiro têm limites apenas para impedir bots e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis. <link>Leia nossa política de uso justo</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
@@ -4512,7 +4513,7 @@ msgstr "O que acontece se eu cancelar?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "z1FMPn"
 msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
-msgstr "Você continua com o Plus até o fim do período que já pagou. Depois, volta para o plano Grátis, e suas metas e seu progresso continuam com você."
+msgstr "Você continua com o Plus até o fim do período que já pagou. Depois, volta para o plano Grátis, e seus objetivos e seu progresso continuam com você."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "94whIk"
@@ -4568,7 +4569,7 @@ msgstr "Dia da prova"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "x-wBHO"
 msgid "Any other goal"
-msgstr "Qualquer outra meta"
+msgstr "Qualquer outro objetivo"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "KshPEJ"
@@ -4669,7 +4670,7 @@ msgstr "virar analista de dados até junho"
 #: src/components/public/goal-form.tsx
 msgctxt "47CC_y"
 msgid "Write your goal in the box first, in your own words."
-msgstr "Primeiro, escreva sua meta no campo com suas próprias palavras."
+msgstr "Primeiro, escreva seu objetivo no campo com suas próprias palavras."
 
 #: src/components/public/goal-form.tsx
 msgctxt "lnZvgd"

@@ -114,15 +114,7 @@ fun LanguageStepView(
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() }
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
-    // On a spread a word's or a letter's sound sits with it before the fold; in one column the action bar has it.
-    val sound: (@Composable () -> Unit)? =
-        if (part == StepPart.Screen &&
-            prompt != null
-        ) {
-            promptAudioUrl(content)?.let { url -> { PromptAudioIconButton(url, prompt) } }
-        } else {
-            null
-        }
+    val sound: (@Composable () -> Unit)? = prompt?.let { promptAudioUrl(content)?.let { url -> { PromptAudioInlineButton(url, prompt) } } }
 
     when (content.kind) {
         StepKind.Alphabet -> {
@@ -297,25 +289,35 @@ private fun VocabularyView(
 
     ReadScene {
         if (part.showsScreen) {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SoundAfter(sound) { modifier ->
                     Text(
                         word.word,
-                        modifier = Modifier.semantics { contentDescription = label },
+                        modifier = modifier.semantics { contentDescription = label },
                         style = targetStyle(language, MaterialTheme.typography.displaySmall),
                     )
-                    Romanization(word.romanization)
-                    word.pronunciation?.let {
-                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                    }
                 }
-                sound?.invoke()
+                Romanization(word.romanization)
+                word.pronunciation?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
         if (part.showsTurn) {
             Text(word.translation, style = MaterialTheme.typography.bodyLarge)
             hints?.let { WordHintsView(it) }
         }
+    }
+}
+
+@Composable
+private fun SoundAfter(
+    sound: (@Composable () -> Unit)?,
+    text: @Composable (Modifier) -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        text(Modifier.weight(1f, fill = false))
+        sound?.invoke()
     }
 }
 
@@ -334,27 +336,26 @@ private fun AlphabetView(
     val label = stringResource(R.string.player_language_alphabet, content.symbol)
 
     ReadScene {
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            SoundAfter(sound) { modifier ->
                 Text(
                     content.symbol,
-                    modifier = Modifier.semantics { contentDescription = label },
+                    modifier = modifier.semantics { contentDescription = label },
                     style =
                         MaterialTheme.typography.displayLarge.copy(
                             fontWeight = FontWeight.SemiBold,
                             textDirection = TextDirection.Content,
                         ),
                 )
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(content.readingAid, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        content.pronunciation,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
             }
-            sound?.invoke()
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(content.readingAid, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    content.pronunciation,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
         if (content.forms.isNotEmpty()) {
             val formStyle = MaterialTheme.typography.headlineSmall.copy(textDirection = TextDirection.Content)

@@ -131,7 +131,7 @@ export function BoardDrawing({
 
   return (
     <svg
-      className="block overflow-visible text-xs"
+      className="block overflow-visible text-xs select-none"
       height={scale.height}
       viewBox={`0 0 ${width} ${scale.height}`}
       width={width}

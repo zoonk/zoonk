@@ -18,8 +18,8 @@
 - “notice” (official exam announcement): “edital”
 - “syllabus” (what an exam's notice or a class covers): “conteúdo programático”
 - “learning” (study days): “estudo”
-- “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
-- “start a goal”: “começar uma meta”
+- “goal”: “objetivo”, not “meta”, for the learner's goal and for the goal of a call, lesson or activity alike; it's masculine: “seu objetivo”, “um novo objetivo”
+- “start a goal”: “começar um objetivo”
 - “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
 - “checked” (when a source was last checked, with a date): “verificado”, agreeing with what was checked (“Fontes · Verificadas em …”)
 - “say” (aloud, in pronunciation or speaking practice): “falar”; words left to say again: “repetir”
@@ -76,8 +76,8 @@
 
 ## Plan terminology
 
-- “Paused” (pace): “Em pausa”; paused goal: “Pausada”
-- “Finished” (plan): “Concluído”; finished goal: “Concluída”
+- “Paused” (pace): “Em pausa”; paused goal: “Pausado”
+- “Finished” (plan or goal): “Concluído”
 - “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”

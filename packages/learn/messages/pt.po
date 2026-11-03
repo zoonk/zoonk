@@ -566,7 +566,7 @@ msgstr "{dateKind, select, month {O tempo necessário para estudar todos os tóp
 #: src/_components/time-answer-lines.tsx
 msgctxt "jecJ21"
 msgid "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}"
-msgstr "{dateKind, select, month {O que é preciso para estudar todo o conteúdo da sua meta até {date}.} other {O que é preciso para estudar todo o conteúdo da sua meta até {date}.}}"
+msgstr "{dateKind, select, month {O que é preciso para estudar todo o conteúdo do seu objetivo até {date}.} other {O que é preciso para estudar todo o conteúdo do seu objetivo até {date}.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -578,7 +578,7 @@ msgstr "{dateKind, select, month {Cobre todos os tópicos da sua prova até {dat
 #: src/_components/time-answer-lines.tsx
 msgctxt "foaBe9"
 msgid "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}"
-msgstr "{dateKind, select, month {Cobre todo o conteúdo da sua meta até {date}.} other {Cobre todo o conteúdo da sua meta até {date}.}}"
+msgstr "{dateKind, select, month {Cobre todo o conteúdo do seu objetivo até {date}.} other {Cobre todo o conteúdo do seu objetivo até {date}.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -605,13 +605,13 @@ msgstr "Escolha pelo menos um dia de estudo."
 #: src/_components/time-answer.tsx
 msgctxt "53o9vK"
 msgid "Working out the time your goal needs…"
-msgstr "Calculando o tempo que sua meta precisa…"
+msgstr "Calculando o tempo que seu objetivo precisa…"
 
 #: src/_components/time-answer-lines.tsx
 #: src/_components/time-answer.tsx
 msgctxt "fiywvR"
 msgid "We couldn't work out the time your goal needs."
-msgstr "A gente não conseguiu calcular o tempo que sua meta precisa."
+msgstr "A gente não conseguiu calcular o tempo que seu objetivo precisa."
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "jQp-oV"
@@ -662,7 +662,7 @@ msgstr "{dateKind, select, month {Cobre a fundo cerca de {share} dos tópicos da
 #: src/_components/time-answer-texts.ts
 msgctxt "Tampv1"
 msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
-msgstr "{dateKind, select, month {Cobre a fundo cerca de {share} do conteúdo da sua meta até {date}, começando pelo que mais importa.} other {Cobre a fundo cerca de {share} do conteúdo da sua meta até {date}, começando pelo que mais importa.}}"
+msgstr "{dateKind, select, month {Cobre a fundo cerca de {share} do conteúdo do seu objetivo até {date}, começando pelo que mais importa.} other {Cobre a fundo cerca de {share} do conteúdo do seu objetivo até {date}, começando pelo que mais importa.}}"
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
@@ -680,13 +680,13 @@ msgstr "Assim, seu plano começa pelo que mais cai na prova, com cerca de {share
 #: src/_components/time-answer-texts.ts
 msgctxt "xjYmua"
 msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
-msgstr "Assim, seu plano cobre todo o conteúdo da sua meta e aprofunda o que mais importa. Isso dá cerca de {share} do conteúdo estudado a fundo."
+msgstr "Assim, seu plano cobre todo o conteúdo do seu objetivo e aprofunda o que mais importa. Isso dá cerca de {share} do conteúdo estudado a fundo."
 
 #. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
 #: src/_components/time-answer-texts.ts
 msgctxt "NaIXds"
 msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
-msgstr "Assim, seu plano começa pelo que mais importa, com cerca de {share} do conteúdo da sua meta estudado a fundo. O resto pode ficar de fora."
+msgstr "Assim, seu plano começa pelo que mais importa, com cerca de {share} do conteúdo do seu objetivo estudado a fundo. O resto pode ficar de fora."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "QrYTpK"
@@ -713,12 +713,12 @@ msgstr "É mais do que a maioria das pessoas consegue manter."
 #: src/_components/time-answer.tsx
 msgctxt "AHugH9"
 msgid "This goal gets {main} a day and your other goal {other}."
-msgstr "Esta meta fica com {main} por dia e sua outra meta com {other}."
+msgstr "Este objetivo fica com {main} por dia e seu outro objetivo com {other}."
 
 #: src/_components/time-answer.tsx
 msgctxt "L1otxC"
 msgid "This goal gets {main} a day and your other goals {other} together."
-msgstr "Esta meta fica com {main} por dia e suas outras metas com {other} no total."
+msgstr "Este objetivo fica com {main} por dia e seus outros objetivos com {other} no total."
 
 #: src/_components/time-answer.tsx
 msgctxt "PNv_qq"
@@ -1115,7 +1115,7 @@ msgstr "Perguntas anteriores"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "BUxbAO"
 msgid "Your goal"
-msgstr "Sua meta"
+msgstr "Seu objetivo"
 
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "u94YzK"
@@ -2236,12 +2236,12 @@ msgstr "“{goal}”"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
-msgstr "Começar uma nova meta"
+msgstr "Começar um novo objetivo"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Zt_vKl"
 msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
-msgstr "No plano Grátis, você acompanha uma meta por vez. Pause sua meta atual pelo menu dela ou acompanhe mais de uma com o Plus."
+msgstr "No plano Grátis, você acompanha um objetivo por vez. Pause seu objetivo atual pelo menu dele ou acompanhe mais de um com o Plus."
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -3282,7 +3282,7 @@ msgstr "Última nota de corte: {score}"
 #: src/exam/target-cutoff.tsx
 msgctxt "gemtGt"
 msgid "Your goal: {target}"
-msgstr "Sua meta: {target}"
+msgstr "Seu objetivo: {target}"
 
 #: src/explain/explain-ending.tsx
 msgctxt "D1mqTL"
@@ -3578,7 +3578,7 @@ msgstr "Conferindo as respostas…"
 #: src/generation/use-generation-copy.ts
 msgctxt "289EPU"
 msgid "Reading your goal"
-msgstr "Lendo sua meta"
+msgstr "Lendo seu objetivo"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "o5XUaf"
@@ -3613,7 +3613,7 @@ msgstr "Mapeando as habilidades necessárias"
 #: src/generation/use-generation-copy.ts
 msgctxt "EWBWPU"
 msgid "Listing what your goal asks for…"
-msgstr "Listando o que sua meta exige…"
+msgstr "Listando o que seu objetivo exige…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "mtbsWA"
@@ -3903,22 +3903,22 @@ msgstr "Adicionando um teste rápido para ver se funciona…"
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
+msgstr "O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais objetivos."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
-msgstr "Pausar esta meta"
+msgstr "Pausar este objetivo"
 
 #: src/journey/goal-actions.tsx
 msgctxt "uUtHtO"
 msgid "Resume this goal"
-msgstr "Retomar esta meta"
+msgstr "Retomar este objetivo"
 
 #: src/journey/goal-actions.tsx
 msgctxt "G24tgI"
 msgid "Archive this goal"
-msgstr "Arquivar esta meta"
+msgstr "Arquivar este objetivo"
 
 #: src/journey/goal-actions.tsx
 msgctxt "MP8LVW"
@@ -3938,7 +3938,7 @@ msgstr "Arquivar {goal}?"
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
 msgid "It leaves your goals and its plan stops. What you learned stays in your progress."
-msgstr "A meta sai da sua lista e o plano dela para. O que você aprendeu continua no seu progresso."
+msgstr "O objetivo sai da sua lista e o plano dele para. O que você aprendeu continua no seu progresso."
 
 #: src/journey/goal-actions.tsx
 msgctxt "hrgo-E"
@@ -3948,13 +3948,13 @@ msgstr "Arquivar"
 #: src/journey/goal-actions.tsx
 msgctxt "xxnZz0"
 msgid "{goal} is paused"
-msgstr "{goal} está em pausa"
+msgstr "Objetivo em pausa: {goal}"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "Nada está planejado até você retomar a meta."
+msgstr "Nada está planejado até você retomar o objetivo."
 
 #: src/journey/journey-chapters.tsx
 msgctxt "CQYCqB"
@@ -4362,7 +4362,7 @@ msgstr "Continua em {date}"
 #: src/journey/path-phase-row.tsx
 msgctxt "e4_rBx"
 msgid "No time for this phase's challenge before your date"
-msgstr "Sem tempo para o desafio desta fase antes da data da sua meta"
+msgstr "Sem tempo para o desafio desta fase antes da data do seu objetivo"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"
@@ -4632,7 +4632,7 @@ msgstr "Dia da prova"
 #: src/plan/plan-properties.tsx
 msgctxt "h0He2G"
 msgid "Goal date"
-msgstr "Data da meta"
+msgstr "Data do objetivo"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -4914,7 +4914,7 @@ msgstr "{stars, plural, =0 {# de 3 estrelas} other {# de 3 estrelas}}"
 #: src/memory/memory-labels.tsx
 msgctxt "XHLYdJ"
 msgid "Goals"
-msgstr "Metas"
+msgstr "Objetivos"
 
 #: src/language/conversation/call-stars-step.tsx
 #: src/missions/brain-power-reward.tsx
@@ -5779,18 +5779,18 @@ msgstr "Eu já consigo…"
 #: src/language/progress/level-value.tsx
 msgctxt "slNkkm"
 msgid "goal"
-msgstr "meta"
+msgstr "objetivo"
 
 #. {level} is a language level, like "B2". {date} is a month, like "May 2027".
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "eRD-Et"
 msgid "Goal {level} by {date}"
-msgstr "Meta: {level} até {date}"
+msgstr "Objetivo: {level} até {date}"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "jnRTbQ"
 msgid "Goal {level}"
-msgstr "Meta: {level}"
+msgstr "Objetivo: {level}"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
@@ -8322,7 +8322,7 @@ msgstr "Estude seu próprio material"
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "9tCzsf"
 msgid "Create a free account to add a PDF, a photo of your notes or any text to your goal."
-msgstr "Crie uma conta grátis para adicionar um PDF, uma foto das suas anotações ou qualquer texto à sua meta."
+msgstr "Crie uma conta grátis para adicionar um PDF, uma foto das suas anotações ou qualquer texto ao seu objetivo."
 
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
@@ -8397,7 +8397,7 @@ msgstr "Remover {title}"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
-msgstr "Começar uma meta"
+msgstr "Começar um objetivo"
 
 #: src/onboarding/entry/goal-entry.tsx
 #: src/onboarding/onboarding-skeletons.tsx
@@ -8455,12 +8455,12 @@ msgstr "Ir para seu plano"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "p9LATe"
 msgid "More goals at once with Plus"
-msgstr "Mais metas ao mesmo tempo com o Plus"
+msgstr "Mais objetivos ao mesmo tempo com o Plus"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "KJXbLd"
 msgid "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime."
-msgstr "No plano Grátis, você segue uma meta por vez. Para começar outra, pause a meta atual pelo menu do seu plano. Você pode fazer perguntas rápidas a qualquer momento."
+msgstr "No plano Grátis, você segue um objetivo por vez. Para começar outro, pause o objetivo atual pelo menu do seu plano. Você pode fazer perguntas rápidas a qualquer momento."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -8480,7 +8480,7 @@ msgstr "Quero uma explicação"
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
 msgid "We can't help with this goal"
-msgstr "A gente não pode ajudar com essa meta"
+msgstr "A gente não pode ajudar com esse objetivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Q354iN"
@@ -8490,7 +8490,7 @@ msgstr "O Zoonk não ensina nada que possa fazer mal a você ou a outras pessoas
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "PDFZz6"
 msgid "Try another goal"
-msgstr "Tentar outra meta"
+msgstr "Tentar outro objetivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/steps/question-steps.tsx
@@ -8506,7 +8506,7 @@ msgstr "O que você quer aprender ou ser capaz de fazer? Por exemplo: “passar 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Bwx5dr"
 msgid "Write my goal again"
-msgstr "Escrever minha meta de novo"
+msgstr "Escrever meu objetivo de novo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
@@ -8539,7 +8539,7 @@ msgstr "Formação musical para {instrument}: reconhecer acordes de ouvido, ler 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "LlWqkT"
 msgid "Saving your goal…"
-msgstr "Salvando sua meta…"
+msgstr "Salvando seu objetivo…"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2zqqBZ"
@@ -8554,13 +8554,13 @@ msgstr "Entrar na lista de espera"
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
 msgid "Create a free account to start another goal"
-msgstr "Crie uma conta grátis para começar outra meta"
+msgstr "Crie uma conta grátis para começar outro objetivo"
 
 #. Creating an account keeps the plan and progress the learner made as a guest.
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "LCl_qZ"
 msgid "Without an account, you can follow one goal. Your plan and progress come with you."
-msgstr "Sem uma conta, você pode seguir uma meta. Ao criar uma conta, você mantém seu plano e seu progresso."
+msgstr "Sem uma conta, você pode seguir um objetivo. Ao criar uma conta, você mantém seu plano e seu progresso."
 
 #: src/onboarding/entry/material-goal.ts
 msgctxt "6dvkek"
@@ -8703,7 +8703,7 @@ msgstr "Adicionar link"
 #: src/onboarding/entry/understanding-wait.tsx
 msgctxt "QR4VbB"
 msgid "Understanding your goal"
-msgstr "Entendendo sua meta"
+msgstr "Entendendo seu objetivo"
 
 #: src/onboarding/entry/understanding-wait.tsx
 msgctxt "5o4Fqb"
@@ -8713,7 +8713,7 @@ msgstr "Em seguida, você confere o que a gente entendeu."
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
 msgid "We couldn't save your goal. Try again in a moment."
-msgstr "A gente não conseguiu salvar sua meta. Tente de novo em instantes."
+msgstr "A gente não conseguiu salvar seu objetivo. Tente de novo em instantes."
 
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/use-local-goal-example.ts
@@ -8735,12 +8735,12 @@ msgstr "Você atingiu o limite de novas perguntas do plano grátis hoje. Tente d
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.WNi4ed"
 msgid "You've started as many new goals as your plan allows today. Try again tomorrow."
-msgstr "Você atingiu o limite de novas metas que seu plano permite começar hoje. Tente de novo amanhã."
+msgstr "Você atingiu o limite de novos objetivos que seu plano permite começar hoje. Tente de novo amanhã."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.fvAhZI"
 msgid "Without an account, you can follow one goal. Create a free account to keep going."
-msgstr "Sem uma conta, você pode acompanhar uma meta. Crie uma conta grátis para continuar."
+msgstr "Sem uma conta, você pode acompanhar um objetivo. Crie uma conta grátis para continuar."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.HtlexK"
@@ -8750,12 +8750,12 @@ msgstr "Você atingiu o limite de novas perguntas do plano grátis neste mês. T
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.h018_j"
 msgid "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "Você atingiu o limite de novas metas que o plano grátis permite começar neste mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+msgstr "Você atingiu o limite de novos objetivos que o plano grátis permite começar neste mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.nMzPGK"
 msgid "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus."
-msgstr "No plano grátis, você pode acompanhar uma meta por vez. Para começar esta, pause sua meta atual pelo menu do seu Plano ou assine o Plus."
+msgstr "No plano grátis, você pode acompanhar um objetivo por vez. Para começar este, pause seu objetivo atual pelo menu do seu Plano ou assine o Plus."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.aFV0Wu"
@@ -8765,27 +8765,27 @@ msgstr "Crie sua conta grátis para continuar."
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.8iLlgO"
 msgid "You're starting goals quickly. Try again in a few minutes."
-msgstr "Você está começando metas muito rápido. Tente de novo em alguns minutos."
+msgstr "Você está começando objetivos muito rápido. Tente de novo em alguns minutos."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YJn24E"
 msgid "Without an account, you can send a few new goals a day. Create a free account to keep going."
-msgstr "Sem uma conta, você pode enviar algumas metas novas por dia. Crie uma conta grátis para continuar."
+msgstr "Sem uma conta, você pode enviar alguns objetivos novos por dia. Crie uma conta grátis para continuar."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.6K8kGV"
 msgid "You've sent as many new goals as your plan allows today. Try again tomorrow."
-msgstr "Você atingiu o limite de novas metas que seu plano permite enviar hoje. Tente de novo amanhã."
+msgstr "Você atingiu o limite de novos objetivos que seu plano permite enviar hoje. Tente de novo amanhã."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.qlYDc1"
 msgid "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "Você atingiu o limite de novas metas que o plano grátis permite enviar neste mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+msgstr "Você atingiu o limite de novos objetivos que o plano grátis permite enviar neste mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.HeGg5v"
 msgid "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
-msgstr "Você atingiu o limite de novas metas que o plano grátis permite enviar hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+msgstr "Você atingiu o limite de novos objetivos que o plano grátis permite enviar hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -8795,7 +8795,7 @@ msgstr "Um momento. Tente de novo em alguns segundos."
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MHrK7m"
 msgid "We couldn't read your goal. Try again in a moment."
-msgstr "A gente não conseguiu ler sua meta. Tente de novo em instantes."
+msgstr "A gente não conseguiu ler seu objetivo. Tente de novo em instantes."
 
 #: src/onboarding/guest-lesson-ending.tsx
 msgctxt "_SKZXL"
@@ -8850,7 +8850,7 @@ msgstr "Comece grátis, sem precisar de uma conta."
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
 msgid "A course in the Library fits your goal"
-msgstr "Um curso da Biblioteca combina com sua meta"
+msgstr "Um curso da Biblioteca combina com seu objetivo"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -8891,7 +8891,7 @@ msgstr "Sem data"
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "0VV_sK"
 msgid "Goal"
-msgstr "Meta"
+msgstr "Objetivo"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -8931,12 +8931,12 @@ msgstr "Começar de novo?"
 #: src/onboarding/start-over-menu.tsx
 msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
-msgstr "Suas respostas para esta meta serão apagadas e você poderá escrever uma meta de novo."
+msgstr "Suas respostas para este objetivo serão apagadas e você poderá escrever um objetivo de novo."
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
 msgid "{count, plural, one {Choose at least {time} a day for your # goal.} other {Choose at least {time} a day for your # goals.}}"
-msgstr "{count, plural, one {Escolha pelo menos {time} por dia para sua # meta.} other {Escolha pelo menos {time} por dia para suas # metas.}}"
+msgstr "{count, plural, one {Escolha pelo menos {time} por dia para seu # objetivo.} other {Escolha pelo menos {time} por dia para seus # objetivos.}}"
 
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
@@ -9240,7 +9240,7 @@ msgstr "Vamos pular as perguntas"
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "XFK0hn"
 msgid "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead."
-msgstr "A gente não conseguiu preparar perguntas para essa meta. Suas primeiras sessões vão ajudar a descobrir seu ponto de partida."
+msgstr "A gente não conseguiu preparar perguntas para esse objetivo. Suas primeiras sessões vão ajudar a descobrir seu ponto de partida."
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "FgQ9-w"
@@ -9270,7 +9270,7 @@ msgstr "Elas vêm do material que você adicionou. A leitura leva alguns minutos
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "1bV_YK"
 msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "Elas são sobre as habilidades necessárias para sua meta. Isso costuma levar um ou dois minutos."
+msgstr "Elas são sobre as habilidades necessárias para seu objetivo. Isso costuma levar um ou dois minutos."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9507,7 +9507,7 @@ msgstr "{days, plural, one {# dia} other {# dias}}"
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "1-tKgx"
 msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Seu plano cobre todas as partes da sua meta. Para terminar mais cedo, dedique mais tempo por dia ou escolha uma data e o plano organiza o que é mais importante para caber até lá."
+msgstr "Seu plano cobre todas as partes do seu objetivo. Para terminar mais cedo, dedique mais tempo por dia ou escolha uma data e o plano organiza o que é mais importante para caber até lá."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "b3M-c5"
@@ -9538,7 +9538,7 @@ msgstr "Ajustar"
 #: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
-msgstr "Pronto. Seu plano agora cobre toda a sua meta."
+msgstr "Pronto. Seu plano agora cobre todo o seu objetivo."
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
@@ -9753,7 +9753,7 @@ msgstr "Foi isso que eu entendi"
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "xuHuGN"
 msgid "These goals share your daily time. You can change all of this later."
-msgstr "Essas metas dividem seu tempo diário. Você pode mudar tudo isso depois."
+msgstr "Esses objetivos dividem seu tempo diário. Você pode mudar tudo isso depois."
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "uN-4n4"
@@ -9763,7 +9763,7 @@ msgstr "Você pode mudar tudo isso depois."
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "aHZ7X8"
 msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {Com o Plus, você pode seguir mais de uma meta ao mesmo tempo. Até lá, essa meta fica na sua lista de metas.} other {Com o Plus, você pode seguir mais de uma meta ao mesmo tempo. Até lá, essas metas ficam na sua lista de metas.}}"
+msgstr "{count, plural, one {Com o Plus, você pode seguir mais de um objetivo ao mesmo tempo. Até lá, esse objetivo fica na sua lista de objetivos.} other {Com o Plus, você pode seguir mais de um objetivo ao mesmo tempo. Até lá, esses objetivos ficam na sua lista de objetivos.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"
@@ -9879,7 +9879,7 @@ msgstr "{lessons, plural, one {# aula a menos} other {# aulas a menos}}."
 #: src/plan-diff/plan-effect-diff.tsx
 msgctxt "-FjPjU"
 msgid "Goal date {date}"
-msgstr "Data da meta: {date}"
+msgstr "Data do objetivo: {date}"
 
 #: src/plan-diff/plan-effect-diff.tsx
 msgctxt "hq8xlY"
@@ -10141,7 +10141,7 @@ msgstr "Até a data escolhida: {after} da prova, como agora."
 #: src/plan/plan-bases-effect.tsx
 msgctxt "3rajAn"
 msgid "By your date: {after} of your goal, as now."
-msgstr "Até a data escolhida: {after} da sua meta, como agora."
+msgstr "Até a data escolhida: {after} do seu objetivo, como agora."
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "4AK5yB"
@@ -10151,7 +10151,7 @@ msgstr "Até a data escolhida: {after} da prova, contra {before} agora."
 #: src/plan/plan-bases-effect.tsx
 msgctxt "OVPlJP"
 msgid "By your date: {after} of your goal, against {before} now."
-msgstr "Até a data escolhida: {after} da sua meta, contra {before} agora."
+msgstr "Até a data escolhida: {after} do seu objetivo, contra {before} agora."
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "2Vm8KH"
@@ -10230,7 +10230,7 @@ msgstr "Ver prévia"
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
-msgstr "{time} por dia não é suficiente para estudar toda a sua meta."
+msgstr "{time} por dia não é suficiente para estudar todo o conteúdo do seu objetivo."
 
 #: src/plan/plan-coverage.tsx
 msgctxt "0YytO3"
@@ -10720,7 +10720,7 @@ msgstr "Você vai usar"
 #: src/plan/study-everything.tsx
 msgctxt "_qzMWL"
 msgid "Every part of your goal, at your own pace, with no end date."
-msgstr "Tudo da sua meta, no seu ritmo, sem data para terminar."
+msgstr "Tudo do seu objetivo, no seu ritmo, sem data para terminar."
 
 #: src/plan/use-area-sentence.ts
 msgctxt "joDSGq"
@@ -10830,7 +10830,7 @@ msgstr "{days, plural, one {# dia restante} other {# dias restantes}}: a gente r
 #: src/plan/use-bases-texts.ts
 msgctxt "McdYH6"
 msgid "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what matters most to your goal."
-msgstr "{days, plural, one {# dia restante} other {# dias restantes}}: a gente recomenda uma aula rápida para cada base, para sobrar tempo para o que mais importa para sua meta."
+msgstr "{days, plural, one {# dia restante} other {# dias restantes}}: a gente recomenda uma aula rápida para cada base, para sobrar tempo para o que mais importa para seu objetivo."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "L-5EDu"
@@ -10850,7 +10850,7 @@ msgstr "Tópicos que caem com frequência dependem dessa base."
 #: src/plan/use-bases-texts.ts
 msgctxt "Ao6Fag"
 msgid "Your goal's final work builds on these."
-msgstr "O trabalho final da sua meta depende dessas bases."
+msgstr "O trabalho final do seu objetivo depende dessas bases."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "9N60CL"
@@ -10957,7 +10957,7 @@ msgstr "A data passa para {date}."
 #: src/plan/use-change-sentence.ts
 msgctxt "TXiOHF"
 msgid "Your phase dates moved, so more lessons fit before your goal's date."
-msgstr "As datas das fases mudam, e cabem mais aulas antes da data da sua meta."
+msgstr "As datas das fases mudam, e cabem mais aulas antes da data do seu objetivo."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "2rqIF8"
@@ -11204,32 +11204,32 @@ msgstr "{dateKind, select, month {Termina por volta de {after} em vez de {before
 #: src/plan/use-estimate-sentence.ts
 msgctxt "FJ-d5Y"
 msgid "{lessons, plural, one {Your goal takes # fewer lesson.} other {Your goal takes # fewer lessons.}}"
-msgstr "{lessons, plural, one {Sua meta precisa de # aula a menos.} other {Sua meta precisa de # aulas a menos.}}"
+msgstr "{lessons, plural, one {Seu objetivo precisa de # aula a menos.} other {Seu objetivo precisa de # aulas a menos.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "f1LZew"
 msgid "{lessons, plural, one {Your goal takes about # more lesson.} other {Your goal takes about # more lessons.}}"
-msgstr "{lessons, plural, one {Sua meta precisa de cerca de # aula a mais.} other {Sua meta precisa de cerca de # aulas a mais.}}"
+msgstr "{lessons, plural, one {Seu objetivo precisa de cerca de # aula a mais.} other {Seu objetivo precisa de cerca de # aulas a mais.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "xM0WOm"
 msgid "{lessons, plural, one {Your goal takes # more lesson.} other {Your goal takes # more lessons.}}"
-msgstr "{lessons, plural, one {Sua meta precisa de # aula a mais.} other {Sua meta precisa de # aulas a mais.}}"
+msgstr "{lessons, plural, one {Seu objetivo precisa de # aula a mais.} other {Seu objetivo precisa de # aulas a mais.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "VE4kqn"
 msgid "{lessons, plural, one {# lesson no longer fits by your date.} other {# lessons no longer fit by your date.}}"
-msgstr "{lessons, plural, one {# aula não cabe mais até a data da sua meta.} other {# aulas não cabem mais até a data da sua meta.}}"
+msgstr "{lessons, plural, one {# aula não cabe mais até a data do seu objetivo.} other {# aulas não cabem mais até a data do seu objetivo.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "xcKc0O"
 msgid "{lessons, plural, one {About # more lesson fits by your date.} other {About # more lessons fit by your date.}}"
-msgstr "{lessons, plural, one {Cerca de # aula a mais cabe até a data da sua meta.} other {Cerca de # aulas a mais cabem até a data da sua meta.}}"
+msgstr "{lessons, plural, one {Cerca de # aula a mais cabe até a data do seu objetivo.} other {Cerca de # aulas a mais cabem até a data do seu objetivo.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "g50YGO"
 msgid "{lessons, plural, one {# more lesson fits by your date.} other {# more lessons fit by your date.}}"
-msgstr "{lessons, plural, one {# aula a mais cabe até a data da sua meta.} other {# aulas a mais cabem até a data da sua meta.}}"
+msgstr "{lessons, plural, one {# aula a mais cabe até a data do seu objetivo.} other {# aulas a mais cabem até a data do seu objetivo.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "tYcO5N"
@@ -11259,12 +11259,12 @@ msgstr "{phase} termina com um desafio em {day}, um dia de descanso. Mudar as da
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "L1jU9X"
 msgid "Keeping your phase dates leaves {outcomes} out by your goal's date. Moving them fits them in."
-msgstr "Se as datas das fases continuarem iguais, {outcomes} vai ficar de fora até a data da sua meta. Mudar essas datas permite incluir tudo."
+msgstr "Se as datas das fases continuarem iguais, {outcomes} vai ficar de fora até a data do seu objetivo. Mudar essas datas permite incluir tudo."
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "hbCDAt"
 msgid "Some lessons take more or less time than planned. Moving your phase dates fits more of them before your goal's date."
-msgstr "Algumas aulas levam mais ou menos tempo que o planejado. Mudar as datas das fases permite fazer mais aulas até a data da sua meta."
+msgstr "Algumas aulas levam mais ou menos tempo que o planejado. Mudar as datas das fases permite fazer mais aulas até a data do seu objetivo."
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "5-K3bz"
@@ -11374,7 +11374,7 @@ msgstr "Aulas na dificuldade de sempre."
 #: src/plan/use-proposed-sentence.ts
 msgctxt "C8erdS"
 msgid "Goal date: {date}."
-msgstr "Data da meta: {date}."
+msgstr "Data do objetivo: {date}."
 
 #: src/plan/use-relearn-sentence.ts
 msgctxt "U1dGge"
@@ -12356,7 +12356,7 @@ msgstr "Disponível com o Plus"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.zbkRbA"
 msgid "Ready to start"
-msgstr "Pronta para começar"
+msgstr "Pronto para começar"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.aefUZL"
@@ -12371,27 +12371,27 @@ msgstr "{days, plural, =0 {O dia chegou} one {Falta # dia} other {Faltam # dias}
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.EQpfkS"
 msgid "Finished"
-msgstr "Concluída"
+msgstr "Concluído"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.C2iTEH"
 msgid "Paused"
-msgstr "Pausada"
+msgstr "Pausado"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.ng8fsM"
 msgid "Start a goal"
-msgstr "Começar uma meta"
+msgstr "Começar um objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
-msgstr ", meta atual. Trocar de meta"
+msgstr ", objetivo atual. Trocar de objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
-msgstr "Suas metas"
+msgstr "Seus objetivos"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
@@ -12401,7 +12401,7 @@ msgstr "Explicações rápidas"
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.QTg-WT"
 msgid "Start a new goal"
-msgstr "Começar uma nova meta"
+msgstr "Começar um novo objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
@@ -13037,7 +13037,7 @@ msgstr "Com {time} por dia, seu plano agora cobre {after} da prova, em vez de {b
 #: src/today/today-falling-behind.tsx
 msgctxt "7ZAXhG"
 msgid "At {time} a day, your plan now covers {after} of your goal, down from {before}."
-msgstr "Com {time} por dia, seu plano agora cobre {after} da sua meta, em vez de {before}."
+msgstr "Com {time} por dia, seu plano agora cobre {after} do seu objetivo, em vez de {before}."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "qjO1fl"
@@ -13214,7 +13214,7 @@ msgstr "Continuar {course}?"
 #: src/today/today-suggested-goal.tsx
 msgctxt "Vr1VPb"
 msgid "Suggested goal"
-msgstr "Meta sugerida"
+msgstr "Objetivo sugerido"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "Ie2Ije"
@@ -13264,7 +13264,7 @@ msgstr "dia da prova"
 #: src/today/today-week.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
-msgstr "data da sua meta"
+msgstr "data do seu objetivo"
 
 #: src/today/today-week.tsx
 msgctxt "KQR6jo"

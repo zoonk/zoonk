@@ -21,7 +21,7 @@ type TouchStep = {
 declare module "vitest/browser" {
   // oxlint-disable-next-line typescript/consistent-type-definitions -- Only an interface merges.
   interface BrowserCommands {
-    /** Playwright sends both touches at once, so a busy runner can't stretch a tap into a hold. */
+    /** Sends both touches at once, though Chrome can still deliver the end after a drag's hold delay. */
     tap: (point: Point) => Promise<void>;
     /** Uses driver input because synthetic events skip scrolling and pointer cancellation. */
     touch: (steps: TouchStep[]) => Promise<void>;

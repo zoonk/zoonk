@@ -56,7 +56,7 @@ function MatchItem({
       aria-keyshortcuts={shortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(
-        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left text-[0.9375rem] leading-6 font-medium wrap-break-word transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
+        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left text-[0.9375rem] leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}

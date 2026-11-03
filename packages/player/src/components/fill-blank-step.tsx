@@ -69,7 +69,7 @@ function BlankSlot({
               })
         }
         className={cn(
-          "text-foreground inline-flex min-w-16 items-center justify-center border-b-2 px-1 transition-colors",
+          "text-foreground inline-flex min-w-16 items-center justify-center border-b-2 px-1 transition-colors select-none",
           hasResult && "pointer-events-none",
           !resultState && "border-foreground/40",
           resultState === "correct" && "border-success",

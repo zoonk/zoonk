@@ -101,7 +101,7 @@ function AtomFace({
         strokeWidth={fill === "open" ? THIN_RING : STATUS_RING}
       />
       <text
-        className={cn(style.text, "font-semibold select-none")}
+        className={cn(style.text, "font-semibold")}
         dominantBaseline="central"
         fontSize={LETTER_SIZE}
         textAnchor="middle"
@@ -155,7 +155,10 @@ export function MoleculeCanvas({
   return (
     <svg
       aria-label={onAtomPress ? undefined : description}
-      className={cn("mx-auto block h-auto w-full max-w-[400px] overflow-visible", className)}
+      className={cn(
+        "mx-auto block h-auto w-full max-w-[400px] overflow-visible select-none",
+        className,
+      )}
       role={onAtomPress ? "group" : "img"}
       viewBox={fit ? fittedViewBox(layout) : `0 0 ${LAYOUT_SIZE.width} ${LAYOUT_SIZE.height}`}
     >
