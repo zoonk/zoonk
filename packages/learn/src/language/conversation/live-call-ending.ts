@@ -27,12 +27,13 @@ type CallEndingReason = "done" | "goodbye" | "quiet" | "time";
 
 export type CallHangUpReason = CallEndingReason | "hardStop";
 
-const OPENING_ID = "opening";
+/** The SDK refuses an event id it already sent, so the one retry has its own. */
+const OPENING_IDS = ["opening", "opening-retry"] as const;
 
 export type CallEndingCommand =
   | { cue: "checkIn"; type: "cue" }
   /** Sent with `id` as its event id, so its acknowledgment comes back with it. */
-  | { cue: "opening"; id: typeof OPENING_ID; type: "cue" }
+  | { cue: "opening"; id: (typeof OPENING_IDS)[number]; type: "cue" }
   /**
    * `whileLearnerSpeaks`: measured, a goodbye spoken aloud at once ("commentary") made the character
    * talk over a learner who paused mid-answer; as quiet context ("thinking") it waited for them.
@@ -201,7 +202,7 @@ function evaluate(state: CallEndingState, at: number): Step {
     !next.reason &&
     at - next.openingAckAt >= next.timing.openingRetryMs
   ) {
-    commands.push({ cue: "opening", id: OPENING_ID, type: "cue" });
+    commands.push({ cue: "opening", id: OPENING_IDS[1], type: "cue" });
     next = { ...next, openingRetried: true };
   }
 
@@ -254,7 +255,7 @@ function acknowledge(
 ): CallEndingState {
   const { goodbye } = state;
 
-  if (id === OPENING_ID) {
+  if (OPENING_IDS.some((opening) => opening === id)) {
     return { ...state, openingAckAt: state.openingAckAt ?? at };
   }
 
@@ -338,7 +339,7 @@ export function startCallEnding({
   timing: LiveCallTiming;
 }): Step {
   return {
-    commands: [{ cue: "opening", id: OPENING_ID, type: "cue" }],
+    commands: [{ cue: "opening", id: OPENING_IDS[0], type: "cue" }],
     state: {
       activityAt: at,
       armedAt: null,

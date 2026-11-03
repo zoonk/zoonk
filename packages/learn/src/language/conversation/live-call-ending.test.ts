@@ -458,5 +458,11 @@ describe("the opening", () => {
 
     expect(cueTimes(silent.log)).toStrictEqual([0, 5750]);
     expect(cueTimes(slow.log)).toStrictEqual([0]);
+
+    // The SDK refuses an event id it already sent, so the retry carries its own.
+    expect(silent.log.map((entry) => "id" in entry && entry.id)).toStrictEqual([
+      "opening",
+      "opening-retry",
+    ]);
   });
 });
