@@ -1,3 +1,4 @@
+import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 
 export const ANSWER_OPTION_CLASS =
@@ -7,7 +8,9 @@ export function AnswerOptionContent({ number, text }: { number: number; text: st
   return (
     <>
       <ShortcutKbd className="flex-none">{number}</ShortcutKbd>
-      <span className="min-w-0 text-pretty">{text}</span>
+      <span className="min-w-0 text-pretty">
+        <LessonRichText text={text} />
+      </span>
     </>
   );
 }
