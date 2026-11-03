@@ -350,8 +350,9 @@ private class MathParser(
 
             in FUNCTIONS -> {
                 val next = source.drop(index).trimStart().firstOrNull()
-                val gap = if (next != null && (next.isLetterOrDigit() || next == '\\')) FUNCTION_GAP else ""
-                run(name + gap, style, italic = false)
+                val isApplied = next != null && (next.isLetterOrDigit() || next in "\\{")
+                val function = run(name, style, italic = false)
+                if (isApplied) function + run(FUNCTION_GAP, style, italic = false).copy(spoken = " ") else function
             }
 
             else -> {

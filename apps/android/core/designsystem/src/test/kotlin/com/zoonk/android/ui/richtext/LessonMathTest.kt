@@ -98,6 +98,11 @@ class LessonMathTest {
     }
 
     @Test
+    fun readsAFunctionAppliedToABracedArgumentApart() {
+        assertEquals("sin x + cos(x)", math("\\sin{x} + \\cos(x)").spoken)
+    }
+
+    @Test
     fun acceptsOverEscapedCommandsAsMainDoes() {
         assertEquals(math("a \\rightarrow b").text.text, math("a \\\\rightarrow b").text.text)
     }

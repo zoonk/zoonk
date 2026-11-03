@@ -68,6 +68,8 @@ describe(speakRichInline, () => {
   });
 
   it("says functions, sets and text inside a formula as words a reader knows", () => {
+    expect(speak(String.raw`$\sin{x} + \cos(x)$`)).toBe("sin x + cos(x)");
+
     expect(speak(String.raw`$f(x) = \sin x$ for $x \in \mathbb{R}$`)).toBe(
       "f(x) = sin x for x ∈ ℝ",
     );
@@ -157,7 +159,19 @@ describe(speakRichBlocks, () => {
 
     expect(
       speakRichBlocks({ text: "Pick the true one:\n- $x^2$ is never negative\n- $5 > 3$", words }),
-    ).toBe("Pick the true one: x squared is never negative 5 > 3");
+    ).toBe("Pick the true one: x squared is never negative, 5 > 3");
+  });
+
+  it("keeps an ordered list's numbers, as the list shows them", () => {
+    expect(speakRichBlocks({ text: "Steps:\n1. Heat $x$\n2. Stir.\n3. Serve", words })).toBe(
+      "Steps: 1. Heat x, 2. Stir. 3. Serve",
+    );
+  });
+
+  it("names a question that is only a table by its header", () => {
+    expect(
+      speakRichBlocks({ text: "| Shape | Area $A$ |\n| --- | --- |\n| Circle | $r^2$ |", words }),
+    ).toBe("Shape, Area A");
   });
 });
 

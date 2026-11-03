@@ -13,6 +13,7 @@ import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../componen
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
+import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
 import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
@@ -282,7 +283,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           <LessonAnswerField
             autoFocusOnPointer={answerMode.micBlocked}
             isLocked={isLocked}
-            label={spoken.blocks(step.content.prompt)}
+            label={spoken.blocks(splitQuestionData(step.content.prompt).question)}
             onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
             value={text}
           />

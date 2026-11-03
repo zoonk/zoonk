@@ -27,6 +27,7 @@ const OPERATOR_GAP = "\u2005";
 const SPACES = /\s+/gu;
 const COMMAND_NAME = /^\p{L}*/u;
 const LEADING_SPACES = /^[ \t\r\n]*/u;
+const APPLIED_ARGUMENT = /[\p{L}\p{N}\\{]/u;
 
 function symbol(text: string): Piece {
   return { plain: text, spoken: SPOKEN_SYMBOLS.get(text) ?? text };
@@ -186,7 +187,7 @@ function readAccented({
 
 function functionName({ end, name, source }: { end: number; name: string; source: string }) {
   const next = source.slice(end).trimStart()[0];
-  const isApplied = next !== undefined && (/[\p{L}\p{N}]/u.test(next) || next === "\\");
+  const isApplied = next !== undefined && APPLIED_ARGUMENT.test(next);
 
   return isApplied ? { plain: `${name}\u2006`, spoken: `${name} ` } : symbol(name);
 }
