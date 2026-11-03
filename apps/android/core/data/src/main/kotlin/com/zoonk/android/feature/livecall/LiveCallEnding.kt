@@ -223,7 +223,7 @@ class LiveCallEnding(
 
     private fun lastWordsAt() = listOfNotNull(liveAt, lastCharacterAt, lastHeardAt, lastTypedAt, lastSentAt).max()
 
-    private fun learnerAt() = listOfNotNull(lastVoiceAt, lastHeardAt, lastTypedAt, lastSentAt).maxOrNull()
+    private fun learnerAt() = listOfNotNull(lastVoiceAt?.plus(VOICE_HANGOVER_MS), lastHeardAt, lastTypedAt, lastSentAt).maxOrNull()
 
     private fun lastActivityAt() = maxOf(liveAt, lastCharacterAt ?: liveAt, learnerAt() ?: liveAt)
 

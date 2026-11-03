@@ -378,10 +378,10 @@ class LiveCallTest {
             learnerTalks(until = 40.seconds)
             assertEquals(1, transport.goodbyes.size)
 
-            waitUntil(47.6.seconds)
+            waitUntil(48.6.seconds)
             assertEquals(1, transport.goodbyes.size)
             wait(0.4.seconds)
-            assertEquals(2, transport.goodbyes.size)
+            assertEquals("8 s after the microphone went quiet, at 40.8 s", 2, transport.goodbyes.size)
             wait(30.seconds)
             assertEquals(2, transport.goodbyes.size)
         }
@@ -455,10 +455,10 @@ class LiveCallTest {
                 transport.onEvent(learnerSays("y luego ", at - 1500, at - 500))
                 runCurrent()
             }
-            waitUntil(40.seconds)
+            waitUntil(40.8.seconds)
             assertEquals(LiveCallPhase.Live, call.phase)
             wait(0.2.seconds)
-            assertEquals("3 s after their last words came back, at 37.1 s", LiveCallPhase.Ended, call.phase)
+            assertEquals("3 s after the microphone went quiet, at 37.9 s", LiveCallPhase.Ended, call.phase)
         }
 
     @Test
