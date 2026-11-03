@@ -980,6 +980,47 @@ class LiveCallTest {
         }
 
     @Test
+    fun aDelegationsWaitStaysInTheLearnersReplyGap() =
+        runTest(dispatcher) {
+            val call = greeted()
+
+            learnerTalks(until = 3.seconds)
+            transport.onEvent(LiveServerEvent.Delegation("d1"))
+            runCurrent()
+            waitUntil(4.seconds)
+            characterTalks(until = 4.5.seconds)
+            call.hangUp()
+
+            val ended = events.filterIsInstance<AnalyticsEvent.CallEnded>().single()
+            assertEquals(
+                "From the microphone's last sample at 2.8 s: the answer to nothing-to-look-up still answers them",
+                1200L,
+                ended.replyGapMaxMs,
+            )
+            assertEquals(1, ended.delegations)
+        }
+
+    @Test
+    fun aPauseOfExactlyASlowReplyIsStillOneTurn() =
+        runTest(dispatcher) {
+            val call = greeted()
+
+            waitUntil(3.seconds)
+            transport.voice()
+            waitUntil(6.seconds)
+            transport.voice()
+            waitUntil(7.seconds)
+            characterTalks(until = 7.5.seconds)
+            call.hangUp()
+
+            assertEquals(
+                "Only a pause longer than a slow reply goes unanswered",
+                0,
+                events.filterIsInstance<AnalyticsEvent.CallEnded>().single().unansweredTurns,
+            )
+        }
+
+    @Test
     fun aQuickReplyIsMeasuredAndAGoodbyeSentWhileTheLearnerSpeaksIsLeftOut() =
         runTest(dispatcher) {
             val call = greeted()

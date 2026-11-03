@@ -45,7 +45,7 @@ class ReplyGaps {
         val voiceAt = lastVoiceAt
         if (voiceAt == null) {
             cueSinceVoice = false
-        } else if (now - voiceAt >= SLOW_REPLY_MS) {
+        } else if (now - voiceAt > SLOW_REPLY_MS) {
             unansweredTurns += 1
         }
         lastVoiceAt = now

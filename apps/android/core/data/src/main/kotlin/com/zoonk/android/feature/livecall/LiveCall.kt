@@ -325,13 +325,14 @@ class LiveCall(
                 advance()
             }
 
+            // The answer that follows still answers the learner, after the wait the delegation cost them.
             is LiveServerEvent.Delegation -> {
                 gaps.delegated()
                 setup
                     ?.script
                     ?.cues
                     ?.noBackend
-                    ?.let { send(it.command(delegationId = event.id)) }
+                    ?.let { transport?.send(it.command(delegationId = event.id)) }
             }
 
             is LiveServerEvent.CueTaken -> {
