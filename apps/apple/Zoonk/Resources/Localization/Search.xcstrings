@@ -1058,7 +1058,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nova meta"
+            "value" : "Novo objetivo"
           }
         },
         "tr" : {
@@ -1530,7 +1530,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma meta"
+            "value" : "Começar um objetivo"
           }
         },
         "tr" : {
@@ -1589,7 +1589,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma meta: “%@”"
+            "value" : "Começar um objetivo: “%@”"
           }
         },
         "tr" : {
@@ -1648,7 +1648,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma nova meta: “%@”"
+            "value" : "Começar um novo objetivo: “%@”"
           }
         },
         "tr" : {
@@ -1884,7 +1884,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas metas"
+            "value" : "Seus objetivos"
           }
         },
         "tr" : {

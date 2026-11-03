@@ -1,4 +1,5 @@
 import createMDX from "@next/mdx";
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -6,6 +7,7 @@ const nextConfig: NextConfig = {
   experimental: { turbopackRustReactCompiler: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
+  turbopack: { rules: tailwindRules },
 };
 
 const withMDX = createMDX();

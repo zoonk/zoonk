@@ -12,3 +12,5 @@ The lesson player for Library lessons. Apps render `LessonPlayerProvider` (`@zoo
 ## Styling
 
 Shared scene primitives (`player-read-scene`, `player-choice-scene`, `step-layouts`) own layout, spacing and baseline typography; step components adapt data into them. When a screen needs a variation of a shared pattern, add a semantic variant to the primitive instead of one-off styling. Local styling fits content unique to one feature, such as vocabulary word display or grammar highlighting.
+
+Anything the learner presses or drags (answer options, word chips, cards, slots, handles) and every chart or drawing with labels is `select-none`, so on a touch screen a held finger presses or lifts it instead of selecting its words. Text the learner reads stays selectable, including words and passages in it they tap (to see a meaning or mark a passage), so a copied sentence keeps them. The browser tests' accessibility scan fails on any it finds (`@zoonk/testing/accessibility/text-selection`).

@@ -1,5 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { tailwindRules } from "@zoonk/ui/turbopack";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -42,7 +43,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } },
+    rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },
   },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },

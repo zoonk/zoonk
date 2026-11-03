@@ -16,7 +16,7 @@ Someone tells you something in Zoonk went wrong, often in everyday words and may
 - A security problem, such as seeing someone else's data: don't post it. Send the person to [private reporting](https://github.com/zoonk/zoonk/security/advisories/new).
 - A problem with their own account or a payment: Zoonk's [Help page](https://www.zoonk.com/support), where the team answers by email.
 - No GitHub account: "Report a problem" in the menu of the screen where it happened, or the Help page. Offer to write the message for them.
-- A request for a change rather than something broken: the Help page, which takes ideas. If you're not sure, file it as a bug.
+- A request for something new or different rather than something broken: an idea, following [zoonk-feature-request](../zoonk-feature-request/SKILL.md). If you're not sure, file it as a bug.
 
 ## Talk with them
 
@@ -60,7 +60,7 @@ Then add the form's fields in its order, each as a `### <label>` heading with th
 
 ## Keep private things out
 
-The issue is public and can stay in search results after it's deleted. Leave out emails, phone numbers, full names, passwords, sign-in codes and links, payment details, and personal details from a learning goal (health, immigration, work) that the bug doesn't need. Look at every screenshot before it goes up; if it shows any of these, ask the person to crop or cover it, or leave it out.
+The issue is public and can stay in search results after it's deleted. Leave out emails, phone numbers, full names, passwords, sign-in codes and links, payment details, and personal details from a learning goal (health, immigration, work, family) that the bug doesn't need. Look at every screenshot before it goes up; if it shows any of these, ask the person to crop or cover it, or leave it out.
 
 ## Confirm, then file
 

@@ -73,7 +73,7 @@
   "tutor_offer_mock_by_subject": "7d46b4a773e9e4acdccd35a14b5358fd8750d2f7681e0167999a5319ed54a352",
   "tutor_offer_mock_description": "76d73fa3a00af807f112c19235058fce4e69c9a527f616ca450cacf68c63fb72",
   "tutor_offer_mock_plus": "de293dfbfb48eb10f4c2c93499fc965ae5f1b1f6509014e32a43e046afefdd58",
-  "tutor_offer_one_goal": "7f79337f973eda720767d53805953ba822fa63974c02453e9413834c08cfe2c0",
+  "tutor_offer_one_goal": "67c06335d8c1b1999a09b14528ee8f5dcc932ed5eb4798dfc124ec412dd99a19",
   "tutor_offer_open": "5ca46ef0a06138f1ea5b8e1c21f61ad184db71ede97987d74b9b43ca6ca6a125",
   "tutor_offer_plus": "78cc36e951dbea1112708bd0f4caa2a2a01001ec65458916fc9231110d95d981",
   "tutor_offer_plus_description": "bae8890098902f37f42784c18656a219ff53473794c638288653f3c24cf5a1b4",
@@ -82,7 +82,7 @@
   "tutor_offer_pronunciation": "4f55dd7947f73723614c308465764d7c6b8bb1c6f1eae42c229a9cada2e771da",
   "tutor_offer_see_plus": "5e9940da6ebebf24506d9f4492c316bd66da1e5ff2fff923928f1db44eba901c",
   "tutor_offer_start": "59e17fc562af83e91ea2b41931c367006c872a76ce81a9851c2e12b50071ee84",
-  "tutor_offer_start_goal": "5d457eba57a2d947f76c024bc7cb114e02f4e37de1b5c269b3b0a157114223fb",
+  "tutor_offer_start_goal": "799bd17c4a30e8dc78a44c84208315e7f9af070ed2060b3e0be1fe91aa55c643",
   "tutor_offer_stats": "d3663ae64ec560a707f0a08e01608e209840ff50da4458e0becf3befe543d12e",
   "tutor_offer_stats_description": "72e93e29b36eb2a5f0582ea09dad4fc1cb114ae94b55ea035dce36933d7d3453",
   "tutor_offer_take_test": "7795dcb3745bb498eb4d8c9475058b2ae0b602c8d76af7ac7fbe0a166b5e0779",
@@ -204,10 +204,10 @@
     <string name="tutor_offer_start">Começar</string>
     <string name="tutor_offer_practice">Praticar</string>
     <string name="tutor_offer_call_paused">As conversas estão em pausa para todo mundo no momento. Tente de novo mais tarde.</string>
-    <string name="tutor_offer_start_goal">Começar uma nova meta</string>
+    <string name="tutor_offer_start_goal">Começar um novo objetivo</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">No plano Grátis, você acompanha uma meta por vez: pause sua meta atual pelo menu dela ou acompanhe mais de uma com o Plus.</string>
+    <string name="tutor_offer_one_goal">No plano Grátis, você acompanha um objetivo por vez: pause seu objetivo atual pelo menu dele ou acompanhe mais de um com o Plus.</string>
     <string name="tutor_offer_catalog_course">Um curso pronto no catálogo</string>
     <string name="tutor_offer_chapter_test">Teste: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

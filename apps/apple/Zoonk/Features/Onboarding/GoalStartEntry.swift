@@ -119,21 +119,15 @@ struct GoalEntrySections<Attachment: View>: View {
           text: $words, prompt: Text(placeholder),
           label: Text(
             "I want to", tableName: "Onboarding",
-            comment: "The goal box's label, before the learner's words")
+            comment: "The goal box's label, before the learner's words"),
+          onSubmit: submit
         )
         .lineLimit(1...6)
         .focused($isFocused)
         .submitLabel(.send)
-        .onSubmit(submit)
         .onChange(of: words) { _, value in
           if value.count > maxLength {
             words = String(value.prefix(maxLength))
-          }
-
-          // Return sends: a vertical field takes it as a new line otherwise.
-          if value.hasSuffix("\n") {
-            words = String(value.dropLast())
-            submit()
           }
         }
         .keepsOffFold()

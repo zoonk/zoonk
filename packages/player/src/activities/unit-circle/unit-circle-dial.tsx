@@ -160,7 +160,7 @@ export function UnitCircleDial({
   return (
     <div className="w-full" ref={ref}>
       <svg
-        className="block overflow-visible"
+        className="block overflow-visible select-none"
         height={size}
         viewBox={`0 0 ${width} ${size}`}
         width={width}

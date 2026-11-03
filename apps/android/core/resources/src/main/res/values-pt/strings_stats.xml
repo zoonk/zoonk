@@ -4,7 +4,7 @@
   "stats_activities": "b53411c07d8234daaeba093a89d9b3d76d1cea2b92b6f899564f40d5f96e2dd5",
   "stats_activity": "f28637d164bcfe052be77b84dcad3bd34e2110170a8379f015a29d795008f9be",
   "stats_afternoon": "25d4e6790e8ea6f53169aa48f8f552cf4f09e7b4a56c606ed435b827c4dc822b",
-  "stats_all_goals": "f30f477626dd81a627cb9a42d63b959c98b449e2d5c482117a3ef962a420d101",
+  "stats_all_goals": "e3d63a6ec53d1659a3dd9b3546049d0192a5a39e8189fb337d278401a1a3aa4f",
   "stats_answer_count": "cca17fb4e1d86d738b9fe71c15ee56896335ba4960e8b7d50204ab0f59be2081",
   "stats_answers": "20e21a041078e8cfd5a8a82dbb20e4f31068b46d45e79052d617823ae78a3f0b",
   "stats_any_day": "0f60280766b9ea9c83c9ed2d5601b7db359cb240a9d3ffceb54ef361b3f319ad",
@@ -98,7 +98,7 @@
 }
 -->
 <resources>
-    <string name="stats_all_goals">Todas as metas</string>
+    <string name="stats_all_goals">Todos os objetivos</string>
     <string name="stats_open">Abrir estatísticas</string>
     <string name="stats_overview">Visão geral</string>
     <string name="stats_level">Nível</string>

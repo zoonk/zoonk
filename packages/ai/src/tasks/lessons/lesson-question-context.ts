@@ -161,10 +161,11 @@ export type PlanScopeContext = {
     title: string;
   };
   language: string;
-  /** Newest first. */
+  /** Newest first, open and fixed. */
   mistakes: {
     answer: string | null;
     correctAnswer: string | null;
+    fixed?: true;
     question: string;
     skill: string | null;
   }[];
