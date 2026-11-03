@@ -322,9 +322,10 @@ private struct TypedAnswerStepView: View {
         LessonVisualView(visual: visual)
       }
     case .turn:
+      let question = LessonQuestionParts(content.question).question
+
       LessonAnswerField(
-        label: Text(
-          verbatim: LessonRichText.spoken(LessonQuestionParts(content.question).question)),
+        label: question.isEmpty ? nil : Text(verbatim: LessonRichText.spoken(question)),
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,
@@ -337,7 +338,8 @@ private struct TypedAnswerStepView: View {
 }
 
 struct LessonAnswerField: View {
-  let label: Text
+  /// Without one, VoiceOver reads the placeholder, as a browser names main's field.
+  let label: Text?
   let text: String
   let isLocked: Bool
   var isNumber = false
@@ -345,14 +347,15 @@ struct LessonAnswerField: View {
   let check: (@MainActor () -> Void)?
   let onChange: @MainActor (String) -> Void
 
+  private var prompt: Text {
+    isNumber
+      ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
+      : Text("Write your answer", tableName: "Player", comment: "Placeholder of a written answer")
+  }
+
   var body: some View {
     MultilineTextField(
-      text: Binding(get: { text }, set: onChange),
-      prompt: isNumber
-        ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
-        : Text(
-          "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
-      label: label
+      text: Binding(get: { text }, set: onChange), prompt: prompt, label: label ?? prompt
     ) {
       isFocused.wrappedValue = false
       check?()
