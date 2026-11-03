@@ -69,6 +69,73 @@ describe(repairWrittenLesson, () => {
     );
   });
 
+  it("writes the lesson's money one way, grouping bare thousands and dropping zero cents only when every amount is whole", () => {
+    const sentence = "Otávio recebe R$ 3.000,00 brutos e R$ 2.700,00 líquidos.";
+
+    const explanation: WrittenScreen = {
+      exampleLineIdea: null,
+      explore: null,
+      image: null,
+      kind: "explanation",
+      text: `${sentence}\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3600 |`,
+      title: "Bruto e líquido",
+      visual: null,
+    };
+
+    const activity: WrittenScreen = {
+      content: JSON.stringify({ check: { explanation: "O líquido é R$ 2.400,00." } }),
+      kind: "activity",
+      template: "formulaModel",
+    };
+
+    const question: WrittenScreen = {
+      basis: { quote: sentence, screen: 0 },
+      context: "Um salário bruto de R$ 2400 tem R$ 200 de descontos.",
+      image: null,
+      kind: "check",
+      options: ["R$\u00A02.200", "R$ 2.600"].map((text, index) => ({
+        isCorrect: index === 0,
+        picture: null,
+        reason: "Bruto menos descontos.",
+        text,
+      })),
+      question: "Qual é o salário líquido?",
+      visual: null,
+    };
+
+    const lesson = {
+      screens: [explanation, activity, question],
+      summary: hubMap(["R$ 0,00 de desconto."]),
+    };
+
+    const repaired = repairWrittenLesson({ language: "pt", lesson });
+
+    expect(repaired.screens[0]).toMatchObject({
+      text: "Otávio recebe R$ 3.000 brutos e R$ 2.700 líquidos.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.600 |",
+    });
+
+    expect(repaired.screens[1]).toMatchObject({
+      content: expect.stringContaining('"O líquido é R$ 2.400."'),
+    });
+
+    expect(repaired.screens[2]).toMatchObject({
+      basis: { quote: "Otávio recebe R$ 3.000 brutos e R$ 2.700 líquidos." },
+      context: "Um salário bruto de R$ 2.400 tem R$ 200 de descontos.",
+      options: [{ text: "R$\u00A02.200" }, { text: "R$ 2.600" }],
+    });
+
+    expect(repaired.summary.ideas[0]?.text).toBe("R$ 0 de desconto.");
+
+    const withRealCents = repairWrittenLesson({
+      language: "pt",
+      lesson: { screens: [explanation], summary: hubMap(["Um café custa R$ 2,50."]) },
+    });
+
+    expect(withRealCents.screens[0]).toMatchObject({
+      text: `${sentence}\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.600 |`,
+    });
+  });
+
   it("leaves a lesson with nothing to repair as it was", () => {
     const lesson = writtenTemperatureLesson();
     expect(repairWrittenLesson({ language: "en", lesson })).toStrictEqual(lesson);
@@ -144,7 +211,7 @@ describe(repairWrittenLesson, () => {
 
     const repaired = repairWrittenLesson({
       language: "pt",
-      lesson: { screens: [twins, alone], summary: hubMap(["Ideia."]) },
+      lesson: { screens: [twins, alone], summary: hubMap(["Um café custa R$ 2,50."]) },
     });
 
     const texts = repaired.screens.map((screen) =>

@@ -1,47 +1,11 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { CURRENCY_MARKS, CURRENCY_WORDS, MONEY_MARK, MONEY_WORD } from "@zoonk/utils/money-marks";
 import { getScreenTexts } from "./screen-texts";
 
-const CURRENCY_MARKS = new Map([
-  ["$", "USD"],
-  ["A$", "AUD"],
-  ["C$", "CAD"],
-  ["R$", "BRL"],
-  ["US$", "USD"],
-  ["zł", "PLN"],
-  ["£", "GBP"],
-  ["¥", "JPY"],
-  ["₩", "KRW"],
-  ["€", "EUR"],
-  ["₹", "INR"],
-  ["₺", "TRY"],
-]);
-
-const CURRENCY_WORDS = new Map([
-  ["dollar", "USD"],
-  ["dollars", "USD"],
-  ["dólar", "USD"],
-  ["dólares", "USD"],
-  ["euro", "EUR"],
-  ["euros", "EUR"],
-  ["peso", "peso"],
-  ["pesos", "peso"],
-  ["reais", "BRL"],
-  ["real", "BRL"],
-]);
-
-function alternatives(currencies: ReadonlyMap<string, string>): string {
-  return [...currencies.keys()]
-    .toSorted((first, second) => second.length - first.length)
-    .map((word) => word.replaceAll("$", String.raw`\$`))
-    .join("|");
-}
-
-const MARK = alternatives(CURRENCY_MARKS);
-const WORD = alternatives(CURRENCY_WORDS);
 const AMOUNT = String.raw`\d{1,3}(?:[.,\u00A0\u202F ]\d{3})*(?:[.,]\d{2})?(?!\d)|\d+(?:[.,]\d{2})?(?!\d)`;
 
 const MONEY = new RegExp(
-  String.raw`(?<markBefore>${MARK})\s?(?<before>${AMOUNT})|(?<after>${AMOUNT})\s?(?<markAfter>${MARK})|(?<spelled>${AMOUNT})\s(?:mil\s)?(?<word>${WORD})\b`,
+  String.raw`(?<markBefore>${MONEY_MARK})\s?(?<before>${AMOUNT})|(?<after>${AMOUNT})\s?(?<markAfter>${MONEY_MARK})|(?<spelled>${AMOUNT})\s(?:mil\s)?(?<word>${MONEY_WORD})\b`,
   "gu",
 );
 
