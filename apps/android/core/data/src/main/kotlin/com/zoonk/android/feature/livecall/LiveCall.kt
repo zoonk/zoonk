@@ -268,7 +268,7 @@ class LiveCall(
         // A start cancelled meanwhile never connects: its reservation is ended at once.
         if (!isCurrent()) {
             scope.launch { client.end(ready.setup.connectionId) }
-            analytics.track(ReplyGaps().event(CallEnd.LearnerEnded, task.kind, talkSeconds = 0, durationSeconds = 0))
+            analytics.track(ReplyGaps().event(CallEnd.LearnerEnded, task.kind, learnerTurns = 0, talkSeconds = 0, durationSeconds = 0))
             return null
         }
         connectionId = ready.setup.connectionId
@@ -503,6 +503,11 @@ class LiveCall(
     private fun lost(run: Int) {
         if (run != attempt || !mutableState.value.isOpen) return
         val wasLive = phase == LiveCallPhase.Live
+        // Nothing still running, such as an objective check on its way, ends the call while the server says how it went.
+        ending = null
+        timers.forEach(Job::cancel)
+        timers.clear()
+        settle?.cancel()
         scope.launch {
             val closed = release()
             if (run != attempt || !mutableState.value.isOpen) return@launch
@@ -541,7 +546,10 @@ class LiveCall(
         if (reported || connectionId == null) return
         reported = true
         val current = mutableState.value
-        analytics.track(gaps.event(reason, task.kind, talkSeconds = current.talkSeconds, durationSeconds = current.elapsedSeconds))
+        val learnerTurns = current.turns.conversationTurns.count { it.speaker == Speaker.LEARNER }
+        analytics.track(
+            gaps.event(reason, task.kind, learnerTurns, talkSeconds = current.talkSeconds, durationSeconds = current.elapsedSeconds),
+        )
     }
 
     private fun silence() {

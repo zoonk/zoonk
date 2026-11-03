@@ -30,11 +30,11 @@ enum class CallEnd(
 /**
  * A proxy for how long the character took to answer: from the learner's microphone last hearing them
  * to the character's next words arriving. A gap after a cue the app sent is left out, since the cue
- * may have started that answer. A learner turn no answer followed (they spoke again after a slow
- * reply's wait, or the call ended) counts as unanswered.
+ * may have started that answer. Speaking again after a pause is the same turn, which keeps a cue sent
+ * during it; the pause counts as unanswered when it outlasted a slow reply, as does a turn the call
+ * ended on.
  */
 class ReplyGaps {
-    private var learnerTurns = 0
     private var unansweredTurns = 0
     private var delegations = 0
     private val gaps = mutableListOf<Long>()
@@ -43,10 +43,10 @@ class ReplyGaps {
 
     fun learnerSpoke(now: Long) {
         val voiceAt = lastVoiceAt
-        if (voiceAt == null || now - voiceAt >= SLOW_REPLY_MS) {
-            if (voiceAt != null) unansweredTurns += 1
-            learnerTurns += 1
+        if (voiceAt == null) {
             cueSinceVoice = false
+        } else if (now - voiceAt >= SLOW_REPLY_MS) {
+            unansweredTurns += 1
         }
         lastVoiceAt = now
     }
@@ -67,9 +67,11 @@ class ReplyGaps {
         delegations += 1
     }
 
+    /** [learnerTurns] come from the transcript, so a typed call counts its replies. */
     fun event(
         end: CallEnd,
         kind: String,
+        learnerTurns: Int,
         talkSeconds: Long,
         durationSeconds: Long,
     ): AnalyticsEvent.CallEnded {

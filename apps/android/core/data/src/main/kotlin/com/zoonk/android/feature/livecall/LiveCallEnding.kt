@@ -118,9 +118,13 @@ class LiveCallEnding(
 
     fun goalsMet(now: Long) = arm(EndingReason.Done, now)
 
-    /** The objective check found a mutual goodbye in what it was sent at [checkedAt]; anything the learner did since makes it stale. */
+    /**
+     * The objective check found a mutual goodbye in what it was sent at [checkedAt]; anything the
+     * learner did since makes it stale. Once the goodbye cue went, its own words and their quiet end
+     * the call instead.
+     */
     fun saidGoodbye(checkedAt: Long) {
-        if ((learnerAt() ?: Long.MIN_VALUE) > checkedAt) return
+        if (goodbyeSentAt != null || (learnerAt() ?: Long.MIN_VALUE) > checkedAt) return
         arm(EndingReason.Goodbye, now = checkedAt)
         goodbyeSaid = true
     }
@@ -172,17 +176,14 @@ class LiveCallEnding(
         now: Long,
     ): Boolean {
         if (characterSpeaking(now) || lastTypedAt?.let { now - it < timing.characterQuietMs } == true) return false
-        if (armed == EndingReason.Quiet || learnerSpeaking(now) ||
-            lastHeardAt?.let { now - it < timing.characterQuietMs } == true
-        ) {
-            return true
-        }
+        if (armed == EndingReason.Quiet) return true
         // Measured: a goodbye sent with a typed reply was taken as part of the reply and never said,
-        // so after one it goes once the character has answered it.
+        // so after one it goes once the character has answered it, whatever the learner says meanwhile.
         val sentAt = lastSentAt
         if (sentAt != null && sentAt >= armedAt) {
             return (lastCharacterAt ?: Long.MIN_VALUE) > sentAt || now - sentAt >= timing.answerWaitMs
         }
+        if (learnerSpeaking(now) || lastHeardAt?.let { now - it < timing.characterQuietMs } == true) return true
         val characterStopped = lastCharacterAt?.plus(timing.characterQuietMs) ?: liveAt
         return now - maxOf(characterStopped, learnerAt() ?: Long.MIN_VALUE) >= timing.answerWaitMs
     }

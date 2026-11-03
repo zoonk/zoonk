@@ -827,6 +827,121 @@ class LiveCallTest {
         }
 
     @Test
+    fun aCheckThatAnswersWhileALostCallIsClosingLeavesItDropped() =
+        runTest(dispatcher) {
+            val checked = CompletableDeferred<Unit>()
+            client.checkGate = checked
+            client.check = { LanguageConversationObjectiveCheck(goodbye = true, objectivesMet = emptyList(), progress = null) }
+            val closing = CompletableDeferred<Unit>()
+            client.endGate = closing
+            val call = greeted()
+            learnerAnswers()
+            characterTalks(until = 4.seconds)
+            wait(LiveCall.REPLY_SETTLED)
+            assertEquals(1, client.checks.size)
+
+            transport.onLost()
+            runCurrent()
+            wait(2.seconds)
+            checked.complete(Unit)
+            runCurrent()
+            assertEquals("The check answered 3.8 s after the last words, past the goodbye's drain", LiveCallPhase.Live, call.phase)
+            wait(5.seconds)
+            assertEquals("Still waiting on the server to say how it ended", LiveCallPhase.Live, call.phase)
+            assertTrue(events.isEmpty())
+
+            closing.complete(Unit)
+            runCurrent()
+            assertEquals(LiveCallFailure.Dropped, call.state.value.failure)
+            assertEquals(listOf("dropped"), endReasons)
+        }
+
+    @Test
+    fun aMutualGoodbyeFoundAfterTheGoodbyeCueWentWaitsForTheCuesWords() =
+        runTest(dispatcher) {
+            client.check = { LanguageConversationObjectiveCheck(goodbye = true, objectivesMet = emptyList(), progress = null) }
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 21.seconds)
+            assertEquals(1, transport.goodbyes.size)
+            transport.onEvent(learnerSays("Adiós", 19000.0, 20800.0))
+            runCurrent()
+            characterTalks(until = 22.seconds)
+
+            waitUntil(26.seconds)
+            assertEquals("The check answered at 23.4 s, after the cue went", LiveCallPhase.Live, call.phase)
+            goodbyeTaken()
+            characterTalks(until = 27.seconds)
+            waitUntil(29.8.seconds)
+            assertEquals(LiveCallPhase.Live, call.phase)
+            waitUntil(30.seconds)
+            assertEquals("3 s after the cue's words, at 26.9 s", LiveCallPhase.Ended, call.phase)
+            assertEquals(listOf("time"), endReasons)
+        }
+
+    @Test
+    fun aLateTranscriptDoesntSendTheGoodbyeBeforeATypedReplyIsAnswered() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(17.seconds)
+            characterTalks(until = 18.seconds)
+            waitUntil(19.5.seconds)
+            while (currentTime < 21_000) {
+                call.typed()
+                wait(0.4.seconds)
+            }
+            waitUntil(21.1.seconds)
+            call.sendText("Un café")
+            waitUntil(21.4.seconds)
+            transport.onEvent(learnerSays("Hola", 16000.0, 16500.0))
+            transport.voice()
+            runCurrent()
+            assertTrue("The reply goes alone", transport.goodbyes.isEmpty())
+
+            waitUntil(22.seconds)
+            characterTalks(until = 23.seconds)
+            waitUntil(24.2.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals("Once the reply's answer stopped, its last words at 22.9 s", 1, transport.goodbyes.size)
+        }
+
+    @Test
+    fun aGoodbyeCueStaysOutOfReplyGapsThroughAPauseInTheLearnersAnswer() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 20.2.seconds)
+            assertEquals(1, transport.goodbyes.size)
+            waitUntil(24.seconds)
+            learnerTalks(until = 25.seconds)
+            waitUntil(29.seconds)
+            characterTalks(until = 29.5.seconds)
+            call.hangUp()
+
+            val ended = events.filterIsInstance<AnalyticsEvent.CallEnded>().single()
+            assertNull("The goodbye answers the cue, not the learner", ended.replyGapMaxMs)
+            assertEquals("The pause went unanswered", 1, ended.unansweredTurns)
+        }
+
+    @Test
+    fun aTypedCallsTurnsCountFromItsTranscript() =
+        runTest(dispatcher) {
+            val call = call()
+            call.start(microphone = false)
+            runCurrent()
+            transport.onEvent(LiveServerEvent.Started)
+            runCurrent()
+            characterTalks(until = 1.seconds)
+            call.sendText("Un café, por favor")
+            wait(1.seconds)
+            characterTalks(until = 3.seconds)
+            call.hangUp()
+
+            assertEquals(1, events.filterIsInstance<AnalyticsEvent.CallEnded>().single().learnerTurns)
+        }
+
+    @Test
     fun aQuickReplyIsMeasuredAndAGoodbyeSentWhileTheLearnerSpeaksIsLeftOut() =
         runTest(dispatcher) {
             val call = greeted()
@@ -842,7 +957,6 @@ class LiveCallTest {
             call.hangUp()
 
             val ended = events.filterIsInstance<AnalyticsEvent.CallEnded>().single()
-            assertEquals(2, ended.learnerTurns)
             assertEquals("0.6 s after the microphone last heard them", 600L, ended.replyGapMaxMs)
             assertEquals(600L, ended.replyGapMedianMs)
             assertEquals(0, ended.unansweredTurns)
@@ -868,7 +982,7 @@ class LiveCallTest {
             call.hangUp()
 
             val ended = events.filterIsInstance<AnalyticsEvent.CallEnded>().single()
-            assertEquals(4, ended.learnerTurns)
+            assertEquals("The typed reply: the microphone's words have no transcript here", 1, ended.learnerTurns)
             assertEquals("The last one, cut off by hanging up", 1, ended.unansweredTurns)
             assertEquals("practice", ended.conversationKind)
             assertEquals("1.2 s and 4.2 s; the typed reply's answer is left out", 2700L, ended.replyGapMedianMs)

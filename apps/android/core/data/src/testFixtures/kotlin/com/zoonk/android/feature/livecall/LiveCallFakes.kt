@@ -132,6 +132,9 @@ class FakeCallClient : LiveCallClient {
     /** Holds every objective check until completed. */
     var checkGate: CompletableDeferred<Unit>? = null
 
+    /** Holds every hangup until completed. */
+    var endGate: CompletableDeferred<Unit>? = null
+
     override suspend fun connect(takeover: Boolean): CallReservation {
         connects += takeover
         connectGates[connects.size]?.await()
@@ -148,6 +151,7 @@ class FakeCallClient : LiveCallClient {
 
     override suspend fun end(connectionId: UUID): Boolean? {
         ended += connectionId
+        endGate?.await()
         return if (endAnswers.isEmpty()) false else endAnswers.removeFirst()
     }
 
