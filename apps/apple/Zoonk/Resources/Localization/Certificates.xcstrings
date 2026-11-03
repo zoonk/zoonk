@@ -906,6 +906,65 @@
         }
       }
     },
+    "Comes when every skill you practice reaches the next level" : {
+      "comment" : "Under a language goal on the empty certificates page: when it earns one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bekommst es, sobald alle Fähigkeiten, die du übst, das nächste Level erreichen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo recibes cuando todas las habilidades que practicas alcanzan el siguiente nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu l’obtiens quand chaque compétence que tu travailles atteint le niveau suivant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo ottieni quando passi al livello successivo in tutte le abilità che alleni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習しているすべてのスキルが次のレベルに進むと取得できます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otrzymasz go, gdy osiągniesz kolejny poziom w każdej ćwiczonej umiejętności"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você recebe quando todas as habilidades que pratica chegam ao próximo nível"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın"
+          }
+        }
+      }
+    },
     "Continue" : {
       "comment" : "Closes the certificate's award moment",
       "localizations" : {
@@ -3541,6 +3600,65 @@
         }
       }
     },
+    "Up next" : {
+      "comment" : "Heading over the learner's goals that can still earn a certificate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A continuación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À suivre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A seguire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の学習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A seguir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki"
+          }
+        }
+      }
+    },
     "Your %@ %@ certificate is ready." : {
       "comment" : "Under the title when a language certificate was earned: the language, then the level",
       "localizations" : {
@@ -3661,6 +3779,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ için sertifikaların hazır."
+          }
+        }
+      }
+    },
+    "Your certificate comes when you finish the plan" : {
+      "comment" : "Under a course goal on the empty certificates page: when it earns one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bekommst dein Zertifikat, wenn du den Plan abschließt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibes tu certificado cuando terminas el plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu obtiens ton certificat quand tu termines le plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricevi il certificato quando completi il piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を終えると証明書がもらえます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 마치면 인증서를 받을 수 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otrzymasz certyfikat po ukończeniu planu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você recebe seu certificado quando conclui o plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planı tamamladığında sertifikanı alırsın"
           }
         }
       }
