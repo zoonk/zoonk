@@ -16,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.feature.plan.learnerSummary
+import com.zoonk.android.feature.today.GoalMistakes
 import com.zoonk.android.feature.tutor.TutorAccess
 import com.zoonk.android.feature.tutor.TutorThread
 import com.zoonk.android.feature.tutor.TutorThreadKey
@@ -90,7 +91,8 @@ class BuddyScreenshots {
                         buddy.status.replace(status)
                         learnerSummary.summary.replace(learnerSummary())
                         tutor.threads[TutorThreadKey.Plan(GOAL)].replace(TutorThread(turns, hasMore = false, nextCursor = null))
-                        today.mistakes[UUID.fromString(GOAL)].replace(MistakeListAvailability(ready = 1, tomorrow = 0))
+                        today.mistakes[UUID.fromString(GOAL)]
+                            .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
                         memory.memory.replace(Memory(enabled = true, facts = emptyList()))
                     }
                 }

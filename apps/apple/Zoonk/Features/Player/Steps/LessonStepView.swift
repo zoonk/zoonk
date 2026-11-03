@@ -64,7 +64,13 @@ struct LessonStepView: View {
       isLocked: state.phase != .playing,
       waitsForPicture: step.isRequiredPictureDrawing(openedAt: store.openedAt),
       select: { store.select($0) },
-      resolveSpoken: { store.resolveSpoken($0, stepId: step.id) })
+      resolveSpoken: { store.resolveSpoken($0, stepId: step.id) },
+      check: state.phase == .playing
+        && step.canCheck(state.answers[step.id], openedAt: store.openedAt) ? check : nil)
+  }
+
+  private func check() {
+    Task { await store.check() }
   }
 }
 
@@ -78,6 +84,8 @@ struct LessonStepContext {
   let waitsForPicture: Bool
   let select: @MainActor (LessonAnswer?) -> Void
   let resolveSpoken: @MainActor (SpokenAnswerVerdict) -> Void
+  /// The main button's check, or nil while that button is disabled.
+  let check: (@MainActor () -> Void)?
 }
 
 private struct HookStepView: View {
@@ -318,7 +326,8 @@ private struct TypedAnswerStepView: View {
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,
-        isFocused: $isFocused
+        isFocused: $isFocused,
+        check: context.check
       ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
       .onAppear { isFocused = !context.isLocked }
     }
@@ -331,6 +340,7 @@ struct LessonAnswerField: View {
   let isLocked: Bool
   var isNumber = false
   var isFocused: FocusState<Bool>.Binding
+  let check: (@MainActor () -> Void)?
   let onChange: @MainActor (String) -> Void
 
   var body: some View {
@@ -341,9 +351,13 @@ struct LessonAnswerField: View {
         : Text(
           "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
       label: label
-    )
+    ) {
+      isFocused.wrappedValue = false
+      check?()
+    }
     .lineLimit(isNumber ? 1...1 : 3...8)
     .keyboardType(isNumber ? .numbersAndPunctuation : .default)
+    .submitLabel(.done)
     .focused(isFocused)
     .disabled(isLocked)
     .padding()
@@ -463,7 +477,7 @@ private struct SpokenAnswerStepView: View {
 
       LessonAnswerField(
         label: Text(LessonRichText.attributed(content.prompt)), text: context.answer?.text ?? "",
-        isLocked: context.isLocked, isFocused: $isFocused
+        isLocked: context.isLocked, isFocused: $isFocused, check: context.check
       ) {
         context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
       }

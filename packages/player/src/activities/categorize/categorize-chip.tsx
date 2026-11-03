@@ -37,7 +37,7 @@ export function CategorizeChip({
       aria-label={label}
       aria-pressed={disabled ? undefined : isSelected}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full touch-manipulation items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm leading-snug outline-none focus-visible:ring-[3px]",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full touch-manipulation items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm leading-snug outline-none select-none focus-visible:ring-[3px]",
         !disabled && "hover:bg-accent cursor-grab active:cursor-grabbing",
         isSelected && "border-primary ring-primary/15 font-medium ring-[3px]",
         isDragging && "relative z-20 shadow-lg",

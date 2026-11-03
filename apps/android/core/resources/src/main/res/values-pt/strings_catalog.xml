@@ -90,7 +90,7 @@
   "catalog_show_fewer_chapters": "bd13e83a0e505e8b1b2b4c51ac04c8cd7c08754d6ba9e07c45d4e5353abc9875",
   "catalog_show_more_chapters": "8f5aa7192d3a5dd5329977539933753668329c8a3a93a458f51de2ba3c79ea91",
   "catalog_start_free": "8461f50fbcba5bd496fd574a4b73e400f173ada486ad901774a571330fbcb94b",
-  "catalog_start_goal": "679413c21e97bebe3cc9b6308cf100ffc828e6f13315cff0d0481c1bc46166c7",
+  "catalog_start_goal": "e79cc0d8527c02ebcf20db00998535438ac5577f80785ed670cfa267d00a01ee",
   "catalog_start_lesson": "3a421cb31d6690f6122924abf1033431a495a2361e3c4bca3175e61094a96f58",
   "catalog_start_this_lesson": "1052015bcd2fb943a8550ac87ef106d06422e7c5eaece0a06bca11441b1c77a2",
   "catalog_subject_arts": "b9d9c1dcd69b606957163af235b11f938a766fe13a9e0b67fae692681a16b3ea",
@@ -161,7 +161,7 @@
     </plurals>
     <string name="catalog_empty_title">Nenhum curso</string>
     <string name="catalog_empty_description">Ainda não há cursos disponíveis.</string>
-    <string name="catalog_start_goal">Começar uma meta</string>
+    <string name="catalog_start_goal">Começar um objetivo</string>
     <string name="catalog_loading_more">Carregando mais cursos…</string>
     <string name="catalog_load_more_failed">Algo deu errado. Tente de novo.</string>
     <string name="catalog_not_found_title">Não encontramos esta página</string>

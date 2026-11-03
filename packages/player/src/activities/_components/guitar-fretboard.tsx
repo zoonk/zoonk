@@ -181,7 +181,7 @@ export function GuitarFretboard(props: FretboardProps) {
       <div
         aria-hidden={onChange ? undefined : true}
         aria-label={onChange ? label : undefined}
-        className="grid w-full items-center"
+        className="grid w-full items-center select-none"
         data-slot="guitar-fretboard"
         role={onChange ? "group" : undefined}
         style={gridColumns(Boolean(onChange))}

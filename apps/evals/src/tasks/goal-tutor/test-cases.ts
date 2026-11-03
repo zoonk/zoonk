@@ -1080,6 +1080,51 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "não entendi meu último erro, pode explicar?",
   }),
   goalCase({
+    context: {
+      ...CONCURSO_PLAN,
+      mistakes: CONCURSO_PLAN.mistakes.map((mistake) => ({ ...mistake, fixed: true as const })),
+    },
+    expectations:
+      "She already fixed her latest mistake in practice (`fixed`) and taps the suggestion to have it explained. Explains it like any mistake: the item is Errado because competence and form are always bound, even in a discretionary act, and what made Certo tempting; it may say she already fixed it. Saying she has no mistakes, or that there's nothing to explain because she fixed it, is a major error (cap 4.0). proposedChange is null.",
+    id: "pt-concurso-fixed-mistake",
+    question: "Explique meu último erro",
+  }),
+  goalCase({
+    context: {
+      ...ENEM_PLAN,
+      mistakes: [
+        {
+          answer: "3,0 A",
+          correctAnswer: "1,0 A",
+          fixed: true,
+          question:
+            "Uma lanterna usa uma bateria de 6 V ligada a dois resistores em série, de 2 Ω e 4 Ω. Qual é a corrente no circuito?",
+          skill: "Resolver circuitos em série",
+        },
+        {
+          answer: "5.000 kcal",
+          correctAnswer: "500 kcal",
+          fixed: true,
+          question:
+            "Os produtores de um ecossistema captam 50000 kcal. Em média, quanto chega aos consumidores secundários?",
+          skill: "Estimar a energia que chega a cada nível",
+        },
+        {
+          answer: "R$ 1.000",
+          correctAnswer: "R$ 990",
+          fixed: true,
+          question:
+            "Um investidor aplicou R$ 1.000. No primeiro mês rendeu 10%; no segundo, perdeu 10%. Com quanto ficou?",
+          skill: "Combinar variações percentuais seguidas",
+        },
+      ],
+    },
+    expectations:
+      "Her mistakes are newest first and all fixed. Her last mistake is the first one, the series circuit: the resistances add up to 6 Ω, so the current is 6 V ÷ 6 Ω = 1,0 A, and 3,0 A comes from using only the 2 Ω resistor. It may say she already fixed it. Explaining another of her mistakes as her last one is a major error (cap 5.0); saying she has no mistakes is a major error (cap 4.0). proposedChange is null.",
+    id: "pt-enem-last-of-fixed-mistakes",
+    question: "Explique meu último erro",
+  }),
+  goalCase({
     context: CONCURSO_PLAN,
     expectations:
       "A plan change: one hour a day. proposedChange asks for one hour (60 minutes) a day. The answer says it will apply after Apply.",

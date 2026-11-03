@@ -4,14 +4,7 @@
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["build-and-start", "make", "psql", "turbo!"],
-  "ignoreDependencies": [
-    "@prisma/client",
-    "@tailwindcss/postcss",
-    "next",
-    "portless",
-    "postcss-load-config",
-    "tsx"
-  ],
+  "ignoreDependencies": ["@prisma/client", "next", "portless", "tsx"],
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
@@ -27,6 +20,7 @@
     },
     "apps/api": {
       "entry": [".eloqnt/config.ts", "e2e/gateway-fetch.ts", "scripts/*.ts"],
+      "ignoreDependencies": ["@tailwindcss/turbopack"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
@@ -39,7 +33,7 @@
         "src/app/*/privacy/*.mdx",
         "src/app/*/terms/*.mdx"
       ],
-      "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
+      "project": ["src/**/*.{ts,tsx,mdx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "packages/ai": {
       "entry": ["scripts/*.ts!"],

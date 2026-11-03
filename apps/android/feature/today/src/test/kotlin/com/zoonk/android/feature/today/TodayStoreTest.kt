@@ -8,6 +8,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.models.LessonGenerationStatus
+import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.test.runTest
@@ -45,8 +46,7 @@ class TodayStoreTest {
             override suspend fun mistakes(
                 session: AuthenticatedSession,
                 goalId: UUID,
-            ) = com.zoonk.api.models
-                .MistakeListAvailability(ready = 0, tomorrow = 0)
+            ) = GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 0)
 
             override suspend fun language(
                 session: AuthenticatedSession,

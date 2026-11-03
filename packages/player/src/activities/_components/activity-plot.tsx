@@ -59,7 +59,7 @@ export function ActivityPlot({
   return (
     <div className={cn("w-full", className)} data-slot="activity-plot" ref={ref}>
       <svg
-        className="block overflow-visible text-xs tabular-nums"
+        className="block overflow-visible text-xs tabular-nums select-none"
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         width={width}

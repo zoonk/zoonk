@@ -81,7 +81,7 @@ function CellButton({
       aria-label={value ? undefined : t("Square {number}, {row} and {column}: empty", place)}
       aria-pressed={isActive}
       className={cn(
-        "bg-background focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 rounded-xl border outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
+        "bg-background focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 rounded-xl border outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
         isCompact ? "min-h-11" : "min-h-18",
         !value && "border-dashed",
         isActive && "border-viz-accent ring-viz-accent/25 ring-4",
