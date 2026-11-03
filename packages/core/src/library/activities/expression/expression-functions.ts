@@ -1,6 +1,21 @@
 const MAX_ROUND_DIGITS = 10;
 const HALF_TURN_DEGREES = 180;
 
+/**
+ * No double is exactly 0.1 or π, so (0.1 + 0.2) − 0.3 leaves 5.6e-17 and sin(π) 1.2e-16 where the
+ * answer is 0. A sum within one unit in the last place of its larger input, or a sine within one of
+ * its angle, is within its inputs' rounding, so it can't be told from 0.
+ */
+export function withoutRoundingError(value: number, inputSize: number): number {
+  return Math.abs(value) <= Number.EPSILON * inputSize ? 0 : value;
+}
+
+function trig(apply: (radians: number) => number): (radians: number) => number {
+  return (radians) => withoutRoundingError(apply(radians), Math.abs(radians));
+}
+
+export const trigFunctions = { cos: trig(Math.cos), sin: trig(Math.sin), tan: trig(Math.tan) };
+
 type ExpressionFunctionSpec = {
   apply: (args: readonly number[]) => number;
   maxArgs: number;
@@ -31,7 +46,7 @@ export const expressionFunctions = {
   atan: unary(Math.atan),
   cbrt: unary(Math.cbrt),
   ceil: unary(Math.ceil),
-  cos: unary(Math.cos),
+  cos: unary(trigFunctions.cos),
   deg: unary((radians) => (radians * HALF_TURN_DEGREES) / Math.PI),
   exp: unary(Math.exp),
   floor: unary(Math.floor),
@@ -44,9 +59,9 @@ export const expressionFunctions = {
   rad: unary((degrees) => (degrees * Math.PI) / HALF_TURN_DEGREES),
   round: { apply: roundTo, maxArgs: 2, minArgs: 1 },
   sign: unary(Math.sign),
-  sin: unary(Math.sin),
+  sin: unary(trigFunctions.sin),
   sqrt: unary(Math.sqrt),
-  tan: unary(Math.tan),
+  tan: unary(trigFunctions.tan),
 } satisfies Record<string, ExpressionFunctionSpec>;
 
 export type ExpressionFunctionName = keyof typeof expressionFunctions;

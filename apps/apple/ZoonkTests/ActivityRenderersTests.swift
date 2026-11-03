@@ -27,6 +27,23 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(
       ActivityExpression.evaluate("sqrt(16) + abs(-2) * pi")!, 4 + 2 * .pi, accuracy: 1e-12)
     XCTAssertEqual(ActivityExpression.evaluate("x * 2", variables: ["x": 3]), 6)
+    XCTAssertEqual(ActivityExpression.evaluate("sin(pi)"), 0)
+    XCTAssertEqual(ActivityExpression.evaluate("-sin(pi)")?.sign, .plus, "Never −0")
+    XCTAssertEqual(ActivityExpression.evaluate("sin(pi) / -2")?.sign, .plus)
+    XCTAssertEqual(ActivityExpression.evaluate("(0.1 + 0.2) - 0.3"), 0)
+    XCTAssertEqual(ActivityExpression.evaluate("1000000000001 - 1000000000000"), 1)
+    XCTAssertNil(ActivityExpression.evaluate("1e308 * 10 - 1"), "Overflow fails, as in core")
+    XCTAssertNil(ActivityExpression.evaluate("1e999 - 1"))
+    XCTAssertNil(ActivityExpression.evaluate("x - 1", variables: ["x": .infinity]))
+    XCTAssertEqual(ActivityExpression.evaluate("((0.1 + 0.2) - 0.3) * 1000"), 0)
+    XCTAssertEqual(
+      ActivityExpression.evaluate(
+        "(1 / sqrt(1 - (v / c)^2) - 1) * m * c^2", variables: ["c": 3e8, "m": 1, "v": 20]),
+      199.84014443252818, "A later step makes the small difference large")
+    XCTAssertEqual(
+      ActivityExpression.evaluate(
+        "speed^2 * sin(rad(2 * angle)) / 9.81", variables: ["angle": 90, "speed": 20]), 0)
+    XCTAssertEqual(ActivityExpression.evaluate("1 + 1e-10 - 1"), 1.000000082740371e-10)
     XCTAssertNil(ActivityExpression.evaluate("1 / 0"))
     XCTAssertNil(ActivityExpression.evaluate("sqrt 4"))
     XCTAssertNil(ActivityExpression.evaluate("y + 1"))
