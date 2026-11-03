@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
 
@@ -6,7 +7,9 @@ const MAIN_APP_URL = "http://localhost:49153";
 
 test.describe("Login Page", () => {
   test("signing in directly on the API ends in the main app", async ({ page }) => {
-    const email = `e2e-direct-login-${Date.now()}@zoonk.test`;
+    const email = `e2e-direct-login-${randomUUID()}@zoonk.test`;
+
+    await page.route(`${MAIN_APP_URL}/login`, (route) => route.fulfill({ body: "" }));
 
     await page.goto("/auth/login");
     await page.getByLabel(/email/iu).fill(email);
