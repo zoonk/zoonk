@@ -7,6 +7,7 @@ export const CURRENCY_MARKS: ReadonlyMap<string, string> = new Map([
   ["zł", "PLN"],
   ["£", "GBP"],
   ["¥", "JPY"],
+  ["￥", "JPY"],
   ["₩", "KRW"],
   ["€", "EUR"],
   ["₹", "INR"],
