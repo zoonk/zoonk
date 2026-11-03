@@ -45,11 +45,9 @@ val SCRIPT =
 fun setup(
     talkSeconds: Long = 300,
     seconds: Long = talkSeconds + 45,
-    endsAtLimit: LanguageConversationSetup.EndsAtLimit? = null,
 ) = LanguageConversationSetup(
     connectionId = CONNECTION,
     deadlineAt = Instant.parse("2026-10-29T12:05:00Z"),
-    endsAtLimit = endsAtLimit,
     script = SCRIPT,
     seconds = seconds,
     sessionUrl = "",

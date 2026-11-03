@@ -534,21 +534,82 @@ class LiveCallTest {
         }
 
     @Test
-    fun typingEndsTheSilence() =
+    fun aCoughWithNoTranscriptStartsTheSilenceAgainOnceItStops() =
+        runTest(dispatcher) {
+            val call = live()
+            characterTalks(until = 1.seconds)
+
+            waitUntil(20.seconds)
+            learnerTalks(until = 20.4.seconds)
+            assertFalse(call.state.value.quietHint)
+
+            waitUntil(33.seconds)
+            assertFalse(call.state.value.quietHint)
+            wait(0.2.seconds)
+            assertTrue("12 s after the microphone went quiet, at 21.2 s", call.state.value.quietHint)
+
+            waitUntil(46.seconds)
+            assertEquals(0, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals(1, transport.checkIns)
+
+            waitUntil(71.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals(EndingReason.Quiet, call.state.value.ending)
+        }
+
+    @Test
+    fun aCoughAfterTheCheckInStartsAQuietWithItsOwnCheckIn() =
+        runTest(dispatcher) {
+            val call = live()
+            characterTalks(until = 1.seconds)
+            waitUntil(30.seconds)
+            assertEquals(1, transport.checkIns)
+            characterTalks(until = 32.seconds)
+
+            waitUntil(40.seconds)
+            learnerTalks(until = 40.4.seconds)
+            waitUntil(66.seconds)
+            assertEquals(1, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals("25 s after the microphone went quiet, at 41.2 s", 2, transport.checkIns)
+
+            waitUntil(91.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals(EndingReason.Quiet, call.state.value.ending)
+        }
+
+    @Test
+    fun aSteadyNoiseHoldsTheQuietHandlingUntilItStops() =
+        runTest(dispatcher) {
+            val call = live()
+            characterTalks(until = 1.seconds)
+
+            learnerTalks(until = 60.seconds)
+            assertFalse(call.state.value.quietHint)
+            assertEquals(0, transport.checkIns)
+            assertNull(call.state.value.ending)
+
+            waitUntil(85.6.seconds)
+            assertEquals(0, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals("25 s after the microphone went quiet, at 60.8 s", 1, transport.checkIns)
+        }
+
+    @Test
+    fun typingStartsTheSilenceAgainFromTheLastKeystroke() =
         runTest(dispatcher) {
             val call = live()
             characterTalks(until = 1.seconds)
 
             waitUntil(20.seconds)
             call.typed()
-            waitUntil(50.seconds)
-            assertEquals("Only the character's next words start a silence again", 0, transport.checkIns)
-
-            characterTalks(until = 51.seconds)
-            waitUntil(77.2.seconds)
+            waitUntil(44.8.seconds)
             assertEquals(0, transport.checkIns)
             wait(0.2.seconds)
-            assertEquals("25 s after the character stopped, at 52.4 s", 1, transport.checkIns)
+            assertEquals(1, transport.checkIns)
         }
 
     @Test
@@ -845,16 +906,16 @@ class LiveCallTest {
         }
 
     @Test
-    fun learnerWordsOverTheCharactersLastOnesDontEndASilenceThatHasntStarted() =
+    fun learnerWordsOverTheCharactersLastOnesStartTheSilenceWhenTheyStop() =
         runTest(dispatcher) {
             live()
             characterTalks(until = 1.seconds)
-            learnerTalks(until = 1.6.seconds)
+            learnerTalks(until = 3.seconds)
 
-            waitUntil(27.2.seconds)
+            waitUntil(28.6.seconds)
             assertEquals(0, transport.checkIns)
             wait(0.2.seconds)
-            assertEquals("25 s after the character stopped, at 2.4 s", 1, transport.checkIns)
+            assertEquals("25 s after the microphone went quiet, at 3.8 s", 1, transport.checkIns)
         }
 
     @Test

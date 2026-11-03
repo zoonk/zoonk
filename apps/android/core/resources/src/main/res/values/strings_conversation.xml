@@ -70,8 +70,6 @@
     <string name="conversation_answer_out_loud">Answer %1$s out loud.</string>
     <!-- The call reached its length: the character says goodbye once the learner answers. -->
     <string name="conversation_wrap_up_time">Almost time. %1$s will say goodbye after your answer.</string>
-    <string name="conversation_wrap_up_day">Your call time for today is almost up. %1$s will say goodbye after your answer.</string>
-    <string name="conversation_wrap_up_month">Your call time for this month is almost up. %1$s will say goodbye after your answer.</string>
     <!-- The learner did every goal of the call: the character ends the call once they answer. -->
     <string name="conversation_wrap_up_done">All goals done. %1$s will wrap up after your answer.</string>
     <string name="conversation_call_ended">Call ended</string>
