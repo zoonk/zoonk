@@ -23,8 +23,11 @@ export const generationEventStreamSchema = z
   .string()
   .meta({
     description:
-      'Server-Sent Events stream. Every data field contains JSON with a required "status" and "step", plus optional "entityId", "reason" and "at" (when the step reported it, in milliseconds since the epoch).',
-    examples: ['data: {"at":1760000000000,"status":"started","step":"writeLesson"}\n\n'],
+      'Server-Sent Events stream. Every data field contains JSON with a required "status" and "step", plus optional "entityId", "reason", "at" (when the step reported it, in milliseconds since the epoch) and "skillName" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again).',
+    examples: [
+      'data: {"at":1760000000000,"status":"started","step":"writeLesson"}\n\n',
+      'data: {"at":1760000000000,"skillName":"Variables","status":"started","step":"buildSkillGraph"}\n\n',
+    ],
   });
 
 export const workflowEventsQuerySchema = z

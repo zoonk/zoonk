@@ -7,6 +7,8 @@ export type StepStreamMessage<TStep extends string = string> = {
   at?: number;
   entityId?: string;
   reason?: WorkflowErrorReason;
+  /** A skill `buildSkillGraph` just wrote, in the order written; a graph written again repeats them. */
+  skillName?: string;
   status: StepStatus;
   step: TStep;
 };

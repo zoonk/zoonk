@@ -100,16 +100,23 @@ export async function decideGoalScopeStep({
 
 async function generateGraph({
   analytics,
+  onSkillNamed,
   prompt,
   scope,
 }: {
   analytics: ReturnType<typeof toContentAnalytics>;
+  onSkillNamed: (name: string) => Promise<void>;
   prompt: GoalCurriculumInputs["graphPrompt"];
   scope: CurriculumScope;
 }) {
   const model = getScopeModel(scope);
 
-  const params = { ...prompt, analytics, serviceTier: chooseServiceTier({ wait: "learner" }) };
+  const params = {
+    ...prompt,
+    analytics,
+    onSkillNamed,
+    serviceTier: chooseServiceTier({ wait: "learner" }),
+  };
 
   if (!model) {
     return generateSkillGraph(params);
@@ -140,15 +147,17 @@ export async function buildSkillGraphStep({
   "use step";
 
   await using stream = createStepStream<GoalStreamStep>();
-  await stream.status({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
+  const report = { entityId: inputs.goal.id, step: "buildSkillGraph" } as const;
+  await stream.status({ ...report, status: "started" });
 
   const { data, provenance } = await generateGraph({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    onSkillNamed: (skillName) => stream.status({ ...report, skillName, status: "started" }),
     prompt: toScopedGraphPrompt({ inputs, scope }),
     scope,
   });
 
-  await stream.status({ entityId: inputs.goal.id, status: "completed", step: "buildSkillGraph" });
+  await stream.status({ ...report, status: "completed" });
 
   return { graph: data, provenance };
 }

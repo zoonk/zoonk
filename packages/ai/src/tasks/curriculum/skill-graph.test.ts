@@ -1,5 +1,5 @@
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
-import { type LanguageModelUsage, generateText } from "ai";
+import { type LanguageModelUsage, streamText } from "ai";
 import { describe, expect, it, vi } from "vitest";
 import { type ExamOutline } from "./exam-outline";
 import { generateSkillGraph } from "./skill-graph";
@@ -26,7 +26,7 @@ vi.mock("./skill-graph.prompt.md", () => ({
 
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
-  generateText: vi.fn(),
+  streamText: vi.fn(),
 }));
 
 const MODEL = "openai/gpt-6-sol";
@@ -63,7 +63,17 @@ function answer(output: unknown) {
     usage,
   };
 
-  return { finalStep: step, output, steps: [step], usage };
+  async function* partialOutputStream() {
+    yield output;
+  }
+
+  return {
+    finalStep: step,
+    output,
+    partialOutputStream: partialOutputStream(),
+    steps: [step],
+    usage,
+  };
 }
 
 const FRAME = {
@@ -90,7 +100,7 @@ const WHOLE_GRAPH = {
 
 function sentPrompts() {
   return vi
-    .mocked(generateText)
+    .mocked(streamText)
     .mock.calls.map(([call]) => ({
       instructions: typeof call.instructions === "string" ? call.instructions : "",
       prompt: typeof call.prompt === "string" ? call.prompt : "",
@@ -125,7 +135,7 @@ describe(generateSkillGraph, () => {
   it("writes a big exam's frame first, then its subjects at once, and joins them into one graph", async () => {
     const prompts: string[] = [];
 
-    vi.mocked(generateText).mockImplementation(async ({ prompt }) => {
+    vi.mocked(streamText).mockImplementation(({ prompt }) => {
       const text = typeof prompt === "string" ? prompt : "";
       prompts.push(text);
 
@@ -134,11 +144,16 @@ describe(generateSkillGraph, () => {
       ) as never;
     });
 
+    const named: string[] = [];
+
     const { data, provenance } = await generateSkillGraph({
       examBlueprint: NOTICE,
       goal: "Passar no concurso",
       goalKind: "exam",
       language: "pt",
+      onSkillNamed: async (name) => {
+        named.push(name);
+      },
     });
 
     // The frame, then one call per subject: four subjects, each with the frame to follow.
@@ -163,6 +178,10 @@ describe(generateSkillGraph, () => {
 
     expect(provenance.usage.outputTokens).toBe(2500);
 
+    expect(named.toSorted()).toStrictEqual(
+      SUBJECTS.map((subject) => `Entender ${subject}`).toSorted(),
+    );
+
     // Every call reads the same exam instructions, so the calls share a cached prefix, and the graph
     // records the version a later learner of the same notice reuses it by.
     const instructions = new Set(sentPrompts().map((sent) => sent.instructions));
@@ -171,8 +190,8 @@ describe(generateSkillGraph, () => {
   });
 
   it("writes any other goal's graph whole, in one call", async () => {
-    vi.mocked(generateText).mockReset();
-    vi.mocked(generateText).mockResolvedValue(answer(WHOLE_GRAPH) as never);
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
 
     const { data } = await generateSkillGraph({
       goal: "Entender juros compostos",
@@ -181,7 +200,7 @@ describe(generateSkillGraph, () => {
       purpose: "overview",
     });
 
-    expect(generateText).toHaveBeenCalledOnce();
+    expect(streamText).toHaveBeenCalledOnce();
     expect(data.skills).toHaveLength(1);
   });
 
@@ -195,16 +214,28 @@ describe(generateSkillGraph, () => {
       }));
 
     // A subject chained in a textbook's order, then one with hard dependencies only.
-    vi.mocked(generateText).mockReset();
+    vi.mocked(streamText).mockReset();
 
-    vi.mocked(generateText)
-      .mockResolvedValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(true) }) as never)
-      .mockResolvedValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(false) }) as never);
+    vi.mocked(streamText)
+      .mockReturnValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(true) }) as never)
+      .mockReturnValueOnce(answer({ ...WHOLE_GRAPH, skills: skills(false) }) as never);
 
-    const { data } = await generateSkillGraph({ goal: "ENEM", goalKind: "exam", language: "pt" });
+    const named: string[] = [];
 
-    expect(generateText).toHaveBeenCalledTimes(2);
+    const { data } = await generateSkillGraph({
+      goal: "ENEM",
+      goalKind: "exam",
+      language: "pt",
+      onSkillNamed: async (name) => {
+        named.push(name);
+      },
+    });
+
+    expect(streamText).toHaveBeenCalledTimes(2);
     expect(data.skills.every((skill) => skill.prerequisites.length === 0)).toBe(true);
+
+    const names = skills(false).map((skill) => skill.name);
+    expect(named).toStrictEqual([...names, ...names]);
   });
 
   it("writes again only a big exam's flawed section, never the whole graph", async () => {
@@ -218,11 +249,11 @@ describe(generateSkillGraph, () => {
     );
 
     let portugueseCalls = 0;
-    vi.mocked(generateText).mockReset();
+    vi.mocked(streamText).mockReset();
 
     // Portuguese comes back chained in a textbook's order the first time, with hard dependencies
     // only the second.
-    vi.mocked(generateText).mockImplementation(async ({ prompt }) => {
+    vi.mocked(streamText).mockImplementation(({ prompt }) => {
       const text = typeof prompt === "string" ? prompt : "";
 
       if (text.includes("SECTION: frame")) {
@@ -251,7 +282,7 @@ describe(generateSkillGraph, () => {
     });
 
     // The frame, four sections and Portuguese once more.
-    expect(generateText).toHaveBeenCalledTimes(6);
+    expect(streamText).toHaveBeenCalledTimes(6);
     expect(portugueseCalls).toBe(2);
 
     const portuguese = data.skills.filter((skill) => skill.area === "Português");
@@ -261,9 +292,9 @@ describe(generateSkillGraph, () => {
   });
 
   it("keeps a graph whose phase is titled like one of its skills instead of drafting it again", async () => {
-    vi.mocked(generateText).mockReset();
+    vi.mocked(streamText).mockReset();
 
-    vi.mocked(generateText).mockResolvedValue(
+    vi.mocked(streamText).mockReturnValue(
       answer({
         ...WHOLE_GRAPH,
         phases: [{ milestone: "Entender o português", title: "Entender português" }],
@@ -277,16 +308,16 @@ describe(generateSkillGraph, () => {
       purpose: "overview",
     });
 
-    expect(generateText).toHaveBeenCalledOnce();
+    expect(streamText).toHaveBeenCalledOnce();
     expect(data.phases.map((phase) => phase.title)).toStrictEqual(["Entender português"]);
   });
 
   it("repairs em dashes, Markdown and a skill written twice in code, and reports them", async () => {
     const [skill] = WHOLE_GRAPH.skills;
 
-    vi.mocked(generateText).mockReset();
+    vi.mocked(streamText).mockReset();
 
-    vi.mocked(generateText).mockResolvedValue(
+    vi.mocked(streamText).mockReturnValue(
       answer({
         ...WHOLE_GRAPH,
         skills: [
@@ -303,7 +334,7 @@ describe(generateSkillGraph, () => {
       purpose: "overview",
     });
 
-    expect(generateText).toHaveBeenCalledOnce();
+    expect(streamText).toHaveBeenCalledOnce();
 
     expect(data.skills.map((item) => [item.name, item.description])).toStrictEqual([
       ["Interpretar textos", "Ler, e entender"],
@@ -315,8 +346,8 @@ describe(generateSkillGraph, () => {
   });
 
   it("gives a learn goal only the learn rules and the inputs they read", async () => {
-    vi.mocked(generateText).mockReset();
-    vi.mocked(generateText).mockResolvedValue(answer(WHOLE_GRAPH) as never);
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
 
     const { provenance } = await generateSkillGraph({
       goal: "Entender juros compostos",
@@ -338,8 +369,8 @@ describe(generateSkillGraph, () => {
   });
 
   it("gives a language goal only the language rules and its target language", async () => {
-    vi.mocked(generateText).mockReset();
-    vi.mocked(generateText).mockResolvedValue(answer(WHOLE_GRAPH) as never);
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
 
     await generateSkillGraph({
       goal: "Speak English at work",
@@ -357,8 +388,8 @@ describe(generateSkillGraph, () => {
   });
 
   it("writes a small exam's graph whole with the same instructions a big exam's calls read", async () => {
-    vi.mocked(generateText).mockReset();
-    vi.mocked(generateText).mockResolvedValue(answer(WHOLE_GRAPH) as never);
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
 
     const { provenance } = await generateSkillGraph({
       goal: "ENEM",
@@ -377,8 +408,8 @@ describe(generateSkillGraph, () => {
   });
 
   it("adds the material and lesson budget rules to a test from the learner's own notes", async () => {
-    vi.mocked(generateText).mockReset();
-    vi.mocked(generateText).mockResolvedValue(answer(WHOLE_GRAPH) as never);
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
 
     const { provenance } = await generateSkillGraph({
       context: "The learner's own material, page by page: …",
