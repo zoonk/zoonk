@@ -822,6 +822,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-patrimonio-liquido-beginner-0",
+    language: "pt",
     lesson: "Patrimônio líquido",
     level: "beginner",
     picture:
@@ -836,6 +837,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: false,
     id: "plan-pt-niveis-ecologicos-beginner-2",
+    language: "pt",
     lesson: "Níveis de organização ecológica",
     level: "beginner",
     picture:
@@ -851,6 +853,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,
     id: "plan-pt-receitas-regulares-overview-1",
+    language: "pt",
     lesson: "Receitas regulares e eventuais",
     level: "overview",
     picture:
