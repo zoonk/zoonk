@@ -4,7 +4,7 @@ import { useSentenceSpace } from "@zoonk/learn/locale";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { NotQuiteLead } from "../../components/verdict-label";
+import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,

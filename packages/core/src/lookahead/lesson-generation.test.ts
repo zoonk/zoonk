@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   heldBackDraftFixture,
@@ -10,6 +11,7 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -287,6 +289,45 @@ describe(getLessonWaitingState, () => {
         warmUpId: null,
       },
       status: "ready",
+    });
+  });
+
+  it("names the goal's warm-up deck only while the goal's first lesson is waited for", async () => {
+    const { goal, plan, user } = await learnerWithPlan();
+
+    const [deck, first, finished] = await Promise.all([
+      warmUpFixture(),
+      libraryLessonFixture({ contentRunId: randomUUID(), contentStatus: "running" }),
+      libraryLessonFixture({ contentStatus: "completed" }),
+    ]);
+
+    await Promise.all([
+      prisma.goal.update({ data: { warmUpId: deck.id }, where: { id: goal.id } }),
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0 }),
+      planItemFixture({ lessonId: finished.id, planId: plan.id, position: 1 }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getLessonWaitingState({ lessonId: first.id })).resolves.toMatchObject({
+      state: { status: "generating", warmUpId: deck.id },
+    });
+
+    await learningEventFixture({
+      contentIds: { lessonId: finished.id },
+      goalId: goal.id,
+      lessonKind: "library",
+      userId: user.id,
+    });
+
+    await expect(getLessonWaitingState({ lessonId: first.id })).resolves.toMatchObject({
+      state: { status: "generating", warmUpId: null },
+    });
+
+    await prisma.lesson.delete({ where: { id: finished.id } });
+
+    await expect(getLessonWaitingState({ lessonId: first.id })).resolves.toMatchObject({
+      state: { status: "generating", warmUpId: null },
     });
   });
 

@@ -176,5 +176,6 @@ export function useWorkflowRun({
     status,
     stepTimes: state.stepTimes,
     steps: state.steps,
+    warmUpId: state.warmUpId ?? undefined,
   };
 }

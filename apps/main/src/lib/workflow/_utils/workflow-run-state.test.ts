@@ -64,6 +64,14 @@ describe(workflowRunReducer, () => {
     expect(run([{ runIds: [], type: "restart" }], named).skillName).toBeNull();
   });
 
+  it("keeps the warm-up deck the run reported, through a start over, without ending the wait", () => {
+    const dealt = run([event({ status: "completed", step: "warmUpReady", warmUpId: "deck" })]);
+
+    expect(dealt.warmUpId).toBe("deck");
+    expect(dealt.ready).toBe(false);
+    expect(run([{ runIds: [], type: "restart" }], dealt).warmUpId).toBe("deck");
+  });
+
   it("is ready once the step that ends the kind's wait finished", () => {
     const started = run([event({ status: "started", step: "createPlan" })]);
     const finished = run([event({ status: "completed", step: "createPlan" })], started);

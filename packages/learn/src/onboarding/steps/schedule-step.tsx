@@ -12,10 +12,11 @@ import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
 import { type GenerationRun } from "../../generation/generation-run";
+import { type OnboardingActions } from "../onboarding-actions";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { NoticeReading } from "./notice-reading";
-import { PlanBuilding } from "./plan-building";
+import { PlanWait } from "./plan-building";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -207,6 +208,7 @@ export function ScheduleStep({
   onPlanReadyChange,
   pending,
   planReadiness,
+  readWarmUp,
   recommendedMinutes,
   run,
   together,
@@ -220,6 +222,7 @@ export function ScheduleStep({
   onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
+  readWarmUp: OnboardingActions["readWarmUp"];
   recommendedMinutes: number;
   run: GenerationRun | null;
   together: GoalsTogether;
@@ -248,34 +251,37 @@ export function ScheduleStep({
     return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
   }
 
-  if (wait === "building") {
-    return <PlanBuilding run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })} />;
-  }
-
   return (
-    <StepForm
-      canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
-      onContinue={() => {
-        const answer = getScheduleAnswer({ exam, schedule });
-
-        if (answer) {
-          onAnswer(answer);
-        }
-      }}
-      pending={pending || waitsToSave({ line: schedule.line, picked: schedule.picked })}
-      rail={<PlanReceipt goal={goal} />}
-      title={t("How much time can you study each day?")}
+    <PlanWait
+      next="timeQuestion"
+      readWarmUp={readWarmUp}
+      ready={wait === null}
+      run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })}
     >
-      <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
-      {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
-      <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
-      <ScheduleTime
-        exam={exam}
-        onChangeDate={() => onChangeDate(schedule.draft)}
-        pending={pending}
-        schedule={schedule}
-      />
-      {exam && <ExamFullCourse schedule={schedule} />}
-    </StepForm>
+      <StepForm
+        canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
+        onContinue={() => {
+          const answer = getScheduleAnswer({ exam, schedule });
+
+          if (answer) {
+            onAnswer(answer);
+          }
+        }}
+        pending={pending || waitsToSave({ line: schedule.line, picked: schedule.picked })}
+        rail={<PlanReceipt goal={goal} />}
+        title={t("How much time can you study each day?")}
+      >
+        <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
+        {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
+        <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
+        <ScheduleTime
+          exam={exam}
+          onChangeDate={() => onChangeDate(schedule.draft)}
+          pending={pending}
+          schedule={schedule}
+        />
+        {exam && <ExamFullCourse schedule={schedule} />}
+      </StepForm>
+    </PlanWait>
   );
 }
