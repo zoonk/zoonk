@@ -1,11 +1,10 @@
 "use client";
 
-import { type LanguageConversationCompletionInput } from "@zoonk/core/language/conversations/contract";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { sendLiveCallCue, setLiveCallMuted } from "./live-call-commands";
 import { type LiveCallScript, toTypedReplyCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
-import { type CallSoFar } from "./live-call-so-far";
+import { type CallSoFar, toCallCompletion } from "./live-call-so-far";
 import { type TranscriptTurn, addTypedReply, toConversationTurns } from "./live-call-transcript";
 
 export type LiveCallPhase = "connecting" | "ended" | "failed" | "idle" | "live";
@@ -39,23 +38,25 @@ export function useCallTranscript(earlier: TranscriptTurn[]) {
 /** Replies typed while the call rings go out once it's live. */
 export function useTypedReplies({
   isConnecting,
-  live,
   onSent,
+  script,
+  session,
   turnsRef,
   updateTurns,
 }: {
   isConnecting: boolean;
-  live: { script: LiveCallScript; session: LiveCallSession } | null;
   onSent: () => void;
+  script: LiveCallScript | null;
+  session: LiveCallSession | null;
   turnsRef: RefObject<TranscriptTurn[]>;
   updateTurns: (next: TranscriptTurn[]) => void;
 }) {
   const waiting = useRef<string[]>([]);
 
   const sendWaitingReplies = useCallback(
-    (session: LiveCallSession, { script }: { script: LiveCallScript }) => {
+    (live: LiveCallSession, length: { script: LiveCallScript }) => {
       for (const text of waiting.current) {
-        sendLiveCallCue({ cue: toTypedReplyCue(script, text), session });
+        sendLiveCallCue({ cue: toTypedReplyCue(length.script, text), session: live });
       }
 
       waiting.current = [];
@@ -65,21 +66,21 @@ export function useTypedReplies({
 
   const sendText = useCallback(
     (text: string) => {
-      if (!live && !isConnecting) {
+      if (!(script && session) && !isConnecting) {
         return;
       }
 
       updateTurns(addTypedReply(turnsRef.current, text));
 
-      if (live) {
-        sendLiveCallCue({ cue: toTypedReplyCue(live.script, text), session: live.session });
+      if (script && session) {
+        sendLiveCallCue({ cue: toTypedReplyCue(script, text), session });
       } else {
         waiting.current = [...waiting.current, text];
       }
 
       onSent();
     },
-    [isConnecting, live, onSent, turnsRef, updateTurns],
+    [isConnecting, onSent, script, session, turnsRef, updateTurns],
   );
 
   return { sendText, sendWaitingReplies };
@@ -102,31 +103,22 @@ export function useCallMute(liveSession: LiveCallSession | null) {
   return { muted, mutedRef, toggleMute };
 }
 
-type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone">;
-
 /**
  * Returns what it saves whether or not the hangup went through: completing hangs the call up
  * itself, and the deadline does if that fails too.
  */
 export function useCallFinish({
   getCallSoFar,
-  getConnectionId,
   release,
+  settle,
 }: {
   getCallSoFar: () => CallSoFar;
-  getConnectionId: () => string | null;
   release: () => Promise<boolean>;
+  settle: () => Promise<unknown>;
 }) {
-  return useCallback(async (): Promise<LiveCallSummary | null> => {
-    const connectionId = getConnectionId();
-
-    if (!connectionId) {
-      return null;
-    }
-
+  return useCallback(async () => {
+    await settle();
     await release();
-    const { spokenSeconds, turns, usedHelp } = getCallSoFar();
-
-    return { connectionId, spokenSeconds, turns: toConversationTurns(turns), usedHelp };
-  }, [getCallSoFar, getConnectionId, release]);
+    return toCallCompletion(getCallSoFar());
+  }, [getCallSoFar, release, settle]);
 }

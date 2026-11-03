@@ -1,25 +1,33 @@
-import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import { type TranscriptTurn, getSpokenSeconds } from "./live-call-transcript";
+import {
+  type LanguageConversationCompletionInput,
+  type LanguageConversationView,
+} from "@zoonk/core/language/conversations/contract";
+import { type TranscriptTurn, getSpokenMs, toConversationTurns } from "./live-call-transcript";
+
+const MS_PER_SECOND = 1000;
 
 /**
  * What "Call again" hands the next connection, in memory only: a call that continues keeps its
- * turns on screen and completes with all of them.
+ * turns on screen and completes with all of them. `connectionId` is what completion must name,
+ * the latest connection the screen saw, once one went live: until then there's no call to save.
  */
 export type CallSoFar = {
+  connectionId: string | null;
   examCuesSent: number;
   metLabels: string[];
-  spokenSeconds: number;
+  spokenMs: number;
   turns: TranscriptTurn[];
   usedHelp: boolean;
 };
 
 export function newCallSoFar(conversation: LanguageConversationView): CallSoFar {
   return {
+    connectionId: null,
     examCuesSent: 0,
     metLabels: conversation.objectives
       .filter((objective) => objective.met)
       .map((objective) => objective.label),
-    spokenSeconds: 0,
+    spokenMs: 0,
     turns: [],
     usedHelp: false,
   };
@@ -27,19 +35,24 @@ export function newCallSoFar(conversation: LanguageConversationView): CallSoFar 
 
 /**
  * Earlier turns lose their timestamps, so the next session's words start turns of their own and
- * each connection's spoken seconds count once.
+ * each connection's speech counts once.
  */
 export function carryCallSoFar({
   before,
+  connectionId,
   examCuesSent,
+  live,
   metLabels,
   turns,
   usedHelp,
-}: Omit<CallSoFar, "spokenSeconds"> & { before: CallSoFar }): CallSoFar {
+}: Omit<CallSoFar, "spokenMs"> & { before: CallSoFar; live: boolean }): CallSoFar {
+  const saved = live || before.connectionId !== null;
+
   return {
+    connectionId: saved ? (connectionId ?? before.connectionId) : null,
     examCuesSent,
     metLabels,
-    spokenSeconds: before.spokenSeconds + getSpokenSeconds(turns),
+    spokenMs: before.spokenMs + getSpokenMs(turns),
     turns: turns.map((turn) => ({ ...turn, endMs: null, startMs: null })),
     usedHelp,
   };
@@ -48,10 +61,29 @@ export function carryCallSoFar({
 /** The goals stay met: the server keeps them for the conversation, whichever call met them. */
 export function startCallOver(before: CallSoFar): CallSoFar {
   return {
+    connectionId: null,
     examCuesSent: 0,
     metLabels: before.metLabels,
-    spokenSeconds: 0,
+    spokenMs: 0,
     turns: [],
     usedHelp: false,
+  };
+}
+
+export function toCallCompletion({
+  connectionId,
+  spokenMs,
+  turns,
+  usedHelp,
+}: CallSoFar): Omit<LanguageConversationCompletionInput, "timeZone"> | null {
+  if (!connectionId) {
+    return null;
+  }
+
+  return {
+    connectionId,
+    spokenSeconds: Math.round(spokenMs / MS_PER_SECOND),
+    turns: toConversationTurns(turns),
+    usedHelp,
   };
 }

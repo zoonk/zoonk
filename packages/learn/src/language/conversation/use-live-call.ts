@@ -5,7 +5,7 @@ import {
   type LanguageConversationObjectiveCheck,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type RefObject, useCallback, useMemo, useState } from "react";
+import { type RefObject, useCallback, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { type CallLength } from "./live-call-clock";
 import { type CallEndingEvent } from "./live-call-ending";
@@ -141,12 +141,12 @@ export function useLiveCall({
   earlier: CallSoFar;
   tappedAudio?: TappedCallAudio;
 }) {
-  const soFar = useCallSoFar({ earlier, minutes: conversation.minutes });
+  const connection = useCallConnection(actions);
+  const soFar = useCallSoFar({ connection, earlier, minutes: conversation.minutes });
   const { carry, getConnectionTurns, getTurns, turnsRef, updateTurns } = soFar;
   const { keepSession, session, sessionRef } = useCallSession();
   const { phase, phaseRef, setPhase } = useCallPhase();
   const microphone = useCallMicrophone();
-  const connection = useCallConnection(actions);
   const report = useCallReport({ getConnectionTurns, kind: conversation.kind });
 
   const { hangUp, release } = useCallRelease({
@@ -210,18 +210,11 @@ export function useLiveCall({
     record: report.record,
   });
 
-  const typedLive = useMemo(
-    () =>
-      liveSession && ending.callLength
-        ? { script: ending.callLength.script, session: liveSession }
-        : null,
-    [ending.callLength, liveSession],
-  );
-
   const { sendText, sendWaitingReplies } = useTypedReplies({
     isConnecting: phase === "connecting",
-    live: typedLive,
     onSent: input.onSent,
+    script: ending.callLength?.script ?? null,
+    session: liveSession,
     turnsRef,
     updateTurns,
   });
@@ -245,7 +238,7 @@ export function useLiveCall({
 
   const [microphoneProblem, setMicrophoneProblem] = useState<MicrophoneProblem | null>(null);
 
-  const { cancelStart, start } = useConnectCall({
+  const { cancelStart, dropStart, start } = useConnectCall({
     endAtDeadline,
     endedByServer: connection.endedByServer,
     fail,
@@ -264,19 +257,19 @@ export function useLiveCall({
   });
 
   const { metLabels } = objectives;
-  const getCallSoFar = useCallback(() => carry(metLabels), [carry, metLabels]);
+  const live = ending.callLength !== null;
 
-  const finish = useCallFinish({
-    getCallSoFar,
-    getConnectionId: connection.getConnectionId,
-    release,
-  });
+  const getCallSoFar = useCallback(() => carry({ live, metLabels }), [carry, live, metLabels]);
+
+  const finish = useCallFinish({ getCallSoFar, release, settle: connection.settle });
 
   useEndCallOnLeave({ cancelStart, fail, phaseRef, release });
 
   return {
     /** The learner stopped a call that was still ringing. */
     cancel: () => report.send("learnerEnded"),
+    continuing: soFar.continuing,
+    dropStart,
     elapsedSeconds: ending.elapsedSeconds,
     error: problem.error,
     finish,
@@ -293,6 +286,7 @@ export function useLiveCall({
     phase,
     reconnecting: connection.reconnecting,
     sendText,
+    settle: connection.settle,
     start,
     toggleMute,
     turn: ending.view,

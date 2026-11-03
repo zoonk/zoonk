@@ -4,8 +4,6 @@ import {
   MAX_CONVERSATION_TURN_LENGTH,
 } from "@zoonk/core/language/conversations/turn-limits";
 
-const MS_PER_SECOND = 1000;
-
 export type TranscriptTurn = ConversationTurn & { endMs: number | null; startMs: number | null };
 
 type TranscriptFragment = {
@@ -49,16 +47,14 @@ export function addTypedReply(turns: readonly TranscriptTurn[], text: string): T
   return [...turns, { endMs: null, speaker: "learner", startMs: null, text }];
 }
 
-export function getSpokenSeconds(turns: readonly TranscriptTurn[]): number {
-  const spokenMs = turns
+export function getSpokenMs(turns: readonly TranscriptTurn[]): number {
+  return turns
     .filter((turn) => turn.speaker === "learner")
     .reduce(
       (total, turn) =>
         turn.startMs === null || turn.endMs === null ? total : total + turn.endMs - turn.startMs,
       0,
     );
-
-  return Math.round(spokenMs / MS_PER_SECOND);
 }
 
 export function toConversationTurns(turns: readonly TranscriptTurn[]): ConversationTurn[] {

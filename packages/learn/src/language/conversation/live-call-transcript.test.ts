@@ -7,7 +7,7 @@ import {
   type TranscriptTurn,
   addTranscriptFragment,
   addTypedReply,
-  getSpokenSeconds,
+  getSpokenMs,
   toConversationTurns,
 } from "./live-call-transcript";
 
@@ -61,7 +61,7 @@ describe(addTranscriptFragment, () => {
   });
 });
 
-describe(getSpokenSeconds, () => {
+describe(getSpokenMs, () => {
   it("adds up the learner's spoken turns, not typed ones or the character's", () => {
     const turns = addTranscriptFragment(addTypedReply(buildCall(), "Saturday?"), {
       delta: "Thanks, bye!",
@@ -70,7 +70,7 @@ describe(getSpokenSeconds, () => {
       startMs: 13_000,
     });
 
-    expect(getSpokenSeconds(turns)).toBe(4);
+    expect(getSpokenMs(turns)).toBe(4100);
   });
 });
 

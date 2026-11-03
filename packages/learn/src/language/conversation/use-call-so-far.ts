@@ -11,14 +11,22 @@ const SECONDS_PER_MINUTE = 60;
 
 /**
  * The call so far, which this connection continues, or drops when the server says it opens a new
- * call: `prepare` decides on the server's answer.
+ * call: `prepare` decides on the server's answer. `continuing`: there's a dropped call to save.
  */
-export function useCallSoFar({ earlier, minutes }: { earlier: CallSoFar; minutes: number }) {
+export function useCallSoFar({
+  connection: { getConnectionId },
+  earlier,
+  minutes,
+}: {
+  connection: { getConnectionId: () => string | null };
+  earlier: CallSoFar;
+  minutes: number;
+}) {
   const before = useRef(earlier);
   const examCuesSent = useRef(earlier.examCuesSent);
-  const [helpedBefore, setHelpedBefore] = useState(earlier.usedHelp);
+  const [startedOver, setStartedOver] = useState(false);
   const [helped, setHelped] = useState(false);
-  const usedHelp = helpedBefore || helped;
+  const usedHelp = (earlier.usedHelp && !startedOver) || helped;
   const transcript = useCallTranscript(earlier.turns);
   const { turnsRef, updateTurns } = transcript;
 
@@ -33,7 +41,7 @@ export function useCallSoFar({ earlier, minutes }: { earlier: CallSoFar; minutes
         updateTurns(getConnectionTurns());
         before.current = startCallOver(before.current);
         examCuesSent.current = 0;
-        setHelpedBefore(false);
+        setStartedOver(true);
       }
 
       return {
@@ -45,15 +53,17 @@ export function useCallSoFar({ earlier, minutes }: { earlier: CallSoFar; minutes
   );
 
   const carry = useCallback(
-    (metLabels: string[]) =>
+    ({ live, metLabels }: { live: boolean; metLabels: string[] }) =>
       carryCallSoFar({
         before: before.current,
+        connectionId: getConnectionId(),
         examCuesSent: examCuesSent.current,
+        live,
         metLabels,
         turns: turnsRef.current,
         usedHelp,
       }),
-    [turnsRef, usedHelp],
+    [getConnectionId, turnsRef, usedHelp],
   );
 
   const markHelpUsed = useCallback(() => setHelped(true), []);
@@ -61,6 +71,7 @@ export function useCallSoFar({ earlier, minutes }: { earlier: CallSoFar; minutes
   return {
     ...transcript,
     carry,
+    continuing: earlier.connectionId !== null && !startedOver,
     examCuesSent,
     getConnectionTurns,
     markHelpUsed,

@@ -1,3 +1,4 @@
+import { setTimeout } from "node:timers/promises";
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
@@ -582,6 +583,74 @@ test.describe("Live call server states", () => {
         connectionId: reconnected.id,
         turns: [...earlierTurns, { speaker: "character", text: CHARACTER_RESUME }],
       });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect that doesn't go live leaves the call dropped, and ending it saves the whole call under the latest connection", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+
+      await expect(
+        page.getByRole("log", { name: "Conversation" }).getByText(CHARACTER_REPLY),
+      ).toBeVisible();
+
+      await peer.drop();
+      const dropped = page.getByText("The call dropped");
+      await expect(dropped).toBeVisible();
+
+      // The first reconnect can't connect.
+      await page.route("**/live-session/**", (route) => route.fulfill({ status: 503 }));
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(dropped).toBeVisible();
+
+      // The learner cancels the second while its reservation is still on its way, then ends the call.
+      await page.route(`**/conversation/${call.id}`, async (route) => {
+        const args: unknown = JSON.parse(route.request().postData() ?? "null");
+        const reserving = Array.isArray(args) && getString(args[0], "conversationId") === call.id;
+        await (reserving ? setTimeout(1500) : Promise.resolve());
+        await route.fallback();
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+      await expect(dropped).toBeVisible();
+      await expect(page.getByRole("button", { name: "Call again" })).toBeVisible();
+      await page.getByRole("button", { name: "End the call" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+
+      const latest = await connectionFor(call.id);
+      expect(actions.sdp).toHaveLength(2);
+      expect(actions.reserve).toHaveLength(3);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: latest.id,
+        turns: [
+          { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+          { speaker: "learner", text: "Is it still free?" },
+          { speaker: "character", text: CHARACTER_REPLY },
+        ],
+      });
+
+      await expect
+        .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
+          timeout: 20_000,
+        })
+        .toMatchObject({ status: "completed" });
     } finally {
       await owned.cleanup();
     }

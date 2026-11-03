@@ -149,5 +149,11 @@ export function useConnectCall({
     attempt.current += 1;
   }, []);
 
-  return { cancelStart, start };
+  /** A reconnect stopped while it rings leaves the call dropped, to end or call again. */
+  const dropStart = useCallback(() => {
+    attempt.current += 1;
+    fail("dropped");
+  }, [fail]);
+
+  return { cancelStart, dropStart, start };
 }

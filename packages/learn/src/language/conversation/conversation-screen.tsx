@@ -68,7 +68,12 @@ function LiveCallRun({
   const call = useLiveCall({ actions, conversation, earlier, tappedAudio: callAudio });
   const [saving, setSaving] = useState<SaveState | null>(null);
   const { finish, start } = call;
-  const restart = (next: RunStart) => onRestart({ earlier: call.getCallSoFar(), startWith: next });
+
+  // A dropped call's reconnect may still be reserving: the next run must name its connection.
+  const restart = (next: RunStart) => {
+    const settled = call.continuing ? call.settle() : Promise.resolve();
+    void settled.then(() => onRestart({ earlier: call.getCallSoFar(), startWith: next }));
+  };
 
   const save = useCallback(async () => {
     setSaving("saving");
@@ -126,9 +131,29 @@ function LiveCallRun({
     call.phase === "connecting"
       ? () => {
           call.cancel();
-          restart("intro");
+
+          if (call.continuing) {
+            call.dropStart();
+          } else {
+            restart("intro");
+          }
         }
       : call.hangUp;
+
+  const problem = {
+    exitHref: hrefs.exit,
+    onEnd: call.hangUp,
+    onRetry: () => restart("call"),
+    onTakeover: () => restart("takeover"),
+    title,
+  };
+
+  // Whatever stops a reconnect, the call stays dropped, so it can still be ended and saved.
+  const stopped = call.phase === "failed" || (call.phase === "idle" && call.microphoneProblem);
+
+  if (call.continuing && stopped) {
+    return <CallProblem {...problem} error="dropped" limit={null} />;
+  }
 
   const locked = conversation.locked || call.error === "plusRequired";
 
@@ -143,14 +168,6 @@ function LiveCallRun({
       />
     );
   }
-
-  const problem = {
-    exitHref: hrefs.exit,
-    onEnd: call.hangUp,
-    onRetry: () => restart("call"),
-    onTakeover: () => restart("takeover"),
-    title,
-  };
 
   if (saving === "ended" || saving === "takenOver") {
     return <CallProblem {...problem} error={saving} limit={null} />;
