@@ -16,6 +16,17 @@ type TestEnvironment = Record<string, string> & {
   DATABASE_URL_UNPOOLED: string;
 };
 
+function pairDatabaseUrls(
+  source: NodeJS.Dict<string>,
+  fallback: TestEnvironment,
+): Pick<TestEnvironment, "DATABASE_URL" | "DATABASE_URL_UNPOOLED"> {
+  return {
+    DATABASE_URL: source.DATABASE_URL || source.DATABASE_URL_UNPOOLED || fallback.DATABASE_URL,
+    DATABASE_URL_UNPOOLED:
+      source.DATABASE_URL_UNPOOLED || source.DATABASE_URL || fallback.DATABASE_URL_UNPOOLED,
+  };
+}
+
 function withRunApi(environment: TestEnvironment): TestEnvironment {
   const apiUrl = process.env.E2E_API_URL;
   return apiUrl ? { ...environment, NEXT_PUBLIC_API_URL: apiUrl } : environment;
@@ -37,12 +48,12 @@ export function getTestEnvironment(mode: "test" | "e2e"): TestEnvironment {
       ...Object.fromEntries(
         Object.entries(defaults).map(([key, value]) => [key, process.env[key] ?? value]),
       ),
-      DATABASE_URL: process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED || url,
-      DATABASE_URL_UNPOOLED: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || url,
+      ...pairDatabaseUrls(process.env, defaults),
     });
   }
 
-  return withRunApi({ ...defaults, ...readEnvironment(resolve(directory, `.env.${mode}.local`)) });
+  const local = readEnvironment(resolve(directory, `.env.${mode}.local`));
+  return withRunApi({ ...defaults, ...local, ...pairDatabaseUrls(local, defaults) });
 }
 
 export const TEST_RUN_DATABASE_MARKER = "_run_";

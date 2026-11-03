@@ -1,6 +1,7 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
+import { AUTH_BASE_PATH } from "./lib/auth-base-path";
 
 if (process.env.NODE_ENV === "production") {
   init({
@@ -15,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
     protect: [
       { method: "POST", path: "/auth/login" },
       { method: "POST", path: "/auth/*/login" },
-      { method: "POST", path: "/v1/auth/*" },
+      { method: "POST", path: `${AUTH_BASE_PATH}/*` },
     ],
   });
 }

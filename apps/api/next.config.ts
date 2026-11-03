@@ -9,6 +9,7 @@ import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
 import { E2E_MAIN_APP_URL } from "./e2e/main-app-url";
+import { AUTH_BASE_PATH } from "./src/lib/auth-base-path";
 
 const isE2E = process.env.E2E_TESTING === "true";
 
@@ -83,7 +84,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",
   env: {
-    NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth",
+    NEXT_PUBLIC_AUTH_BASE_PATH: AUTH_BASE_PATH,
     ZOONK_APP: "api",
     // Prerendered auth pages link to the main app as the build knew it, so the API's own E2E build
     // names the address its server runs with, as deployments and Main's E2E do.

@@ -11,7 +11,7 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 | Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                                               |
 | TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm format <files>` then `pnpm lint <files>` |
 | Module boundaries or dependencies | `pnpm knip --production`                                                                                                               |
-| App runtime or build integration  | `pnpm --filter <app> build`                                                                                                            |
+| App runtime or build integration  | `pnpm --filter <app> build`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                 |
 | E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
 | Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
 | Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                                                    |
