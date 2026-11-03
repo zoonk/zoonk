@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -92,7 +93,8 @@ fun RichText(
 
 /**
  * One line of lesson text (a question, an option, a label) with its emphasis and math, and the
- * `mark` sentence highlighted when the line shows it (main's `LessonRichText`).
+ * `mark` sentence highlighted when the line shows it (main's `LessonRichText`). Past [maxLines] it
+ * ends in an ellipsis.
  */
 @Composable
 fun RichInlineText(
@@ -100,6 +102,7 @@ fun RichInlineText(
     modifier: Modifier = Modifier,
     mark: String? = null,
     style: TextStyle = LocalTextStyle.current,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val locale = currentLocale()
     val segments =
@@ -108,7 +111,7 @@ fun RichInlineText(
             typeset(if (mark.isNullOrEmpty()) parsed else markRichInline(parsed, mark), locale)
         }
 
-    RichTextLine(richText(segments), modifier, style)
+    RichTextLine(richText(segments), modifier, style, maxLines)
 }
 
 /**
@@ -315,6 +318,7 @@ fun RichTextLine(
     text: SpokenText,
     modifier: Modifier,
     style: TextStyle,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val spoken = text.spoken
 
@@ -322,6 +326,8 @@ fun RichTextLine(
         text = text.text,
         modifier = if (spoken == null) modifier else modifier.semantics { contentDescription = spoken },
         style = style,
+        overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
+        maxLines = maxLines,
     )
 }
 

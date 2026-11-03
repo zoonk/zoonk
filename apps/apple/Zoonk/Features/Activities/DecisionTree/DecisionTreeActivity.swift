@@ -139,7 +139,8 @@ private struct DecisionTreeCanvas: View {
         } label: {
           Label {
             Text(
-              "Undo", tableName: "Activities", comment: "Steps back one answer in a decision tree")
+              "Undo", tableName: "Activities",
+              comment: "Takes back a decision tree's last answer or the last card sorted")
           } icon: {
             Image(systemName: "arrow.uturn.backward")
           }

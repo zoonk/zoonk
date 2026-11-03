@@ -4,6 +4,7 @@ import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { useId } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
+import { PlayerInteractionContext, usePlayerInteractionState } from "../player-context";
 import { ActivityBadge } from "./_components/activity-badge";
 import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
@@ -56,6 +57,7 @@ export function ActivityStep({
   picture,
 }: ActivityStepProps) {
   const labelId = useId();
+  const interactionState = usePlayerInteractionState();
   const { badge, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const isCheckFirst = checkFirst(content);
@@ -81,14 +83,17 @@ export function ActivityStep({
       {isCheckFirst && checkArea}
 
       <fieldset className="flex min-w-0 flex-col gap-2" disabled={isLocked} inert={isLocked}>
-        <BrowserCanvas
-          answer={answer}
-          content={content}
-          expected={expected}
-          labelId={labelId}
-          onAnswerChange={onAnswerChange}
-          phase={phase}
-        />
+        {/* `inert` stops clicks but not the window-level keys a canvas listens to. */}
+        <PlayerInteractionContext value={isLocked ? "paused" : interactionState}>
+          <BrowserCanvas
+            answer={answer}
+            content={content}
+            expected={expected}
+            labelId={labelId}
+            onAnswerChange={onAnswerChange}
+            phase={phase}
+          />
+        </PlayerInteractionContext>
 
         <ActivityDataNote content={content} />
       </fieldset>

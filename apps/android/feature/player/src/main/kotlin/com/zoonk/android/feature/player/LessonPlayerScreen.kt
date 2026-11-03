@@ -301,6 +301,7 @@ fun LessonPlayer(
         remember(viewModel) {
             object : StepActions {
                 private var keyPicks: ((LessonAnswer?) -> Unit)? = null
+                private var numberKeys: ((Int) -> Boolean)? = null
 
                 override fun select(answer: LessonAnswer?) = viewModel.select(answer)
 
@@ -312,6 +313,12 @@ fun LessonPlayer(
                 override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) {
                     keyPicks = pick
                 }
+
+                override fun takeNumberKeys(keys: ((Int) -> Boolean)?) {
+                    numberKeys = keys
+                }
+
+                override fun pressNumberKey(index: Int) = numberKeys?.invoke(index) == true
 
                 override fun runPrimary() {
                     viewModel.state.value
@@ -397,7 +404,8 @@ fun LessonPlayer(
                         if (event.type == KeyEventType.KeyDown) touches.intValue++
                         false
                     }.onKeyEvent { event ->
-                        event.type == KeyEventType.KeyDown && state != null && screen != null &&
+                        // A shortcut acts once per press, as main's do: a held number key would otherwise sort every card.
+                        event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0 && state != null && screen != null &&
                             handleKey(event.key, state, screen, viewModel, actions, leave) {
                                 if (ownEnd == null) {
                                     completionMainAction(lesson, state, ending, viewModel, exits)
@@ -532,6 +540,7 @@ private fun handleKey(
         }
 
         digit >= 0 && state.phase == LessonPhase.Playing -> {
+            if (actions.pressNumberKey(digit)) return true
             val step = screen.step ?: return false
             val pick = keyPick(step, digit, state) ?: return false
             actions.pickByKey(pick.answer)

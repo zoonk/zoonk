@@ -54,7 +54,7 @@
   "challenge_trickster_recording_count": "b975eb0b4b4a7fcf8d214e14e902673017709e79c5c7cef635649d38c702d0a1",
   "challenge_trickster_recordings": "73ee4881bf91f74c0655babbbd01163f6dd9f412fcc38a05b5d115e100e8ab74",
   "challenge_trickster_rule": "acf986c3b06f831e33052b567aa6f317d8dd21ff701327cd7775be69e664446d",
-  "challenge_undo": "9df9296db0daf8ba399c5aaee2f0d3be607ff7f8736248b8acb4fc6c10b55cb9",
+  "challenge_undo": "17f4a348cc6de7111f94f6cdfbd5625a483a14a112144677ce25719d7fc91b93",
   "challenge_used_up_move": "7d0ee1626dc61578c02df61e70ed8c4f28cf604cd2123133fd5a0e41e626a789",
   "challenge_used_up_next_session": "f6d93f2133a9e34afd1f07a53e497933ee0ca9064978a9d5ded2a8356bbcfa88",
   "challenge_used_up_on": "1ec11325487a8c8c03368e07bc44c304184e19aa602c572a3a4f0f795c284bb8",
@@ -165,7 +165,7 @@
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">%1$s로 옮겼어요</string>
     <string name="challenge_moved_detail">챌린지를 넣을 수 있도록 이후 레슨 일정을 옮겼어요.</string>
-    <string name="challenge_undo">되돌리기</string>
+    <string name="challenge_undo">실행 취소</string>
     <string name="challenge_move_before_monday">주간 챌린지나 모의고사는 다음 주 월요일이나 그 이후 날짜로만 옮길 수 있어요. 원래 일정대로 진행해요.</string>
     <string name="challenge_move_collision">그날은 이미 주간 챌린지나 모의고사가 있어서 원래 일정대로 진행해요.</string>
     <string name="challenge_move_no_room">월요일 계획에 이 챌린지를 넣을 시간이 없어요. 원래 일정대로 진행해요.</string>

@@ -1736,6 +1736,191 @@
           "activityTemplates": []
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The individual animals are classified correctly, and the questions have defensible keyed answers. However, the summary teaches that poriferans universally lack regularly mirrored halves, despite radially symmetrical sponges. The vertebrate sorting rule and summary also incorrectly make bone obligatory, overlooking cartilaginous vertebrates. These teaching errors trigger the maximum score of 6.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Most explanations use short sentences, concrete animals, and effective comparisons such as a filter, armor, and a structural beam. Group names generally follow descriptions of their distinguishing traits. However, 'habitat' is used repeatedly without being explicitly explained as the place or environment where an animal lives, triggering the unexplained-term cap of 8.",
+          "score": 8,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks generally require classification or comparison rather than verbatim recall, include the planned tempting mistakes, and explain every option. The sorting interaction demonstrates the main skill. However, its feedback supplies the habitat conclusion without the requested learner decision, and some distractors—especially the claim that a soft body substitutes for arthropod armor and joints—are weak misconceptions. Subsequent screens do not judge the learner's previous selection.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, never names the exam, opens directly with the animal-classification problem, and preserves the planned screen sequence. The categorize prompt avoids all gesture instructions and the records match the prescribed groups. Nevertheless, the activity omits the requested habitat-choice task, the application provides no concrete location beyond a generic coast, and one summary sentence combines the separate arthropod and vertebrate identification ideas. These are several fit and plan-following slips, warranting the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8088,
+          "outputTokens": 1043,
+          "reasoningTokens": 337
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The summary incorrectly generalizes asymmetry to all poriferans; some sponges have radial symmetry. The activity and summary also define vertebrates by an internal column of bones, excluding vertebrates such as sharks and rays whose skeletons are cartilaginous. These statements turn useful examples into inaccurate group-wide rules.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The categorization correctly assigns all four records and avoids gesture instructions, but it never asks learners to choose which records cannot be classified by habitat alone; that conclusion appears only in feedback. Its prompt also leaves the destination animal groups implicit. The application mentions a generic coastal inventory rather than a concrete location. 'Habitat' is repeatedly used without a plain-language definition.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace implausible distractors, such as a soft body substituting for arthropod joints, with more credible classification mistakes. Give arthropods and vertebrates separate summary sentences so that each sentence expresses one group-identification idea.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school\n      - The categorize activity's `prompt` says what to sort and by what (the records into the animal groups by their body traits), never how to work the screen: no \"arraste\", \"toque\", \"clique\" or any other gesture, although its brief asks the learner to drag each record\n      - The categorize activity sorts the four records into poríferos, cnidários, artrópodes and vertebrados by body traits, as its brief says\n      - No screen names the exam, its board or its notice\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-grupos-de-animais-activity-prompt-1",
+        "userInput": {
+          "chapterTitle": "Dados de biodiversidade e classificação",
+          "courseTitle": "ENEM",
+          "exams": [
+            {
+              "name": "ENEM",
+              "style": "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."
+            }
+          ],
+          "language": "pt",
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Distinguir grupos animais por traços do corpo, não pelo habitat",
+            "description": "Compara simetria, sustentação e estruturas do corpo para distinguir grandes grupos animais em registros de biodiversidade.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Edson encontrou um caranguejo no litoral. Pergunte com qual animal ele deve agrupá-lo pelos traços do corpo: A) caracol-marinho, B) camarão, C) estrela-do-mar, D) peixe, E) água-viva. Revele imediatamente B: caranguejo e camarão têm cobertura rígida e pernas que se dobram em juntas; deixe a explicação do critério para as telas seguintes.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Marília compara um morcego e uma libélula. Peça que escolha a observação mais útil para separá-los em grandes grupos: ossos que sustentam o morcego por dentro, em contraste com a cobertura rígida e as pernas com juntas da libélula. Inclua como alternativa tentadora o fato de ambos terem asas.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente os poríferos por uma esponja presa à rocha: a água entra por muitos poros, como em um filtro, e sai por uma abertura maior. Mostre que seu corpo não apresenta metades regularmente espelhadas, ao contrário do corpo de muitos outros animais.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Esponja inteira presa a uma rocha, com poros pequenos distribuídos pelo corpo, abertura maior no alto e setas mostrando a entrada e a saída da água."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente os cnidários com uma água-viva: seus tentáculos têm células que picam, como minúsculos ferrões, e suas partes se distribuem em torno de um centro. Contraste esses traços com os poros por onde a água atravessa uma esponja.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Água-viva inteira, com centro do corpo, tentáculos distribuídos ao redor e detalhe ampliado de uma célula que pica em um tentáculo."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Davi observa um animal de água doce preso a uma pedra, com tentáculos que capturam presas e picam; a água não atravessa seu corpo por poros. Peça que o classifique como cnidário ou porífero e escolha o traço decisivo. Inclua como erro tentador classificá-lo como porífero apenas por estar preso à pedra.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente os artrópodes por um caranguejo: a cobertura rígida protege por fora como uma armadura, mas as pernas se dobram nas juntas. Explique que essa combinação, e não o ambiente aquático, também permite reconhecer insetos e aranhas.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Caranguejo inteiro com a cobertura rígida destacada e juntas marcadas em duas pernas; as demais pernas permanecem visíveis."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente os vertebrados por um peixe: ossos internos sustentam o corpo, e uma coluna de ossos percorre as costas como a viga de uma estrutura. Compare a posição desse suporte com a cobertura rígida externa do caranguejo; ambos vivem na água, mas não pertencem ao mesmo grupo.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Peixe visto de lado, com contorno do corpo, ossos internos e coluna ao longo das costas destacados."
+              },
+              {
+                "activityTemplate": "categorize",
+                "brief": "Raíssa organiza quatro registros pelos grupos e critérios vistos: animal fixo de água doce atravessado pela água por poros → poríferos; animal marinho com tentáculos que picam → cnidários; animal terrestre com cobertura rígida e pernas com juntas → artrópodes; animal aquático com coluna de ossos interna → vertebrados. Peça que arraste cada registro ao grupo correspondente e escolha qual registro não pode ser classificado apenas pelo habitat.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente os moluscos ao resolver passo a passo um registro de Fábio: o animal marinho tem corpo mole, uma concha, nenhuma coluna de ossos e nenhuma perna com juntas. Compare esses indícios com os de um caranguejo; conclua que é um molusco, pois ter uma proteção dura, sozinho, não o torna artrópode.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": "Dois desenhos lado a lado, identificados como 1 e 2: animal de corpo mole dentro de uma concha, sem pernas; caranguejo com cobertura rígida e pernas com juntas."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Cíntia recebe o registro de um polvo: corpo mole, sem concha, sem coluna de ossos e sem pernas com juntas. Peça que identifique o grupo e justifique por que a ausência de concha não impede a classificação como molusco. Inclua como alternativa tentadora excluí-lo dos moluscos porque o exemplo anterior tinha concha.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Igor revisa um inventário costeiro que colocou no mesmo grupo um caracol-marinho de corpo mole com concha e um caranguejo de cobertura rígida com pernas articuladas, porque ambos têm uma proteção dura e vivem no mar. Peça que decida se mantém ou corrige o registro, atribua o grupo de cada animal e indique quais traços pesam mais que concha e habitat compartilhados. Inclua a decisão tentadora de manter o agrupamento pela proteção dura.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Comparar poros, tentáculos, sustentação e partes articuladas permite distinguir grupos animais mesmo quando compartilham habitat ou aparência.",
+                "example": "Um caranguejo e um caracol-marinho têm proteção dura, mas só o caranguejo tem pernas com juntas e cobertura rígida externa.",
+                "hard": true,
+                "name": "Comparar planos corporais de animais",
+                "topic": "Grupos de animais",
+                "useCase": "Revisar a classificação de animais em um levantamento de biodiversidade."
+              }
+            ],
+            "supportMode": "questionFirst",
+            "title": "Grupos de animais"
+          },
+          "activityTemplates": [
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs. Check kinds this template supports: interaction.",
+              "id": "categorize",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"groups\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"rule\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"id\",\"label\",\"rule\"],\"additionalProperties\":false}},\"items\":{\"minItems\":3,\"maxItems\":10,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"groupId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"why\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"groupId\",\"id\",\"text\",\"why\"],\"additionalProperties\":false}}},\"required\":[\"groups\",\"items\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"categorize\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "lesson-writer"

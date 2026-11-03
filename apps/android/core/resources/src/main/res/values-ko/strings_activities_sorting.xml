@@ -2,14 +2,14 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_sorting_about_years": "261d3197c111b79cc72a38bd8d3a5ea02c6a46fdfe7c5d775a3125b8b4134e7e",
-  "activities_sorting_all_sorted": "94e2cc20b8ff8fb83893d233daa5c8e8b2dae803edc788742e5e060b714c27b8",
+  "activities_sorting_all_sorted": "96eb35aaf835eb92880a3f50985215b8d75cc8aadeab9d4b0ec0cdd6f1681017",
   "activities_sorting_badge_label_it": "1bd1b4013bcb2ca586046004812923fb3e69e7c3716bad2e540cb68a845b0d76",
   "activities_sorting_badge_link_causes": "99168c16d353ca121996c887b678a4f2291ea8a9d66b7f97c57c31e707ccc4a8",
   "activities_sorting_badge_match_pairs": "034cada819e3f4f39cfb7cc958ca3049cfa6246c5c0e220a7a2b2ecda68c8e06",
   "activities_sorting_badge_place_in_time": "5ceaf0f95ae703097d952dcedb6c6442dcd9f92a9374780a1456cb838579e166",
   "activities_sorting_badge_put_in_order": "e44fda963bb7d7cf16f0d6dbdf4d1d10c33739f941f50b6bb9d63ac532790481",
   "activities_sorting_badge_sort_groups": "ca92ad29e36bfe9b154eac044511e6d794a5a6893df5987bfba433864eb3ae4e",
-  "activities_sorting_belongs_in": "4dea483efc313dc36b1cb10d527813f00558b17430d6d91d3b5138db11483601",
+  "activities_sorting_belongs_in": "94dead14dedfb5ce95c38482d224c62be54e486db5c41ac9a82ae13fbb65ba4a",
   "activities_sorting_card_matched": "260c03c25dcd57e5f8e1dba690de45b198e3b4485a10f809463df4d675d46355",
   "activities_sorting_card_no_match": "fbccd52d1c8390bc2f6ec9aa1d24867d30acecb820b1cc188a8e48db6ec3f129",
   "activities_sorting_cards_to_match": "947e573896da6b9ce7a15448feee7cfe223a0e9a40935b398da5069812b42ad2",
@@ -27,6 +27,8 @@
   "activities_sorting_gap_between": "fccd6394a93af7b2245f6a9d351e7b0e5491f942fc779905061980c9eda0bfd9",
   "activities_sorting_goes_with": "d62e5dc0166bbc0ab80938a23ff17e18217fc340d38c64601fb0a21058ce7b8e",
   "activities_sorting_how_they_connect": "e7b38512af1308b9496a0eefbee40c1d4d93c4cbf717feb65e3f9e3e016205c5",
+  "activities_sorting_is_in": "629b9b504d4a4692465972c5c427e0f2ee24af27cd1354c325898a4f73c730b0",
+  "activities_sorting_is_in_next": "5992a450bb1a51603c7679b9ed8c36bf755885435cc37c5ced403a1ae9f275ba",
   "activities_sorting_led_to": "abdbd1606c5408ff6386f9219426996ae1d7f85317119f64a4eed3ebff541b2f",
   "activities_sorting_linked": "be6d5e2718a585b6ec06901614802be75133f461aa820d3ef816b20ea54bbbb2",
   "activities_sorting_links_count": "ba89b7be2e98938166cb67ff700748d0279c64aaffcfe6d79b83acfb99edb667",
@@ -34,27 +36,26 @@
   "activities_sorting_matched": "966cc48b406c7d9c4968ec73dc49c147759dddf70f808a1757d69e39d618fefe",
   "activities_sorting_missed_first_try": "3205382294f80466f5cb16194022a904b84cd38f0a321e66bcbaf8b2905031e9",
   "activities_sorting_missed_link": "148d5a8690b9dd428edefbc6bf7531625d3f7745743635014f1ab0fdc25b8bbf",
+  "activities_sorting_more_count": "4b6f2f760871c9a9682a6efb6b4b63314c677099ae28ee041f05355531953671",
+  "activities_sorting_move_to": "42b7d223ceb85d06ec12bc97ee10e9de26f078f708c63a93674ca5d41cd27ef1",
   "activities_sorting_name_on_spot": "4c2ed47c58ba679d5128707f37eaf83a6f9c0b6168eecad67b7f97314ae5342d",
   "activities_sorting_name_taken_off": "e8001c2f069ae38398c77ad13e4d54d8a45b5470e51c467961b3dd297f81847c",
   "activities_sorting_names": "3df17cec81ce6e51d77d37008c1119cd4b9e349dd7bb837a788ca45f721259e9",
+  "activities_sorting_no_cards": "58fb09358ede4cd40f1ee911d149d91dff259cb0e6a083c287037110aaea9df5",
   "activities_sorting_no_match_note": "9f33b017a69af1cacc20b5d78670f6294d2ad7de9a1060efb45ecde7446bc547",
   "activities_sorting_not_a_link": "3f6aad901b0678010d8d5570aa7530351e7868d81f81086deaa3a3339ad00a45",
   "activities_sorting_not_quite": "d5f574e638396786a70f3b4bf6bdc174164c15a2e5d48428098ef687b81f3618",
   "activities_sorting_not_straight": "c005ec73ada7302fa5dd6fb31899a97a43acb3759100ec84618ae27d51e9ef4f",
-  "activities_sorting_nothing_here": "a7e8467dc4d022eb1e5f974681b6cae149b1194ff62f217d85d2eafe89b5be90",
   "activities_sorting_now_pick": "f0b8364cec1ce00980ac03e0d2936a018da7a42cb34d15c315ce6570c3545579",
   "activities_sorting_pairs_matched": "4b0d58e0d24fabd19aef314cc2f1c3172ff47bc6ba2035a153f4b9ccb624681b",
   "activities_sorting_pick_a_name": "51967e9e477fd206dda1dd1f7069a306b0202f5725a52d906b6966136e99d122",
   "activities_sorting_pick_cause": "7486c25519373e474a3f87a81beb75bbe25a6bbe154d696857f87c1fe7bfb2be",
   "activities_sorting_place_on_timeline": "02e7ee9277bc843ee6e056328463f009e0d44feb323a2e67a0bab8bb0276fda0",
-  "activities_sorting_placed": "9531ef3d8c8920b0bd048de5007b07a748adc3d2933acf0412c0d91805fe5618",
-  "activities_sorting_put_in": "14e470bbdc98b3c2939359ba4cfcaac3959992b3121129517b455216539aa4b0",
-  "activities_sorting_put_it_here": "f1e85c41d9a6c6a824db1ed60ee5370ba3dd0f12a427be915c052df2cab43497",
   "activities_sorting_put_on_spot": "51de57e0b4378c1ff3a74799a6cc7914c132cbc2a174422cdfc5d886ce3a61a0",
   "activities_sorting_remove_link": "51643c739724072a40578050ffc617e33b1e945bf745b603d060b7c4f80c1541",
   "activities_sorting_removed": "b43b4973b3186cccc07498a964cf89223d3cac18b58de72151b2d1596524b69f",
-  "activities_sorting_right_count": "7803899a12124a9e1abce38119248642690764e4cad599f1a04ee0eb9586048b",
-  "activities_sorting_right_group": "8c15e2a6ba944d13c3a1460f2e6e4982833296a223741b62347116b4a7fa5c97",
+  "activities_sorting_right_count": "75f57486444011777a1d942b762ad90ccb5e877e541c997fcc88b161b74098bf",
+  "activities_sorting_right_group": "f35be266fcf068cf1f7035925a4ee4bbc302566789fa152f0060efe3a475c401",
   "activities_sorting_right_order": "cf237dc141326ba06594ca17aa7caccb6ce36f5777bc4e6d4f048af93c75d593",
   "activities_sorting_show_real_dates": "458fe6dea26acd83f9da740a7037d248999a5563da08be95eac623f3967ac8ba",
   "activities_sorting_sorted_count": "3d723f4886272cc16e101c245c5c93aa1ad1b0a634cb1cadf3ac854005b55f07",
@@ -65,8 +66,10 @@
   "activities_sorting_tap_a_name": "1f333d432f9678e4b59a376ffe3ae076a22aa2ab204fcf00924f0ac1736ec1a3",
   "activities_sorting_time_between": "73394fbf690e0f3cde3722131993e32db6ad7453782371ac319e1a22eda418cf",
   "activities_sorting_timeline_from": "c4ef0d032e98505ab25e077fc02c165ef390bb56b46883559a85fc0139672b4c",
-  "activities_sorting_to_sort": "8674c1cad4fd851b9d854a3c65cf58a173e45639d2da389c9b4a4041c1107ea9",
+  "activities_sorting_took_back": "0e6de1801b5a6fafececd546797bf37f04ea0c4bd986fda1909fc48fa812e445",
+  "activities_sorting_undo": "453aaa8e532a8d40b74b66d3710b88f5dcc26a7af60b3e5244490821038b1cbb",
   "activities_sorting_what_each_number_shows": "648121b8f7037c9b87eff7c4d4b1407d3abe06f0d442179380ed061e4e44e8fc",
+  "activities_sorting_which_group": "2455c4b436012908a9c227e7e47a6dece9ba3da95633e1ffe5003b86c3388899",
   "activities_sorting_wrong_group": "7cb99953390152b76f0984dd25f3524668e3fdb6b62470592df518a649a9f02c",
   "activities_sorting_year_and_guess": "adaf023945d3a49ee9ee64b6877a0e32f97873d5e36434da21bdef3db42d88a4",
   "activities_sorting_year_bce": "122a61c91de42165afd67f4232280885ca131ad3dacd49d7d43e6f2a51bf03de",
@@ -79,31 +82,36 @@
 -->
 <resources>
     <string name="activities_sorting_badge_sort_groups">그룹으로 나누기</string>
-    <!-- Above the items still to sort into groups. -->
-    <string name="activities_sorting_to_sort">분류할 항목</string>
-    <string name="activities_sorting_all_sorted">모두 분류했어요. 준비되면 정답을 확인하세요.</string>
-    <!-- How many items are in a group so far, like "1 of 3 sorted". -->
+    <!-- Progress while sorting: how many of the cards already have a group, like "1 of 3 sorted". The form follows the first number, the cards sorted so far. -->
     <plurals name="activities_sorting_sorted_count">
         <item quantity="other">%1$d/%2$d개 분류 완료</item>
     </plurals>
-    <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
-    <string name="activities_sorting_put_in">%1$s을(를) %2$s에 넣기</string>
-    <!-- In an empty group while an item is picked. -->
-    <string name="activities_sorting_put_it_here">여기에 넣기</string>
-    <!-- In an empty group. -->
-    <string name="activities_sorting_nothing_here">아직 비어 있어요</string>
-    <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
-    <plurals name="activities_sorting_placed">
-        <item quantity="other">%1$s을(를) %2$s에 넣었어요. 분류한 항목은 %3$d개, 전체는 %4$d개예요.</item>
-    </plurals>
+    <!-- Under the card being sorted, above the groups to choose from. -->
+    <string name="activities_sorting_which_group">어느 그룹에 들어갈까요?</string>
+    <!-- Takes back the card sorted last. -->
+    <string name="activities_sorting_undo">실행 취소</string>
+    <!-- On a group, beside the last card sorted into it: how many more cards it holds, like "+2". -->
+    <string name="activities_sorting_more_count">+%1$d</string>
+    <!-- Read by TalkBack after a card is sorted; the last one is the card to sort now, like "Melting ice is in Same substance. Next: Rusting iron." -->
+    <string name="activities_sorting_is_in_next">%1$s 카드는 %2$s 그룹에 있어요. 다음은 %3$s 카드예요.</string>
+    <!-- Read by TalkBack after the last card is sorted or a card is moved, like "Melting ice is in Same substance." -->
+    <string name="activities_sorting_is_in">%1$s 카드는 %2$s 그룹에 있어요.</string>
+    <!-- Read by TalkBack after Undo: this card is back to be sorted again, like "Took back Melting ice." -->
+    <string name="activities_sorting_took_back">%1$s 카드를 되돌렸어요.</string>
+    <!-- Once every card has a group; choosing a card opens a menu to move it to another group. -->
+    <string name="activities_sorting_all_sorted">모두 분류했어요. 옮길 카드를 선택하세요.</string>
+    <!-- Title of the menu that moves a sorted card to another group. -->
+    <string name="activities_sorting_move_to">옮길 그룹</string>
+    <!-- A group that holds no cards once every card is sorted. -->
+    <string name="activities_sorting_no_cards">카드가 없어요</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
-    <string name="activities_sorting_right_group">%1$s, 알맞은 그룹</string>
+    <string name="activities_sorting_right_group">%1$s, 올바른 그룹</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, 잘못된 그룹</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d/%2$d개를 올바르게 분류했어요</string>
+    <string name="activities_sorting_right_count">올바르게 분류한 항목 %1$d/%2$d개</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
-    <string name="activities_sorting_belongs_in">%1$s은(는) %2$s에 들어가야 해요.</string>
+    <string name="activities_sorting_belongs_in">%1$s은(는) %2$s에 속해요.</string>
     <string name="activities_sorting_badge_put_in_order">순서대로 놓기</string>
     <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
     <string name="activities_sorting_steps_in_your_order">내가 정한 단계 순서</string>

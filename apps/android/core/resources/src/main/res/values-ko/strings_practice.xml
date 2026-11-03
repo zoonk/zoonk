@@ -31,7 +31,7 @@
   "practice_time_machine_seen": "284893bde76a0d74884c1409ab7bd9b0f021f45e2c558b6f6d2a07a892f7a685",
   "practice_time_machine_tripped": "937ef08340f819902d619fb9ce77eefb5097fa22122e5f8612a88dd25538bca9",
   "practice_try_again": "abb96c63f3a375c87ae792cbf0fa3c24501d2a9a52cc32fbfcb0eea6fca316bf",
-  "practice_undo": "968c5f1d764793aed6c39f02513cb19490ed6a14a1966ac786712a5cdc06b283",
+  "practice_undo": "93d9b3087ddab858838ce6a74c93aee37bed4870503408dd8f97c91ed82666bc",
   "practice_undo_failed": "40832f0839175f6c2e39e5253c16ed74a3aa948125ecb6eeab5db560165bc430"
 }
 -->
@@ -44,7 +44,7 @@
     <string name="practice_next">다음</string>
     <!-- Sends a test's answers when its last questions couldn't be written. -->
     <string name="practice_finish_now">이 답으로 제출하기</string>
-    <string name="practice_undo">되돌리기</string>
+    <string name="practice_undo">실행 취소</string>
     <string name="practice_undo_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d/%2$d</string>
