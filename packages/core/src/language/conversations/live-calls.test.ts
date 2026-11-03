@@ -231,19 +231,24 @@ describe("live calls", () => {
     expect(first.connectionId).not.toBe(second.connectionId);
   });
 
-  it("[1] gives a practice reconnect only what's left of its talk window, and a whole call once that's over", async () => {
+  it("[1] gives a practice reconnect only what's left of its talk window, continuing the call, and a new call once that's over", async () => {
     const { conversation } = await learner({ plus: true });
-    await live(conversation.id);
+    const first = await live(conversation.id);
 
     advance(30);
     const reconnected = await live(conversation.id);
     advance(TWO_MINUTES - 30 + 1);
     const restarted = await reserved(conversation.id);
 
-    expect([reconnected, restarted]).toMatchObject([
-      { talkSeconds: TWO_MINUTES - 30 },
-      { talkSeconds: TWO_MINUTES },
+    expect([first, reconnected, restarted]).toMatchObject([
+      { continuesCall: false, talkSeconds: TWO_MINUTES },
+      { continuesCall: true, talkSeconds: TWO_MINUTES - 30 },
+      { continuesCall: false, talkSeconds: TWO_MINUTES },
     ]);
+
+    await expect(connection(reconnected.connectionId)).resolves.toMatchObject({
+      continuesCall: true,
+    });
   });
 
   it("[1] opens no talk window for a session OpenAI refused to create, so the next call is a new start", async () => {
@@ -255,7 +260,12 @@ describe("live calls", () => {
     await expect(offer(refused, conversation.id)).resolves.toStrictEqual({ status: "retryable" });
 
     advance(30);
-    await expect(reserved(conversation.id)).resolves.toMatchObject({ talkSeconds: TWO_MINUTES });
+
+    await expect(reserved(conversation.id)).resolves.toMatchObject({
+      continuesCall: false,
+      talkSeconds: TWO_MINUTES,
+    });
+
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 40, userId: user.id });
 
     await expect(reserve(conversation.id)).resolves.toStrictEqual({

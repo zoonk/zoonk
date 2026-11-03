@@ -272,7 +272,7 @@ describe("language conversations", () => {
       redeemLiveCallSdp({
         connectionId: reserved.setup.connectionId,
         conversationId,
-        input: { sdp: "test-offer", sessionConfig: { instructions: "untrusted" } },
+        input: { sdp: "test-offer" },
       }),
     ).resolves.toMatchObject({
       sdp: "test-answer",

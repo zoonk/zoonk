@@ -250,6 +250,7 @@ async function holdCallTime({
 
   const connection = await transaction.liveCallConnection.create({
     data: {
+      continuesCall: reconnect,
       conversationId: conversation.id,
       costMicros: getLiveCallReservationMicros(seconds),
       createdAt: now,

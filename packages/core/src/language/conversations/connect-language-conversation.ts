@@ -137,6 +137,7 @@ export async function connectLanguageConversation({
     setup: {
       ...getCallTimes(connection),
       connectionId: connection.id,
+      continuesCall: connection.continuesCall,
       deadlineAt: connection.deadlineAt.toISOString(),
       script: call.script,
       sessionUrl: `/v1/language-conversations/${conversationId}/connections/${connection.id}/sdp`,
