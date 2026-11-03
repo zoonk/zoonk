@@ -63,7 +63,11 @@ function toCandidate({
   fact: ExtractedMemoryFact;
   today: Date;
 }): MemoryCandidate | null {
-  const statement = fact.statement.replaceAll(/\s+/gu, " ").trim();
+  const statement = fact.statement
+    .replaceAll(/\s+/gu, " ")
+    .replace(/[\s.]+$/u, "")
+    .trim();
+
   const expiry = readExpiry({ expiresOn: fact.expiresOn, today });
 
   if (expiry.expired || !statement || statement.length > MAX_MEMORY_STATEMENT_LENGTH) {
