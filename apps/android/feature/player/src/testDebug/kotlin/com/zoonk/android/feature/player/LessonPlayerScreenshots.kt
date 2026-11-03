@@ -1,6 +1,9 @@
 package com.zoonk.android.feature.player
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,13 +21,19 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.testing.layout.FoldingFeature
 import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
-import com.zoonk.android.app.AppContainer
+import coil3.ImageLoader
+import coil3.asImage
+import coil3.decode.DataSource
+import coil3.intercept.Interceptor
+import coil3.request.ImageResult
+import coil3.request.SuccessResult
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.player.engine.HyperdriveStart
 import com.zoonk.android.feature.player.engine.LESSON_MAP_STEP_ID
@@ -32,6 +41,7 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.reduce
+import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.model.GuessOption
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
@@ -58,6 +68,7 @@ import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -151,13 +162,20 @@ class LessonPlayerScreenshots {
             "hook-revealed" to {
                 at(
                     LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")),
-                    LessonAction.CheckResolved("hook", checkResult(false, "No, and here's why.").toStepResult("Yes"), counts = false),
+                    LessonAction.CheckResolved("hook", revealGuess(steps.first(), "yes")!!, counts = false),
                 )
             },
             "hook" to { at() },
             "hook-dont-know" to { at(LessonAction.DontKnow("hook")) },
             "hook-drawing" to { played(listOf(DRAWING_HOOK, explanationStep("idea"))) },
             "hook-four-options" to { played(listOf(FOUR_OPTION_HOOK, explanationStep("idea"))) },
+            "hook-four-options-revealed" to {
+                played(
+                    listOf(FOUR_OPTION_HOOK, explanationStep("idea")),
+                    LessonAction.SelectAnswer("hook", LessonAnswer.Hook("o0")),
+                    LessonAction.CheckResolved("hook", revealGuess(FOUR_OPTION_HOOK, "o0")!!, counts = false),
+                )
+            },
             "map-stored" to { onMap(STORED_MAP, "Receitas regulares e eventuais") },
             "map-hub" to { onMap(HUB_MAP, "Características dos seres vivos") },
             "map-nested" to { onMap(NESTED_MAP, NESTED_TITLE) },
@@ -316,7 +334,7 @@ class LessonPlayerScreenshots {
     private fun pastHook() =
         arrayOf(
             LessonAction.SelectAnswer("hook", LessonAnswer.Hook("no")),
-            LessonAction.CheckResolved("hook", checkResult(true, "No, and here's why.").toStepResult("No"), counts = false),
+            LessonAction.CheckResolved("hook", revealGuess(steps.first(), "no")!!, counts = false),
             LessonAction.Continue,
         )
 
@@ -358,7 +376,7 @@ class LessonPlayerScreenshots {
                 override fun replace(route: AppRoute) = Unit
             }
 
-        val pictures = PrivatePictures(AppContainer.preview(compose.activity).images, AuthenticatedSession(ANA, "token", "local"))
+        val pictures = scenePictures()
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -397,6 +415,35 @@ class LessonPlayerScreenshots {
             }
             write("${states[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
+    }
+
+    /** Every picture loads at once as the same drawn 3:2 scene, so a render shows the room real pictures take. */
+    private fun scenePictures(): PrivatePictures {
+        val scene =
+            Bitmap.createBitmap(1536, 1024, Bitmap.Config.ARGB_8888).apply {
+                val canvas = Canvas(this)
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+                canvas.drawColor(0xFFDCEAF5.toInt())
+                paint.color = 0xFF9CC9A6.toInt()
+                canvas.drawRect(0f, 820f, 1536f, 1024f, paint)
+                paint.color = 0xFFF2B84B.toInt()
+                canvas.drawRoundRect(RectF(380f, 400f, 1160f, 780f), 64f, 64f, paint)
+                paint.color = 0xFF2F3B4C.toInt()
+                canvas.drawCircle(580f, 800f, 90f, paint)
+                canvas.drawCircle(960f, 800f, 90f, paint)
+            }
+        val loader =
+            ImageLoader
+                .Builder(compose.activity)
+                .components {
+                    add(
+                        object : Interceptor {
+                            override suspend fun intercept(chain: Interceptor.Chain): ImageResult =
+                                SuccessResult(scene.asImage(), chain.request, DataSource.MEMORY)
+                        },
+                    )
+                }.build()
+        return PrivatePictures(PrivateImages("$API/".toHttpUrl(), loader), AuthenticatedSession(ANA, "token", "local"))
     }
 
     private fun write(
@@ -451,7 +498,8 @@ private val NESTED_MAP =
         shape = LessonMap.Shape.NESTED,
     )
 
-private const val API_FILES = "http://localhost/v1/files"
+private const val API = "http://localhost/v1"
+private const val API_FILES = "$API/files"
 
 private val FOUR_OPTION_HOOK =
     hookGuessStep("hook").let { step ->
@@ -461,6 +509,7 @@ private val FOUR_OPTION_HOOK =
                 StepContent.Guess(
                     guess.copy(
                         question = "A food truck costs R$ 40,000 and its owner still owes R$ 30,000 on it. How much of it is really hers?",
+                        reveal = "R$ 10,000 is hers. The rest still belongs to the bank.",
                         options =
                             listOf("R$ 40,000", "R$ 10,000", "R$ 70,000", "R$ 30,000").mapIndexed { index, text ->
                                 GuessOption(
