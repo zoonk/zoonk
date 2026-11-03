@@ -157,7 +157,7 @@ function screenUnion<LEAD extends z.ZodRawShape>(lead: LEAD) {
   ]);
 }
 
-export const writtenScreenSchema = screenUnion({});
+const writtenScreenSchema = screenUnion({});
 
 /** A screen with its number first, the shape the fix reads its lesson in and answers in. */
 export const numberedScreenSchema = screenUnion({ screen: z.number().int() });
