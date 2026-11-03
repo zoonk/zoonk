@@ -5,7 +5,7 @@ import {
   startCallOver,
   toCallCompletion,
 } from "./live-call-so-far";
-import { type TranscriptTurn, addTranscriptFragment } from "./live-call-transcript";
+import { type TranscriptTurn, addTranscriptFragment, addTypedReply } from "./live-call-transcript";
 
 const FIRST_CONNECTION: TranscriptTurn[] = [
   { endMs: 800, speaker: "character", startMs: 0, text: "Hi, this is Sarah." },
@@ -62,15 +62,20 @@ describe(carryCallSoFar, () => {
     });
   });
 
-  it("has no call to save when no connection went live, even one it reserved", () => {
+  it("starts over when no connection went live, even one it reserved, dropping replies typed while it rang", () => {
+    const before = { ...NOTHING_YET, metLabels: ["Ask about the rent"] };
+
     expect(
       carryCallSoFar({
-        ...NOTHING_YET,
-        before: NOTHING_YET,
+        before,
         connectionId: "never-live",
+        examCuesSent: 0,
         live: false,
+        metLabels: before.metLabels,
+        turns: addTypedReply([], "Hello?"),
+        usedHelp: true,
       }),
-    ).toMatchObject({ connectionId: null });
+    ).toStrictEqual(before);
   });
 
   it("names a reconnect's own reservation once it has one, live or not, since completion takes the latest", () => {

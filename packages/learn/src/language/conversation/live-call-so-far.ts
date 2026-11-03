@@ -7,9 +7,10 @@ import { type TranscriptTurn, getSpokenMs, toConversationTurns } from "./live-ca
 const MS_PER_SECOND = 1000;
 
 /**
- * What "Call again" hands the next connection, in memory only: a call that continues keeps its
- * turns on screen and completes with all of them. `connectionId` is what completion must name,
- * the latest connection the screen saw, once one went live: until then there's no call to save.
+ * What "Call again" hands the next connection, in memory only, once a connection of the call went
+ * live (until then there's no call to save, so a retry starts over): a call that continues keeps
+ * its turns on screen and completes with all of them under `connectionId`, the latest connection
+ * the screen saw.
  */
 export type CallSoFar = {
   connectionId: string | null;
@@ -46,10 +47,12 @@ export function carryCallSoFar({
   turns,
   usedHelp,
 }: Omit<CallSoFar, "spokenMs"> & { before: CallSoFar; live: boolean }): CallSoFar {
-  const saved = live || before.connectionId !== null;
+  if (!live && before.connectionId === null) {
+    return startCallOver(before);
+  }
 
   return {
-    connectionId: saved ? (connectionId ?? before.connectionId) : null,
+    connectionId: connectionId ?? before.connectionId,
     examCuesSent,
     metLabels,
     spokenMs: before.spokenMs + getSpokenMs(turns),
