@@ -2,6 +2,7 @@ import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { findQuestionBases } from "../steps/question-bases";
 import { type ConvertedScreen } from "../steps/written-screens";
+import { findWordyExplanations } from "./_utils/explanation-words";
 import { findGuessGiveaways } from "./_utils/guess-giveaways";
 import { findMixedMoneyFormats } from "./_utils/money-formats";
 import { findScreensWithNewTerms } from "./_utils/new-terms";
@@ -13,7 +14,8 @@ export type LessonFlowCheckCode =
   | "moneyFormat"
   | "newTerms"
   | "plannedVisual"
-  | "repeatedTable";
+  | "repeatedTable"
+  | "screenWords";
 
 type LessonFlowProblem = { code: LessonFlowCheckCode; problem: string; screen: number };
 
@@ -83,7 +85,21 @@ function getVisualProblems({
   return [...missing, ...repeated];
 }
 
-function getWordingProblems(lesson: WrittenLesson): LessonFlowProblem[] {
+function getWordingProblems({
+  lesson,
+  novice,
+}: {
+  lesson: WrittenLesson;
+  novice: boolean;
+}): LessonFlowProblem[] {
+  const wordy = findWordyExplanations({ novice, screens: lesson.screens }).map(
+    ({ screen, target, words }) => ({
+      code: "screenWords" as const,
+      problem: `Has ${words} words besides its tables; an explanation here aims for about ${target}. Keep the story's beat, the idea and one example, and cut the rest or leave it to the screen that teaches it.`,
+      screen,
+    }),
+  );
+
   const guesses = findGuessGiveaways(lesson.screens).map((giveaway) => ({
     ...giveaway,
     code: "guessAnswer" as const,
@@ -103,18 +119,16 @@ function getWordingProblems(lesson: WrittenLesson): LessonFlowProblem[] {
     screen: mention.screen,
   }));
 
-  return [...guesses, ...bold, ...money];
+  return [...guesses, ...bold, ...money, ...wordy];
 }
 
 /** How the lesson's screens work together: their visuals, the guess, the checks' bases and wording. */
 export function checkLessonFlow(input: {
   lesson: WrittenLesson;
+  /** `readsNoviceRules` for the lesson, which sets its words per explanation. */
+  novice: boolean;
   screens: readonly ConvertedScreen[];
   spec: LessonSpec;
 }): LessonFlowProblem[] {
-  return [
-    ...getVisualProblems(input),
-    ...getBasisProblems(input),
-    ...getWordingProblems(input.lesson),
-  ];
+  return [...getVisualProblems(input), ...getBasisProblems(input), ...getWordingProblems(input)];
 }

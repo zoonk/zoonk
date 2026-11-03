@@ -21,7 +21,11 @@ function planned(changes: Record<number, Partial<LessonScreen>>): LessonSpec {
   };
 }
 
-function flowCodes(lesson: WrittenLesson, spec: LessonSpec = temperatureSpec()) {
+function flowCodes(
+  lesson: WrittenLesson,
+  spec: LessonSpec = temperatureSpec(),
+  options: Partial<Parameters<typeof checkWrittenLesson>[0]> = {},
+) {
   const flow = new Set([
     "basis",
     "guessAnswer",
@@ -29,11 +33,16 @@ function flowCodes(lesson: WrittenLesson, spec: LessonSpec = temperatureSpec()) 
     "newTerms",
     "plannedVisual",
     "repeatedTable",
+    "screenWords",
   ]);
 
-  return checkWrittenLesson({ language: "en", lesson, level: "beginner", spec })
+  return checkWrittenLesson({ language: "en", lesson, level: "beginner", spec, ...options })
     .problems.filter((problem) => flow.has(problem.code))
     .map((problem) => [problem.screen, problem.code]);
+}
+
+function words(count: number): string {
+  return Array.from({ length: count }, () => "word").join(" ");
 }
 
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
@@ -131,6 +140,30 @@ describe("checkWrittenLesson's flow checks", () => {
       6,
       "moneyFormat",
     ]);
+  });
+
+  it("flags an explanation far over its word target, a lower one for new learners", () => {
+    const sixty = explanation(`${words(59)}.`);
+    const eighty = explanation(`${words(79)}.`);
+    const withTable = explanation(`${words(40)}.\n\n${TABLE}`);
+
+    expect(flowCodes(withScreens({ 4: sixty }))).toStrictEqual([[4, "screenWords"]]);
+
+    expect(
+      flowCodes(withScreens({ 4: sixty }), temperatureSpec(), { level: "advanced" }),
+    ).toStrictEqual([]);
+
+    expect(
+      flowCodes(withScreens({ 4: sixty }), temperatureSpec(), {
+        exams: [{ name: "SAT", style: "multipleChoice" }],
+      }),
+    ).toStrictEqual([]);
+
+    expect(
+      flowCodes(withScreens({ 4: eighty }), temperatureSpec(), { level: "advanced" }),
+    ).toStrictEqual([[4, "screenWords"]]);
+
+    expect(flowCodes(withScreens({ 4: withTable }))).toStrictEqual([]);
   });
 
   it("asks for the visual the plan names and never the same table twice in a row", () => {

@@ -31,6 +31,7 @@ async function checkLesson(
 
   const result = checkWrittenLesson({
     chapterLessons: input.chapterLessons,
+    exams: input.exams,
     language: input.language,
     lesson,
     level: input.level,

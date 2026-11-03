@@ -5,6 +5,7 @@ import {
   type WrittenScreen,
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { findOptionPositionReferences } from "../_utils/answer-options";
@@ -234,6 +235,7 @@ export function toReviewedLesson({
 export function checkWrittenLesson({
   allowActivityFallback = false,
   chapterLessons,
+  exams,
   language,
   lesson,
   level,
@@ -244,6 +246,7 @@ export function checkWrittenLesson({
 }: {
   allowActivityFallback?: boolean;
   chapterLessons?: Parameters<typeof findRepeatedExamples>[0]["chapterLessons"];
+  exams?: readonly unknown[];
   language: string;
   lesson: WrittenLesson;
   level: CourseLevel;
@@ -276,7 +279,12 @@ export function checkWrittenLesson({
     problems: [
       ...countProblem,
       ...checked.flatMap((result) => result.problems),
-      ...checkLessonFlow({ lesson, screens, spec }),
+      ...checkLessonFlow({
+        lesson,
+        novice: readsNoviceRules({ exams, level, material }),
+        screens,
+        spec,
+      }),
       ...getTermOrderProblems(lesson),
       ...getRepeatProblems({
         chapterLessons,
