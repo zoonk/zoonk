@@ -3,9 +3,8 @@
 import { OWN_FILES_WEB_PATH, toOwnFileUrl } from "@zoonk/utils/user-blobs";
 import { useState } from "react";
 
-/** Question pictures are drawn at 1024 by 1280. */
-const DEFAULT_WIDTH = 1024;
-const DEFAULT_HEIGHT = 1280;
+/** The size new question pictures are drawn at, for a picture whose payload lacks its own (stored ones carry it). */
+const DRAWN_SIZE = { height: 1024, width: 1536 } as const;
 
 export type ItemPictureData = {
   alt: string;
@@ -28,10 +27,10 @@ export function ItemPicture({ image }: { image: ItemPictureData }) {
       className="bg-muted/40 mx-auto h-auto max-h-[55dvh] w-auto max-w-full rounded-xl object-contain"
       data-slot="item-picture"
       decoding="async"
-      height={image.height ?? DEFAULT_HEIGHT}
+      height={image.height ?? DRAWN_SIZE.height}
       onError={() => setFailedUrl(image.url)}
       src={toOwnFileUrl({ baseUrl: OWN_FILES_WEB_PATH, url: image.url })}
-      width={image.width ?? DEFAULT_WIDTH}
+      width={image.width ?? DRAWN_SIZE.width}
     />
   );
 }
