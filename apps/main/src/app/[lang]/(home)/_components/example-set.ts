@@ -3,11 +3,7 @@ type ExamDayRow = {
   kind: "essay" | "lesson" | "practice" | "review";
   minutes: number;
   title: string;
-  /** One of the exam's `topics`, so the wall can show which ones today picked. */
-  topic: string;
 };
-
-type MissedDayTopic = { subject: string; title: string };
 
 type MockScore = { label: string; range: string };
 
@@ -18,18 +14,8 @@ export type ExamExample = {
   day: readonly [ExamDayRow, ExamDayRow, ExamDayRow, ExamDayRow];
   /** Gets the exam month's name; a language that inflects it ("w maju") writes the month itself. */
   goal: (month: string) => string;
-  /** A study plan kept in a spreadsheet, two days before today to two after. */
-  missedDay: {
-    file: string;
-    goal: string;
-    topics: readonly [
-      MissedDayTopic,
-      MissedDayTopic,
-      MissedDayTopic,
-      MissedDayTopic,
-      MissedDayTopic,
-    ];
-  };
+  /** How people there say they want it, such as "Passar no Enem": the headline's first goal and the example plan's name. */
+  headline: string;
   mock: {
     firm: readonly string[];
     details?: string;
@@ -41,15 +27,35 @@ export type ExamExample = {
   name: string;
   /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
   sittings: readonly [string, ...string[]];
-  /** Two video tabs a student left open, short enough to sit side by side on a phone. */
-  tabs: readonly [string, string];
   /** An IANA zone; the example counts days from today there. */
   timeZone: string;
-  topics: readonly string[];
+};
+
+type CareerTopic = { lessons: number; title: string };
+
+/** A career change people there make, as a plan that skipped its first topic and starts the next one today. */
+type CareerExample = {
+  /** Written to follow the goal box's "I want to". */
+  goal: string;
+  name: string;
+  skipped: string;
+  topics: readonly [CareerTopic, CareerTopic, CareerTopic, CareerTopic, CareerTopic];
+};
+
+type TopicExample = {
+  chapters: readonly [string, string, string, string, string];
+  laterChapters: number;
+  name: string;
+  /** This subject and two more like it, opening the section's lead: "Física quântica, história da arte, como funciona a bolsa de valores". */
+  subjects: string;
 };
 
 export type ExampleSet = {
+  career: CareerExample;
   exam: ExamExample;
+  /** The exams people there study for, opening the exams section's lead: "Enem, vestibular, concurso ou OAB". */
+  exams: string;
   /** A page never suggests learning the language it's written in, so English pages move to Mexico City to speak Spanish. */
   move: "london" | "mexico-city";
+  topic: TopicExample;
 };

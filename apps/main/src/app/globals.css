@@ -12,9 +12,6 @@
 @custom-variant signed-in (&:where([data-signed-in] *));
 @custom-variant usage-notice (&:where([data-usage-notice] *));
 
-/* The landing's hero shows the mess a plan replaces while its "Without Zoonk" radio is checked. */
-@custom-variant without-zoonk (&:where([data-slot="hero-stage"]:has(input[value="without"]:checked) *));
-
 /* The landing's last call: an ink band in light mode, a raised one in dark. */
 [data-slot="ink-band"] {
   --background: oklch(0.185 0.004 286);
