@@ -41,10 +41,7 @@ enum class PictureFrame(
     Question(0.40f),
 }
 
-/**
- * The shape a picture holds until its own size is known: pictures stored before lessons drew in
- * landscape are portrait, a lesson's screen pictures are now landscape and its option pictures square.
- */
+/** The shape a picture reserves when its stored size is unknown. */
 enum class PictureShape(
     val ratio: Float,
 ) {

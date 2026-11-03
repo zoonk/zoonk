@@ -206,8 +206,9 @@ internal fun GuessHookView(
 }
 
 /**
- * The hook's picture comes first. In one column of [viewHeight] it gives up height on a short view,
- * down to [MIN_YIELDED_PICTURE], so the question and its options stay in view.
+ * The hook's picture comes first. In one column of [viewHeight] it gives the question and its options
+ * the height they need, down to [MIN_YIELDED_PICTURE]; when even that doesn't leave them room, the
+ * column scrolls.
  */
 @Composable
 private fun HookScene(
