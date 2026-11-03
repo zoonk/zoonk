@@ -89,7 +89,7 @@ final class RichTextTypographyTests: XCTestCase {
     let task = "Match **codes** like 350000 or 94103-1234."
 
     XCTAssertEqual(
-      String(LessonRichText.attributed(task, literalNumbers: true).characters),
+      String(LessonRichText.typeset(task, literalNumbers: true).text.characters),
       "Match codes like 350000 or 94103-1234.")
     XCTAssertNotEqual(LessonRichText.plain(task), "Match codes like 350000 or 94103-1234.")
   }

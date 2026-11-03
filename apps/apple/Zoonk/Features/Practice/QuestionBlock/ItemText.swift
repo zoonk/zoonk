@@ -8,7 +8,7 @@ struct ItemText: View {
   }
 
   var body: some View {
-    RichTextBlocks(text, inline: ItemTextBlock.inline)
+    RichTextBlocks(text) { RichInline(text: ItemTextBlock.inline($0)) }
   }
 }
 

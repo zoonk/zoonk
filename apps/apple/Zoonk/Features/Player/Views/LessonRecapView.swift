@@ -65,7 +65,7 @@ struct LessonRecapView: View {
           LessonTextBlocks(solved.text, mark: recap.mark)
 
           if let math = solved.math {
-            Text(LessonMath.attributed(math))
+            Text(LessonMath.typeset(math))
           }
         }
       }
