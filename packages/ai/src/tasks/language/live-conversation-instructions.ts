@@ -57,7 +57,12 @@ type LiveConversationRole =
 type LiveConversationLanguages = { targetLanguage: string; learnerLanguage: string };
 
 export type LiveConversationInstructionsParams = LiveConversationRole &
-  LiveConversationLanguages & { scenario: GenerateConversationScenarioSchema; level: CefrLevel };
+  LiveConversationLanguages & {
+    scenario: GenerateConversationScenarioSchema;
+    level: CefrLevel;
+    /** A memory fact a role-play character may bring up. Other roles leave it out. */
+    learnerNote?: string;
+  };
 
 const EXAM_TASK_TEMPLATES = {
   examiner: selectPromptVariants({
@@ -82,9 +87,15 @@ function getExamTaskLevelRules({ examTask, level }: { examTask: ExamTaskRole; le
   return `Keep the exam's standard wording at every level: the candidate is preparing for ${examTask.title}.`;
 }
 
-function getRoleRules(params: LiveConversationRole & { level: CefrLevel }) {
+function getRoleRules(params: LiveConversationRole & { learnerNote?: string; level: CefrLevel }) {
   if (params.kind === "unit") {
-    return { levelRules: LEVEL_RULES[params.level], template: rolePlayTemplate };
+    return {
+      levelRules: LEVEL_RULES[params.level],
+      template: selectPromptVariants({
+        template: rolePlayTemplate,
+        variants: { learnerNote: Boolean(params.learnerNote) },
+      }),
+    };
   }
 
   if (params.kind === "examTask") {
@@ -184,6 +195,7 @@ export function buildLiveConversationInstructions(
     CHARACTER_PLACE: scenario.character.place,
     CHARACTER_ROLE: scenario.character.role,
     HINTS: scenario.hints.map((hint) => `- "${hint}"`).join("\n"),
+    LEARNER_NOTE: params.learnerNote ?? "",
     OPENING_LINE: scenario.openingLine,
     SITUATION: scenario.situation,
     TITLE: scenario.title,

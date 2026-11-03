@@ -102,6 +102,35 @@ describe(buildLiveConversationInstructions, () => {
     expect(buildLiveConversationInstructions({ ...toeflMock, level: "C1" })).toBe(instructions);
   });
 
+  it("gives a role-play character the learner's note only when there is one", () => {
+    const withNote = buildLiveConversationInstructions({
+      ...apartmentCall,
+      learnerNote: "Vai se mudar para Toronto em março com o cachorro.",
+    });
+
+    const withoutNote = buildLiveConversationInstructions(apartmentCall);
+
+    expect(withNote).not.toContain("{{");
+    expect(withNote).toContain("written in Português Brasileiro");
+    expect(withNote).toContain('"Vai se mudar para Toronto em março com o cachorro."');
+    expect(withNote).toContain("never act as if you know it");
+    expect(withoutNote).not.toContain("Something the learner shared before");
+    expect(withoutNote).not.toContain("never act as if you know it");
+    expect(withoutNote).toMatch(/bring the conversation back\.\n\nThese phrases/u);
+  });
+
+  it("leaves the learner's note out of an exam's examiner", () => {
+    const instructions = buildLiveConversationInstructions({
+      ...apartmentCall,
+      exam: "ielts",
+      kind: "speakingMock",
+      learnerNote: "Vai se mudar para Toronto em março com o cachorro.",
+    });
+
+    expect(instructions).not.toContain("Toronto");
+    expect(instructions).not.toContain("Something the learner shared before");
+  });
+
   it("keeps dollar signs in scenario text as written", () => {
     const instructions = buildLiveConversationInstructions({
       ...apartmentCall,
