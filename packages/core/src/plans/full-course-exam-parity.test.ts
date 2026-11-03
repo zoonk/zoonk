@@ -1,8 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { seedPersonaCopy } from "../seed/seed";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { computePlan } from "./_utils/replan";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -45,75 +48,57 @@ describe("studying everything after an exam (R14)", () => {
     vi.useRealTimers();
   });
 
-  it.each([100, 30])(
-    "keeps Ana's pre-exam schedule at %i minutes a day",
-    async (minutes) => {
-      const copyKey = randomUUID();
+  it.each([100, 30])("keeps Ana's pre-exam schedule at %i minutes a day", async (minutes) => {
+    const copyKey = randomUUID();
 
-      const copy = await seedPersonaCopy({
-        copyKey,
-        email: `full-course-${copyKey}@zoonk.test`,
-        persona: "exam",
-      });
+    const copy = await seedPersonaCopy({
+      copyKey,
+      email: `full-course-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
 
-      mockSession(copy.userId);
+    mockSession(copy.userId);
 
-      await expect(
-        changeGoalPlan({
-          goalId: copy.goalId,
-          input: {
-            operations: [
-              { kind: "setTargetDate", targetDate: EXAM },
-              { kind: "setDailyMinutes", minutes },
-            ],
-            timeZone: TIME_ZONE,
-          },
+    await expect(
+      changeGoalPlan({
+        goalId: copy.goalId,
+        input: {
+          operations: [
+            { kind: "setTargetDate", targetDate: EXAM },
+            { kind: "setDailyMinutes", minutes },
+          ],
+          timeZone: TIME_ZONE,
+        },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const owned = await findOwnedPlan({ goalId: copy.goalId });
+
+    if (owned.status !== "ready") {
+      throw new Error(`Expected Ana's plan, got ${owned.status}`);
+    }
+
+    const { context } = owned;
+
+    const [off, on] = await Promise.all(
+      [false, true].map((fullCourse) =>
+        computePlan({
+          context,
+          mode: "forced",
+          state: { ...context.state, settings: { ...context.state.settings, fullCourse } },
         }),
-      ).resolves.toMatchObject({ status: "applied" });
+      ),
+    );
 
-      const owned = await findOwnedPlan({ goalId: copy.goalId });
+    if (!off || !on) {
+      throw new Error("Expected both schedules");
+    }
 
-      if (owned.status !== "ready") {
-        throw new Error(`Expected Ana's plan, got ${owned.status}`);
-      }
-
-      const { context } = owned;
-
-      const [off, on] = await Promise.all(
-        [false, true].map((fullCourse) =>
-          computePlan({
-            context,
-            mode: "forced",
-            state: { ...context.state, settings: { ...context.state.settings, fullCourse } },
-          }),
-        ),
-      );
-
-      if (!off || !on) {
-        throw new Error("Expected both schedules");
-      }
-
-      expect(beforeExam(on.built)).toStrictEqual(beforeExam(off.built));
-      expect(off.feasibility.fits).toBe(minutes === 100);
-      expect(on.feasibility.fits).toBe(off.feasibility.fits);
-      expect(on.built.droppedSkillIds).toStrictEqual([]);
-
-      const foundOff = await findPlanTimeToCover({ goalId: copy.goalId, input: {} });
-      expect(foundOff).toMatchObject({ status: "ready", time: { recommendedMinutes: 100 } });
-
-      await expect(
-        changeGoalPlan({
-          goalId: copy.goalId,
-          input: { operations: [{ fullCourse: true, kind: "setFullCourse" }], timeZone: TIME_ZONE },
-        }),
-      ).resolves.toMatchObject({ status: "applied" });
-
-      await expect(findPlanTimeToCover({ goalId: copy.goalId, input: {} })).resolves.toStrictEqual(
-        foundOff,
-      );
-    },
-    120_000,
-  );
+    expect(beforeExam(on.built)).toStrictEqual(beforeExam(off.built));
+    expect(off.feasibility.fits).toBe(minutes === 100);
+    expect(on.feasibility.fits).toBe(off.feasibility.fits);
+    expect(on.built.droppedSkillIds).toStrictEqual([]);
+  });
 
   it.each([
     { exam: EXAM, fits: true, minutes: 100 },
@@ -184,7 +169,6 @@ describe("studying everything after an exam (R14)", () => {
       expect(after).toStrictEqual(before);
       expect(off.feasibility.fits).toBe(fits);
     },
-    120_000,
   );
 
   it("reads the end the change saved after the exam", async () => {
@@ -217,5 +201,42 @@ describe("studying everything after an exam (R14)", () => {
 
     expect(end).toBeDefined();
     expect(read).toMatchObject({ plan: { estimate: { fullCourseEndDate: end } }, status: "ready" });
-  }, 120_000);
+  });
+
+  it("finds the same time to cover the exam once the learner saves studying everything after it", async () => {
+    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
+
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ lessons: 6 }, { lessons: 6 }, { lessons: 6 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 5,
+      examBlueprintId: null,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-09T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const byExam = await findPlanTimeToCover({ goalId: goal.id, input: {} });
+    const minutes = byExam.status === "ready" ? byExam.time.recommendedMinutes : null;
+    expect(minutes).toBeGreaterThan(goal.dailyMinutes);
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ fullCourse: true, kind: "setFullCourse" }], timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    await expect(findPlanTimeToCover({ goalId: goal.id, input: {} })).resolves.toStrictEqual(
+      byExam,
+    );
+  });
 });

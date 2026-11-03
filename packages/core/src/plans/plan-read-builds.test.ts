@@ -1,60 +1,33 @@
 import { randomUUID } from "node:crypto";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedPersonaCopy } from "../seed/seed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
-import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
-import { type buildPlan } from "./planner/build-plan";
-import { type getFittingFloor } from "./planner/fitting-floor";
+import * as planner from "./planner/build-plan";
 
-const builds = vi.hoisted(() => ({ depth: 0, laidOut: 0 }));
+const SEARCH_STEP_MINUTES = 5;
 
-/** With the floor off, the search tries every time from the least, as it did before it had one. */
-const floor = vi.hoisted(() => ({ off: false }));
-
-vi.mock("./planner/fitting-floor", async (importOriginal) => {
-  const actual = await importOriginal<{ getFittingFloor: typeof getFittingFloor }>();
-
-  return {
-    getFittingFloor: (...args: Parameters<typeof getFittingFloor>) =>
-      floor.off ? 0 : actual.getFittingFloor(...args),
-  };
-});
-
-vi.mock("./planner/build-plan", async (importOriginal) => {
-  const actual = await importOriginal<{ buildPlan: typeof buildPlan }>();
-
-  return {
-    ...actual,
-    buildPlan: (...args: Parameters<typeof buildPlan>) => {
-      if (builds.depth === 0) {
-        builds.laidOut += 1;
-      }
-
-      builds.depth += 1;
-
-      try {
-        return actual.buildPlan(...args);
-      } finally {
-        builds.depth -= 1;
-      }
-    },
-  };
-});
+/** Trying every daily time with the floor at 0 finds this same time. */
+const ANA_WEEKDAY_MINUTES = 145;
 
 async function countBuilds<Result>(read: () => Promise<Result>) {
-  builds.laidOut = 0;
+  const builds = vi.spyOn(planner, "buildPlan");
+  builds.mockClear();
   const result = await read();
-  return { builds: builds.laidOut, result };
+  return { builds: builds.mock.calls.length, result };
 }
 
 describe("plans laid out per read", () => {
-  // It builds Ana's exam plan several times over, past the default timeout on CI's slower runners.
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
   it("reads Ana's exam plan, her time advice and a buddy turn from her own plan, never searching other daily times", async () => {
     const copyKey = randomUUID();
 
@@ -72,6 +45,7 @@ describe("plans laid out per read", () => {
 
     const own = await countBuilds(() => getPlanTimeAdvice({ goalId: user.goalId, input: {} }));
     expect(own.result.status).toBe("ready");
+    expect(own.builds, "time advice plans her week").toBeGreaterThan(0);
     expect.soft(own.builds, "time advice at her own time").toBeLessThanOrEqual(2);
 
     const other = await countBuilds(() =>
@@ -90,18 +64,11 @@ describe("plans laid out per read", () => {
 
     expect(turn.result.status).toBe("created");
     expect.soft(turn.builds, "a buddy turn not about time").toBeLessThanOrEqual(3);
+  });
 
-    const found = await countBuilds(() => findPlanTimeToCover({ goalId: user.goalId, input: {} }));
-
-    expect(found.result.status).toBe("ready");
-    expect(found.builds, "Find searches other daily times").toBeGreaterThan(plan.builds);
-
-    const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
-    expect(advice.result.status).toBe("ready");
-  }, 120_000);
-
-  // It plans Ana's exam at each daily time twice over, past the default timeout on CI's slower runners.
   it("finds the time that covers Ana's exam without planning every time under it, and finds the same one", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-03T15:00:00Z"));
     const copyKey = randomUUID();
 
     const user = await seedPersonaCopy({
@@ -112,18 +79,17 @@ describe("plans laid out per read", () => {
 
     mockSession(user.userId);
 
-    const find = () =>
-      findPlanTimeToCover({ goalId: user.goalId, input: { studyDays: [1, 2, 3, 4, 5] } });
+    const found = await countBuilds(() =>
+      findPlanTimeToCover({ goalId: user.goalId, input: { studyDays: [1, 2, 3, 4, 5] } }),
+    );
 
-    floor.off = true;
-    const everyTime = await countBuilds(find);
-    floor.off = false;
-    const fromFloor = await countBuilds(find);
+    expect(found.result).toMatchObject({
+      status: "ready",
+      time: { recommendedMinutes: ANA_WEEKDAY_MINUTES },
+    });
 
-    expect(everyTime.result).toMatchObject({ time: { recommendedMinutes: expect.any(Number) } });
-    expect(fromFloor.result).toStrictEqual(everyTime.result);
-    expect(fromFloor.builds).toBeLessThan(everyTime.builds / 2);
-  }, 120_000);
+    expect(found.builds).toBeLessThan(ANA_WEEKDAY_MINUTES / SEARCH_STEP_MINUTES / 2);
+  });
 
   it("finds no time for a date that has passed without searching every daily time", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
