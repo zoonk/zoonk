@@ -57,5 +57,6 @@ export function getCertificateFonts(locale: string): Promise<SatoriFont[]> {
   );
 
   fontsByLocale.set(locale, fonts);
+  fonts.catch(() => fontsByLocale.delete(locale));
   return fonts;
 }
