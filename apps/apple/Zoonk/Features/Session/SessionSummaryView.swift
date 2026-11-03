@@ -42,7 +42,9 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
-    .milestoneCeremony(summary.value?.ceremony)
+    .completionMoments(
+      certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
+    )
     .onDisappear {
       action?.cancel()
     }

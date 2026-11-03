@@ -1116,6 +1116,31 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testOnlyARenameReadsAgainWhatSaysTheName() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount()),
+      updateProfileResult: .success(makeAccount(name: "Ana Souza")))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var reads = 0
+    let certificates: Resource<Int> = cache.resource(audience: .signedIn, domains: [.userSession]) {
+      _ in
+      reads += 1
+      return reads
+    }
+    await certificates.load()
+
+    _ = await session.updateProfile(name: "Ana Souza")
+    await certificates.load()
+    _ = await session.updateProfile(name: "Ana Souza")
+    await certificates.load()
+
+    XCTAssertEqual(certificates.state, .loaded(2))
+  }
+
+  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -1173,7 +1198,7 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     )?
   var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
-  var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
+  var updateProfileHandler: (@MainActor (String, String, String?) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
 
   init(
@@ -1247,7 +1272,8 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     try signOutResult.get()
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+  func updateProfile(token: String, name: String, username: String?) async throws -> CurrentAccount
+  {
     if let updateProfileHandler {
       return try await updateProfileHandler(token, name, username)
     }
@@ -1342,7 +1368,8 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+  func updateProfile(token: String, name: String, username: String?) async throws -> CurrentAccount
+  {
     throw AccountAPIError.invalidResponse
   }
 

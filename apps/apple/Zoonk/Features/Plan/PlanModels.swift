@@ -418,6 +418,19 @@ enum BaseChoice: String, Codable, Sendable {
   case skip
 }
 
+/// What a finished plan's card offers, from the goal map.
+struct PlanEnd: Decodable, Equatable, Sendable {
+  struct CourseCertificate: Decodable, Equatable, Sendable {
+    /// Nil while the course is finished but its certificate isn't written yet: the learner claims
+    /// it.
+    let code: String?
+  }
+
+  /// Nil for goals that earn no course certificate, and before the course is finished.
+  let certificate: CourseCertificate?
+  let next: StudyNext?
+}
+
 struct StudyNext: Decodable, Equatable, Sendable {
   struct NextLevel: Decodable, Equatable, Sendable {
     let level: String

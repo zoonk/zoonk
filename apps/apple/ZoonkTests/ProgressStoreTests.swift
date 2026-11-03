@@ -246,7 +246,7 @@ private final class ProgressAccountAPIStub: AccountAPIClient, @unchecked Sendabl
     throw AccountAPIError.invalidResponse
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws
+  func updateProfile(token: String, name: String, username: String?) async throws
     -> CurrentAccount
   {
     throw AccountAPIError.invalidResponse

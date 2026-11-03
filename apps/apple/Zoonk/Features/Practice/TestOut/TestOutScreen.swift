@@ -21,7 +21,6 @@ struct TestOutScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
-  @Environment(\.practiceHooks) private var hooks
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading
@@ -30,7 +29,6 @@ struct TestOutScreen: View {
   @State private var isSubmitting = false
   @State private var submitFailed = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
-  @State private var ceremonyClosed = false
   @State private var undo: UndoState = .idle
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
@@ -43,13 +41,7 @@ struct TestOutScreen: View {
     NavigationStack {
       Group {
         if let result {
-          if let milestone = result.ceremony?.value1, !ceremonyClosed,
-            let ceremony = hooks.ceremony
-          {
-            ceremony(milestone) { ceremonyClosed = true }
-          } else {
-            resultView(result)
-          }
+          resultView(result)
         } else {
           switch load {
           case .loading:
@@ -91,6 +83,9 @@ struct TestOutScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .completionMoments(
+      certificates: result?.certificates ?? [], ceremony: result?.ceremony?.value1
+    )
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
   }
@@ -203,7 +198,7 @@ struct TestOutScreen: View {
       {
         guard session.authenticatedSession == identity else { return }
         result = .init(
-          ceremony: nil, reached: .init(energy: nil, level: nil),
+          ceremony: nil, certificates: [], reached: .init(energy: nil, level: nil),
           changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
           lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
         undo = recorded.undone ? .done : .idle

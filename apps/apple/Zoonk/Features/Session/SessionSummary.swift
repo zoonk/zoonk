@@ -52,6 +52,8 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let bestStreak: Int
   let brainPower: Int
   let ceremony: Milestone?
+  /// Unshown, so a moment whose completion response was lost still plays here.
+  let certificates: [CertificateFacts]
   let comesBack: [ComesBack]
   let correct: Int
   let energy: Energy?
@@ -80,6 +82,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let blockId: String
   let brainPower: Int
   let ceremony: Milestone?
+  let certificates: [CertificateFacts]
   /// `YYYY-MM-DD`.
   let comesBackOn: String?
   let completedMissions: [StudyMission.Kind]
@@ -104,6 +107,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   var day: DayResult {
     DayResult(
       ceremony: ceremony,
+      certificates: certificates,
       missionMoment: completedMissions.isEmpty
         ? nil
         : DayResult.MissionMoment(
