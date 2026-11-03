@@ -64,9 +64,9 @@ class CompletedLessonsStoreTest {
             }
 
     @Test
-    fun aLessonReplayedWhileTheListWasOpenStaysUnderItsNewDayOnly() =
+    fun aLessonTheNextPageRepeatsShowsOnce() =
         runTest(dispatcher) {
-            // Lesson 3 was replayed after the first page loaded, so the second page starts one lesson later than it did.
+            // A lesson finished on another device after the first page loaded moved to the top, so the second page repeats lesson 1.
             pages[null] = { page(listOf(3 to "2026-11-02", 1 to "2026-11-01"), nextCursor = "c1") }
             pages["c1"] = { page(listOf(1 to "2026-11-01", 2 to "2026-10-30"), nextCursor = null) }
             val store = store()
