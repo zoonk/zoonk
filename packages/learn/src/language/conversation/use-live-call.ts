@@ -2,176 +2,122 @@
 
 import {
   type ConversationTurn,
+  type LanguageConversationObjectiveCheck,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type Experimental_RealtimeState as RealtimeState } from "ai";
-import {
-  type RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { type RefObject, useCallback, useEffect, useMemo } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallEndingEvent } from "./live-call-ending";
+import {
+  type LiveCallError,
+  useCallProblem,
+  useCallRelease,
+  useCallSession,
+} from "./live-call-lifecycle";
+import { type ReplyGapEvent } from "./live-call-report";
 import { type LiveCallSession } from "./live-call-session";
-import { loadLiveCallSession } from "./load-live-call-session";
+import { type SpeechSample } from "./speech-activity";
+import { type CallConnectionActions, useCallConnection } from "./use-call-connection";
 import {
-  type CallConnectionActions,
-  type ConversationConnection,
-  useCallConnection,
-} from "./use-call-connection";
-import {
-  type LiveCallPhase,
   useCallFinish,
   useCallMute,
   useCallPhase,
   useCallTranscript,
   useTypedReplies,
 } from "./use-call-controls";
-import { type CallLength, useCallClock, useOpeningCue } from "./use-call-cues";
+import { type CallLength, useCallEnding } from "./use-call-ending";
 import { useCallEvents } from "./use-call-events";
-import {
-  type CallAudio,
-  type TappedCallAudio,
-  openCallAudio,
-  useCallMicrophone,
-} from "./use-call-microphone";
+import { type TappedCallAudio, useCallMicrophone } from "./use-call-microphone";
+import { type CallEndReason, type CallReport, useCallReport } from "./use-call-report";
+import { useConnectCall } from "./use-connect-call";
 import { useCallObjectives } from "./use-objective-checks";
 
-export type LiveCallError =
-  | "callInProgress"
-  | "callsPaused"
-  | "connect"
-  | "dropped"
-  | "ended"
-  | "limit"
-  | "plusRequired";
-
 export type LiveCallActions = CallConnectionActions & {
-  /** Every goal met so far; null when the check didn't run. */
-  checkObjectives: (turns: ConversationTurn[]) => Promise<string[] | null>;
+  /** Null when the check didn't run. */
+  checkObjectives: (
+    turns: ConversationTurn[],
+  ) => Promise<LanguageConversationObjectiveCheck | null>;
 };
 
-const MS_PER_SECOND = 1000;
-
-const EMPTY_STATE: RealtimeState = {
-  events: [],
-  isCapturing: false,
-  isPlaying: false,
-  messages: [],
-  status: "disconnected",
-};
-
-const noSubscription = () => () => {
-  // Nothing to stop listening to before the call starts.
-};
-
-const emptySnapshot = () => EMPTY_STATE;
-
-/**
- * The microphone opens before the call is reserved, since the server's deadline starts then and a
- * permission prompt would take its time. Null when the start was cancelled meanwhile.
- */
-async function openCall({
-  isCurrent,
-  keepAudio,
-  tapped,
+/** The learner's voice, typing and sending, for the call's ending and its report. */
+function useLearnerInput({
+  dispatch,
+  mutedRef,
+  onLearnerTurn,
+  record,
 }: {
-  isCurrent: () => boolean;
-  keepAudio: (audio: CallAudio) => boolean;
-  tapped: Promise<CallAudio> | null;
+  dispatch: (event: CallEndingEvent) => void;
+  mutedRef: RefObject<boolean>;
+  onLearnerTurn: () => void;
+  record: (event: ReplyGapEvent) => void;
 }) {
-  const live = loadLiveCallSession();
-  const audio = await (tapped ?? openCallAudio());
-
-  if (!isCurrent()) {
-    audio.stop();
-    return null;
-  }
-
-  if (!keepAudio(audio)) {
-    return null;
-  }
-
-  const loaded = await live;
-  return isCurrent() ? { audio, live: loaded } : null;
-}
-
-function toConnectionError(
-  status: Exclude<ConversationConnection["status"], "ready">,
-): LiveCallError {
-  if (status === "failed" || status === "previousConnectionClosing") {
-    return "connect";
-  }
-
-  return status;
-}
-
-function useCallProblem({
-  phase,
-  release,
-  setPhase,
-}: {
-  phase: LiveCallPhase;
-  release: () => Promise<boolean>;
-  setPhase: (phase: LiveCallPhase) => void;
-}) {
-  const [problem, setProblem] = useState<{ error: LiveCallError; limit: CallLimit | null } | null>(
-    null,
-  );
-
-  const fail = useCallback(
-    (error: LiveCallError, limit: CallLimit | null = null) => {
-      void release();
-      setProblem({ error, limit });
-      setPhase("failed");
+  const hear = useCallback(
+    ({ at, speaking, voicedAt }: SpeechSample) => {
+      const heard = speaking && !mutedRef.current;
+      dispatch({ at, speaking: heard, type: "speech" });
+      record({ at, speaking: heard, type: "voice", voicedAt });
     },
-    [release, setPhase],
+    [dispatch, mutedRef, record],
   );
 
-  const shown = phase === "failed" ? problem : null;
+  const onSent = useCallback(() => {
+    onLearnerTurn();
+    record({ type: "cue" });
+    dispatch({ at: Date.now(), type: "sent" });
+  }, [dispatch, onLearnerTurn, record]);
 
-  return { error: shown?.error ?? null, fail, limit: shown?.limit ?? null };
+  const onTyping = useCallback(() => dispatch({ at: Date.now(), type: "typing" }), [dispatch]);
+
+  return { hear, onSent, onTyping };
 }
 
-/**
- * `release` resolves true once OpenAI confirmed the session is over; only then does the browser
- * drop its peer.
- */
-function useCallEnding({
-  endConnection,
-  sessionRef,
-  setPhase,
-  stopAudio,
+/** The session's events, told to the ending, the objective checks and the report. */
+function useLiveCallEvents({
+  begin,
+  endAtDeadline,
+  fail,
+  objectives,
+  report,
+  ...events
 }: {
-  endConnection: () => Promise<boolean>;
-  sessionRef: RefObject<LiveCallSession | null>;
-  setPhase: (phase: LiveCallPhase) => void;
-  stopAudio: () => void;
-}) {
-  const silence = useCallback(() => {
-    stopAudio();
-    sessionRef.current?.silence();
-  }, [sessionRef, stopAudio]);
+  begin: (session: LiveCallSession, length: CallLength) => void;
+  endAtDeadline: () => void;
+  fail: (error: LiveCallError) => void;
+  objectives: { onCharacterTurn: () => void; onLearnerTurn: () => void };
+  report: CallReport;
+} & Pick<
+  Parameters<typeof useCallEvents>[0],
+  | "dispatch"
+  | "phaseRef"
+  | "sendWaitingReplies"
+  | "sessionRef"
+  | "setPhase"
+  | "turnsRef"
+  | "updateTurns"
+>) {
+  const { onCharacterTurn, onLearnerTurn } = objectives;
 
-  const release = useCallback(async () => {
-    silence();
-    const closed = await endConnection();
-
-    if (closed) {
-      sessionRef.current?.dispose();
-    }
-
-    return closed;
-  }, [endConnection, sessionRef, silence]);
-
-  const hangUp = useCallback(() => {
-    silence();
-    setPhase("ended");
-  }, [setPhase, silence]);
-
-  return { hangUp, release };
+  return useCallEvents({
+    ...events,
+    begin: useCallback(
+      (created: LiveCallSession, length: CallLength) => {
+        report.live();
+        begin(created, length);
+      },
+      [begin, report],
+    ),
+    hangUp: endAtDeadline,
+    onCharacterTurn: useCallback(
+      (at: number) => {
+        onCharacterTurn();
+        report.record({ at, type: "character" });
+      },
+      [onCharacterTurn, report],
+    ),
+    onClosedEarly: useCallback(() => fail("connect"), [fail]),
+    onDelegation: useCallback(() => report.record({ type: "delegation" }), [report]),
+    onLearnerTurn,
+  });
 }
 
 export function useLiveCall({
@@ -183,148 +129,119 @@ export function useLiveCall({
   conversation: LanguageConversationView;
   tappedAudio?: TappedCallAudio;
 }) {
-  const [session, setSession] = useState<LiveCallSession | null>(null);
+  const { keepSession, session, sessionRef } = useCallSession();
   const { phase, phaseRef, setPhase } = useCallPhase();
   const { getTurns, savedTurns, turnsRef, updateTurns } = useCallTranscript();
-  const sessionRef = useRef<LiveCallSession | null>(null);
-  const attempt = useRef(0);
-  const { blocked: micBlocked, keep: keepAudio, stop: stopAudio } = useCallMicrophone();
+  const microphone = useCallMicrophone();
   const connection = useCallConnection(actions);
-  const { end: endConnection, endedByServer, getConnectionId, reserve } = connection;
+  const report = useCallReport({ kind: conversation.kind, turnsRef });
+
+  const { hangUp, release } = useCallRelease({
+    endConnection: connection.end,
+    sessionRef,
+    setPhase,
+    stopAudio: microphone.stop,
+  });
+
+  const endAs = useCallback(
+    (reason: CallEndReason) => {
+      report.send(reason);
+      hangUp();
+    },
+    [hangUp, report],
+  );
+
+  const recordCue = useCallback(() => report.record({ type: "cue" }), [report]);
+
+  const ending = useCallEnding({
+    examCues: conversation.examTask?.cues,
+    onCue: recordCue,
+    onHangUp: endAs,
+  });
 
   const objectives = useCallObjectives({
     checkObjectives: actions.checkObjectives,
     conversation,
     getTurns,
-    sessionRef,
+    onResult: ending.checked,
   });
-
-  const { metLabels, onCharacterTurn } = objectives;
-
-  const { hangUp, release } = useCallEnding({ endConnection, sessionRef, setPhase, stopAudio });
-
-  const opening = useOpeningCue(conversation.openingLine);
-
-  const { elapsedSeconds, limitNear, limitSeconds, markLearnerActive, startClock } = useCallClock({
-    cues: conversation.examTask?.cues,
-    hangUp,
-    minutes: conversation.minutes,
-    session: phase === "live" ? session : null,
-  });
-
-  const objectivesLearnerTurn = objectives.onLearnerTurn;
-
-  const onLearnerTurn = useCallback(() => {
-    markLearnerActive();
-    objectivesLearnerTurn();
-  }, [markLearnerActive, objectivesLearnerTurn]);
-
-  const state = useSyncExternalStore(
-    session?.subscribe ?? noSubscription,
-    session?.getSnapshot ?? emptySnapshot,
-    emptySnapshot,
-  );
-
-  const { error, fail, limit } = useCallProblem({ phase, release, setPhase });
 
   const liveSession = phase === "live" ? session : null;
+  const { muted, mutedRef, toggleMute } = useCallMute(liveSession);
+  const problem = useCallProblem({ phase, release, setPhase });
+  const failCall = problem.fail;
+
+  const fail = useCallback(
+    (error: LiveCallError, limit: CallLimit | null = null) => {
+      report.send(error === "dropped" ? "dropped" : "failed");
+      failCall(error, limit);
+    },
+    [failCall, report],
+  );
+
+  const input = useLearnerInput({
+    dispatch: ending.dispatch,
+    mutedRef,
+    onLearnerTurn: objectives.onLearnerTurn,
+    record: report.record,
+  });
+
+  const typedLive = useMemo(
+    () =>
+      liveSession && ending.callLength
+        ? { script: ending.callLength.script, session: liveSession }
+        : null,
+    [ending.callLength, liveSession],
+  );
 
   const { sendText, sendWaitingReplies } = useTypedReplies({
     isConnecting: phase === "connecting",
-    liveSession,
-    onLearnerTurn,
+    live: typedLive,
+    onSent: input.onSent,
     turnsRef,
     updateTurns,
   });
 
-  const { muted, toggleMute } = useCallMute(liveSession);
+  const endAtDeadline = useCallback(() => endAs("hardStop"), [endAs]);
 
-  const failToConnect = useCallback(() => fail("connect"), [fail]);
-
-  const handleEvent = useCallEvents({
-    hangUp,
-    onCharacterTurn,
-    onClosedEarly: failToConnect,
-    onLearnerTurn,
-    opening,
+  const handleEvent = useLiveCallEvents({
+    begin: ending.begin,
+    dispatch: ending.dispatch,
+    endAtDeadline,
+    fail,
+    objectives,
     phaseRef,
+    report,
     sendWaitingReplies,
     sessionRef,
     setPhase,
-    startClock,
     turnsRef,
     updateTurns,
   });
 
-  const start = useCallback(
-    async (takeover = false) => {
-      const mine = attempt.current + 1;
-      attempt.current = mine;
-      const isCurrent = () => attempt.current === mine;
+  const { cancelStart, start } = useConnectCall({
+    endAtDeadline,
+    endedByServer: connection.endedByServer,
+    fail,
+    handleEvent,
+    hear: input.hear,
+    keepAudio: microphone.keep,
+    keepSession,
+    onReserved: report.reserved,
+    phaseRef,
+    reserve: connection.reserve,
+    setPhase,
+    tappedAudio,
+  });
 
-      setPhase("connecting");
-
-      const opened = await openCall({ isCurrent, keepAudio, tapped: tappedAudio?.take() ?? null });
-
-      if (!opened) {
-        return;
-      }
-
-      if (!opened.live) {
-        fail("connect");
-        return;
-      }
-
-      const { audio, live } = opened;
-      const answer = await reserve({ isCurrent, takeover });
-
-      if (!answer || !isCurrent()) {
-        return;
-      }
-
-      if (answer.status !== "ready") {
-        fail(toConnectionError(answer.status), "limit" in answer ? answer.limit : null);
-        return;
-      }
-
-      const { createLiveCallSession, watchConnection } = live;
-      const { setup } = answer;
-
-      // The time the server said was left, from now: the device's clock can be off.
-      const length: CallLength = {
-        endsAt: Date.now() + setup.seconds * MS_PER_SECOND,
-        endsAtLimit: setup.endsAtLimit,
-      };
-
-      const created: LiveCallSession = createLiveCallSession({
-        onEvent: (event) => handleEvent(created, event, length),
-        sessionUrl: setup.sessionUrl,
-      });
-
-      watchConnection({
-        endedByServer,
-        isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
-        onEnded: hangUp,
-        onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
-        session: created,
-      });
-
-      sessionRef.current = created;
-      setSession(created);
-      // Failures arrive via the session's state (`watchConnection`); only a second connect rejects.
-      void created.connect({ stream: audio.stream }).catch(() => null);
-    },
-    [endedByServer, fail, handleEvent, hangUp, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
-  );
-
-  const finish = useCallFinish({ getConnectionId, release, turnsRef });
+  const finish = useCallFinish({ getConnectionId: connection.getConnectionId, release, turnsRef });
 
   // Leaving ends the call; a screen kept hidden in an Activity shows it dropped when it's back.
   useEffect(
     () => () => {
       // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start,
       // so they cancel nothing.
-      attempt.current += 1;
+      cancelStart();
 
       if (phaseRef.current === "connecting" || phaseRef.current === "live") {
         fail(phaseRef.current === "live" ? "dropped" : "connect");
@@ -332,27 +249,29 @@ export function useLiveCall({
         void release();
       }
     },
-    [fail, phaseRef, release],
+    [cancelStart, fail, phaseRef, release],
   );
 
   return {
-    elapsedSeconds,
-    error,
+    /** The learner stopped a call that was still ringing. */
+    cancel: () => report.send("learnerEnded"),
+    elapsedSeconds: ending.elapsedSeconds,
+    endsAtLimit: ending.callLength?.endsAtLimit ?? null,
+    error: problem.error,
     finish,
-    hangUp,
-    isCapturing: state.isCapturing,
-    isPlaying: state.isPlaying,
-    limit,
-    limitNear,
-    limitSeconds,
-    metLabels,
-    micBlocked,
+    hangUp: () => endAs("learnerEnded"),
+    limit: problem.limit,
+    metLabels: objectives.metLabels,
+    micBlocked: microphone.blocked,
     muted,
+    onTyping: input.onTyping,
     phase,
     reconnecting: connection.reconnecting,
     sendText,
     start,
+    talkSeconds: ending.callLength?.talkSeconds ?? null,
     toggleMute,
+    turn: ending.view,
     turns: savedTurns,
   };
 }

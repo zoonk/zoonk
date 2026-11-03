@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { postAsLearner } from "@/lib/api/learner-api";
 import {
   type CompletedLanguageConversation,
+  type LanguageConversationObjectiveCheck,
   completedLanguageConversationSchema,
   languageConversationCompletionInputSchema,
   languageConversationObjectiveCheckInputSchema,
@@ -82,7 +83,7 @@ export async function endConversationConnectionAction(
 export async function checkObjectivesAction(
   conversationId: string,
   input: unknown,
-): Promise<string[] | null> {
+): Promise<LanguageConversationObjectiveCheck | null> {
   const parsed = languageConversationObjectiveCheckInputSchema.safeParse(input);
 
   if (!parsed.success) {
@@ -98,7 +99,7 @@ export async function checkObjectivesAction(
     ? languageConversationObjectiveCheckSchema.safeParse(response.json)
     : null;
 
-  return result?.success ? result.data.objectivesMet : null;
+  return result?.success ? result.data : null;
 }
 
 export async function completeConversationAction(

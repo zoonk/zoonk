@@ -1,16 +1,20 @@
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
+import { LIVE_CALL_WRAP_UP_SECONDS } from "@zoonk/core/entitlements/limits";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { getString } from "@zoonk/utils/json";
 import { TEST_LIVE_SDP_ANSWER } from "../../../packages/e2e/src/live-call-provider";
 import { test as base, expect } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
+import { quietMicrophone } from "./live-peer";
 import { openAs } from "./study-day";
 
 const NATIVE_SETUP_TIMEOUT_MS = 8000;
 const NATIVE_TEARDOWN_TIMEOUT_MS = 30_000;
 
-const DEADLINE_MS = 25_000;
+/** The first connection's talk time; the reconnect keeps what's left of it, plus its own wrap-up. */
+const TALK_SECONDS = 5;
+const DEADLINE_MS = (TALK_SECONDS + LIVE_CALL_WRAP_UP_SECONDS) * 1000;
 
 type NativeCallResources = {
   answer: string | null;
@@ -125,7 +129,7 @@ async function startNativePeer({ peer, session }: { peer: Page; session: BridgeS
             }
 
             if (
-              event.type === "session.instructions.append" &&
+              event.type === "session.commentary.append" &&
               "content" in event &&
               typeof event.content === "string" &&
               event.content.includes("opening line")
@@ -303,7 +307,7 @@ async function reconnectingCheckpoint({ callId, userId }: { callId: string; user
       createdAt: new Date(now),
       deadlineAt: new Date(now + DEADLINE_MS),
       endedAt: new Date(now),
-      heldSeconds: 0,
+      heldSeconds: TALK_SECONDS,
       state: "ended",
       userId,
     },
@@ -315,7 +319,7 @@ test("the durable deadline hangs up an established WebRTC peer when the client n
   request,
   liveCallResources: owned,
 }) => {
-  test.setTimeout(70_000);
+  test.setTimeout(DEADLINE_MS + 45_000);
   const { bridge, peerContext } = owned;
 
   const { goal, renting, user } = await createLanguageLearner({ withSubscription: true });
@@ -337,6 +341,7 @@ test("the durable deadline hangs up an established WebRTC peer when the client n
   });
 
   const page = await openAs(browser, user);
+  await quietMicrophone(page);
   owned.page = page;
   owned.conversationId = call.id;
   const sessions = () => readSessions({ bridge, request });
@@ -381,12 +386,12 @@ test("the durable deadline hangs up an established WebRTC peer when the client n
   await peer.setContent("<button>Start test peer</button>");
   await peer.getByRole("button", { name: "Start test peer" }).click();
   await page.goto(`/conversation/${call.id}`);
-  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
   const first = await reconnectingCheckpoint({ callId: call.id, userId: user.id });
   await page.clock.install();
   // A moment ahead: the browser's clock runs from the install, and pausing it behind its time throws.
   await page.clock.pauseAt(new Date(Date.now() + 1000));
-  await page.getByRole("button", { name: "Start the call" }).click();
+  await page.getByRole("button", { name: "Call Linda" }).click();
   await expect.poll(offeredSession).toBeDefined();
   const session = await offeredSession();
 

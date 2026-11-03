@@ -15,7 +15,13 @@ type TranscriptFragment = {
   startMs: number;
 };
 
-/** Fragments carry their own spaces, so they're appended exactly as received. */
+/** A pause this long between two fragments starts a new sentence. */
+const UTTERANCE_PAUSE_MS = 1000;
+
+/**
+ * Fragments carry their own spaces, so they're appended as received, except the first of words
+ * said after a pause, which comes without one.
+ */
 export function addTranscriptFragment(
   turns: readonly TranscriptTurn[],
   fragment: TranscriptFragment,
@@ -23,10 +29,10 @@ export function addTranscriptFragment(
   const last = turns.at(-1);
 
   if (last?.speaker === fragment.speaker && last.startMs !== null) {
-    return [
-      ...turns.slice(0, -1),
-      { ...last, endMs: fragment.endMs, text: `${last.text}${fragment.delta}` },
-    ];
+    const paused = last.endMs !== null && fragment.startMs - last.endMs >= UTTERANCE_PAUSE_MS;
+    const spaced = /\s$/u.test(last.text) || /^\s/u.test(fragment.delta);
+    const text = `${last.text}${paused && !spaced ? " " : ""}${fragment.delta}`;
+    return [...turns.slice(0, -1), { ...last, endMs: fragment.endMs, text }];
   }
 
   return [

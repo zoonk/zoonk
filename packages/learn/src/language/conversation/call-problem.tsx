@@ -10,7 +10,7 @@ import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { CallLimitMessage } from "./call-limit-message";
 import { CallOffMessage } from "./conversation-parts";
-import { type LiveCallError } from "./use-live-call";
+import { type LiveCallError } from "./live-call-lifecycle";
 
 type CallProblemKind = LiveCallError | "takenOver";
 
@@ -191,47 +191,47 @@ function SavingLine({ grading }: { grading: boolean }) {
     : t("Writing your feedback…");
 }
 
-export function SavingCall({
+/** The live screen keeps its transcript while the call saves, so the end never reads as a drop. */
+export function CallEndedStatus({
   grading,
   onRetry,
   state,
-  title,
 }: {
   grading: boolean;
   onRetry: () => void;
   state: "closing" | "failed" | "saving";
-  title: string;
 }) {
   const t = useExtracted();
 
   if (state === "saving") {
     return (
-      <TaskFrame exitHref={null} headerTitle={title}>
-        <p className="text-muted-foreground flex items-start gap-2 py-6 text-pretty" role="status">
-          <Spinner aria-hidden="true" className="mt-1 shrink-0" />
-          <span>
+      <div className="flex min-h-11 items-center gap-3" data-slot="call-ended">
+        <span
+          aria-hidden="true"
+          className="bg-secondary grid size-8 shrink-0 place-items-center rounded-full"
+        >
+          <Spinner className="size-4" />
+        </span>
+        <p className="flex min-w-0 flex-col text-pretty">
+          <span className="text-sm leading-5 font-medium">{t("Call ended")}</span>
+          <span className="text-muted-foreground text-[0.8125rem] leading-snug">
             <SavingLine grading={grading} />
           </span>
         </p>
-      </TaskFrame>
+      </div>
     );
   }
 
   return (
-    <TaskFrame
-      exitHref={null}
-      footer={
-        <TaskActions>
-          <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
-        </TaskActions>
-      }
-      headerTitle={title}
-    >
-      <p className="py-6 text-pretty" role="alert">
+    <>
+      <p className="text-sm text-pretty" role="alert">
         {state === "closing"
           ? t("The call is still closing. Try again in a moment.")
           : t("We couldn't save the call.")}
       </p>
-    </TaskFrame>
+      <TaskActions>
+        <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
+      </TaskActions>
+    </>
   );
 }

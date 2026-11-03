@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { type SpeechSample, sampleSpeech } from "./speech-activity";
 
 function stopTracks(stream: MediaStream) {
   for (const track of stream.getTracks()) {
@@ -8,59 +9,90 @@ function stopTracks(stream: MediaStream) {
   }
 }
 
-/**
- * Silence when the microphone is blocked: a GPT-Live session only moves on while audio streams in.
- */
-export async function openCallAudio(): Promise<{
-  blocked: boolean;
-  stop: () => void;
-  stream: MediaStream;
-}> {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    return { blocked: false, stop: () => stopTracks(stream), stream };
-  } catch {
-    const context = new AudioContext();
-    const silence = context.createConstantSource();
-    const destination = context.createMediaStreamDestination();
-    silence.offset.value = 0;
-    silence.connect(destination);
-    silence.start();
-
-    return {
-      blocked: true,
-      // Called on fail, end and close; an AudioContext closes only once.
-      stop: () => {
-        stopTracks(destination.stream);
-
-        if (context.state !== "closed") {
-          void context.close().catch(() => null);
-        }
-      },
-      stream: destination.stream,
-    };
+/** Called on fail, end and close; an AudioContext closes only once. */
+function closeContext(context: AudioContext) {
+  if (context.state !== "closed") {
+    void context.close().catch(() => null);
   }
 }
 
-export type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
+export type CallAudio = {
+  blocked: boolean;
+  /** Reports whether the learner is speaking until the audio stops. */
+  hear: (onSample: (sample: SpeechSample) => void) => void;
+  stop: () => void;
+  stream: MediaStream;
+};
 
 /**
- * Safari on iOS asks for the microphone only while a tap is active, so the tap opens it before the
- * call's screen exists. It's taken once.
+ * Null when the microphone is blocked. Call it in a tap: Safari on iOS asks for the microphone,
+ * and starts the context that hears the learner, only during one.
  */
-export function openCallAudioInTap() {
-  const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
+export async function openCallAudio(): Promise<CallAudio | null> {
+  const context = new AudioContext();
+  void context.resume().catch(() => null);
 
-  const take = () => {
-    const { audio } = held;
-    held.audio = null;
-    return audio;
-  };
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const hearing: (() => void)[] = [];
 
-  return { release: () => void take()?.then((audio) => audio.stop()), take };
+    return {
+      blocked: false,
+      hear: (onSample) => {
+        hearing.push(sampleSpeech({ context, onSample, stream }));
+      },
+      stop: () => {
+        for (const stopHearing of hearing.splice(0)) {
+          stopHearing();
+        }
+
+        stopTracks(stream);
+        closeContext(context);
+      },
+      stream,
+    };
+  } catch {
+    closeContext(context);
+    return null;
+  }
 }
 
-export type TappedCallAudio = ReturnType<typeof openCallAudioInTap>;
+/** Silence for a call made by typing: a GPT-Live session only moves on while audio streams in. */
+export function openTypedCallAudio(): CallAudio {
+  const context = new AudioContext();
+  const silence = context.createConstantSource();
+  const destination = context.createMediaStreamDestination();
+  silence.offset.value = 0;
+  silence.connect(destination);
+  silence.start();
+
+  return {
+    blocked: true,
+    hear: () => {
+      // A blocked microphone never counts as speaking.
+    },
+    stop: () => {
+      stopTracks(destination.stream);
+      closeContext(context);
+    },
+    stream: destination.stream,
+  };
+}
+
+/** The intro's tap opens the audio and hands it to the call, which takes it once. */
+export function holdCallAudio(audio: CallAudio) {
+  const held: { audio: CallAudio | null } = { audio };
+
+  const take = () => {
+    const taken = held.audio;
+    held.audio = null;
+    return taken;
+  };
+
+  return { release: () => take()?.stop(), take };
+}
+
+export type TappedCallAudio = ReturnType<typeof holdCallAudio>;
 
 /** It must not close when the session is set: GPT-Live needs the audio before it says a word. */
 export function useCallMicrophone() {

@@ -3,15 +3,22 @@
 import {
   type ConversationTurn,
   type LanguageConversationView,
+  type LanguageConversationObjectiveCheck as ObjectiveCheck,
 } from "@zoonk/core/language/conversations/contract";
-import { formatObjectivesProgressCue } from "@zoonk/core/language/conversations/live-call-cues";
-import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { sendLiveCallCue } from "./live-call-commands";
-import { type LiveCallSession } from "./live-call-session";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type LiveCallCue } from "./live-call-script";
 
 const REPLY_SETTLED_MS = 1500;
 
-type CheckObjectives = (turns: ConversationTurn[]) => Promise<string[] | null>;
+/** What a check found, for the transcript as it was at `snapshotAt`. */
+export type ObjectiveCheckResult = {
+  allMet: boolean;
+  goodbye: boolean;
+  progress: LiveCallCue | null;
+  snapshotAt: number;
+};
+
+type CheckObjectives = (turns: ConversationTurn[]) => Promise<ObjectiveCheck | null>;
 
 const skipObjectiveChecks = () => Promise.resolve(null);
 
@@ -19,12 +26,12 @@ function useObjectiveChecks({
   checkObjectives,
   conversation,
   getTurns,
-  onChange,
+  onChecked,
 }: {
   checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
-  onChange: (met: string[]) => void;
+  onChecked: (check: ObjectiveCheck & { snapshotAt: number }) => void;
 }) {
   const [metLabels, setMetLabels] = useState(() =>
     conversation.objectives
@@ -48,18 +55,22 @@ function useObjectiveChecks({
 
     do {
       again.current = false;
+      const snapshotAt = Date.now();
       // oxlint-disable-next-line no-await-in-loop -- One check at a time, then one more for turns that ended meanwhile.
       const found = await checkObjectives(getTurns()).catch(() => null);
 
-      if (found && found.length > met.current.length) {
-        met.current = found;
-        setMetLabels(found);
-        onChange(found);
+      if (found) {
+        if (found.objectivesMet.length > met.current.length) {
+          met.current = found.objectivesMet;
+          setMetLabels(found.objectivesMet);
+        }
+
+        onChecked({ ...found, objectivesMet: met.current, snapshotAt });
       }
     } while (again.current);
 
     running.current = false;
-  }, [checkObjectives, getTurns, onChange]);
+  }, [checkObjectives, getTurns, onChecked]);
 
   const clearSettle = useCallback(() => {
     if (settle.current) {
@@ -95,31 +106,26 @@ export function useCallObjectives({
   checkObjectives,
   conversation,
   getTurns,
-  sessionRef,
+  onResult,
 }: {
   checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
-  sessionRef: RefObject<LiveCallSession | null>;
+  onResult: (result: ObjectiveCheckResult) => void;
 }) {
   const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
 
-  const onChange = useCallback(
-    (met: string[]) => {
-      if (sessionRef.current) {
-        sendLiveCallCue({
-          channel: "thinking",
-          content: formatObjectivesProgressCue({
-            met,
-            open: labels.filter((label) => !met.includes(label)),
-          }),
-          session: sessionRef.current,
-        });
-      }
-    },
-    [labels, sessionRef],
+  const onChecked = useCallback(
+    ({ goodbye, objectivesMet, progress, snapshotAt }: ObjectiveCheck & { snapshotAt: number }) =>
+      onResult({
+        allMet: labels.length > 0 && labels.every((label) => objectivesMet.includes(label)),
+        goodbye,
+        progress,
+        snapshotAt,
+      }),
+    [labels, onResult],
   );
 
   const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
-  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
+  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChecked });
 }

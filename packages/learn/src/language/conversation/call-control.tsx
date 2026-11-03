@@ -1,40 +1,239 @@
 "use client";
 
+import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LifeBuoyIcon, MicIcon, MicOffIcon, PhoneOffIcon } from "lucide-react";
+import {
+  KeyboardIcon,
+  LifeBuoyIcon,
+  MicIcon,
+  MicOffIcon,
+  PhoneIcon,
+  PhoneOffIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
+import { CharacterAvatar } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
-function useCallStatus({ call, name }: { call: LiveCall; name: string }) {
-  const t = useExtracted();
+const MARK_CLASS = "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
 
-  if (call.phase === "connecting" || call.phase === "idle") {
-    return call.reconnecting ? t("Reconnecting…") : t("Calling…");
+/** The calling mark's ring turns while the call rings, and holds still under reduced motion. */
+function CallingMark() {
+  return (
+    <span aria-hidden="true" className={cn(MARK_CLASS, "bg-secondary relative")}>
+      <PhoneIcon />
+      <span className="border-foreground/15 border-t-foreground/60 absolute inset-0 animate-spin rounded-full border-[1.5px] motion-reduce:animate-none" />
+    </span>
+  );
+}
+
+function MicMark({ listening }: { listening: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        MARK_CLASS,
+        "bg-primary text-primary-foreground ring-offset-background ring-[1.5px] ring-transparent ring-offset-2 transition-shadow duration-150 motion-reduce:transition-none",
+        listening && "ring-foreground/40",
+      )}
+    >
+      <MicIcon />
+    </span>
+  );
+}
+
+function QuietMark({ icon }: { icon: React.ReactNode }) {
+  return (
+    <span aria-hidden="true" className={cn(MARK_CLASS, "bg-secondary text-secondary-foreground")}>
+      {icon}
+    </span>
+  );
+}
+
+/** What the line under "Your turn" says once the call started ending, until the goodbye. */
+function useWrapUpLine({ call, name }: { call: LiveCall; name: string }) {
+  const t = useExtracted();
+  const reason = call.turn?.saidGoodbye ? null : call.turn?.reason;
+
+  if (reason === "done") {
+    return t("All goals done. {name} will wrap up after your answer.", { name });
   }
 
-  if (call.micBlocked) {
-    return t("Microphone off");
+  if (reason !== "time") {
+    return null;
+  }
+
+  if (call.endsAtLimit === "day") {
+    return t("Your call time for today is almost up. {name} will say goodbye after your answer.", {
+      name,
+    });
+  }
+
+  if (call.endsAtLimit === "month") {
+    return t(
+      "Your call time for this month is almost up. {name} will say goodbye after your answer.",
+      { name },
+    );
+  }
+
+  return t("Almost time. {name} will say goodbye after your answer.", { name });
+}
+
+type TurnState = { detail: string | null; mark: React.ReactNode; title: string };
+
+function useYourTurnDetail({
+  call,
+  conversation,
+}: {
+  call: LiveCall;
+  conversation: LanguageConversationView;
+}) {
+  const t = useExtracted();
+  const { name } = conversation.character;
+
+  const next = conversation.examTask
+    ? undefined
+    : conversation.objectives.find((objective) => !call.metLabels.includes(objective.label));
+
+  if (call.turn?.quietHint) {
+    return t("Take your time.");
+  }
+
+  if (!call.turn?.spokeOutLoud && !call.micBlocked) {
+    return t("Answer {name} out loud.", { name });
+  }
+
+  return next ? t("Tip: {goal}", { goal: next.description }) : null;
+}
+
+function useTurnState({
+  call,
+  conversation,
+}: {
+  call: LiveCall;
+  conversation: LanguageConversationView;
+}): TurnState {
+  const t = useExtracted();
+  const { name } = conversation.character;
+  const yourTurn = useYourTurnDetail({ call, conversation });
+  const { turn } = call;
+
+  if (call.reconnecting && call.phase !== "live") {
+    return { detail: null, mark: <CallingMark />, title: t("Reconnecting…") };
+  }
+
+  if (!turn) {
+    return {
+      detail: t("{name} answers first.", { name }),
+      mark: <CallingMark />,
+      title: t("Calling {name}…", { name }),
+    };
+  }
+
+  if (turn.saidGoodbye) {
+    return {
+      detail: null,
+      mark: <CharacterAvatar name={name} talking />,
+      title: t("{name} is saying goodbye", { name }),
+    };
+  }
+
+  if (turn.characterSpeaking) {
+    const firstTurn = !call.turns.some((item) => item.speaker === "learner");
+
+    return {
+      detail: firstTurn ? t("Listen, then answer.") : null,
+      mark: <CharacterAvatar name={name} talking />,
+      title: t("{name} is talking", { name }),
+    };
   }
 
   if (call.muted) {
-    return t("Muted");
+    return {
+      detail: t("Unmute to answer out loud, or type your reply."),
+      mark: <QuietMark icon={<MicOffIcon />} />,
+      title: t("Muted"),
+    };
   }
 
-  return call.isPlaying
-    ? t("{name} is talking…", { name })
-    : t({
-        description: "Call status while Zoonk listens to the learner speak.",
+  if (call.micBlocked) {
+    return {
+      detail: t("Type your reply below."),
+      mark: <QuietMark icon={<KeyboardIcon />} />,
+      title: t("Your turn"),
+    };
+  }
+
+  if (turn.learnerSpeaking) {
+    return {
+      detail: null,
+      mark: <MicMark listening />,
+      title: t({
+        description: "Call status while Zoonk hears the learner speak.",
         message: "Listening…",
-      });
+      }),
+    };
+  }
+
+  return { detail: yourTurn, mark: <MicMark listening={false} />, title: t("Your turn") };
 }
 
-export function CallStatus({ call, name }: { call: LiveCall; name: string }) {
-  const status = useCallStatus({ call, name });
+/** Plain text, read on demand: its flips are audible in the call already. */
+export function CallTurn({
+  call,
+  conversation,
+}: {
+  call: LiveCall;
+  conversation: LanguageConversationView;
+}) {
+  const state = useTurnState({ call, conversation });
+  const wrapUp = useWrapUpLine({ call, name: conversation.character.name });
+  const detail = wrapUp ?? state.detail;
 
   return (
-    <p aria-live="polite" className="text-muted-foreground text-[0.8125rem]" role="status">
-      {status}
+    <div className="flex min-h-11 items-center gap-3" data-slot="call-turn">
+      {state.mark}
+      <p className="flex min-w-0 flex-col text-pretty">
+        <span className="text-sm leading-5 font-medium">{state.title}</span>
+        {detail && (
+          <span className="text-muted-foreground text-[0.8125rem] leading-snug">{detail}</span>
+        )}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * The one live region of the call: the wrap-up line, mute, reconnecting and the end. The
+ * transcript isn't live, so a screen reader doesn't talk over the character into the microphone.
+ */
+export function CallAnnouncer({
+  call,
+  ended,
+  name,
+}: {
+  call: LiveCall;
+  ended: boolean;
+  name: string;
+}) {
+  const t = useExtracted();
+  const wrapUp = useWrapUpLine({ call, name });
+
+  const announcement = (() => {
+    if (ended) {
+      return t("Call ended. Writing your feedback…");
+    }
+
+    if (call.reconnecting && call.phase !== "live") {
+      return t("Reconnecting…");
+    }
+
+    return call.muted ? t("Muted") : wrapUp;
+  })();
+
+  return (
+    <p aria-atomic="true" aria-live="polite" className="sr-only" role="status">
+      {announcement}
     </p>
   );
 }
@@ -79,7 +278,7 @@ export function CallControls({
         variant="outline"
       >
         <PhoneOffIcon aria-hidden="true" />
-        {t("End")}
+        {call.phase === "live" ? t("End") : t("Cancel")}
       </Button>
     </div>
   );

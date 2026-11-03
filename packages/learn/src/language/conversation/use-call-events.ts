@@ -1,13 +1,14 @@
 "use client";
 
-import { LIVE_CALL_NO_BACKEND_CUE } from "@zoonk/core/language/conversations/live-call-cues";
+import { getNumber } from "@zoonk/utils/json";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 import { type RefObject, useCallback } from "react";
 import { sendLiveCallCue } from "./live-call-commands";
+import { type CallEndingEvent } from "./live-call-ending";
 import { type LiveCallSession } from "./live-call-session";
 import { type TranscriptTurn, addTranscriptFragment } from "./live-call-transcript";
 import { type LiveCallPhase } from "./use-call-controls";
-import { type CallLength } from "./use-call-cues";
+import { type CallLength } from "./use-call-ending";
 
 function movesCall({ event, phase }: { event: RealtimeServerEvent; phase: LiveCallPhase }) {
   if (phase === "live") {
@@ -20,45 +21,47 @@ function movesCall({ event, phase }: { event: RealtimeServerEvent; phase: LiveCa
 }
 
 export function useCallEvents({
+  begin,
+  dispatch,
   hangUp,
   onCharacterTurn,
   onClosedEarly,
+  onDelegation,
   onLearnerTurn,
-  opening,
   phaseRef,
   sendWaitingReplies,
   sessionRef,
   setPhase,
-  startClock,
   turnsRef,
   updateTurns,
 }: {
+  begin: (session: LiveCallSession, length: CallLength) => void;
+  dispatch: (event: CallEndingEvent) => void;
   hangUp: () => void;
-  onCharacterTurn: () => void;
+  onCharacterTurn: (at: number) => void;
   onClosedEarly: () => void;
+  onDelegation: () => void;
   onLearnerTurn: () => void;
-  opening: { cancel: () => void; open: (session: LiveCallSession) => void };
   phaseRef: RefObject<LiveCallPhase>;
-  sendWaitingReplies: (session: LiveCallSession) => void;
+  sendWaitingReplies: (session: LiveCallSession, length: CallLength) => void;
   sessionRef: RefObject<LiveCallSession | null>;
   setPhase: (phase: LiveCallPhase) => void;
-  startClock: (length: CallLength) => void;
   turnsRef: RefObject<TranscriptTurn[]>;
   updateTurns: (next: TranscriptTurn[]) => void;
 }) {
   return useCallback(
     (created: LiveCallSession, event: RealtimeServerEvent, length: CallLength) => {
       const phase = phaseRef.current;
+      const at = Date.now();
 
       if (sessionRef.current !== created || !movesCall({ event, phase })) {
         return;
       }
 
       if (event.type === "session-started" && phase === "connecting") {
-        startClock(length);
         setPhase("live");
-        opening.open(created);
-        sendWaitingReplies(created);
+        begin(created, length);
+        sendWaitingReplies(created, length);
       }
 
       if (event.type === "transcript-fragment") {
@@ -68,16 +71,27 @@ export function useCallEvents({
 
         if (speaker === "learner") {
           onLearnerTurn();
+          dispatch({ at, type: "learnerHeard" });
         } else {
-          opening.cancel();
-          onCharacterTurn();
+          onCharacterTurn(at);
+          dispatch({ at, startMs, type: "characterSpoke" });
         }
       }
 
+      if (event.type === "command-acknowledged" && event.clientEventId) {
+        dispatch({
+          at,
+          id: event.clientEventId,
+          startMs: getNumber(event.raw, "start_ms"),
+          type: "acknowledged",
+        });
+      }
+
       if (event.type === "delegation-created") {
+        onDelegation();
+
         sendLiveCallCue({
-          channel: "thinking",
-          content: LIVE_CALL_NO_BACKEND_CUE,
+          cue: length.script.cues.noBackend,
           delegationId: event.delegationId,
           session: created,
         });
@@ -92,16 +106,17 @@ export function useCallEvents({
       }
     },
     [
+      begin,
+      dispatch,
       hangUp,
       onCharacterTurn,
       onClosedEarly,
+      onDelegation,
       onLearnerTurn,
-      opening,
       phaseRef,
       sendWaitingReplies,
       sessionRef,
       setPhase,
-      startClock,
       turnsRef,
       updateTurns,
     ],

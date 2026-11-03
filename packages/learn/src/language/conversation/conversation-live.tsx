@@ -4,23 +4,36 @@ import { type LanguageConversationView } from "@zoonk/core/language/conversation
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { LearnerBubble } from "@zoonk/ui/components/message";
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+  useMessageScroller,
+} from "@zoonk/ui/components/message-scroller";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ClockIcon, LightbulbIcon, SendIcon } from "lucide-react";
+import { ArrowDownIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
-import { LIST_GROUP_CLASS } from "../../_components/list-group";
-import { PageSectionTitle } from "../../_components/page";
-import { TaskHeaderTitle } from "../../_components/task-header";
+import { useState } from "react";
+import { TaskHeaderTitle, useTaskAsideShown } from "../../_components/task-header";
+import { TaskBody } from "../../_components/task-layout";
 import { formatClock } from "../../_utils/clock";
 import { TaskFrame } from "../../shell/task-frame";
 import { useTaskRoleNoun } from "../exam-speaking/exam-speaking-labels";
-import { CallControls, CallStatus } from "./call-control";
-import { CallNote } from "./call-note";
+import { CallAnnouncer, CallControls, CallTurn } from "./call-control";
 import { CallObjectives, countMetGoals } from "./call-objectives";
+import { Phrases, PhrasesSheet } from "./call-phrases";
+import { CallEndedStatus } from "./call-problem";
 import { CharacterRow } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
 const MS_PER_SECOND = 1000;
+const PERCENT = 100;
+const NO_BREAK_SPACE = "\u00A0";
+
+/** How the screen's last part reads once the call ended: saving, or a save to try again. */
+export type CallEnding = { onRetry: () => void; state: "closing" | "failed" | "saving" };
 
 function Transcript({
   call,
@@ -32,7 +45,11 @@ function Transcript({
   const t = useExtracted();
 
   return (
-    <div aria-label={t("Conversation")} className="flex flex-col gap-3" role="log">
+    <MessageScrollerContent
+      aria-label={t("Conversation")}
+      aria-live="off"
+      className="h-auto min-h-0 gap-3"
+    >
       {call.turns.map((turn, index) =>
         turn.speaker === "learner" ? (
           <LearnerBubble
@@ -55,13 +72,15 @@ function Transcript({
           </p>
         ),
       )}
-    </div>
+    </MessageScrollerContent>
   );
 }
 
+/** It never takes focus on its own: speaking comes first, and a phone's keyboard would cover the call. */
 function TypedReply({ call }: { call: LiveCall }) {
   const t = useExtracted();
   const [text, setText] = useState("");
+  const { scrollToEnd } = useMessageScroller();
   const canSend = call.phase === "connecting" || call.phase === "live";
 
   const send = () => {
@@ -84,7 +103,12 @@ function TypedReply({ call }: { call: LiveCall }) {
       <Input
         aria-label={t("Type your reply")}
         disabled={!canSend}
-        onChange={(event) => setText(event.target.value)}
+        onChange={(event) => {
+          setText(event.target.value);
+          call.onTyping();
+        }}
+        // A phone's keyboard shrinks the view: the newest line stays in sight above it.
+        onFocus={() => scrollToEnd({ behavior: "instant" })}
         placeholder={t("Or type your reply")}
         value={text}
       />
@@ -96,25 +120,46 @@ function TypedReply({ call }: { call: LiveCall }) {
   );
 }
 
-function Phrases({ conversation }: { conversation: LanguageConversationView }) {
+function CallBody({
+  call,
+  conversation,
+}: {
+  call: LiveCall;
+  conversation: LanguageConversationView;
+}) {
   const t = useExtracted();
-  const titleId = useId();
+  const roleNoun = useTaskRoleNoun();
+  const { character, examTask } = conversation;
 
   return (
-    <div className="flex flex-col gap-2">
-      <PageSectionTitle id={titleId}>{t("Phrases you can use")}</PageSectionTitle>
-      <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
-        {conversation.hints.map((hint) => (
-          <li
-            className="py-2.5 text-[0.9375rem] leading-snug text-pretty"
-            key={hint}
-            lang={conversation.targetLanguage}
-          >
-            {hint}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <MessageScroller>
+      {/* The scroller keeps the newest line in place; the browser's own anchoring would move it twice. */}
+      <MessageScrollerViewport
+        aria-label={t("Call")}
+        className="scroll-smooth [overflow-anchor:none] motion-reduce:scroll-auto"
+      >
+        <TaskBody>
+          <CharacterRow
+            detail={
+              examTask
+                ? roleNoun(examTask.task.role)
+                : t("{role} · {place}", { place: character.place, role: character.role })
+            }
+            name={character.name}
+            talking={Boolean(call.turn?.characterSpeaking)}
+          />
+
+          <div className="lg:hidden">
+            <CallObjectives conversation={conversation} met={call.metLabels} />
+          </div>
+
+          <Transcript call={call} conversation={conversation} />
+        </TaskBody>
+      </MessageScrollerViewport>
+      <MessageScrollerButton aria-label={t("Scroll to latest")}>
+        <ArrowDownIcon aria-hidden="true" />
+      </MessageScrollerButton>
+    </MessageScroller>
   );
 }
 
@@ -130,121 +175,107 @@ function LiveDot({ live }: { live: boolean }) {
   );
 }
 
-function CallTip({
-  limitNear,
-  next,
-}: {
-  limitNear: LiveCall["limitNear"];
-  next: LanguageConversationView["objectives"][number] | undefined;
-}) {
+function useCallProgress(call: LiveCall) {
   const t = useExtracted();
+  const talkSeconds = call.talkSeconds ?? 0;
+  const value = talkSeconds > 0 ? (call.elapsedSeconds / talkSeconds) * PERCENT : 0;
 
-  if (limitNear) {
-    return (
-      <CallNote role="status">
-        <ClockIcon aria-hidden="true" />
-        <span>
-          {limitNear === "month"
-            ? t("Your call time for this month is almost up.")
-            : t("Your call time for today is almost up.")}
-        </span>
-      </CallNote>
-    );
-  }
-
-  return next ? (
-    <CallNote>
-      <LightbulbIcon aria-hidden="true" />
-      <span>{t("Tip: {goal}", { goal: next.description })}</span>
-    </CallNote>
-  ) : null;
+  return { label: t("Call time"), value: call.turn?.reason ? PERCENT : value };
 }
 
 export function ConversationLive({
   call,
   conversation,
+  ending = null,
+  grading,
   onEnd,
   onHelp,
   usedHelp,
 }: {
   call: LiveCall;
   conversation: LanguageConversationView;
+  ending?: CallEnding | null;
+  grading: boolean;
   onEnd: () => void;
   onHelp: () => void;
   usedHelp: boolean;
 }) {
   const t = useExtracted();
-  const roleNoun = useTaskRoleNoun();
+  const asideShown = useTaskAsideShown();
+  const [phrasesOpen, setPhrasesOpen] = useState(false);
+  const progress = useCallProgress(call);
   const { character, examTask } = conversation;
+  const started = call.turn !== null;
 
-  const next = examTask
-    ? undefined
-    : conversation.objectives.find((objective) => !call.metLabels.includes(objective.label));
+  const help = () => {
+    onHelp();
 
-  const clock = t("{elapsed} / {limit}", {
-    elapsed: formatClock(call.elapsedSeconds * MS_PER_SECOND),
-    limit: formatClock(call.limitSeconds * MS_PER_SECOND),
-  });
+    if (!asideShown) {
+      setPhrasesOpen(true);
+    }
+  };
 
   return (
-    <TaskFrame
-      aside={{
-        children: (
-          <>
-            <CallObjectives conversation={conversation} met={call.metLabels} titled={false} />
-            <CallTip limitNear={call.limitNear} next={next} />
-            {usedHelp && <Phrases conversation={conversation} />}
-          </>
-        ),
-        label: t("Call goals and phrases"),
-        meta: examTask
-          ? undefined
-          : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
-        title: examTask ? undefined : t("Goals of the call"),
-      }}
-      exitHref={null}
-      footer={
-        <div className="lg:max-w-column flex w-full flex-col gap-2 lg:mx-auto lg:px-4">
-          <TypedReply call={call} />
-          <CallControls call={call} onEnd={onEnd} onHelp={onHelp} />
-        </div>
-      }
-      headerTitle={
-        <TaskHeaderTitle
-          announce={false}
-          detail={
+    <MessageScrollerProvider autoScroll>
+      <TaskFrame
+        aside={{
+          children: (
             <>
-              <LiveDot live={call.phase === "live"} />
-              {clock}
+              <CallObjectives conversation={conversation} met={call.metLabels} titled={false} />
+              {usedHelp && <Phrases conversation={conversation} />}
             </>
-          }
-          title={conversation.title}
-        />
-      }
-    >
-      <CharacterRow
-        detail={
-          examTask
-            ? roleNoun(examTask.task.role)
-            : t("{role} · {place}", { place: character.place, role: character.role })
+          ),
+          label: t("Call goals and phrases"),
+          meta: examTask
+            ? undefined
+            : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
+          title: examTask ? undefined : t("Goals of the call"),
+        }}
+        exitHref={null}
+        fit="always"
+        footer={
+          <div className="lg:max-w-column flex w-full flex-col gap-3 lg:mx-auto lg:px-4">
+            <CallAnnouncer call={call} ended={ending?.state === "saving"} name={character.name} />
+            {ending ? (
+              <CallEndedStatus grading={grading} onRetry={ending.onRetry} state={ending.state} />
+            ) : (
+              <>
+                <CallTurn call={call} conversation={conversation} />
+                <TypedReply call={call} />
+                <CallControls call={call} onEnd={onEnd} onHelp={help} />
+              </>
+            )}
+          </div>
         }
-        name={character.name}
-        talking={call.isPlaying}
-      />
+        headerTitle={
+          <TaskHeaderTitle
+            announce={false}
+            // The clock's line is kept while the call rings, so nothing moves when it connects.
+            detail={
+              started ? (
+                <>
+                  <LiveDot live={call.phase === "live"} />
+                  {formatClock(call.elapsedSeconds * MS_PER_SECOND)}
+                </>
+              ) : (
+                NO_BREAK_SPACE
+              )
+            }
+            title={conversation.title}
+          />
+        }
+        progress={progress}
+      >
+        <CallBody call={call} conversation={conversation} />
+      </TaskFrame>
 
-      <div className="lg:hidden">
-        <CallObjectives conversation={conversation} met={call.metLabels} />
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <Transcript call={call} conversation={conversation} />
-        <CallStatus call={call} name={character.name} />
-      </div>
-
-      <div className="flex flex-col gap-6 lg:hidden">
-        <CallTip limitNear={call.limitNear} next={next} />
-        {usedHelp && <Phrases conversation={conversation} />}
-      </div>
-    </TaskFrame>
+      {!asideShown && (
+        <PhrasesSheet
+          conversation={conversation}
+          onOpenChange={setPhrasesOpen}
+          open={phrasesOpen}
+        />
+      )}
+    </MessageScrollerProvider>
   );
 }

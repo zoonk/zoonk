@@ -12,7 +12,7 @@ import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
 import { ExamSpeakingResult } from "../exam-speaking/exam-speaking-result";
-import { CallProblem, SavingCall } from "./call-problem";
+import { CallProblem } from "./call-problem";
 import { ConversationIntro } from "./conversation-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
@@ -115,13 +115,19 @@ function LiveCallRun({
       }
 
       autoStarted.current = true;
-      void start(startWith === "takeover");
+      void start({ takeover: startWith === "takeover" });
     });
 
     return () => replaced.abort();
   }, [start, startWith]);
 
-  const end = call.phase === "connecting" ? () => onRestart("intro") : call.hangUp;
+  const end =
+    call.phase === "connecting"
+      ? () => {
+          call.cancel();
+          onRestart("intro");
+        }
+      : call.hangUp;
 
   const locked = conversation.locked || call.error === "plusRequired";
 
@@ -131,7 +137,7 @@ function LiveCallRun({
         conversation={conversation}
         exitHref={hrefs.exit}
         locked={locked}
-        onStart={() => void start()}
+        onStart={(audio) => void start({ audio })}
       />
     );
   }
@@ -148,18 +154,9 @@ function LiveCallRun({
     return <CallProblem {...problem} error={saving} limit={null} />;
   }
 
-  if (saving || call.phase === "ended") {
-    return (
-      <SavingCall
-        grading={conversation.kind === "speakingMock" || conversation.examTask !== null}
-        onRetry={() => void save()}
-        state={saving ?? "saving"}
-        title={title}
-      />
-    );
-  }
+  const ended = saving || call.phase === "ended";
 
-  if (call.phase === "failed") {
+  if (!ended && call.phase === "failed") {
     return <CallProblem {...problem} error={call.error} limit={call.limit} />;
   }
 
@@ -167,6 +164,8 @@ function LiveCallRun({
     <ConversationLive
       call={call}
       conversation={conversation}
+      ending={ended ? { onRetry: () => void save(), state: saving ?? "saving" } : null}
+      grading={conversation.kind === "speakingMock" || conversation.examTask !== null}
       onEnd={end}
       onHelp={() => setUsedHelp(true)}
       usedHelp={usedHelp}

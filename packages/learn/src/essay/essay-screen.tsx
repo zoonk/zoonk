@@ -214,7 +214,7 @@ function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writ
       }
       confirmExit={confirmExit}
       exitHref={hrefs.exit}
-      fit
+      fit="lg"
       footer={<EssayWriteFooter writer={writer} />}
       headerTitle={<TaskHeaderTitle title={label} />}
     >
