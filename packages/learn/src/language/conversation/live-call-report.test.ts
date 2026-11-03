@@ -88,6 +88,18 @@ describe(summarizeReplyGaps, () => {
     ).toMatchObject({ reply_gap_max_ms: 900, unanswered_turns: 0 });
   });
 
+  it("lets a cue's answer said over the learner end its hold on their reply", () => {
+    expect(
+      play([
+        { type: "cue" },
+        ...turn(20_000, 0),
+        { at: 20_100, type: "character" },
+        ...turn(22_000, 1900),
+        { at: 26_000, type: "character" },
+      ]),
+    ).toMatchObject({ reply_gap_max_ms: 4000, slow_replies: 1 });
+  });
+
   it("counts a turn the hang-up cut off as unanswered", () => {
     expect(play(turn(9800))).toMatchObject({ unanswered_turns: 1 });
   });

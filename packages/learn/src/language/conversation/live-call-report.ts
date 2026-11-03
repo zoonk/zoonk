@@ -42,12 +42,9 @@ function hearVoice(gaps: ReplyGaps, at: number): ReplyGaps {
 function hearCharacter(gaps: ReplyGaps, at: number): ReplyGaps {
   const { voicedAt } = gaps;
 
-  if (voicedAt === null) {
+  // Words said over the learner don't answer them, but they do answer a cue.
+  if (voicedAt === null || at - voicedAt < OVERLAP_MS) {
     return { ...gaps, cued: false };
-  }
-
-  if (at - voicedAt < OVERLAP_MS) {
-    return gaps;
   }
 
   const answered = gaps.cued ? gaps.gaps : [...gaps.gaps, at - voicedAt];
