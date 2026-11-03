@@ -64,5 +64,5 @@ export function toConversationTurns(turns: readonly TranscriptTurn[]): Conversat
       text: turn.text.trim().slice(0, MAX_CONVERSATION_TURN_LENGTH),
     }))
     .filter((turn) => turn.text.length > 0)
-    .slice(0, MAX_CONVERSATION_TURNS);
+    .slice(-MAX_CONVERSATION_TURNS);
 }
