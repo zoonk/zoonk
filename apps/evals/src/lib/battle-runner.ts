@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { toError } from "@zoonk/utils/error";
 import { logError, logInfo } from "@zoonk/utils/logger";
-import { getBattleLeaderboard } from "./battle-loader";
+import { buildBattleLeaderboard } from "./battle-loader";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { generateBattleRankings } from "./battle-score";
 import { canJudge } from "./models";
@@ -26,7 +26,7 @@ import {
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
-const BATTLE_JUDGES_CONFIG: readonly string[] = [
+export const BATTLE_JUDGES: readonly string[] = [
   "anthropic/claude-opus-5.5",
   "google/gemini-4-argon",
   "openai/gpt-6-astra",
@@ -87,6 +87,19 @@ async function loadExistingMatchup(
   }
 }
 
+/** So regenerated outputs get judged again instead of reusing the old outputs' rankings. */
+export async function removeBattleMatchups({
+  taskId,
+  testCaseIds,
+}: {
+  taskId: string;
+  testCaseIds: string[];
+}): Promise<void> {
+  await Promise.all(
+    testCaseIds.map((testCaseId) => fs.rm(getMatchupFilePath(taskId, testCaseId), { force: true })),
+  );
+}
+
 async function saveMatchup(matchup: BattleMatchup): Promise<void> {
   await ensureBattlesDir(matchup.taskId);
   const filePath = getMatchupFilePath(matchup.taskId, matchup.testCaseId);
@@ -121,7 +134,7 @@ function getMissingJudges({
 }): string[] {
   const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
 
-  return BATTLE_JUDGES_CONFIG.filter(
+  return BATTLE_JUDGES.filter(
     (judgeId) => !existingJudges.has(judgeId) && canJudgeAny({ judgeId, modelIds }),
   );
 }
@@ -274,7 +287,7 @@ async function runBattleForTestCase({
 
   const judgesToRun = effectiveExisting
     ? getMissingJudges({ matchup: effectiveExisting, modelIds: currentModelIds })
-    : BATTLE_JUDGES_CONFIG.filter((judgeId) => canJudgeAny({ judgeId, modelIds: currentModelIds }));
+    : BATTLE_JUDGES.filter((judgeId) => canJudgeAny({ judgeId, modelIds: currentModelIds }));
 
   if (judgesToRun.length === 0 && effectiveExisting) {
     return effectiveExisting;
@@ -345,34 +358,37 @@ async function runBattleTestCase({
   return result;
 }
 
-export async function runBattleMode(task: RegisteredTask): Promise<void> {
+/**
+ * Ranks the models with outputs for every case, or exactly `modelIds` when given (the CLI's
+ * `--battle`), where a case a model failed to write is ranked without it.
+ */
+export async function runBattleMode(
+  task: RegisteredTask,
+  { modelIds }: { modelIds?: string[] } = {},
+): Promise<BattleMatchup[]> {
   if (!supportsJudgeMode(task)) {
     throw new Error(`Task ${task.id} does not support judge mode.`);
   }
 
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
-  const completeModels = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
+  const battleModels =
+    modelIds ?? (await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task }));
 
-  if (completeModels.length < 2) {
-    throw new Error(
-      `Need at least 2 models with complete outputs. Found: ${completeModels.length}`,
-    );
+  if (battleModels.length < 2) {
+    throw new Error(`Need at least 2 models with outputs. Found: ${battleModels.length}`);
   }
 
-  logInfo(`Found ${completeModels.length} models with complete outputs`);
+  logInfo(`Ranking ${battleModels.length} models`);
 
   const allOutputs = await getAllOutputsForTask(task.id);
 
-  const completeOutputs = new Map<string, ModelOutputs>();
-
-  for (const modelId of completeModels) {
-    const outputs = allOutputs.get(modelId);
-
-    if (outputs) {
-      completeOutputs.set(modelId, outputs);
-    }
-  }
+  const completeOutputs = new Map(
+    battleModels.flatMap((modelId): [string, ModelOutputs][] => {
+      const outputs = allOutputs.get(modelId);
+      return outputs ? [[modelId, outputs]] : [];
+    }),
+  );
 
   const battleResults = await Promise.allSettled(
     task.testCases.map((testCase) => runBattleTestCase({ completeOutputs, task, testCase })),
@@ -387,7 +403,8 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
     );
   }
 
-  const leaderboard = await getBattleLeaderboard(task.id);
+  const matchups = getFulfilledValues(battleResults);
+  const leaderboard = buildBattleLeaderboard({ allOutputs, matchups });
 
   logInfo("\n=== Battle Mode Complete ===");
   logInfo("Top 3 models:");
@@ -395,4 +412,6 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
   leaderboard.slice(0, 3).forEach((entry, i) => {
     logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.averageScore.toFixed(2)} average`);
   });
+
+  return matchups;
 }

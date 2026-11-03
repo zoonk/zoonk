@@ -53,6 +53,8 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.5", name: "gpt-5.5" },
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
   { id: "xiaomi/mimo-v2.6-pro", name: "mimo-v2.6-pro" },
+  { id: "moonshotai/kimi-k3.1-pro", name: "kimi-k3.1-pro" },
+  { id: "spacexai/grok-4.7", name: "grok-4.7" },
 ];
 
 const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [

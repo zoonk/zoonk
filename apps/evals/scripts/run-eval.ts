@@ -1,4 +1,6 @@
 import { parseArgs } from "node:util";
+import { buildBattleLeaderboard, sumJudgeCost } from "@/lib/battle-loader";
+import { BATTLE_JUDGES, removeBattleMatchups, runBattleMode } from "@/lib/battle-runner";
 import {
   type LanguageSummary,
   REQUIRED_LANGUAGES,
@@ -6,6 +8,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
+import { getCallCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   formatDollars,
@@ -18,10 +21,15 @@ import { meetsLatencyBudget } from "@/lib/latency";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
-import { removeModelOutputRuns } from "@/lib/output-loader";
+import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
 import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunId } from "@/lib/test-case-runs";
-import { type RegisteredTask, type TaskEvalResults, type TestCase } from "@/lib/types";
+import {
+  type BattleLeaderboardEntry,
+  type RegisteredTask,
+  type TaskEvalResults,
+  type TestCase,
+} from "@/lib/types";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
@@ -40,6 +48,7 @@ type ReportRow = {
 function parseCliArgs() {
   const { values } = parseArgs({
     options: {
+      battle: { default: false, type: "boolean" },
       case: { multiple: true, type: "string" },
       fresh: { default: false, type: "boolean" },
       language: { multiple: true, type: "string" },
@@ -70,6 +79,7 @@ function parseCliArgs() {
   }
 
   return {
+    battle: values.battle,
     caseIds: values.case ?? [],
     fresh: values.fresh,
     languages: values.language ?? [],
@@ -280,11 +290,136 @@ async function runTask({
   );
 }
 
+function formatBattleRow({
+  entry,
+  failed,
+  spent,
+}: {
+  entry: BattleLeaderboardEntry;
+  failed: number;
+  spent: number;
+}): string {
+  const judges = BATTLE_JUDGES.map((judgeId) => entry.scoresByJudge[judgeId]?.toFixed(2) ?? "—");
+  const categories = entry.categoryScores.map((category) => category.score.toFixed(1));
+
+  return [
+    entry.modelName,
+    entry.averageScore.toFixed(2),
+    ...judges,
+    ...categories,
+    String(failed),
+    formatSeconds(entry.latencyP50),
+    formatDollars(spent),
+  ].join(" | ");
+}
+
+/**
+ * Writes the sampled cases with every model, then has one judge per family rank them, each judge
+ * skipping its own family's models, instead of scoring each output with the single judge.
+ */
+async function runBattle({
+  filters,
+  fresh,
+  limit,
+  modelIds,
+  task,
+}: {
+  filters: CaseFilters;
+  fresh: boolean;
+  limit?: number;
+  modelIds: string[];
+  task: RegisteredTask;
+}): Promise<{ report: string; spent: number }> {
+  const sampledTask = {
+    ...task,
+    testCases: sampleTestCases({ filters, limit, testCases: task.testCases }),
+  };
+
+  const runIds = getRunIds(sampledTask.testCases);
+
+  if (fresh) {
+    await Promise.all([
+      removeBattleMatchups({ taskId: task.id, testCaseIds: [...runIds] }),
+      ...modelIds.map((modelId) => removeModelOutputRuns({ modelId, runIds, taskId: task.id })),
+    ]);
+  }
+
+  const outputs = await Promise.all(
+    modelIds.map((modelId) => generateOutputs(sampledTask, modelId)),
+  );
+
+  const matchups = await runBattleMode(sampledTask, { modelIds });
+  const allOutputs = await getAllOutputsForTask(task.id);
+  const leaderboard = buildBattleLeaderboard({ allOutputs, matchups });
+
+  const runOutputs = new Map(
+    outputs.map((modelOutputs) => [
+      modelOutputs.modelId,
+      modelOutputs.outputs.filter((output) => runIds.has(output.testCaseId)),
+    ]),
+  );
+
+  const generationSpent = (modelId: string) =>
+    (runOutputs.get(modelId) ?? []).reduce(
+      (total, usage) => total + getCallCost({ modelId, prices: GATEWAY_PRICES, usage }),
+      0,
+    );
+
+  const judgeSpent = sumJudgeCost(matchups);
+  const totalGeneration = modelIds.reduce((total, modelId) => total + generationSpent(modelId), 0);
+  const categoryLabels = (task.scoreCategories ?? []).map((category) => category.label);
+
+  const headers = [
+    "Model",
+    "Average",
+    ...BATTLE_JUDGES.map((judgeId) => `by ${judgeId.split("/")[1]}`),
+    ...categoryLabels,
+    "Failed",
+    "p50",
+    "Spent",
+  ];
+
+  const report = [
+    `\n### ${task.name} (${task.id}), battle on ${runIds.size} cases\n`,
+    `| ${headers.join(" | ")} |`,
+    `| ${headers.map(() => "---").join(" | ")} |`,
+    ...leaderboard.map(
+      (entry) =>
+        `| ${formatBattleRow({
+          entry,
+          failed: runIds.size - (runOutputs.get(entry.modelId)?.length ?? 0),
+          spent: generationSpent(entry.modelId),
+        })} |`,
+    ),
+    `\nWriting: ${formatDollars(totalGeneration)}. Judges: ${formatDollars(judgeSpent)}.`,
+  ].join("\n");
+
+  return { report, spent: totalGeneration + judgeSpent };
+}
+
 async function main() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
-  const { caseIds, fresh, languages, limit, modelIds, saved, tasks } = parseCliArgs();
+  const { battle, caseIds, fresh, languages, limit, modelIds, saved, tasks } = parseCliArgs();
   const filters = { caseIds, languages };
   const prices = GATEWAY_PRICES;
+
+  if (battle) {
+    const battles = await tasks.reduce<Promise<{ report: string; spent: number }[]>>(
+      async (previous, task) => [
+        ...(await previous),
+        await runBattle({ filters, fresh, limit, modelIds, task }),
+      ],
+      Promise.resolve([]),
+    );
+
+    const spent = battles.reduce((total, result) => total + result.spent, 0);
+
+    process.stdout.write(
+      `${battles.map((result) => result.report).join("\n")}\n\nTotal spent: ${formatDollars(spent)}.\n`,
+    );
+
+    return;
+  }
 
   const reports = await tasks.reduce<Promise<{ rows: ReportRow[]; task: RegisteredTask }[]>>(
     async (previous, task) => [

@@ -168,41 +168,46 @@ function buildLeaderboardEntry({
   };
 }
 
-export async function getBattleJudgeCost(taskId: string): Promise<number> {
-  const prices = GATEWAY_PRICES;
-  const matchups = await getBattleMatchups(taskId);
-
+export function sumJudgeCost(matchups: BattleMatchup[]): number {
   const judgeCosts = matchups
     .flatMap((matchup) => matchup.judgments)
     .map((judgment) =>
       judgment.usage
-        ? getCallCost({ modelId: judgment.judgeId, prices, usage: judgment.usage })
+        ? getCallCost({ modelId: judgment.judgeId, prices: GATEWAY_PRICES, usage: judgment.usage })
         : 0,
     );
 
   return sum(judgeCosts);
 }
 
+export async function getBattleJudgeCost(taskId: string): Promise<number> {
+  return sumJudgeCost(await getBattleMatchups(taskId));
+}
+
+export function buildBattleLeaderboard({
+  allOutputs,
+  matchups,
+}: {
+  allOutputs: Map<string, ModelOutputs>;
+  matchups: BattleMatchup[];
+}): BattleLeaderboardEntry[] {
+  const modelScores = aggregateScoresFromMatchups(matchups);
+
+  const entries = [...modelScores.entries()].flatMap(([modelId, scores]) => {
+    const entry = buildLeaderboardEntry({ allOutputs, modelId, prices: GATEWAY_PRICES, scores });
+    return entry ? [entry] : [];
+  });
+
+  return entries.toSorted((a, b) => b.averageScore - a.averageScore);
+}
+
 export const getBattleLeaderboard = cache(
   async (taskId: string): Promise<BattleLeaderboardEntry[]> => {
-    const prices = GATEWAY_PRICES;
-
     const [matchups, allOutputs] = await Promise.all([
       getBattleMatchups(taskId),
       getAllOutputsForTask(taskId),
     ]);
 
-    if (matchups.length === 0) {
-      return [];
-    }
-
-    const modelScores = aggregateScoresFromMatchups(matchups);
-
-    const entries = [...modelScores.entries()].flatMap(([modelId, scores]) => {
-      const entry = buildLeaderboardEntry({ allOutputs, modelId, prices, scores });
-      return entry ? [entry] : [];
-    });
-
-    return entries.toSorted((a, b) => b.averageScore - a.averageScore);
+    return buildBattleLeaderboard({ allOutputs, matchups });
   },
 );
