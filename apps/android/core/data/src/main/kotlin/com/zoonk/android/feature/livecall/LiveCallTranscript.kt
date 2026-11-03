@@ -48,4 +48,4 @@ val List<TranscriptTurn>.conversationTurns: List<LanguageConversationTurn>
                 .take(MAX_TURN_LENGTH)
                 .takeIf { it.isNotEmpty() }
                 ?.let { LanguageConversationTurn(turn.speaker, it) }
-        }.take(MAX_TURNS)
+        }.takeLast(MAX_TURNS)

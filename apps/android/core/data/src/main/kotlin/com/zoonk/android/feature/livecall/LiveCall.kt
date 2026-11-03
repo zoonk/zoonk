@@ -221,12 +221,16 @@ class LiveCall(
         mutableState.update { it.copy(usedHelp = true) }
     }
 
-    /** What a call started again on this screen continues; earlier turns lose their timeline, so new words never join them. */
+    /**
+     * What a call started again on this screen continues, nothing until one of its connections went
+     * live; earlier turns lose their timeline, so new words never join them.
+     */
     val soFar: CallSoFar
         get() {
+            val id = savedConnection ?: return CallSoFar()
             val current = mutableState.value
             return CallSoFar(
-                connectionId = savedConnection,
+                connectionId = id,
                 turns = current.turns.map { TranscriptTurn(it.speaker, it.text) },
                 spokenMs = earlier.spokenMs + current.turns.spokenMs,
                 usedHelp = current.usedHelp,

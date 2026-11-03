@@ -1353,6 +1353,20 @@ class LiveCallTest {
         }
 
     @Test
+    fun aCallThatNeverWentLiveHandsTheNextOneNothing() =
+        runTest(dispatcher) {
+            val call = call()
+            call.start(microphone = true)
+            call.sendText("Hola")
+            call.help()
+            runCurrent()
+
+            call.leave()
+
+            assertEquals(CallSoFar(), call.soFar)
+        }
+
+    @Test
     fun shortRepliesSplitByADropAddUpBeforeTheCallsSpokenTimeIsRounded() =
         runTest(dispatcher) {
             val first = live()

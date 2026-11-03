@@ -64,9 +64,6 @@ class ConversationViewModel(
     var call by mutableStateOf<LiveCall?>(null)
         private set
 
-    /** Kept through a trip back to the intro: the server decides whether the next start continues it. */
-    private var callSoFar = CallSoFar()
-
     var save by mutableStateOf<CallSave?>(null)
         private set
 
@@ -85,13 +82,10 @@ class ConversationViewModel(
         save = null
         viewModelScope.launch {
             // A dropped call's reconnect may still be reserving: the next start must name its connection.
-            left?.let {
-                it.settle()
-                callSoFar = it.soFar
-            }
+            left?.settle()
             // Ended meanwhile, it's being saved under that connection: no other may start.
             if (call !== left || left?.state?.value?.phase == LiveCallPhase.Ended) return@launch
-            val next = newCall(conversation.callTask, callSoFar)
+            val next = newCall(conversation.callTask, left?.soFar ?: CallSoFar())
             call = next
             next.start(microphone, takeover)
             // The notification's Hang up does what End does.
@@ -122,14 +116,8 @@ class ConversationViewModel(
      */
     fun cancel() {
         val current = call
-        if (current?.hasCallToSave == true) {
-            current.leave()
-            return
-        }
-        current?.let {
-            callSoFar = it.soFar
-            it.leave()
-        }
+        current?.leave()
+        if (current?.hasCallToSave == true) return
         call = null
         save = null
     }
