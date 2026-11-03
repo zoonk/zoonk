@@ -537,6 +537,20 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
   });
+
+  it("keeps two ideas that differ only in accents, as a grandmother and a grandfather", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const summary = {
+      ideas: [
+        { label: "Avó", text: "Mora no interior." },
+        { label: "Avô", text: "Mora no interior." },
+      ],
+      shape: "hub" as const,
+    };
+
+    expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
+  });
 });
 
 describe(checkScreenText, () => {

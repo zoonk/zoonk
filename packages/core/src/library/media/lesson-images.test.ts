@@ -56,6 +56,7 @@ async function scienceLesson(attrs?: Parameters<typeof libraryLessonFixture>[0])
 
 function stepKey(scene: ReturnType<typeof testScene>) {
   return buildImageReuseKey({
+    canvas: "landscape",
     language: scene.labels.length > 0 ? "en" : null,
     prompt: describeImageScene(scene),
   });

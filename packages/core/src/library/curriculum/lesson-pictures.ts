@@ -15,11 +15,20 @@ export type PlannedPicture = {
 
 export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & { teaches: boolean };
 
-/** Native visuals (tables, charts, timelines) aren't pictures and stay as planned. */
-export function listPlannedPictures(specs: readonly LessonSpec[]): PlannedPicture[] {
+/**
+ * Native visuals (tables, charts, timelines) aren't pictures and stay as planned, and so does a new
+ * learner's hook picture: a beginner lesson always opens on its main example's picture.
+ */
+export function listPlannedPictures({
+  novice,
+  specs,
+}: {
+  novice: boolean;
+  specs: readonly LessonSpec[];
+}): PlannedPicture[] {
   return specs.flatMap((spec, lesson) =>
     spec.screens.flatMap((screen, index) =>
-      screen.visual
+      screen.visual && !(novice && screen.kind === "hook")
         ? [
             {
               brief: screen.brief,

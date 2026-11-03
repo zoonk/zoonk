@@ -898,15 +898,15 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The single scene clearly depicts an adult receiving his pay envelope at work, with a repair toolbox beside him. It conveys the intended salary-receipt moment without inventing a second repair scene or contradicting the screen.",
+          "reasoning": "An adult man receives an envelope from a colleague with his toolbox beside him, conveying the intended salary-receipt scene. There is no separate repair scene or contradiction of the screen text.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The result retains one scene and one main action, but the desk, chair, and two visible tools introduce unnecessary objects beyond the requested envelope and toolbox. Removing these additions would satisfy the strict scene inventory and reduce visual clutter.",
-          "score": 7,
+          "reasoning": "The layout explicitly uses one scene and one central action. However, the visible wrench and screwdriver introduce two additional objects beyond the requested envelope and toolbox, violating the restriction against unnamed additions.",
+          "score": 8,
           "label": "One idea, simply",
           "weight": 25
         },
@@ -937,17 +937,17 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1361,
-          "outputTokens": 632,
-          "reasoningTokens": 268
+          "inputTokens": 1364,
+          "outputTokens": 583,
+          "reasoningTokens": 241
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The desk, chair, and visible wrench and screwdriver add objects beyond the specified scene. These details are unnecessary under the explicit restriction against unnamed additions; Igor receiving the envelope with the toolbox beside him is sufficient.",
+          "conclusion": "The visible wrench and screwdriver add objects not named in the alt, contrary to the explicit scope restriction. Showing the toolbox closed would preserve the intended scene without those extras.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
@@ -969,28 +969,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The scene clearly depicts an adult receiving payment at work, matching the selected scene and alt text. It appropriately excludes the bike sale rather than combining both situations, and nothing contradicts the screen.",
+          "reasoning": "The scene clearly depicts an adult receiving payment at work, matching the supplied alt text and the relevant part of the screen. It correctly omits the separate bicycle-sale scene and introduces no contradiction.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "There is one coherent payment scene, but the desk, monitor, and pen holder exceed the two-supporting-object limit. Removing the monitor and pen holder would preserve the workplace setting while making the payment more prominent.",
-          "score": 7,
+          "reasoning": "There is one coherent scene and one idea, but the focal description bundles Igor with another person, a desk, an envelope, and banknotes. This exceeds the intended one focal object and at most two small supporting objects.",
+          "score": 8,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "No labels are included, as appropriate for this concrete scene and the explicit expectation that labels are unnecessary.",
+          "reasoning": "No labels are included, as appropriate for this concrete payment scene. There are no redundant captions or unnecessary numbers.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
+          "reasoning": "All descriptive fields are in English. With no labels, label-target placement is not applicable.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -1008,19 +1008,23 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1356,
-          "outputTokens": 653,
-          "reasoningTokens": 291
+          "inputTokens": 1327,
+          "outputTokens": 631,
+          "reasoningTokens": 230
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The scene includes more supporting objects than allowed: the desk, computer monitor, and pen holder are three distinct props even though grouped into one array entry. The monitor and pen holder add unnecessary clutter.",
+          "conclusion": "The composition is busier than the requested object budget: alongside Igor, it includes a manager, desk, payment envelope, and banknotes. Putting these inside focalObject does not make them a single visual object.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Simplify to adult Igor receiving a payment envelope from an off-frame hand, with one small workplace cue. This preserves the intended scene while reducing competing elements.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
@@ -1040,28 +1044,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The two scenes correctly contrast putting a book into a red box with taking it out. Directional arrows make the actions distinguishable, and describing the same woman in both scenes satisfies the adult-character requirement.",
-          "score": 10,
+          "reasoning": "Both required actions are preserved side by side: handing a product to a customer at the shop counter and recording the sale in a notebook at night. However, adulthood and the home setting are not specified, and daytime does not specifically establish morning.",
+          "score": 8,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The comparison contains only the required woman, book, and red box in each scene, plus arrows that clarify the single contrast. No unrelated objects or ideas are added.",
+          "reasoning": "The two-scene comparison is explicitly required by the task-specific expectations. The result keeps that comparison focused, with concrete props supporting the sale and recording actions rather than adding unrelated content.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "Only the explicitly required scene labels 1 and 2 appear. They correctly identify the corresponding actions and add no captions or other text.",
+          "reasoning": "No labels are included, as appropriate for these readily drawable actions and the explicit expectation that labels are unnecessary.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each label target explicitly places its number above the appropriate scene.",
+          "reasoning": "All descriptive fields are written in English. There are no labels requiring placement targets.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -1079,9 +1083,80 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1466,
-          "outputTokens": 400,
-          "reasoningTokens": 71
+          "inputTokens": 1383,
+          "outputTokens": 562,
+          "reasoningTokens": 190
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The scene descriptions do not explicitly establish that Fábio is an adult or that the nighttime writing happens at home. The sale is described as daytime rather than specifically morning. These omissions leave some required visual details ambiguous.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
+        "expected": { "labels": "any", "layout": "comparison" },
+        "id": "alt-names-two-moments-pt-1",
+        "userInput": {
+          "alt": "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
+          "context": "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+          "language": "pt",
+          "request": "Fábio vende um produto de manhã e anota a venda à noite.",
+          "screenText": "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The comparison depicts an adult woman lowering a book into a red box in scene 1 and lifting it out in scene 2. Opposite directional arrows make the distinction immediately readable and support the caption-matching question.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "Both scenes focus on the requested woman, book, and red box. The table provides unobtrusive support, and the arrows clarify the single contrast without introducing another idea.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The only text is the explicitly required scene numbers 1 and 2. They match the question exactly and identify the alternatives without adding captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each label has an explicit placement above its corresponding scene.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1464,
+          "outputTokens": 489,
+          "reasoningTokens": 156
         }
       },
       "steps": [

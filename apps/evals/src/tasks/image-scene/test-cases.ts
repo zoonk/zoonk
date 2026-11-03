@@ -213,6 +213,22 @@ export const TEST_CASES: ImageSceneCase[] = [
   },
   {
     expectations:
+      "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "comparison" },
+    id: "alt-names-two-moments-pt",
+    userInput: {
+      alt: "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
+      context:
+        "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+      language: "pt",
+      request: "Fábio vende um produto de manhã e anota a venda à noite.",
+      screenText:
+        "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
       "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
     expected: { labels: "some", layout: "comparison" },
     id: "two-scenes-to-compare-pt",

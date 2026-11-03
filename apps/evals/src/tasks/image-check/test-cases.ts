@@ -1,7 +1,12 @@
 import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { TEST_CASES as IMAGE_CASES } from "../lesson-image/test-cases";
 
-export type ImageCheckCaseInput = { imageFile: string; scene: ImageScene; language: string };
+export type ImageCheckCaseInput = {
+  alt?: string;
+  imageFile: string;
+  scene: ImageScene;
+  language: string;
+};
 
 export type ImageCheckExpected = { passed: boolean };
 
@@ -24,7 +29,7 @@ function checkCase({
   expected: boolean;
   id: string;
   imageFile: string;
-  input: { language: string; scene: ImageScene };
+  input: { alt?: string; language: string; scene: ImageScene };
 }) {
   return { expected: { passed: expected }, id, userInput: { imageFile, ...input } };
 }
@@ -161,6 +166,16 @@ const officeRepairs: ImageScene = {
   motion: null,
   relation: "a toolbox and an opened computer tower rest on a low table beside the desk",
   supportingObjects: ["a small side table holding an open computer tower and a toolbox"],
+};
+
+const counterRepairs: ImageScene = {
+  focalObject:
+    "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+  labels: [],
+  layout: "single",
+  motion: null,
+  relation: "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+  supportingObjects: ["a pegboard with a screwdriver and a wrench"],
 };
 
 const discount = sceneOf("discount-pt");
@@ -384,5 +399,35 @@ export const TEST_CASES = [
     id: "repair-counter-for-office",
     imageFile: "flare-repair-counter.webp",
     input: { language: "pt", scene: officeRepairs },
+  }),
+  checkCase({
+    expected: true,
+    id: "repair-counter-matches-alt",
+    imageFile: "flare-repair-counter.webp",
+    input: {
+      alt: "Igor entrega uma torradeira consertada a um cliente no balcão da oficina.",
+      language: "pt",
+      scene: counterRepairs,
+    },
+  }),
+  checkCase({
+    expected: false,
+    id: "repair-counter-contradicts-alt",
+    imageFile: "flare-repair-counter.webp",
+    input: {
+      alt: "Igor recebe um envelope de salário sentado à mesa do escritório.",
+      language: "pt",
+      scene: counterRepairs,
+    },
+  }),
+  checkCase({
+    expected: false,
+    id: "repair-counter-drops-alt-moment",
+    imageFile: "flare-repair-counter.webp",
+    input: {
+      alt: "Igor entrega uma torradeira consertada no balcão e, à noite, anota o valor recebido num caderno em casa.",
+      language: "pt",
+      scene: counterRepairs,
+    },
   }),
 ];

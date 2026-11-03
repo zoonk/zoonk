@@ -1,7 +1,228 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 
-/** Plans written before beginner lessons opened with a scene, as stored lessons still have them. */
+/** Beginner plans as a planner wrote them; the older ones open with a guess, as stored plans do. */
 export const NOVICE_LESSON_SPECS = {
+  "pt-entidade-contabil-beginner": {
+    canDo: "Separar operações da entidade das operações dos proprietários",
+    description:
+      "A lição mostra como distinguir o patrimônio e as operações da empresa daqueles de seu proprietário.",
+    estimatedMinutes: 5,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Renan é dono de uma empresa e usa dinheiro dela para pagar uma conta de sua casa. Essa conta passa a ser um gasto da empresa?",
+        kind: "hook",
+        skills: [],
+        visual: "Renan na empresa, junto ao caixa e a uma conta identificada como conta de casa.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que a entidade contábil é a empresa considerada separadamente de seu dono. Mesmo que Renan seja o único proprietário, os bens e as dívidas dele não se confundem automaticamente com os da empresa.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Apresente a autonomia patrimonial como essa separação entre o patrimônio da empresa e o do proprietário. Explique que importa a quem pertence o bem ou a dívida e a quem a operação beneficia, não apenas de onde saiu o dinheiro.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre passo a passo: Renan paga com dinheiro pessoal um material para a empresa e combina que ela o reembolsará. O material pertence à empresa, e a empresa fica devendo a Renan; o pagamento não torna o material uma compra pessoal.",
+        kind: "workedExample",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Renan paga com dinheiro pessoal o conserto de um equipamento da empresa, com reembolso combinado. Peça para identificar a operação da empresa e inclua como erro tentador tratá-la como gasto pessoal porque ele pagou.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Retome a conta de casa: se a empresa a paga e Renan se compromete a devolver o valor, sai dinheiro da empresa e ela passa a ter um valor a receber dele. A conta continua sendo pessoal, não uma despesa da empresa.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que nem todo pagamento pessoal feito pela empresa gera automaticamente um valor a receber: é preciso verificar o que foi combinado e documentado. Por exemplo, uma retirada de lucros não é uma despesa da empresa nem, por si só, uma dívida do proprietário com ela.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A empresa paga uma conta pessoal de Renan, que se compromete a reembolsá-la. Peça para decidir o que a empresa tem após o pagamento; inclua como erro tentador registrar a conta como despesa da empresa.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que uma dívida pessoal não vira dívida da empresa só porque a pessoa é dona dela. Da mesma forma, uma dívida da empresa não vira automaticamente dívida pessoal do dono; garantias e outras obrigações precisam ser verificadas.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre que, quando Renan coloca dinheiro pessoal na empresa como investimento, o dinheiro passa a ser da empresa e aumenta a participação dele nela. Essa entrada não é uma venda da empresa.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Renan investe dinheiro pessoal na empresa; depois, ela paga uma conta de casa dele, com reembolso combinado. Peça para identificar o efeito de cada operação para a empresa e inclua como erro tentador tratar a entrada como venda e a conta como despesa da empresa.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Distinguir bens, dívidas e operações da empresa daqueles de seu proprietário, inclusive quando há pagamentos entre eles.",
+        example:
+          "O dono paga um material da empresa e combina reembolso: a empresa recebe o material e fica devendo a ele.",
+        hard: true,
+        name: "Aplicar a autonomia patrimonial",
+        topic: "Autonomia patrimonial",
+        useCase:
+          "Organizar os registros de uma empresa sem confundir gastos do negócio com gastos do proprietário.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Entidade contábil",
+  },
+  "pt-equacao-patrimonial-beginner": {
+    canDo: "Aplicar a equação patrimonial a valores simples",
+    description:
+      "A equação patrimonial relaciona ativo, passivo e patrimônio líquido e ajuda a conferir os totais de uma entidade.",
+    estimatedMinutes: 5,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Débora confere os registros da empresa e vê quanto ela tem e quanto deve. Como saber se os totais fecham?",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre uma tabela dos totais da empresa de Débora na mesma data: ativo de R$ 12.000,00, passivo de R$ 4.000,00 e patrimônio líquido de R$ 8.000,00. Lembre brevemente que o ativo reúne bens e direitos, o passivo reúne obrigações e o patrimônio líquido é a diferença entre eles.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "formulaModel",
+        brief:
+          "Apresente a equação patrimonial: ativo = passivo + patrimônio líquido. No modelo, use controles de R$ 0,00 a R$ 10.000,00 em passos de R$ 1.000,00 para passivo e patrimônio líquido, começando em R$ 4.000,00 e R$ 8.000,00; mostre o ativo como a soma e seu gráfico em função do passivo.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Resolva o caso de Débora: some o passivo de R$ 4.000,00 ao patrimônio líquido de R$ 8.000,00 para obter um ativo de R$ 12.000,00. Mostre que esse resultado é igual ao total do ativo registrado.",
+        kind: "workedExample",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "formulaModel",
+        brief:
+          "No modelo ativo = passivo + patrimônio líquido, com os dois controles de R$ 0,00 a R$ 10.000,00 em passos de R$ 1.000,00, peça para ajustar o passivo a R$ 3.000,00 e o patrimônio líquido a R$ 5.000,00 e informar o ativo. A resposta é R$ 8.000,00; trate R$ 2.000,00 como erro de subtrair os valores.",
+        kind: "activity",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre que, quando falta o passivo, ele pode ser encontrado por ativo menos patrimônio líquido. Lembre que, quando falta o patrimônio líquido, ele é o ativo menos o passivo.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Uma empresa registra ativo de R$ 15.000,00 e patrimônio líquido de R$ 9.000,00. Peça o passivo e inclua R$ 24.000,00 como erro de somar os dois valores.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que o patrimônio líquido pode ser zero: nesse caso, o ativo e o passivo têm o mesmo valor. Por exemplo, R$ 7.000,00 = R$ 7.000,00 + R$ 0,00.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que, quando o passivo supera o ativo, o patrimônio líquido é negativo e a igualdade continua válida. Por exemplo, R$ 8.000,00 = R$ 11.000,00 + (−R$ 3.000,00).",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Uma empresa tem ativo de R$ 6.000,00 e passivo de R$ 9.000,00. Peça o patrimônio líquido que faz a igualdade fechar e inclua R$ 3.000,00 como erro de ignorar o sinal negativo.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre uma tabela de conferência com ativo de R$ 20.000,00, passivo de R$ 14.000,00 e patrimônio líquido registrado de R$ 8.000,00. Informe que os dois primeiros totais estão corretos e peça o valor que corrige o patrimônio líquido; explique no retorno que a igualdade, sozinha, não garante que os registros estejam corretos.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Usar a igualdade entre ativo, passivo e patrimônio líquido para calcular ou conferir um total patrimonial.",
+        example:
+          "Ativo de R$ 12.000,00 = passivo de R$ 4.000,00 + patrimônio líquido de R$ 8.000,00.",
+        hard: true,
+        name: "Aplicar a equação patrimonial",
+        topic: "Equação patrimonial",
+        useCase: "Conferir os totais patrimoniais registrados por uma empresa.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Equação patrimonial",
+  },
   "pt-niveis-ecologicos-beginner": {
     canDo: "Distinguir organismo, população, comunidade e ecossistema",
     description:
@@ -255,5 +476,117 @@ export const NOVICE_LESSON_SPECS = {
     ],
     supportMode: "explanationFirst",
     title: "Receitas regulares e eventuais",
+  },
+  "pt-usuarios-contabilidade-beginner": {
+    canDo: "Identificar usuários da informação contábil e suas decisões",
+    description:
+      "A contabilidade fornece informações que diferentes usuários empregam para tomar decisões sobre uma organização.",
+    estimatedMinutes: 5,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Fábio administra uma empresa e conversa com uma representante de um banco sobre um empréstimo. Os dois olham informações sobre a empresa: por que cada um se interessa por elas?",
+        kind: "hook",
+        skills: [],
+        visual:
+          "Fábio e uma representante de banco conversam diante de documentos sobre a empresa.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que a contabilidade registra e organiza informações sobre a situação e as atividades de uma organização. Por exemplo, ela reúne dados sobre bens, dívidas e dinheiro que entra e sai.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Apresente usuários da informação contábil como pessoas ou organizações que a utilizam. Um proprietário pode consultar entradas e saídas de dinheiro ao decidir se amplia as atividades da empresa.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Fábio é proprietário e quer decidir se amplia sua empresa. Pergunte quais informações contábeis podem ajudá-lo; inclua como alternativa tentadora a cor preferida dos clientes.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que um credor é quem tem dinheiro a receber de uma organização ou considera emprestar a ela. Um banco pode examinar dívidas e entradas de dinheiro antes de decidir se concede um empréstimo.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Mostre que órgãos do governo também usam informações contábeis. Uma autoridade fiscal pode examiná-las para verificar se a empresa cumpriu obrigações tributárias.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "matchPairs",
+        brief:
+          "Peça para associar cada usuário à decisão descrita: proprietário à ampliação da própria empresa; banco à concessão de um empréstimo; autoridade fiscal à verificação de obrigações tributárias. Inclua a troca entre banco e autoridade fiscal como erro tentador e explique que os usuários podem se interessar por informações semelhantes, embora tomem decisões diferentes.",
+        kind: "activity",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Apresente outros usuários: investidores podem avaliar se aplicam dinheiro na empresa, e trabalhadores podem observar sua situação ao decidir se permanecem nela. Ambos podem consultar informações contábeis para apoiar essas escolhas.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Explique que a mesma informação pode interessar a mais de um usuário. Por exemplo, as dívidas da empresa podem ajudar tanto um banco a avaliar um empréstimo quanto um investidor a avaliar uma aplicação.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Uma empresa informa que suas dívidas aumentaram. Pergunte quem pode usar essa informação ao decidir sobre a empresa: um banco, um investidor ou ambos; inclua a ideia tentadora de que cada informação serve a um único usuário.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Fábio considera ampliar sua empresa enquanto um banco avalia emprestar dinheiro a ela; há registros de entradas, saídas e dívidas. Peça para escolher a combinação de decisões que esses dados podem apoiar para os dois usuários, incluindo como alternativa tentadora a verificação de tributos pelo banco.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Reconhecer diferentes usuários das informações contábeis e as decisões que elas podem apoiar.",
+        example:
+          "Um banco consulta as dívidas de uma empresa antes de decidir sobre um empréstimo.",
+        hard: false,
+        name: "Identificar usuários da informação contábil",
+        topic: "Usuários da informação contábil",
+        useCase:
+          "Entender quem consulta informações de uma organização e para tomar quais decisões.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Usuários e finalidade da contabilidade",
   },
 } as const satisfies Record<string, LessonSpec>;

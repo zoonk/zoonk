@@ -1,25 +1,38 @@
-import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
 import { type LessonMap, type WrittenLessonMap } from "./written-lesson-schema";
 
-const MIN_NESTED_LEVELS = 2;
+const NESTED_LEVELS = { max: 5, min: 2 } as const;
 
 function cleanLabel(label: string): string {
   return toPlainLine(label).replace(/[.:;,]+$/u, "");
 }
 
-function ideaKey(idea: { label?: string; text: string }): string {
-  return `${normalizeString(idea.label ?? "")}\n${normalizeString(idea.text)}`;
+function sameText(text: string): string {
+  return text.normalize("NFC").replaceAll(/\s+/gu, " ").trim();
 }
 
-function drawsNested(ideas: LessonMap["ideas"]): boolean {
-  return ideas.length >= MIN_NESTED_LEVELS && ideas.every((idea) => idea.label);
+/** Accents and case stay: "Avó" and "Avô" are two ideas. */
+export function getLessonMapIdeaKey(idea: { label?: string; text: string }): string {
+  return `${sameText(idea.label ?? "")}\n${sameText(idea.text)}`;
 }
 
-/**
- * Never drops a real idea: only empty ones and exact repeats of another idea's label and sentence.
- * A nested map whose levels aren't all named is drawn as a hub.
- */
+/** A nested map draws each level inside the last, so it needs 2 to 5 named levels; else a hub. */
+export function getLessonMapShape({
+  ideas,
+  shape,
+}: {
+  ideas: LessonMap["ideas"];
+  shape: LessonMap["shape"];
+}): LessonMap["shape"] {
+  const drawsNested =
+    ideas.length >= NESTED_LEVELS.min &&
+    ideas.length <= NESTED_LEVELS.max &&
+    ideas.every((idea) => idea.label);
+
+  return shape === "nested" && drawsNested ? "nested" : "hub";
+}
+
+/** Never drops a real idea: only empty ones and exact repeats of another idea's label and sentence. */
 export function normalizeLessonMap(map: WrittenLessonMap): LessonMap {
   const seen = new Set<string>();
 
@@ -27,7 +40,7 @@ export function normalizeLessonMap(map: WrittenLessonMap): LessonMap {
     const text = idea.text.trim();
     const label = cleanLabel(idea.label);
     const cleaned = label ? { label, text } : { text };
-    const key = ideaKey(cleaned);
+    const key = getLessonMapIdeaKey(cleaned);
 
     if (!text || seen.has(key)) {
       return [];
@@ -37,7 +50,5 @@ export function normalizeLessonMap(map: WrittenLessonMap): LessonMap {
     return [cleaned];
   });
 
-  const shape = map.shape === "nested" && drawsNested(ideas) ? "nested" : "hub";
-
-  return { ideas, shape };
+  return { ideas, shape: getLessonMapShape({ ideas, shape: map.shape }) };
 }

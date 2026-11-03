@@ -88,7 +88,7 @@ describe("lesson draft durability", () => {
 
   it("retries only the picture judgment that failed, never planning the lesson again", async () => {
     const pictures = (recordedSpec.lessons[0]?.screens ?? []).flatMap((screen) =>
-      screen.visual ? [screen.visual] : [],
+      screen.visual && screen.kind !== "hook" ? [screen.visual] : [],
     );
 
     const [failing] = pictures;
@@ -105,7 +105,7 @@ describe("lesson draft durability", () => {
       });
 
     const chapter = await libraryChapterFixture();
-    const lesson = await recordedLessonFixture({ homeChapterId: chapter.id });
+    const lesson = await recordedLessonFixture({ homeChapterId: chapter.id, level: "beginner" });
     await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
 
     const run = await start(lessonContentWorkflow, [{ lessonId: lesson.id }]);

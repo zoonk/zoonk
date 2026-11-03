@@ -30,12 +30,14 @@ async function isBlank(image: Uint8Array): Promise<boolean> {
 }
 
 export async function reviewImage({
+  alt,
   analytics,
   image,
   language,
   scene,
   serviceTier,
 }: {
+  alt?: string | null;
   analytics?: ImageAnalytics;
   image: { data: Uint8Array; mediaType: string };
   language: string;
@@ -47,6 +49,7 @@ export async function reviewImage({
   }
 
   const { data: verdict } = await checkLessonImage({
+    alt,
     analytics,
     image,
     language,
@@ -85,10 +88,14 @@ export async function drawImage({
 }
 
 export async function drawCheckedImage({
+  alt,
   attempts = DEFAULT_ATTEMPTS,
   serviceTier,
   ...input
-}: DrawImageInput & { serviceTier?: ServiceTier }): Promise<DrawnImage | null> {
+}: DrawImageInput & {
+  alt?: string | null;
+  serviceTier?: ServiceTier;
+}): Promise<DrawnImage | null> {
   if (attempts <= 0) {
     return null;
   }
@@ -97,6 +104,7 @@ export async function drawCheckedImage({
   const image = { data: data.image.uint8Array, mediaType: data.image.mediaType };
 
   const review = await reviewImage({
+    alt,
     analytics: input.analytics,
     image,
     language: input.language,
@@ -110,6 +118,7 @@ export async function drawCheckedImage({
 
   return drawCheckedImage({
     ...input,
+    alt,
     attempts: attempts - 1,
     corrections: review.problems,
     serviceTier,

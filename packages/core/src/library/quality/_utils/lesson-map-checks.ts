@@ -1,5 +1,5 @@
+import { getLessonMapIdeaKey } from "@zoonk/ai/tasks/lesson-writer/map";
 import { type LessonMap } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { normalizeString } from "@zoonk/utils/string";
 import { lessonMapSchema } from "../../lessons/lesson-map";
 import { type LessonCheckProblem } from "../lesson-code-checks";
 import { findLessonPhrases } from "./lesson-phrases";
@@ -22,9 +22,7 @@ export function getLessonMapProblems({
   const parsed = lessonMapSchema.safeParse(map);
   const summary = map.ideas.map((idea) => idea.text);
 
-  const normalized = map.ideas.map(
-    (idea) => `${normalizeString(idea.label ?? "")}\n${normalizeString(idea.text)}`,
-  );
+  const normalized = map.ideas.map((idea) => getLessonMapIdeaKey(idea));
 
   const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
 

@@ -254,7 +254,7 @@ describe(lessonContentWorkflow, () => {
     ]);
   });
 
-  it("judges each planned picture once and saves the spec without the ones it calls decorative", async () => {
+  it("judges each planned picture but a new learner's hook once, saving the spec without decorative ones", async () => {
     const lesson = await outlinedLesson();
     const planned = recordedSpec.lessons[0]?.screens ?? [];
 
@@ -276,13 +276,18 @@ describe(lessonContentWorkflow, () => {
       (screen) => screen.visual,
     );
 
-    expect(judgePicture).toHaveBeenCalledTimes(planned.filter((screen) => screen.visual).length);
+    const judged = planned.filter((screen) => screen.visual && screen.kind !== "hook");
+    expect(judgePicture).toHaveBeenCalledTimes(judged.length);
+
+    expect(judgePicture).not.toHaveBeenCalledWith(
+      expect.objectContaining({ picture: planned[0]?.visual }),
+    );
 
     expect(visuals).toStrictEqual(
       planned.map((screen, index) => (index === decorative ? null : screen.visual)),
     );
 
-    expect(vi.mocked(judgePicture).mock.calls[1]?.[0]).toMatchObject({
+    expect(vi.mocked(judgePicture).mock.calls[0]?.[0]).toMatchObject({
       novice: true,
       previousPicture: planned[0]?.visual,
     });

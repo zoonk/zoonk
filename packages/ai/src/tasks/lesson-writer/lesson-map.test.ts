@@ -37,7 +37,7 @@ describe(normalizeLessonMap, () => {
       ideas: [
         idea("Empty", " "),
         idea("Sólido", "Tem volume fixo."),
-        idea("sólido", "tem volume fixo."),
+        idea("Sólido ", "Tem  volume fixo."),
         idea("Líquido", "Tem volume fixo."),
       ],
       shape: "hub",
@@ -47,6 +47,29 @@ describe(normalizeLessonMap, () => {
       idea("Sólido", "Tem volume fixo."),
       idea("Líquido", "Tem volume fixo."),
     ]);
+  });
+
+  it("keeps ideas that differ only in accents or case", () => {
+    const ideas = [
+      idea("Avó", "Avó é uma palavra de duas sílabas."),
+      idea("Avô", "Avô é uma palavra de duas sílabas."),
+      idea("avô", "avô é uma palavra de duas sílabas."),
+    ];
+
+    expect(normalizeLessonMap({ ideas, shape: "hub" }).ideas).toStrictEqual(ideas);
+  });
+
+  it("draws more than five nested levels as a hub, keeping every idea", () => {
+    const six = ["Átomo", "Molécula", "Célula", "Tecido", "Órgão", "Organismo"].map((label) =>
+      idea(label, `${label} é um nível.`),
+    );
+
+    expect(normalizeLessonMap({ ideas: six, shape: "nested" })).toStrictEqual({
+      ideas: six,
+      shape: "hub",
+    });
+
+    expect(normalizeLessonMap({ ideas: six.slice(0, 5), shape: "nested" }).shape).toBe("nested");
   });
 
   it("leaves out a label that is only marks", () => {

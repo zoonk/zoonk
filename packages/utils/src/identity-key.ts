@@ -142,16 +142,20 @@ export function buildSourceIdentityKey({
 
 /**
  * The style isn't part of the key: a style change draws new scenes only, and redrawing stored
- * pictures is a person's call.
+ * pictures is a person's call. A landscape picture keeps the key stored pictures already have.
  */
 export function buildImageReuseKey({
+  canvas,
   language,
   prompt,
 }: {
+  canvas: "landscape" | "square";
   language: string | null;
   prompt: string;
 }): string {
-  return `image:${language ?? "any"}:${hashText(normalizeIdentityText(prompt))}`;
+  const shape = canvas === "square" ? "square:" : "";
+
+  return `image:${shape}${language ?? "any"}:${hashText(normalizeIdentityText(prompt))}`;
 }
 
 /** An exact match never crosses owners, and public search can exclude private keys. */

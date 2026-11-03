@@ -28,6 +28,7 @@ const schema = z.object({
 export type ImageCheckVerdict = z.infer<typeof schema> & { passed: boolean };
 
 type ImageCheckInput = {
+  alt?: string | null;
   image: { data: Uint8Array; mediaType: string };
   scene: ImageScene;
   language: string;
@@ -56,6 +57,7 @@ function formatLabels({ language, scene }: Pick<ImageCheckInput, "language" | "s
  * replaced, and a screen whose redraws fail too goes without one.
  */
 export async function checkLessonImage({
+  alt,
   analytics,
   image,
   language,
@@ -65,7 +67,12 @@ export async function checkLessonImage({
   serviceTier,
   useFallback = true,
 }: ImageCheckParams) {
-  const userPrompt = `SCENE: ${describeImageScene(scene)}\nLABELS: ${formatLabels({ language, scene })}`;
+  const userPrompt = [
+    `SCENE: ${describeImageScene(scene)}`,
+    `ALT: ${alt || "none"}`,
+    `LABELS: ${formatLabels({ language, scene })}`,
+  ].join("\n");
+
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({

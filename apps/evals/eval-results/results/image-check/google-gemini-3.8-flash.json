@@ -244,23 +244,11 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": { "expected": "fail", "predicted": "pass" },
       "steps": [
-        {
-          "conclusion": "Expected fail; got fail. object drawn twice with no sequence change",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected fail; got fail. object drawn twice with no sequence change",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected fail; got fail. object drawn twice with no sequence change",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "Expected fail; got pass. ", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected fail; got pass. ", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected fail; got pass. ", "kind": "potentialImprovements", "score": 6 }
       ],
       "testCase": {
         "expected": { "passed": false },
@@ -319,17 +307,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. shows a house instead of microwave oven",
+          "conclusion": "Expected fail; got fail. shows a house instead of a microwave oven",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. shows a house instead of microwave oven",
+          "conclusion": "Expected fail; got fail. shows a house instead of a microwave oven",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. shows a house instead of microwave oven",
+          "conclusion": "Expected fail; got fail. shows a house instead of a microwave oven",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -355,17 +343,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' instead of 'antes R$ 90' wrong text: 'você paga R$ 60' instead of 'você paga R$ 70'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' instead of 'antes R$ 90' wrong text: 'você paga R$ 60' instead of 'você paga R$ 70'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' instead of 'antes R$ 90' wrong text: 'você paga R$ 60' instead of 'você paga R$ 70'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -431,17 +419,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. shows a leaf with sunlight instead of a red apple on a plate",
+          "conclusion": "Expected fail; got fail. shows a leaf and sun instead of a red apple on a white plate",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. shows a leaf with sunlight instead of a red apple on a plate",
+          "conclusion": "Expected fail; got fail. shows a leaf and sun instead of a red apple on a white plate",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. shows a leaf with sunlight instead of a red apple on a plate",
+          "conclusion": "Expected fail; got fail. shows a leaf and sun instead of a red apple on a white plate",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -656,17 +644,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram and wavy lines unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram unrequested text: '0:45'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram and wavy lines unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram unrequested text: '0:45'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram and wavy lines unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. photo instead of flat illustration missing water molecule diagram unrequested text: '0:45'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -692,17 +680,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene unrequested text: 'The Water Cycle'",
+          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene complex infographic style with multiple panels extensive unrequested text including title 'The Water Cycle'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene unrequested text: 'The Water Cycle'",
+          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene complex infographic style with multiple panels extensive unrequested text including title 'The Water Cycle'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene unrequested text: 'The Water Cycle'",
+          "conclusion": "Expected fail; got fail. multi-panel infographic layout instead of single scene complex infographic style with multiple panels extensive unrequested text including title 'The Water Cycle'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -761,17 +749,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. pointer B touches the outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. pointer B touches outer boundary instead of inner line",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. pointer B touches the outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. pointer B touches outer boundary instead of inner line",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. pointer B touches the outer boundary instead of the thin inner line",
+          "conclusion": "Expected fail; got fail. pointer B touches outer boundary instead of inner line",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -892,17 +880,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. split into two panels instead of a single scene",
+          "conclusion": "Expected fail; got fail. split into two panels instead of a single layout",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. split into two panels instead of a single scene",
+          "conclusion": "Expected fail; got fail. split into two panels instead of a single layout",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. split into two panels instead of a single scene",
+          "conclusion": "Expected fail; got fail. split into two panels instead of a single layout",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -928,17 +916,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. scene shows a repairman with a toaster instead of a man typing at a computer desk",
+          "conclusion": "Expected fail; got fail. shows a repairman holding a toaster instead of a man typing at a desk missing computer monitor, keyboard, open tower, and toolbox",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene shows a repairman with a toaster instead of a man typing at a computer desk",
+          "conclusion": "Expected fail; got fail. shows a repairman holding a toaster instead of a man typing at a desk missing computer monitor, keyboard, open tower, and toolbox",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene shows a repairman with a toaster instead of a man typing at a computer desk",
+          "conclusion": "Expected fail; got fail. shows a repairman holding a toaster instead of a man typing at a desk missing computer monitor, keyboard, open tower, and toolbox",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -956,6 +944,105 @@
             "motion": null,
             "relation": "a toolbox and an opened computer tower rest on a low table beside the desk",
             "supportingObjects": ["a small side table holding an open computer tower and a toolbox"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "repair-counter-matches-alt-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor entrega uma torradeira consertada a um cliente no balcão da oficina.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. mismatches ALT: does not show Igor receiving a salary envelope at an office desk",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. mismatches ALT: does not show Igor receiving a salary envelope at an office desk",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. mismatches ALT: does not show Igor receiving a salary envelope at an office desk",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-contradicts-alt-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor recebe um envelope de salário sentado à mesa do escritório.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. missing ALT action: writing received amount in notebook at home at night",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. missing ALT action: writing received amount in notebook at home at night",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. missing ALT action: writing received amount in notebook at home at night",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "repair-counter-drops-alt-moment-1",
+        "userInput": {
+          "imageFile": "flare-repair-counter.webp",
+          "alt": "Igor entrega uma torradeira consertada no balcão e, à noite, anota o valor recebido num caderno em casa.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a repairman in an apron behind a wooden counter, handing a repaired yellow toaster to a customer whose hands reach in from the right",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a pegboard with a screwdriver and a wrench hangs on the wall behind him",
+            "supportingObjects": ["a pegboard with a screwdriver and a wrench"]
           }
         }
       }

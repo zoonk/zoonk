@@ -880,4 +880,208 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       skills: ["Identificar receitas"],
     },
   },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in accounting
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its \`visual\` shows that scene in a picture
+      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-usuarios-contabilidade-cold-start",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Separar operações da entidade das operações dos proprietários",
+          order: "after",
+          title: "Entidade contábil",
+        },
+        {
+          canDo: "Reconhecer características de informação contábil útil",
+          order: "after",
+          title: "Qualidade da informação contábil",
+        },
+        {
+          canDo: "Identificar pressupostos e limites de uma demonstração",
+          order: "after",
+          title: "Continuidade, estimativas e materialidade",
+        },
+        {
+          canDo: "Localizar normas brasileiras pertinentes a uma questão contábil",
+          order: "after",
+          title: "Normas contábeis brasileiras",
+        },
+        {
+          canDo: "Reconhecer cuidados com sigilo e documentação contábil",
+          order: "after",
+          title: "Ética e responsabilidade profissional",
+        },
+        {
+          canDo: "Tomar decisões com as habilidades deste capítulo",
+          order: "after",
+          title: "Desafio: Informação contábil e responsabilidade",
+        },
+      ],
+      chapterTitle: "Informação contábil e responsabilidade",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      lessonCanDo: "Identificar usuários da informação contábil e suas decisões",
+      lessonDescription:
+        "A contabilidade produz informações para proprietários, credores, governo e outros usuários tomarem decisões.",
+      lessonTitle: "Usuários e finalidade da contabilidade",
+      level: "beginner",
+      skills: ["Identificar usuários da informação contábil"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in accounting
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its \`visual\` shows that scene in a picture
+      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-entidade-contabil-cold-start",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Identificar usuários da informação contábil e suas decisões",
+          order: "before",
+          title: "Usuários e finalidade da contabilidade",
+        },
+        {
+          canDo: "Reconhecer características de informação contábil útil",
+          order: "after",
+          title: "Qualidade da informação contábil",
+        },
+        {
+          canDo: "Identificar pressupostos e limites de uma demonstração",
+          order: "after",
+          title: "Continuidade, estimativas e materialidade",
+        },
+        {
+          canDo: "Localizar normas brasileiras pertinentes a uma questão contábil",
+          order: "after",
+          title: "Normas contábeis brasileiras",
+        },
+        {
+          canDo: "Reconhecer cuidados com sigilo e documentação contábil",
+          order: "after",
+          title: "Ética e responsabilidade profissional",
+        },
+        {
+          canDo: "Tomar decisões com as habilidades deste capítulo",
+          order: "after",
+          title: "Desafio: Informação contábil e responsabilidade",
+        },
+      ],
+      chapterTitle: "Informação contábil e responsabilidade",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      lessonCanDo: "Separar operações da entidade das operações dos proprietários",
+      lessonDescription:
+        "A entidade é tratada separadamente de seus proprietários, mesmo quando uma pessoa controla o negócio.",
+      lessonTitle: "Entidade contábil",
+      level: "beginner",
+      skills: ["Aplicar a autonomia patrimonial"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in accounting
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its \`visual\` shows that scene in a picture
+      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-bens-direitos-cold-start",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Identificar obrigações presentes de uma entidade",
+          order: "after",
+          title: "Obrigações e passivos",
+        },
+        {
+          canDo: "Calcular a participação residual dos proprietários",
+          order: "after",
+          title: "Patrimônio líquido",
+        },
+        {
+          canDo: "Aplicar a equação patrimonial a valores simples",
+          order: "after",
+          title: "Equação patrimonial",
+        },
+        {
+          canDo: "Tomar decisões com as habilidades deste capítulo",
+          order: "after",
+          title: "Desafio: Patrimônio e equação patrimonial",
+        },
+      ],
+      chapterTitle: "Patrimônio e equação patrimonial",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      lessonCanDo: "Identificar bens e direitos controlados por uma entidade",
+      lessonDescription:
+        "Bens e direitos, como mercadorias e valores a receber, podem compor os ativos da entidade.",
+      lessonTitle: "Bens, direitos e ativos",
+      level: "beginner",
+      skills: ["Identificar bens e direitos"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner in accounting
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its \`visual\` shows that scene in a picture
+      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { pictures: "some" },
+    id: "pt-equacao-patrimonial-cold-start",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: [
+        {
+          canDo: "Identificar bens e direitos controlados por uma entidade",
+          order: "before",
+          title: "Bens, direitos e ativos",
+        },
+        {
+          canDo: "Identificar obrigações presentes de uma entidade",
+          order: "before",
+          title: "Obrigações e passivos",
+        },
+        {
+          canDo: "Calcular a participação residual dos proprietários",
+          order: "before",
+          title: "Patrimônio líquido",
+        },
+        {
+          canDo: "Tomar decisões com as habilidades deste capítulo",
+          order: "after",
+          title: "Desafio: Patrimônio e equação patrimonial",
+        },
+      ],
+      chapterTitle: "Patrimônio e equação patrimonial",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      lessonCanDo: "Aplicar a equação patrimonial a valores simples",
+      lessonDescription:
+        "A igualdade entre ativo e a soma de passivo e patrimônio líquido permite conferir uma posição patrimonial.",
+      lessonTitle: "Equação patrimonial",
+      level: "beginner",
+      skills: ["Aplicar a equação patrimonial"],
+    },
+  },
 ];

@@ -59,6 +59,7 @@ export const LESSON_SIZE = {
   minMinutes: 2,
   minScreens: 5,
   noviceTeachingBeforeFirstCheck: 2,
+  noviceTeachingScreensPerVisual: 3,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
@@ -87,10 +88,12 @@ type LessonSpecIssueCode =
   | "checkGap"
   | "earlyCheck"
   | "hook"
+  | "hookPicture"
   | "screenCount"
   | "skillCount"
   | "skillReference"
   | "supportMode"
+  | "teachingVisual"
   | "tooLong"
   | "unpracticedSkill"
   | "untaughtSkill"
@@ -175,6 +178,31 @@ function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
   return before.filter((screen) => isTeachingScreen(screen.kind)).length;
 }
 
+function getTeachingVisualIssue(screens: readonly LessonScreen[]) {
+  const teaching = screens.filter((screen) => isTeachingScreen(screen.kind));
+  const shown = teaching.filter((screen) => screen.visual || screen.activityTemplate).length;
+  const needed = Math.ceil(teaching.length / LESSON_SIZE.noviceTeachingScreensPerVisual);
+
+  return (
+    shown < needed && {
+      code: "teachingVisual" as const,
+      detail: `${shown} of ${teaching.length} explanations and worked examples show a picture or a template to explore; a new learner needs at least ${needed}.`,
+    }
+  );
+}
+
+/** A floor for new learners, not a share to fill: the hook's picture and a few more visuals. */
+function getNoviceVisualIssues(screens: readonly LessonScreen[]) {
+  return [
+    screens[0]?.kind === "hook" &&
+      !screens[0].visual && {
+        code: "hookPicture" as const,
+        detail: "The hook has no picture of the lesson's main example.",
+      },
+    getTeachingVisualIssue(screens),
+  ].filter((issue) => issue !== false);
+}
+
 function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
@@ -207,6 +235,7 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
+    ...(novice ? getNoviceVisualIssues(screens) : []),
   ].filter((issue) => issue !== false);
 }
 

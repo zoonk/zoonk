@@ -23,7 +23,7 @@ function serveStoredPictures() {
 }
 
 function explanation(prompt: string) {
-  return { image: { alt: "A picture", prompt }, text: "One idea on this screen." };
+  return { image: { alt: `A drawing of a ${prompt}`, prompt }, text: "One idea on this screen." };
 }
 
 function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: string[] }) {
@@ -72,7 +72,7 @@ describe(lessonImagesWorkflow, () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows each new picture before its check, then replaces one its check rejects with a redraw", async () => {
+  it("shows each new picture before its check against its alt, then replaces one its check rejects with a redraw", async () => {
     const lesson = await libraryLessonFixture();
     const [rejectedPrompt, passedPrompt] = [`globe ${randomUUID()}`, `compass ${randomUUID()}`];
     await markedScreens({ lessonId: lesson.id, prompts: [rejectedPrompt, passedPrompt] });
@@ -103,6 +103,11 @@ describe(lessonImagesWorkflow, () => {
       vi.mocked(checkLessonImage).mock.calls.every(([params]) => params.serviceTier === "flex"),
     ).toBe(true);
 
+    const alts = vi.mocked(checkLessonImage).mock.calls.map(([params]) => params.alt);
+
+    expect(alts.filter((alt) => alt === `A drawing of a ${rejectedPrompt}`)).toHaveLength(2);
+    expect(alts.filter((alt) => alt === `A drawing of a ${passedPrompt}`)).toHaveLength(1);
+
     expect(generateLessonImage).toHaveBeenLastCalledWith(
       expect.objectContaining({ corrections: ["wrong object"] }),
     );
@@ -122,7 +127,11 @@ describe(lessonImagesWorkflow, () => {
       libraryLessonFixture(),
       mediaAssetFixture({
         prompt: describeImageScene(reusedScene),
-        reuseKey: buildImageReuseKey({ language: null, prompt: describeImageScene(reusedScene) }),
+        reuseKey: buildImageReuseKey({
+          canvas: "landscape",
+          language: null,
+          prompt: describeImageScene(reusedScene),
+        }),
         styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);
