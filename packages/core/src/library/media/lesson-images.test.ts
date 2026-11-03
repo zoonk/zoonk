@@ -347,6 +347,36 @@ describe(createStepImage, () => {
     expect(steps.map((step) => step.mediaAssetId)).toStrictEqual([assetId, assetId, null, assetId]);
   });
 
+  it("links a drawing only within its screen's version, so a retired screen's job leaves the new version alone", async () => {
+    const lesson = await libraryLessonFixture();
+    const heart = explanation(pictureOf("heart from the front"));
+    const retiredAt = new Date();
+
+    const [retired, retiredPeer, current] = await Promise.all([
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 0, retiredAt }),
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 1, retiredAt }),
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 0, version: 2 }),
+    ]);
+
+    mockSearchTerms([]);
+    mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
+    mockDrawnImages([await drawTestImage()]);
+
+    const outcome = await createStepImage({ stepId: retired.id });
+    const assetId = "mediaAssetId" in outcome ? outcome.mediaAssetId : null;
+
+    const linked = await prisma.step.findMany({
+      select: { id: true, mediaAssetId: true },
+      where: { id: { in: [retired.id, retiredPeer.id, current.id] } },
+    });
+
+    expect(Object.fromEntries(linked.map((step) => [step.id, step.mediaAssetId]))).toStrictEqual({
+      [current.id]: null,
+      [retired.id]: assetId,
+      [retiredPeer.id]: assetId,
+    });
+  });
+
   it("draws a blank frame once more and ships the screen without a picture after two", async () => {
     const lesson = await libraryLessonFixture();
 

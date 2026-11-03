@@ -41,10 +41,6 @@ function findStepForImage(stepId: string) {
           id: true,
           language: true,
           ownerId: true,
-          steps: {
-            select: { content: true, id: true, kind: true, mediaAssetId: true },
-            where: CURRENT_STEPS,
-          },
           targetLanguage: true,
           title: true,
           visibility: true,
@@ -95,21 +91,31 @@ export async function listLessonImageSteps({ lessonId }: { lessonId: string }): 
     .map((step) => step.id);
 }
 
+/**
+ * Links the picture to every screen of the step's own version that asks for it, so a job queued
+ * before a regeneration finishes the version it was for and never fills the new one.
+ */
 async function linkStepImage({
-  lessonId,
   mediaAssetId,
-  stepIds,
+  step,
 }: {
-  lessonId: string;
   mediaAssetId: string;
-  stepIds: string[];
+  step: StepForImage;
 }): Promise<void> {
-  await prisma.step.updateMany({
-    data: { mediaAssetId, pictureAvailableAt: new Date() },
-    where: { id: { in: stepIds }, mediaAssetId: null },
+  const peers = await prisma.step.findMany({
+    select: { content: true, id: true, kind: true },
+    where: { lessonId: step.lessonId, mediaAssetId: null, version: step.version },
   });
 
-  revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+  await prisma.step.updateMany({
+    data: { mediaAssetId, pictureAvailableAt: new Date() },
+    where: {
+      id: { in: findStepsSharingPicture({ step, steps: peers }).map((peer) => peer.id) },
+      mediaAssetId: null,
+    },
+  });
+
+  revalidateCacheTags([getLibraryLessonCacheTag(step.lessonId)]);
 }
 
 /** Internal workflow bridge, not an app authorization boundary. */
@@ -143,11 +149,7 @@ export async function createStepImage({
     return { status: "failed" };
   }
 
-  const stepIds = findStepsSharingPicture({ step, steps: lesson.steps }).map((item) => item.id);
-
-  const { error } = await safeAsync(() =>
-    linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepIds }),
-  );
+  const { error } = await safeAsync(() => linkStepImage({ mediaAssetId: picture.assetId, step }));
 
   if (error) {
     logError("The optional lesson picture could not be linked", error);
