@@ -13,11 +13,7 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
-import {
-  useCertificateDate,
-  useCertificateName,
-  useCertificateSentence,
-} from "./certificate-labels";
+import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
 import { type CertificateAccount } from "./certificate-moment-copy";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
@@ -93,7 +89,6 @@ export function CertificateOwnerActions({
   owner: CertificateOwner;
 }) {
   const t = useExtracted();
-  const certificateName = useCertificateName();
 
   if (owner.account === "guest") {
     return (
@@ -116,8 +111,6 @@ export function CertificateOwnerActions({
     return <CertificateNameField current={null} save={owner.saveName} />;
   }
 
-  const fileName = `${facts.recipientName} - ${certificateName(facts)} - Zoonk.png`;
-
   return (
     <CertificateSharing
       className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
@@ -131,8 +124,8 @@ export function CertificateOwnerActions({
       </Button>
       <a
         className={buttonVariants({ size: "lg", variant: "outline" })}
-        download={fileName}
-        href={links.imageUrls.print}
+        download
+        href={`${links.imageUrls.print}&download=1`}
       >
         <DownloadIcon aria-hidden="true" data-icon="inline-start" />
         {t("Download")}
