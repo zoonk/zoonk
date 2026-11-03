@@ -638,28 +638,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The salary handoff and adjacent toolbox correctly convey the requested core scene. However, the added appliance and bills suggest paid repair activity at the same workplace, contrary to the intended distinction and the explicit restriction against adding these elements.",
-          "score": 6,
+          "reasoning": "The envelope handoff at work and toolbox beside Igor clearly communicate the intended scene without inventing a separate repair setting. However, the explicit requirement that Igor be an adult is not established.",
+          "score": 8,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The result correctly requests a single scene rather than stacked or adjacent scenes. Nevertheless, it explicitly adds a forbidden appliance, bills, and motion graphics, turning the simple salary handoff into a depiction of two income ideas.",
-          "score": 6,
+          "reasoning": "There is one focal interaction, one supporting toolbox, and an explicitly single layout. The unnecessary dashed line and arrow introduce extra visual material beyond the requested scene.",
+          "score": 8,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The labels array is empty, correctly avoiding unnecessary labels or captions.",
+          "reasoning": "The label list is empty, appropriately matching a scene that needs no labels or captions.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. With no labels, there are no label-placement targets to check.",
+          "reasoning": "All populated descriptive fields are in English. With no labels, label-target placement requirements do not apply.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -677,24 +677,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1382,
-          "outputTokens": 682,
-          "reasoningTokens": 260
+          "inputTokens": 1354,
+          "outputTokens": 700,
+          "reasoningTokens": 314
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The repaired appliance and nearby bills violate the explicit requirement to show only the salary handoff with Igor's toolbox beside him. They also place evidence of paid repair work at his workplace, blurring the screen's distinction between salary earned there and occasional repairs performed elsewhere.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The dashed line and arrow add unnecessary visual clutter to a handoff that is already understandable from the adults' hands and envelope.",
+          "conclusion": "The dashed motion line and arrow add visual elements not named in the alt and are unnecessary for showing the envelope handoff. Igor's required adult age is also left unspecified, although nothing explicitly depicts him as a child.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Explicitly describe Igor as an adult; the result specifies adulthood only for the person handing him the envelope.",
+          "conclusion": "Specify Igor as an adult and depict the envelope being handed directly to him without motion graphics. Preserve the single workplace scene, adjacent toolbox, and absence of labels.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -717,28 +713,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The payment exchange and calendar communicate recurring income, and the bicycle sale is consistent with the screen text. However, explicitly placing both scenes side by side violates the task-specific single-scene requirement and weakens the intended focus on Igor's monthly workplace payment.",
-          "score": 6,
+          "reasoning": "The workplace payment scene matches the alt text and illustrates the income Igor can expect again. The calendar reinforces monthly recurrence. Receiving money from 'another adult' also establishes Igor as an adult.",
+          "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The comparison layout and placement instructions create two separate narrative scenes. The bicycle exchange is a second focal event, not a small supporting object, so the result fails the explicit requirement to reduce the overloaded request to one scene.",
-          "score": 6,
+          "reasoning": "The result appropriately reduces the two-scene request to one workplace payment scene, without including the bike sale. It has one focal interaction and one supporting object, the calendar.",
+          "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "The labels array is empty, appropriately matching the expectation that no labels are needed. No unnecessary captions or prices are introduced.",
+          "reasoning": "The labels array is empty, appropriately avoiding unnecessary text or captions. No labels are required for this scene.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All populated textual fields are in English. There are no labels requiring placement targets.",
+          "reasoning": "All descriptive fields are in English. There are no labels requiring placement targets.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -746,8 +742,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "2 of 3 parts passed. This screen needs one scene (single), but the scene's layout is comparison.",
-          "score": 7,
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -756,23 +752,15 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1364,
-          "outputTokens": 673,
-          "reasoningTokens": 269
+          "inputTokens": 1346,
+          "outputTokens": 432,
+          "reasoningTokens": 115
         }
       },
       "steps": [
-        {
-          "conclusion": "The result explicitly requests two scenes side by side: monthly pay on the left and the bicycle sale on the right. This directly violates the requirement to show only one scene and divides attention instead of focusing on the workplace payment identified by the alt text.",
-          "kind": "majorErrors",
-          "score": 6
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Explicitly describe Igor as an adult to ensure the illustration preserves the required age.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
@@ -784,6 +772,152 @@
           "language": "pt",
           "request": "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
           "screenText": "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Preserves both required moments as a comparison: the morning handoff at a counter and nighttime recording in a notebook at home. The actions are concrete and consistent with the screen, but Fábio's required adult appearance is unspecified.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The two scenes are required by the task and appropriately retained. However, the cashbox containing money adds visual clutter beyond the product handoff and notebook entry needed to convey the idea.",
+          "score": 8,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "No labels are included, as appropriate for these readily understandable actions. No label-related cap applies.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Fábio is a proper name, and there are no labels requiring placement targets.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1380,
+          "outputTokens": 563,
+          "reasoningTokens": 182
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Fábio is not explicitly described as an adult, leaving a required visual detail unspecified. The cashbox containing money adds an unnecessary prop to the nighttime recording scene.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the side-by-side placement fully explicit by placing the nighttime scene on the right.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
+        "expected": { "labels": "any", "layout": "comparison" },
+        "id": "alt-names-two-moments-pt-1",
+        "userInput": {
+          "alt": "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
+          "context": "Contabilidade › Introdução à contabilidade › Usuários e finalidade da contabilidade",
+          "language": "pt",
+          "request": "Fábio vende um produto de manhã e anota a venda à noite.",
+          "screenText": "Fábio vende durante o dia e anota cada venda à noite. Assim ele sabe quanto entrou no caixa.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The comparison correctly contrasts putting a book into the red box with taking it out of the same box. Directional arrows make the distinction readable. However, the description does not establish that Nayara is an adult, as required.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "Both scenes serve the single requested comparison, using only Nayara, a book, and the red box. The motion indicators clarify the actions without adding unrelated content.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The only label texts are the explicitly required numbers 1 and 2. There are no captions or unnecessary textual labels.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All non-label fields are in English, and each label target clearly specifies placement above its corresponding scene.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1459,
+          "outputTokens": 528,
+          "reasoningTokens": 182
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Nayara is not described as an adult, leaving an explicit visual requirement unspecified.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
+        "expected": { "labels": "some", "layout": "comparison" },
+        "id": "two-scenes-to-compare-pt-1",
+        "userInput": {
+          "alt": "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
+          "context": "Língua Portuguesa › Interpretação de imagens › Imagens e legendas",
+          "language": "pt",
+          "request": "Duas cenas lado a lado, rotuladas 1 e 2: em 1 Nayara coloca um livro numa caixa vermelha; em 2 ela tira um livro da mesma caixa.",
+          "screenText": "Qual cena, 1 ou 2, combina com a legenda: Nayara coloca um livro na caixa vermelha?",
           "textAllowed": true
         }
       }

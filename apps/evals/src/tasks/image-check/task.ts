@@ -31,6 +31,7 @@ const scoreImageCheck: TaskScorer<ImageCheckExpected> = ({ output, testCase }) =
 };
 
 async function generate({
+  alt,
   imageFile,
   language,
   model,
@@ -40,7 +41,7 @@ async function generate({
 }: ImageCheckCaseInput & { model: string; reasoning?: Reasoning; useFallback?: boolean }) {
   const data = await readDatasetImage({ fileName: imageFile, taskId: TASK_ID });
   const image = { data, mediaType: "image/webp" };
-  return checkLessonImage({ image, language, model, reasoning, scene, useFallback });
+  return checkLessonImage({ alt, image, language, model, reasoning, scene, useFallback });
 }
 
 export const imageCheckTask: Task<ImageCheckCaseInput, ImageCheckVerdict, ImageCheckExpected> = {

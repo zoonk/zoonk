@@ -102,9 +102,12 @@ async function removePicture(asset: CheckedAsset) {
 
 /** Internal workflow bridge for pictures drawn by an existing generation workflow. */
 export async function checkImageAsset({
+  alt,
   analytics,
   assetId,
 }: {
+  /** The alt of the screen the picture was drawn for. */
+  alt?: string | null;
   analytics?: ImageAnalytics;
   assetId: string;
 }): Promise<ImageAssetCheck> {
@@ -118,6 +121,7 @@ export async function checkImageAsset({
   const image = await readStoredImage({ url: asset.url });
 
   const review = await reviewImage({
+    alt,
     analytics,
     image,
     language,
@@ -130,6 +134,7 @@ export async function checkImageAsset({
   }
 
   const drawn = await drawCheckedImage({
+    alt,
     analytics,
     canvas: getAssetCanvas(asset),
     corrections: review.problems,
