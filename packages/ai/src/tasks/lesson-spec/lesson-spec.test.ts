@@ -196,6 +196,44 @@ describe(generateLessonSpec, () => {
     expect(generateText).toHaveBeenCalledTimes(5);
   });
 
+  it("gives a teaching screen both plans left bare a visual: a picture when shared, a table when private", async () => {
+    const bare = oneSkillLesson({
+      kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
+      title: "Bare",
+    });
+
+    const screens = bare.screens.map((screen, index) =>
+      index === 3 ? { ...screen, visual: null, visualKind: "none" } : screen,
+    );
+
+    const plan = createGenerateTextResult({ lessons: [{ ...bare, screens }] });
+
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(plan)
+      .mockResolvedValueOnce(plan)
+      .mockResolvedValueOnce(plan)
+      .mockResolvedValueOnce(plan);
+
+    const params = {
+      activityTemplates: [],
+      chapterTitle: "Temperature",
+      courseTitle: "Weather",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Below zero",
+      level: "beginner",
+    } satisfies Parameters<typeof generateLessonSpec>[0];
+
+    const sharedPlan = await generateLessonSpec(params);
+    const privatePlan = await generateLessonSpec({ ...params, isPrivate: true });
+    const [shared] = sharedPlan.data.lessons;
+    const [own] = privatePlan.data.lessons;
+
+    expect(generateText).toHaveBeenCalledTimes(4);
+    expect(shared?.screens[3]).toMatchObject({ visual: "explanation", visualKind: "picture" });
+    expect(own?.screens[3]).toMatchObject({ visual: null, visualKind: "table" });
+  });
+
   it("plans a quick lesson as one lesson, never split, with the quick lesson rules only for it", async () => {
     const lesson = {
       canDo: "Relacionar estrutura proteica e função",

@@ -58,7 +58,7 @@ const validScreens = [
 ];
 
 const illustratedScreens = validScreens.map((item, index) =>
-  [0, 1, 3].includes(index) ? picture(item, index) : item,
+  [0, 1, 3, 5].includes(index) ? picture(item, index) : item,
 );
 
 function getCodes(
@@ -198,7 +198,7 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
   });
 
-  it("asks a shared lesson for a visual on one teaching screen in two, rounded up", () => {
+  it("asks a shared lesson for a visual on every teaching screen", () => {
     const longLesson = [
       picture(screen("hook", []), 0),
       screen("explanation"),
@@ -217,18 +217,22 @@ describe(getLessonSpecIssues, () => {
     const showing = (shown: number[]) =>
       spec(longLesson.map((item, index) => (shown.includes(index) ? picture(item, index) : item)));
 
-    expect(getCodes(showing([1, 5, 9]), "beginner", true)).toStrictEqual(["teachingVisual"]);
+    const everyOne = [1, 3, 5, 6, 7, 9, 10];
 
-    expect(getCodes(showing([1, 5, 9]), "advanced", false, "pictures")).toStrictEqual([
+    expect(getCodes(showing(everyOne.slice(1)), "beginner", true)).toStrictEqual([
       "teachingVisual",
     ]);
 
-    expect(getCodes(showing([1, 5, 7, 9]), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(showing(everyOne.slice(1)), "advanced", false, "pictures")).toStrictEqual([
+      "teachingVisual",
+    ]);
+
+    expect(getCodes(showing(everyOne), "beginner", true)).toStrictEqual([]);
   });
 
-  it("counts what the app draws toward the floor, and only that in a private lesson", () => {
+  it("counts what the app draws toward the floor, and only that in a private lesson, one in two", () => {
     const drawn = validScreens.map((item, index) => {
-      if (index === 0) {
+      if (index === 0 || index === 1) {
         return { ...item, visualKind: "table" as const };
       }
 
@@ -243,8 +247,13 @@ describe(getLessonSpecIssues, () => {
       [0, 3, 5].includes(index) ? picture(item, index) : item,
     );
 
+    const halfDrawn = drawn.map((item, index) =>
+      index === 5 ? { ...item, activityTemplate: null, visualKind: "none" as const } : item,
+    );
+
     expect(getCodes(spec(drawn), "beginner", true)).toStrictEqual([]);
-    expect(getCodes(spec(drawn), "beginner", true, "drawn")).toStrictEqual([]);
+    expect(getCodes(spec(halfDrawn), "beginner", true, "drawn")).toStrictEqual([]);
+    expect(getCodes(spec(halfDrawn), "beginner", true)).toStrictEqual(["teachingVisual"]);
     expect(getCodes(spec(pictured), "beginner", true, "drawn")).toStrictEqual(["teachingVisual"]);
   });
 
@@ -261,7 +270,9 @@ describe(getLessonSpecIssues, () => {
 
     expect(getCodes(spec(validScreens), "beginner", true, "none")).toStrictEqual([]);
 
-    const explored = validScreens.map((item, index) => (index === 1 ? picture(item, 1) : item));
+    const explored = validScreens.map((item, index) =>
+      index === 1 || index === 5 ? picture(item, index) : item,
+    );
 
     explored[3] = screen("explanation", [0], {
       activityTemplate: "formulaModel",

@@ -23,7 +23,7 @@ import {
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
-import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
+import { LESSON_VISUAL_KINDS, fillTeachingVisuals } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
@@ -230,17 +230,22 @@ function countShapeIssues({
 
 /**
  * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
- * more, and the one with fewer broken rules is kept.
+ * more, and the one with fewer broken rules is kept; teaching screens still bare get a visual.
  */
-export function generateLessonSpec(params: LessonSpecParams) {
-  return draftAgainWhenFlawed({
+export async function generateLessonSpec(params: LessonSpecParams) {
+  const visualFloor = getVisualFloor(params);
+
+  const planned = await draftAgainWhenFlawed({
     countProblems: ({ data }) =>
       countShapeIssues({
         data,
         level: params.level,
         novice: readsNoviceRules(params),
-        visualFloor: getVisualFloor(params),
+        visualFloor,
       }),
     draft: () => planLesson(params),
   });
+
+  const lessons = planned.data.lessons.map((spec) => fillTeachingVisuals({ spec, visualFloor }));
+  return { ...planned, data: { lessons } };
 }

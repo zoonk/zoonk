@@ -48,15 +48,19 @@ function kindsAfterDropping(
 }
 
 describe(dropDecorativePictures, () => {
-  it("drops a decorative picture the lesson can spare", () => {
-    expect(kindsAfterDropping([3], "pictures")?.[3]).toStrictEqual(["none", null]);
-  });
-
-  it("draws a table instead when the floor needs that screen", () => {
+  it("draws a table in place of every decorative picture on a shared lesson's teaching screens", () => {
     const kinds = kindsAfterDropping([1, 3], "pictures");
 
     expect(kinds?.[1]).toStrictEqual(["table", null]);
-    expect(kinds?.[3]).toStrictEqual(["none", null]);
+    expect(kinds?.[3]).toStrictEqual(["table", null]);
+  });
+
+  it("drops a private lesson's decorative picture where what the app draws already meets its floor", () => {
+    const table = { ...plain("explanation"), visualKind: "table" as const };
+    const drawn = screens.map((screen, index) => (index === 1 || index === 5 ? table : screen));
+
+    expect(kindsAfterDropping([3], "drawn", drawn)?.[3]).toStrictEqual(["none", null]);
+    expect(kindsAfterDropping([3], "drawn")?.[3]).toStrictEqual(["table", null]);
   });
 
   it("judges a picture shown on several screens once, and drops it from all of them", () => {
