@@ -49,8 +49,8 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
     >
       <StartClient
         // "Start over" comes back here with a new key, so nothing typed before is kept, and
-        // opening another draft or a link with other words shows those.
-        key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}:${goal}`}
+        // opening another draft, or a link with other words or another plan, shows those.
+        key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}:${goal}:${plan ?? ""}`}
         canAttach={canAttach}
         defaultGoal={goal}
         goalLimit={goalLimit}
