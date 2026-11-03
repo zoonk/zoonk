@@ -14,6 +14,7 @@ import { explanationStep, languageStep, teachingStep } from "../preview/preview-
 
 const EXPLANATION_TITLE = "A cloud, not a little ball";
 const PHONE = { height: 844, width: 390 };
+const DESKTOP = { height: 900, width: 1440 };
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
@@ -88,6 +89,32 @@ describe("lesson screens", () => {
       await summary.getByRole("button", { name: "Got it" }).click();
       await expect.element(summary).not.toBeInTheDocument();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+
+  it("leaves the lesson map out of the menu on a wide screen, whose aside already shows it", async () => {
+    await atViewport(DESKTOP, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([teachingStep("check")], {
+          summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
+        }),
+      });
+
+      await answerRight();
+      await continueFromMap();
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+      const aside = page.getByRole("complementary", { name: "Lesson map" });
+      await expect.element(aside.getByText("Electrons live in clouds.")).toBeVisible();
+
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await expect.element(page.getByRole("menu")).toBeVisible();
+
+      await expect
+        .element(page.getByRole("menuitem", { name: "Lesson map" }))
+        .not.toBeInTheDocument();
+
+      await expect.element(page.getByRole("menu").getByRole("separator")).not.toBeInTheDocument();
     });
   });
 
