@@ -214,12 +214,15 @@ function evaluate(state: CallEndingState, at: number): Step {
   return { commands, state: next };
 }
 
+/** Only what they do once the character stopped answers it: talking over its last words doesn't. */
 function markLearner(state: CallEndingState, at: number): CallEndingState {
+  const { episodeFrom } = state;
+
   return {
     ...state,
     activityAt: Math.max(state.activityAt, at),
     checkedIn: false,
-    episodeFrom: null,
+    episodeFrom: episodeFrom !== null && episodeFrom > at ? episodeFrom : null,
     learnerAt: at,
   };
 }
@@ -307,7 +310,8 @@ function reduce(
   // Their words come back 1.3 to 1.8 s late, often after a short answer: the quiet starts again
   // from them rather than waiting for words the character already said.
   if (event.type === "learnerHeard") {
-    return { ...markLearner(state, at), episodeFrom: at, heardAt: at, spokeOutLoud: true };
+    const marked = markLearner(state, at);
+    return { ...marked, episodeFrom: marked.episodeFrom ?? at, heardAt: at, spokeOutLoud: true };
   }
 
   if (event.type === "typing") {

@@ -393,9 +393,24 @@ describe("a quiet learner", () => {
       until: 40_000,
     });
 
-    expect(log.filter((entry) => entry.type === "cue").map((entry) => entry.at)).toStrictEqual([
-      0, 33_000,
-    ]);
+    // The stretch starts once the character's reply ended, at 8.9 s, not when the words came back.
+    expect(cueTimes(log)).toStrictEqual([0, 34_000]);
+  });
+
+  it("is still checked on when the character answered over the end of their words", () => {
+    const { log } = play({
+      events: [
+        ...GREETING,
+        ...learnerTalks(4000, 4000),
+        ...characterTalks(6500, 1800),
+        { at: 8200, type: "learnerHeard" },
+      ],
+      talkSeconds: 120,
+      until: 40_000,
+    });
+
+    // The character's last words came at 8 s, while the microphone still held the learner's voice.
+    expect(cueTimes(log)).toStrictEqual([0, 34_500]);
   });
 
   it("isn't checked on after typing", () => {
