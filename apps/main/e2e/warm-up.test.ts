@@ -4,8 +4,9 @@ import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { type Page, expect, test } from "./fixtures";
-import { followRun } from "./generation-run";
+import { type StreamEvent, followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
+import { createStudyDay, openAs, writeStudyLesson } from "./study-day";
 
 /** The time question asks the plan every 3 s while it's being built. */
 const NEXT_CHECK_TIMEOUT_MS = 10_000;
@@ -120,6 +121,59 @@ test("a learner who didn't guess moves on to the time question as soon as the pl
   await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible({
     timeout: NEXT_CHECK_TIMEOUT_MS,
   });
+});
+
+test("a learner who guessed on the session's first lesson wait keeps its finished timeline once the lesson is written", async ({
+  browser,
+}) => {
+  const [{ goal, lesson, user }, deck] = await Promise.all([
+    createStudyDay({ reviewDone: true, writtenLesson: false }),
+    warmUpFixture(),
+  ]);
+
+  const runId = `e2e-warm-up-session-${randomUUID()}`;
+
+  const events: StreamEvent[] = [
+    { entityId: lesson.id, status: "started", step: "planLesson" },
+    { entityId: lesson.id, status: "completed", step: "planLesson" },
+    { entityId: lesson.id, status: "started", step: "writeLesson" },
+  ];
+
+  await Promise.all([
+    prisma.goal.update({ data: { warmUpId: deck.id }, where: { id: goal.id } }),
+    prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    }),
+  ]);
+
+  const page = await openAs(browser, user);
+  await followRun({ events, page, runId });
+  await page.goto("/session");
+
+  const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
+
+  await expect(steps).toHaveText([
+    /^Planning the lesson, done/u,
+    /^Writing the lesson, in progress/u,
+  ]);
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await writeStudyLesson(lesson.id);
+  events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });
+
+  await expect(page.getByRole("status").filter({ hasText: "Your lesson is ready." })).toBeVisible();
+
+  await expect(steps).toHaveText([/^Planning the lesson, done/u, /^Writing the lesson, done/u]);
+  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
+  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
+
+  await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+  await page.context().close();
 });
 
 test("a learner who guessed while the exam's notice is read stays once it's read", async ({
