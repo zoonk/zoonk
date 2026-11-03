@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -111,6 +112,11 @@ fun GoalSetupScreen(
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
     val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.history.isNotEmpty() }
 
+    // The time question keeps what the learner set while a screen after it is open, such as the date they went to change.
+    val schedule = rememberSaveableStateHolder()
+    val keepsSchedule = step == OnboardingStep.SCHEDULE || OnboardingStep.SCHEDULE in vm.flow.history
+    LaunchedEffect(keepsSchedule) { if (!keepsSchedule) schedule.removeState(OnboardingStep.SCHEDULE.value) }
+
     view?.let { LaunchedEffect(it.goal.id) { vm.begin(it) } }
     if (view?.goal?.kind == Goal.Kind.EXPLAIN) {
         LaunchedEffect(view.goal.id) {
@@ -189,19 +195,23 @@ fun GoalSetupScreen(
                                 )
                             }
                             step?.let {
-                                SetupStep(
-                                    it,
-                                    shown.value,
-                                    vm,
-                                    store,
-                                    plans,
-                                    mocks,
-                                    isGuest,
-                                    navigator,
-                                    route,
-                                    asideBeside || fold != null,
-                                    prepareToday,
-                                )
+                                val setupStep =
+                                    @Composable {
+                                        SetupStep(
+                                            it,
+                                            shown.value,
+                                            vm,
+                                            store,
+                                            plans,
+                                            mocks,
+                                            isGuest,
+                                            navigator,
+                                            route,
+                                            asideBeside || fold != null,
+                                            prepareToday,
+                                        )
+                                    }
+                                if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
                             }
                         }
                     }

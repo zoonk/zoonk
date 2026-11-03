@@ -10,6 +10,7 @@ import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import kotlinx.serialization.Serializable
 
 /** Sunday is 0, as the plan numbers weekdays. */
 internal val EVERY_DAY = (0..6).toList()
@@ -20,6 +21,17 @@ internal fun isWeekend(day: Int) = day == 0 || day == 6
 
 /** A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless someone chose fewer days. */
 internal fun startingDays(goalDays: List<Int>): List<Int> = goalDays.takeIf { it.isNotEmpty() && it.size < EVERY_DAY.size } ?: WEEKDAYS
+
+@Serializable
+internal data class ScheduleChoice(
+    val days: List<Int>,
+    val weekendOn: Boolean = false,
+    val weekendPicked: Int? = null,
+    val picked: Int? = null,
+    val fullCourse: Boolean = false,
+) {
+    val weekend: Int? get() = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
+}
 
 internal data class StudyWeek(
     val studyDays: List<Int>,

@@ -3816,6 +3816,37 @@ msgctxt "_DwRra"
 msgid "About your answer to “<question></question>”"
 msgstr "Sulla tua risposta a “<question></question>”"
 
+#: src/questions/lesson-question-answer.tsx
+msgctxt "KQvwZ5"
+msgid "We couldn't finish this answer."
+msgstr "Non abbiamo potuto completare questa risposta."
+
+#. The study buddy is writing its answer; it speaks as "I".
+#: src/questions/lesson-question-answer.tsx
+msgctxt "P1QHV0"
+msgid "Thinking…"
+msgstr "Sto pensando…"
+
+#: src/questions/lesson-question-answer.tsx
+msgctxt "plrEVt"
+msgid "Get answer"
+msgstr "Ottieni la risposta"
+
+#: src/questions/lesson-question-answer.tsx
+msgctxt "TtobyB"
+msgid "This one wasn't answered."
+msgstr "Questa domanda non ha ricevuto risposta."
+
+#: src/questions/lesson-question-answer.tsx
+msgctxt "1A8Z_l"
+msgid "Check again"
+msgstr "Controlla di nuovo"
+
+#: src/questions/lesson-question-answer.tsx
+msgctxt "C1eFF3"
+msgid "No answer available."
+msgstr "Nessuna risposta disponibile."
+
 #: src/questions/lesson-question-composer.tsx
 msgctxt "pLRK5_"
 msgid "We couldn't send your last question. Try again."
@@ -4053,37 +4084,6 @@ msgid "About this question"
 msgstr "Su questa domanda"
 
 #: src/questions/lesson-question-turn.tsx
-msgctxt "KQvwZ5"
-msgid "We couldn't finish this answer."
-msgstr "Non abbiamo potuto completare questa risposta."
-
-#: src/questions/lesson-question-turn.tsx
-msgctxt "plrEVt"
-msgid "Get answer"
-msgstr "Ottieni la risposta"
-
-#: src/questions/lesson-question-turn.tsx
-msgctxt "TtobyB"
-msgid "This one wasn't answered."
-msgstr "Questa domanda non ha ricevuto risposta."
-
-#: src/questions/lesson-question-turn.tsx
-msgctxt "1A8Z_l"
-msgid "Check again"
-msgstr "Controlla di nuovo"
-
-#: src/questions/lesson-question-turn.tsx
-msgctxt "C1eFF3"
-msgid "No answer available."
-msgstr "Nessuna risposta disponibile."
-
-#. The study buddy is writing its answer; it speaks as "I".
-#: src/questions/lesson-question-turn.tsx
-msgctxt "P1QHV0"
-msgid "Thinking…"
-msgstr "Sto pensando…"
-
-#: src/questions/lesson-question-turn.tsx
 msgctxt "wfxYSP"
 msgid "Couldn't load earlier messages. Try again."
 msgstr "Non abbiamo potuto caricare i messaggi precedenti. Riprova."
@@ -4108,11 +4108,6 @@ msgstr "Carica le domande precedenti"
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "La tua domanda"
-
-#: src/questions/tutor-conversation-parts.tsx
-msgctxt "Hv0XJn"
-msgid "Suggestions"
-msgstr "Suggerimenti"
 
 #: src/questions/tutor-conversation-parts.tsx
 msgctxt "zWgbGg"
@@ -4153,11 +4148,6 @@ msgstr "Chiedi a {name} aiuto su questa domanda"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Fai una domanda a {name} su questa schermata"
-
-#: src/questions/tutor-dock.tsx
-msgctxt "8ToTqX"
-msgid "Suggested questions"
-msgstr "Domande suggerite"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"
@@ -4208,6 +4198,11 @@ msgstr "Fammi un altro esempio"
 msgctxt "tutorSuggestions.AcKlQI"
 msgid "Explain it more simply"
 msgstr "Spiegalo in modo più semplice"
+
+#: src/questions/tutor-suggestions.tsx
+msgctxt "8ToTqX"
+msgid "Suggested questions"
+msgstr "Domande suggerite"
 
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "DMPOmk"

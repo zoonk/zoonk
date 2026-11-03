@@ -39,6 +39,16 @@ export function StepsClient(props: {
         planActions={{
           ...props.planActions,
           adviseOnBases: () => getGoalBasesAdvice(goalId),
+          // The API saves the choice, so unlike the other changes nothing drops the pages kept.
+          chooseTools: async (input) => {
+            const chosen = await props.planActions.chooseTools(input);
+
+            if (chosen === true) {
+              navigation.refreshPages();
+            }
+
+            return chosen;
+          },
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
         }}
         generation={generation}

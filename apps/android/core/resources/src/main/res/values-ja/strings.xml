@@ -51,6 +51,7 @@
   "load_failed_try_again": "12fb80f3ad4c0a640f037cd6e2f67955c6258d9fbb4a47cf0aa8a6220bf35fe8",
   "navigation_back": "4ef063f96f17a5f68644b30a479547093d308f9bb80c9c4c147d7d02313c86ce",
   "navigation_buddy": "9265a1cf6e6893392b4ba8ea900a7304356ab4a808abae2999a23dcd90319b64",
+  "navigation_completed_lessons": "7fd8be3131092c817ba0b32ab372badc88050db42df5cc424e7a2bb933961014",
   "navigation_exam": "727e62ea32301600dcebe74de2ac4af9df56a860837fdbfadb6655c3e6d113e8",
   "navigation_mind_maps": "c8c9ccd06be93091cebcc5b964a1c5e639b9f454c370ca9307d8e9b5aa108e5f",
   "navigation_mistakes": "91fd88ad5426ea1caf4ecf33fdd6995705ce1a19928cf630bdb9c7183cd8180f",
@@ -78,6 +79,8 @@
     <string name="navigation_buddy">相棒</string>
     <string name="navigation_study">学習</string>
     <string name="navigation_mistakes">間違いノート</string>
+    <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
+    <string name="navigation_completed_lessons">完了したレッスン</string>
     <string name="navigation_exam">試験</string>
     <string name="navigation_speaking">スピーキング</string>
     <string name="navigation_mind_maps">マインドマップ</string>

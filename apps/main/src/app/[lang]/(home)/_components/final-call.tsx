@@ -15,28 +15,32 @@ export async function FinalCall({ startPath }: { startPath: string }) {
       className="bg-background text-foreground dark:border-y"
       data-slot="ink-band"
     >
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col items-center py-26 text-center")}>
+      <div
+        className={cn(
+          PUBLIC_CONTAINER_CLASS,
+          "flex flex-col items-center py-26 text-center lg:py-34",
+        )}
+      >
         <h2
-          className="text-[clamp(2.5rem,6.6vw,5.5rem)] leading-[0.98] font-[680] tracking-[-0.052em] text-balance"
+          className="text-[clamp(2.5rem,7vw,5.25rem)] leading-[0.98] font-[680] tracking-tighter text-balance"
           id={TITLE_ID}
         >
-          {t("Start with what matters today.")}
+          {t({
+            description: "In Brazilian Portuguese: “Qual é o seu objetivo?”",
+            message: "What's your goal?",
+          })}
         </h2>
-        <p className="text-muted-foreground mt-4.5 max-w-[30em] text-[1.0625rem] leading-normal text-pretty lg:text-xl">
+        <p className="text-lead mt-4.5 max-w-[28em]">
           {t({
             description:
-              "In Brazilian Portuguese: “Conte sua meta e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”",
+              "In Brazilian Portuguese: “Conte do seu jeito e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”",
             message:
-              "Tell us your goal and answer a few quick questions. Then just follow each day's plan.",
+              "Tell us in your own words and answer a few quick questions. Then just follow each day's plan.",
           })}
         </p>
 
-        <div className="max-w-column mt-8 w-full text-left">
-          <LandingGoalBox
-            action={startPath}
-            id={FINAL_GOAL_ID}
-            note={t("Start free, no account needed.")}
-          />
+        <div className="max-w-column mt-9 w-full text-left">
+          <LandingGoalBox action={startPath} example="language" id={FINAL_GOAL_ID} />
         </div>
       </div>
     </section>

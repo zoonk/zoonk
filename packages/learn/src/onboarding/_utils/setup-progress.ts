@@ -17,7 +17,14 @@ export function getSetupProgress({
     return null;
   }
 
-  const answered = history.filter((step) => isSetupQuestion(step)).length;
-  const remaining = view.steps.filter((step) => step !== current && isSetupQuestion(step)).length;
-  return { current: answered, total: answered + 1 + remaining };
+  // Each question counts once, where the learner meets it: an earlier one opened again from a
+  // later screen keeps its place, and the screen it was opened from is still ahead.
+  const ahead = view.steps.filter((step) => isSetupQuestion(step));
+
+  const behind = history.filter(
+    (step) => isSetupQuestion(step) && (step === current || !ahead.includes(step)),
+  );
+
+  const order = [...new Set([...behind, current, ...ahead])];
+  return { current: order.indexOf(current), total: order.length };
 }

@@ -44,7 +44,7 @@ export function CategorizeGroup({
             : t("Put {item} in {group}", { group: group.label, item: selectedText })
         }
         className={cn(
-          "focus-visible:ring-ring/50 flex min-h-11 flex-col items-start rounded-xl px-1.5 pt-1 pb-1.5 text-left outline-none focus-visible:ring-[3px]",
+          "focus-visible:ring-ring/50 flex min-h-11 flex-col items-start rounded-xl px-1.5 pt-1 pb-1.5 text-left outline-none select-none focus-visible:ring-[3px]",
           canPlace &&
             "hover:bg-viz-accent-soft cursor-pointer after:absolute after:inset-0 after:rounded-2xl after:content-['']",
         )}

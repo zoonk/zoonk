@@ -56,6 +56,9 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Mistakes : AppRoute
 
+    @Serializable
+    data object CompletedLessons : AppRoute
+
     /** [task] opens that task's row, as main's `?task=` does. */
     @Serializable
     data class Speaking(
@@ -181,12 +184,17 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Logbook : AppRoute
 
-    /** `firstAnswer` is the option a visitor picked on the lesson's public page, checked as the first step. */
+    /**
+     * `firstAnswer` is the option a visitor picked on the lesson's public page, checked as the first step.
+     * `fromCatalog`: opened from a public catalog page, so a guest's lesson ends with "Build my plan"; opened
+     * anywhere else in the app, it ends as a learner's.
+     */
     @Serializable
     data class Lesson(
         val lessonId: String,
         val sessionId: String? = null,
         val firstAnswer: String? = null,
+        val fromCatalog: Boolean = false,
     ) : AppRoute
 
     @Serializable
@@ -339,7 +347,7 @@ val AppRoute.presentation: Presentation
             is AppRoute.Buddy -> Presentation.Tab(AppTab.Buddy)
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
-            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, is AppRoute.Speaking,
+            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking,
             AppRoute.EarlierQuestions,
             -> Presentation.Push
 
@@ -374,7 +382,7 @@ val AppRoute.requirement: Requirement
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
             AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap,
-            AppRoute.Mistakes, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
+            AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
             is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,

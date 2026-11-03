@@ -298,7 +298,7 @@ describe("exam speaking tasks", () => {
     );
   });
 
-  it("starts a task of a language goal that names no exam on its language's paper at its target", async () => {
+  it("starts a task of a language goal on the paper of the exam it names, at its target", async () => {
     const user = await userFixture();
 
     const [goal] = await Promise.all([
@@ -306,7 +306,7 @@ describe("exam speaking tasks", () => {
         details: { targetLevel: "B1+" },
         kind: "language",
         language: "pt",
-        prompt: "Quero conversar em francês com a família do meu marido",
+        prompt: "Quero conversar em francês com a família do meu marido e um dia fazer o DELF",
         targetLanguage: "fr",
         title: "Francês com a família",
         userId: user.id,

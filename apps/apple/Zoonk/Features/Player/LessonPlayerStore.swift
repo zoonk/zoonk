@@ -33,7 +33,9 @@ final class LessonPlayerStore {
 
   let lessonId: String
   let studySessionId: String?
-  /// Its Library page showed the first question, so answering it counts as main's catalog answer.
+  /// Opened from a public catalog page, where main asks the first question: answering it counts as
+  /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
+  /// the app, a guest's lesson ends as a learner's.
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
   private(set) var lesson: PlayableLesson?
@@ -43,8 +45,8 @@ final class LessonPlayerStore {
   private(set) var explanations: [String: Explanation] = [:]
   private(set) var exampleLines: [String: String] = [:]
   private(set) var fit: LessonFit?
-  /// A guest outside a study session: the lesson ends with "Build my plan".
   var isGuest = false
+  var endsAsGuest: Bool { isGuest && fromCatalog }
   /// "I can't talk now" lasts the rest of the learner's day on this device.
   var cantTalkToday: Bool {
     didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
@@ -638,7 +640,7 @@ final class LessonPlayerStore {
         blockFinished(studySessionId, block)
       }
 
-      if isGuest, studySessionId == nil {
+      if endsAsGuest {
         fit = await api.getLessonFit(id: lessonId, token: token)
       }
     case .done(.incomplete):

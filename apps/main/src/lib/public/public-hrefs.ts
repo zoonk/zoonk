@@ -67,17 +67,42 @@ export function getPlanLinkStartHref({ goal, planId }: { goal: string; planId: s
 /** The player opens with this answer checked, so the tap on the public page counts as the lesson's first step. */
 export const FIRST_ANSWER_PARAM = "answer";
 
-/** Only a catalog path is read back, so the parameter can't send anyone off the site. */
+/**
+ * Only a catalog path or one of the app's own places is read back, so the parameter can't send
+ * anyone off the site.
+ */
 export const ORIGIN_PARAM = "from";
 
 const CATALOG_PATH =
   /^\/b\/[^\s#/?]+\/c\/[^\s#/?]+(?:\/ch\/[^\s#/?]+(?:\/l\/[^\s#/?]+)?)?(?:#[\w-]+)?$/u;
 
-export function readCatalogOrigin(value: string | string[] | undefined): string | null {
-  return typeof value === "string" && CATALOG_PATH.test(value) ? value : null;
+const APP_ORIGINS = ["/today", "/completed-lessons"] as const;
+
+type AppOrigin = (typeof APP_ORIGINS)[number];
+
+export type LessonOrigin = { kind: "app" | "catalog"; path: string };
+
+function isAppOrigin(value: string): value is AppOrigin {
+  return APP_ORIGINS.some((origin) => origin === value);
 }
 
-export function withCatalogOrigin(href: string, origin: string): string {
+export function readLessonOrigin(value: string | string[] | undefined): LessonOrigin | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  if (isAppOrigin(value)) {
+    return { kind: "app", path: value };
+  }
+
+  return CATALOG_PATH.test(value) ? { kind: "catalog", path: value } : null;
+}
+
+export function getLessonAgainHref({ lessonId, origin }: { lessonId: string; origin: AppOrigin }) {
+  return withOrigin(`/learn/${lessonId}`, origin);
+}
+
+export function withOrigin(href: string, origin: string): string {
   const separator = href.includes("?") ? "&" : "?";
   return `${href}${separator}${ORIGIN_PARAM}=${encodeURIComponent(origin)}`;
 }

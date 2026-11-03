@@ -91,7 +91,7 @@ function DatedWords({
         description:
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
-          "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}",
+          "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}",
         values: shown,
       });
     default:

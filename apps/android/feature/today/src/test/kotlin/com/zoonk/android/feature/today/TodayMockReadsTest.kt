@@ -52,7 +52,7 @@ class TodayMockReadsTest {
         rule.setContent {
             ZoonkTheme {
                 Column {
-                    TodayPractice(today, mocks, goal) {}
+                    TodayPractice(today, mocks, goal, completedLessons = false) {}
                     if (examPage) mocks.options[GOAL].collectShown()
                 }
             }

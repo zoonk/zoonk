@@ -3,6 +3,7 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 
@@ -60,9 +61,9 @@ function LimitNoticeBody({
       <p className={TEXT_CLASS}>{message}</p>
 
       {needsAccount(limit) ? (
-        <a className={action} href={routes.signUp}>
+        <PendingLink className={action} href={routes.signUp}>
           {t("Create a free account")}
-        </a>
+        </PendingLink>
       ) : (
         <LinkComponent className={action} href={routes.upgrade}>
           {t("See Plus")}

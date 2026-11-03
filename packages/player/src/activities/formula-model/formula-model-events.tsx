@@ -24,7 +24,7 @@ function EventToggle({
     <button
       aria-pressed={isOn}
       className={cn(
-        "focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
+        "focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium outline-none select-none focus-visible:ring-[3px] motion-safe:transition-colors",
         isOn
           ? "bg-primary text-primary-foreground border-primary"
           : "bg-background hover:bg-accent",

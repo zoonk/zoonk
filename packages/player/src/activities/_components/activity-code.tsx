@@ -291,7 +291,7 @@ export function ActivitySnippetBar({
           aria-label={
             snippet.name === snippet.label ? undefined : `${snippet.label}, ${snippet.name}`
           }
-          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl px-3 font-mono text-sm outline-none focus-visible:ring-[3px] disabled:opacity-50"
+          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl px-3 font-mono text-sm outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={disabled}
           key={snippet.label}
           onClick={() => onInsert(snippet)}

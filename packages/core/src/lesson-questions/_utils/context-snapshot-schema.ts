@@ -115,6 +115,7 @@ const planScopeSnapshotSchema = z.object({
     z.object({
       answer: z.string().nullable(),
       correctAnswer: z.string().nullable(),
+      fixed: z.literal(true).optional(),
       question: z.string(),
       skill: z.string().nullable(),
     }),

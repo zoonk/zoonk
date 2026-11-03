@@ -1204,7 +1204,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A meta %@ está em pausa."
+            "value" : "Objetivo em pausa: %@."
           }
         },
         "tr" : {
@@ -5724,7 +5724,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "depois da data da sua meta"
+            "value" : "depois da data do seu objetivo"
           }
         },
         "tr" : {
@@ -6096,7 +6096,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ da sua meta, antes cobria %3$@."
+            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ do seu objetivo, antes cobria %3$@."
           }
         },
         "tr" : {
@@ -7165,6 +7165,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Birkaç dakika sonra tekrar gel."
+          }
+        }
+      }
+    },
+    "Completed lessons" : {
+      "comment" : "Opens the page of the lessons the learner finished",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgeschlossene Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones completadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons terminées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni completate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了したレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료한 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukończone lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas concluídas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlanan dersler"
           }
         }
       }
@@ -8841,6 +8900,65 @@
         }
       }
     },
+    "Go back to any lesson you've finished" : {
+      "comment" : "The completed lessons page's line",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede abgeschlossene Lektion noch einmal öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a cualquier lección que completaste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retrouve toutes les leçons que tu as terminées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna a qualsiasi lezione completata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了したレッスンにいつでも戻れます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료한 레슨 다시 학습하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróć do dowolnej ukończonej lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volte a qualquer aula que você já concluiu"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamladığın derslerden istediğine geri dön"
+          }
+        }
+      }
+    },
     "Have a call" : {
       "comment" : "Mission: a practice call",
       "localizations" : {
@@ -10353,7 +10471,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nova meta"
+            "value" : "Novo objetivo"
           }
         },
         "tr" : {
@@ -11116,7 +11234,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada está planejado até você retomar a meta."
+            "value" : "Nada está planejado até você retomar o objetivo."
           }
         },
         "tr" : {
@@ -14076,7 +14194,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece uma nova meta ou escolha outra acima."
+            "value" : "Comece um novo objetivo ou escolha outro acima."
           }
         },
         "tr" : {
@@ -14717,7 +14835,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meta sugerida"
+            "value" : "Objetivo sugerido"
           }
         },
         "tr" : {
@@ -15319,7 +15437,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
+            "value" : "O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais objetivos."
           }
         },
         "tr" : {
@@ -15616,7 +15734,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta meta está pausada."
+            "value" : "Este objetivo está pausado."
           }
         },
         "tr" : {
@@ -18543,7 +18661,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "data da sua meta"
+            "value" : "data do seu objetivo"
           }
         },
         "tr" : {
@@ -18602,7 +18720,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data da sua meta passou e ainda restam aulas."
+            "value" : "A data do seu objetivo passou e ainda restam aulas."
           }
         },
         "tr" : {

@@ -8,6 +8,7 @@ enum AppRoute: Hashable, Identifiable {
   case exam
   case mockChooser
   case mistakes
+  case completedLessons
   case speaking
   case earlierQuestions
   case statistics
@@ -16,7 +17,8 @@ enum AppRoute: Hashable, Identifiable {
 
   case session
   case logbook
-  /// `fromCatalog`: started from its Library page, which showed its first question.
+  /// `fromCatalog`: started from a public catalog page (its Library page, or "Try a lesson" on a
+  /// course or chapter), where main asks its first question.
   case lesson(lessonId: String, sessionId: String? = nil, fromCatalog: Bool = false)
   case questionBlock(sessionId: String, blockId: String)
   case mistakePractice(skillId: String? = nil)
@@ -55,8 +57,8 @@ enum AppRoute: Hashable, Identifiable {
 
   var presentation: Presentation {
     switch self {
-    case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking,
-      .earlierQuestions, .statistics, .catalog, .course:
+    case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes,
+      .completedLessons, .speaking, .earlierQuestions, .statistics, .catalog, .course:
       .push
     default:
       .task
@@ -67,7 +69,7 @@ enum AppRoute: Hashable, Identifiable {
   /// `AuthGateScreen`).
   var requirement: Requirement {
     switch self {
-    case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
+    case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .completedLessons, .speaking:
       .goal
     case .chapter, .languageUnit, .earlierQuestions, .statistics:
       .account

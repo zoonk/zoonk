@@ -5,34 +5,6 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted, useFormatter } from "next-intl";
 import { useLessonQuestionController } from "./lesson-question-provider";
 
-export type TutorSuggestion = { id: string; label: string };
-
-export function Suggestions({
-  onSend,
-  suggestions,
-}: {
-  onSend: (question: string) => void;
-  suggestions: readonly TutorSuggestion[];
-}) {
-  const t = useExtracted();
-
-  return (
-    <ul aria-label={t("Suggestions")} className="flex flex-wrap gap-1.5">
-      {suggestions.map((suggestion) => (
-        <li className="min-w-0" key={suggestion.id}>
-          <button
-            className="text-muted-foreground ring-input hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area bg-background relative flex h-6.5 max-w-full items-center rounded-[0.375rem] px-2.5 text-xs font-medium ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
-            onClick={() => onSend(suggestion.label)}
-            type="button"
-          >
-            <span className="truncate">{suggestion.label}</span>
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function useDayLabel() {
   const t = useExtracted();
   const format = useFormatter();

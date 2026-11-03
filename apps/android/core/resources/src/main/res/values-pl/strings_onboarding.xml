@@ -21,6 +21,8 @@
   "onboarding_buddy_description": "af68f3efb439b65a20107e3c93a3542ee0402991cbac5384795ba736d1473aab",
   "onboarding_buddy_title": "ed19ec370e00c852c8343e201aa722fb58ed2efcaaada4b49d04ea4e8788ae8b",
   "onboarding_cancel": "63f4d6bf872960b3a566c8478a757ccbb3ec2645049f2e25239bcc9082393d82",
+  "onboarding_change_date": "64fa9b0f4f92d3fa25e72ab9c0e84445811eef365e8125e1a6828406785b7f57",
+  "onboarding_choose_date": "a0ee32c6febdd6e1f8e903ddaddfe2761b4ac302a213fe91e0311cb960050f51",
   "onboarding_continue": "66346dc40f787c5f51921d49e6b4b3cce5822b0a858636576dc45a2babb020b2",
   "onboarding_course_build": "ec0015afe806c25ad3b4b803fafd724265432c26b1c5c82d8a69d2d3598b1d2a",
   "onboarding_course_chapter_description": "480f05e6e80f3dd773df8426e8207d8df2d4b9746639722572fab59e712cea17",
@@ -1051,6 +1053,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Inny czas nauki w weekendy</string>
     <string name="onboarding_schedule_time_label">Dzienny czas nauki</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">Wybierz datę</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">Zmień datę</string>
     <string name="onboarding_study_days">Dni nauki</string>
     <string name="onboarding_weekend_time_label">Czas nauki w weekendy</string>
     <string name="onboarding_answers_saved">Twoje odpowiedzi są zapisane.</string>

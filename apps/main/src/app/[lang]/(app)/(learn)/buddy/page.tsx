@@ -6,7 +6,7 @@ import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { countCurrentUserMemory } from "@zoonk/core/memory/count";
 import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
-import { countOpenGoalMistakes } from "@zoonk/core/mistakes/count-goal";
+import { countGoalMistakes } from "@zoonk/core/mistakes/count-goal";
 import { getSession } from "@zoonk/core/users/session";
 import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
 import { PageWithAside } from "@zoonk/learn/shell";
@@ -56,9 +56,9 @@ async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string 
   return result.thread ?? NO_MESSAGES;
 }
 
-async function hasOpenMistake(goalId: string): Promise<boolean> {
-  const result = await countOpenGoalMistakes({ goalId });
-  return result.status === "ready" && result.open > 0;
+async function hasGoalMistake(goalId: string): Promise<boolean> {
+  const result = await countGoalMistakes({ goalId });
+  return result.status === "ready" && result.open + result.fixed > 0;
 }
 
 async function BuddyContent() {
@@ -90,7 +90,7 @@ async function BuddyContent() {
   const canAsk = !session.user.isAnonymous;
 
   const [hasMistake, thread] = await Promise.all([
-    hasOpenMistake(goal.id),
+    hasGoalMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
   ]);
 

@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
@@ -76,7 +77,7 @@ export default defineConfig({
       "streamdown",
     ],
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: { "next/image": nextImageShim, "web-haptics/react": webHapticsShim },
     tsconfigPaths: true,

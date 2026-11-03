@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isFinished, splitTodayQueue } from "./today-queue";
+import { getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
 
 describe(splitTodayQueue, () => {
   it("keeps pending lessons before a later active block out of the done fold", () => {
@@ -41,5 +41,26 @@ describe(isFinished, () => {
 
   it.each(["active", "pending"] as const)("keeps %s outstanding", (status) => {
     expect(isFinished({ status })).toBe(false);
+  });
+});
+
+describe(getLessonAgainId, () => {
+  it("opens a finished lesson again", () => {
+    expect(getLessonAgainId({ kind: "learn", lessonId: "lesson-1", status: "completed" })).toBe(
+      "lesson-1",
+    );
+  });
+
+  it.each([
+    { kind: "learn", lessonId: "lesson-1", status: "skipped" },
+    { kind: "learn", lessonId: "lesson-1", status: "active" },
+    { kind: "learn", lessonId: "lesson-1", status: "pending" },
+    { kind: "learn", lessonId: null, status: "completed" },
+    { kind: "review", lessonId: "lesson-1", status: "completed" },
+    { kind: "practice", lessonId: null, status: "completed" },
+    { kind: "produce", lessonId: null, status: "completed" },
+    { kind: "checkpoint", lessonId: null, status: "completed" },
+  ] as const)("keeps $kind ($status) closed", (block) => {
+    expect(getLessonAgainId(block)).toBeNull();
   });
 });

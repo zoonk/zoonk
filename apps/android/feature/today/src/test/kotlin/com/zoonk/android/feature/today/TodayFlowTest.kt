@@ -28,6 +28,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
@@ -365,8 +366,7 @@ class TodayFlowTest {
         override suspend fun mistakes(
             session: AuthenticatedSession,
             goalId: UUID,
-        ) = com.zoonk.api.models
-            .MistakeListAvailability(ready = 0, tomorrow = 0)
+        ) = GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 0)
 
         override suspend fun language(
             session: AuthenticatedSession,

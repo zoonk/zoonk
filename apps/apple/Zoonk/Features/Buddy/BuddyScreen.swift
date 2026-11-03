@@ -20,9 +20,7 @@ struct BuddyScreen: View {
           loading
         }
       case .loaded(let status):
-        BuddyContent(
-          status: status, goalId: tutoredGoalId,
-          hasMistake: (summary.summary.value?.places.readyMistakes ?? 0) > 0)
+        BuddyContent(status: status, goalId: tutoredGoalId)
       case .empty:
         EmptyView()
       }
@@ -74,12 +72,12 @@ struct BuddyScreen: View {
 
 private struct BuddyContent: View {
   @Environment(BuddyStore.self) private var store
+  @Environment(PracticeStore.self) private var practice
   @Environment(TutorStore.self) private var tutor
   @Environment(\.tutorPlaces) private var places
 
   let status: BuddyStatus
   let goalId: String?
-  let hasMistake: Bool
 
   @State private var isDayShown = false
   @State private var isEditing = false
@@ -233,9 +231,11 @@ private struct BuddyContent: View {
   @ViewBuilder
   private var conversation: some View {
     if let goalId {
+      let mistakes = practice.mistakes(goalId: goalId, fixed: false)
+
       TutorThreadView(
         scope: .plan(goalId: goalId),
-        suggestions: suggestions,
+        suggestions: suggestions(mistakes: mistakes.state),
         placeholder: Text(
           "Ask a question or request a change", tableName: "Buddy",
           comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
@@ -243,6 +243,7 @@ private struct BuddyContent: View {
       ) {
         greeting
       }
+      .loads(mistakes, refreshable: false)
     } else {
       BuddyGoalStart(name: name, goal: $goalDraft)
     }
@@ -283,8 +284,22 @@ private struct BuddyContent: View {
     .accessibilityElement(children: .contain)
   }
 
-  private var suggestions: [TutorSuggestion] {
-    [
+  /// None until the notebook is read, so the last one doesn't change under the learner's finger.
+  private func suggestions(mistakes: LoadState<Components.Schemas.MistakeList>)
+    -> [TutorSuggestion]
+  {
+    let hasMistake: Bool
+
+    switch mistakes {
+    case .idle, .loading:
+      return []
+    case .loaded(let list):
+      hasMistake = list.counts.open + list.counts.fixed > 0
+    case .empty, .failed:
+      hasMistake = false
+    }
+
+    return [
       status.today != nil
         ? TutorSuggestion(
           id: "today",

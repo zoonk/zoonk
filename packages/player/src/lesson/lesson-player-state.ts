@@ -19,7 +19,13 @@ type CheckIssue = HelpLimit | { status: "noSpeech" };
 
 type LessonPlayerRun =
   | { refusal: LessonRunRefusal; status: "refused" }
-  | { carriedStepIds: string[]; hyperdrive: LessonRunHyperdrive; runId: string; status: "started" }
+  | {
+      carriedStepIds: string[];
+      hyperdrive: LessonRunHyperdrive;
+      replay: boolean;
+      runId: string;
+      status: "started";
+    }
   | { status: "idle" }
   | { status: "starting" };
 
@@ -74,6 +80,7 @@ export type LessonPlayerAction =
   | {
       answers: LessonRunAnswers;
       hyperdrive: LessonRunHyperdrive;
+      replay: boolean;
       runId: string;
       startedAt: string;
       optionalStepIds?: string[];

@@ -23,7 +23,9 @@ const WEBM_SIGNATURE = Buffer.from("1a45dfa3", "hex");
 const PNG_WIDTH_OFFSET = 16;
 const PNG_HEIGHT_OFFSET = 20;
 const NOT_FOUND = 404;
-const SLOW_RESPONSE_MS = 1500;
+// A shot that doesn't wait beats this even on a busy runner; one that waits for quiet (up to 10 s)
+// sees the answer.
+const SLOW_RESPONSE_MS = 5000;
 const TIMEOUT_MS = 60_000;
 
 const checkAnswer: Steps = async ({ page, shot }) => {
@@ -76,7 +78,7 @@ beforeAll(async () => {
   const address = server.address();
   baseUrl = `http://127.0.0.1:${typeof address === "object" ? address?.port : ""}`;
   browser = await chromium.launch(process.env.CI ? { channel: "chrome" } : {});
-});
+}, TIMEOUT_MS);
 
 afterAll(async () => {
   await browser?.close();

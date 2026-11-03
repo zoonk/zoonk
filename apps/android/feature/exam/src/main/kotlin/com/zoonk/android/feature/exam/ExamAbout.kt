@@ -4,7 +4,6 @@ import android.icu.text.ListFormatter
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -35,6 +33,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
@@ -103,7 +102,7 @@ private fun ExamFormatSection(format: List<ExamFormatDay>) {
             .takeIf { it.isNotEmpty() && format.size > 1 }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        ExamSectionHeader(title, detail)
+        SectionHeader(title, detail = detail)
         Column {
             format.forEachIndexed { index, day ->
                 if (index > 0) HorizontalDivider()
@@ -212,7 +211,7 @@ private fun ExamScoringSection(exam: ExamView) {
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ExamSectionHeader(stringResource(R.string.exam_scoring_title), detail = null)
+        SectionHeader(stringResource(R.string.exam_scoring_title))
         OutlinedCard(Modifier.fillMaxWidth()) {
             rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
@@ -359,25 +358,6 @@ private fun Line(text: String) = Line(AnnotatedString(text))
 @Composable
 private fun Line(text: AnnotatedString) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-}
-
-/** A section's title, with a short fact at its end that drops under it when both don't fit on a line. */
-@Composable
-internal fun ExamSectionHeader(
-    title: String,
-    detail: String?,
-) {
-    FlowRow(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        itemVerticalAlignment = Alignment.Bottom,
-    ) {
-        Text(title, Modifier.padding(end = 12.dp).semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-        detail?.let {
-            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
-        }
-    }
 }
 
 private const val SECONDS_PER_MINUTE = 60L

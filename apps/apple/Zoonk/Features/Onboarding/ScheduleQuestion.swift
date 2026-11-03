@@ -4,30 +4,48 @@ import SwiftUI
 /// the time the plan works out it needs, which follows the days until the learner picks their own
 /// time.
 struct ScheduleQuestion: View {
+  /// What the learner set here before leaving to change their date.
+  struct Draft {
+    let days: [Int]
+    let fullCourse: Bool
+    let picked: Int?
+    let weekendOn: Bool
+    let weekendPicked: Int?
+  }
+
   let view: GoalOnboarding
   let isSaving: Bool
   let failed: Bool
   let refusal: OnboardingError?
   let onAnswer: ([String: Any]) -> Void
+  let onChangeDate: (Draft) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(\.isPaneSplit) private var isBesidePlan
   @Environment(\.onboardingAside) private var aside
-  @State private var found = PlanAsking<ScheduleWeek, TimeToCover, ContinuousClock>()
+  @State private var found = PlanAsking<FindKey, TimeToCover, ContinuousClock>()
   @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
-  @State private var fullCourse = false
+  @State private var fullCourse: Bool
   @State private var days: [Int]
-  @State private var weekendOn = false
+  @State private var weekendOn: Bool
   /// The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
   @State private var weekendPicked: Int?
   /// What the plan's wait heard from the run: its plan made, then the run ended.
   @State private var planMade = false
   @State private var runEnded = false
 
+  /// The answers are for the goal's date too, so a date saved meanwhile, such as from another
+  /// window, asks them again and keeps what the learner set.
+  private struct FindKey: Hashable, Sendable {
+    let week: ScheduleWeek
+    let date: String?
+  }
+
   private struct AdviceKey: Hashable, Sendable {
     let week: ScheduleWeek
     let minutes: Int
+    let date: String?
   }
 
   private struct Asked<Key: Hashable>: Hashable {
@@ -55,17 +73,24 @@ struct ScheduleQuestion: View {
 
   init(
     view: GoalOnboarding,
+    draft: Draft?,
     isSaving: Bool,
     failed: Bool,
     refusal: OnboardingError?,
-    onAnswer: @escaping ([String: Any]) -> Void
+    onAnswer: @escaping ([String: Any]) -> Void,
+    onChangeDate: @escaping (Draft) -> Void
   ) {
     self.view = view
     self.isSaving = isSaving
     self.failed = failed
     self.refusal = refusal
     self.onAnswer = onAnswer
-    _days = State(initialValue: ScheduleTime.startingDays(view.goal.studyDays))
+    self.onChangeDate = onChangeDate
+    _days = State(initialValue: draft?.days ?? ScheduleTime.startingDays(view.goal.studyDays))
+    _weekendOn = State(initialValue: draft?.weekendOn ?? false)
+    _weekendPicked = State(initialValue: draft?.weekendPicked)
+    _picked = State(initialValue: draft?.picked)
+    _fullCourse = State(initialValue: draft?.fullCourse ?? false)
   }
 
   /// What the plan's answers say of it, as main's gate reads them: when the goal has no date, the
@@ -112,7 +137,7 @@ struct ScheduleQuestion: View {
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {
-        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey)
+        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey.week)
       }
     }
     .task(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
@@ -140,7 +165,11 @@ struct ScheduleQuestion: View {
       Section {
         VStack(alignment: .leading, spacing: 12) {
           timeMenu(shown)
-          timeAnswer(shown)
+
+          VStack(alignment: .leading, spacing: 0) {
+            timeAnswer(shown)
+            dateLink(shown)
+          }
         }
         .keepsBeforeHinge()
         .listRowBackground(Color.clear)
@@ -193,7 +222,9 @@ struct ScheduleQuestion: View {
 
   private var weekend: Int? { studiesOnWeekends && weekendOn ? weekendPicked : nil }
 
-  private var findKey: ScheduleWeek { ScheduleTime.findWeek(days: days, weekend: weekend) }
+  private var findKey: FindKey {
+    FindKey(week: ScheduleTime.findWeek(days: days, weekend: weekend), date: view.goal.targetDate)
+  }
 
   private var timeChoices: [TimeChoice] { view.timeChoices.map(TimeChoice.init) }
 
@@ -212,7 +243,7 @@ struct ScheduleQuestion: View {
       week: ScheduleTime.studyWeek(
         days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend,
         fullCourse: isExam && fullCourse),
-      minutes: minutes ?? view.recommendedMinutes)
+      minutes: minutes ?? view.recommendedMinutes, date: view.goal.targetDate)
 
     let advice = advised.answer(for: adviceKey)
 
@@ -331,6 +362,30 @@ struct ScheduleQuestion: View {
     } onUseOffer: { minutes in
       picked = ScheduleTime.pickedMinutes(first: found.first, found: shown.found, minutes: minutes)
     }
+  }
+
+  private func dateLink(_ shown: Shown) -> some View {
+    Button {
+      onChangeDate(
+        Draft(
+          days: days, fullCourse: fullCourse, picked: picked, weekendOn: weekendOn,
+          weekendPicked: weekendPicked))
+    } label: {
+      (shown.dated
+        ? Text(
+          "Change date", tableName: "Onboarding",
+          comment: "Opens the date question from the daily time question, for a goal with a date")
+        : Text(
+          "Choose a date", tableName: "Onboarding",
+          comment: "Opens the date question from the daily time question, for a goal without a date"
+        ))
+        .underline()
+        .multilineTextAlignment(.leading)
+        .frame(minHeight: 44)
+        .contentShape(.rect)
+    }
+    .font(.subheadline)
+    .buttonStyle(.borderless)
   }
 
   /// An exam's switch shows while the time falls short, and stays while it's on.

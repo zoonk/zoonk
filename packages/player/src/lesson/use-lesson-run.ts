@@ -53,6 +53,7 @@ export function useLessonRun({
           answers: outcome.answers,
           hyperdrive: outcome.hyperdrive,
           optionalStepIds: outcome.optionalStepIds,
+          replay: outcome.replay,
           runId: outcome.runId,
           startedAt: outcome.startedAt,
           type: "runStarted",

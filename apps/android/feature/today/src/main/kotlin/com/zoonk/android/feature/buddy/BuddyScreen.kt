@@ -53,6 +53,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.settings.BuddyEditor
+import com.zoonk.android.feature.today.GoalMistakes
 import com.zoonk.android.feature.tutor.TutorAccess
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.feature.tutor.TutorPage
@@ -166,7 +167,6 @@ fun BuddyPage(
     var asking by remember { mutableStateOf(false) }
     // Asking the buddy happens in this page's own composer, so its mission puts the cursor there.
     val onMission: (MissionOpens) -> Unit = { opens -> if (opens == MissionOpens.Buddy) asking = true else vm.openMission(opens, goalId) }
-    val hasMistake = mistakes.value?.let { it.ready + it.tomorrow > 0 } == true
     val earlier by app.earlierQuestions.questions.collectShown()
 
     LaunchedEffect(vm) { vm.routes.collect(navigator::open) }
@@ -184,7 +184,7 @@ fun BuddyPage(
     val page =
         TutorPage(
             greeting = stringResource(R.string.buddy_page_greeting, name),
-            suggestions = suggestions(hasToday = status.today != null, hasMistake = hasMistake),
+            suggestions = suggestions(hasToday = status.today != null, mistakes = mistakes),
             placeholder = stringResource(R.string.buddy_page_placeholder),
             greetingAction = if (status.buddy.picked) null else ({ PickBuddyButton { editing = true } }),
             onAsked = { react(BuddyAct.Glance) },
@@ -250,16 +250,22 @@ fun BuddyPage(
     }
 }
 
+/** None until the mistakes are read, so the last one doesn't change under the learner's finger. */
 @Composable
 private fun suggestions(
     hasToday: Boolean,
-    hasMistake: Boolean,
-): List<TutorSuggestion> =
-    listOf(
+    mistakes: LoadState<GoalMistakes>,
+): List<TutorSuggestion> {
+    if (mistakes is LoadState.Idle || mistakes is LoadState.Loading) return emptyList()
+
+    val hasMistake = (mistakes.value?.total ?: 0) > 0
+
+    return listOf(
         TutorSuggestion(stringResource(if (hasToday) R.string.tutor_suggest_plan_today else R.string.buddy_page_suggest_plan_today)),
         TutorSuggestion(stringResource(R.string.buddy_page_suggest_lighter)),
         TutorSuggestion(stringResource(if (hasMistake) R.string.buddy_page_suggest_mistake else R.string.buddy_page_suggest_focus)),
     )
+}
 
 @Composable
 internal fun BuddyHeader(

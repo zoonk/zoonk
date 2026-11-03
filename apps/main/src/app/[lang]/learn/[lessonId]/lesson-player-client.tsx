@@ -72,22 +72,7 @@ function createAdapters({
   };
 }
 
-export function LessonPlayerClient({
-  challengeTeam = null,
-  endingSlots,
-  firstAnswer,
-  hasSession,
-  lesson,
-  outline = false,
-  resume,
-  routing = DEFAULT_ROUTING,
-  sessionContext = null,
-  soundsEnabled,
-  studySessionId,
-  support = null,
-  tutor: tutorViewer,
-  tutorSuggestions,
-}: {
+type LessonPlayerClientProps = {
   challengeTeam?: ChallengeTeam | null;
   endingSlots?: Pick<
     NonNullable<LessonPlayerProviderProps["slots"]>,
@@ -105,7 +90,24 @@ export function LessonPlayerClient({
   support?: LessonSupport | null;
   tutor: TutorViewer;
   tutorSuggestions?: readonly LessonTutorSuggestion[];
-}) {
+};
+
+function LessonPlayerVisit({
+  challengeTeam = null,
+  endingSlots,
+  firstAnswer,
+  hasSession,
+  lesson,
+  outline = false,
+  resume,
+  routing = DEFAULT_ROUTING,
+  sessionContext = null,
+  soundsEnabled,
+  studySessionId,
+  support = null,
+  tutor: tutorViewer,
+  tutorSuggestions,
+}: LessonPlayerClientProps) {
   const router = useRouter();
   const locale = useAppLocale();
 
@@ -174,4 +176,13 @@ export function LessonPlayerClient({
       <LessonPlayerShell />
     </LessonPlayerProvider>
   );
+}
+
+/**
+ * A link or redirect opens the lesson as the server has it now, so a finished lesson starts over;
+ * Back and forward keep the screen as it was.
+ */
+export function LessonPlayerClient(props: LessonPlayerClientProps) {
+  const { bfcacheId } = useRouter();
+  return <LessonPlayerVisit key={bfcacheId} {...props} />;
 }

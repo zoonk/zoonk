@@ -61,10 +61,11 @@ struct BuddyGoalStart: View {
             prompt: Text(
               "What you want to learn", tableName: "Buddy", comment: "Placeholder of the goal field"
             ),
-            label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
+            label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver"),
+            onSubmit: start
           )
           .lineLimit(1...4)
-          .onSubmit(start)
+          .submitLabel(.go)
           .padding(isStacked ? .horizontal : .leading, 16)
           .padding(.vertical, 12)
 

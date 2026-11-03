@@ -3,6 +3,7 @@ import { type GoalTutorLookUpRequest } from "@zoonk/ai/tasks/tutor/goal-tutor-lo
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -121,18 +122,25 @@ describe(lookUpTutorData, () => {
     mockSession(null);
   });
 
-  it("reads a subject's progress from the learner's own answers and mistakes", async () => {
-    const [{ goal, library, user }, other] = await Promise.all([plannedLearner(), userFixture()]);
+  it("reads a subject's progress from the learner's own answers and mistakes, its lessons' finer skills included", async () => {
+    const [{ goal, library, user }, other, finer] = await Promise.all([
+      plannedLearner(),
+      userFixture(),
+      skillFixture(),
+    ]);
+
     const math = library.skills[0]?.id ?? "";
     const longAgo = new Date(Date.now() - 60 * MS_PER_DAY);
 
     await Promise.all([
+      lessonSkillFixture({ lessonId: library.lessons[0]?.id ?? "", skillId: finer.id }),
       attemptFixture({ isCorrect: true, skillId: math, userId: user.id }),
-      attemptFixture({ isCorrect: true, skillId: math, userId: user.id }),
+      attemptFixture({ isCorrect: true, skillId: finer.id, userId: user.id }),
       attemptFixture({ isCorrect: false, skillId: math, userId: user.id }),
       attemptFixture({ answeredAt: longAgo, isCorrect: false, skillId: math, userId: user.id }),
       attemptFixture({ isCorrect: false, skillId: math, userId: other.id }),
       mistakeFixture({ skillId: math, userId: user.id }),
+      mistakeFixture({ skillId: finer.id, userId: user.id }),
       mistakeFixture({ skillId: math, status: "fixed", userId: user.id }),
     ]);
 
@@ -141,7 +149,7 @@ describe(lookUpTutorData, () => {
     await expect(lookUp(asked, { area: "math", what: "subjectProgress" })).resolves.toMatchObject({
       status: "found",
       subjects: [
-        { answers: { right: 2, total: 3 }, lessonsDone: 0, lessonsTotal: 3, openMistakes: 1 },
+        { answers: { right: 2, total: 3 }, lessonsDone: 0, lessonsTotal: 3, openMistakes: 2 },
       ],
       what: "subjectProgress",
     });
@@ -228,6 +236,68 @@ describe(lookUpTutorData, () => {
     await expect(lookUp(asked, { area: "Biology", what: "mistakes" })).resolves.toMatchObject({
       mistakes: [{ question: "Photosynthesis" }],
       status: "found",
+    });
+  });
+
+  it("finds a mistake on a lesson's finer skill under that lesson's subject, fixed or not", async () => {
+    const [{ goal, library, user }, finer] = await Promise.all([plannedLearner(), skillFixture()]);
+    const [lesson] = library.lessons;
+
+    if (!lesson) {
+      throw new Error("Expected a planned lesson");
+    }
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
+      mistakeFixture({
+        skillId: finer.id,
+        snapshot: { answer: "3/4", question: "Add 1/2 and 1/4" },
+        status: "fixed",
+        userId: user.id,
+      }),
+    ]);
+
+    const asked = await answering(goal.id);
+
+    await expect(lookUp(asked, { area: "Math", what: "mistakes" })).resolves.toMatchObject({
+      mistakes: [{ answer: "3/4", question: "Add 1/2 and 1/4", status: "fixed" }],
+      status: "found",
+    });
+
+    await expect(lookUp(asked, { area: "Biology", what: "mistakes" })).resolves.toStrictEqual({
+      status: "notFound",
+      what: "mistakes",
+    });
+  });
+
+  it("follows a planned skill merged since into its survivor, by subject", async () => {
+    const [{ goal, library, user }, survivor] = await Promise.all([
+      plannedLearner(),
+      skillFixture(),
+    ]);
+
+    const math = library.skills[0]?.id ?? "";
+
+    await prisma.skill.update({ data: { mergedIntoId: survivor.id }, where: { id: math } });
+
+    await Promise.all([
+      attemptFixture({ isCorrect: true, skillId: survivor.id, userId: user.id }),
+      mistakeFixture({
+        skillId: survivor.id,
+        snapshot: { answer: "12", question: "What is 3 × 5?" },
+        userId: user.id,
+      }),
+    ]);
+
+    const asked = await answering(goal.id);
+
+    await expect(lookUp(asked, { area: "Math", what: "mistakes" })).resolves.toMatchObject({
+      mistakes: [{ question: "What is 3 × 5?" }],
+      status: "found",
+    });
+
+    await expect(lookUp(asked, { area: "math", what: "subjectProgress" })).resolves.toMatchObject({
+      subjects: [{ answers: { right: 1, total: 1 }, openMistakes: 1 }],
     });
   });
 

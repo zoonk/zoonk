@@ -93,6 +93,63 @@ class TutorViewModelTest {
             assertTrue(vm.state.value.canAsk(vm.turns))
         }
 
+    /** A sent question shows at once with an empty composer, and Android closing the app before the reply keeps what was typed. */
+    @Test
+    fun aQuestionShowsWhileItsSentAndSurvivesAndroidClosingTheApp() =
+        runTest(dispatcher) {
+            val saved = SavedStateHandle()
+            val vm = conversation(saved = saved)
+            api.askGate = CompletableDeferred()
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            // Compose applies a text field's edits as the app draws; this test has no frames.
+            Snapshot.sendApplyNotifications()
+            advanceUntilIdle()
+
+            vm.send()
+            Snapshot.sendApplyNotifications()
+            advanceUntilIdle()
+
+            assertEquals(SendingQuestion("Why?", TutorTurn.About.Plan), vm.state.value.sending)
+            assertEquals("", vm.draft.text.toString())
+            assertTrue(vm.turns.isEmpty())
+            assertFalse(vm.state.value.isEmpty(vm.thread.state.value.value!!))
+            val restored = SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) })
+            assertEquals("Why?", conversation(saved = restored).draft.text.toString())
+
+            api.askGate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertNull(vm.state.value.sending)
+            assertEquals(listOf("Why?"), vm.turns.map { it.question })
+            assertEquals("", vm.draft.text.toString())
+        }
+
+    /** A question that couldn't be asked goes back to the composer unless something new was typed; a tapped suggestion leaves what's typed alone. */
+    @Test
+    fun aFailedQuestionGoesBackToTheComposerUnlessAnotherWasStarted() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Unavailable, status = 422)
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            assertNull(vm.state.value.sending)
+            assertEquals("Why?", vm.draft.text.toString())
+            assertTrue(vm.state.value.isEmpty(vm.thread.state.value.value!!))
+
+            api.askGate = CompletableDeferred()
+            vm.send(TutorSuggestion("Explain it more simply"))
+            advanceUntilIdle()
+            assertEquals("Why?", vm.draft.text.toString())
+            vm.draft.setTextAndPlaceCursorAtEnd("Something else")
+            api.askGate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals("Something else", vm.draft.text.toString())
+        }
+
     /** A lesson's suggestion only fills the composer: nothing is asked until the learner sends it, by its id only while unchanged. */
     @Test
     fun anOfferedSuggestionWaitsForSendAndGoesByItsIdOnlyUnchanged() =
@@ -208,6 +265,7 @@ class TutorViewModelTest {
 
             assertEquals("Why?", vm.state.value.unresolvedQuestion)
             assertEquals("Why?", vm.draft.text.toString())
+            assertFalse(vm.state.value.offersSuggestions(vm.turns))
 
             api.refusal = null
             api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
@@ -224,6 +282,7 @@ class TutorViewModelTest {
                     .size,
             )
             assertNull(vm.state.value.unresolvedQuestion)
+            assertTrue(vm.state.value.offersSuggestions(vm.turns))
         }
 
     @Test

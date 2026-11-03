@@ -76,17 +76,11 @@ internal fun PathSection(
     val lastIndex = beforeFinish.lastOrNull()?.index
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(stringResource(R.string.plan_your_path), Modifier.weight(1f))
-            if (roadmap.size >= 2) {
-                val done = roadmap.count { it.state == PlanPhase.State.DONE }
-                Text(
-                    text = pluralStringResource(R.plurals.plan_phases_done, roadmap.size, done, roadmap.size),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        val done = roadmap.count { it.state == PlanPhase.State.DONE }
+        SectionHeader(
+            stringResource(R.string.plan_your_path),
+            detail = if (roadmap.size >= 2) pluralStringResource(R.plurals.plan_phases_done, roadmap.size, done, roadmap.size) else null,
+        )
 
         alphabet?.invoke()
 

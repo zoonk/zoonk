@@ -1,5 +1,4 @@
 import {
-  SPEAKING_EXAMS,
   SPEAKING_EXAM_LANGUAGES,
   type SpeakingExam,
 } from "@zoonk/ai/tasks/language/exam-speaking-exams";
@@ -73,10 +72,6 @@ function toExamLevel({ exam, level }: { exam: SpeakingExam; level: CefrLevel }):
   return levels.find((item) => CEFR_LEVELS.indexOf(item) > index) ?? levels.at(-1) ?? level;
 }
 
-function findLanguagePaper(language: string | null): SpeakingExam | undefined {
-  return SPEAKING_EXAMS.find((exam) => SPEAKING_EXAM_LANGUAGES[exam] === language);
-}
-
 export function getSpeakingExamGoal({
   fallbackLevel,
   goal,
@@ -97,8 +92,7 @@ export function getSpeakingExamGoal({
   ].filter((text): text is string => Boolean(text));
 
   const name = texts.map((text) => detectLanguageExam(text)).find((found) => found !== null);
-  const unnamed = !name && goal.kind === "language";
-  const exam = unnamed ? findLanguagePaper(goal.targetLanguage) : name && EXAMS_BY_NAME[name];
+  const exam = name && EXAMS_BY_NAME[name];
 
   if (!exam || goal.targetLanguage !== SPEAKING_EXAM_LANGUAGES[exam]) {
     return null;
@@ -110,11 +104,6 @@ export function getSpeakingExamGoal({
 
   const findLevel = (from: readonly string[], read: typeof readLevel) =>
     from.map((text) => read({ exam, text })).find((found) => found !== null);
-
-  if (unnamed) {
-    const level = findLevel(target, readLevel) ?? fallbackLevel;
-    return { exam, level: toExamLevel({ exam, level }) };
-  }
 
   const named =
     findLevel(texts, readExamLevel) ??

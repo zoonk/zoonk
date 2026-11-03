@@ -33,11 +33,19 @@ function readyAnswer<Answer extends { ready: boolean }>(answer: Answer | null): 
   return answer?.ready ? answer : null;
 }
 
+export type ScheduleDraft = {
+  days: number[];
+  fullCourse: boolean;
+  picked: number | null;
+  weekendOn: boolean;
+  weekendPicked: number | null;
+};
+
 /** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
-function useStudyWeek(goal: GoalView) {
-  const [days, setDays] = useState(() => getStartingDays(goal.studyDays));
-  const [weekendOn, setWeekendOn] = useState(false);
-  const [weekendPicked, setWeekendPicked] = useState<number | null>(null);
+function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: GoalView }) {
+  const [days, setDays] = useState(() => draft?.days ?? getStartingDays(goal.studyDays));
+  const [weekendOn, setWeekendOn] = useState(draft?.weekendOn ?? false);
+  const [weekendPicked, setWeekendPicked] = useState(draft?.weekendPicked ?? null);
   const studiesOnWeekends = days.some((day) => isWeekend(day));
 
   return {
@@ -96,6 +104,7 @@ function useFoundTime({
 export function useSchedule({
   actions,
   dated: datedGuess,
+  draft,
   exam,
   goal,
   paused,
@@ -105,6 +114,7 @@ export function useSchedule({
 }: {
   actions: ScheduleActions;
   dated: boolean;
+  draft: ScheduleDraft | null;
   exam: boolean;
   goal: GoalView;
   paused: boolean;
@@ -112,9 +122,9 @@ export function useSchedule({
   recommendedMinutes: number;
   together: GoalsTogether;
 }) {
-  const [picked, setPicked] = useState<number | null>(null);
-  const [fullCourse, setFullCourse] = useState(false);
-  const week = useStudyWeek(goal);
+  const [picked, setPicked] = useState(draft?.picked ?? null);
+  const [fullCourse, setFullCourse] = useState(draft?.fullCourse ?? false);
+  const week = useStudyWeek({ draft, goal });
   const hasDays = week.days.length > 0;
 
   const found = useFoundTime({
@@ -176,6 +186,13 @@ export function useSchedule({
   return {
     advice,
     dated,
+    draft: {
+      days: week.days,
+      fullCourse,
+      picked,
+      weekendOn: week.weekendOn,
+      weekendPicked: week.weekendPicked,
+    } satisfies ScheduleDraft,
     found,
     fullCourse,
     // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.

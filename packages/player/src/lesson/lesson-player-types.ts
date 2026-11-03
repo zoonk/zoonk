@@ -52,6 +52,8 @@ export type LessonStartOutcome =
       hyperdrive: LessonRunHyperdrive;
       optionalStepIds?: string[];
       reason: "started";
+      /** The learner already finished this lesson, so its end offers no next lesson. */
+      replay: boolean;
       runId: string;
       startedAt: string;
     };

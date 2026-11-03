@@ -14,6 +14,7 @@ if (process.env.NODE_ENV === "production") {
   initBotId({
     protect: [
       { method: "POST", path: "/auth/login" },
+      { method: "POST", path: "/auth/*/login" },
       { method: "POST", path: "/v1/auth/*" },
     ],
   });

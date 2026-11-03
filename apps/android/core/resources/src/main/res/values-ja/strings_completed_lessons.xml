@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "completed_lessons_empty_description": "8b5710bb50a2edc38dc618bd57e39b6907808a662c64b22a8c5f07a827ba006a",
+  "completed_lessons_empty_title": "b56850558e08ba54d470a8da2c2100091d77f6039aae3a61b4f814e5d1b32d3a",
+  "completed_lessons_load_more_failed": "def371152f50f5752f5e125a441952771c9c545dc5e5b179671196317b6f7e78",
+  "completed_lessons_loading_more": "a82bd016f5046d7702d6b802cfca9718f2706d5eb06a68bfa7689f2905f10809",
+  "completed_lessons_today": "69d4291efeddd412e38df7df1e106af23c7efa2b39d07d294bad551e69d3f354",
+  "completed_lessons_yesterday": "510695208ab2b6c901c5f8a60e5ce6a9e591cfda609f534e1056a58552981d9e"
+}
+-->
+<resources>
+    <!-- A section title over the lessons the learner last finished today. -->
+    <string name="completed_lessons_today">今日</string>
+    <!-- A section title over the lessons the learner last finished yesterday. -->
+    <string name="completed_lessons_yesterday">昨日</string>
+    <string name="completed_lessons_empty_title">完了したレッスンはまだありません</string>
+    <string name="completed_lessons_empty_description">完了したレッスンがここに表示されます。いつでももう一度学習できます。</string>
+    <!-- Read aloud while the next lessons load at the end of the list. -->
+    <string name="completed_lessons_loading_more">レッスンを追加で読み込んでいます…</string>
+    <string name="completed_lessons_load_more_failed">読み込めませんでした。もう一度試してください。</string>
+</resources>

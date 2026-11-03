@@ -181,6 +181,11 @@ export type OnboardingRoutes = {
 };
 
 export type OnboardingNavigation = {
+  /**
+   * Drops the pages the browser kept: they were read before this setup changed the goal and its
+   * plan, so Today would open on what they showed.
+   */
+  refreshPages: () => void;
   /** Replaces the page, so the archived goal's isn't kept in history. */
   replaceSteps: (goalId: string) => void;
   /**

@@ -49,6 +49,7 @@ One short, kind sentence in `LEARNER_LANGUAGE` about what they did in this call,
 
 - Speak to the learner as "you". Warm, direct and concise.
 - Quote `TARGET_LANGUAGE` words inside `LEARNER_LANGUAGE` text in quotes.
+- Write correct `LEARNER_LANGUAGE` with every accent and letter it needs (Portuguese "você", "não", "pronúncia"), even when the learner's lines have no accents or are in `TARGET_LANGUAGE`. Only quotes of the learner's words keep their spelling.
 - No emojis. Use commas or periods instead of dashes between clauses.
 - Never mention speech recognition, transcripts, models or this app.
 

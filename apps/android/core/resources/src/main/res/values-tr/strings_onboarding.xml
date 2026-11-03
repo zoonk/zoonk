@@ -21,6 +21,8 @@
   "onboarding_buddy_description": "5e279b1d9e23cf1a6965dc1015b7d33f161b4e50e94c5c182cc25eb79d1e6b6d",
   "onboarding_buddy_title": "e860635b79cae6427181a12e5a993a1aebedb5ebe9e738fbfa45edf97f061206",
   "onboarding_cancel": "83483a9fe6c33e49f8c11b7b913c058f9d16f462b0715640386dd82491c019a8",
+  "onboarding_change_date": "8aeb245c5f554a52fac215375a6315234afe5e85d9c060b4f03c5d612db429d4",
+  "onboarding_choose_date": "5da38092a30101199b50b5ecd1ad9049155c5c85a49110d7a8c6d1eeb5c31869",
   "onboarding_continue": "b87f76bd23a8ea11eef65c0a385053f19df4563c0c5b79dd4761f396b14f50bc",
   "onboarding_course_build": "b26947f2bc8e77454819d3b794ecc126e3d05c67aafc04f4df4010af4584a24f",
   "onboarding_course_chapter_description": "e63454f67a41ee007e8b18a88cdb43f2492b76da29cf1c9fd7a20394b658fbbc",
@@ -1001,6 +1003,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Hafta sonları farklı çalışma süresi</string>
     <string name="onboarding_schedule_time_label">Günlük çalışma süresi</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">Tarih seç</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">Tarihi değiştir</string>
     <string name="onboarding_study_days">Çalıştığın günler</string>
     <string name="onboarding_weekend_time_label">Hafta sonu çalışma süresi</string>
     <string name="onboarding_answers_saved">Cevapların kaydedildi.</string>

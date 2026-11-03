@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
@@ -69,12 +70,12 @@ export function SignUpPrompt({ signUpHref }: { signUpHref: string }) {
       <p className="text-muted-foreground text-sm">
         {t("Create a free account to add a PDF, a photo of your notes or any text to your goal.")}
       </p>
-      <a
+      <PendingLink
         className="text-foreground self-start text-sm font-medium underline underline-offset-4"
         href={signUpHref}
       >
         {t("Create an account")}
-      </a>
+      </PendingLink>
     </div>
   );
 }

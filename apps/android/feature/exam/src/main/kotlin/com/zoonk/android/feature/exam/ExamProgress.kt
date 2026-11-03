@@ -23,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +33,7 @@ import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
@@ -54,7 +54,7 @@ import com.zoonk.api.models.MockShape
 @Composable
 internal fun ExamMockProgressSection(exam: ExamView) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ExamSectionHeader(stringResource(R.string.exam_progress_title), detail = null)
+        SectionHeader(stringResource(R.string.exam_progress_title))
         val progress = exam.progress
         if (progress != null) ProgressCard(progress, exam.scoring.method) else LockedProgress()
     }

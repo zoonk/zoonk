@@ -68,6 +68,7 @@ export function TodayScreen({
   actions,
   brainPower = null,
   buddy,
+  completedLessons = false,
   level = null,
   missions = null,
   mistakes = NO_MISTAKES,
@@ -82,6 +83,7 @@ export function TodayScreen({
   actions: TodayActions;
   brainPower?: number | null;
   buddy: LearnBuddy | null;
+  completedLessons?: boolean;
   level?: LanguageTodayView["level"];
   missions?: MissionsDay | null;
   mistakes?: MistakeAvailability;
@@ -124,6 +126,7 @@ export function TodayScreen({
             <TodayWeek className={ASIDE_LEAD_CLASS} />
             <TodayPreparation className={ASIDE_LEAD_CLASS} level={level} syllabus={syllabus} />
             <TodayPractice
+              completedLessons={completedLessons}
               mistakes={mistakes}
               mockEntry={mockEntry}
               speakingEntry={speakingEntry}

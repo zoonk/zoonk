@@ -1,7 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
-import { LearnLink } from "../learn-link";
+import { LearnLink, type LearnPrefetch } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
 
 /** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
@@ -36,7 +36,7 @@ export const LIST_ROW_CLASS = cn(
 
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
-  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
+  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
 );
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
@@ -67,7 +67,7 @@ export function ListRowLink({
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
-  prefetch?: boolean | "auto";
+  prefetch?: LearnPrefetch;
 }) {
   return (
     <LearnLink

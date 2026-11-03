@@ -397,7 +397,11 @@ internal fun FirstQuestion(
     secondary: Boolean = false,
 ) {
     if (started) {
-        ContinueLesson(onContinue = { navigator.open(AppRoute.Lesson(lessonId)) }, secondary = secondary, modifier = modifier)
+        ContinueLesson(
+            onContinue = { navigator.open(AppRoute.Lesson(lessonId, fromCatalog = true)) },
+            secondary = secondary,
+            modifier = modifier,
+        )
         return
     }
 
@@ -429,7 +433,7 @@ internal fun FirstQuestion(
                     result = null,
                     onClick = {
                         analytics.track(AnalyticsEvent.HookAnswered(lessonId))
-                        navigator.open(AppRoute.Lesson(lessonId, firstAnswer = option.id))
+                        navigator.open(AppRoute.Lesson(lessonId, firstAnswer = option.id, fromCatalog = true))
                     },
                 ) {
                     RichInlineText(option.text, style = MaterialTheme.typography.bodyLarge)

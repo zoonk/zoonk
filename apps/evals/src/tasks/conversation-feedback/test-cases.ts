@@ -67,6 +67,30 @@ export const TEST_CASES: TestCase<unknown, ConversationFeedbackInput>[] = [
     },
   },
   {
+    expectations: `A2 Brazilian learner who typed one correct English line and reached one objective before the call ran out. "Went well" can quote "Is it still available?". The fix is null or a small naturalness point; pronunciation words are optional. The learner wrote no Portuguese, and every Portuguese sentence for them is spelled with all its accents ("você", "está", "disponível", "início"), never "voce" or "disponivel". In Brazilian Portuguese.`,
+    id: "pt-en-a2-one-typed-line",
+    userInput: {
+      learnerLanguage: "pt",
+      level: "A2",
+      objectivesMet: ["Is it available?"],
+      scenario: {
+        characterName: "Linda",
+        objectives: ["Is it available?", "Book a viewing", "Ask about the deposit"],
+        situation:
+          "Você viu um anúncio de apartamento na Queen Street e liga para a proprietária, Linda, para saber se ainda está disponível, perguntar sobre o depósito e marcar uma visita.",
+        title: "Ligar para marcar uma visita",
+      },
+      targetLanguage: "en",
+      turns: [
+        character("Hi! Are you calling about the apartment on Queen Street?"),
+        learner("Yes! Is it still available?"),
+        character("Yes, it is still available."),
+        character("Are you still there?"),
+        character("Sorry, I have to go now. Goodbye."),
+      ],
+    },
+  },
+  {
     expectations: `A strong B2 call where every objective was met. "Went well" should quote strong phrases like "something came up at work and I was wondering if I could move it to Friday" or "I've had it for about two weeks now". The fix should be the one real slip, the word order in "how much costs the consultation" ("how much the consultation costs"), explained from Portuguese ("quanto custa a consulta"). Pronunciation words are optional. In Brazilian Portuguese.`,
     id: "pt-en-b2-strong-call",
     userInput: {

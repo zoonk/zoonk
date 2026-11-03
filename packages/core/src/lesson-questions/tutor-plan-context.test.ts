@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { planChangeFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -246,5 +249,46 @@ describe("the plan the buddy reads", () => {
     expect(plan.catchUp?.lessons).toStrictEqual(
       carried.map((item) => ({ inToday: false, link: null, title: item.titleSnapshot })),
     );
+  });
+
+  it("shows the latest mistakes, fixed ones marked, including those on a lesson's finer skill", async () => {
+    const [{ carried, goal, user }, finer, other] = await Promise.all([
+      learnerBehind(),
+      skillFixture(),
+      userFixture(),
+    ]);
+
+    const [item] = carried;
+
+    if (!item?.lessonId || !item.skillId) {
+      throw new Error("Expected a planned lesson with its skill");
+    }
+
+    const planned = await prisma.skill.findUniqueOrThrow({ where: { id: item.skillId } });
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: item.lessonId, skillId: finer.id }),
+      mistakeFixture({
+        createdAt: new Date(Date.now() - 2 * MS_PER_DAY),
+        skillId: planned.id,
+        snapshot: { answer: "A", correctAnswer: "B", question: "Older open" },
+        userId: user.id,
+      }),
+      mistakeFixture({
+        createdAt: new Date(Date.now() - MS_PER_DAY),
+        skillId: finer.id,
+        snapshot: { answer: "C", correctAnswer: "D", question: "Latest fixed" },
+        status: "fixed",
+        userId: user.id,
+      }),
+      mistakeFixture({ skillId: finer.id, snapshot: { question: "Not hers" }, userId: other.id }),
+    ]);
+
+    const { snapshot } = await askAboutPlan({ goalId: goal.id, userId: user.id });
+
+    expect(readPlanSnapshot(snapshot).mistakes).toStrictEqual([
+      { answer: "C", correctAnswer: "D", fixed: true, question: "Latest fixed", skill: finer.name },
+      { answer: "A", correctAnswer: "B", question: "Older open", skill: planned.name },
+    ]);
   });
 });

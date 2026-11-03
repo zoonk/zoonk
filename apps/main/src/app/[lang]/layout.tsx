@@ -7,7 +7,7 @@ import { RefreshStalePages } from "@/lib/http/refresh-stale-pages";
 import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { getBaseUrl } from "@zoonk/utils/origin";
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { lang } from "next/root-params";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
@@ -18,6 +18,7 @@ import { AuthChangeReload } from "./auth-change-reload";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
+import { PendingLinkScript } from "./pending-link-script";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import { UsageNoticeScript } from "./usage-notice-script";
 import "../globals.css";
@@ -28,6 +29,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: { default: "Zoonk", template: "%s | Zoonk" },
 };
+
+/** Browsers let the on-screen keyboard cover the page; this shrinks the page instead, so a screen's action bar stays above it. */
+export const viewport: Viewport = { interactiveWidget: "resizes-content" };
 
 /** The reset comes first, so a commit that changes the page and mounts the palette drops the old request first. */
 function AppCommandPaletteSlot() {
@@ -56,6 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <UsageNoticeScript />
         <SidebarStateScript />
         <KeepTypingScript />
+        <PendingLinkScript />
       </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the

@@ -210,6 +210,8 @@
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Go back to any lesson you\'ve finished</string>
     <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d ready to practice</item>

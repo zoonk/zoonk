@@ -19,6 +19,7 @@
   "today_coming_stalled": "f65f75e6d3c18918907b81c2f178c2d0c8f3ba0ba9f28577f4dbc0edb1613fcb",
   "today_coming_title": "d08551f3e4e150b1c9850a92071412b09ba238e3c2e54eb0a9e55042f6b6119e",
   "today_coming_writing": "af10404f4c488f2bfedbe22f2d3a66f6f828b5f5fa77be354f628acbbe584194",
+  "today_completed_lessons_detail": "4e54e848d9409ae4268b8ce43dc9cbcf3f8231e356c686293402f26e5d24a8cd",
   "today_connection_lost": "73abae7a322a5e46cd1087aa956fac226d26b42e8fa098c0f688b1a3b64b672d",
   "today_connection_lost_detail": "444ad06c89cfcbb67e7160b07091e4aae5d4fe808a86a3b92fd7248ff8315dae",
   "today_continue_explanation": "0f524b458fb306b661a3c840449f71b1e2f08ed1ee1684cce1ba49f6267ff367",
@@ -390,6 +391,8 @@
     <string name="today_practice_anytime">いつでも練習</string>
     <string name="today_mistakes_notebook">間違いノート</string>
     <string name="today_mistakes_redo">間違えた問題を解き直す</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">完了したレッスンにいつでも戻れます</string>
     <string name="today_mistakes_return_tomorrow">今日間違えた問題は明日から練習できます</string>
     <plurals name="today_mistakes_ready">
         <item quantity="other">%d件を練習できます</item>

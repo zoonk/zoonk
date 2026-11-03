@@ -4,6 +4,7 @@ import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -18,7 +19,12 @@ import { PlanBuilding } from "./plan-building";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
-import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
+import {
+  type Schedule,
+  type ScheduleActions,
+  type ScheduleDraft,
+  useSchedule,
+} from "./use-schedule";
 import { WAITING_RUN, getPlanWait, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
@@ -56,7 +62,17 @@ function getScheduleAnswer({
   };
 }
 
-function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule }) {
+function ScheduleTime({
+  exam,
+  onChangeDate,
+  pending,
+  schedule,
+}: {
+  exam: boolean;
+  onChangeDate: () => void;
+  pending: boolean;
+  schedule: Schedule;
+}) {
   const t = useExtracted();
   const { found, minutes, setPicked, shown } = schedule;
   const marked = getMarkedTimes(found.found);
@@ -82,6 +98,27 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
       />
 
       <TimeAnswer
+        action={
+          <Button
+            className="self-start"
+            disabled={pending}
+            onClick={onChangeDate}
+            type="button"
+            variant="link"
+          >
+            {schedule.dated
+              ? t({
+                  description:
+                    "A link under the daily study time that opens the question about the goal's date, to change it.",
+                  message: "Change date",
+                })
+              : t({
+                  description:
+                    "A link under the daily study time that opens the question about the goal's date, for a goal with none yet.",
+                  message: "Choose a date",
+                })}
+          </Button>
+        }
         date={getGoalDate(schedule)}
         exam={exam}
         line={shown.line}
@@ -160,11 +197,13 @@ function ScheduleWeek({
 
 export function ScheduleStep({
   dated,
+  draft,
   exam = false,
   findTimeToCover,
   getTimeAdvice,
   goal,
   onAnswer,
+  onChangeDate,
   onPlanReadyChange,
   pending,
   planReadiness,
@@ -173,9 +212,11 @@ export function ScheduleStep({
   together,
 }: ScheduleActions & {
   dated: boolean;
+  draft: ScheduleDraft | null;
   exam?: boolean;
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
+  onChangeDate: (draft: ScheduleDraft) => void;
   onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
@@ -188,6 +229,7 @@ export function ScheduleStep({
   const schedule = useSchedule({
     actions: { findTimeToCover, getTimeAdvice },
     dated,
+    draft,
     exam,
     goal,
     paused: isRunStopped(run),
@@ -227,7 +269,12 @@ export function ScheduleStep({
       <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
       {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
       <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
-      <ScheduleTime exam={exam} schedule={schedule} />
+      <ScheduleTime
+        exam={exam}
+        onChangeDate={() => onChangeDate(schedule.draft)}
+        pending={pending}
+        schedule={schedule}
+      />
       {exam && <ExamFullCourse schedule={schedule} />}
     </StepForm>
   );

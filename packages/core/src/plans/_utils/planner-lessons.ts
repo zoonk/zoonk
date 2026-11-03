@@ -7,6 +7,7 @@ import { readCourseStart } from "../../goals/course-start-details";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { needsTool } from "../../library/chapters/chapter-tools";
 import {
+  type CourseOrderedLesson,
   compareCourseOrder,
   getCourseOrder,
   loadChapterTaughtLessons,
@@ -29,7 +30,7 @@ async function loadLessons({
   skillIds: string[];
   userId: string | null;
   withToolChapters: boolean;
-}): Promise<PlannerLesson[]> {
+}): Promise<CourseOrderedLesson[]> {
   const rows = await prisma.lessonSkill.findMany({
     select: {
       lesson: {
@@ -114,14 +115,7 @@ async function loadLessons({
         a.createdAt.getTime() - b.createdAt.getTime() ||
         a.lessonId.localeCompare(b.lessonId),
     )
-    .map(({ band, chapterId, lessonId, minutes, skillIds: taughtIds, title }) => ({
-      band,
-      chapterId,
-      lessonId,
-      minutes,
-      skillIds: taughtIds,
-      title,
-    }));
+    .map(({ createdAt: _createdAt, ...lesson }) => lesson);
 }
 
 export async function loadSkillLessons({
