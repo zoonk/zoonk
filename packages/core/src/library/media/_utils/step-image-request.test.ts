@@ -69,9 +69,10 @@ describe(getOptionPictureRequests, () => {
 });
 
 describe(findStepsSharingPicture, () => {
-  it("finds every step asking for the same picture, and none for a step without one", () => {
+  it("finds the steps asking for the same picture, prompt, alt and parts alike, and none without one", () => {
     const flower = { ...numberedCheckContent, image: { alt: "A flower", prompt: "A flower" } };
     const asked = { content: flower, id: "first", kind: "check" as const };
+    const otherAlt = { ...flower, image: { alt: "A wilted flower", prompt: "A flower" } };
     const none = { content: { ...flower, image: null }, id: "none", kind: "check" as const };
 
     const steps = [
@@ -82,6 +83,7 @@ describe(findStepsSharingPicture, () => {
         kind: "check" as const,
       },
       { content: numberedCheckContent, id: "numbered", kind: "check" as const },
+      { content: otherAlt, id: "other alt", kind: "check" as const },
       none,
     ];
 

@@ -21,8 +21,9 @@ export type StepImageRequest = {
 
 type StepWithContent = { content: unknown; id: string; kind: StepKind };
 
+/** The lesson writes a picture it keeps across screens with the same prompt, alt and parts. */
 function getPictureKey(request: StepImageRequest): string {
-  return JSON.stringify([request.prompt, request.parts]);
+  return JSON.stringify([request.prompt, request.alt, request.parts]);
 }
 
 /**
