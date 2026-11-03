@@ -3,9 +3,10 @@
 import {
   formatLocalizedNumber,
   fractionDigitsFor,
+  getNumberFormatter,
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
-import { currencyFor, formatMoney, withUnit } from "@zoonk/utils/math-answer";
+import { currencyFor, formatMoney, moneyFractionDigits, withUnit } from "@zoonk/utils/math-answer";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "./locale";
 
@@ -28,6 +29,17 @@ function splitMoneyUnit(unit?: string): { currency: string; rest: string } | nul
   const currency = currencyFor(head);
 
   return currency && rest.length > 0 ? { currency, rest: rest.join(" ") } : null;
+}
+
+export function displayDigits(value: number, unit?: string): number {
+  return splitMoneyUnit(unit) ? moneyFractionDigits(value) : fractionDigitsFor(value);
+}
+
+/** `Intl` rounds as `format` does: 1.005 to 1.01, where `toFixed` gives 1.00. */
+export function roundForDisplay(value: number, unit?: string): number {
+  const maximumFractionDigits = displayDigits(value, unit);
+  const formatter = getNumberFormatter("en", { maximumFractionDigits, useGrouping: false });
+  return Number(formatter.format(value));
 }
 
 export function useFormatNumber() {
