@@ -16,7 +16,9 @@ struct TutorComposerBar: View {
       } else if let limit = conversation.limit {
         TutorLimitNotice(failure: limit)
       } else {
-        if conversation.thread.value?.turns.isEmpty == true, !suggestions.isEmpty {
+        if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
+          !suggestions.isEmpty
+        {
           suggestionChips
         }
 

@@ -24,6 +24,8 @@ private struct SuggestionChip: View {
       .padding(.vertical, 10)
       .background(Color(.tertiarySystemFill), in: .capsule)
       .opacity(configuration.isPressed ? 0.6 : 1)
+      // The capsule hugs the label; pressing reaches Apple's 44-point minimum around it.
+      .frame(minHeight: 44)
       .contentShape(.capsule)
   }
 }

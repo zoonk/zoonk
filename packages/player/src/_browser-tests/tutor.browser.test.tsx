@@ -1222,6 +1222,57 @@ describe("the learner's buddy", () => {
     });
   });
 
+  it("shows a tapped suggestion as sent, with the buddy thinking, before the server saves it", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const saveQuestion = api.hold("create");
+    playLesson({ lesson });
+
+    const sheet = await openTutor();
+    await sheet.getByRole("button", { name: "Explain it more simply" }).click();
+
+    const turn = sheet.getByRole("article", { name: "Your question" });
+    await expect.element(turn).toMatchTextContent(/Explain it more simply.*Thinking…/u);
+
+    await expect
+      .element(sheet.getByRole("list", { name: "Suggested questions" }))
+      .not.toBeInTheDocument();
+
+    await expectAccessibleScreen("tutor sending a suggestion");
+
+    await saveQuestion();
+    await expect.element(turn).toMatchTextContent(TUTOR_ANSWER);
+    expect(api.requests.create).toBe(1);
+  });
+
+  it("holds back the suggestions until a lost suggestion is sent again", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+
+    api.next("create", async (serve) => {
+      await serve();
+      throw connectionLost();
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await sheet.getByRole("button", { name: "Explain it more simply" }).click();
+
+    await expect
+      .element(sheet.getByRole("alert"))
+      .toHaveTextContent("We couldn't send your last question. Try again.");
+
+    await expect
+      .element(sheet.getByRole("list", { name: "Suggested questions" }))
+      .not.toBeInTheDocument();
+
+    await sheet.getByRole("button", { name: "Retry last question" }).click();
+    await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
+
+    expect(api.inputs.map(({ question, requestId }) => ({ question, requestId }))).toStrictEqual([
+      { question: "Explain it more simply", requestId: api.inputs[0]?.requestId },
+      { question: "Explain it more simply", requestId: api.inputs[0]?.requestId },
+    ]);
+  });
+
   it("words the lesson's suggestions as the server sent them, in the lesson's language", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     api.next("answer", () => Promise.resolve(tutorAnswerResponse(TUTOR_ANSWER)));
@@ -1387,7 +1438,7 @@ describe("docked beside the lesson", () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     playLesson({ lesson });
 
-    const suggestions = lessonAside().getByRole("group", { name: "Suggested questions" });
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
     await expectCount(suggestions.getByRole("button"), 2);
 
     await expect
@@ -1406,11 +1457,25 @@ describe("docked beside the lesson", () => {
     await expect.element(suggestions).not.toBeInTheDocument();
   });
 
+  it("offers no suggestions beside the lesson while a question is still on its way", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const saveQuestion = api.hold("create");
+    playLesson({ lesson });
+
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
+    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
+    await expect.element(suggestions).not.toBeInTheDocument();
+
+    await saveQuestion();
+    await expect.element(suggestions).not.toBeInTheDocument();
+  });
+
   it("offers two questions to ask after a wrong answer, each sent with a tap", async () => {
     const { api, lesson } = lessonWithTutor();
     playLesson({ lesson });
 
-    const suggestions = lessonAside().getByRole("group", { name: "Suggested questions" });
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
 
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
@@ -1441,7 +1506,7 @@ describe("docked beside the lesson", () => {
     await expect.element(asideComposer()).toHaveAccessibleName("Ask Pip about your answer");
 
     await expect
-      .element(lessonAside().getByRole("group", { name: "Suggested questions" }))
+      .element(lessonAside().getByRole("list", { name: "Suggested questions" }))
       .not.toBeInTheDocument();
   });
 

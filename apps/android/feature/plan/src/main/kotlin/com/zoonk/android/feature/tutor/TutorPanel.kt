@@ -154,8 +154,8 @@ fun TutorPanel(
         TutorThreadView(vm, thread, state, identity, suggestions, routes, Modifier.weight(1f), page)
         if (page != null) {
             TurnSignals(turns, page)
-            val empty = turns?.isEmpty() == true && thread.value?.hasMore == false
-            if (empty && state.limit(turns.orEmpty()) == null) {
+            val empty = thread.value?.let(state::isEmpty) == true
+            if (empty && state.offersSuggestions(turns.orEmpty())) {
                 SuggestionChips(
                     suggestions,
                     enabled = state.canAsk(turns.orEmpty()),
@@ -183,7 +183,7 @@ private fun SuggestionChips(
     onSend: (TutorSuggestion) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         suggestions.forEach { suggestion ->
             SuggestionChip(onClick = { onSend(suggestion) }, label = { Text(suggestion.label) }, enabled = enabled)
         }

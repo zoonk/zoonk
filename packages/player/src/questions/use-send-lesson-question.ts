@@ -105,7 +105,7 @@ export function useSendLessonQuestion({
         (!question && !pendingRequest) ||
         currentState.activeQuestionId ||
         createRequestsInFlight.current.has(scope) ||
-        currentState.isCreating ||
+        currentState.creating ||
         blocksNewQuestion
       ) {
         return;
@@ -113,7 +113,6 @@ export function useSendLessonQuestion({
 
       createRequestsInFlight.current.add(scope);
       preloadTutorMarkdown();
-      dispatch({ type: "questionCreateStarted" });
 
       const request = getQuestionCreateRequest({
         context,
@@ -123,6 +122,7 @@ export function useSendLessonQuestion({
         suggestion,
       });
 
+      dispatch({ question: request.input.question, type: "questionCreateStarted" });
       const input = { ...request.input, requestId: request.requestId };
       setPendingRequests((current) => new Map(current).set(scope, request));
       const result = await createLessonQuestionRequest({ connection, input, target });
@@ -179,7 +179,7 @@ export function useSendLessonQuestion({
     [state.context, submitQuestion],
   );
 
-  const unresolvedQuestion = state.isCreating
+  const unresolvedQuestion = state.creating
     ? null
     : (pendingRequests.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 

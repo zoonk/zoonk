@@ -60,6 +60,19 @@ enum TutorScope: Hashable, Sendable {
     }
   }
 
+  /// What the server files a question asked here under, known before it answers.
+  var about: TutorTurn.About {
+    switch self {
+    case .plan: .plan
+    case .subject: .subject
+    case .chapter: .chapter
+    case .mock: .mock
+    case .lesson: .lesson
+    case .step: isAboutCheckedAnswer ? .answer : .step
+    case .item: isAboutCheckedAnswer ? .answer : .item
+    }
+  }
+
   var goalId: String? {
     switch self {
     case .plan(let goalId), .subject(let goalId, _):

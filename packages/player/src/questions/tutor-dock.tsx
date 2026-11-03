@@ -11,11 +11,11 @@ import { useEffect, useMemo, useRef } from "react";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
 import { isAboutCheckedAnswer } from "./lesson-question-context";
-import { getQuestionLimit } from "./lesson-question-errors";
 import { LessonQuestionNavigationContext } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { type TutorBuddy, useTutorBuddy } from "./tutor-buddy";
+import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
 
@@ -100,7 +100,6 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
 }
 
 function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
-  const t = useExtracted();
   const controller = useLessonQuestionController();
 
   const suggestions = useTutorSuggestions({
@@ -108,29 +107,12 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
     lessonSuggestions: controller.suggestions,
   }).slice(0, SUGGESTED);
 
-  if (suggestions.length === 0) {
-    return null;
-  }
-
   return (
-    <div
-      aria-label={t("Suggested questions")}
-      className="bg-background flex flex-wrap gap-2 px-5 pb-3"
-      role="group"
-    >
-      {suggestions.map((suggestion) => (
-        <Button
-          className="h-auto min-h-7.5 py-1 text-left whitespace-normal"
-          key={suggestion.question}
-          onClick={() => buddy.ask(suggestion)}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          {suggestion.question}
-        </Button>
-      ))}
-    </div>
+    <TutorSuggestions
+      className="bg-background px-5 pb-3"
+      onSelect={(suggestion) => buddy.ask(suggestion)}
+      suggestions={suggestions}
+    />
   );
 }
 
@@ -186,9 +168,10 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
 }
 
 function Dock({ buddy }: { buddy: TutorBuddy }) {
-  const { canAskQuestions, state } = useLessonQuestionController();
+  const { canAskQuestions } = useLessonQuestionController();
   const dockRef = useRef<HTMLDivElement>(null);
-  const suggests = buddy.suggests && canAskQuestions && !buddy.docked && !getQuestionLimit(state);
+  const offersSuggestions = useOffersSuggestions();
+  const suggests = buddy.suggests && canAskQuestions && !buddy.docked && offersSuggestions;
 
   useTaskFootHeight(dockRef);
 

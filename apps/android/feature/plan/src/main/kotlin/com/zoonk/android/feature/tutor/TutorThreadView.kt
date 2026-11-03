@@ -110,8 +110,8 @@ internal fun TutorThreadView(
 
             thread is LoadState.Loaded -> {
                 val turns = thread.value.turns
-                if (turns.isEmpty() && !thread.value.hasMore) {
-                    EmptyThread(identity, suggestions.takeIf { state.limit(turns) == null }.orEmpty(), state.canAsk(turns), vm::send)
+                if (state.isEmpty(thread.value)) {
+                    EmptyThread(identity, suggestions.takeIf { state.offersSuggestions(turns) }.orEmpty(), state.canAsk(turns), vm::send)
                 } else {
                     Turns(vm, thread.value, state, identity, routes)
                 }
@@ -155,18 +155,20 @@ private fun Turns(
     pending: LazyListScope.() -> Unit = {},
 ) {
     val list = rememberLazyListState()
-    val latest = thread.turns.lastOrNull()?.id
+    val sending = state.sending
+    val latest = if (sending != null) SENDING else thread.turns.lastOrNull()?.id
     var shown by rememberSaveable { mutableStateOf<String?>(null) }
     val today = remember { LocalDate.now() }
     val days = thread.turns.map { it.day }
     // A page opens with its hello, dated by the conversation's first day when that wasn't today.
     val firstDay = days.firstOrNull()?.takeIf { page != null && it != today }
     val leading = (if (firstDay != null) 1 else 0) + (if (page != null) 1 else 0) + (if (thread.hasMore) 1 else 0)
+    val newDay = { day: LocalDate, before: LocalDate? -> day.takeIf { page != null && before != null && it != before } }
 
     // The latest question comes into view as it's asked, from its top, as main scrolls it.
     LaunchedEffect(latest) {
         if (latest == null || latest == shown) return@LaunchedEffect
-        val index = leading + thread.turns.lastIndex
+        val index = leading + if (sending != null) thread.turns.size else thread.turns.lastIndex
         if (shown == null) list.scrollToItem(index) else list.animateScrollToItem(index)
         shown = latest
     }
@@ -184,7 +186,6 @@ private fun Turns(
             item(key = "earlier", contentType = "earlier") { EarlierQuestions(state, vm::loadEarlier) }
         }
         itemsIndexed(thread.turns, key = { _, turn -> turn.id }, contentType = { _, _ -> "turn" }) { index, turn ->
-            val day = days[index].takeIf { page != null && index > 0 && it != days[index - 1] }
             TurnView(
                 turn = turn,
                 vm = vm,
@@ -192,9 +193,21 @@ private fun Turns(
                 identity = identity,
                 routes = routes,
                 others = thread.turns.count { it.isInProgress && it.id != turn.id },
-                day = day?.let { { DayLabel(it, today) } },
+                day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
                 showsAbout = page == null,
             )
+        }
+        // The server's turn takes this one's place, laid out the same, so nothing moves when it arrives.
+        if (sending != null) {
+            item(key = SENDING, contentType = "turn") {
+                val day = newDay(today, days.lastOrNull())
+                TurnLayout(
+                    sending.question,
+                    sending.about.takeIf { page == null },
+                    identity,
+                    day?.let { { DayLabel(it, today) } },
+                ) { Thinking() }
+            }
         }
         state.missionMoment?.facts()?.takeIf { it.shows }?.let { facts ->
             item(key = "mission-moment", contentType = "mission-moment") {
@@ -289,6 +302,46 @@ private fun TurnView(
     day: (@Composable () -> Unit)? = null,
     showsAbout: Boolean = true,
 ) {
+    TurnLayout(turn.question, turn.about.takeIf { showsAbout }, identity, day) {
+        // A finished or failed answer is read out once; while it streams nothing is, word by word.
+        val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
+        Column(
+            Modifier.semantics { if (finished) liveRegion = LiveRegionMode.Polite },
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Answer(turn, vm, state, routes, others)
+        }
+        if (turn.answer != null || turn.status != TutorTurn.Status.Running) {
+            val change = turn.planChange
+            if (change != null && vm.goalId != null) {
+                TutorPlanChange(
+                    change = change,
+                    deciding = change.id in state.decidingChanges,
+                    failed = change.id in state.failedDecisions,
+                    onDecide = { vm.decidePlanChange(change.id, it) },
+                )
+            }
+            turn.toolOffer?.let { TutorOffer(it, routes) }
+        }
+        state.memoryChanges[turn.id]?.let { changes ->
+            MemoryUpdated(
+                changes = changes.map { it.shown },
+                undo = state.memoryUndos[turn.id] ?: MemoryUndo.Offered,
+                onUndo = { vm.undoMemory(turn.id) },
+            )
+        }
+    }
+}
+
+/** The learner's question, then the buddy's [answer] beside its face. */
+@Composable
+private fun TurnLayout(
+    question: String,
+    about: TutorTurn.About?,
+    identity: TutorIdentity,
+    day: (@Composable () -> Unit)?,
+    answer: @Composable ColumnScope.() -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         day?.invoke()
         Column(
@@ -296,9 +349,9 @@ private fun TurnView(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            if (showsAbout) {
+            about?.let {
                 Text(
-                    aboutLabel(turn.about),
+                    aboutLabel(it),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -308,41 +361,13 @@ private fun TurnView(
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
-                Text(turn.question, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
+                Text(question, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
             }
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                // A finished or failed answer is read out once; while it streams nothing is, word by word.
-                val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
-                Column(
-                    Modifier.semantics { if (finished) liveRegion = LiveRegionMode.Polite },
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Answer(turn, vm, state, routes, others)
-                }
-                if (turn.answer != null || turn.status != TutorTurn.Status.Running) {
-                    val change = turn.planChange
-                    if (change != null && vm.goalId != null) {
-                        TutorPlanChange(
-                            change = change,
-                            deciding = change.id in state.decidingChanges,
-                            failed = change.id in state.failedDecisions,
-                            onDecide = { vm.decidePlanChange(change.id, it) },
-                        )
-                    }
-                    turn.toolOffer?.let { TutorOffer(it, routes) }
-                }
-                state.memoryChanges[turn.id]?.let { changes ->
-                    MemoryUpdated(
-                        changes = changes.map { it.shown },
-                        undo = state.memoryUndos[turn.id] ?: MemoryUndo.Offered,
-                        onUndo = { vm.undoMemory(turn.id) },
-                    )
-                }
-            }
+            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
         }
     }
 }
@@ -400,20 +425,25 @@ private fun Answer(
         }
 
         else -> {
-            Row(
-                Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                Text(
-                    stringResource(R.string.tutor_thinking),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
+            Thinking()
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
+    }
+}
+
+@Composable
+private fun Thinking() {
+    Row(
+        Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+        Text(
+            stringResource(R.string.tutor_thinking),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 
@@ -536,7 +566,10 @@ private fun EmptyThread(
             style = MaterialTheme.typography.bodyMedium,
         )
         if (suggestions.isNotEmpty()) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 suggestions.forEach { suggestion ->
                     FilledTonalButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
                 }
@@ -590,6 +623,7 @@ private fun ConversationLoading(modifier: Modifier = Modifier) {
     }
 }
 
+private const val SENDING = "sending"
 private val AVATAR_SIZE = 32.dp
 private val EMPTY_AVATAR_SIZE = 48.dp
 private val BUBBLE_MAX_WIDTH = 480.dp

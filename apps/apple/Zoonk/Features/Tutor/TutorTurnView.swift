@@ -55,7 +55,7 @@ struct TutorTurnView: View {
 
   @ViewBuilder
   private var answer: some View {
-    let isStreamingHere = conversation.answeringID == turn.id
+    let isStreamingHere = conversation.answeringID == turn.id || conversation.asking?.id == turn.id
     let failure = conversation.answerFailures[turn.id]
 
     switch turn.status {
