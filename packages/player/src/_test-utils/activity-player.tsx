@@ -112,3 +112,17 @@ export function sortedCard({ group, item }: { group: string; item: string }) {
 export async function expectCount(locator: Locator, count: number) {
   await expect.poll(() => locator.elements()).toHaveLength(count);
 }
+
+// Vitest's visibility matcher excludes MathML elements, so math needs a rendered-box check.
+export async function expectMathVisible(math: Locator) {
+  await expect.poll(() => hasVisibleBox(math.query())).toBe(true);
+}
+
+function hasVisibleBox(element: Element | null) {
+  if (!element?.checkVisibility({ visibilityProperty: true })) {
+    return false;
+  }
+
+  const box = element.getBoundingClientRect();
+  return box.width > 0 && box.height > 0;
+}

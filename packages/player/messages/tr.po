@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "{total, plural, other {# kartı}} {groups} gruplarına tek tek yerleştir."
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item} {group} grubunda. Sıradaki: {next}."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item} {group} grubunda."
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "{item} geri alındı."
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "Burada kart yok"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "<item></item> öğesi <group></group> grubunda olmalı."
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "{right} / {total} öğe doğru grupta"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "{item} öğesi {group} grubunda olmalı."
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "{sorted} / {total} gruplandırıldı"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "Hangi gruba ait?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} {group} grubunda."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} {group} grubunda. Sıradaki: {next}."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "{item} geri alındı."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
