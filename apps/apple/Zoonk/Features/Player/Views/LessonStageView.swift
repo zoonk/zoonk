@@ -209,6 +209,7 @@ struct LessonStageView: View {
           \.lessonScreenHeight,
           proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
         )
+        .environment(\.lessonPageHeight, proxy.size.height)
         .environment(store.promptAudio)
         .onChange(of: pages != nil, initial: true) { _, isSpread in
           store.isSpread = isSpread
@@ -239,7 +240,7 @@ struct LessonStageView: View {
   }
 }
 
-private struct LessonPage<Content: View>: View {
+struct LessonPage<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
   let store: LessonPlayerStore
@@ -312,7 +313,8 @@ private struct LessonCheckNote: View {
 struct LessonActionBar: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
-  let step: LessonStep
+  /// Nil on the lesson map, which is read like a screen.
+  let step: LessonStep?
 
   @Environment(\.activityRenderers) private var activityRenderers
 
@@ -338,7 +340,7 @@ struct LessonActionBar: View {
         .keyboardShortcut(.leftArrow, modifiers: [])
       }
 
-      if step.isRead {
+      if let step, step.isRead {
         LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
@@ -377,7 +379,7 @@ struct LessonActionBar: View {
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
-    guard case .activity(let content) = step.content else {
+    guard case .activity(let content) = step?.content else {
       return nil
     }
 
@@ -396,6 +398,10 @@ struct LessonActionBar: View {
   }
 
   private var primaryAction: PrimaryAction {
+    guard let step else {
+      return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
+    }
+
     switch state.phase {
     case .feedback:
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
@@ -406,7 +412,7 @@ struct LessonActionBar: View {
           "Checking your answer", table: "Player",
           comment: "The main button while a written answer is graded"),
         isBusy: true, isDisabled: true)
-    case .playing, .completed:
+    case .playing, .map, .completed:
       break
     }
 
@@ -423,7 +429,7 @@ struct LessonActionBar: View {
 
       return PrimaryAction(
         action: .continueLesson,
-        title: state.position == state.queue.count - 1
+        title: state.isLastScreen
           ? Self.continueTitle
           : LocalizedStringResource(
             "Next", table: "Player", comment: "Moves to the next screen of the lesson"))
@@ -472,7 +478,7 @@ struct LessonActionBar: View {
     case .reading(let words), .listening(let words):
       !words.isEmpty
     case .matchColumns(let pairs, _):
-      if case .language(let exercise, _) = step.content {
+      if case .language(let exercise, _) = step?.content {
         pairs.count == (exercise.content.pairs ?? []).count
       } else {
         false

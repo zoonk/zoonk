@@ -141,14 +141,14 @@ private struct CatalogLessonList: View {
       .listRowBackground(Color.clear)
 
       // Folded, as on main: an idea can answer the first question.
-      if !value.summaryIdeas.isEmpty {
+      if let ideas = value.summary?.ideas.map(\.text) {
         Section {
           DisclosureGroup {
-            ForEach(value.summaryIdeas, id: \.self) { CheckLine(text: $0) }
+            ForEach(ideas, id: \.self) { CheckLine(text: $0) }
           } label: {
             LabeledContent {
               Text(
-                "\(value.summaryIdeas.count) ideas", tableName: "Courses",
+                "\(ideas.count) ideas", tableName: "Courses",
                 comment: "How many ideas a lesson teaches")
             } label: {
               Text(

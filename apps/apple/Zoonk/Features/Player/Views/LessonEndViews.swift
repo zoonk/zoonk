@@ -6,6 +6,8 @@ struct LessonCompletionView: View {
   let answered: Int
   let soundsEnabled: Bool
   var guestEnding: LessonGuestEnding?
+  /// A spread shows the lesson's map under what was done; one column keeps it in the menu.
+  var lesson: PlayableLesson?
   let finish: () -> Void
   let close: () -> Void
 
@@ -13,6 +15,10 @@ struct LessonCompletionView: View {
     PaneSplit {
       page {
         moment
+
+        if let lesson, let summary = lesson.summary {
+          LessonMapSection(title: lesson.title, summary: summary)
+        }
       }
     } secondary: {
       page {
@@ -439,32 +445,6 @@ private struct LessonGuestEndingView: View {
         .controlSize(.large)
       }
     }
-  }
-}
-
-struct LessonSummarySheet: View {
-  @Environment(\.dismiss) private var dismiss
-
-  let ideas: [String]
-
-  var body: some View {
-    NavigationStack {
-      List(Array(ideas.enumerated()), id: \.offset) { _, idea in
-        LessonRichText(idea)
-      }
-      .navigationTitle(
-        Text("Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
-    }
-    .presentationDetents([.medium, .large])
   }
 }
 

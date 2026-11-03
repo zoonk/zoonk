@@ -2713,6 +2713,65 @@
         }
       }
     },
+    "Each level sits inside the next one." : {
+      "comment" : "VoiceOver, before the levels of a lesson map drawn as boxes inside boxes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedes Level liegt innerhalb des nächsten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada nivel está dentro del siguiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque niveau est contenu dans le suivant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni livello è racchiuso in quello successivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各レベルは次のレベルの中に入っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 단계는 그다음 단계 안에 들어 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy poziom znajduje się wewnątrz kolejnego."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada nível fica dentro do próximo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her seviye bir sonrakinin içinde yer alır."
+          }
+        }
+      }
+    },
     "Each question is checked a few times a day. Compare your answer with this one:" : {
       "comment" : "A typed answer that wasn't graded, before the sample answer",
       "localizations" : {
@@ -3716,65 +3775,6 @@
         }
       }
     },
-    "Guess first" : {
-      "comment" : "Above a hook's question: a guess never counts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rate zuerst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero, haz una suposición"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essaie de deviner"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima prova a indovinare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まず予想する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "먼저 예상하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najpierw zgadnij"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dê seu palpite primeiro"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce tahmin et"
-          }
-        }
-      }
-    },
     "Hands on" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -4189,7 +4189,7 @@
       }
     },
     "I don't know yet" : {
-      "comment" : "Shows a good answer to a written question",
+      "comment" : "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4420,6 +4420,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Genellikle bir iki dakika sürer. Dersi hazır olur olmaz burada açacağız."
+          }
+        }
+      }
+    },
+    "Just a guess, it doesn't count" : {
+      "comment" : "Chip above the lesson's opening question, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur eine Vermutung, wird nicht gewertet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es solo una suposición, no cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste une supposition, ça ne compte pas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È solo un’ipotesi, non conta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予想なので、スコアには影響しません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예상일 뿐, 점수에는 반영되지 않아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To tylko strzał, nie wpływa na wynik"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só um palpite, não vale ponto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece bir tahmin, puanını etkilemez"
           }
         }
       }
@@ -4784,6 +4843,65 @@
         }
       }
     },
+    "Lesson map" : {
+      "comment" : "A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionsübersicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte de la leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappa della lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンマップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨 개념도"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa da aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders haritası"
+          }
+        }
+      }
+    },
     "Lesson not available" : {
       "comment" : "The lesson doesn't exist anymore",
       "localizations" : {
@@ -4898,65 +5016,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ders ilerlemesi"
-          }
-        }
-      }
-    },
-    "Lesson summary" : {
-      "comment" : "Opens the lesson's summary card",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zusammenfassung der Lektion"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resumen de la lección"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résumé de la leçon"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri il riepilogo della lezione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスンのまとめ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨 요약"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz podsumowanie lekcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resumo da aula"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders özeti"
           }
         }
       }

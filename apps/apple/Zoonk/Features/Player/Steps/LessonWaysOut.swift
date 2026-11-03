@@ -5,11 +5,20 @@ struct LessonWaysOut: View {
   let store: LessonPlayerStore
   let step: LessonStep
 
+  private var isGuess: Bool {
+    if case .hook(let hook) = step.content { hook.asksGuess } else { false }
+  }
+
   var body: some View {
     let isLocked = state.phase != .playing
     let isWriting = step.isWriting
 
     VStack(alignment: .leading, spacing: 4) {
+      if isGuess, !isLocked {
+        dontKnowButton
+          .disabled(step.isRequiredPictureDrawing(openedAt: store.openedAt))
+      }
+
       if state.canExplainFirst {
         Button {
           store.explainFirst()
@@ -28,17 +37,7 @@ struct LessonWaysOut: View {
 
       if isWriting, !isLocked {
         if !state.canExplainFirst {
-          Button {
-            store.dontKnow()
-          } label: {
-            Label {
-              Text(
-                "I don't know yet", tableName: "Player",
-                comment: "Shows a good answer to a written question")
-            } icon: {
-              Image(systemName: "questionmark.circle")
-            }
-          }
+          dontKnowButton
         }
 
         Button {
@@ -56,6 +55,22 @@ struct LessonWaysOut: View {
     }
     .buttonStyle(.borderless)
     .font(.subheadline)
+  }
+
+  private var dontKnowButton: some View {
+    Button {
+      store.dontKnow()
+    } label: {
+      Label {
+        Text(
+          "I don't know yet", tableName: "Player",
+          comment:
+            "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+        )
+      } icon: {
+        Image(systemName: "questionmark.circle")
+      }
+    }
   }
 }
 

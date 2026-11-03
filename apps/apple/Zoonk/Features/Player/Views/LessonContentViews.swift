@@ -78,6 +78,8 @@ struct LessonQuestionText: View {
 
 extension EnvironmentValues {
   @Entry var lessonScreenHeight: CGFloat = .infinity
+  /// Between the lesson's bars: what a screen and its action bar share.
+  @Entry var lessonPageHeight: CGFloat = .infinity
   @Entry var isLessonStepChecked = false
 }
 
@@ -115,6 +117,11 @@ enum LessonPictureFrame {
 struct LessonPictureView: View {
   @Environment(\.imageLoader) private var images
   @Environment(\.lessonScreenHeight) private var screenHeight
+  @Environment(\.lessonPageHeight) private var pageHeight
+  @Environment(\.isPaneSplit) private var isPaneSplit
+  /// What the opening guess's page holds besides its picture: the chip, a three-line question,
+  /// three options, "I don't know yet" and the action bar.
+  @ScaledMetric(relativeTo: .title2) private var openingReserve: CGFloat = 520
   @Environment(SessionStore.self) private var session
 
   let image: LessonStepImage?
@@ -123,6 +130,9 @@ struct LessonPictureView: View {
   /// A question's picture says what it shows until it's there, since the question may need it.
   var asks = false
   var hero = false
+  /// The opening guess's picture comes before its question, so in one column it gives up its height
+  /// for the question and options, down to a floor where it still reads. On a spread they face it.
+  var opens = false
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
@@ -146,7 +156,8 @@ struct LessonPictureView: View {
 
   private var maxHeight: CGFloat {
     let frame: LessonPictureFrame = asks ? .question : hero ? .hero : .inline
-    return frame.maxHeight(screen: screenHeight)
+    let cap = frame.maxHeight(screen: screenHeight)
+    return opens && !isPaneSplit ? max(140, min(pageHeight - openingReserve, cap)) : cap
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {

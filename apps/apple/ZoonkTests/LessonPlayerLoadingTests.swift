@@ -33,7 +33,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let outline = LessonOutline(id: "lesson", title: "Before", description: "", estimatedMinutes: 5)
     let ready = PlayableLesson(
       id: "lesson", title: "Ready", language: "en", targetLanguage: nil, chapterTitle: nil,
-      steps: [], summaryIdeas: [], tutorSuggestions: [])
+      steps: [], summary: nil, tutorSuggestions: [])
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
       reads += 1
       return reads == 1 ? .notGenerated(outline) : .ready(ready)
@@ -158,7 +158,7 @@ private func pictureLesson(isDrawn: Bool) throws -> PlayableLesson {
 
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
-    steps: [step], summaryIdeas: [], tutorSuggestions: [])
+    steps: [step], summary: nil, tutorSuggestions: [])
 }
 
 extension CurrentAccount {
