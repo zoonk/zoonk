@@ -166,13 +166,19 @@ private fun Certificate(
 
             else -> {
                 Column(Modifier.padding(top = 8.dp).bleed(LIST_ITEM_INSET)) {
-                    ActionRow(R.drawable.ic_print, stringResource(R.string.certificates_print), actions.busy == CertificateAction.Print) {
+                    ActionRow(
+                        R.drawable.ic_print,
+                        stringResource(R.string.certificates_print),
+                        busy = actions.busy == CertificateAction.Print,
+                        enabled = actions.busy == null,
+                    ) {
                         actions.print(certificate, fileName)
                     }
                     ActionRow(
                         R.drawable.ic_download,
                         stringResource(R.string.certificates_download),
-                        actions.busy == CertificateAction.Download,
+                        busy = actions.busy == CertificateAction.Download,
+                        enabled = actions.busy == null,
                     ) {
                         actions.download(certificate, fileName)
                     }
@@ -219,11 +225,12 @@ private fun ActionRow(
     @DrawableRes icon: Int,
     text: String,
     busy: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     ListItem(
         headlineContent = { Text(text) },
-        modifier = Modifier.clickable(enabled = !busy, role = Role.Button, onClick = onClick),
+        modifier = Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick),
         leadingContent = {
             if (busy) {
                 CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)

@@ -94,6 +94,7 @@ class CertificateActions internal constructor(
         certificate: OwnedCertificate,
         fileName: String,
     ) {
+        if (busy != null) return
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             pendingSave.value = listOf(certificate.imageUrls.print.toString(), fileName)
             saveAs(fileName)
