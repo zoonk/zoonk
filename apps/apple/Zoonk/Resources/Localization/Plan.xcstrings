@@ -14604,6 +14604,65 @@
         }
       }
     },
+    "Course complete" : {
+      "comment" : "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso completado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cours terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corso completato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コース修了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코스 완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs ukończony"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curso concluído"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs tamamlandı"
+          }
+        }
+      }
+    },
     "Daily time changed to %@." : {
       "comment" : "Says the plan's time a day changed",
       "localizations" : {
@@ -27098,25 +27157,25 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se guardó. Inténtalo de nuevo."
+            "value" : "No se pudo guardar. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce choix n’a pas été enregistré. Réessaie."
+            "value" : "L’enregistrement a échoué. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvataggio non riuscito. Riprova."
+            "value" : "Il salvataggio non è riuscito. Riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保存できませんでした。もう一度試してください。"
+            "value" : "保存できませんでした。もう一度お試しください。"
           }
         },
         "ko" : {
@@ -27134,7 +27193,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu para salvar. Tente de novo."
+            "value" : "Não foi possível salvar. Tente de novo."
           }
         },
         "tr" : {

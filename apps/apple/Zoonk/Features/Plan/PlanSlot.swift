@@ -4,6 +4,7 @@ import SwiftUI
 enum PlanSlotItem: Hashable {
   case behind(String)
   case choice(GoalPlan.ExamChoice)
+  case courseComplete
   case coverage(String)
   case finished
   case fitLessons
@@ -12,7 +13,10 @@ enum PlanSlotItem: Hashable {
   case paused
   case tooTight
 
-  static func items(plan: GoalPlan, isPaused: Bool, isExam: Bool) -> [PlanSlotItem] {
+  /// `courseComplete` while the finished course's certificate isn't written yet.
+  static func items(
+    plan: GoalPlan, isPaused: Bool, isExam: Bool, courseComplete: Bool
+  ) -> [PlanSlotItem] {
     let fix = planPaceFix(plan, isExam: isExam)
     let status = plan.status?.kind
     let finished = plan.end != nil
@@ -23,7 +27,7 @@ enum PlanSlotItem: Hashable {
       open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
     ].compactMap(\.self)
 
-    var items: [PlanSlotItem] = []
+    var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
     if isPaused {
       items.append(.paused)
@@ -69,8 +73,11 @@ struct PlanSuggestionSection: View {
 
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
+    let isExam = context.goal.kind == .exam
+    let certificate = isExam ? store.planEnd(goalId: context.goal.id).value?.certificate : nil
     let items = PlanSlotItem.items(
-      plan: context.plan, isPaused: context.isPaused, isExam: context.goal.kind == .exam
+      plan: context.plan, isPaused: context.isPaused, isExam: isExam,
+      courseComplete: certificate != nil && certificate?.code == nil
     ).filter { !state.dismissed.contains($0) }
 
     if let item = items.first {
@@ -173,6 +180,21 @@ struct PlanSuggestionSection: View {
         }
 
         notNow(item)
+      }
+    case .courseComplete:
+      VStack(alignment: .leading, spacing: 8) {
+        Label {
+          Text(
+            "Course complete", tableName: "Plan",
+            comment:
+              "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead"
+          )
+          .font(.headline)
+        } icon: {
+          StatusMark(status: .done)
+        }
+
+        CertificateClaimButton(context: context)
       }
     case .finished:
       PlanFinishedSlot(context: context)
@@ -394,15 +416,53 @@ private struct PlanPausedSlot: View {
   }
 }
 
+/// Writes the course's certificate; the Plan plays its moment.
+private struct CertificateClaimButton: View {
+  @State private var isClaiming = false
+  @State private var failed = false
+
+  let context: PlanContext
+
+  var body: some View {
+    let failure = String(
+      localized: "That didn't save. Try again.", table: "Plan",
+      comment: "The course's certificate couldn't be written; Get your certificate tries again")
+
+    Button {
+      Task {
+        isClaiming = true
+        failed = !(await context.claimCertificate())
+        isClaiming = false
+
+        if failed {
+          AccessibilityNotification.Announcement(failure).post()
+        }
+      }
+    } label: {
+      Label {
+        Text(
+          "Get your certificate", tableName: "Plan",
+          comment: "Writes the certificate of the plan's finished course and shows it")
+      } icon: {
+        Image(systemName: "rosette")
+      }
+    }
+    .buttonStyle(.mainAction)
+    .disabled(isClaiming)
+
+    if failed {
+      Text(failure)
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
+    }
+  }
+}
+
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
-  @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
   @State private var failed = false
   @State private var isStarting = false
-  @State private var isClaiming = false
-  @State private var claimed: [CertificateFacts] = []
-  @State private var opened: OpenedCertificate?
 
   let context: PlanContext
 
@@ -420,7 +480,7 @@ private struct PlanFinishedSlot: View {
       if let certificate = end.value?.certificate {
         if let code = certificate.code {
           Button {
-            opened = OpenedCertificate(code: code)
+            context.show(.certificate(code: code))
           } label: {
             Label {
               Text(
@@ -432,19 +492,7 @@ private struct PlanFinishedSlot: View {
           }
           .buttonStyle(.bordered)
         } else {
-          Button {
-            Task { await claim() }
-          } label: {
-            Label {
-              Text(
-                "Get your certificate", tableName: "Plan",
-                comment: "Writes the certificate of the finished plan's course and shows it")
-            } icon: {
-              Image(systemName: "rosette")
-            }
-          }
-          .buttonStyle(.mainAction)
-          .disabled(isClaiming)
+          CertificateClaimButton(context: context)
         }
       }
 
@@ -488,29 +536,6 @@ private struct PlanFinishedSlot: View {
       }
     }
     .loads(end, refreshable: false)
-    .completionMoments(certificates: claimed)
-    .sheet(item: $opened) { opened in
-      CertificateSheet(code: opened.code)
-        .accessibilitySizeStyles()
-    }
-  }
-
-  private func claim() async {
-    isClaiming = true
-    failed = false
-
-    switch await certificates.claim(goalID: context.goal.id) {
-    case .done(let certificate?):
-      if certificate.wasShown {
-        opened = OpenedCertificate(code: certificate.facts.code)
-      } else {
-        claimed = [certificate.facts]
-      }
-    case .done(nil), .failed: failed = true
-    case .obsolete: break
-    }
-
-    isClaiming = false
   }
 
   private func continueAtNextLevel() async {
