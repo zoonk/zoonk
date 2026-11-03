@@ -52,16 +52,21 @@ export function RowOpen({
 }
 
 export function LessonAgainLink({
+  block,
   children,
   lessonId,
 }: {
+  block: DayStep;
   children: React.ReactNode;
   lessonId: string;
 }) {
   const { actions } = useTodayScreen();
+  const t = useExtracted();
+  const title = useBlockTitle();
 
   return (
     <LearnLink
+      aria-label={`${title(block)}${t(", done")}`}
       className={cn(ROW_OPEN_CLASS, "after:-inset-x-2.5")}
       href={actions.lessonAgainHref(lessonId)}
       lessonWritten

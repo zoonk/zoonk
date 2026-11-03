@@ -158,7 +158,11 @@ function RowTarget({
   const name = <RowName block={block} isNext={isNext} />;
 
   if (lessonAgainId) {
-    return <LessonAgainLink lessonId={lessonAgainId}>{name}</LessonAgainLink>;
+    return (
+      <LessonAgainLink block={block} lessonId={lessonAgainId}>
+        {name}
+      </LessonAgainLink>
+    );
   }
 
   if (isFinished(block) || block.waitReason || !opens) {
