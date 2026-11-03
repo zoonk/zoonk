@@ -17,9 +17,42 @@ import {
   type SpeakingExam,
 } from "./exam-speaking-exams";
 
-/** Same model as `speaking-mock-scenario`, whose eval chose it for exam-like scripts. */
-const defaultModel = "openai/gpt-6-luna";
+/**
+ * Not GPT-6 Luna, though cheaper: it wrote the learner's summary, role or a photo's alt in the
+ * exam's language, such as a Brazilian learner's Goethe summary in German.
+ */
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
+
+/** Left to itself, the model gives every try of a task the same favorite topic, such as a library. */
+const TOPIC_AREAS = [
+  "food and cooking",
+  "sport and exercise",
+  "travel and holidays",
+  "shopping",
+  "housing",
+  "work",
+  "studying and courses",
+  "technology",
+  "free time and hobbies",
+  "nature and the environment",
+  "music",
+  "cinema and television",
+  "reading",
+  "getting around town",
+  "festivals and celebrations",
+  "family and friends",
+  "volunteering",
+  "pets and animals",
+  "clothes and fashion",
+  "neighbourhood life",
+  "museums and art",
+  "gardening",
+  "games",
+  "photography",
+  "weather and seasons",
+  "restaurants and cafés",
+] as const;
 
 const MAX_PHOTOS = 5;
 const MIN_HINTS = 3;
@@ -77,6 +110,7 @@ function buildSystemPrompt(params: GenerateExamSpeakingCardParams): string {
       continues: Boolean(params.previous),
       data: stimulus === "data",
       examiner: role === "examiner",
+      newTopic: !params.previous,
       partner: role === "partner",
       photos: stimulus === "photos",
       text: stimulus === "text",
@@ -88,8 +122,12 @@ function formatPrevious(previous: PreviousCard): string {
   return `\n    PREVIOUS_CARD:\n${JSON.stringify(previous, null, 2)}`;
 }
 
+function formatTopicArea(): string {
+  return `\n    TOPIC_AREA: ${TOPIC_AREAS[Math.floor(Math.random() * TOPIC_AREAS.length)]}`;
+}
+
 function buildUserPrompt(params: GenerateExamSpeakingCardParams): string {
-  const previous = params.previous ? formatPrevious(params.previous) : "";
+  const topic = params.previous ? formatPrevious(params.previous) : formatTopicArea();
 
   return `
     EXAM: ${params.title}
@@ -101,7 +139,7 @@ function buildUserPrompt(params: GenerateExamSpeakingCardParams): string {
     LEVEL: ${params.level}
     TARGET_LANGUAGE: ${SPEAKING_EXAM_VARIETIES[params.exam]}
     LEARNER_LANGUAGE: ${getPromptLanguageName({ language: params.learnerLanguage })}
-    ${formatCast({ language: SPEAKING_EXAM_LANGUAGES[params.exam], seed: `${params.title}:${params.task.name}:${Date.now()}` })}${previous}
+    ${formatCast({ language: SPEAKING_EXAM_LANGUAGES[params.exam], seed: `${params.title}:${params.task.name}:${Date.now()}` })}${topic}
   `;
 }
 

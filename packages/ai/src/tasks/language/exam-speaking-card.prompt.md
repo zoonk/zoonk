@@ -13,6 +13,9 @@ You write one task card of a language certificate's speaking paper for a languag
 - `TARGET_LANGUAGE`: the exam's language and variety.
 - `LEARNER_LANGUAGE`: the learner's own language.
 - `CAST`: first names to pick the voice model's name from.
+{{#newTopic}}
+- `TOPIC_AREA`: the everyday area this card's topic comes from, so each try gets a different one. Pick a concrete topic in it that fits the task. A sheet that is the same for every candidate, such as a self-introduction's points, stays as the exam prints it.
+{{/newTopic}}
 {{#continues}}
 - `PREVIOUS_CARD`: the card of the earlier task this one continues. Stay on its topic and material: this task's prompts and script build on it.
 {{/continues}}
