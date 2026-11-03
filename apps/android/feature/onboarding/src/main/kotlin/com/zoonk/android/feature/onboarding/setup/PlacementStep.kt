@@ -70,7 +70,6 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
-import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
@@ -297,7 +296,7 @@ private fun ColumnScope.PlacementWaiting(
         patient = true
     }
 
-    Column(Modifier.watchTouches(hold), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         GenerationWait(
             kind = GenerationKind.Placement,
             run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run,
@@ -319,12 +318,9 @@ private fun ColumnScope.PlacementWaiting(
         }
         SetupWarmUpCard(run.warmUpId, AnalyticsEvent.WarmUpSurface.PlacementWait, hold)
     }
+    PageHold(hold, stringResource(R.string.onboarding_continue))
 
-    if (hold.holding) {
-        OnboardingActions {
-            Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_continue)) }
-        }
-    } else if (patient || run.status == GenerationRun.Status.Failed) {
+    if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {
             FinishFailed(failed)
             TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {

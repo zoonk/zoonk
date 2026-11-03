@@ -2,20 +2,7 @@ package com.zoonk.android.feature.onboarding
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -23,17 +10,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.R
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -46,8 +32,10 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWarmUp
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanBuilding
+import com.zoonk.android.feature.onboarding.setup.PlanNext
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
-import com.zoonk.android.feature.onboarding.setup.SetupWarmUp
+import com.zoonk.android.feature.onboarding.setup.PlanSoFar
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WARM_UP_ID
@@ -56,8 +44,8 @@ import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.Goal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -74,8 +62,8 @@ import java.io.File
 /**
  * Review screenshots of the setup's waits with the goal's guesses, written only on demand:
  * `./gradlew :feature:onboarding:testDebugUnitTest --tests '*WarmUpScreenshots*' --rerun -Pzoonk.shots=<folder>`.
- * Each plays one learner through the plan's wait, the time question's, an exam notice's reading and placement's: a
- * guess on each, then the work ready while they're still guessing.
+ * Each plays one learner through the plan's wait, the time question's and placement's: a guess on each, then the work
+ * ready while they're still guessing, its way on pinned to the page's bottom. An exam notice's reading deals no guesses.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -104,17 +92,24 @@ class WarmUpScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
     fun darkMoreContrast() = capture("dark-more-contrast", dark = true, moreContrast = true)
 
+    /** A phone's height, so the held wait's pinned button shows under content that runs past the screen. */
     @Test
-    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun twiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         capture("font200")
     }
 
+    /** An open book: the wait and its pinned button on the page before the fold, the plan so far after it. */
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = PageFold(start = 418.dp, end = 434.dp, bounds = Rect.Zero))
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: PageFold? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -131,8 +126,8 @@ class WarmUpScreenshots {
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface {
-                    CompositionLocalProvider(LocalSetupWarmUp provides SetupWarmUp(warmUps, Goal.Kind.LEARN)) {
-                        SetupColumn {
+                    CompositionLocalProvider(LocalSetupWarmUp provides warmUps) {
+                        SetupColumn(fold, aside = fold?.let { { PlanSoFar(examGoal()) } }) {
                             key(scene) {
                                 when (scene) {
                                     0 -> {
@@ -150,13 +145,7 @@ class WarmUpScreenshots {
 
                                     1 -> {
                                         val hold = rememberReadyHold(scheduleReady)
-                                        PlanBuilding(
-                                            MAPPING,
-                                            onRetry = null,
-                                            hold = hold,
-                                            readyDescription = R.string.warm_up_plan_ready_one_question,
-                                            readyAction = R.string.onboarding_continue,
-                                        )
+                                        PlanBuilding(MAPPING, onRetry = null, hold = hold, next = PlanNext.TimeQuestion)
                                     }
 
                                     2 -> {
@@ -196,7 +185,7 @@ class WarmUpScreenshots {
 
         compose.waitForIdle()
         write("plan-wait-$name")
-        compose.onNodeWithText("To put the bees to sleep").performClick()
+        compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         compose.waitForIdle()
         write("plan-wait-guessed-$name")
         planApi.shownPlan = planOf()
@@ -206,7 +195,7 @@ class WarmUpScreenshots {
 
         scene = 1
         compose.waitForIdle()
-        compose.onNodeWithText("8").performClick()
+        compose.onNodeWithText("8").performScrollTo().performClick()
         scheduleReady = true
         compose.waitForIdle()
         write("time-wait-ready-$name")
@@ -217,10 +206,10 @@ class WarmUpScreenshots {
 
         scene = 3
         compose.waitForIdle()
-        compose.onNodeWithText("Start").performClick()
+        compose.onNodeWithText("Start").performScrollTo().performClick()
         compose.waitForIdle()
         write("placement-wait-$name")
-        compose.onNodeWithText("A summer worker").performClick()
+        compose.onNodeWithText("A summer worker").performScrollTo().performClick()
         onboardingApi.placement = placementOf(started = true)
         compose.mainClock.advanceTimeBy(3_500)
         compose.waitForIdle()
@@ -232,25 +221,6 @@ class WarmUpScreenshots {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         println("Screenshot ${file.path}")
-    }
-
-    /** The setup's column: at least the window's height, so actions sit at its bottom on phones. */
-    @Composable
-    private fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
-        BoxWithConstraints(Modifier.fillMaxSize()) {
-            val height = maxHeight
-            Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-                Column(
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = height)
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    content = content,
-                )
-            }
-        }
     }
 
     private companion object {

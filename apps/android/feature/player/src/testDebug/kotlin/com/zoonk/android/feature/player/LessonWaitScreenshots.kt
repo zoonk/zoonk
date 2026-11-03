@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -73,8 +74,9 @@ class LessonWaitScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
     fun darkMoreContrast() = capture("dark-more-contrast", dark = true, moreContrast = true)
 
+    /** A phone's height, so the held wait's pinned button shows under content that runs past the screen. */
     @Test
-    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun twiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         capture("font200")
@@ -124,7 +126,7 @@ class LessonWaitScreenshots {
         write("lesson-wait-$name")
         if (!deck) return
 
-        compose.onNodeWithText("To hide the bees' alarm scent").performClick()
+        compose.onNodeWithText("To hide the bees' alarm scent").performScrollTo().performClick()
         events.tryEmit(GenerationEvent(at = 40_000, status = "completed", step = "lessonReady"))
         compose.waitForIdle()
         write("lesson-wait-ready-$name")

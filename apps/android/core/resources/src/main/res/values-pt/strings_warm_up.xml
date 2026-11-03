@@ -8,7 +8,7 @@
   "warm_up_plan_ready_one_question": "f8df1b577133af37ac7f2b6341d2d5ec8ad985073cb3fca48aa55acf41475301",
   "warm_up_plan_ready_whenever": "e949bb569d065acd9b88efb8f2b1db28eacaf68bd22a487cb2c0bad204dc318c",
   "warm_up_questions_ready": "deca6af652162fa212bbe3467106c7ed578219b1e42f7fe127b6f441b5c0bc67",
-  "warm_up_questions_ready_description": "47f427de6d73f2551b4f6896c2529ffc2ce7665c0623c0d71ef54cfbb0d58de1",
+  "warm_up_questions_ready_description": "02d8548ca50ebfba3b504500d1bb832a57bd5225dc598bb0f1103354e230877f",
   "warm_up_title": "cfb365553f6fdd7e84c3aabd35a591bec02bf4bcfd4a85d498dfd9ded400770c"
 }
 -->
@@ -27,7 +27,8 @@
     <string name="warm_up_plan_ready_whenever">Veja quando quiser.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Suas perguntas estão prontas</string>
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
     <string name="warm_up_questions_ready_description">Comece quando quiser.</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">Sua aula está pronta. Comece quando quiser.</string>
 </resources>

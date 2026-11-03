@@ -8,7 +8,7 @@
   "warm_up_plan_ready_one_question": "389cfece76a0c2ec43f232d6e72f1d6b875a163ea00f53e341fa2a3bc008bc8f",
   "warm_up_plan_ready_whenever": "ff7f4907ecc4d89abcc91f11995f07fbefaa8fea83519e6e9e3adec05cce750e",
   "warm_up_questions_ready": "80d27f79fd20716358b60a96ef3ff0c95bf0a248c70f08c70adfcc2054fc9b6f",
-  "warm_up_questions_ready_description": "5eb37951eb43a40c034a2ca7a6fd8f2dead4eee90959331dc3fe30045d47e55e",
+  "warm_up_questions_ready_description": "f7a7dbd8badb51cb07bd6e61c6d46b9bf7d7492f336869bbb4f0d20041187f63",
   "warm_up_title": "8a8f9663293d16da0df53168f1768d0f5c1c7802e0586517250d634e6db5137a"
 }
 -->
@@ -27,7 +27,8 @@
     <string name="warm_up_plan_ready_whenever">Hazır olduğunda planına bakabilirsin.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Soruların hazır</string>
-    <string name="warm_up_questions_ready_description">İstediğin zaman başlayabilirsin.</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">Hazır olduğunda başlayabilirsin.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">Dersin hazır. İstediğin zaman başlayabilirsin.</string>
 </resources>

@@ -10,6 +10,9 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
@@ -46,9 +49,12 @@ fun rememberReadyHold(ready: Boolean): ReadyHold {
     return ReadyHold(state, holding = state.holding(ready), over = state.over(ready))
 }
 
-/** Every touch on the wait starts its quiet second again. */
+/** Every touch on the wait, a key press included, starts its quiet second again. */
 fun Modifier.watchTouches(hold: ReadyHold): Modifier =
-    pointerInput(hold.key) {
+    onPreviewKeyEvent {
+        if (it.type == KeyEventType.KeyDown) hold.touch()
+        false
+    }.pointerInput(hold.key) {
         awaitPointerEventScope {
             while (true) {
                 if (awaitPointerEvent(PointerEventPass.Initial).changes.any { it.changedToDown() }) hold.touch()

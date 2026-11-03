@@ -14,7 +14,8 @@
     <string name="warm_up_plan_ready_whenever">See it whenever you\'re ready.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Your questions are ready</string>
-    <string name="warm_up_questions_ready_description">Start them whenever you like.</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">Start them whenever you\'re ready.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">Your lesson is ready. Start it whenever you like.</string>
 </resources>
