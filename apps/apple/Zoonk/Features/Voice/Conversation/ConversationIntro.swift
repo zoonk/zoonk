@@ -22,6 +22,8 @@ struct CallIntro {
   let objectives: [Objective]
   let situation: String
   let speakingTask: Components.Schemas.ExamSpeakingTask?
+  /// A role-play call, not an exam's.
+  let callsCharacter: Bool
   let targetLanguage: String
   let title: String
 
@@ -36,6 +38,7 @@ struct CallIntro {
     }
     situation = conversation.situation
     speakingTask = conversation.speakingTask
+    callsCharacter = conversation.callsCharacter
     targetLanguage = conversation.targetLanguage
     title = conversation.title
   }
@@ -49,6 +52,7 @@ struct CallIntro {
     objectives = intro.objectives.map { Objective(description: $0.description, label: $0.label) }
     situation = intro.situation
     speakingTask = intro.examTask?.value1
+    callsCharacter = intro.examTask == nil
     targetLanguage = intro.targetLanguage
     title = intro.title
   }
@@ -97,7 +101,7 @@ struct ConversationIntro<Footer: View>: View {
         Text(intro.speakingTask?.card.summary ?? intro.situation)
           .foregroundStyle(.secondary)
 
-        if intro.speakingTask != nil {
+        if !intro.callsCharacter {
           Text(
             "It ends on its own after about \(length).", tableName: "Voice",
             comment: "An exam task's call stops by itself at about its length"
@@ -124,7 +128,9 @@ struct ConversationIntro<Footer: View>: View {
 
       ExamTaskCard(task: examTask)
     } else {
-      HowTheCallWorks(intro: intro)
+      if intro.callsCharacter {
+        HowTheCallWorks(intro: intro)
+      }
 
       Section {
         ForEach(intro.objectives, id: \.label) { objective in

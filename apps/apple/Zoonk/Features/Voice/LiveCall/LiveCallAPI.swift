@@ -9,6 +9,9 @@ typealias LanguageCheckpointCall = Components.Schemas.LanguageCheckpointCall
 extension LanguageConversation {
   var speakingTask: Components.Schemas.ExamSpeakingTask? { examTask?.value1 }
   var mockExam: Components.Schemas.SpeakingMockExam? { exam?.value1 }
+
+  /// An examiner isn't someone the learner calls: exams and speaking mocks just start.
+  var callsCharacter: Bool { speakingTask == nil && kind != .speakingMock }
 }
 
 typealias ObjectiveCheck = Components.Schemas.LanguageConversationObjectiveCheck

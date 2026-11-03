@@ -314,10 +314,8 @@ private struct LiveCallRun: View {
     }
   }
 
-  /// An examiner isn't someone the learner calls.
   private var callee: String? {
-    conversation.speakingTask == nil && conversation.kind != .speakingMock
-      ? conversation.character.name : nil
+    conversation.callsCharacter ? conversation.character.name : nil
   }
 
   private func handle(_ action: CallProblemView.Action, call: LiveCall) {
