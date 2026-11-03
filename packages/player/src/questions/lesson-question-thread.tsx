@@ -2,7 +2,7 @@
 
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -17,17 +17,14 @@ import { MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense, useState } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
-import {
-  QuestionErrorAction,
-  RequestErrorMessage,
-  getQuestionLimit,
-} from "./lesson-question-errors";
+import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { ThreadViewport, ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
-import { EarlierTurns, QuestionTurn } from "./lesson-question-turn";
+import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
+import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
 
@@ -108,19 +105,8 @@ function EmptyThread({
           {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
         </EmptyDescription>
       </EmptyHeader>
-      <EmptyContent className="flex-row flex-wrap">
-        {suggestions.map((suggestion) => (
-          <Button
-            className="h-auto min-h-8 py-1.5 whitespace-normal"
-            key={suggestion.question}
-            onClick={() => onSelect(suggestion)}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            {suggestion.question}
-          </Button>
-        ))}
+      <EmptyContent>
+        <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
       </EmptyContent>
     </Empty>
   );
@@ -194,6 +180,11 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
             />
           </MessageScrollerItem>
         ))}
+        {state.creating && (
+          <MessageScrollerItem className="[content-visibility:visible]" messageId={SENDING_TURN_ID}>
+            <SendingTurn identity={identity} question={state.creating.question} />
+          </MessageScrollerItem>
+        )}
       </MessageScrollerContent>
     </ThreadViewport>
   );
@@ -202,6 +193,7 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
 export function QuestionThread({ identity }: { identity: TutorIdentity }) {
   const controller = useLessonQuestionController();
   const { state } = controller;
+  const offersSuggestions = useOffersSuggestions();
 
   if (!controller.canAskQuestions) {
     return (
@@ -223,13 +215,13 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
     );
   }
 
-  if (state.questions.length === 0 && !state.hasMore) {
+  if (state.questions.length === 0 && !state.hasMore && !state.creating) {
     return (
       <ThreadViewport>
         <EmptyThread
           context={state.context}
           identity={identity}
-          lessonSuggestions={getQuestionLimit(state) ? null : controller.suggestions}
+          lessonSuggestions={offersSuggestions ? controller.suggestions : null}
           onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
         />
       </ThreadViewport>

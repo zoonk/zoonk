@@ -533,7 +533,7 @@ describe(lessonQuestionReducer, () => {
   it("preserves a new draft typed while the previous question is being created", () => {
     const creating = lessonQuestionReducer(
       { ...INITIAL_LESSON_QUESTION_STATE, draft: "First question" },
-      { type: "questionCreateStarted" },
+      { question: "First question", type: "questionCreateStarted" },
     );
 
     const edited = lessonQuestionReducer(creating, {
@@ -547,6 +547,39 @@ describe(lessonQuestionReducer, () => {
     });
 
     expect(created.draft).toBe("A follow-up typed while waiting");
+  });
+
+  it("keeps the same question typed again while the first one is being created", () => {
+    const creating = lessonQuestionReducer(
+      { ...INITIAL_LESSON_QUESTION_STATE, draft: "Why?" },
+      { question: "Why?", type: "questionCreateStarted" },
+    );
+
+    const retyped = lessonQuestionReducer(creating, { draft: "Why?", type: "draftChanged" });
+
+    const created = lessonQuestionReducer(retyped, {
+      question: questionResource({ question: "Why?" }),
+      type: "questionCreated",
+    });
+
+    expect(created.draft).toBe("Why?");
+  });
+
+  it("keeps a question shown as sent when a history load that started before it arrives", () => {
+    const creating = lessonQuestionReducer(
+      { ...INITIAL_LESSON_QUESTION_STATE, draft: "Why?" },
+      { question: "Why?", type: "questionCreateStarted" },
+    );
+
+    const loaded = lessonQuestionReducer(creating, {
+      hasMore: false,
+      nextCursor: null,
+      questions: [],
+      type: "threadLoaded",
+    });
+
+    expect(loaded.creating).toStrictEqual({ draft: "Why?", question: "Why?" });
+    expect(loaded.draft).toBe("");
   });
 });
 

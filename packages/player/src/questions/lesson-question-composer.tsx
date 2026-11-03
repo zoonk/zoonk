@@ -128,7 +128,7 @@ function getComposerAvailability({
 }) {
   const isBusy =
     state.activeQuestionId !== null ||
-    state.isCreating ||
+    state.creating !== null ||
     state.isRefreshing ||
     state.questions.some(doesLessonQuestionBlockNewQuestion);
 
@@ -260,7 +260,7 @@ export function QuestionComposer({
             variant="default"
           >
             <SubmitIcon
-              isCreating={state.isCreating}
+              isCreating={state.creating !== null}
               isResolvingPreviousQuestion={isResolvingPreviousQuestion}
             />
           </InputGroupButton>

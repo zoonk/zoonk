@@ -37,7 +37,7 @@ export function useLessonQuestionThread({
 
       const current = getState(context);
 
-      if (current.activeQuestionId || current.isCreating) {
+      if (current.activeQuestionId || current.creating) {
         return current.questions;
       }
 

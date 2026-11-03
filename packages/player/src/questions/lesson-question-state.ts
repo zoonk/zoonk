@@ -13,6 +13,7 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   answerPlanChange,
+  endQuestionCreate,
   isSameDraftContext,
   mergeCreatedQuestion,
   replacePlanChanges,
@@ -30,11 +31,12 @@ export type LessonQuestionState = {
   activeQuestionId: string | null;
   answerError: { questionId: string; reason: LessonQuestionApiError } | null;
   context: LessonQuestionContext;
+  /** The question on its way to the server, shown as sent; `draft` is what it took from the composer. */
+  creating: { draft: string; question: string } | null;
   draft: string;
   earlierLoadFailed: boolean;
   error: LessonQuestionError;
   hasMore: boolean;
-  isCreating: boolean;
   isLoadingEarlier: boolean;
   isOpen: boolean;
   isRefreshing: boolean;
@@ -72,7 +74,7 @@ export type LessonQuestionAction =
   | { type: "earlierThreadLoadFailed" }
   | { draft: string; type: "draftChanged" }
   | { suggestion: OfferedSuggestion; type: "suggestionChosen" }
-  | { type: "questionCreateStarted" }
+  | { question: string; type: "questionCreateStarted" }
   | { question: LessonQuestionResource; type: "questionCreated" }
   | { reason: LessonQuestionApiError; type: "questionCreateFailed" }
   | { questionId: string; type: "answerStarted" }
@@ -90,11 +92,11 @@ export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   activeQuestionId: null,
   answerError: null,
   context: { kind: "lesson" },
+  creating: null,
   draft: "",
   earlierLoadFailed: false,
   error: null,
   hasMore: false,
-  isCreating: false,
   isLoadingEarlier: false,
   isOpen: false,
   isRefreshing: false,
@@ -108,6 +110,24 @@ export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   suggestion: null,
 };
 
+function reduceQuestionCreateStarted({
+  question,
+  state,
+}: {
+  question: string;
+  state: LessonQuestionState;
+}): LessonQuestionState {
+  const draft = state.draft.trim() === question ? state.draft : "";
+
+  return {
+    ...state,
+    creating: { draft, question },
+    draft: draft ? "" : state.draft,
+    error: null,
+    requestError: null,
+  };
+}
+
 function reduceQuestionCreated({
   question,
   state,
@@ -117,9 +137,8 @@ function reduceQuestionCreated({
 }): LessonQuestionState {
   return {
     ...state,
-    draft: state.draft.trim() === question.question ? "" : state.draft,
+    creating: null,
     error: null,
-    isCreating: false,
     questions: mergeCreatedQuestion({ question, questions: state.questions }),
     requestError: null,
     revealedQuestionId: question.status === "completed" ? question.id : null,
@@ -163,11 +182,16 @@ export function lessonQuestionReducer(
         suggestion: action.suggestion,
       };
     case "questionCreateStarted":
-      return { ...state, error: null, isCreating: true, requestError: null };
+      return reduceQuestionCreateStarted({ question: action.question, state });
     case "questionCreated":
       return reduceQuestionCreated({ question: action.question, state });
     case "questionCreateFailed":
-      return { ...state, error: "create", isCreating: false, requestError: action.reason };
+      return {
+        ...state,
+        ...endQuestionCreate(state),
+        error: "create",
+        requestError: action.reason,
+      };
     case "memoryUpdated":
       return {
         ...state,

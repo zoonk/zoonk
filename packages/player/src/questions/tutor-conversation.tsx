@@ -5,6 +5,7 @@ import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
@@ -26,15 +27,10 @@ import {
   useLessonQuestionController,
 } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
-import { EarlierTurns, QuestionTurn } from "./lesson-question-turn";
-import {
-  ConversationSkeleton,
-  FirstDay,
-  Suggestions,
-  TurnDay,
-  type TutorSuggestion,
-} from "./tutor-conversation-parts";
+import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
+import { ConversationSkeleton, FirstDay, TurnDay } from "./tutor-conversation-parts";
 import { ConversationMissionMoment, useConversationMissionMoment } from "./tutor-mission-moment";
+import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
@@ -49,10 +45,12 @@ type TutorConversationProps = TutorCards & {
   onAnswered?: () => void;
   onAsked?: () => void;
   placeholder: string;
-  suggestions: readonly TutorSuggestion[];
+  suggestions: readonly { id: string; label: string }[];
 };
 
 const GOAL_CONTEXT = { kind: "plan" } as const;
+
+const TURN_CLASS = "flex scroll-mt-4 flex-col gap-5 lg:scroll-mt-24";
 
 const COMPOSER_POSITION =
   "sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:bottom-0 z-10 -mx-4 bg-linear-to-t from-background from-75% to-transparent px-4 pt-6 pb-3 lg:pb-6";
@@ -92,25 +90,39 @@ function SignUpPrompt() {
   );
 }
 
-function useFollowLatest({ latestId, ready }: { latestId: string | null; ready: boolean }) {
+/** Follows a turn added at the end; a saved question taking its sent turn's place stays put. */
+function useFollowLatest({
+  count,
+  latestId,
+  ready,
+}: {
+  count: number;
+  latestId: string | null;
+  ready: boolean;
+}) {
   const reducedMotion = useReducedMotion();
   const turns = useRef(new Map<string, HTMLElement>());
-  const shown = useRef<{ id: string | null } | null>(null);
+  const shown = useRef<{ count: number; id: string | null } | null>(null);
 
   useEffect(() => {
-    if (!ready || (shown.current && shown.current.id === latestId)) {
+    if (!ready) {
       return;
     }
 
-    const opening = shown.current === null;
-    shown.current = { id: latestId };
+    const previous = shown.current;
+    shown.current = { count, id: latestId };
+
+    if (previous && (previous.id === latestId || count <= previous.count)) {
+      return;
+    }
+
     const turn = latestId ? turns.current.get(latestId) : null;
 
     turn?.scrollIntoView({
-      behavior: opening || reducedMotion ? "instant" : "smooth",
+      behavior: previous === null || reducedMotion ? "instant" : "smooth",
       block: "start",
     });
-  }, [latestId, ready, reducedMotion]);
+  }, [count, latestId, ready, reducedMotion]);
 
   return (id: string) => (element: HTMLElement | null) => {
     if (element) {
@@ -128,19 +140,22 @@ function ConversationTurns({
 }: Pick<TutorConversationProps, "identity" | "renderPlanChange" | "renderToolOffer">) {
   const controller = useLessonQuestionController();
   const { state } = controller;
-  const latestId = state.questions.at(-1)?.id ?? null;
-  const trackTurn = useFollowLatest({ latestId, ready: state.loadStatus === "ready" });
+  const now = useMountTime();
+  const last = state.questions.at(-1);
+  const latestId = state.creating ? SENDING_TURN_ID : (last?.id ?? null);
+
+  const trackTurn = useFollowLatest({
+    count: state.questions.length + (state.creating ? 1 : 0),
+    latestId,
+    ready: state.loadStatus === "ready",
+  });
 
   return (
     <>
       <EarlierTurns page />
 
       {state.questions.map((question, index) => (
-        <div
-          className="flex scroll-mt-4 flex-col gap-5 lg:scroll-mt-24"
-          key={question.id}
-          ref={trackTurn(question.id)}
-        >
+        <div className={TURN_CLASS} key={question.id} ref={trackTurn(question.id)}>
           <TurnDay
             date={new Date(question.createdAt)}
             previous={index > 0 ? new Date(state.questions[index - 1]?.createdAt ?? 0) : null}
@@ -160,6 +175,13 @@ function ConversationTurns({
           />
         </div>
       ))}
+
+      {state.creating && (
+        <div className={TURN_CLASS} ref={trackTurn(SENDING_TURN_ID)}>
+          <TurnDay date={now} previous={last ? new Date(last.createdAt) : null} />
+          <SendingTurn identity={identity} page question={state.creating.question} />
+        </div>
+      )}
     </>
   );
 }
@@ -196,7 +218,8 @@ function ConversationBody({
   const controller = useLessonQuestionController();
   const { canAskQuestions, state } = controller;
   const ready = state.loadStatus === "ready" && state.error !== "load";
-  const empty = ready && state.questions.length === 0;
+  const empty = ready && state.questions.length === 0 && !state.creating;
+  const offersSuggestions = useOffersSuggestions();
 
   const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
 
@@ -232,10 +255,10 @@ function ConversationBody({
       </div>
 
       <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>
-        {empty && canAskQuestions && (
-          <Suggestions
-            onSend={(question) => void controller.sendSuggestion({ question })}
-            suggestions={suggestions}
+        {empty && canAskQuestions && offersSuggestions && (
+          <TutorSuggestions
+            onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
+            suggestions={suggestions.map(({ label }) => ({ question: label }))}
           />
         )}
 
