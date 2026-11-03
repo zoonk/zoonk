@@ -42,9 +42,12 @@ const SILENT = {
 export function ActivityDragDrop({
   children,
   onDrop,
+  underPointerOnly = false,
 }: {
   children: React.ReactNode;
   onDrop: (itemId: string, targetId: string) => void;
+  /** Ignores targets the piece only overlaps, for pieces so big that overlap isn't where the learner aims. */
+  underPointerOnly?: boolean;
 }) {
   const id = useId();
 
@@ -56,7 +59,7 @@ export function ActivityDragDrop({
   );
 
   function handleDragEnd({ active, over }: DragEndEvent) {
-    if (over) {
+    if (over && over.id !== active.data.current?.from) {
       onDrop(String(active.id), String(over.id));
     }
   }
@@ -64,7 +67,7 @@ export function ActivityDragDrop({
   return (
     <DndContext
       accessibility={SILENT}
-      collisionDetection={dropUnderPointer}
+      collisionDetection={underPointerOnly ? pointerWithin : dropUnderPointer}
       id={id}
       onDragEnd={handleDragEnd}
       sensors={sensors}
@@ -74,9 +77,25 @@ export function ActivityDragDrop({
   );
 }
 
-/** Use `touch-manipulation` and check `isClickAfterDrag()` in onClick; browsers click after a drag. */
-export function useActivityDraggable({ disabled, id }: { disabled?: boolean; id: string }) {
-  const { isDragging, listeners, setNodeRef, transform } = useDraggable({ disabled, id });
+/**
+ * Use `touch-manipulation` and check `isClickAfterDrag()` in onClick; browsers click after a drag.
+ * `from` names the target the piece already sits on: it doesn't light up, and a drop there changes nothing.
+ */
+export function useActivityDraggable({
+  disabled,
+  from,
+  id,
+}: {
+  disabled?: boolean;
+  from?: string;
+  id: string;
+}) {
+  const { isDragging, listeners, setNodeRef, transform } = useDraggable({
+    data: { from },
+    disabled,
+    id,
+  });
+
   const draggedRef = useRef(false);
 
   /* The click, when it comes, fires in the same task as the drop; the reset waits for the next. */
@@ -111,6 +130,6 @@ export function useActivityDraggable({ disabled, id }: { disabled?: boolean; id:
 }
 
 export function useActivityDropTarget({ disabled, id }: { disabled?: boolean; id: string }) {
-  const { isOver, setNodeRef } = useDroppable({ disabled, id });
-  return { dropRef: setNodeRef, isOver };
+  const { active, isOver, setNodeRef } = useDroppable({ disabled, id });
+  return { dropRef: setNodeRef, isOver: isOver && active?.data.current?.from !== id };
 }

@@ -55,7 +55,9 @@ export function CategorizeSorted({
                   />
                 ) : (
                   <CategorizeMoveRow
+                    groupId={group.id}
                     id={rowId(item.id)}
+                    itemId={item.id}
                     key={item.id}
                     onMove={(groupId) => onMove(item.id, groupId)}
                     otherGroups={groups.filter((other) => other.id !== group.id)}

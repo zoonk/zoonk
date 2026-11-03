@@ -674,6 +674,11 @@ msgctxt "8JMvOf"
 msgid "{times} times more"
 msgstr "{times} fois plus"
 
+#: src/activities/categorize/categorize-activity.tsx
+msgctxt "COrd83"
+msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
+msgstr "Trie {total, plural, one {# carte} other {# cartes}} dans {groups}, une à la fois."
+
 #. Read by screen readers after a card is sorted; {next} is the card to sort now.
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "gF3jVY"
@@ -690,11 +695,6 @@ msgstr "{item} est dans {group}."
 msgctxt "2I4Dzf"
 msgid "Took back {item}."
 msgstr "Tu as repris {item}."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "COrd83"
-msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
-msgstr "Trie {total, plural, one {# carte} other {# cartes}} dans {groups}, une à la fois."
 
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx

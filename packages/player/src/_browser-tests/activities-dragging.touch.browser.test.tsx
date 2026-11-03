@@ -3,11 +3,23 @@ import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { openActivity } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { holdAndDrag, swipeUpFrom, tap } from "../_test-utils/touch-screen";
+import { holdAndDrag, swipeFrom, swipeUpFrom, tap } from "../_test-utils/touch-screen";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
 const SWIPE_PX = 200;
+
+/** A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe. */
+async function flick(swipe: () => Promise<void>) {
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+  try {
+    await swipe();
+    vi.runOnlyPendingTimers();
+  } finally {
+    vi.useRealTimers();
+  }
+}
 
 describe("dragging activity items with a finger", () => {
   it("labeled diagram: a name held and dragged onto a spot labels it", async () => {
@@ -60,15 +72,9 @@ describe("dragging activity items with a finger", () => {
     await expect.element(lastSpot).toBeVisible();
     await expect.element(lastSpot).not.toBeInViewport();
 
-    // A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe.
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-
-    try {
-      await swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX);
-      vi.runOnlyPendingTimers();
-    } finally {
-      vi.useRealTimers();
-    }
+    await flick(() =>
+      swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX),
+    );
 
     await expect.element(lastSpot).toBeInViewport();
     await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
@@ -87,5 +93,37 @@ describe("dragging activity items with a finger", () => {
     }
 
     await expect.element(page.getByRole("button", { name: "Spot 1: Aorta" })).toBeVisible();
+  });
+
+  it("categorize: the card held and dragged onto a group sorts it", async () => {
+    openActivity({ template: "categorize" });
+
+    await holdAndDrag({
+      from: page.getByText("Melting ice", { exact: true }),
+      to: page.getByRole("button", { name: "Same substance" }),
+    });
+
+    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Same substance" }).getByText("Melting ice"))
+      .toBeVisible();
+  });
+
+  it("categorize: a quick swipe from the card down over a group sorts nothing", async () => {
+    openActivity({ template: "categorize" });
+    const card = page.getByText("Melting ice", { exact: true });
+    const firstGroup = page.getByRole("button", { name: "New substance" });
+    await expect.element(firstGroup).toBeVisible();
+
+    const from = card.element().getBoundingClientRect();
+    const to = firstGroup.element().getBoundingClientRect();
+
+    await flick(() =>
+      swipeFrom(card, { y: to.top + to.height / 2 - (from.top + from.height / 2) }),
+    );
+
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Undo" })).not.toBeInTheDocument();
   });
 });

@@ -7,6 +7,7 @@ import { useId, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { usePlayerInteractionState } from "../../player-context";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { ActivityDragDrop } from "../_components/activity-drag-drop";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import {
@@ -20,6 +21,25 @@ import { CategorizeSorted } from "./categorize-sorted";
 import { CategorizeSorting } from "./categorize-sorting";
 
 type CategorizeProps = ActivityRendererProps<"categorize">;
+
+function CategorizeTextAlternative({
+  groups,
+  total,
+}: {
+  groups: readonly { label: string }[];
+  total: number;
+}) {
+  const t = useExtracted();
+
+  return (
+    <ActivityTextAlternative>
+      {t("Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time.", {
+        groups: groups.map((group) => group.label).join(", "),
+        total,
+      })}
+    </ActivityTextAlternative>
+  );
+}
 
 export function CategorizeActivity({
   answer,
@@ -138,6 +158,14 @@ export function CategorizeActivity({
     document.querySelector<HTMLElement>(`#${CSS.escape(rowId(itemId))}`)?.focus();
   }
 
+  function drop(itemId: string, groupId: string) {
+    if (!card) {
+      move(itemId, groupId);
+    } else if (itemId === card.id) {
+      sort(groupId);
+    }
+  }
+
   useNumberKeys({
     count: groups.length,
     enabled: card !== null && interactionState !== "paused",
@@ -154,41 +182,38 @@ export function CategorizeActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {card ? (
-        <CategorizeSorting
-          card={card}
-          groups={groups}
-          groupsRef={groupsRef}
-          items={items}
-          onSort={sort}
-          onUndo={undo}
-          state={state}
-          undoRef={undoRef}
-        />
-      ) : (
-        <CategorizeSorted
-          checkedPairs={
-            isChecked ? (expectedInteraction(expected, "assignment")?.pairs ?? null) : null
-          }
-          groups={groups}
-          items={items}
-          onMove={move}
-          placements={state.placements}
-          rowId={rowId}
-          statusRef={statusRef}
-        />
-      )}
+      <ActivityDragDrop onDrop={drop} underPointerOnly>
+        {card ? (
+          <CategorizeSorting
+            card={card}
+            groups={groups}
+            groupsRef={groupsRef}
+            items={items}
+            onSort={sort}
+            onUndo={undo}
+            state={state}
+            undoRef={undoRef}
+          />
+        ) : (
+          <CategorizeSorted
+            checkedPairs={
+              isChecked ? (expectedInteraction(expected, "assignment")?.pairs ?? null) : null
+            }
+            groups={groups}
+            items={items}
+            onMove={move}
+            placements={state.placements}
+            rowId={rowId}
+            statusRef={statusRef}
+          />
+        )}
+      </ActivityDragDrop>
 
       <p aria-live="polite" className="sr-only">
         {announcement}
       </p>
 
-      <ActivityTextAlternative>
-        {t("Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time.", {
-          groups: groups.map((group) => group.label).join(", "),
-          total: items.length,
-        })}
-      </ActivityTextAlternative>
+      <CategorizeTextAlternative groups={groups} total={items.length} />
     </ActivityCanvas>
   );
 }

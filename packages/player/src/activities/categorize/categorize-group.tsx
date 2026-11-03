@@ -1,12 +1,14 @@
 "use client";
 
 import { AnswerOption } from "@zoonk/learn/answer-option";
+import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { getNumberKeyShortcut } from "../../player-shortcuts";
+import { useActivityDropTarget } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string; rule: string };
 
@@ -60,6 +62,8 @@ export function CategorizeGroupOption({
   onSort: () => void;
   others: number;
 }) {
+  const { dropRef, isOver } = useActivityDropTarget({ id: group.id });
+
   return (
     // A group sorts the card the moment it's pressed, so it's a plain button, not a radio to pick.
     <AnswerOption
@@ -67,7 +71,8 @@ export function CategorizeGroupOption({
       aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       marker={index + 1}
       onClick={onSort}
-      picked={false}
+      picked={isOver}
+      ref={dropRef}
       role="button"
     >
       <span>
@@ -94,12 +99,17 @@ export function CategorizeGroupList({
 }) {
   const t = useExtracted();
   const headingId = useId();
+  const { dropRef, isOver } = useActivityDropTarget({ id: group.id });
 
   return (
     <section
       aria-labelledby={headingId}
-      className="rounded-option ring-input flex flex-col gap-0.5 px-3.5 py-3.25 ring-1 ring-inset"
+      className={cn(
+        "rounded-option flex flex-col gap-0.5 px-3.5 py-3.25",
+        isOver ? ANSWER_TONE.picked : ANSWER_TONE.idle,
+      )}
       data-slot="categorize-group"
+      ref={dropRef}
     >
       <h3 className="text-[0.9375rem] leading-6 font-medium" id={headingId}>
         <LessonRichText text={group.label} />
@@ -117,9 +127,7 @@ export function CategorizeGroupList({
           })}
         </p>
       ) : (
-        <ul className="bg-background ring-input mt-2.5 divide-y overflow-hidden rounded-lg ring-1">
-          {children}
-        </ul>
+        <ul className="bg-background ring-input mt-2.5 divide-y rounded-lg ring-1">{children}</ul>
       )}
     </section>
   );

@@ -12,6 +12,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { useActivityDraggable } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string };
 
@@ -49,25 +50,50 @@ function CategorizeMoveMenu({
 }
 
 export function CategorizeMoveRow({
+  groupId,
   id,
+  itemId,
   onMove,
   otherGroups,
   text,
 }: {
+  groupId: string;
   id: string;
+  itemId: string;
   onMove: (groupId: string) => void;
   otherGroups: readonly Group[];
   text: string;
 }) {
+  const { dragProps, isClickAfterDrag, isDragging } = useActivityDraggable({
+    from: groupId,
+    id: itemId,
+  });
+
   return (
-    <li>
+    <li
+      {...dragProps}
+      className={cn(
+        "first:*:rounded-t-lg last:*:rounded-b-lg",
+        isDragging &&
+          "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1",
+      )}
+    >
       <DropdownMenu>
+        {/* Base UI opens a menu on press; the row opens it on click, so a press that moves can lift the row. */}
         <DropdownMenuTrigger
           className={cn(
             ROW_CLASS,
-            "hover:bg-muted/60 focus-visible:outline-ring outline-none select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid",
+            "focus-visible:outline-ring cursor-grab touch-manipulation outline-none select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid active:cursor-grabbing",
+            !isDragging && "hover:bg-muted/60",
           )}
           id={id}
+          onClick={(event) => {
+            if (isClickAfterDrag()) {
+              event.preventBaseUIHandler();
+            }
+          }}
+          onMouseDown={(event) => event.preventBaseUIHandler()}
+          onPointerDown={(event) => event.preventBaseUIHandler()}
         >
           <span className="min-w-0 flex-1">
             <LessonRichText text={text} />
@@ -98,7 +124,13 @@ export function CategorizeResultRow({ isRight, text }: { isRight: boolean; text:
       });
 
   return (
-    <li className={cn(ROW_CLASS, isRight ? "bg-success/9" : "bg-destructive/9")}>
+    <li
+      className={cn(
+        ROW_CLASS,
+        "first:rounded-t-lg last:rounded-b-lg",
+        isRight ? "bg-success/9" : "bg-destructive/9",
+      )}
+    >
       <span className="min-w-0 flex-1">
         <LessonRichText text={text} />
         <span className="sr-only">{verdict}</span>

@@ -674,6 +674,11 @@ msgctxt "8JMvOf"
 msgid "{times} times more"
 msgstr "{times}-mal mehr"
 
+#: src/activities/categorize/categorize-activity.tsx
+msgctxt "COrd83"
+msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
+msgstr "Ordne {total, plural, one {# Karte} other {# Karten}} einzeln den Gruppen {groups} zu."
+
 #. Read by screen readers after a card is sorted; {next} is the card to sort now.
 #: src/activities/categorize/categorize-activity.tsx
 msgctxt "gF3jVY"
@@ -690,11 +695,6 @@ msgstr "{item} ist in der Gruppe {group}."
 msgctxt "2I4Dzf"
 msgid "Took back {item}."
 msgstr "Zuordnung von {item} rückgängig gemacht."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "COrd83"
-msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
-msgstr "Ordne {total, plural, one {# Karte} other {# Karten}} einzeln den Gruppen {groups} zu."
 
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
