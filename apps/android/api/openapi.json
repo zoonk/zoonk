@@ -29255,7 +29255,7 @@
         "properties": {
           "id": {
             "nullable": true,
-            "description": "The goal, conversation or study session id",
+            "description": "The goal, tutor question, study session or call id",
             "type": "string"
           },
           "kind": {
@@ -29263,7 +29263,8 @@
             "enum": [
               "onboarding",
               "chat",
-              "session"
+              "session",
+              "call"
             ]
           }
         },

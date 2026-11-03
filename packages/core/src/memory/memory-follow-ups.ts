@@ -1,9 +1,14 @@
 import "server-only";
+import { type LanguageConversationKind, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { type FollowUp } from "../follow-ups/follow-up-contract";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
+import {
+  type ConversationTurn,
+  conversationScenarioSchema,
+} from "../language/conversations/conversation-contract";
 import { isMemoryEnabled } from "./_utils/memory-access";
 import { hasEnoughActivity, loadGoalActivity } from "./insights/_utils/goal-activity";
 import { type MemoryChange } from "./memory-contract";
@@ -84,6 +89,53 @@ export function proposeOnboardingMemory({
   userId: string;
 }): Promise<ProposedMemoryUpdate | null> {
   return proposeMemoryUpdate({ goalId, source: { goalId, kind: "onboarding" }, userId });
+}
+
+/** Mocks and exam tasks are standardized tests, so what the learner says there stays out of memory. */
+const CALLS_THAT_TEACH_MEMORY: ReadonlySet<LanguageConversationKind> = new Set([
+  "practice",
+  "checkpoint",
+]);
+
+/** Internal, for the run a call's review starts once it settles; the turns are never stored. */
+export async function proposeCallMemory({
+  conversationId,
+  turns,
+  userId,
+}: {
+  conversationId: string;
+  turns: ConversationTurn[];
+  userId: string;
+}): Promise<ProposedMemoryUpdate | null> {
+  const conversation = await prisma.languageConversation.findFirst({
+    include: { goal: { select: { timezone: true } } },
+    where: { id: conversationId, userId },
+  });
+
+  if (!conversation || !CALLS_THAT_TEACH_MEMORY.has(conversation.kind)) {
+    return null;
+  }
+
+  const scenario = conversationScenarioSchema.parse(conversation.scenario);
+
+  return proposeMemoryUpdate({
+    goalId: conversation.goalId,
+    source: {
+      call: {
+        scenario: {
+          objectives: scenario.objectives.map((objective) => objective.description),
+          situation: scenario.situation,
+        },
+        targetLanguage: conversation.targetLanguage,
+        turns,
+      },
+      id: conversationId,
+      kind: "call",
+      language: conversation.language,
+    },
+    timeZone: conversation.goal?.timezone,
+    userId,
+  });
 }
 
 /** Internal: saves one gated candidate; candidates run in order, each seeing the previous one. */

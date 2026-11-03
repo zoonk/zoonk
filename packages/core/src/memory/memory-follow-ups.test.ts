@@ -1,8 +1,10 @@
+import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
 import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
 import { type MemoryInsightOutput } from "@zoonk/ai/tasks/memory/insight-rules";
 import { type SessionPattern, findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
-import { prisma } from "@zoonk/db";
+import { type LanguageConversationKind, prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -10,7 +12,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runSessionFollowUps } from "./_test-utils/session-follow-ups";
 import { claimDailyInsight } from "./insights/daily-insight";
-import { getSessionMemoryFollowUps } from "./memory-follow-ups";
+import {
+  getSessionMemoryFollowUps,
+  proposeCallMemory,
+  rememberMemoryCandidate,
+} from "./memory-follow-ups";
 
 const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
@@ -255,5 +261,125 @@ describe("memory after a session", () => {
     await expect(
       prisma.memoryInsight.count({ where: { userId: { in: [user.id, stranger.id] } } }),
     ).resolves.toBe(0);
+  });
+});
+
+const CALL_TURNS = [
+  { speaker: "character" as const, text: "Hi! Are you calling about the apartment?" },
+  { speaker: "learner" as const, text: "Yes. I move to Toronto next month for my job." },
+];
+
+async function practiceCall(kind: LanguageConversationKind = "practice") {
+  const user = await userFixture();
+
+  const goal = await goalFixture({
+    kind: "language",
+    language: "pt",
+    targetLanguage: "en",
+    timezone: "America/Sao_Paulo",
+    userId: user.id,
+  });
+
+  const conversation = await prisma.languageConversation.create({
+    data: {
+      goalId: goal.id,
+      kind,
+      language: "pt",
+      level: "A2",
+      minutes: 2,
+      scenario: RENTING_SCENARIO,
+      targetLanguage: "en",
+      titleSnapshot: RENTING_SCENARIO.title,
+      userId: user.id,
+    },
+  });
+
+  return { conversationId: conversation.id, userId: user.id };
+}
+
+describe(proposeCallMemory, () => {
+  beforeEach(() => {
+    vi.mocked(extractMemoryFacts).mockResolvedValue({
+      data: {
+        facts: [
+          {
+            category: "context",
+            evidence: "I move to Toronto next month for my job",
+            expiresOn: null,
+            intent: "remember",
+            origin: "said",
+            statement: "Está se mudando para Toronto",
+          },
+        ],
+      },
+      provenance: PROVENANCE,
+    } as Awaited<ReturnType<typeof extractMemoryFacts>>);
+  });
+
+  it("reads the call as the learner saw it and saves its facts as from that call", async () => {
+    const { conversationId, userId } = await practiceCall();
+
+    const proposed = await proposeCallMemory({ conversationId, turns: CALL_TURNS, userId });
+
+    expect(extractMemoryFacts).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        language: "pt",
+        scenario: {
+          objectives: RENTING_SCENARIO.objectives.map((objective) => objective.description),
+          situation: RENTING_SCENARIO.situation,
+        },
+        source: "call",
+        targetLanguage: "en",
+        turns: CALL_TURNS,
+      }),
+    );
+
+    const [candidate] = proposed?.candidates ?? [];
+
+    if (!proposed || !candidate) {
+      throw new Error("Expected a candidate from the call");
+    }
+
+    await rememberMemoryCandidate({
+      candidate,
+      context: proposed.context,
+      gate: { sensitive: false },
+    });
+
+    await expect(prisma.memoryFact.findFirstOrThrow({ where: { userId } })).resolves.toMatchObject({
+      origin: "said",
+      sourceRef: { id: conversationId, kind: "call" },
+      statement: "Está se mudando para Toronto",
+    });
+  });
+
+  it("learns nothing from a mock, an exam task or a call where the learner never spoke", async () => {
+    const [mock, examTask, silent] = await Promise.all([
+      practiceCall("speakingMock"),
+      practiceCall("examSpeaking"),
+      practiceCall(),
+    ]);
+
+    const proposals = await Promise.all([
+      proposeCallMemory({ ...mock, turns: CALL_TURNS }),
+      proposeCallMemory({ ...examTask, turns: CALL_TURNS }),
+      proposeCallMemory({ ...silent, turns: CALL_TURNS.slice(0, 1) }),
+    ]);
+
+    expect(proposals).toStrictEqual([null, null, null]);
+    expect(extractMemoryFacts).not.toHaveBeenCalled();
+  });
+
+  it("learns nothing while memory is off or from another learner's call", async () => {
+    const [call, stranger] = await Promise.all([practiceCall(), userFixture()]);
+    await learningProfileFixture({ memoryEnabled: false, userId: call.userId });
+
+    const proposals = await Promise.all([
+      proposeCallMemory({ ...call, turns: CALL_TURNS }),
+      proposeCallMemory({ ...call, turns: CALL_TURNS, userId: stranger.id }),
+    ]);
+
+    expect(proposals).toStrictEqual([null, null]);
+    expect(extractMemoryFacts).not.toHaveBeenCalled();
   });
 });
