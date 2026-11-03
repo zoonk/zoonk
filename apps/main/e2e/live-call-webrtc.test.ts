@@ -308,6 +308,7 @@ async function reconnectingCheckpoint({ callId, userId }: { callId: string; user
       deadlineAt: new Date(now + DEADLINE_MS),
       endedAt: new Date(now),
       heldSeconds: TALK_SECONDS,
+      providerSessionId: `live_${crypto.randomUUID()}`,
       startedAt: new Date(now),
       state: "ended",
       userId,

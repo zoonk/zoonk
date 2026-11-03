@@ -37,8 +37,9 @@ type RequestedCall = { reconnect: boolean; seconds: number };
 
 /**
  * A call that connected finishes, so a reconnect keeps what's left of its talk window, whatever the
- * allowance; a reservation that never connected started nothing. Once the window is over, a
- * checkpoint has ended and other calls start over.
+ * allowance; a connection with no provider session started nothing. A connection made inside a
+ * window continues it, one made after opens a new one. Once the window is over, a checkpoint has
+ * ended and other calls start over.
  */
 async function requestCall({
   conversation,
@@ -49,18 +50,27 @@ async function requestCall({
   now: Date;
   transaction: TransactionClient;
 }): Promise<RequestedCall | null> {
-  const latest = await transaction.liveCallConnection.findFirst({
-    orderBy: { createdAt: "desc" },
-    where: { conversationId: conversation.id, startedAt: { not: null } },
+  const connected = await transaction.liveCallConnection.findMany({
+    orderBy: { createdAt: "asc" },
+    where: { conversationId: conversation.id, providerSessionId: { not: null } },
   });
 
-  const left = latest ? Math.floor((getTalkEndsAt(latest) - now.getTime()) / MS_PER_SECOND) : 0;
+  const windowEndsAt = connected.reduce<number | null>(
+    (endsAt, connection) =>
+      endsAt !== null && connection.createdAt.getTime() < endsAt
+        ? endsAt
+        : getTalkEndsAt(connection),
+    null,
+  );
+
+  const left =
+    windowEndsAt === null ? 0 : Math.floor((windowEndsAt - now.getTime()) / MS_PER_SECOND);
 
   if (left > 0) {
     return { reconnect: true, seconds: left };
   }
 
-  if (latest && conversation.kind === "checkpoint") {
+  if (windowEndsAt !== null && conversation.kind === "checkpoint") {
     return null;
   }
 

@@ -246,6 +246,38 @@ describe("live calls", () => {
     ]);
   });
 
+  it("[1] opens no talk window for a session OpenAI refused to create, so the next call is a new start", async () => {
+    const { conversation, user } = await learner();
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 80, userId: user.id });
+    const refused = await reserved(conversation.id);
+
+    vi.mocked(createLiveCallSession).mockRejectedValueOnce(new LiveCallCreationRefusedError(429));
+    await expect(offer(refused, conversation.id)).resolves.toStrictEqual({ status: "retryable" });
+
+    advance(30);
+    await expect(reserved(conversation.id)).resolves.toMatchObject({ talkSeconds: TWO_MINUTES });
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 40, userId: user.id });
+
+    await expect(reserve(conversation.id)).resolves.toStrictEqual({
+      limit: { limit: TWO_MINUTES, period: "day", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it("[1] keeps a talk window's end however many times, and at whatever fraction of a second, the call reconnects", async () => {
+    const { conversation } = await learner({ kind: "checkpoint", plus: true });
+    await live(conversation.id);
+
+    advance(30.1);
+    const second = await live(conversation.id);
+    advance(30.1);
+    const third = await live(conversation.id);
+    advance(30.1);
+    const fourth = await live(conversation.id);
+
+    expect([second, third, fourth].map((setup) => setup.talkSeconds)).toStrictEqual([89, 59, 29]);
+  });
+
   it("[1] keeps a checkpoint's first talk time on every reconnect, each with its own wrap-up, until that time is over", async () => {
     const { conversation } = await learner({ kind: "checkpoint", plus: true });
     const first = await live(conversation.id);
