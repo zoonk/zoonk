@@ -1,6 +1,5 @@
 import { type TestCase } from "@/lib/types";
 import { type GenerateConversationScenarioParams } from "@zoonk/ai/tasks/language/conversation-scenario";
-import { type ConversationScenarioExpected } from "./scorer";
 
 type ConversationScenarioInput = Omit<
   GenerateConversationScenarioParams,
@@ -19,22 +18,19 @@ const PT_RENTING_UNIT = {
   unitTitle: "Alugando um apartamento",
 };
 
-export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScenarioInput>[] = [
+export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
   {
     expectations: `Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.`,
-    expected: { knowsLearner: false },
     id: "pt-en-a2-renting",
     userInput: { ...PT_RENTING_UNIT, level: "A2" },
   },
   {
     expectations: `Brazilian learner of US English at A1, renting an apartment. A call to a landlord or agent, a stranger, to ask about a flat and book a viewing. The opening line introduces the character as the one speaking ("this is Sarah from...", "I'm Sarah") or names the place, and addresses no one by name: never "Hi, Emma" when Emma is the character, and never a name for the learner. Opening line and hints very short (A1: 3 to 6 words, present tense, the most common words). US name and dollars. Title, situation and descriptions in Brazilian Portuguese.`,
-    expected: { knowsLearner: false },
     id: "pt-en-a1-renting",
     userInput: { ...PT_RENTING_UNIT, level: "A1" },
   },
   {
     expectations: `US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord ("dueño" or "dueña") about a "departamento", with pesos, Mexican vocabulary ("renta", "depósito", "servicios", "departamento", not "piso") and "usted". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
-    expected: { knowsLearner: false },
     id: "en-es-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
@@ -48,7 +44,6 @@ export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScen
   },
   {
     expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation and descriptions in US English.`,
-    expected: { knowsLearner: false },
     id: "en-pt-a1-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
@@ -61,7 +56,6 @@ export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScen
   },
   {
     expectations: `Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.`,
-    expected: { knowsLearner: false },
     id: "pt-en-b1-doctor",
     userInput: {
       canDo: [
@@ -78,7 +72,6 @@ export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScen
   },
   {
     expectations: `Brazilian learner of US English at A2, making weekend plans. The character already knows the learner: a friend, colleague, neighbor or host family member (role in Brazilian Portuguese, such as "amiga" or "colega de trabalho"), never a relative, and the situation says who they are to the learner ("sua amiga Emma"). Together they choose what to do and agree on a day, time and place, with a small twist (the first idea doesn't work). The opening line greets the way a friend would and says who is calling, without the learner's name. Nothing names the learner or assumes facts about their life (their job, family or city). US name, places and prices. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.`,
-    expected: { knowsLearner: true },
     id: "pt-en-a2-weekend-plans",
     userInput: {
       canDo: [
@@ -95,7 +88,6 @@ export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScen
   },
   {
     expectations: `US English speaker learning Mexican Spanish at A1, talking about family. The character already knows the learner: a friend, colleague, neighbor or host family member (role in US English), never one of the learner's relatives, and the situation says who they are to the learner ("your neighbor Lupita"). The learner says who is in their family and asks about the character's. The character's own family is in the brief; nothing assumes who is in the learner's family, and nothing names the learner. The opening line greets the way a friend would and says who is speaking. Opening line and hints very short (A1: 3 to 6 words, present tense): "Tengo dos hermanos.", "¿Tienes hijos?". Title, situation and descriptions in US English.`,
-    expected: { knowsLearner: true },
     id: "en-es-a1-family",
     userInput: {
       canDo: [
@@ -112,7 +104,6 @@ export const TEST_CASES: TestCase<ConversationScenarioExpected, ConversationScen
   },
   {
     expectations: `US English speaker learning Brazilian Portuguese at B1, joining a gym in São Paulo. A service moment, so the character is a stranger who works there (a receptionist or a trainer), never a friend or neighbor. The learner asks about plans and prices, hours or classes, and books a trial class, with reais and a Brazilian name. Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in US English.`,
-    expected: { knowsLearner: false },
     id: "en-pt-b1-gym",
     userInput: {
       canDo: [
