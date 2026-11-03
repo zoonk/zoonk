@@ -23,6 +23,7 @@
     "./native-sessions": "./src/native-sessions.ts",
     "./permissions": "./src/permissions.ts",
     "./play-integrity-contract": "./src/play-integrity/play-integrity-contract.ts",
+    "./profile-update": "./src/profile-update.ts",
     "./session-hint": "./src/session-hint.ts",
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",
