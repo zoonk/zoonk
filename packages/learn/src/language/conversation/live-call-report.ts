@@ -1,23 +1,27 @@
 /**
- * How long the learner waited for the character, as a proxy: from their microphone going quiet to
- * the character's next transcript arriving, not to audible speech. A pause shorter than a slow
- * reply is the learner thinking, so it stays one turn.
+ * How long the learner waited for the character, as a proxy: from their microphone last hearing
+ * them to the character's next transcript arriving, not to audible speech. A pause shorter than a
+ * slow reply is the learner thinking, so it stays one turn.
  */
 
 const SLOW_REPLY_MS = 3000;
 
+/** Words that come sooner were said over the learner, as on Android. */
+const OVERLAP_MS = 400;
+
 export type ReplyGaps = {
-  /** An app cue went out in this turn: the character's next words answer it, not only them. */
+  /** An app cue went out the character hasn't answered yet: its next words answer the cue. */
   cued: boolean;
   delegations: number;
   gaps: number[];
-  speaking: boolean;
-  stoppedAt: number | null;
   unanswered: number;
+  /** When the microphone last heard the learner, until the character answers it. */
+  voicedAt: number | null;
 };
 
 export type ReplyGapEvent =
-  | { at: number; speaking: boolean; type: "voice"; voicedAt: number | null }
+  /** A microphone sample that heard the learner. */
+  | { at: number; type: "voice" }
   | { at: number; type: "character" }
   | { type: "cue" }
   | { type: "delegation" };
@@ -26,33 +30,33 @@ export const NO_REPLY_GAPS: ReplyGaps = {
   cued: false,
   delegations: 0,
   gaps: [],
-  speaking: false,
-  stoppedAt: null,
   unanswered: 0,
+  voicedAt: null,
 };
 
-function isUnanswered(gaps: ReplyGaps, at: number) {
-  return gaps.stoppedAt !== null && at - gaps.stoppedAt > SLOW_REPLY_MS;
+function hearVoice(gaps: ReplyGaps, at: number): ReplyGaps {
+  const unanswered = gaps.voicedAt !== null && at - gaps.voicedAt > SLOW_REPLY_MS;
+  return { ...gaps, unanswered: gaps.unanswered + (unanswered ? 1 : 0), voicedAt: at };
 }
 
-function hearVoice(gaps: ReplyGaps, event: Extract<ReplyGapEvent, { type: "voice" }>): ReplyGaps {
-  if (event.speaking === gaps.speaking) {
+function hearCharacter(gaps: ReplyGaps, at: number): ReplyGaps {
+  const { voicedAt } = gaps;
+
+  if (voicedAt === null) {
+    return { ...gaps, cued: false };
+  }
+
+  if (at - voicedAt < OVERLAP_MS) {
     return gaps;
   }
 
-  if (event.speaking) {
-    const unanswered = gaps.unanswered + (isUnanswered(gaps, event.at) ? 1 : 0);
-    // Speaking again after a pause is the same turn, which keeps a cue sent during it.
-    const cued = gaps.stoppedAt !== null && gaps.cued;
-    return { ...gaps, cued, speaking: true, stoppedAt: null, unanswered };
-  }
-
-  return { ...gaps, speaking: false, stoppedAt: event.voicedAt ?? event.at };
+  const answered = gaps.cued ? gaps.gaps : [...gaps.gaps, at - voicedAt];
+  return { ...gaps, cued: false, gaps: answered, voicedAt: null };
 }
 
 export function recordReplyGap(gaps: ReplyGaps, event: ReplyGapEvent): ReplyGaps {
   if (event.type === "voice") {
-    return hearVoice(gaps, event);
+    return hearVoice(gaps, event.at);
   }
 
   if (event.type === "delegation") {
@@ -63,15 +67,11 @@ export function recordReplyGap(gaps: ReplyGaps, event: ReplyGapEvent): ReplyGaps
     return { ...gaps, cued: true };
   }
 
-  if (gaps.stoppedAt === null) {
-    return { ...gaps, cued: false };
-  }
-
-  const answered = gaps.cued ? gaps.gaps : [...gaps.gaps, event.at - gaps.stoppedAt];
-  return { ...gaps, cued: false, gaps: answered, stoppedAt: null };
+  return hearCharacter(gaps, event.at);
 }
 
-export function summarizeReplyGaps(gaps: ReplyGaps, endedAt: number) {
+/** A turn still waiting for its answer when the call ended counts as unanswered. */
+export function summarizeReplyGaps(gaps: ReplyGaps) {
   const sorted = gaps.gaps.toSorted((first, second) => first - second);
   const middle = Math.floor(sorted.length / 2);
 
@@ -85,6 +85,6 @@ export function summarizeReplyGaps(gaps: ReplyGaps, endedAt: number) {
     reply_gap_max_ms: sorted.at(-1) ?? null,
     reply_gap_median_ms: sorted.length > 0 ? Math.round(median) : null,
     slow_replies: sorted.filter((gap) => gap > SLOW_REPLY_MS).length,
-    unanswered_turns: gaps.unanswered + (isUnanswered(gaps, endedAt) ? 1 : 0),
+    unanswered_turns: gaps.unanswered + (gaps.voicedAt === null ? 0 : 1),
   };
 }

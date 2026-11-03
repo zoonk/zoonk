@@ -51,10 +51,13 @@ function useLearnerInput({
   record: (event: ReplyGapEvent) => void;
 }) {
   const hear = useCallback(
-    ({ at, speaking, voicedAt }: SpeechSample) => {
-      const heard = speaking && !mutedRef.current;
-      dispatch({ at, speaking: heard, type: "speech" });
-      record({ at, speaking: heard, type: "voice", voicedAt });
+    ({ at, speaking, voiced }: SpeechSample) => {
+      const muted = mutedRef.current;
+      dispatch({ at, speaking: speaking && !muted, type: "speech" });
+
+      if (voiced && !muted) {
+        record({ at, type: "voice" });
+      }
     },
     [dispatch, mutedRef, record],
   );

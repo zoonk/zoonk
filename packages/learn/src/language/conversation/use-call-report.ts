@@ -87,7 +87,7 @@ export function useCallReport({
           learner_turns: turns.filter((turn) => turn.speaker === "learner").length,
           reason: REASONS[reason],
           talk_seconds: current.talkSeconds,
-          ...summarizeReplyGaps(gaps.current, at),
+          ...summarizeReplyGaps(gaps.current),
         },
       });
     },

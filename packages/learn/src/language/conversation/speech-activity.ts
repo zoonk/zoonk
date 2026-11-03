@@ -10,7 +10,8 @@ const SAMPLE_MS = 100;
 /** A voice dips between words; below the level this long and the learner stopped. */
 const HANGOVER_MS = 1000;
 
-export type SpeechSample = { at: number; speaking: boolean; voicedAt: number | null };
+/** `voiced`: this sample heard a voice; `speaking` also holds the hangover after one. */
+export type SpeechSample = { at: number; speaking: boolean; voiced: boolean };
 
 function getLevel(samples: Float32Array) {
   let sum = 0;
@@ -43,11 +44,13 @@ export function sampleSpeech({
     analyser.getFloatTimeDomainData(samples);
     const at = Date.now();
 
-    if (getLevel(samples) >= SPEECH_LEVEL) {
+    const voiced = getLevel(samples) >= SPEECH_LEVEL;
+
+    if (voiced) {
       voicedAt = at;
     }
 
-    onSample({ at, speaking: voicedAt !== null && at - voicedAt < HANGOVER_MS, voicedAt });
+    onSample({ at, speaking: voicedAt !== null && at - voicedAt < HANGOVER_MS, voiced });
   }, SAMPLE_MS);
 
   return () => {
