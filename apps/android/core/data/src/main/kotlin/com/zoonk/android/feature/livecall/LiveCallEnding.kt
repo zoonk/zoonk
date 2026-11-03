@@ -137,7 +137,7 @@ class LiveCallEnding(
 
     fun next(now: Long): Step? {
         if (now >= hardStopAt) return Step.HangUp(null)
-        if (goodbyeSaid && now - lastActivityAt() >= timing.goodbyeQuietMs) return Step.HangUp(reason)
+        if (goodbyeSaid && goodbyeOver(now)) return Step.HangUp(reason)
 
         if (now >= talkEndsAt) arm(EndingReason.Time, now)
         val quiet = now - quietSince
@@ -214,6 +214,14 @@ class LiveCallEnding(
 
     /** The microphone hears them, or their words just came back: the model waits for a speaker to finish. */
     private fun learnerTalking(now: Long) = learnerSpeaking(now) || lastHeardAt?.let { now - it < timing.characterQuietMs } == true
+
+    /**
+     * Measured: a noisy room keeps the microphone above the speech level, so after the goodbye its
+     * sound holds the call only as long as a learner gets to answer unless it comes back as words.
+     */
+    private fun goodbyeOver(now: Long) = now - lastActivityAt() >= timing.goodbyeQuietMs || now - lastWordsAt() >= timing.answerWaitMs
+
+    private fun lastWordsAt() = listOfNotNull(liveAt, lastCharacterAt, lastHeardAt, lastTypedAt, lastSentAt).max()
 
     private fun learnerAt() = listOfNotNull(lastVoiceAt, lastHeardAt, lastTypedAt, lastSentAt).maxOrNull()
 

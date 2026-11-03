@@ -425,6 +425,43 @@ class LiveCallTest {
         }
 
     @Test
+    fun theCallHangsUpOnceEightSecondsPassWithoutWordsWhileTheMicrophoneHearsANoisyRoom() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 21.seconds)
+            goodbyeTaken()
+            characterTalks(until = 23.seconds)
+
+            learnerTalks(until = 30.6.seconds)
+            assertEquals(LiveCallPhase.Live, call.phase)
+            wait(0.1.seconds)
+            assertEquals("8 s after the goodbye's last words, at 22.8 s", LiveCallPhase.Ended, call.phase)
+            assertEquals(listOf("time"), endReasons)
+        }
+
+    @Test
+    fun theCallWaitsWhileTheLearnersWordsKeepComingBackAfterTheGoodbye() =
+        runTest(dispatcher) {
+            val call = greeted()
+            waitUntil(19.seconds)
+            learnerTalks(until = 21.seconds)
+            goodbyeTaken()
+            characterTalks(until = 23.seconds)
+
+            repeat(14) {
+                learnerTalks(until = currentTime.milliseconds + 1.seconds)
+                val at = currentTime.toDouble()
+                transport.onEvent(learnerSays("y luego ", at - 1500, at - 500))
+                runCurrent()
+            }
+            waitUntil(40.seconds)
+            assertEquals(LiveCallPhase.Live, call.phase)
+            wait(0.2.seconds)
+            assertEquals("3 s after their last words came back, at 37.1 s", LiveCallPhase.Ended, call.phase)
+        }
+
+    @Test
     fun aLearnerAnsweringTheGoodbyeAndTheCharacterReplyingStartsTheQuietAgain() =
         runTest(dispatcher) {
             val call = greeted()
