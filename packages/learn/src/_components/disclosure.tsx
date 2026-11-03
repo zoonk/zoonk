@@ -7,6 +7,7 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
+import { SpokenMath } from "../rich-text/spoken-math";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
@@ -39,7 +40,11 @@ export function Disclosure({
         <ListRowLeading>{icon}</ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{title}</ListRowTitle>
-          {description && <ListRowDescription>{description}</ListRowDescription>}
+          {description && (
+            <ListRowDescription>
+              <SpokenMath>{description}</SpokenMath>
+            </ListRowDescription>
+          )}
         </ListRowContent>
         {aside !== undefined && <ListRowTrailing>{aside}</ListRowTrailing>}
         <ChevronDownIcon

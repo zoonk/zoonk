@@ -4,20 +4,20 @@ Read the relevant section when starting local services, signing in, or choosing 
 
 ## Commands
 
-Run commands from the repository root with the Node.js and pnpm versions in `.tool-versions` (with mise, prefix `mise x --` when your shell doesn't activate it). Read package scripts to select supported commands. Commits require the change's relevant checks and reported results. Before opening a PR (including a draft), marking it ready for review, or merging it, the [root PR verification gate](../../AGENTS.md#pr-verification-gate) requires the full PR and `main` CI quality checks:
+Run commands from the repository root with the Node.js and pnpm versions in `.tool-versions` (with mise, prefix `mise x --` when your shell doesn't activate it). Read package scripts to select supported commands. Commits and PRs require the change's relevant checks and reported results; CI runs the full suites on every PR push ([root PR verification gate](../../AGENTS.md#pr-verification-gate)):
 
-| Change                            | Relevant checks                                                                                          |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                 |
-| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, root `pnpm lint` |
-| Module boundaries or dependencies | `pnpm knip --production`                                                                                 |
-| App runtime or build integration  | `pnpm --filter <app> build`                                                                              |
-| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                     |
-| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                               |
-| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                      |
-| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                         |
-| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                       |
-| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
+| Change                            | Relevant checks                                                                                                                        |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                                               |
+| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm format <files>` then `pnpm lint <files>` |
+| Module boundaries or dependencies | `pnpm knip --production`                                                                                                               |
+| App runtime or build integration  | `pnpm --filter <app> build`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                 |
+| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
+| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
+| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                                                    |
+| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                       |
+| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                     |
+| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                                                       |
 
 - Builds, test suites and E2E runs take turns through `pnpm dev:queue`, one per 20 GB of the machine's memory (`ZOONK_QUEUE_SLOTS` overrides it), so parallel agents don't push the machine into swap. `pnpm start`'s build, `pnpm build`, `pnpm test`, the E2E builds and runs, the device launchers' builds (`pnpm iphone`, `pnpm android:phone`) and the Apple and Android Makefiles already queue; prefix other heavy commands, such as `pnpm dev:queue pnpm --filter @zoonk/core test`, and run `pnpm dev:queue` alone before booting a simulator or emulator, so the boot waits while every slot is busy. A job started inside a queued job runs at once, and CI skips the queue.
 - Turbo shares task results through Vercel Remote Cache, so typecheck, lint and test runs replay what CI or another checkout already ran for unchanged packages. Link a machine once with `pnpm exec turbo login` and `pnpm exec turbo link` (it needs access to Zoonk's Vercel team); runs then print "Remote caching enabled". Only builds hash the database URL, which differs between CI, the primary checkout and each worktree.
@@ -29,13 +29,34 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 
 ## Local development and sign-in
 
+- Nothing needs an environment variable: with PostgreSQL 18 running, `pnpm install` then `pnpm db:setup` prepare any checkout. In the primary checkout or a fresh clone, `db:setup` creates `zoonk`, `zoonk_test` and `zoonk_e2e` when they're missing (seeding new ones) and applies migrations to all three, connecting as `postgres:postgres@localhost:5432` unless `packages/db/.env` names another local server. It never replaces a database it didn't create, and it rebuilds only one its own interrupted run left unfinished.
 - In a new linked worktree, run `pnpm worktree:setup` before database-dependent work; worktrees that Codex, Claude Code, or T3 Code with the imported `t3.json` Setup action create already ran it. Keep the generated local database overrides so migrations, integration tests, and E2E tests stay isolated. The development copy starts as a snapshot of the primary checkout's `zoonk`, which can be behind; setup, `pnpm dev` and `pnpm start` apply the checkout's migrations to the worktree's own copy, so pulling a branch with new migrations needs only a restart. Setup drops the database copies of removed worktrees and of those idle for a week; rerun it to restore a worktree's expired copies.
 
 - `pnpm dev` starts the apps and mailbox through clone- and worktree-scoped Portless routes. Use the URLs it prints. Name apps to start only those and the mailbox: `pnpm dev main api`. Use `pnpm dev:lan` for another device, `pnpm dev:direct` for direct ports, and `pnpm dev:prune` for orphaned servers. A stack's services stop by themselves within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed, so stopping the command stops the whole stack.
 - `pnpm start` builds every app for those same routes, or only the ones you name (`pnpm start api` for a native app's walk), and serves the production builds, so sign-in and the mailbox work as in `pnpm dev`. Stop the checkout's `pnpm dev` first: both register the same routes. Each app's `start:app` is the bare `next start`, which E2E servers run on their own ports; outside `pnpm start` and E2E, a production build counts as a deployment, so local sign-in refuses it.
 - Verify, review and walk personas on `pnpm start`: the production build is what learners get, while a dev server compiles on demand and shows loading states they never see. Use `pnpm dev` only while you change UI and want hot reload, then stop it and check the result on `pnpm start`. With agents working in parallel this also saves memory: an idle dev stack holds about 8 GB (Main alone about 5 GB after a few dozen pages), a production one about 2.5 GB. Stop the server when you're done.
 - For local sign-in, use an account from `packages/db/src/prisma/seed/users.ts`, such as `owner@zoonk.test`, or a new `@zoonk.test` address. Request an OTP and read the newest message for that address in the local mailbox.
-- Vercel Blob (learners' uploads, generated pictures and audio) signs in with the app's Vercel OIDC token; there is no read-write token. In the primary checkout, run `vercel link` once in `apps/main` (project `zoonk`), `apps/api` (`zoonk-api`) and `apps/evals` (`zoonk`, since evals has no project of its own), stay signed in to the Vercel CLI, and set the store ids each app's `.env.example` lists in its `.env` (scripts read only that file). `pnpm worktree:setup` copies the links into worktrees.
+- AI Gateway (everything that generates) and Vercel Blob (learners' uploads, generated pictures and audio) sign in with the app's Vercel OIDC token, which refreshes itself; there is no AI key or Blob read-write token. In the primary checkout, run `vercel link` once in `apps/main` (project `zoonk`), `apps/api` (`zoonk-api`) and `apps/evals` (`zoonk`, since evals has no project of its own) and stay signed in to the Vercel CLI. For Blob, also set the store ids each app's `.env.example` lists in its `.env` (scripts read only that file). `pnpm worktree:setup` copies the links into worktrees. Leave `AI_GATEWAY_API_KEY` unset on these machines, since a key wins over the login. Without access to Zoonk's Vercel team, set your own `AI_GATEWAY_API_KEY` in each app's `.env` instead; cloud agents use the development key ([cloud agents](#cloud-agents)).
+
+## Cloud agents
+
+A Linux machine (Ubuntu 24.04, as root or with passwordless sudo) gets everything from `bash scripts/cloud/setup.sh`: Node.js and pnpm from `.tool-versions`, PostgreSQL 18 from apt.postgresql.org as a service on port 5432, the dependencies, Playwright's Chromium and `pnpm db:setup`. It's safe to rerun. Snapshots and restarts keep files but not processes, so a new session runs `bash scripts/cloud/start.sh`, which starts PostgreSQL, installs changed dependencies and applies new migrations. Node.js goes to `/opt/node<major>` and is linked from `/usr/local/bin`; a shell whose `PATH` finds another Node.js first needs `/opt/node<major>/bin` at its front.
+
+- Claude Code cloud: set the environment's setup script to `bash scripts/cloud/setup.sh`. The repository's SessionStart hook runs `start.sh` when `CLAUDE_CODE_REMOTE` is `true` and puts that Node.js first on the session's `PATH`; its log is `/tmp/zoonk-start.log`. Hooks don't run in sessions with several repositories or in a project's threads, so run `start.sh` there yourself.
+- Codex cloud: environments live only in Codex's settings. Set the setup script to `bash scripts/cloud/setup.sh` and the maintenance script to `bash scripts/cloud/start.sh`; if PostgreSQL isn't answering during a task, run `start.sh`.
+- boat.dev or any Ubuntu 24.04 machine: run `bash scripts/cloud/setup.sh` once; systemd starts PostgreSQL after a reboot. After pulling, run `pnpm install && pnpm db:setup`.
+
+Allow these domains beyond each platform's defaults, which already cover nodejs.org, the npm registry, GitHub and Ubuntu's mirrors:
+
+- Setup: `apt.postgresql.org` (PostgreSQL) and `cdn.playwright.dev` (Chromium). Codex's setup runs with full internet access; on Claude Code choose Custom network access, list them and keep the default list.
+- The agent: `ai-gateway.vercel.sh`, for anything that generates.
+
+Set variables in the platform's environment variables, which commands read like any others. None is required; each turns on one thing:
+
+- `AI_GATEWAY_API_KEY`: everything that generates, such as plans, lessons, grading and speech. Use the team's development key, which has a monthly budget. On Codex it can be a network secret for `ai-gateway.vercel.sh` instead, so the machine never holds it: commands see a placeholder, the AI SDK sends that as its bearer token, and Codex's proxy swaps in the key. Leaving the variable unset doesn't work there, since the SDK then looks for a Vercel OIDC token and fails before sending anything.
+- `OPENAI_API_KEY`: live language calls (GPT-Live) only.
+- Vercel Blob (uploads, generated pictures and audio) signs in through a linked Vercel project, so it needs a Vercel login (see above); agents usually run without it.
+- `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` for checkout, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` for Google sign-in, and the `APPLE_*` keys for Apple sign-in and App Store purchases, each only for that flow. Sign-in codes go to the local mailbox without a mailer key.
 
 ## Persona passes
 

@@ -22,7 +22,8 @@ describe(getTestLearnerRefusal, () => {
     LOCAL_DATABASE_URL,
     "postgresql://postgres:secret@127.0.0.1:5432/zoonk",
     "postgresql://postgres:secret@localhost:5432/zoonk_wt_0123456789ab_dev",
-  ])("allows the local development database %s", (databaseUrl) => {
+    "",
+  ])("allows the local development database %s, which an unset URL defaults to", (databaseUrl) => {
     vi.stubEnv("DATABASE_URL", databaseUrl);
 
     expect(getTestLearnerRefusal()).toBeNull();
@@ -34,7 +35,6 @@ describe(getTestLearnerRefusal, () => {
     "postgresql://postgres:secret@localhost:5432/zoonk_wt_0123456789ab_test",
     "postgresql://postgres:secret@ep-example.us-east-2.aws.neon.tech/zoonk",
     "postgresql://postgres:secret@localhost:5432/zoonk?host=production.example.invalid",
-    "",
   ])("refuses any other database, without repeating its URL: %s", (databaseUrl) => {
     vi.stubEnv("DATABASE_URL", databaseUrl);
 

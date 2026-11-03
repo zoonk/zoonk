@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { type APIRequestContext, request } from "@playwright/test";
+import { getDatabaseUrl } from "../../packages/db/src/local-database.ts";
 import { type Finding } from "./checks.mts";
 
 /** As `ZOONK_QUERY_LOG` writes it (`packages/db/src/pool.ts`). */
@@ -125,13 +126,13 @@ function connect(repository: string, production: boolean): Client {
     ) => { combinedEnv: Record<string, string | undefined> };
   };
 
-  const { DATABASE_URL } = loadEnvConfig(join(repository, "apps/main"), !production).combinedEnv;
+  const environment = loadEnvConfig(join(repository, "apps/main"), !production).combinedEnv;
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- pg's public Client API.
   const { Client } = createRequire(join(repository, "packages/db/package.json"))("pg") as {
     Client: new (options: { connectionString?: string }) => Client;
   };
 
-  return new Client({ connectionString: DATABASE_URL });
+  return new Client({ connectionString: getDatabaseUrl(environment) });
 }
 
 /**

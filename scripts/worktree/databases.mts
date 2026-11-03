@@ -2,10 +2,11 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { ownDevelopmentDatabaseUrl, worktreeDatabaseName } from "./environment.mts";
+import { type DatabaseMode, ownDevelopmentDatabaseUrl } from "./environment.mts";
 import { postgresEnvironment, query, run, sqlLiteral, together } from "./postgres.mts";
 
-export type WorktreeDatabase = { mode: "dev" | "test" | "e2e"; name: string; ready: boolean };
+/** A fresh database is marked ready only once it's migrated and has its content. */
+export type CheckoutDatabase = { fresh: boolean; mode: DatabaseMode; seed: boolean; url: URL };
 
 export function prisma({
   args,
@@ -34,13 +35,26 @@ export async function migrateDevelopmentDatabase(worktree: string): Promise<void
   }
 }
 
+export function databaseName(database: CheckoutDatabase): string {
+  return decodeURIComponent(database.url.pathname.slice(1));
+}
+
+function urlEnvironment(database: CheckoutDatabase): NodeJS.ProcessEnv {
+  return {
+    ...process.env,
+    DATABASE_URL: database.url.href,
+    DATABASE_URL_UNPOOLED: database.url.href,
+  };
+}
+
+/** Each database is managed on its own server; `source` names the primary checkout's database for cleanup. */
 export function markDatabase({
   database,
   ready,
   source,
   worktree,
 }: {
-  database: WorktreeDatabase;
+  database: CheckoutDatabase;
   ready: boolean;
   source: URL;
   worktree: string;
@@ -54,24 +68,30 @@ export function markDatabase({
   });
 
   return query({
-    source,
-    sql: `COMMENT ON DATABASE "${database.name}" IS ${sqlLiteral(metadata)}`,
+    source: database.url,
+    sql: `COMMENT ON DATABASE "${databaseName(database)}" IS ${sqlLiteral(metadata)}`,
   });
 }
 
+/**
+ * A database this checkout's setup didn't create is never replaced: a worktree refuses one with its
+ * copy's name, and the primary checkout keeps its own and only migrates it.
+ */
 async function prepareDatabase({
-  mode,
+  database,
+  isolated,
   source,
   worktree,
 }: {
-  mode: WorktreeDatabase["mode"];
+  database: CheckoutDatabase;
+  isolated: boolean;
   source: URL;
   worktree: string;
-}): Promise<WorktreeDatabase> {
-  const name = worktreeDatabaseName({ mode, worktree });
+}): Promise<CheckoutDatabase> {
+  const name = databaseName(database);
 
   const state = await query({
-    source,
+    source: database.url,
     sql: `SELECT CASE
       WHEN shobj_description(oid, 'pg_database') IS JSON OBJECT THEN
         CASE WHEN shobj_description(oid, 'pg_database')::jsonb->>'owner' = 'zoonk-worktree-v1'
@@ -81,41 +101,42 @@ async function prepareDatabase({
   });
 
   if (state === "true") {
-    const database = { mode, name, ready: true };
     // A fresh mark keeps a cleanup that found this worktree missing from dropping its copies.
     await markDatabase({ database, ready: true, source, worktree });
     return database;
   }
 
   if (state && state !== "false") {
-    throw new Error(`Refusing to replace unmanaged database ${name}.`);
+    if (isolated) {
+      throw new Error(`Refusing to replace unmanaged database ${name}.`);
+    }
+
+    return database;
   }
 
-  // Only unfinished databases from this worktree's previous setup may be rebuilt. Never force a
+  // Only unfinished databases from this checkout's previous setup may be rebuilt. Never force a
   // disconnect.
   if (state === "false") {
-    await query({ source, sql: `DROP DATABASE "${name}"` });
+    await query({ source: database.url, sql: `DROP DATABASE "${name}"` });
   }
 
-  await query({ source, sql: `CREATE DATABASE "${name}" TEMPLATE template0` });
-  const database = { mode, name, ready: false };
+  await query({ source: database.url, sql: `CREATE DATABASE "${name}" TEMPLATE template0` });
   await markDatabase({ database, ready: false, source, worktree });
-  return database;
+  return { ...database, fresh: true, seed: true };
 }
 
-async function copyDevelopmentDatabase({
+async function hasSourceDatabase(source: URL): Promise<boolean> {
+  const name = sqlLiteral(decodeURIComponent(source.pathname.slice(1)));
+  return Boolean(await query({ source, sql: `SELECT 1 FROM pg_database WHERE datname = ${name}` }));
+}
+
+async function copySourceDatabase({
   database,
   source,
-  worktree,
 }: {
-  database: WorktreeDatabase;
+  database: CheckoutDatabase;
   source: URL;
-  worktree: string;
 }): Promise<void> {
-  if (database.ready) {
-    return;
-  }
-
   const directory = await mkdtemp(join(tmpdir(), "zoonk-worktree-"));
   const archive = join(directory, "development.dump");
   const env = postgresEnvironment(source);
@@ -143,7 +164,7 @@ async function copyDevelopmentDatabase({
       args: [
         "-w",
         "-d",
-        database.name,
+        databaseName(database),
         "--no-owner",
         "--no-acl",
         "--exit-on-error",
@@ -151,32 +172,77 @@ async function copyDevelopmentDatabase({
         archive,
       ],
       command: "pg_restore",
-      env,
+      env: postgresEnvironment(database.url),
     });
-
-    await markDatabase({ database, ready: true, source, worktree });
   } finally {
     await rm(directory, { force: true, recursive: true });
   }
 }
 
+/** A worktree's development copy starts as the primary checkout's `zoonk` when there is one; every other fresh database is seeded. */
 export async function prepareDatabases({
+  isolated,
   source,
+  urls,
   worktree,
 }: {
+  isolated: boolean;
   source: URL;
+  urls: Record<DatabaseMode, URL>;
   worktree: string;
-}): Promise<WorktreeDatabase[]> {
+}): Promise<CheckoutDatabase[]> {
   const databases = await together(
-    (["dev", "test", "e2e"] as const).map((mode) => prepareDatabase({ mode, source, worktree })),
+    (["dev", "test", "e2e"] as const).map((mode) =>
+      prepareDatabase({
+        database: { fresh: false, mode, seed: false, url: urls[mode] },
+        isolated,
+        source,
+        worktree,
+      }),
+    ),
   );
 
   const development = databases.find((database) => database.mode === "dev");
 
-  if (!development) {
-    throw new Error("Missing development database.");
+  if (!development?.fresh || !isolated || !(await hasSourceDatabase(source))) {
+    return databases;
   }
 
-  await copyDevelopmentDatabase({ database: development, source, worktree });
-  return databases;
+  await copySourceDatabase({ database: development, source });
+
+  return databases.map((database) =>
+    database === development ? { ...database, seed: false } : database,
+  );
+}
+
+export function migrateDatabase({
+  database,
+  worktree,
+}: {
+  database: CheckoutDatabase;
+  worktree: string;
+}): Promise<string> {
+  return prisma({ args: ["migrate", "deploy"], env: urlEnvironment(database), worktree });
+}
+
+/** Tests need only the regular seed; the development database also gets core's Library courses and personas. */
+export function seedDatabase({
+  database,
+  worktree,
+}: {
+  database: CheckoutDatabase;
+  worktree: string;
+}): Promise<string> {
+  const directory = join(worktree, "packages/db");
+
+  if (database.mode === "dev") {
+    return prisma({ args: ["db", "seed"], env: urlEnvironment(database), worktree });
+  }
+
+  return run({
+    args: [createRequire(join(directory, "package.json")).resolve("tsx/cli"), "src/prisma/seed.ts"],
+    command: process.execPath,
+    cwd: directory,
+    env: urlEnvironment(database),
+  });
 }

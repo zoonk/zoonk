@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "Trie {total, plural, one {# carte} other {# cartes}} dans {groups}, une à la fois."
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item} est dans {group}. Carte suivante : {next}."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item} est dans {group}."
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "Tu as repris {item}."
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "Aucune carte ici"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "<item></item> appartient au groupe <group></group>."
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "{right} sur {total} dans le bon groupe"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "{item} appartient au groupe {group}."
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "Cartes classées : {sorted} sur {total}"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "Dans quel groupe va cette carte ?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} est dans {group}."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} est dans {group}. Carte suivante : {next}."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "Tu as repris {item}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
@@ -3023,6 +3023,12 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Toutes les paires sont associées. Appuie sur Vérifier pour continuer."
 
+#. Starts the explanation of why the learner's answer is wrong.
+#: src/components/not-quite-lead.tsx
+msgctxt "Ilqo6R"
+msgid "Not quite:"
+msgstr "Ce n’est pas ça :"
+
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -3052,55 +3058,6 @@ msgstr "Écouter"
 msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "Quel mot correspond à cette définition ?"
-
-#. Verdict on an answer that is almost right.
-#: src/components/verdict-label.tsx
-msgctxt "Bk6B6r"
-msgid "Almost there"
-msgstr "Presque"
-
-#: src/components/verdict-label.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Correct !"
-
-#: src/components/verdict-label.tsx
-msgctxt "yuSMTV"
-msgid "Here's the answer"
-msgstr "Voici la réponse"
-
-#: src/components/verdict-label.tsx
-msgctxt "WbwDD5"
-msgid "Good guess!"
-msgstr "Bien deviné !"
-
-#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
-#: src/components/verdict-label.tsx
-msgctxt "--l7ni"
-msgid "Not quite"
-msgstr "Ce n’est pas ça"
-
-#: src/components/verdict-label.tsx
-msgctxt "pWC3pf"
-msgid "Here's a good answer"
-msgstr "Voici une bonne réponse"
-
-#: src/components/verdict-label.tsx
-msgctxt "9DZ20y"
-msgid "Right, watch the spelling"
-msgstr "C’est juste, attention à l’orthographe"
-
-#. Verdict when the learner's answer wasn't checked this time.
-#: src/components/verdict-label.tsx
-msgctxt "yRGkJi"
-msgid "Not checked this time"
-msgstr "Pas de vérification cette fois"
-
-#. Starts the explanation of why the learner's answer is wrong.
-#: src/components/verdict-label.tsx
-msgctxt "Ilqo6R"
-msgid "Not quite:"
-msgstr "Ce n’est pas ça :"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3698,11 +3655,6 @@ msgstr "Ton exemple"
 msgctxt "p6MDZm"
 msgid "Guess first"
 msgstr "Essaie d’abord de deviner"
-
-#: src/lesson/steps/hook-step.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Te tromper maintenant t’aide à retenir la réponse plus tard."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx

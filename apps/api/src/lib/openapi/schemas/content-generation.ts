@@ -54,6 +54,13 @@ export const lessonReadinessSchema = z
         description:
           "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now",
       }),
+    warmUpId: z
+      .uuid()
+      .nullable()
+      .meta({
+        description:
+          "The goal's ready warm-up deck for its first lesson's wait, or null when none applies. Read it with GET /warm-ups/{warmUpId}",
+      }),
   })
   .meta({ id: "LessonReadiness" });
 

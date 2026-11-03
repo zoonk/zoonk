@@ -103,7 +103,7 @@ describe(callContentWorkflow, () => {
 
     await vi.waitFor(
       () => expect(generateConversationScenario).toHaveBeenCalledWith(expect.anything()),
-      { interval: 100, timeout: 30_000 },
+      { interval: 100, timeout: 10_000 },
     );
 
     const second = await start(callContentWorkflow, [writing]);

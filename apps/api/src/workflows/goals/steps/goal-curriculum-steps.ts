@@ -16,12 +16,7 @@ import {
   linkGoalSkillPrerequisites,
   saveGoalSkills,
 } from "@zoonk/core/library/curriculum/save-goal-skills";
-import {
-  type CurriculumScope,
-  getContentReuse,
-  getScopeModel,
-  getScopeReuse,
-} from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
 import {
   toLanguageGoal,
   toScopedGraphPrompt,
@@ -103,31 +98,14 @@ export async function decideGoalScopeStep({
   return { ...shared, exams: inputs.exams, generalGoal };
 }
 
-function getGraphTier({
-  goalKind,
-  scope,
-}: {
-  goalKind: GoalCurriculumInputs["graphPrompt"]["goalKind"];
-  scope: CurriculumScope;
-}) {
-  const reuse =
-    goalKind === "exam"
-      ? getContentReuse({
-          forExam: true,
-          ownerId: scope.ownerId,
-          targetLanguage: scope.targetLanguage,
-        })
-      : getScopeReuse(scope);
-
-  return chooseServiceTier({ reuse, wait: "learner" });
-}
-
 async function generateGraph({
   analytics,
+  onSkillNamed,
   prompt,
   scope,
 }: {
   analytics: ReturnType<typeof toContentAnalytics>;
+  onSkillNamed: (name: string) => Promise<void>;
   prompt: GoalCurriculumInputs["graphPrompt"];
   scope: CurriculumScope;
 }) {
@@ -136,7 +114,8 @@ async function generateGraph({
   const params = {
     ...prompt,
     analytics,
-    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
+    onSkillNamed,
+    serviceTier: chooseServiceTier({ wait: "learner" }),
   };
 
   if (!model) {
@@ -168,15 +147,17 @@ export async function buildSkillGraphStep({
   "use step";
 
   await using stream = createStepStream<GoalStreamStep>();
-  await stream.status({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
+  const report = { entityId: inputs.goal.id, step: "buildSkillGraph" } as const;
+  await stream.status({ ...report, status: "started" });
 
   const { data, provenance } = await generateGraph({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    onSkillNamed: (skillName) => stream.status({ ...report, skillName, status: "started" }),
     prompt: toScopedGraphPrompt({ inputs, scope }),
     scope,
   });
 
-  await stream.status({ entityId: inputs.goal.id, status: "completed", step: "buildSkillGraph" });
+  await stream.status({ ...report, status: "completed" });
 
   return { graph: data, provenance };
 }
@@ -209,7 +190,7 @@ export async function checkGraphCoverageStep({
     goalKind: prompt.goalKind,
     language: prompt.language,
     references,
-    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
+    serviceTier: chooseServiceTier({ wait: "learner" }),
     skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
       area,
       description,

@@ -40,6 +40,12 @@ function isWhole(value: number, digits: number): boolean {
 }
 
 /** Cents show only when there are some and the amount is small ($3.50, $200, $103,449). */
+export function moneyFractionDigits(value: number): number {
+  return Math.abs(value) >= WHOLE_MONEY_FROM || isWhole(value, MONEY_FRACTION_DIGITS)
+    ? 0
+    : MONEY_FRACTION_DIGITS;
+}
+
 export function formatMoney({
   compact = false,
   currency,
@@ -55,8 +61,7 @@ export function formatMoney({
   signed?: boolean;
   value: number;
 }): string {
-  const whole = Math.abs(value) >= WHOLE_MONEY_FROM || isWhole(value, MONEY_FRACTION_DIGITS);
-  const digits = maximumFractionDigits ?? (whole ? 0 : MONEY_FRACTION_DIGITS);
+  const digits = maximumFractionDigits ?? moneyFractionDigits(value);
   const minimum = isWhole(value, digits) ? 0 : Math.min(digits, MONEY_FRACTION_DIGITS);
 
   const formatted = getNumberFormatter(locale, {
@@ -64,7 +69,7 @@ export function formatMoney({
     maximumFractionDigits: Math.max(digits, minimum),
     minimumFractionDigits: minimum,
     notation: compact ? "compact" : "standard",
-    signDisplay: signed ? "exceptZero" : "auto",
+    ...(signed && { signDisplay: "exceptZero" }),
     style: "currency",
   }).format(value);
 

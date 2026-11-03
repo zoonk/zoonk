@@ -514,11 +514,38 @@ struct LessonHelpLimitNote: View {
 
 /// Only the learner asks for the lesson to be written: it runs AI.
 struct LessonWaitingView: View {
+  static let lessonReady = LocalizedStringResource(
+    "Your lesson is ready. Start it whenever you like.", table: "Player",
+    comment: "A goal's first lesson is written while the learner still guesses on its wait")
+
   let outline: LessonOutline
   let writing: LessonPlayerStore.LessonWriting
+  var warmUpID: String?
+  var holding: WarmUpHolding?
   let write: () -> Void
 
   var body: some View {
+    if let warmUpID {
+      List {
+        Section {
+          unavailable
+        }
+        .listRowBackground(Color.clear)
+
+        WarmUpSection(deckID: warmUpID)
+      }
+      .warmUpDeck(warmUpID)
+      .warmUpHoldBar(
+        holding,
+        label: Text(
+          "Start this lesson", tableName: "Player",
+          comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
+    } else {
+      unavailable
+    }
+  }
+
+  private var unavailable: some View {
     ContentUnavailableView {
       Label {
         Text(outline.title)
@@ -528,39 +555,49 @@ struct LessonWaitingView: View {
     } description: {
       Text(description)
     } actions: {
-      switch writing {
-      case .notStarted, .failed:
+      switch (holding, writing) {
+      case (_?, _):
+        EmptyView()
+      case (nil, .notStarted), (nil, .failed):
         Button(action: write) {
           Text(
             "Start this lesson", tableName: "Player",
             comment: "Starts a lesson that isn't written yet: it's written, then opens")
         }
         .buttonStyle(.mainAction)
-      case .writing:
+      case (nil, .writing), (nil, .written):
         ProgressView()
-      case .refused(let refusal):
+      case (nil, .refused(let refusal)):
         LessonHelpLimitNote(refusal: refusal)
-      case .setAside:
+      case (nil, .setAside):
         EmptyView()
       }
     }
   }
 
   private var symbol: String {
+    guard holding == nil else {
+      return "doc.text"
+    }
+
     switch writing {
-    case .writing: "pencil.and.scribble"
-    case .failed, .setAside: "exclamationmark.circle"
-    default: "doc.text"
+    case .writing, .written: return "pencil.and.scribble"
+    case .failed, .setAside: return "exclamationmark.circle"
+    default: return "doc.text"
     }
   }
 
   private var description: LocalizedStringResource {
-    switch writing {
+    guard holding == nil else {
+      return Self.lessonReady
+    }
+
+    return switch writing {
     case .notStarted:
       LocalizedStringResource(
         "Zoonk writes it when you start. It takes a minute or two.", table: "Player",
         comment: "A lesson not written yet")
-    case .writing:
+    case .writing, .written:
       LocalizedStringResource(
         "It usually takes a minute or two. The lesson opens here as soon as it's ready.",
         table: "Player",

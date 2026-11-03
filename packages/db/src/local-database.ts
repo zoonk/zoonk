@@ -15,6 +15,22 @@ const CONNECTION_TARGET_PARAMETERS = new Set([
 
 const DEVELOPMENT_DATABASE_NAME = /^zoonk(?:_wt_[a-f0-9]{12}_dev)?$/u;
 
+const LOCAL_DATABASE_NAMES = { dev: "zoonk", e2e: "zoonk_e2e", test: "zoonk_test" } as const;
+
+/** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
+export function getLocalDatabaseUrl(mode: keyof typeof LOCAL_DATABASE_NAMES = "dev"): string {
+  return `postgres://postgres:postgres@localhost:5432/${LOCAL_DATABASE_NAMES[mode]}`;
+}
+
+export function getDatabaseUrl(environment: NodeJS.Dict<string> = process.env): string {
+  return environment.DATABASE_URL || getLocalDatabaseUrl();
+}
+
+/** Migrations need a direct connection, which deployments name apart from the pooled one. */
+export function getUnpooledDatabaseUrl(environment: NodeJS.Dict<string> = process.env): string {
+  return environment.DATABASE_URL_UNPOOLED || getDatabaseUrl(environment);
+}
+
 export function isLocalDevelopmentDatabase(connectionString: string): boolean {
   if (!URL.canParse(connectionString)) {
     return false;

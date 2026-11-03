@@ -9,6 +9,12 @@ import { googlePlayRenewalWorkflow } from "./google-play-renewal-workflow";
 const DAY_MS = 86_400_000;
 const MINUTE_MS = 60_000;
 const realFetch = globalThis.fetch;
+const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+
+const SERVICE_ACCOUNT_KEY = JSON.stringify({
+  client_email: "play-billing@zoonk-test.iam.gserviceaccount.com",
+  private_key: privateKey.export({ format: "pem", type: "pkcs8" }),
+});
 
 const google = {
   acknowledged: true,
@@ -109,21 +115,12 @@ function findSubscription(id: string) {
 
 describe(googlePlayRenewalWorkflow, () => {
   beforeEach(() => {
-    const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
     google.acknowledged = true;
     google.acknowledgements = [];
     google.answer = "renewed";
     google.reads = [];
     google.renewedUntil = new Date(Date.now() + 30 * DAY_MS);
-
-    vi.stubEnv(
-      "GOOGLE_PLAY_SERVICE_ACCOUNT_KEY",
-      JSON.stringify({
-        client_email: "play-billing@zoonk-test.iam.gserviceaccount.com",
-        private_key: privateKey.export({ format: "pem", type: "pkcs8" }),
-      }),
-    );
-
+    vi.stubEnv("GOOGLE_PLAY_SERVICE_ACCOUNT_KEY", SERVICE_ACCOUNT_KEY);
     vi.stubGlobal("fetch", vi.fn(googleFetch));
   });
 

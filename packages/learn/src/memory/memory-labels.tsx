@@ -5,8 +5,9 @@ import { useExtracted, useFormatter } from "next-intl";
 
 export type MemoryCategory = MemoryFactView["category"];
 
+/** The extractor gives the same English one id, so without a namespace a category would share another screen's translation, like the mastery state “Learning”. */
 export function MemoryCategoryName({ category }: { category: MemoryCategory }) {
-  const t = useExtracted();
+  const t = useExtracted("memoryCategories");
 
   switch (category) {
     case "goals":
@@ -22,7 +23,11 @@ export function MemoryCategoryName({ category }: { category: MemoryCategory }) {
     case "preferences":
       return t("Preferences");
     case "learning":
-      return t("Learning");
+      return t({
+        description:
+          "A category of what Zoonk remembers about the learner: how their studies are going, like mixing up two ideas or reading better than they speak.",
+        message: "Learning",
+      });
     case "context":
       return t("Context");
     default:

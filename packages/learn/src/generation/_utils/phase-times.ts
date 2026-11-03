@@ -1,4 +1,4 @@
-import { type GenerationKindDefinition } from "../generation-kinds";
+import { type GenerationKindDefinition, getGenerationDoneAt } from "../generation-kinds";
 import { type GenerationStepTimes } from "../generation-run";
 import { type PhaseStatus, getPhaseSteps } from "./phase-progress";
 
@@ -9,14 +9,18 @@ export type PhaseTime = { endedAt: number | null; startedAt: number | null };
 
 const UNTIMED: PhaseTime = { endedAt: null, startedAt: null };
 
-function earliest(times: (number | undefined)[]): number | null {
-  const known = times.filter((time) => time !== undefined);
-  return known.length > 0 ? Math.min(...known) : null;
+function known(times: (number | null | undefined)[]): number[] {
+  return times.filter((time) => typeof time === "number");
 }
 
-function latest(times: (number | undefined)[]): number | null {
-  const known = times.filter((time) => time !== undefined);
-  return known.length > 0 ? Math.max(...known) : null;
+function earliest(times: (number | null | undefined)[]): number | null {
+  const reported = known(times);
+  return reported.length > 0 ? Math.min(...reported) : null;
+}
+
+function latest(times: (number | null | undefined)[]): number | null {
+  const reported = known(times);
+  return reported.length > 0 ? Math.max(...reported) : null;
 }
 
 function getReportedTimes<TPhase extends string>({
@@ -29,42 +33,42 @@ function getReportedTimes<TPhase extends string>({
   stepTimes: StepTimes;
 }) {
   const times = getPhaseSteps(definition, phase).map((step) => stepTimes[step] ?? {});
+  const finished = times.map((time) => time.completed);
 
   return {
-    finished: latest(times.map((time) => time.completed)),
+    allFinished: finished.every((time) => time !== undefined) ? latest(finished) : null,
+    finished: latest(finished),
     started: earliest(times.map((time) => time.started ?? time.completed)),
   };
 }
 
 type ReportedTimes = ReturnType<typeof getReportedTimes>;
 
-function toPhaseTime({
-  next,
-  own,
-  previous,
-  status,
+/**
+ * `getPhaseProgress` moves past a phase once a later one reports a step, every step of one before
+ * the last finished, or the run is done.
+ */
+function getPassedAt({
+  doneAt,
+  index,
+  reported,
 }: {
-  next?: ReportedTimes;
-  own?: ReportedTimes;
-  previous?: ReportedTimes;
-  status: PhaseStatus;
-}): PhaseTime {
-  if (status === "pending") {
-    return UNTIMED;
-  }
+  doneAt: number | null;
+  index: number;
+  reported: readonly ReportedTimes[];
+}): number | null {
+  const isLast = index === reported.length - 1;
 
-  const startedAt = own?.started ?? previous?.finished ?? null;
-
-  if (status !== "completed") {
-    return { endedAt: null, startedAt };
-  }
-
-  return { endedAt: own?.finished ?? next?.started ?? null, startedAt };
+  return earliest([
+    isLast ? null : reported[index]?.allFinished,
+    ...reported.slice(index + 1).map((times) => times.started),
+    doneAt,
+  ]);
 }
 
 /**
- * Runs don't report every step, so a phase begins when the one before it ended and ends as the next
- * one begins.
+ * A phase's clock runs while the wait shows it as the running one, so a shown start never moves
+ * later, and a finished phase keeps the time of a step that finished after the wait moved on.
  */
 export function getPhaseTimes<TPhase extends string>({
   definition,
@@ -75,16 +79,26 @@ export function getPhaseTimes<TPhase extends string>({
   phases: readonly { id: TPhase; status: PhaseStatus }[];
   stepTimes: StepTimes;
 }): PhaseTime[] {
+  const doneAt = getGenerationDoneAt({ definition, stepTimes });
+
   const reported = phases.map((phase) =>
     getReportedTimes({ definition, phase: phase.id, stepTimes }),
   );
 
-  return phases.map((phase, index) =>
-    toPhaseTime({
-      next: reported[index + 1],
-      own: reported[index],
-      previous: reported[index - 1],
-      status: phase.status,
-    }),
-  );
+  return phases.map((phase, index) => {
+    if (phase.status === "pending") {
+      return UNTIMED;
+    }
+
+    const startedAt = getPassedAt({ doneAt, index: index - 1, reported });
+
+    if (phase.status !== "completed") {
+      return { endedAt: null, startedAt };
+    }
+
+    return {
+      endedAt: latest([getPassedAt({ doneAt, index, reported }), reported[index]?.finished]),
+      startedAt,
+    };
+  });
 }

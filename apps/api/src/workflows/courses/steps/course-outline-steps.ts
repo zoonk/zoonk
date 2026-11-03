@@ -28,7 +28,6 @@ import {
   type CourseBandNeed,
   type CurriculumScope,
   type GoalSkillRef,
-  getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
 import { planSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
 import {
@@ -161,9 +160,8 @@ function getBandWait({ background, waited }: { background?: boolean; waited: boo
 
 type BandWait = { background?: boolean; waitedSkillId?: string };
 
-function getBandTier({ background, plan, scope, waitedSkillId }: BandWait & BandInput) {
+function getBandTier({ background, plan, waitedSkillId }: BandWait & Pick<BandInput, "plan">) {
   return chooseServiceTier({
-    reuse: getScopeReuse(scope),
     wait: getBandWait({
       background,
       waited: plan.skills.some((skill) => skill.id === waitedSkillId),
@@ -216,7 +214,7 @@ async function coverBandSkills({
     courseTitle: plan.courseTitle,
     language: scope.language,
     level: plan.level,
-    serviceTier: getBandTier({ ...input, background, waitedSkillId }),
+    serviceTier: getBandTier({ background, plan, waitedSkillId }),
     skills: [
       ...plan.skills.map(({ description, key, name }) => ({ description, key, name })),
       ...plan.extensions.map(({ chapters: taught, skill }) => ({
@@ -272,7 +270,7 @@ export async function writeOutlineBandStep({
 
   const { plan } = input;
   const waitedKey = plan.skills.find((skill) => skill.id === waitedSkillId)?.key;
-  const serviceTier = getBandTier({ ...input, background, waitedSkillId });
+  const serviceTier = getBandTier({ background, plan, waitedSkillId });
 
   if (waitedKey && plan.extensions.length === 0) {
     return writeWaitedBand({ input, serviceTier, waitedKey });

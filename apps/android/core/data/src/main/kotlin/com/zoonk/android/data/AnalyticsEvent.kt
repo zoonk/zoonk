@@ -143,6 +143,30 @@ sealed class AnalyticsEvent(
             ),
         )
 
+    data class WarmUpShown(
+        val surface: WarmUpSurface,
+        val cardCount: Int,
+    ) : AnalyticsEvent("Warm-Up Shown", mapOf("surface" to surface.value, "card_count" to cardCount))
+
+    /** [position] counts from 1 in the deck. */
+    data class WarmUpAnswered(
+        val surface: WarmUpSurface,
+        val cardId: String,
+        val position: Int,
+        val correct: Boolean,
+    ) : AnalyticsEvent(
+            "Warm-Up Answered",
+            mapOf("surface" to surface.value, "card_id" to cardId, "position" to position, "correct" to correct),
+        )
+
+    enum class WarmUpSurface(
+        val value: String,
+    ) {
+        PlanWait("planWait"),
+        PlacementWait("placementWait"),
+        LessonWait("lessonWait"),
+    }
+
     enum class PublicPage(
         val value: String,
     ) {

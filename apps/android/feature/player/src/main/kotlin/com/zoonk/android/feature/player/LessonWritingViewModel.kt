@@ -71,6 +71,7 @@ class LessonWritingViewModel(
 ) : ViewModel() {
     private val mutableWriting = MutableStateFlow<LessonWriting?>(null)
     private val mutableAlternative = MutableStateFlow<ReadyAlternative?>(null)
+    private val mutableWarmUpId = MutableStateFlow<String?>(null)
     private var owner: AuthenticatedSession? = null
     private var work = openScope()
     private var startedAt: Long? = null
@@ -97,6 +98,9 @@ class LessonWritingViewModel(
     /** A lesson or a review ready now, to do while waiting or instead. */
     val alternative: StateFlow<ReadyAlternative?> = mutableAlternative.asStateFlow()
 
+    /** The goal's deck of guesses, only while its first lesson is written. */
+    val warmUpId: StateFlow<String?> = mutableWarmUpId.asStateFlow()
+
     /** Reads whether a run already writes it; reading never starts one. */
     fun open() {
         val session = sessions.current
@@ -118,6 +122,7 @@ class LessonWritingViewModel(
         waitRecorded = false
         mutableWriting.value = null
         mutableAlternative.value = null
+        mutableWarmUpId.value = null
 
         if (session == null) return
 
@@ -129,6 +134,7 @@ class LessonWritingViewModel(
                     null
                 }
             mutableAlternative.value = readiness?.alternative
+            mutableWarmUpId.value = readiness?.warmUpId?.toString()
             val generationId = readiness?.generationId
 
             when {

@@ -39,6 +39,24 @@ final class GenerationEventsTests: XCTestCase {
       ])
   }
 
+  func testDecodesTheSkillNameAGraphJustWrote() throws {
+    let event = try JSONDecoder().decode(
+      GenerationEvent.self,
+      from: Data(#"{"skillName":"Variables","status":"started","step":"buildSkillGraph"}"#.utf8))
+
+    XCTAssertEqual(
+      event, GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
+  }
+
+  func testDecodesTheWarmUpDeckAGoalsRunReports() throws {
+    let event = try JSONDecoder().decode(
+      GenerationEvent.self,
+      from: Data(#"{"status":"completed","step":"warmUpReady","warmUpId":"deck-1"}"#.utf8))
+
+    XCTAssertEqual(
+      event, GenerationEvent(status: "completed", step: "warmUpReady", warmUpID: "deck-1"))
+  }
+
   func testMissingGenerationEndsTheStreamWithNotFound() async throws {
     let transport = GenerationEventsTransport(responses: [.notFound])
     let clients = APIClientFactory(
@@ -68,17 +86,21 @@ final class GenerationEventsTests: XCTestCase {
   }
 
   func testARunStillWorkingKeepsItsStreamOpen() async throws {
-    let transport = OpenStreamTransport(status: "running")
+    let checkedAgain = expectation(description: "Status checked after a running answer")
+    let transport = OpenStreamTransport(status: "running") { statusChecks in
+      if statusChecks == 2 {
+        checkedAgain.fulfill()
+      }
+    }
     let clients = APIClientFactory(
       baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
     let events = clients.generationEvents(
       id: "run-1", token: "learner-token", stopCheck: .milliseconds(10))
 
+    await fulfillment(of: [checkedAgain], timeout: 5)
     let outcome = await outcome(of: events, within: .milliseconds(300))
 
     XCTAssertEqual(outcome, .open)
-    let statusChecks = await transport.statusChecks
-    XCTAssertGreaterThan(statusChecks, 1)
   }
 
   func testFollowsTheRunAJoinNamesOnceTheJoiningRunsStreamEnds() async throws {
@@ -307,10 +329,12 @@ final class GenerationEventsTests: XCTestCase {
 /// A run's events stream that never ends, as a run that stopped without closing it (vercel/workflow#964).
 private actor OpenStreamTransport: ClientTransport {
   private let status: String
+  private let statusChecked: @Sendable (Int) -> Void
   private(set) var statusChecks = 0
 
-  init(status: String) {
+  init(status: String, statusChecked: @escaping @Sendable (Int) -> Void = { _ in }) {
     self.status = status
+    self.statusChecked = statusChecked
   }
 
   func send(
@@ -335,6 +359,7 @@ private actor OpenStreamTransport: ClientTransport {
 
     XCTAssertEqual(operationID, "getGeneration")
     statusChecks += 1
+    statusChecked(statusChecks)
     headerFields[.contentType] = "application/json"
     return (
       HTTPResponse(status: .ok, headerFields: headerFields),

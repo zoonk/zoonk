@@ -31,6 +31,7 @@
   "account_menu_subscription": "ec3ab83075d2898c31ea816766bb38fb0fea57790fc8276e56440b60d1f31eef",
   "account_name": "476e803faef5f2ae05f2e5160152b3cc67e2b5e2d79de39d400844d3242a28a4",
   "account_name_description": "13c4dc02d9c3f2cc53c55a2893855aec9e59ebdc6367ec952d0d0e09bdf7bf5d",
+  "account_name_too_long": "50859025621593213cc448c74ba13555118cd7c301feb888ea68948c4b6893ca",
   "account_new_code_failed": "4ce90ea9af144aa9347712b4802278d71643ec73d96b2825fdf5eac5e0f6ad89",
   "account_new_code_sent": "c5444ca2d3e3bd6049ad58283f06bcaba9ce6b9aaf8af9617e8a60afda77d6d8",
   "account_new_code_wait": "918f69c3a19597298642548d2957aab949919428989499f3b102e56a98c1702c",
@@ -99,6 +100,7 @@
     <string name="account_setup_description">Możesz to później zmienić w swoim profilu.</string>
     <string name="account_name">Imię</string>
     <string name="account_name_description">Tak zwracają się do ciebie Zoonk i twój kumpel</string>
+    <string name="account_name_too_long">Wpisz maksymalnie 150 znaków.</string>
     <string name="account_username">Nazwa użytkownika</string>
     <!-- %1$s is a username. -->
     <string name="account_username_line">Twoja nazwa użytkownika: @%1$s</string>

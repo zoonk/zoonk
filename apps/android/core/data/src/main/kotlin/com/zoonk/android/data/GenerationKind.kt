@@ -448,7 +448,7 @@ enum class PhaseStatus { Pending, Active, Completed, Failed }
 data class PhaseProgress(
     val phase: GenerationPhase,
     val status: PhaseStatus,
-    /** Server milliseconds; a run doesn't report every step, so a phase starts as the one before it ends. */
+    /** Server milliseconds from when the wait shows it as the running phase, so a shown start never moves later. */
     val startedAt: Long?,
     val endedAt: Long?,
 )
@@ -482,10 +482,11 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
         }
 
     val reported = visible.map { phase -> reportedTimes(phase.id, run.stepTimes) }
+    val doneAt = doneAt(run.stepTimes)
     val progress =
         visible.mapIndexed { index, phase ->
             val status = statuses[index]
-            val startedAt = reported[index].first ?: reported.getOrNull(index - 1)?.second
+            val startedAt = passedAt(reported, index - 1, doneAt)
             when (status) {
                 PhaseStatus.Pending -> {
                     PhaseProgress(phase, status, null, null)
@@ -496,7 +497,7 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
                         phase,
                         status,
                         startedAt,
-                        reported[index].second ?: reported.getOrNull(index + 1)?.first,
+                        listOfNotNull(passedAt(reported, index, doneAt), reported[index].finished).maxOrNull(),
                     )
                 }
 
@@ -539,12 +540,39 @@ private fun GenerationKind.finishedShare(
     return if (steps.isEmpty()) 0f else steps.count { run.steps[it] == StepState.Completed }.toFloat() / steps.size
 }
 
+private data class ReportedTimes(
+    val started: Long?,
+    val finished: Long?,
+    val allFinished: Long?,
+)
+
 private fun GenerationKind.reportedTimes(
     phase: String,
     stepTimes: Map<String, StepTimes>,
-): Pair<Long?, Long?> {
-    val times = stepsOf(phase).mapNotNull(stepTimes::get)
-    return times.mapNotNull { it.started ?: it.completed }.minOrNull() to times.mapNotNull { it.completed }.maxOrNull()
+): ReportedTimes {
+    val times = stepsOf(phase).map { stepTimes[it] ?: StepTimes() }
+    val finished = times.mapNotNull { it.completed }.maxOrNull()
+    return ReportedTimes(
+        started = times.mapNotNull { it.started ?: it.completed }.minOrNull(),
+        finished = finished,
+        allFinished = if (times.all { it.completed != null }) finished else null,
+    )
+}
+
+/** When the run reported what [GenerationKind.isDone] ends it on. */
+private fun GenerationKind.doneAt(stepTimes: Map<String, StepTimes>): Long? {
+    val done = steps.filterValues { it == StepPlace.Done }.keys.mapNotNull { step -> stepTimes[step]?.let { it.started ?: it.completed } }
+    return (done + listOfNotNull(doneOnCompleted?.let { stepTimes[it]?.completed })).minOrNull()
+}
+
+/** [progress] moves past a phase once a later one reports a step, every step of one before the last finished, or the run is done. */
+private fun passedAt(
+    reported: List<ReportedTimes>,
+    index: Int,
+    doneAt: Long?,
+): Long? {
+    val finished = reported.getOrNull(index)?.allFinished?.takeIf { index < reported.lastIndex }
+    return (listOfNotNull(finished, doneAt) + reported.drop(index + 1).mapNotNull { it.started }).minOrNull()
 }
 
 private fun share(

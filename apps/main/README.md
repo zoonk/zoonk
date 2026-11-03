@@ -6,11 +6,7 @@ Check our [repo's README](../../README.md) for setup instructions.
 
 ## Environment Variables
 
-Copy the `.env.example` file to `.env` and fill in the required environment variables:
-
-```bash
-cp .env.example .env
-```
+None is required to run locally. `.env.example` lists what each one turns on; set the ones you need in `.env`.
 
 ## File Structure
 

@@ -29,6 +29,8 @@ export default defineConfig({
     maxWorkers: 1,
     server: { deps: { inline: [/@workflow\/vitest/u] } },
     setupFiles: ["./setup-workflow-tests.ts"],
-    testTimeout: 60_000,
+    // The Workflow runtime waits at least 1 s before each step retry, so a step that uses all 3 of
+    // its retries holds its test for 3 s.
+    testTimeout: 15_000,
   },
 });

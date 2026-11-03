@@ -8,6 +8,7 @@ type TaskCoverage = {
   counts: Map<string, number>;
   problems: string[];
   production: number;
+  skips: string[];
   taskId: string;
 };
 
@@ -32,8 +33,10 @@ function getTaskCoverage(task: RegisteredTask): TaskCoverage {
     .filter((testCase) => !getTestCaseLanguage(testCase))
     .map((testCase) => testCase.id);
 
+  const skipped = task.skippedLanguages ?? {};
+
   const problems = [
-    ...REQUIRED_LANGUAGES.filter((language) => !counts.has(language)).map(
+    ...REQUIRED_LANGUAGES.filter((language) => !counts.has(language) && !skipped[language]).map(
       (language) => `no ${language} cases`,
     ),
     ...(unknownIds.length > 0 ? [`no language on ${formatIds(unknownIds)}`] : []),
@@ -43,6 +46,7 @@ function getTaskCoverage(task: RegisteredTask): TaskCoverage {
     counts,
     problems,
     production: task.testCases.filter((testCase) => testCase.origin === "production").length,
+    skips: Object.entries(skipped).map(([language, reason]) => `skips ${language}: ${reason}`),
     taskId: task.id,
   };
 }
@@ -60,7 +64,7 @@ function formatRow(coverage: TaskCoverage): string {
     ...REQUIRED_LANGUAGES.map((language) => String(coverage.counts.get(language) ?? 0)),
     formatOtherLanguages(coverage.counts) || "—",
     String(coverage.production),
-    coverage.problems.join("; ") || "ok",
+    [...(coverage.problems.length > 0 ? coverage.problems : ["ok"]), ...coverage.skips].join("; "),
   ].join(" | ");
 }
 
@@ -73,7 +77,7 @@ const output = [
   ...coverages.map((coverage) => `| ${formatRow(coverage)} |`),
   "",
   failing.length === 0
-    ? `All ${coverages.length} tasks have English and Portuguese cases.`
+    ? `All ${coverages.length} tasks have English and Portuguese cases, or say why they skip one.`
     : `${failing.length} of ${coverages.length} tasks need cases: ${failing.map((coverage) => coverage.taskId).join(", ")}.`,
 ].join("\n");
 

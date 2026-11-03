@@ -12,6 +12,7 @@ import {
 } from "@zoonk/learn/list";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { TaskAside, TaskAsideContent } from "@zoonk/learn/task-layout";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -85,7 +86,9 @@ function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
     <>
       {title && (
         <h3 className="text-sm leading-snug font-semibold">
-          <LessonRichText text={title} />
+          <SpokenMath>
+            <LessonRichText text={title} />
+          </SpokenMath>
         </h3>
       )}
 

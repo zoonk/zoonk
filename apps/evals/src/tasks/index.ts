@@ -82,6 +82,8 @@ import { transcribeSpeechTask } from "./transcribe-speech/task";
 import { translatePassMarksTask } from "./translate-pass-marks/task";
 import { understandGoalTask } from "./understand-goal/task";
 import { uploadVisibilityTask } from "./upload-visibility/task";
+import { warmUpCardsTask } from "./warm-up-cards/task";
+import { warmUpCheckTask } from "./warm-up-check/task";
 import { wordIpaTask } from "./word-ipa/task";
 import { workFieldTask } from "./work-field/task";
 import { writeItemSetTask } from "./write-item-set/task";
@@ -175,6 +177,8 @@ export const TASKS: readonly RegisteredTask[] = [
   alphabetLessonTask,
   alphabetLessonFixTask,
   setupLessonOutlineTask,
+  warmUpCardsTask,
+  warmUpCheckTask,
 ];
 
 export const RUNS_PER_TEST_CASE = 1;

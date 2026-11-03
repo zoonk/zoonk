@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "warm_up_deck_end": "b7ca956f76413ca9d2627257f1db8e6d971d26bda73124af1f058c54db7a8b92",
+  "warm_up_lesson_ready": "3cae7905e3e241ef777f8962a541f7bdff0faf9baf4e853d089bbe0168691ab5",
+  "warm_up_next": "8fc238e38e704806e910bb58bffbe3ba0b257fc1abc97ed8e2da0e444d64efd6",
+  "warm_up_plan_ready": "d7e16f7bd6a79905d783edeb9510c10d0cde814ed449a5a69030ec807e9f12da",
+  "warm_up_plan_ready_one_question": "7f533c7a4ba8122236aa10c56a3d2b5b9371474eb20a834e2da3552e2d76f4a9",
+  "warm_up_plan_ready_whenever": "5f20948e2ada27d9d9fc7b5913543316eecda07b491002e3cbefe6abd9d3cf22",
+  "warm_up_questions_ready": "916d897fba61dd02b853df9500cad66e0146580b4cc0e2ebcc6e400b03185db7",
+  "warm_up_questions_ready_description": "0fe6e516df22fe914bf15345950ca1649ef487ae9d2fd39aabfe7aa6fecd96ba",
+  "warm_up_title": "3fec5becc3f2d65cbb6eee15067af8f5cef7e94c200e08e452ddd2e2ca2c3f23"
+}
+-->
+<resources>
+    <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
+    <string name="warm_up_title">Indovina mentre aspetti</string>
+    <!-- Button under a guessed question's answer: shows the next question. -->
+    <string name="warm_up_next">Passa alla prossima domanda</string>
+    <!-- Under the last question's answer: there are no more questions to guess. -->
+    <string name="warm_up_deck_end">Per ora è tutto.</string>
+    <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
+    <string name="warm_up_plan_ready">Il tuo piano è pronto</string>
+    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
+    <string name="warm_up_plan_ready_one_question">Un’ultima domanda, poi lo vedrai.</string>
+    <!-- Under "Your plan is ready" on the step that shows the plan. -->
+    <string name="warm_up_plan_ready_whenever">Guardalo quando vuoi.</string>
+    <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
+    <string name="warm_up_questions_ready">Le tue domande sono pronte</string>
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">Inizia quando vuoi.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
+    <string name="warm_up_lesson_ready">La tua lezione è pronta. Iniziala quando vuoi.</string>
+</resources>

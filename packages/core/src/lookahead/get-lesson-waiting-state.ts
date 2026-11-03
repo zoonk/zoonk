@@ -5,6 +5,7 @@ import {
   type LessonGenerationState,
   getLessonGenerationState,
 } from "../library/generation/lesson-generation-state";
+import { findFirstLessonWarmUp } from "./_utils/first-lesson-warm-up";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
 type ReadyAlternative =
@@ -19,6 +20,8 @@ type LessonWaitingState = {
   alternative: ReadyAlternative | null;
   /** A failed lesson its checks set aside: it's never written again, so there's nothing to retry. */
   setAside: boolean;
+  /** The goal's ready warm-up deck, only while its first lesson is being waited for. */
+  warmUpId: string | null;
 };
 
 export type LessonWaitingResult =
@@ -84,17 +87,29 @@ export async function getLessonWaitingState({
 
   if (state.status === "ready") {
     return {
-      state: { alternative: null, generationId: null, setAside: false, status: "ready" },
+      state: {
+        alternative: null,
+        generationId: null,
+        setAside: false,
+        status: "ready",
+        warmUpId: null,
+      },
       status: "ready",
     };
   }
 
+  const [alternative, warmUpId] = await Promise.all([
+    findReadyAlternative({ lessonId, userId: viewer.userId }),
+    findFirstLessonWarmUp({ lessonId, userId: viewer.userId }),
+  ]);
+
   return {
     state: {
-      alternative: await findReadyAlternative({ lessonId, userId: viewer.userId }),
+      alternative,
       generationId: state.status === "generating" ? state.runId : null,
       setAside: state.status === "failed" && state.setAside,
       status: state.status,
+      warmUpId,
     },
     status: "ready",
   };

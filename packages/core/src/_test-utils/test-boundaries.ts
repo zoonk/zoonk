@@ -112,6 +112,8 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/exam-identity-decision": { decideExamIdentity: vi.fn() },
   "@zoonk/ai/tasks/variants/example-lines": { generateExampleLines: vi.fn() },
   "@zoonk/ai/tasks/variants/step-variant": { generateStepVariant: vi.fn() },
+  "@zoonk/ai/tasks/warm-up/check-warm-up-cards": { checkWarmUpCards: vi.fn() },
+  "@zoonk/ai/tasks/warm-up/write-warm-up-cards": { generateWarmUpCards: vi.fn() },
   "@zoonk/mailer": { sendEmail: vi.fn() },
   "@zoonk/utils/logger": { logError: vi.fn(), logInfo: vi.fn() },
   "@zoonk/utils/shuffle": { shuffle: vi.fn(realShuffle) },

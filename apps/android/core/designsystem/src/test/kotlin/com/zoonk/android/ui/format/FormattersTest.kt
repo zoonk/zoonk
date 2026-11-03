@@ -91,6 +91,7 @@ class FormattersTest {
         assertEquals("−3", formatNumber(-3.0, en))
         assertEquals("+50", formatNumber(50.0, en, signed = true))
         assertEquals("0", formatNumber(-0.001, en, signed = true))
+        assertEquals("0", formatNumber(-0.001, en))
         assertEquals("0", formatNumber(0.0, en, signed = true))
     }
 

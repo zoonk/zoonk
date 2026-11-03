@@ -1,6 +1,7 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
 import { speakMath } from "./math-speech";
+import { MathMarkupView } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
 
 export type RichInlineSegment = (
@@ -30,6 +31,7 @@ function MathSource({ segment }: { segment: MathSegment }) {
 }
 
 function MathView({ segment }: { segment: MathSegment }) {
+  const words = useMathWords();
   const markup = useMathMarkup({ displayMode: segment.kind === "displayMath", text: segment.text });
 
   if (markup === null) {
@@ -37,10 +39,10 @@ function MathView({ segment }: { segment: MathSegment }) {
   }
 
   return (
-    <span
+    <MathMarkupView
       className={mathClassName(segment)}
-      // eslint-disable-next-line react/no-danger -- KaTeX returns escaped MathML with trust disabled, which lets formulas render without allowing AI-provided HTML.
-      dangerouslySetInnerHTML={{ __html: markup }}
+      markup={markup}
+      words={speakMath({ latex: segment.text, words })}
     />
   );
 }

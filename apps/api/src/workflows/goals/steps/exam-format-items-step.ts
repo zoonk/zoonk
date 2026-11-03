@@ -1,6 +1,5 @@
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateItems } from "@zoonk/ai/tasks/items/generate";
-import { getContentReuse } from "@zoonk/core/library/curriculum/scope";
 import { createItems } from "@zoonk/core/library/items/create";
 import { recordNumericWrite } from "@zoonk/core/library/items/numeric-skills";
 import {
@@ -51,14 +50,7 @@ export async function prepareExamFormatItemsStep({
     format,
     language: skill.language,
     level: skill.level ?? "intermediate",
-    serviceTier: chooseServiceTier({
-      reuse: getContentReuse({
-        forExam: skill.exam !== null,
-        ownerId: skill.ownerId,
-        targetLanguage: skill.targetLanguage,
-      }),
-      wait,
-    }),
+    serviceTier: chooseServiceTier({ wait }),
     skill: { description: skill.description, name: skill.name },
   });
 

@@ -679,23 +679,6 @@ msgctxt "COrd83"
 msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
 msgstr "{total, plural, other {카드 #장}}을 한 장씩 {groups} 그룹으로 분류하세요."
 
-#. Read by screen readers after a card is sorted; {next} is the card to sort now.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "gF3jVY"
-msgid "{item} is in {group}. Next: {next}."
-msgstr "{item} 카드는 {group} 그룹에 있어요. 다음은 {next} 카드예요."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "vmmoiT"
-msgid "{item} is in {group}."
-msgstr "{item} 카드는 {group} 그룹에 있어요."
-
-#. Read by screen readers after Undo: this card is back to be sorted again.
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "2I4Dzf"
-msgid "Took back {item}."
-msgstr "{item} 카드를 되돌렸어요."
-
 #. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "jNJRxP"
@@ -709,14 +692,14 @@ msgid "No cards here"
 msgstr "카드가 없어요"
 
 #: src/activities/categorize/categorize-results.tsx
+msgctxt "Cwq6lj"
+msgid "<item></item> belongs in <group></group>."
+msgstr "<item></item>은(는) <group></group>에 속해요."
+
+#: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
 msgid "{right} of {total} in the right group"
 msgstr "올바르게 분류한 항목 {right}/{total}개"
-
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Q5lL_i"
-msgid "{item} belongs in {group}."
-msgstr "{item}은(는) {group}에 속해요."
 
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
@@ -753,6 +736,23 @@ msgstr "{sorted}/{total}개 분류 완료"
 msgctxt "c5muiH"
 msgid "Which group does it belong in?"
 msgstr "어느 그룹에 들어갈까요?"
+
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} 카드는 {group} 그룹에 있어요."
+
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} 카드는 {group} 그룹에 있어요. 다음은 {next} 카드예요."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/use-sort-announcements.ts
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "{item} 카드를 되돌렸어요."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"
@@ -3023,6 +3023,12 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "짝을 모두 맞췄어요. 계속하려면 확인을 누르세요."
 
+#. Starts the explanation of why the learner's answer is wrong.
+#: src/components/not-quite-lead.tsx
+msgctxt "Ilqo6R"
+msgid "Not quite:"
+msgstr "정답은 아니에요:"
+
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -3052,55 +3058,6 @@ msgstr "재생"
 msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "이 뜻에 맞는 건 무엇인가요?"
-
-#. Verdict on an answer that is almost right.
-#: src/components/verdict-label.tsx
-msgctxt "Bk6B6r"
-msgid "Almost there"
-msgstr "거의 맞았어요"
-
-#: src/components/verdict-label.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "정답이에요!"
-
-#: src/components/verdict-label.tsx
-msgctxt "yuSMTV"
-msgid "Here's the answer"
-msgstr "정답은 이거예요"
-
-#: src/components/verdict-label.tsx
-msgctxt "WbwDD5"
-msgid "Good guess!"
-msgstr "예상이 맞았어요!"
-
-#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
-#: src/components/verdict-label.tsx
-msgctxt "--l7ni"
-msgid "Not quite"
-msgstr "정답은 아니에요"
-
-#: src/components/verdict-label.tsx
-msgctxt "pWC3pf"
-msgid "Here's a good answer"
-msgstr "이렇게 답하면 좋아요"
-
-#: src/components/verdict-label.tsx
-msgctxt "9DZ20y"
-msgid "Right, watch the spelling"
-msgstr "맞았어요, 철자만 확인해 보세요"
-
-#. Verdict when the learner's answer wasn't checked this time.
-#: src/components/verdict-label.tsx
-msgctxt "yRGkJi"
-msgid "Not checked this time"
-msgstr "이번에는 답을 확인하지 않았어요"
-
-#. Starts the explanation of why the learner's answer is wrong.
-#: src/components/verdict-label.tsx
-msgctxt "Ilqo6R"
-msgid "Not quite:"
-msgstr "정답은 아니에요:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3698,11 +3655,6 @@ msgstr "내 예시"
 msgctxt "p6MDZm"
 msgid "Guess first"
 msgstr "먼저 예상해 보기"
-
-#: src/lesson/steps/hook-step.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 #: src/lesson/steps/spoken-answer-step.tsx

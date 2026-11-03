@@ -1,5 +1,6 @@
 "use client";
 
+import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
@@ -73,7 +74,9 @@ export function ActivitySelectGridItem({
             )}
           </LineMarker>
         )}
-        <span className="min-w-0">{children}</span>
+        <span className="min-w-0">
+          <SpokenMath>{children}</SpokenMath>
+        </span>
       </span>
     </button>
   );

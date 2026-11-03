@@ -1243,6 +1243,11 @@ msgid "Your name, username and account."
 msgstr "이름, 사용자 이름, 계정 정보예요."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "확인하고 있어요…"
@@ -2480,6 +2485,16 @@ msgstr "기다리는 동안 할 수 있는 학습"
 msgctxt "P0sSfc"
 msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
 msgstr "{count, plural, other {개념 #개 복습하기}}"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "레슨이 준비됐어요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aWuC4D"
+msgid "Your lesson is ready. Start it whenever you like."
+msgstr "레슨이 준비됐어요. 편할 때 시작하세요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"

@@ -7,7 +7,7 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-import { claimNoticeLanding, endNoticeWait, startNoticeWait } from "./notice-wait";
+import { claimNoticeLanding, endNoticeWait } from "./notice-wait";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
@@ -25,7 +25,15 @@ function setNow(now: Date) {
   });
 }
 
-async function builtExam({ days, year }: { days: string[]; year: number }) {
+async function builtExam({
+  days,
+  waitsForNotice = false,
+  year,
+}: {
+  days: string[];
+  waitsForNotice?: boolean;
+  year: number;
+}) {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
     examBlueprintFixture({
@@ -58,7 +66,7 @@ async function builtExam({ days, year }: { days: string[]; year: number }) {
   });
 
   mockSession(user.id);
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await createGoalPlan({ goalId: goal.id, graph: library.graph, waitsForNotice });
 
   return goal;
 }
@@ -83,13 +91,10 @@ describe("an exam plan waiting for its notice", () => {
     vi.useRealTimers();
   });
 
-  it("reads the notice while the wait runs, then follows the usual structure until it lands", async () => {
-    const goal = await builtExam({ days: ["2020-11-08"], year: 2020 });
+  it("reads the notice from the plan's first read while the wait runs, then follows the usual structure until it lands", async () => {
+    const goal = await builtExam({ days: ["2020-11-08"], waitsForNotice: true, year: 2020 });
 
-    await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: null });
-
-    await startNoticeWait({ goalId: goal.id, now: NOW });
-    await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading" });
+    await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading", ready: true });
 
     await expect(
       claimNoticeLanding({ goalId: goal.id, now: new Date(NOW.getTime() + 2 * MINUTE_MS) }),
@@ -115,6 +120,7 @@ describe("an exam plan waiting for its notice", () => {
     const estimated = await builtExam({ days: ["2019-11-03"], year: 2019 });
 
     await expect(readPlan(estimated.id)).resolves.toMatchObject({
+      notice: null,
       schedule: { targetDate: "2020-11-01", targetDateEstimated: true },
     });
 

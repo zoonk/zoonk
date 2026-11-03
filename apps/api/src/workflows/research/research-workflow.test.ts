@@ -1520,7 +1520,7 @@ describe(researchWorkflow, () => {
       contentScope: "personal",
     });
 
-    expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+    expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       researchUploadReason: null,

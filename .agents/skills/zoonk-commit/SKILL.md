@@ -11,7 +11,7 @@ metadata:
 
 Commit each change's own files as it lands. Stage only that change's paths; never use `git add -A`, `git add .`, or `git commit -a` on a shared tree. Before committing, check the path list and diff for secrets, `.env*`, keys, logs, and temporary or scratch files. Never amend, force-push, or use `--no-verify`. Push when you open or update the task's pull request ([zoonk-pull-request](../zoonk-pull-request/SKILL.md)), and otherwise only when asked.
 
-Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. The full [root PR verification gate](../../../AGENTS.md#pr-verification-gate) applies only before opening a PR (including a draft), marking it ready for review, or merging it. It includes the full local PR and `main` quality checks, including Main and API E2E. Include the final results in the PR's verification section.
+Before each commit, run the change's relevant checks: format and lint the touched files, typecheck their packages, and run the affected tests, where applicable. Report the checks and results, and include the final ones in the PR's verification section; CI runs the full suites on the PR ([root PR verification gate](../../../AGENTS.md#pr-verification-gate)).
 
 Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
 

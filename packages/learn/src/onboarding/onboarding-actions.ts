@@ -3,6 +3,7 @@ import { type GoalCreateInput } from "@zoonk/core/goals/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
@@ -164,6 +165,8 @@ export type OnboardingActions = {
     question: string;
     sourceIds: string[];
   }) => Promise<MaterialQuestionOutcome>;
+  /** Null when the deck can't be shown. */
+  readWarmUp: (warmUpId: string) => Promise<WarmUpDeck | null>;
   recordPlanWait: (milliseconds: number) => Promise<void>;
   startOver: (goalIds: string[]) => Promise<void>;
   stopPlacementMock: (mockId: string) => Promise<boolean>;

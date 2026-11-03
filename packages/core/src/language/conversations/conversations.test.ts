@@ -118,6 +118,7 @@ function checkGoals({ connectionId, conversationId }: PracticeCall, turns: Conve
 }
 
 const CONVERSATION_UPDATE = /UPDATE "public"\."language_conversations"/u;
+const SPEAKING_LEVEL_LOCK = /FROM "language_skill_levels"[\s\S]+FOR UPDATE/u;
 
 /** Holds the call's row, so checks that read it wait at their claim in the order they were sent. */
 function holdConversationRow(conversationId: string) {
@@ -129,6 +130,22 @@ function holdConversationRow(conversationId: string) {
     const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
     held.resolve(backend?.pid ?? 0);
     await released.promise;
+  });
+
+  done.catch((error: unknown) => held.reject(error));
+  return { done, pid: held.promise, release: () => released.resolve(null) };
+}
+
+function deleteLevelOnceWriterWaits(levelId: string) {
+  const held = Promise.withResolvers<number>();
+  const released = Promise.withResolvers<null>();
+
+  const done = prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM language_skill_levels WHERE id = ${levelId}::uuid FOR UPDATE`;
+    const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+    held.resolve(backend?.pid ?? 0);
+    await released.promise;
+    await tx.languageSkillLevel.delete({ where: { id: levelId } });
   });
 
   done.catch((error: unknown) => held.reject(error));
@@ -740,6 +757,44 @@ describe("language conversations", () => {
       seconds: 42,
     });
 
+    expect(speaking).toMatchObject({ windowCorrect: 2, windowTotal: 3 });
+  });
+
+  it("records a call's speaking evidence when the settle that wrote it failed and the call is finished again", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    const level = await prisma.languageSkillLevel.create({
+      data: { language: "en", score: 2, skill: "speaking", startScore: 2, userId: user.id },
+    });
+
+    const deletion = deleteLevelOnceWriterWaits(level.id);
+    const pid = await deletion.pid;
+    const input = testCallCompletionInput(conversationId, COMPLETION);
+    const failed = completeLanguageConversation({ conversationId, input, runs: reviewRunsInline });
+
+    try {
+      await waitForBlockedStatement(pid, SPEAKING_LEVEL_LOCK);
+    } finally {
+      deletion.release();
+      await deletion.done;
+    }
+
+    await expect(failed).resolves.toStrictEqual({ status: "retryable" });
+
+    await expect(
+      completeLanguageConversation({ conversationId, input, runs: reviewRunsInline }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    const [events, speaking] = await Promise.all([
+      prisma.learningEvent.count({ where: { kind: "conversation", userId: user.id } }),
+      prisma.languageSkillLevel.findUnique({
+        where: { userLanguageSkill: { language: "en", skill: "speaking", userId: user.id } },
+      }),
+    ]);
+
+    expect(events).toBe(1);
     expect(speaking).toMatchObject({ windowCorrect: 2, windowTotal: 3 });
   });
 

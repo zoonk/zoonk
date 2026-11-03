@@ -1243,6 +1243,11 @@ msgid "Your name, username and account."
 msgstr "Twoje imię, nazwa użytkownika i konto."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Wpisz maksymalnie 150 znaków."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "Sprawdzamy…"
@@ -2480,6 +2485,16 @@ msgstr "Na czas oczekiwania"
 msgctxt "P0sSfc"
 msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
 msgstr "{count, plural, one {Powtórz # zagadnienie} few {Powtórz # zagadnienia} other {Powtórz # zagadnień}}"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Twoja lekcja jest gotowa"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "aWuC4D"
+msgid "Your lesson is ready. Start it whenever you like."
+msgstr "Twoja lekcja jest gotowa. Zacznij, kiedy chcesz."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"
